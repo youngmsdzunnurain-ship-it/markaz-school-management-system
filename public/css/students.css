@@ -815,3 +815,94 @@ main {
 
 }
 
+
+/* =========================================
+   STUDENT PROFILE VIEW — 2026
+========================================= */
+
+.student-profile-hero {
+    position: relative;
+}
+
+.student-profile-photo {
+    border: 2px solid #e5eadf;
+    box-shadow: 0 6px 20px rgba(18, 61, 42, 0.08);
+}
+
+.student-profile-identity {
+    min-width: 0;
+}
+
+.student-profile-identity h3 {
+    overflow-wrap: anywhere;
+}
+
+.student-profile-identity .student-status {
+    margin-top: 2px;
+}
+
+.student-profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 9px;
+}
+
+.student-profile-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 5px 9px;
+    border: 1px solid var(--markaz-border);
+    border-radius: 8px;
+    background: #fafcfb;
+    color: #5e6962;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.student-details-grid > div {
+    min-width: 0;
+    transition: background-color 0.15s ease;
+}
+
+.student-details-grid > div:hover {
+    background: #fbfdfb;
+}
+
+.student-details-grid strong {
+    overflow-wrap: anywhere;
+}
+
+.student-profile-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+@media (max-width: 600px) {
+
+    .student-profile-hero {
+        align-items: flex-start;
+    }
+
+    .student-profile-photo {
+        width: 74px;
+        height: 74px;
+        min-width: 74px;
+    }
+
+    .student-profile-hero h3 {
+        font-size: 18px;
+    }
+
+    .student-profile-meta {
+        gap: 6px;
+    }
+
+    .student-profile-meta span {
+        font-size: 10px;
+    }
+
+}
+
