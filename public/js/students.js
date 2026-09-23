@@ -681,3 +681,333 @@ function updateStudentSummary() {
     inactiveStudentCount.textContent = inactive;
 }
 
+
+/* =========================================
+   STUDENT PAGINATION
+========================================= */
+
+const studentsPerPage = 10;
+let currentStudentPage = 1;
+
+function getFilteredStudents() {
+
+    const searchTerm = studentSearch.value.trim().toLowerCase();
+    const status = statusFilter.value;
+    const selectedClass = classFilter.value;
+
+    return students.filter(student => {
+
+        const fullName = [
+            student.first_name,
+            student.middle_name,
+            student.last_name
+        ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+        const matchesSearch =
+            !searchTerm ||
+            fullName.includes(searchTerm) ||
+            String(student.admission_number)
+                .toLowerCase()
+                .includes(searchTerm);
+
+        const matchesStatus =
+            status === "" ||
+            String(student.is_active) === status;
+
+        const matchesClass =
+            selectedClass === "" ||
+            String(student.class_id) === selectedClass;
+
+        return matchesSearch && matchesStatus && matchesClass;
+    });
+}
+
+function renderPagination(totalItems) {
+
+    const paginationInfo =
+        document.getElementById("paginationInfo");
+
+    const paginationControls =
+        document.getElementById("paginationControls");
+
+    const totalPages =
+        Math.max(1, Math.ceil(totalItems / studentsPerPage));
+
+    if (currentStudentPage > totalPages) {
+        currentStudentPage = totalPages;
+    }
+
+    if (totalItems === 0) {
+
+        paginationInfo.textContent = "Showing 0–0 of 0";
+        paginationControls.innerHTML = "";
+
+        return;
+    }
+
+    const start =
+        ((currentStudentPage - 1) * studentsPerPage) + 1;
+
+    const end =
+        Math.min(
+            currentStudentPage * studentsPerPage,
+            totalItems
+        );
+
+    paginationInfo.textContent =
+        `Showing ${start}–${end} of ${totalItems}`;
+
+    let html = "";
+
+    html += `
+        <button
+            type="button"
+            class="pagination-button"
+            data-page-action="previous"
+            ${currentStudentPage === 1 ? "disabled" : ""}
+        >
+            Previous
+        </button>
+    `;
+
+    for (let page = 1; page <= totalPages; page++) {
+
+        if (
+            totalPages > 7 &&
+            page > 2 &&
+            page < totalPages - 1 &&
+            Math.abs(page - currentStudentPage) > 1
+        ) {
+            if (page === 3 || page === totalPages - 2) {
+                html += `<span class="pagination-info">…</span>`;
+            }
+
+            continue;
+        }
+
+        html += `
+            <button
+                type="button"
+                class="pagination-button ${page === currentStudentPage ? "active" : ""}"
+                data-page="${page}"
+            >
+                ${page}
+            </button>
+        `;
+    }
+
+    html += `
+        <button
+            type="button"
+            class="pagination-button"
+            data-page-action="next"
+            ${currentStudentPage === totalPages ? "disabled" : ""}
+        >
+            Next
+        </button>
+    `;
+
+    paginationControls.innerHTML = html;
+}
+
+function renderStudentPage() {
+
+    const filtered = getFilteredStudents();
+
+    studentCount.textContent =
+        `${filtered.length} ${
+            filtered.length === 1 ? "Student" : "Students"
+        }`;
+
+    const totalPages =
+        Math.max(1, Math.ceil(filtered.length / studentsPerPage));
+
+    if (currentStudentPage > totalPages) {
+        currentStudentPage = totalPages;
+    }
+
+    const startIndex =
+        (currentStudentPage - 1) * studentsPerPage;
+
+    const pageStudents =
+        filtered.slice(
+            startIndex,
+            startIndex + studentsPerPage
+        );
+
+    if (!pageStudents.length) {
+
+        studentsTableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-state">
+                    No students found.
+                </td>
+            </tr>
+        `;
+
+        renderPagination(0);
+        return;
+    }
+
+    studentsTableBody.innerHTML = pageStudents.map(student => {
+
+        const fullName = [
+            student.first_name,
+            student.middle_name,
+            student.last_name
+        ]
+        .filter(Boolean)
+        .join(" ");
+
+        const statusLabel =
+            Number(student.is_active) === 1
+                ? "Active"
+                : "Inactive";
+
+        const photoStyle = student.profile_image
+            ? `background-image:url("../${escapeHtml(student.profile_image)}")`
+            : "";
+
+        return `
+            <tr>
+
+                <td>
+                    <div class="student-list-profile">
+
+                        <div
+                            class="student-list-photo"
+                            style="${photoStyle}"
+                        >
+                            ${student.profile_image ? "" : "<span>ST</span>"}
+                        </div>
+
+                        <strong>
+                            ${escapeHtml(fullName)}
+                        </strong>
+
+                    </div>
+                </td>
+
+                <td>
+                    ${escapeHtml(student.admission_number)}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.class_name || "—")}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.gender || "—")}
+                </td>
+
+                <td>
+                    <span class="student-status ${statusLabel.toLowerCase()}">
+                        ${statusLabel}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="student-actions">
+
+                        <button
+                            type="button"
+                            class="student-action-button view-student-button"
+                            data-student-id="${student.id}"
+                        >
+                            View
+                        </button>
+
+                        <button
+                            type="button"
+                            class="student-action-button edit-student-button"
+                            data-student-id="${student.id}"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            type="button"
+                            class="student-action-button toggle-status-button"
+                            data-student-id="${student.id}"
+                        >
+                            ${Number(student.is_active) === 1
+                                ? "Deactivate"
+                                : "Activate"}
+                        </button>
+
+                    </div>
+                </td>
+
+            </tr>
+        `;
+
+    }).join("");
+
+    renderPagination(filtered.length);
+}
+
+/* Make the existing filters reset pagination */
+
+studentSearch.addEventListener("input", () => {
+    currentStudentPage = 1;
+    renderStudentPage();
+});
+
+statusFilter.addEventListener("change", () => {
+    currentStudentPage = 1;
+    renderStudentPage();
+});
+
+classFilter.addEventListener("change", () => {
+    currentStudentPage = 1;
+    renderStudentPage();
+});
+
+/* Pagination controls */
+
+document
+    .getElementById("paginationControls")
+    .addEventListener("click", event => {
+
+        const button =
+            event.target.closest(".pagination-button");
+
+        if (!button || button.disabled) {
+            return;
+        }
+
+        const totalItems =
+            getFilteredStudents().length;
+
+        const totalPages =
+            Math.max(
+                1,
+                Math.ceil(totalItems / studentsPerPage)
+            );
+
+        if (button.dataset.page) {
+
+            currentStudentPage =
+                Number(button.dataset.page);
+
+        } else if (
+            button.dataset.pageAction === "previous"
+        ) {
+
+            currentStudentPage =
+                Math.max(1, currentStudentPage - 1);
+
+        } else if (
+            button.dataset.pageAction === "next"
+        ) {
+
+            currentStudentPage =
+                Math.min(totalPages, currentStudentPage + 1);
+        }
+
+        renderStudentPage();
+    });
+

@@ -906,3 +906,72 @@ main {
 
 }
 
+
+/* =========================================
+   STUDENT PAGINATION
+========================================= */
+
+.students-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--markaz-border);
+    background: #fcfdfc;
+}
+
+.pagination-info {
+    color: var(--markaz-muted);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination-button {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--markaz-border);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--markaz-green);
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.pagination-button:hover:not(:disabled) {
+    border-color: var(--markaz-gold);
+    background: #fffdf7;
+}
+
+.pagination-button.active {
+    background: var(--markaz-green);
+    border-color: var(--markaz-green);
+    color: #fff;
+}
+
+.pagination-button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+
+    .students-pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .pagination-controls {
+        justify-content: center;
+    }
+
+}
+
