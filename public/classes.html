@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="theme-color"
+        content="#123d2a">
+
+    <title>Classes | MARKAZ</title>
+
+    <link
+        rel="stylesheet"
+        href="./css/dashboard.css">
+
+    <link
+        rel="stylesheet"
+        href="./css/classes.css">
+</head>
+
+<body>
+
+<div class="classes-page">
+
+    <header class="classes-topbar">
+
+        <div>
+            <span class="eyebrow">MARKAZ</span>
+
+            <h1>Classes</h1>
+
+            <p>
+                Manage academic classes and their organization.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            class="primary-button"
+            id="addClassButton">
+
+            + Add Class
+
+        </button>
+
+    </header>
+
+
+    <main>
+
+        <section class="classes-toolbar">
+
+            <input
+                type="search"
+                id="classSearch"
+                placeholder="Search classes..."
+                autocomplete="off">
+
+            <select id="classStatusFilter">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="1">
+                    Active
+                </option>
+
+                <option value="0">
+                    Inactive
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <section class="classes-panel">
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        ACADEMIC CLASSES
+                    </span>
+
+                    <h2>
+                        All Classes
+                    </h2>
+
+                </div>
+
+                <span
+                    id="classCount"
+                    class="class-count">
+
+                    0 Classes
+
+                </span>
+
+            </div>
+
+
+            <div class="classes-table-wrap">
+
+                <table class="classes-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Level / Group
+                            </th>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="classesTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="empty-state">
+
+                                Loading classes...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ADD / EDIT CLASS MODAL -->
+
+<div
+    class="modal-overlay"
+    id="classModal"
+    hidden>
+
+    <div class="class-modal">
+
+        <header class="modal-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    CLASS MANAGEMENT
+                </span>
+
+                <h2 id="classModalTitle">
+                    Add Class
+                </h2>
+
+                <p id="classModalDescription">
+                    Create a new academic class.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeClassModal">
+
+                ×
+
+            </button>
+
+        </header>
+
+
+        <form id="classForm">
+
+            <input
+                type="hidden"
+                id="classId"
+                name="id">
+
+
+            <div class="class-form-grid">
+
+                <div class="form-field">
+
+                    <label for="className">
+                        Class Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="className"
+                        name="name"
+                        placeholder="e.g. JSS 1"
+                        required>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="classLevelGroup">
+                        Level / Group
+                    </label>
+
+                    <input
+                        type="text"
+                        id="classLevelGroup"
+                        name="level_group"
+                        placeholder="e.g. Junior Secondary">
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="classSortOrder">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="classSortOrder"
+                        name="sort_order"
+                        value="0"
+                        min="0">
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="classStatus">
+                        Status
+                    </label>
+
+                    <select
+                        id="classStatus"
+                        name="is_active">
+
+                        <option value="1">
+                            Active
+                        </option>
+
+                        <option value="0">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="cancelClassButton">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                    id="saveClassButton">
+
+                    Save Class
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="./js/classes.js"></script>
+
+</body>
+
+</html>
