@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123d2a">
+
+    <title>Students | MARKAZ</title>
+
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/students.css">
+</head>
+
+<body>
+
+    <div class="students-page">
+
+        <header class="students-topbar">
+            <div>
+                <span class="eyebrow">MARKAZ</span>
+                <h1>Students</h1>
+                <p>Manage student records and enrollment information.</p>
+            </div>
+
+            <button type="button" class="primary-button" id="addStudentButton">
+                + Add Student
+            </button>
+        </header>
+
+        <section class="student-summary">
+            <article class="student-summary-card">
+                <div class="student-summary-icon">T</div>
+                <div>
+                    <p class="student-summary-label">Total Students</p>
+                    <p class="student-summary-value" id="totalStudentCount">0</p>
+                </div>
+            </article>
+
+            <article class="student-summary-card active">
+                <div class="student-summary-icon">A</div>
+                <div>
+                    <p class="student-summary-label">Active Students</p>
+                    <p class="student-summary-value" id="activeStudentCount">0</p>
+                </div>
+            </article>
+
+            <article class="student-summary-card inactive">
+                <div class="student-summary-icon">I</div>
+                <div>
+                    <p class="student-summary-label">Inactive Students</p>
+                    <p class="student-summary-value" id="inactiveStudentCount">0</p>
+                </div>
+            </article>
+        </section>
+        <main>
+
+            <section class="students-toolbar">
+
+                <div class="search-box">
+                    <input
+                        type="search"
+                        id="studentSearch"
+                        placeholder="Search by name or admission number..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <select id="classFilter">
+                    <option value="">All Classes</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+
+            </section>
+
+            <section class="students-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <span class="eyebrow">STUDENT RECORDS</span>
+                        <h2>All Students</h2>
+                    </div>
+
+                    <span id="studentCount" class="student-count">
+                        0 Students
+                    </span>
+                </div>
+
+                <div class="students-table-wrap">
+
+                    <table class="students-table">
+
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Admission No.</th>
+                                <th>Class</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    Loading students...
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="./js/students.js"></script>
+
+</body>
+</html>
+
+<!-- Edit Student Modal -->
+<div class="modal-overlay" id="editStudentModal" hidden>
+
+    <div class="student-modal" role="dialog" aria-modal="true">
+
+        <div class="modal-header">
+            <div>
+                <span class="eyebrow">STUDENT RECORD</span>
+                <h2>Edit Student</h2>
+                <p>Update student information.</p>
+            </div>
+
+            <button type="button" class="modal-close" id="closeEditStudentModal">
+                &times;
+            </button>
+        </div>
+
+        <form id="editStudentForm" enctype="multipart/form-data">
+
+            <input type="hidden" id="editStudentId" name="id">
+
+            <div class="student-photo-upload">
+
+                <div class="student-photo-preview" id="editStudentPhotoPreview">
+                    <span>ST</span>
+                </div>
+
+                <div>
+                    <strong>Student Photo</strong>
+                    <p>JPG, PNG or WEBP · Maximum 3MB</p>
+
+                    <label class="secondary-button">
+                        Change Photo
+                        <input
+                            type="file"
+                            id="editStudentPhoto"
+                            name="student_photo"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label for="editAdmissionNumber">Admission Number</label>
+                    <input
+                        type="text"
+                        id="editAdmissionNumber"
+                        name="admission_number"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="editStudentClass">Class</label>
+                    <select id="editStudentClass" name="class_id" required>
+                        <option value="">Select class</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="editFirstName">First Name</label>
+                    <input
+                        type="text"
+                        id="editFirstName"
+                        name="first_name"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="editMiddleName">Middle Name</label>
+                    <input
+                        type="text"
+                        id="editMiddleName"
+                        name="middle_name"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="editLastName">Last Name</label>
+                    <input
+                        type="text"
+                        id="editLastName"
+                        name="last_name"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="editGender">Gender</label>
+                    <select id="editGender" name="gender">
+                        <option value="">Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="editDateOfBirth">Date of Birth</label>
+                    <input type="date" id="editDateOfBirth" name="date_of_birth">
+                </div>
+
+                <div class="form-field">
+                    <label for="editAdmissionDate">Admission Date</label>
+                    <input type="date" id="editAdmissionDate" name="admission_date">
+                </div>
+
+            </div>
+
+            <div class="form-field status-field">
+                <label for="editStudentStatus">Status</label>
+
+                <select id="editStudentStatus" name="is_active">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="cancelEditStudent"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                    id="updateStudentButton"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
