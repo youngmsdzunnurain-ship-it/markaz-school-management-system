@@ -11,18 +11,27 @@ requireAdmin();
 
 $stmt = db()->query(
     'SELECT
-        id,
-        name,
-        level_group,
-        sort_order,
-        is_active,
-        created_at,
-        updated_at
-     FROM classes
-     ORDER BY sort_order ASC, name ASC'
+        c.id,
+        c.name,
+        c.level_group,
+        c.sort_order,
+        c.is_active,
+        c.created_at,
+        c.updated_at,
+
+        (
+            SELECT COUNT(*)
+            FROM students s
+            WHERE s.class_id = c.id
+              AND s.is_active = 1
+        ) AS student_count
+
+    FROM classes c
+    ORDER BY c.sort_order ASC, c.name ASC'
 );
 
+$classes = $stmt->fetchAll();
 echo json_encode([
     'success' => true,
-    'classes' => $stmt->fetchAll()
+    'classes' => $classes
 ]);

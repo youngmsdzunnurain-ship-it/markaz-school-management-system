@@ -1,0 +1,121 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../../app/config/app.php';
+require_once __DIR__ . '/../../../app/middleware/auth.php';
+
+header('Content-Type: application/json; charset=utf-8');
+
+requireSeniorAdmin();
+
+$pdo = db();
+$method = $_SERVER['REQUEST_METHOD'];
+
+function getCurrentAcademicPeriod(PDO $pdo): ?array
+{
+    $stmt = $pdo->query(
+        'SELECT
+            ap.id,
+            s.name AS session_name,
+            t.name AS term_name,
+            ap.examination_date,
+            ap.vacation_date,
+            ap.resumption_date
+         FROM academic_periods ap
+         INNER JOIN academic_sessions s
+            ON s.id = ap.academic_session_id
+         INNER JOIN terms t
+            ON t.id = ap.term_id
+         WHERE s.is_current = 1
+         ORDER BY ap.id DESC
+         LIMIT 1'
+    );
+
+    $period = $stmt->fetch();
+
+    return $period ?: null;
+}
+
+if ($method === 'GET') {
+    $period = getCurrentAcademicPeriod($pdo);
+
+    if (!$period) {
+        http_response_code(404);
+        echo json_encode([
+            'success' => false,
+            'message' => 'No current academic period is configured.'
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'success' => true,
+        'academic_period' => [
+            'id' => (int) $period['id'],
+            'session_name' => $period['session_name'],
+            'term_name' => $period['term_name'],
+            'resumption_date' => $period['resumption_date']
+        ]
+    ]);
+    exit;
+}
+
+if ($method !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Method not allowed.'
+    ]);
+    exit;
+}
+
+$resumptionDate = trim((string) ($_POST['resumption_date'] ?? ''));
+
+if ($resumptionDate === '') {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Next Term Begins date is required.'
+    ]);
+    exit;
+}
+
+$date = DateTime::createFromFormat('Y-m-d', $resumptionDate);
+
+if (!$date || $date->format('Y-m-d') !== $resumptionDate) {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Please enter a valid date.'
+    ]);
+    exit;
+}
+
+$period = getCurrentAcademicPeriod($pdo);
+
+if (!$period) {
+    http_response_code(404);
+    echo json_encode([
+        'success' => false,
+        'message' => 'No current academic period is configured.'
+    ]);
+    exit;
+}
+
+$stmt = $pdo->prepare(
+    'UPDATE academic_periods
+     SET resumption_date = ?,
+         updated_at = NOW()
+     WHERE id = ?'
+);
+
+$stmt->execute([
+    $resumptionDate,
+    (int) $period['id']
+]);
+
+echo json_encode([
+    'success' => true,
+    'message' => 'Next Term Begins date saved successfully.',
+    'resumption_date' => $resumptionDate
+]);

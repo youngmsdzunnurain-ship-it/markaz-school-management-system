@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Subjects | MARKAZ</title>
+
+    <meta
+        name="description"
+        content="Manage subjects for MARKAZ Centre for Learning and Memorization of the Glorious Qur'an."
+    >
+
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="./subjects.css?v=20260927">
+</head>
+
+<body>
+
+<div class="subjects-page">
+
+    <!-- =====================================================
+         TOP HEADER
+    ====================================================== -->
+
+    <header class="page-header">
+
+        <div class="header-accent"></div>
+
+        <div class="page-header-content">
+
+            <div class="page-heading">
+
+                <a href="../dashboard.html" class="back-link">
+                    <span>←</span>
+                    Dashboard
+                </a>
+
+                <div class="heading-main">
+
+                    <div class="heading-kicker">
+                        <span class="kicker-line"></span>
+                        ACADEMIC MANAGEMENT
+                    </div>
+
+                    <div class="heading-title-row">
+                        <div class="heading-icon">
+                            <span>◈</span>
+                        </div>
+
+                        <div>
+                            <h1>Subjects</h1>
+
+                            <p class="page-description">
+                                Create, manage and organize the subjects used across MARKAZ classes.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-button add-subject-button"
+                id="addSubjectButton"
+            >
+                <span class="add-icon" aria-hidden="true">+</span>
+                <span>Add Subject</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="page-content">
+
+        <!-- SUMMARY -->
+
+        <section class="summary-grid" aria-label="Subject summary">
+
+            <article class="summary-card summary-total">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">TOTAL SUBJECTS</span>
+
+                    <span class="summary-icon">◈</span>
+                </div>
+
+                <div
+                    class="summary-card-value"
+                    id="totalSubjectCount"
+                >
+                    0
+                </div>
+
+                <div class="summary-card-note">
+                    All subjects in the library
+                </div>
+
+            </article>
+
+
+            <article class="summary-card summary-active">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">ACTIVE</span>
+
+                    <span class="summary-icon">✓</span>
+                </div>
+
+                <div
+                    class="summary-card-value"
+                    id="activeSubjectCount"
+                >
+                    0
+                </div>
+
+                <div class="summary-card-note">
+                    Currently available
+                </div>
+
+            </article>
+
+
+            <article class="summary-card summary-inactive">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">INACTIVE</span>
+
+                    <span class="summary-icon">−</span>
+                </div>
+
+                <div
+                    class="summary-card-value"
+                    id="inactiveSubjectCount"
+                >
+                    0
+                </div>
+
+                <div class="summary-card-note">
+                    Currently disabled
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             SUBJECT LIBRARY
+        ================================================== -->
+
+        <section class="subjects-panel">
+
+            <div class="panel-heading">
+
+                <div class="panel-title-area">
+
+                    <div class="panel-icon">
+                        ◈
+                    </div>
+
+                    <div>
+                        <span class="panel-kicker">
+                            MARKAZ ACADEMIC LIBRARY
+                        </span>
+
+                        <h2>Subject Library</h2>
+
+                        <p>
+                            Manage the subjects available for classes and results.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="panel-count">
+                    <span class="panel-count-dot"></span>
+                    <span>Academic Subjects</span>
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH / FILTER -->
+
+            <div class="subject-tools">
+
+                <div class="search-box">
+
+                    <label
+                        for="subjectSearch"
+                        class="sr-only"
+                    >
+                        Search subjects
+                    </label>
+
+                    <span class="tool-icon">⌕</span>
+
+                    <input
+                        type="search"
+                        id="subjectSearch"
+                        placeholder="Search by subject, code or category..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="filter-box">
+
+                    <label
+                        for="subjectStatusFilter"
+                        class="sr-only"
+                    >
+                        Filter subjects by status
+                    </label>
+
+                    <span class="filter-label">
+                        Status
+                    </span>
+
+                    <select id="subjectStatusFilter">
+
+                        <option value="all">
+                            All Subjects
+                        </option>
+
+                        <option value="active">
+                            Active
+                        </option>
+
+                        <option value="inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-wrapper">
+
+                <table class="subjects-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                <span>Subject</span>
+                            </th>
+
+                            <th>
+                                <span>Code</span>
+                            </th>
+
+                            <th>
+                                <span>Category</span>
+                            </th>
+
+                            <th>
+                                <span>Assessment Structure</span>
+                            </th>
+
+                            <th>
+                                <span>Status</span>
+                            </th>
+
+                            <th class="actions-heading">
+                                <span>Actions</span>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="subjectsTableBody">
+
+                        <tr>
+                            <td
+                                colspan="6"
+                                class="empty-state"
+                            >
+                                Loading subjects...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     ADD / EDIT SUBJECT MODAL
+========================================================= -->
+
+<div
+    class="modal-backdrop"
+    id="subjectModal"
+    hidden
+>
+
+    <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="subjectModalTitle"
+    >
+
+        <div class="modal-header">
+
+            <div class="modal-brand">
+
+                <div class="modal-brand-icon">
+                    ◈
+                </div>
+
+                <div>
+                    <p class="eyebrow">
+                        SUBJECT MANAGEMENT
+                    </p>
+
+                    <h2 id="subjectModalTitle">
+                        Add Subject
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Create or update an academic subject.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeSubjectModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="subjectForm"
+            novalidate
+        >
+
+            <input
+                type="hidden"
+                id="subjectId"
+            >
+
+
+            <div class="form-section-title">
+                <span></span>
+                Subject Information
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-field form-field-full">
+
+                    <label for="subjectName">
+                        Subject Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subjectName"
+                        name="name"
+                        placeholder="e.g. Mathematics"
+                        maxlength="150"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="subjectCode">
+                        Subject Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subjectCode"
+                        name="code"
+                        placeholder="e.g. MATH"
+                        maxlength="50"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="subjectCategory">
+                        Category
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subjectCategory"
+                        name="category"
+                        placeholder="e.g. Core, Science"
+                        maxlength="100"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section-title assessment-section-title">
+                <span></span>
+                Assessment Structure
+            </div>
+
+
+            <div class="assessment-form-grid">
+
+                <div class="assessment-field ca-one">
+
+                    <label for="subjectCa1">
+                        CA 1 Maximum
+                    </label>
+
+                    <div class="number-input-wrap">
+                        <input
+                            type="number"
+                            id="subjectCa1"
+                            name="max_ca1"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="20"
+                            required
+                        >
+
+                        <span>/ 100</span>
+                    </div>
+
+                </div>
+
+
+                <div class="assessment-field ca-two">
+
+                    <label for="subjectCa2">
+                        CA 2 Maximum
+                    </label>
+
+                    <div class="number-input-wrap">
+                        <input
+                            type="number"
+                            id="subjectCa2"
+                            name="max_ca2"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="20"
+                            required
+                        >
+
+                        <span>/ 100</span>
+                    </div>
+
+                </div>
+
+
+                <div class="assessment-field exam-field">
+
+                    <label for="subjectExam">
+                        Exam Maximum
+                    </label>
+
+                    <div class="number-input-wrap">
+                        <input
+                            type="number"
+                            id="subjectExam"
+                            name="max_exam"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="60"
+                            required
+                        >
+
+                        <span>/ 100</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-note">
+
+                <div class="note-icon">✓</div>
+
+                <div>
+                    <strong>Total Assessment</strong>
+
+                    <span>
+                        CA 1 + CA 2 + Exam should normally equal 100.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div
+                class="form-message"
+                id="subjectFormMessage"
+                role="alert"
+                hidden
+            ></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="cancelSubjectButton"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                    id="saveSubjectButton"
+                >
+                    Save Subject
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="./subjects.js"></script>
+<script src="/js/markaz-global.js"></script>
+
+</body>
+</html>

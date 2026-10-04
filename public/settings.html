@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123d2a">
+    <title>Settings | MARKAZ</title>
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body data-role-access="admin">
+
+    <div class="settings-watermark" aria-hidden="true">
+        <div class="settings-watermark-ring"></div>
+        <img src="assets/images/markaz-logo.jpg" alt="">
+    </div>
+
+    <main class="settings-page">
+
+        <header class="settings-header">
+            <a href="dashboard.html" class="back-link">← Dashboard</a>
+            <div>
+                <span>MARKAZ</span>
+                <h1>Settings</h1>
+                <p>Manage your administrator profile.</p>
+            </div>
+        </header>
+
+        <section class="settings-card">
+
+            <div class="settings-card-heading">
+                <div>
+                    <span class="settings-label">ADMINISTRATOR</span>
+                    <h2>Profile Information</h2>
+                    <p>Update your name, email and profile picture.</p>
+                </div>
+            </div>
+
+            <form id="profileForm" enctype="multipart/form-data">
+
+                <div class="profile-preview">
+                    <div class="profile-photo" id="profilePhoto">
+                        <span id="profileInitials">AD</span>
+                    </div>
+
+                    <div>
+                        <strong id="profilePreviewName">
+                            Administrator
+                        </strong>
+
+                        <span id="profilePreviewEmail">
+                            Loading...
+                        </span>
+
+                        <div class="profile-photo-actions">
+                            <label class="upload-button">
+                                Choose Photo
+                                <input
+                                    type="file"
+                                    id="profileImage"
+                                    name="profile_image"
+                                    accept="image/jpeg,image/png,image/webp"
+                                >
+                            </label>
+
+                            <button
+                                type="button"
+                                id="removeProfileButton"
+                                class="remove-photo-button"
+                            >
+                                Remove Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <label>
+                        <span>Full Name</span>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            autocomplete="name"
+                            required
+                        >
+                    </label>
+
+                    <label>
+                        <span>Email Address</span>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            autocomplete="email"
+                            required
+                        >
+                    </label>
+
+                </div>
+
+                <div class="password-section">
+
+                    <span class="settings-label">
+                        SECURITY VERIFICATION
+                    </span>
+
+                    <h3>Confirm your password</h3>
+
+                    <p>
+                        Your current password is required before profile
+                        changes can be saved.
+                    </p>
+
+                    <label>
+                        <span>Current Password</span>
+                        <input
+                            type="password"
+                            id="currentPassword"
+                            name="current_password"
+                            placeholder="...................."
+                            autocomplete="current-password"
+                            required
+                        >
+                    </label>
+
+                </div>
+
+                <div id="formMessage" class="form-message"></div>
+
+                <button type="submit" id="saveProfileButton">
+                    Save Changes
+                </button>
+
+            </form>
+
+        </section>
+
+    
+    <section class="settings-card academic-period-settings-card">
+        <div class="settings-card-heading">
+            <div>
+                <span class="settings-label">ACADEMIC CALENDAR</span>
+                <h2>Current Academic Period</h2>
+                <p>Set the date when the next academic term begins. This date will appear on every student result.</p>
+            </div>
+        </div>
+
+        <div class="academic-period-summary">
+            <div class="academic-session-setting">
+                <span>Academic Session</span>
+                <select id="academicSessionSelect" name="academic_session_id">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+            <div class="academic-term-setting">
+                <span>Current Term</span>
+                <select id="academicTermSelect" name="term_id">
+                    <option value="1">First Term</option>
+                    <option value="2">Second Term</option>
+                    <option value="3">Third Term</option>
+                </select>
+            </div>
+        </div>
+
+        <form id="academicPeriodForm">
+            <div class="academic-period-field">
+                <label for="resumptionDate">
+                    <span>Next Term Begins</span>
+                    <input
+                        type="date"
+                        id="resumptionDate"
+                        name="resumption_date"
+                        required
+                    >
+                </label>
+            </div>
+
+            <div id="academicPeriodMessage" class="form-message"></div>
+
+            <button type="submit" id="saveAcademicPeriodButton">
+                Save Academic Calendar
+            </button>
+        </form>
+    </section>
+
+    <section class="settings-card result-footer-settings-card">
+        <div class="settings-card-heading">
+            <div>
+                <span class="settings-label">RESULT FOOTER</span>
+                <h2>Signatures &amp; Report Date</h2>
+                <p>Set the signatures and date that appear at the bottom of every student result.</p>
+            </div>
+        </div>
+
+        <form id="resultFooterForm">
+            <div class="form-grid">
+                <label>
+                    <span>Class Teacher's Signature</span>
+                    <input
+                        type="text"
+                        id="classTeacherSignature"
+                        name="class_teacher_signature"
+                        placeholder="Enter teacher's name or signature"
+                        autocomplete="off"
+                    >
+                </label>
+
+                <label>
+                    <span>Director / Principal's Signature</span>
+                    <input
+                        type="text"
+                        id="directorSignature"
+                        name="director_signature"
+                        placeholder="Enter director/principal's name or signature"
+                        autocomplete="off"
+                    >
+                </label>
+
+                <label>
+                    <span>Result Date</span>
+                    <input
+                        type="date"
+                        id="resultSignatureDate"
+                        name="result_signature_date"
+                    >
+                </label>
+            </div>
+
+            <div id="resultFooterMessage" class="form-message"></div>
+
+            <button type="submit" id="saveResultFooterButton">
+                Save Result Footer
+            </button>
+        </form>
+    </section>
+
+    <section class="settings-card memorization-settings-card">
+        <button
+            type="button"
+            class="settings-section-toggle"
+            id="memorizationSettingsToggle"
+            aria-expanded="false"
+            aria-controls="memorizationSettingsBody"
+        >
+            <span class="settings-section-toggle-content">
+                <span class="settings-section-icon">
+                    <i class="fa-solid fa-book-quran" aria-hidden="true"></i>
+                </span>
+
+                <span>
+                    <span class="settings-label">QUR'AN MEMORIZATION</span>
+                    <strong>Arabic Class Memorization</strong>
+                    <small>Set the default portion for each Arabic class.</small>
+                </span>
+            </span>
+
+            <span class="settings-section-chevron" aria-hidden="true">
+                <i class="fa-solid fa-chevron-down"></i>
+            </span>
+        </button>
+
+        <div
+            id="memorizationSettingsBody"
+            class="settings-collapsible-body"
+            hidden
+        >
+            <div id="memorizationSettingsMessage" class="form-message"></div>
+
+            <div id="memorizationSettingsList" class="memorization-settings-list">
+                <div class="settings-loading">Loading Arabic classes...</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+            © 2026 MARKAZ. All Rights Reserved.
+        </footer>
+
+    </main>
+
+    <script src="js/settings.js"></script>
+
+    <script src="/js/markaz-global.js"></script>
+</body>
+</html>

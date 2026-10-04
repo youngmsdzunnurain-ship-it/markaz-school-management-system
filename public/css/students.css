@@ -281,8 +281,9 @@ main {
     background: #f5f7f5;
 }
 
-#addStudentForm {
-    padding: 26px;
+#addStudentForm,
+#editStudentForm {
+    padding: 30px;
 }
 
 .student-photo-upload {
@@ -412,8 +413,9 @@ main {
     }
 
     .modal-header,
-    #addStudentForm {
-        padding: 20px;
+    #addStudentForm,
+    #editStudentForm {
+        padding: 22px;
     }
 
     .form-grid {
@@ -474,7 +476,7 @@ main {
 }
 
 .student-profile-content {
-    padding: 26px;
+    padding: 30px;
 }
 
 .student-profile-hero {
@@ -554,7 +556,7 @@ main {
     }
 
     .student-profile-content {
-        padding: 20px;
+        padding: 22px;
     }
 
     .student-details-grid {
@@ -975,3 +977,4714 @@ main {
 
 }
 
+
+/* =========================================================
+   MARKAZ 2026 — STUDENTS PAGE REFINEMENT
+   HEADER + SUMMARY
+   ========================================================= */
+
+.students-page {
+    background:
+        radial-gradient(circle at 92% 3%, rgba(201,169,75,.07), transparent 22%),
+        #f4f7f5;
+}
+
+.students-topbar {
+    padding: 4px 0 2px;
+}
+
+.students-topbar h1 {
+    margin-top: 7px;
+    color: #123d2a;
+    font-size: clamp(28px, 3vw, 34px);
+    font-weight: 800;
+    letter-spacing: -.5px;
+}
+
+.students-topbar p {
+    margin-top: 6px;
+    color: #7b8781;
+    font-size: 12px;
+}
+
+.students-topbar .eyebrow {
+    color: #c8a43a;
+    font-size: 9px;
+    letter-spacing: 1.8px;
+}
+
+.primary-button {
+    min-height: 44px;
+    padding: 0 19px;
+    border: 1px solid #17643a;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #123d2a, #17643a);
+    box-shadow: 0 6px 16px rgba(18,61,42,.12);
+    font-size: 12px;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.primary-button:hover {
+    background: linear-gradient(135deg, #17643a, #247449);
+    transform: translateY(-2px);
+    box-shadow: 0 9px 20px rgba(18,61,42,.16);
+}
+
+/* Summary cards */
+
+.student-summary {
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.student-summary-card {
+    position: relative;
+    min-height: 112px;
+    padding: 21px 22px;
+    border: 1px solid #e1e8e3;
+    border-radius: 17px;
+    box-shadow: 0 5px 18px rgba(18,61,42,.05);
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.student-summary-card::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 0;
+    height: 2px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #17643a, #c8a43a);
+}
+
+.student-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(18,61,42,.08);
+}
+
+.student-summary-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border: 1px solid #e0e9e3;
+    border-radius: 13px;
+    background: #f4f8f5;
+    color: #17643a;
+    font-size: 16px;
+}
+
+.student-summary-card.active .student-summary-icon {
+    border-color: #d5eadc;
+    background: #e8f5ed;
+}
+
+.student-summary-card.inactive .student-summary-icon {
+    border-color: #e4e7e5;
+    background: #f3f4f4;
+}
+
+.student-summary-label {
+    margin-bottom: 4px;
+    color: #7b8781;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .15px;
+}
+
+.student-summary-value {
+    margin: 0;
+    color: #123d2a;
+    font-size: 29px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+@media (max-width: 800px) {
+    .student-summary {
+        gap: 12px;
+    }
+
+    .student-summary-card {
+        min-height: 102px;
+        padding: 17px;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .student-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .student-summary-card {
+        min-height: 92px;
+    }
+
+    .primary-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ 2026 — STUDENTS PAGE REFINEMENT
+   TOOLBAR + RECORDS TABLE
+   ========================================================= */
+
+.students-toolbar {
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 4px 0;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box::before {
+    content: "⌕";
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-52%);
+    color: #8b9791;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.search-box input,
+.students-toolbar select {
+    height: 45px;
+    border: 1px solid #dfe7e2;
+    border-radius: 11px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(18,61,42,.025);
+    color: #24382c;
+    font-size: 12px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.search-box input {
+    padding-left: 40px;
+}
+
+.search-box input::placeholder {
+    color: #a0aaa5;
+}
+
+.search-box input:focus,
+.students-toolbar select:focus {
+    border-color: rgba(23,100,58,.38);
+    box-shadow: 0 0 0 3px rgba(23,100,58,.07);
+}
+
+.students-toolbar select {
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+/* Records panel */
+
+.students-panel {
+    border: 1px solid #e1e8e3;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(18,61,42,.05);
+}
+
+.panel-heading {
+    min-height: 76px;
+    padding: 19px 22px;
+    background: linear-gradient(180deg, #ffffff, #fcfdfc);
+}
+
+.panel-heading .eyebrow {
+    color: #c8a43a;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+.panel-heading h2 {
+    margin-top: 5px;
+    color: #123d2a;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.student-count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #dce7e0;
+    border-radius: 9px;
+    background: #f5f9f6;
+    color: #17643a;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* Table */
+
+.students-table {
+    min-width: 820px;
+}
+
+.students-table th,
+.students-table td {
+    padding: 14px 18px;
+}
+
+.students-table th {
+    height: 45px;
+    background: #f7faf8;
+    color: #718078;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .9px;
+    border-bottom: 1px solid #e4ebe6;
+}
+
+.students-table td {
+    height: 64px;
+    color: #45554c;
+    font-size: 12px;
+    border-bottom-color: #edf1ee;
+}
+
+.students-table tbody tr {
+    transition: background .15s ease;
+}
+
+.students-table tbody tr:hover {
+    background: #f9fbfa;
+}
+
+.students-table td:first-child strong {
+    color: #193d2b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.student-status {
+    min-height: 25px;
+    padding: 4px 9px;
+    border: 1px solid transparent;
+    font-size: 9px;
+    letter-spacing: .2px;
+}
+
+.student-status.active {
+    border-color: #cfe7d7;
+    background: #eaf6ee;
+    color: #17643a;
+}
+
+.student-status.inactive {
+    border-color: #e2e5e3;
+    background: #f3f4f4;
+    color: #69736d;
+}
+
+.student-actions {
+    gap: 6px;
+}
+
+.student-action-button {
+    min-height: 30px;
+    padding: 5px 9px;
+    border: 1px solid #dce5df;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #31513e;
+    font-size: 9px;
+    font-weight: 800;
+    transition: .18s ease;
+}
+
+.student-action-button:hover {
+    border-color: #b9d4c2;
+    background: #f5faf7;
+    color: #17643a;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 800px) {
+    .students-toolbar {
+        gap: 9px;
+    }
+
+    .students-table {
+        min-width: 820px;
+    }
+
+    .students-panel {
+        border-radius: 15px;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ 2026 — STUDENT MODAL REFINEMENT
+   ========================================================= */
+
+.modal-overlay {
+    background: rgba(10, 29, 19, .62);
+    backdrop-filter: blur(7px);
+    padding: 20px;
+}
+
+.student-modal {
+    width: min(780px, 100%);
+    border: 1px solid #dfe8e2;
+    border-radius: 20px;
+    box-shadow: 0 28px 80px rgba(10, 35, 22, .24);
+}
+
+.modal-header {
+    min-height: 92px;
+    padding: 23px 26px;
+    background:
+        linear-gradient(135deg, #fbfdfb 0%, #ffffff 100%);
+}
+
+.modal-header .eyebrow {
+    color: #c8a43a;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+}
+
+.modal-header h2 {
+    margin-top: 6px;
+    color: #123d2a;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.modal-header p {
+    margin-top: 5px;
+    color: #7b8781;
+    font-size: 11px;
+}
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    color: #647169;
+    font-size: 22px;
+    transition: .18s ease;
+}
+
+.modal-close:hover {
+    border-color: #c8d8ce;
+    background: #f5faf7;
+    color: #17643a;
+}
+
+/* Student photo */
+
+.student-photo-upload {
+    margin-bottom: 25px;
+    padding: 17px;
+    border: 1px dashed #d4dfd8;
+    border-radius: 15px;
+    background:
+        linear-gradient(135deg, #f8fbf9, #ffffff);
+}
+
+.student-photo-preview {
+    width: 82px;
+    height: 82px;
+    min-width: 82px;
+    border: 2px solid rgba(200,164,58,.45);
+    box-shadow: 0 5px 14px rgba(18,61,42,.08);
+}
+
+.student-photo-upload strong {
+    color: #234333;
+    font-size: 13px;
+}
+
+.student-photo-upload p {
+    margin-top: 3px;
+    margin-bottom: 10px;
+    color: #89948e;
+    font-size: 10px;
+}
+
+/* Form fields */
+
+#addStudentForm,
+#editStudentForm {
+    padding: 27px;
+}
+
+.form-grid {
+    gap: 17px;
+}
+
+.form-field {
+    gap: 6px;
+}
+
+.form-field label {
+    color: #4c5b52;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.form-field input,
+.form-field select {
+    height: 44px;
+    border: 1px solid #dce5df;
+    border-radius: 10px;
+    color: #263b2f;
+    font-size: 12px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: rgba(23,100,58,.4);
+    box-shadow: 0 0 0 3px rgba(23,100,58,.07);
+}
+
+.form-field input[readonly] {
+    background: #f7f9f8;
+    color: #7b8781;
+}
+
+.form-field small {
+    color: #929d97;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* Modal buttons */
+
+.modal-actions {
+    margin-top: 27px;
+    padding-top: 19px;
+    gap: 9px;
+}
+
+.modal-actions .primary-button,
+.modal-actions .secondary-button {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+@media (max-width: 640px) {
+    .modal-overlay {
+        padding: 0;
+    }
+
+    .student-modal {
+        border-radius: 19px 19px 0 0;
+    }
+
+    .modal-header,
+    #addStudentForm,
+    #editStudentForm {
+        padding: 21px;
+    }
+
+    .student-photo-upload {
+        padding: 14px;
+    }
+
+    .student-photo-preview {
+        width: 70px;
+        height: 70px;
+        min-width: 70px;
+    }
+
+    .modal-actions {
+        padding-top: 16px;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ 2026 — VIEW STUDENT PROFILE REFINEMENT
+   ========================================================= */
+
+.student-view-modal {
+    width: min(650px, 100%);
+    border: 1px solid #dfe8e2;
+    border-radius: 20px;
+    box-shadow: 0 28px 80px rgba(10,35,22,.24);
+}
+
+.student-profile-content {
+    padding: 28px;
+}
+
+.student-profile-hero {
+    position: relative;
+    gap: 18px;
+    padding: 4px 2px 23px;
+}
+
+.student-profile-photo {
+    width: 94px;
+    height: 94px;
+    min-width: 94px;
+    border: 3px solid rgba(200,164,58,.48);
+    box-shadow: 0 7px 18px rgba(18,61,42,.10);
+}
+
+.student-profile-hero h3 {
+    margin-bottom: 6px;
+    color: #123d2a;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -.2px;
+}
+
+.student-profile-hero p {
+    margin-bottom: 9px;
+    color: #7b8781;
+    font-size: 11px;
+}
+
+.student-profile-hero .student-status {
+    font-size: 9px;
+}
+
+/* Detail grid */
+
+.student-details-grid {
+    gap: 1px;
+    margin-top: 22px;
+    border: 1px solid #e0e7e2;
+    border-radius: 14px;
+    background: #e0e7e2;
+}
+
+.student-details-grid > div {
+    min-height: 72px;
+    padding: 15px 16px;
+    background: #ffffff;
+    transition: background .15s ease;
+}
+
+.student-details-grid > div:hover {
+    background: #fbfdfb;
+}
+
+.student-details-grid span {
+    margin-bottom: 7px;
+    color: #8a958f;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.student-details-grid strong {
+    color: #284334;
+    font-size: 12px;
+    font-weight: 750;
+    word-break: break-word;
+}
+
+@media (max-width: 600px) {
+    .student-view-modal {
+        border-radius: 19px 19px 0 0;
+    }
+
+    .student-profile-content {
+        padding: 22px;
+    }
+
+    .student-profile-hero {
+        gap: 14px;
+    }
+
+    .student-profile-photo {
+        width: 78px;
+        height: 78px;
+        min-width: 78px;
+    }
+
+    .student-profile-hero h3 {
+        font-size: 18px;
+    }
+
+    .student-details-grid > div {
+        min-height: 65px;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ STUDENTS — PART 1
+   Main dashboard visual design
+   ========================================================= */
+
+:root {
+    --students-green: #123d2a;
+    --students-green-2: #087f5b;
+    --students-green-dark: #0d2f20;
+    --students-green-soft: #eef6f1;
+    --students-gold: #c9a94b;
+    --students-text: #183326;
+    --students-muted: #718078;
+}
+
+body {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8, 127, 91, 0.035),
+            transparent 260px
+        ),
+        #f4f7f5 !important;
+}
+
+.students-page {
+    position: relative !important;
+    isolation: isolate !important;
+    min-height: 100vh !important;
+    padding: 34px 32px 56px !important;
+}
+
+.students-page::before {
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background-image: url("../assets/images/markaz-logo.jpg") !important;
+    background-repeat: repeat !important;
+    background-position: center center !important;
+    background-size: 430px 430px !important;
+    opacity: 0.032 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+/* HEADER */
+
+.students-topbar {
+    position: relative !important;
+    max-width: 1400px !important;
+    min-height: 118px !important;
+    margin: 0 auto 26px !important;
+    padding: 26px 28px !important;
+    border: 1px solid rgba(8, 127, 91, 0.16) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(
+        135deg,
+        #123d2a,
+        #165238 65%,
+        #1b6447
+    ) !important;
+    box-shadow:
+        0 22px 46px rgba(18, 61, 42, 0.14),
+        0 5px 14px rgba(18, 61, 42, 0.07) !important;
+    overflow: hidden !important;
+}
+
+.students-topbar::before {
+    content: "" !important;
+    position: absolute !important;
+    right: -100px !important;
+    top: -135px !important;
+    width: 440px !important;
+    height: 280px !important;
+    border: 3px solid rgba(201, 169, 75, 0.42) !important;
+    border-left-color: transparent !important;
+    border-bottom-color: transparent !important;
+    border-radius: 50% !important;
+    transform: rotate(-17deg) !important;
+    pointer-events: none !important;
+}
+
+.students-topbar .eyebrow {
+    color: #e5c96d !important;
+}
+
+.students-topbar h1 {
+    margin: 5px 0 6px !important;
+    color: #ffffff !important;
+    font-size: 32px !important;
+    font-weight: 800 !important;
+}
+
+.students-topbar p {
+    color: rgba(255, 255, 255, 0.72) !important;
+    font-size: 13px !important;
+}
+
+/* BUTTON */
+
+.primary-button {
+    min-height: 44px !important;
+    padding: 0 18px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(
+        135deg,
+        #087f5b,
+        #126c4c
+    ) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow:
+        0 9px 18px rgba(8, 72, 50, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.13) !important;
+}
+
+.primary-button:hover {
+    background: linear-gradient(
+        135deg,
+        #09966b,
+        #087f5b
+    ) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* SUMMARY CARDS */
+
+.student-summary {
+    max-width: 1400px !important;
+    margin: 0 auto 22px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+}
+
+.student-summary-card {
+    position: relative !important;
+    min-height: 108px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 20px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 18px !important;
+    background: #ffffff !important;
+    box-shadow:
+        0 15px 32px rgba(18, 61, 42, 0.075),
+        0 3px 8px rgba(18, 61, 42, 0.035) !important;
+}
+
+.student-summary-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4px !important;
+    background: linear-gradient(
+        90deg,
+        #087f5b,
+        #c9a94b
+    ) !important;
+}
+
+.student-summary-card.active::before {
+    background: linear-gradient(
+        90deg,
+        #087f5b,
+        #3b9b73
+    ) !important;
+}
+
+.student-summary-card.inactive::before {
+    background: linear-gradient(
+        90deg,
+        #9aa49e,
+        #c9a94b
+    ) !important;
+}
+
+.student-summary-icon {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+    background: #eef6f1 !important;
+    color: #087f5b !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+}
+
+.student-summary-card.active .student-summary-icon {
+    background: #e8f6ef !important;
+}
+
+.student-summary-card.inactive .student-summary-icon {
+    background: #f2f3f2 !important;
+    color: #69746e !important;
+}
+
+.student-summary-label {
+    margin: 0 0 4px !important;
+    color: var(--students-muted) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+.student-summary-value {
+    margin: 0 !important;
+    color: var(--students-green-dark) !important;
+    font-size: 27px !important;
+    font-weight: 850 !important;
+}
+
+/* TOOLBAR */
+
+.students-toolbar {
+    max-width: 1400px !important;
+    margin: 0 auto 18px !important;
+    padding: 14px !important;
+    display: grid !important;
+    grid-template-columns: minmax(240px, 1fr) 220px 180px !important;
+    gap: 10px !important;
+    border: 1px solid rgba(18, 61, 42, 0.10) !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow:
+        0 10px 24px rgba(18, 61, 42, 0.055) !important;
+}
+
+.search-box input,
+.students-toolbar select {
+    height: 46px !important;
+    border: 1px solid #dce5df !important;
+    border-radius: 11px !important;
+    background: #fbfdfc !important;
+    color: var(--students-text) !important;
+    font-size: 13px !important;
+}
+
+.search-box input:focus,
+.students-toolbar select:focus {
+    border-color: #087f5b !important;
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.09) !important;
+}
+
+/* RECORDS PANEL */
+
+.students-panel {
+    position: relative !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    box-shadow:
+        0 22px 44px rgba(18, 61, 42, 0.085),
+        0 5px 13px rgba(18, 61, 42, 0.04) !important;
+}
+
+.students-panel::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4px !important;
+    background: linear-gradient(
+        90deg,
+        #087f5b 0%,
+        #087f5b 58%,
+        #c9a94b 100%
+    ) !important;
+}
+
+.panel-heading {
+    min-height: 78px !important;
+    padding: 20px 24px !important;
+    border-bottom: 1px solid #e8eeea !important;
+    background: #f9fbfa !important;
+}
+
+.panel-heading h2 {
+    color: var(--students-green-dark) !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+}
+
+.student-count {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 32px !important;
+    padding: 0 11px !important;
+    border: 1px solid #dce8e0 !important;
+    border-radius: 999px !important;
+    background: #f4f8f5 !important;
+    color: #567064 !important;
+    font-size: 12px !important;
+}
+
+/* TABLE */
+
+.students-table-wrap {
+    overflow-x: auto !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #aebdb5 transparent !important;
+}
+
+.students-table-wrap::-webkit-scrollbar {
+    height: 8px !important;
+}
+
+.students-table-wrap::-webkit-scrollbar-thumb {
+    background: #aebdb5 !important;
+    border-radius: 999px !important;
+}
+
+.students-table {
+    min-width: 860px !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.students-table th {
+    padding: 15px 18px !important;
+    background: #f7faf8 !important;
+    color: #68776f !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: .08em !important;
+}
+
+.students-table td {
+    padding: 15px 18px !important;
+    border-bottom: 1px solid #edf1ee !important;
+    color: #33443a !important;
+    font-size: 13px !important;
+}
+
+.students-table tbody tr:hover td {
+    background: #f8fbf9 !important;
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+/* STATUS */
+
+.student-status {
+    min-height: 28px !important;
+    padding: 0 10px !important;
+    border: 1px solid transparent !important;
+    font-size: 10px !important;
+}
+
+.student-status.active {
+    background: #e8f6ef !important;
+    border-color: #cce9d9 !important;
+    color: #17633a !important;
+}
+
+.student-status.inactive {
+    background: #f2f4f3 !important;
+    border-color: #e0e4e1 !important;
+    color: #68716c !important;
+}
+
+/* ACTION BUTTON */
+
+.student-action-button {
+    min-height: 34px !important;
+    padding: 0 11px !important;
+    border: 1px solid #d7e2db !important;
+    border-radius: 9px !important;
+    background: #ffffff !important;
+    color: var(--students-green) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+}
+
+.student-action-button:hover {
+    border-color: var(--students-gold) !important;
+    background: #fffdf7 !important;
+}
+
+/* EMPTY STATE */
+
+.empty-state {
+    min-height: 170px !important;
+    padding: 55px 30px !important;
+    color: #829089 !important;
+    background: #fbfdfc !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+/* MAIN DASHBOARD MOBILE */
+
+@media (max-width: 900px) {
+
+    .students-page {
+        padding: 24px 18px 42px !important;
+    }
+
+    .student-summary {
+        grid-template-columns: 1fr !important;
+    }
+
+    .students-toolbar {
+        grid-template-columns: 1fr !important;
+    }
+
+    .students-topbar {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .students-topbar .primary-button {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .students-page {
+        padding: 16px 12px 34px !important;
+    }
+
+    .students-topbar {
+        min-height: 0 !important;
+        padding: 21px 18px !important;
+        border-radius: 18px !important;
+    }
+
+    .students-topbar h1 {
+        font-size: 27px !important;
+    }
+
+    .student-summary {
+        gap: 11px !important;
+    }
+
+    .student-summary-card {
+        min-height: 88px !important;
+        padding: 16px !important;
+        border-radius: 15px !important;
+    }
+
+    .student-summary-value {
+        font-size: 24px !important;
+    }
+
+    .students-toolbar {
+        padding: 10px !important;
+        border-radius: 14px !important;
+    }
+
+    .students-panel {
+        border-radius: 16px !important;
+    }
+
+    .panel-heading {
+        padding: 17px 16px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ STUDENTS — PART 2
+   Student modal visual design
+   ========================================================= */
+
+.modal-overlay {
+    padding: 28px !important;
+    background: rgba(8, 25, 17, 0.62) !important;
+    backdrop-filter: blur(7px) !important;
+}
+
+.student-modal {
+    position: relative !important;
+    width: min(780px, 100%) !important;
+    max-height: calc(100vh - 56px) !important;
+    overflow-y: auto !important;
+    border: 1px solid rgba(18, 61, 42, 0.13) !important;
+    border-radius: 22px !important;
+    background: #ffffff !important;
+    box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.23),
+        0 8px 24px rgba(18, 61, 42, 0.12) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #aebdb5 transparent !important;
+}
+
+.student-modal::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.student-modal::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.student-modal::-webkit-scrollbar-thumb {
+    background: #aebdb5 !important;
+    border-radius: 999px !important;
+}
+
+/* MODAL HEADER */
+
+.modal-header {
+    position: relative !important;
+    min-height: 92px !important;
+    padding: 23px 26px !important;
+    border-bottom: 1px solid #e7eeea !important;
+    background:
+        linear-gradient(
+            135deg,
+            #f4faf6,
+            #ffffff 65%,
+            #fffdf7
+        ) !important;
+}
+
+.modal-header::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 5px !important;
+    height: 100% !important;
+    background: linear-gradient(
+        180deg,
+        #087f5b,
+        #c9a94b
+    ) !important;
+}
+
+.modal-header .eyebrow {
+    color: #c9a94b !important;
+}
+
+.modal-header h2 {
+    margin: 5px 0 !important;
+    color: #0d2f20 !important;
+    font-size: 23px !important;
+    font-weight: 850 !important;
+}
+
+.modal-header p {
+    color: #77857e !important;
+}
+
+.modal-close {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 40px !important;
+    height: 40px !important;
+    border: 1px solid #dbe5df !important;
+    border-radius: 11px !important;
+    background: #ffffff !important;
+    color: #526058 !important;
+    font-size: 23px !important;
+    box-shadow: 0 4px 10px rgba(18, 61, 42, 0.045) !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease !important;
+}
+
+.modal-close:hover {
+    border-color: #c9a94b !important;
+    background: #fffdf7 !important;
+    transform: rotate(2deg) !important;
+}
+
+/* FORMS */
+
+#addStudentForm,
+#editStudentForm {
+    padding: 28px !important;
+}
+
+.student-photo-upload {
+    position: relative !important;
+    min-height: 112px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    margin-bottom: 24px !important;
+    padding: 18px !important;
+    border: 1px solid #dce7e0 !important;
+    border-radius: 17px !important;
+    background:
+        linear-gradient(
+            135deg,
+            #f3faf6,
+            #ffffff 65%,
+            #fffdf7
+        ) !important;
+    box-shadow:
+        0 9px 20px rgba(18, 61, 42, 0.055) !important;
+    overflow: hidden !important;
+}
+
+.student-photo-upload::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 4px !important;
+    height: 100% !important;
+    background: linear-gradient(
+        180deg,
+        #087f5b,
+        #c9a94b
+    ) !important;
+}
+
+.student-photo-preview {
+    width: 78px !important;
+    height: 78px !important;
+    min-width: 78px !important;
+    border: 3px solid #ffffff !important;
+    outline: 2px solid rgba(8, 127, 91, 0.20) !important;
+    border-radius: 18px !important;
+    background-color: #087f5b !important;
+    color: #e5c96d !important;
+    box-shadow:
+        0 9px 18px rgba(18, 61, 42, 0.16) !important;
+}
+
+.student-photo-upload strong {
+    margin-bottom: 5px !important;
+    color: #0d2f20 !important;
+    font-size: 14px !important;
+    font-weight: 850 !important;
+}
+
+.student-photo-upload p {
+    margin-bottom: 11px !important;
+    color: #819088 !important;
+    font-size: 11px !important;
+}
+
+/* SECONDARY BUTTON */
+
+.secondary-button {
+    min-height: 40px !important;
+    padding: 0 14px !important;
+    border: 1px solid #d3e0d8 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    color: #123d2a !important;
+    box-shadow: 0 4px 9px rgba(18, 61, 42, 0.035) !important;
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        transform .18s ease !important;
+}
+
+.secondary-button:hover {
+    border-color: #c9a94b !important;
+    background: #fffdf7 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* FORM FIELDS */
+
+.form-grid {
+    gap: 16px !important;
+}
+
+.form-field {
+    position: relative !important;
+    min-width: 0 !important;
+    padding: 14px !important;
+    border: 1px solid #e0e8e3 !important;
+    border-radius: 14px !important;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f9fbfa
+        ) !important;
+    box-shadow:
+        0 6px 15px rgba(18, 61, 42, 0.035) !important;
+}
+
+.form-field::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 14px !important;
+    right: 14px !important;
+    top: 0 !important;
+    height: 3px !important;
+    border-radius: 0 0 5px 5px !important;
+    background: linear-gradient(
+        90deg,
+        rgba(8, 127, 91, 0.88),
+        rgba(201, 169, 75, 0.72)
+    ) !important;
+}
+
+.form-field label {
+    display: block !important;
+    padding-top: 3px !important;
+    color: #43544b !important;
+    font-size: 11px !important;
+    font-weight: 850 !important;
+}
+
+.form-field input,
+.form-field select {
+    height: 45px !important;
+    padding: 0 12px !important;
+    border: 1px solid #dbe5df !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    color: #183326 !important;
+    font-size: 13px !important;
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease !important;
+}
+
+.form-field input:hover,
+.form-field select:hover {
+    border-color: #b9cec2 !important;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: #087f5b !important;
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.09) !important;
+}
+
+.form-field input[readonly] {
+    background: #f3f6f4 !important;
+    color: #718078 !important;
+}
+
+.form-field small {
+    color: #89968f !important;
+    font-size: 10px !important;
+    line-height: 1.45 !important;
+}
+
+/* EDIT STATUS */
+
+.status-field {
+    max-width: 100% !important;
+    margin-top: 16px !important;
+}
+
+/* ACTION AREA */
+
+.modal-actions {
+    margin-top: 24px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid #e4ebe7 !important;
+    gap: 10px !important;
+}
+
+.modal-actions .secondary-button {
+    min-width: 92px !important;
+}
+
+.modal-actions .primary-button {
+    min-width: 128px !important;
+}
+
+/* MOBILE */
+
+@media (max-width: 640px) {
+
+    .modal-overlay {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+
+    .student-modal {
+        width: 100% !important;
+        max-height: 94vh !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+
+    .modal-header {
+        padding: 21px 20px !important;
+    }
+
+    #addStudentForm,
+    #editStudentForm {
+        padding: 20px !important;
+    }
+
+    .student-photo-upload {
+        padding: 15px !important;
+        gap: 14px !important;
+    }
+
+    .student-photo-preview {
+        width: 68px !important;
+        height: 68px !important;
+        min-width: 68px !important;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .form-field {
+        padding: 13px !important;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse !important;
+    }
+
+    .modal-actions .primary-button,
+    .modal-actions .secondary-button {
+        width: 100% !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ STUDENTS — TABLE ROW POLISH
+   ========================================================= */
+
+.students-table tbody tr {
+    transition:
+        background-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.students-table tbody tr:hover {
+    background: #f8fbf9 !important;
+}
+
+.students-table td {
+    vertical-align: middle !important;
+}
+
+/* Student name */
+.students-table td:first-child {
+    min-width: 190px;
+}
+
+.students-table td:first-child strong {
+    display: block !important;
+    color: #123d2a !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+}
+
+/* Admission number */
+.students-table td:nth-child(2) {
+    color: #52645a !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: .02em !important;
+}
+
+/* Class */
+.students-table td:nth-child(3) {
+    color: #31483b !important;
+    font-weight: 700 !important;
+}
+
+/* Gender */
+.students-table td:nth-child(4) {
+    color: #68776f !important;
+    font-size: 13px !important;
+}
+
+/* Student type */
+.students-table td:nth-child(5) {
+    color: #42564b !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+/* Status badge */
+.students-table .student-status {
+    min-width: 68px !important;
+    justify-content: center !important;
+    padding: 6px 10px !important;
+    border: 1px solid transparent !important;
+    font-size: 10px !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+}
+
+.students-table .student-status.active {
+    background: #edf8f1 !important;
+    border-color: #cce8d6 !important;
+    color: #17633a !important;
+}
+
+.students-table .student-status.inactive {
+    background: #f3f5f4 !important;
+    border-color: #dde3df !important;
+    color: #68736d !important;
+}
+
+/* Action group */
+.students-table .student-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Action buttons */
+.students-table .student-action-button {
+    min-height: 34px !important;
+    padding: 7px 11px !important;
+    border-radius: 9px !important;
+    border: 1px solid #d9e3dd !important;
+    background: #ffffff !important;
+    color: #315343 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease !important;
+}
+
+.students-table .student-action-button:hover {
+    transform: translateY(-1px) !important;
+    border-color: #b8cfc1 !important;
+    background: #f7faf8 !important;
+    box-shadow: 0 4px 10px rgba(18,61,42,.06) !important;
+}
+
+/* View */
+.students-table .view-student-button {
+    color: #087f5b !important;
+}
+
+/* Edit */
+.students-table .edit-student-button {
+    color: #8b6b18 !important;
+}
+
+.students-table .edit-student-button:hover {
+    border-color: #d9c27a !important;
+    background: #fffdf5 !important;
+}
+
+/* Activate / Deactivate */
+.students-table .toggle-student-button {
+    color: #68736d !important;
+}
+
+.students-table .toggle-student-button:hover {
+    border-color: #c9d5ce !important;
+}
+
+/* Last column */
+.students-table td:last-child {
+    min-width: 245px !important;
+    white-space: nowrap !important;
+}
+
+/* Slightly stronger separation between records */
+.students-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+@media (max-width: 900px) {
+    .students-table td:last-child {
+        min-width: 235px !important;
+    }
+}
+
+
+/* Students table — keep columns readable and on one line */
+.students-table-wrapper {
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.students-table {
+    width: max-content !important;
+    min-width: 1120px !important;
+    table-layout: auto !important;
+}
+
+.students-table th,
+.students-table td {
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+.students-table th:nth-child(1),
+.students-table td:nth-child(1) {
+    min-width: 220px !important;
+}
+
+.students-table th:nth-child(2),
+.students-table td:nth-child(2) {
+    min-width: 165px !important;
+}
+
+.students-table th:nth-child(3),
+.students-table td:nth-child(3) {
+    min-width: 150px !important;
+}
+
+.students-table th:nth-child(4),
+.students-table td:nth-child(4) {
+    min-width: 95px !important;
+}
+
+.students-table th:nth-child(5),
+.students-table td:nth-child(5) {
+    min-width: 140px !important;
+}
+
+.students-table th:nth-child(6),
+.students-table td:nth-child(6) {
+    min-width: 105px !important;
+}
+
+.students-table th:nth-child(7),
+.students-table td:nth-child(7) {
+    min-width: 245px !important;
+}
+
+
+/* Students toolbar — MARKAZ green + gold treatment */
+.students-toolbar {
+    position: relative !important;
+    border: 1px solid rgba(201, 154, 36, 0.42) !important;
+    border-top: 3px solid #c99a24 !important;
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fbfdfc 100%
+    ) !important;
+    box-shadow:
+        0 14px 30px rgba(18, 61, 42, 0.07),
+        0 3px 8px rgba(18, 61, 42, 0.035) !important;
+}
+
+.students-toolbar::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+    background: linear-gradient(
+        180deg,
+        #087f5b 0%,
+        #087f5b 55%,
+        #c99a24 100%
+    ) !important;
+    border-radius: 12px 0 0 12px !important;
+}
+
+.students-toolbar input,
+.students-toolbar select {
+    border: 1px solid #d8e3dc !important;
+    background: #ffffff !important;
+    color: #243d31 !important;
+    border-radius: 10px !important;
+    min-height: 42px !important;
+    font-weight: 600 !important;
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease !important;
+}
+
+.students-toolbar input:focus,
+.students-toolbar select:focus {
+    outline: none !important;
+    border-color: #c99a24 !important;
+    background: #fffdf7 !important;
+    box-shadow:
+        0 0 0 3px rgba(201, 154, 36, 0.13),
+        0 4px 12px rgba(18, 61, 42, 0.05) !important;
+}
+
+.students-toolbar input::placeholder {
+    color: #8a9991 !important;
+}
+
+.students-toolbar label {
+    color: #315343 !important;
+    font-weight: 800 !important;
+}
+
+
+/* View Student — polished MARKAZ profile */
+.view-student-profile {
+    padding: 4px 0 2px !important;
+}
+
+.view-student-profile-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 92px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 18px !important;
+    padding: 18px !important;
+    margin-bottom: 18px !important;
+    border: 1px solid #dce7e1 !important;
+    border-radius: 16px !important;
+    background: linear-gradient(
+        135deg,
+        #f8fcfa 0%,
+        #ffffff 65%,
+        #fffdf7 100%
+    ) !important;
+    overflow: hidden !important;
+}
+
+.view-student-profile-header::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+    background: linear-gradient(
+        180deg,
+        #087f5b,
+        #c99a24
+    ) !important;
+}
+
+.view-student-photo {
+    width: 92px !important;
+    height: 92px !important;
+    border-radius: 16px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border: 3px solid #ffffff !important;
+    box-shadow:
+        0 0 0 2px #c99a24,
+        0 8px 18px rgba(18, 61, 42, 0.12) !important;
+    overflow: hidden !important;
+}
+
+.view-student-photo-placeholder {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(
+        135deg,
+        #087f5b,
+        #123d2a
+    ) !important;
+    color: #ffffff !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+}
+
+.view-student-profile-heading {
+    min-width: 0 !important;
+}
+
+.view-student-profile-heading .eyebrow {
+    color: #c99a24 !important;
+    font-weight: 900 !important;
+    letter-spacing: .12em !important;
+}
+
+.view-student-profile-heading h3 {
+    margin: 4px 0 3px !important;
+    color: #123d2a !important;
+    font-size: 21px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+}
+
+.view-student-profile-heading p {
+    margin: 0 !important;
+    color: #65766d !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: .03em !important;
+}
+
+.view-student-profile-header .student-status {
+    align-self: start !important;
+    margin-top: 2px !important;
+}
+
+.view-student-details {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+}
+
+.view-student-detail {
+    min-width: 0 !important;
+    padding: 13px 14px !important;
+    border: 1px solid #e0e8e3 !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+}
+
+.view-student-detail span {
+    display: block !important;
+    margin-bottom: 5px !important;
+    color: #8a9991 !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+}
+
+.view-student-detail strong {
+    display: block !important;
+    color: #294b3a !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.view-student-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 9px !important;
+    margin-top: 18px !important;
+    padding-top: 16px !important;
+    border-top: 1px solid #e4ebe7 !important;
+}
+
+.view-student-actions .edit-student-button {
+    border-color: #d9c27a !important;
+    background: #fffdf5 !important;
+    color: #806315 !important;
+}
+
+.view-student-actions .view-student-close-button {
+    border-color: #cfdad4 !important;
+    background: #f7faf8 !important;
+    color: #52645a !important;
+}
+
+@media (max-width: 720px) {
+    .view-student-profile-header {
+        grid-template-columns: 76px minmax(0, 1fr) !important;
+    }
+
+    .view-student-photo {
+        width: 76px !important;
+        height: 76px !important;
+    }
+
+    .view-student-profile-header .student-status {
+        grid-column: 1 / -1 !important;
+        justify-self: start !important;
+    }
+
+    .view-student-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .view-student-details {
+        grid-template-columns: 1fr !important;
+    }
+
+    .view-student-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .view-student-actions button {
+        width: 100% !important;
+    }
+}
+
+
+/* Students page — final spacing and alignment */
+.students-page {
+    width: min(100% - 32px, 1440px) !important;
+    margin: 0 auto !important;
+    padding: 28px 0 42px !important;
+}
+
+.students-topbar {
+    margin-bottom: 22px !important;
+}
+
+.student-summary {
+    margin-bottom: 22px !important;
+}
+
+.students-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(260px, 1fr) 190px 170px !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding: 14px !important;
+    margin-bottom: 20px !important;
+}
+
+.students-toolbar .search-box {
+    min-width: 0 !important;
+}
+
+.students-toolbar input,
+.students-toolbar select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.students-panel {
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.students-table-wrapper {
+    width: 100% !important;
+    padding: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+.students-table {
+    margin: 0 !important;
+}
+
+@media (max-width: 900px) {
+    .students-page {
+        width: min(100% - 24px, 1440px) !important;
+        padding-top: 20px !important;
+    }
+
+    .students-toolbar {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .students-toolbar .search-box {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@media (max-width: 560px) {
+    .students-page {
+        width: calc(100% - 18px) !important;
+        padding-top: 14px !important;
+    }
+
+    .students-toolbar {
+        grid-template-columns: 1fr !important;
+    }
+
+    .students-toolbar .search-box {
+        grid-column: auto !important;
+    }
+}
+
+
+.students-table td.student-arabiyya-class {
+    color: #087f5b !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    border-left: 2px solid rgba(201, 154, 36, 0.35) !important;
+    padding-left: 14px !important;
+}
+
+.students-table td.student-arabiyya-class::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 5px !important;
+    height: 5px !important;
+    margin-right: 7px !important;
+    vertical-align: middle !important;
+    border-radius: 50% !important;
+    background: #c99a24 !important;
+}
+
+.students-table th:nth-child(4),
+.students-table td:nth-child(4) {
+    min-width: 165px !important;
+}
+
+
+.phone-input-group {
+    display: flex !important;
+    align-items: stretch !important;
+    width: 100% !important;
+}
+
+.phone-prefix {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 58px !important;
+    padding: 0 12px !important;
+    border: 1px solid #d8e3dc !important;
+    border-right: 0 !important;
+    border-radius: 10px 0 0 10px !important;
+    background: #f7faf8 !important;
+    color: #087f5b !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+}
+
+.phone-input-group input {
+    flex: 1 !important;
+    min-width: 0 !important;
+    border-radius: 0 10px 10px 0 !important;
+}
+
+.phone-validation-message {
+    display: block !important;
+    margin-top: 6px !important;
+    color: #b42318 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+.phone-validation-message[hidden] {
+    display: none !important;
+}
+
+.phone-input-group input.phone-invalid {
+    border-color: #d92d20 !important;
+    background: #fff8f7 !important;
+    box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.08) !important;
+}
+
+.phone-input-group input.phone-valid {
+    border-color: #087f5b !important;
+    background: #f7fcf9 !important;
+    box-shadow: 0 0 0 3px rgba(8, 127, 91, 0.07) !important;
+}
+
+/* Student photo upload — final polish */
+.student-photo-upload {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    padding: 18px !important;
+    margin-bottom: 26px !important;
+    border: 1px dashed #d4dfd8 !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #f8fbf9 0%, #ffffff 100%) !important;
+}
+
+.student-photo-preview {
+    position: relative !important;
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    flex: 0 0 82px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+    border: 3px solid #ffffff !important;
+    outline: 2px solid rgba(201, 154, 36, 0.42) !important;
+    background: linear-gradient(145deg, #123d2a, #087f5b) !important;
+    color: #e5c96d !important;
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.08),
+        0 9px 20px rgba(18, 61, 42, 0.14) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.student-photo-preview span {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: #e5c96d !important;
+    font-size: 23px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.04em !important;
+}
+
+.student-photo-upload > div:last-child {
+    min-width: 0 !important;
+}
+
+.student-photo-upload strong {
+    display: block !important;
+    margin-bottom: 5px !important;
+    color: #123d2a !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+}
+
+.student-photo-upload p {
+    margin: 0 0 11px !important;
+    color: #819088 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+}
+
+.student-photo-actions {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+.student-photo-actions .secondary-button,
+.student-photo-actions .remove-photo-button {
+    min-height: 36px !important;
+    padding: 8px 12px !important;
+    border-radius: 9px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+}
+
+.student-photo-actions .secondary-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #b8d3c4 !important;
+    background: #f5fbf7 !important;
+    color: #087f5b !important;
+}
+
+.student-photo-actions .secondary-button:hover {
+    border-color: #087f5b !important;
+    background: #edf8f1 !important;
+}
+
+.student-photo-actions .remove-photo-button {
+    border: 1px solid #e0c7c4 !important;
+    background: #fff9f8 !important;
+    color: #9b3d34 !important;
+    cursor: pointer !important;
+}
+
+.student-photo-actions .remove-photo-button:hover {
+    border-color: #c96d62 !important;
+    background: #fff2f0 !important;
+}
+
+@media (max-width: 560px) {
+    .student-photo-upload {
+        align-items: flex-start !important;
+        gap: 14px !important;
+        padding: 15px !important;
+    }
+
+    .student-photo-preview {
+        width: 68px !important;
+        height: 68px !important;
+        min-width: 68px !important;
+        flex-basis: 68px !important;
+    }
+
+    .student-photo-preview span {
+        font-size: 19px !important;
+    }
+
+    .student-photo-actions {
+        gap: 7px !important;
+    }
+}
+
+/* Student table avatar — keep photo/initials beside the name */
+.students-table .student-name-cell {
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+}
+
+.students-table .student-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    flex: 0 0 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+    border: 2px solid #ffffff !important;
+    outline: 2px solid rgba(201, 154, 36, 0.35) !important;
+    background: linear-gradient(145deg, #123d2a, #087f5b) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    color: #e5c96d !important;
+    box-shadow: 0 4px 10px rgba(18, 61, 42, 0.10) !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+.students-table .student-avatar.has-photo {
+    background-color: #ffffff !important;
+}
+
+.students-table .student-name-cell strong {
+    display: block !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    color: #123d2a !important;
+    font-size: 13px !important;
+    font-weight: 850 !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+@media (max-width: 560px) {
+    .students-table .student-avatar {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        flex-basis: 34px !important;
+    }
+
+    .students-table .student-name-cell {
+        gap: 8px !important;
+    }
+}
+
+/* MARKAZ 2026 — Student photo preview image state */
+.student-photo-preview {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.student-photo-preview[style*="background-image"] {
+    background-color: #ffffff !important;
+}
+
+/* Student photo preview image */
+.student-photo-preview img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: inherit !important;
+}
+
+/* Student table photo */
+.students-table .student-avatar.has-photo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 50% !important;
+}
+
+/* MARKAZ-AUTO-STUDENT-CAMERA-CSS */
+.markaz-camera-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(7, 27, 19, 0.78);
+    backdrop-filter: blur(7px);
+}
+
+.markaz-camera-overlay[hidden] {
+    display: none !important;
+}
+
+.markaz-camera-modal {
+    width: min(680px, 100%);
+    max-height: calc(100vh - 36px);
+    overflow: auto;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.markaz-camera-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e3ebe6;
+}
+
+.markaz-camera-header h2 {
+    margin: 4px 0 4px;
+    color: #123d2a;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.markaz-camera-header p {
+    margin: 0;
+    color: #718078;
+    font-size: 12px;
+}
+
+.markaz-camera-body {
+    padding: 18px;
+}
+
+.markaz-camera-stage {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #10261c;
+}
+
+.markaz-camera-stage video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+.markaz-camera-guide {
+    position: absolute;
+    inset: 7% 12% 7%;
+    pointer-events: none;
+    border: 2px solid rgba(229, 201, 109, 0.9);
+    border-radius: 45% 45% 28% 28%;
+    box-shadow: inset 0 0 0 999px rgba(18, 61, 42, 0.10);
+}
+
+.markaz-camera-head-guide {
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    top: 10%;
+    height: 48%;
+    border: 2px dashed rgba(255, 255, 255, 0.82);
+    border-radius: 50%;
+}
+
+.markaz-camera-chest-guide {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 3%;
+    height: 31%;
+    border: 2px dashed rgba(255, 255, 255, 0.65);
+    border-radius: 35% 35% 18% 18%;
+}
+
+.markaz-camera-guide-label {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(18, 61, 42, 0.78);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.markaz-camera-status {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: 8px 13px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.62);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.markaz-camera-requirements {
+    max-width: 520px;
+    margin: 14px auto 0;
+    padding: 13px 14px;
+    border: 1px solid #dce8e1;
+    border-radius: 13px;
+    background: #f8fbf9;
+}
+
+.markaz-camera-requirements strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #123d2a;
+    font-size: 12px;
+}
+
+.markaz-camera-checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 12px;
+}
+
+.markaz-camera-checks span {
+    color: #68766f;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.markaz-camera-requirements small {
+    display: block;
+    margin-top: 9px;
+    color: #8a7560;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.markaz-camera-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 18px 18px;
+    border-top: 1px solid #e3ebe6;
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-overlay {
+        padding: 8px;
+    }
+
+    .markaz-camera-modal {
+        max-height: calc(100vh - 16px);
+        border-radius: 16px;
+    }
+
+    .markaz-camera-header {
+        padding: 14px;
+    }
+
+    .markaz-camera-body {
+        padding: 12px;
+    }
+
+    .markaz-camera-stage {
+        border-radius: 14px;
+    }
+
+    .markaz-camera-checks {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* MARKAZ-CAMERA-VISUAL-FIX-V1 */
+
+.markaz-camera-stage {
+    position: relative;
+}
+
+.markaz-camera-guide {
+    inset: 6% 16% 6%;
+    border: 2px solid rgba(229, 201, 109, 0.95);
+    border-radius: 28px;
+    box-shadow:
+        inset 0 0 0 999px rgba(18, 61, 42, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.markaz-camera-head-guide {
+    left: 25%;
+    right: 25%;
+    top: 9%;
+    height: 43%;
+    border: 2px dashed rgba(255, 255, 255, 0.88);
+    border-radius: 24px;
+}
+
+.markaz-camera-chest-guide {
+    left: 10%;
+    right: 10%;
+    bottom: 5%;
+    height: 27%;
+    border: 2px dashed rgba(255, 255, 255, 0.78);
+    border-radius: 18px;
+}
+
+.markaz-camera-guide-label {
+    bottom: 10px;
+    padding: 6px 12px;
+    background: rgba(18, 61, 42, 0.9);
+    border: 1px solid rgba(229, 201, 109, 0.7);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+}
+
+.markaz-camera-switch-row {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 20;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(18, 61, 42, 0.9);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 900;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.markaz-camera-requirements {
+    border: 1px solid #d4e3da;
+    background: #f5faf7;
+}
+
+.markaz-camera-requirements strong {
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.markaz-camera-checks span {
+    padding: 7px 9px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #dce8e1;
+    color: #34483e;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.markaz-camera-requirements small {
+    margin-top: 11px;
+    padding: 10px 11px;
+    border-radius: 9px;
+    background: #fff8e8;
+    border: 1px solid #ead7a1;
+    color: #4f3b12;
+    font-size: 11px;
+    line-height: 1.5;
+    font-weight: 900;
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-switch-row {
+        top: 10px;
+        right: 10px;
+    }
+
+    .markaz-camera-switch-row .secondary-button {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 10px;
+    }
+
+    .markaz-camera-guide {
+        inset: 6% 12% 6%;
+        border-radius: 22px;
+    }
+}
+
+/* END MARKAZ-CAMERA-VISUAL-FIX-V1 */
+
+
+/* MARKAZ-CAMERA-SKETCH-GUIDE-V2 */
+
+.markaz-camera-guide {
+    inset: 4% 8% 4%;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Head sketch */
+.markaz-camera-head-guide {
+    left: 50%;
+    right: auto;
+    top: 7%;
+    width: 42%;
+    height: 39%;
+    transform: translateX(-50%);
+    border: 2px solid rgba(255, 255, 255, 0.92) !important;
+    border-radius: 47% 47% 43% 43% !important;
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow:
+        0 0 0 1px rgba(229, 201, 109, 0.5),
+        0 0 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Small neck connection */
+.markaz-camera-head-guide::after {
+    content: "";
+    position: absolute;
+    left: 38%;
+    right: 38%;
+    bottom: -9%;
+    height: 13%;
+    border-left: 2px solid rgba(255, 255, 255, 0.88);
+    border-right: 2px solid rgba(255, 255, 255, 0.88);
+}
+
+/* Shoulder + chest sketch */
+.markaz-camera-chest-guide {
+    left: 10%;
+    right: 10%;
+    bottom: 3%;
+    height: 43%;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent;
+}
+
+/* Shoulder line */
+.markaz-camera-chest-guide::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 13%;
+    height: 70%;
+    border-top: 2px solid rgba(255, 255, 255, 0.9);
+    border-left: 2px solid rgba(255, 255, 255, 0.78);
+    border-right: 2px solid rgba(255, 255, 255, 0.78);
+    border-radius: 48% 48% 12% 12%;
+    box-shadow:
+        0 0 0 1px rgba(229, 201, 109, 0.42),
+        inset 0 18px 28px rgba(255, 255, 255, 0.025);
+}
+
+/* Chest/lower frame */
+.markaz-camera-chest-guide::after {
+    content: "";
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 0;
+    height: 34%;
+    border-left: 2px dashed rgba(255, 255, 255, 0.62);
+    border-right: 2px dashed rgba(255, 255, 255, 0.62);
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.62);
+    border-radius: 0 0 18px 18px;
+}
+
+/* Guide label */
+.markaz-camera-guide-label {
+    bottom: 8px;
+    padding: 6px 12px;
+    border: 1px solid rgba(229, 201, 109, 0.72);
+    border-radius: 999px;
+    background: rgba(18, 61, 42, 0.92);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.1em;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* Stronger camera controls */
+.markaz-camera-switch-row {
+    top: 12px;
+    right: 12px;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid rgba(229, 201, 109, 0.8);
+    border-radius: 999px;
+    background: rgba(18, 61, 42, 0.94);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 950;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Stronger requirements panel */
+.markaz-camera-requirements {
+    border: 1px solid #cfded5;
+    border-radius: 15px;
+    background: #f7faf8;
+    box-shadow: 0 5px 18px rgba(18, 61, 42, 0.06);
+}
+
+.markaz-camera-requirements strong {
+    display: block;
+    margin-bottom: 11px;
+    color: #123d2a;
+    font-size: 13px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.markaz-camera-checks span {
+    display: flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 7px 10px;
+    border: 1px solid #d8e5de;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #294338;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.markaz-camera-requirements small {
+    margin-top: 12px;
+    padding: 11px 12px;
+    border: 2px solid #d6b85e;
+    border-radius: 10px;
+    background: #fff8df;
+    color: #3f3010;
+    font-size: 11px;
+    line-height: 1.55;
+    font-weight: 950;
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-guide {
+        inset: 4% 5% 4%;
+    }
+
+    .markaz-camera-head-guide {
+        width: 48%;
+        height: 38%;
+    }
+
+    .markaz-camera-switch-row {
+        top: 9px;
+        right: 9px;
+    }
+
+    .markaz-camera-switch-row .secondary-button {
+        min-height: 37px;
+        padding: 7px 11px;
+        font-size: 10px;
+    }
+}
+
+/* END MARKAZ-CAMERA-SKETCH-GUIDE-V2 */
+
+
+/* MARKAZ-CAMERA-PORTRAIT-FRAME-V3 */
+
+.markaz-camera-guide {
+    inset: 2.5% 4.5% 3%;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow: visible;
+}
+
+.markaz-camera-guide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2.5px solid rgba(255,255,255,.94);
+    border-radius: 46% 46% 24% 24% / 30% 30% 16% 16%;
+    box-shadow:
+        0 0 0 1px rgba(229,201,109,.7),
+        0 0 22px rgba(0,0,0,.16),
+        inset 0 0 28px rgba(255,255,255,.035);
+}
+
+.markaz-camera-guide::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 29%;
+    width: 18%;
+    height: 16%;
+    transform: translateX(-50%);
+    border-left: 2.5px solid rgba(255,255,255,.9);
+    border-right: 2.5px solid rgba(255,255,255,.9);
+    border-radius: 0 0 45% 45%;
+}
+
+.markaz-camera-head-guide,
+.markaz-camera-chest-guide {
+    display: none !important;
+}
+
+.markaz-camera-guide-label {
+    left: 50%;
+    bottom: 2.5%;
+    padding: 7px 14px;
+    border: 1px solid rgba(229,201,109,.9);
+    border-radius: 999px;
+    background: rgba(18,61,42,.94);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: .12em;
+    box-shadow: 0 5px 16px rgba(0,0,0,.24);
+}
+
+.markaz-camera-status {
+    bottom: 14%;
+    padding: 9px 15px;
+    border: 1px solid rgba(255,255,255,.24);
+    border-radius: 999px;
+    background: rgba(8,24,17,.82);
+    font-size: 11px;
+    font-weight: 900;
+    backdrop-filter: blur(4px);
+}
+
+.markaz-camera-switch-row {
+    top: 14px;
+    right: 14px;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    min-height: 42px;
+    padding: 8px 15px;
+    border: 1px solid rgba(229,201,109,.95);
+    border-radius: 999px;
+    background: rgba(18,61,42,.96);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    box-shadow: 0 6px 18px rgba(0,0,0,.28);
+}
+
+.markaz-camera-requirements {
+    max-width: 560px;
+    margin: 16px auto 0;
+    padding: 16px;
+    border: 1px solid #c9ddd2;
+    border-radius: 16px;
+    background: linear-gradient(180deg,#f9fcfa 0%,#f2f8f4 100%);
+    box-shadow: 0 7px 22px rgba(18,61,42,.07);
+}
+
+.markaz-camera-requirements strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #103b29;
+    font-size: 13px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+}
+
+.markaz-camera-requirements strong::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #d6b85e;
+    box-shadow: 0 0 0 4px rgba(214,184,94,.14);
+}
+
+.markaz-camera-checks {
+    gap: 8px;
+}
+
+.markaz-camera-checks span {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 8px 11px;
+    border: 1px solid #d5e4dc;
+    border-radius: 10px;
+    background: #fff;
+    color: #29483b;
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1.3;
+}
+
+.markaz-camera-requirements small {
+    display: block;
+    margin-top: 13px;
+    padding: 13px 14px;
+    border: 2px solid #d5b653;
+    border-radius: 11px;
+    background: #fff8df;
+    color: #3d2d0b;
+    font-size: 11px;
+    line-height: 1.55;
+    font-weight: 950;
+}
+
+@media (max-width:560px) {
+    .markaz-camera-guide {
+        inset: 3% 3% 3%;
+    }
+
+    .markaz-camera-guide-label {
+        font-size: 9px;
+        padding: 6px 11px;
+    }
+
+    .markaz-camera-status {
+        bottom: 13%;
+        max-width: calc(100% - 28px);
+    }
+
+    .markaz-camera-switch-row {
+        top: 9px;
+        right: 9px;
+    }
+
+    .markaz-camera-switch-row .secondary-button {
+        min-height: 38px;
+        padding: 7px 12px;
+        font-size: 10px;
+    }
+}
+
+/* END MARKAZ-CAMERA-PORTRAIT-FRAME-V3 */
+
+
+/* MARKAZ-CAMERA-FINAL-VISUAL-POLISH-V4 */
+
+.markaz-camera-guide-label {
+    display: none !important;
+}
+
+.markaz-camera-status {
+    bottom: 12%;
+    padding: 10px 17px;
+    border: 1px solid rgba(229, 201, 109, 0.85);
+    border-radius: 999px;
+    background: rgba(18, 61, 42, 0.94);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.015em;
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.28),
+        0 0 0 3px rgba(229, 201, 109, 0.10);
+    backdrop-filter: blur(5px);
+}
+
+.markaz-camera-switch-row {
+    top: 15px;
+    right: 15px;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    min-height: 44px;
+    min-width: 132px;
+    padding: 9px 16px;
+    border: 2px solid #e5c96d;
+    border-radius: 999px;
+    background: #123d2a;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.30),
+        0 0 0 3px rgba(229, 201, 109, 0.12);
+}
+
+.markaz-camera-switch-row .secondary-button:hover {
+    background: #19543b;
+}
+
+.markaz-camera-switch-row .secondary-button:active {
+    transform: translateY(1px);
+}
+
+.markaz-camera-requirements {
+    border: 1px solid #c8dcd0;
+    border-top: 3px solid #123d2a;
+    border-radius: 16px;
+    background: #f7faf8;
+}
+
+.markaz-camera-requirements strong {
+    color: #123d2a;
+    font-size: 13px;
+    font-weight: 950;
+}
+
+.markaz-camera-checks span {
+    border-color: #d4e3da;
+    background: #ffffff;
+    color: #123d2a;
+    font-weight: 900;
+}
+
+.markaz-camera-requirements small {
+    border: 2px solid #e5c96d;
+    background: #fff9e7;
+    color: #123d2a;
+    font-size: 11px;
+    font-weight: 950;
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-switch-row {
+        top: 10px;
+        right: 10px;
+    }
+
+    .markaz-camera-switch-row .secondary-button {
+        min-width: 118px;
+        min-height: 42px;
+        padding: 8px 12px;
+    }
+
+    .markaz-camera-status {
+        bottom: 12%;
+        max-width: calc(100% - 24px);
+    }
+}
+
+/* END MARKAZ-CAMERA-FINAL-VISUAL-POLISH-V4 */
+
+
+/* MARKAZ-CAMERA-READINESS-RING-V1 */
+.markaz-camera-progress {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(72%, 330px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.markaz-camera-progress.is-active {
+    opacity: 1;
+}
+
+.markaz-camera-progress svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    overflow: visible;
+}
+
+.markaz-camera-progress-track,
+.markaz-camera-progress-value {
+    fill: none;
+    stroke-width: 2.8;
+}
+
+.markaz-camera-progress-track {
+    stroke: rgba(255, 255, 255, 0.30);
+}
+
+.markaz-camera-progress-value {
+    stroke: #159447;
+    stroke-linecap: round;
+    stroke-dasharray: 282.74;
+    stroke-dashoffset: 282.74;
+    transition: stroke-dashoffset 120ms linear;
+    filter: drop-shadow(0 0 5px rgba(21, 148, 71, 0.55));
+}
+
+.markaz-camera-progress.is-complete .markaz-camera-progress-value {
+    stroke: #e5c96d;
+    filter: drop-shadow(0 0 7px rgba(229, 201, 109, 0.75));
+}
+
+.markaz-camera-progress-check {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%) scale(.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(18, 61, 42, 0.88);
+    border: 2px solid #e5c96d;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 950;
+    opacity: 0;
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.markaz-camera-progress.is-complete .markaz-camera-progress-check {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .markaz-camera-progress,
+    .markaz-camera-progress-value,
+    .markaz-camera-progress-check {
+        transition: none;
+    }
+}
+
+/* MARKAZ-CAMERA-PREMIUM-POLISH-V5 */
+
+.markaz-camera-stage {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: #f8fbf9;
+}
+
+.markaz-camera-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18, 61, 42, 0.08),
+            transparent 24%,
+            transparent 72%,
+            rgba(18, 61, 42, 0.12)
+        );
+}
+
+.markaz-camera-guide {
+    z-index: 3;
+    transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.markaz-camera-guide::before {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.16),
+        0 0 18px rgba(255, 255, 255, 0.16);
+}
+
+.markaz-camera-progress {
+    z-index: 5;
+    width: min(74%, 350px);
+}
+
+.markaz-camera-progress-track {
+    stroke: rgba(18, 61, 42, 0.22);
+    stroke-width: 3.2;
+}
+
+.markaz-camera-progress-value {
+    stroke: #159447;
+    stroke-width: 3.8;
+    filter:
+        drop-shadow(0 0 4px rgba(21, 148, 71, 0.45))
+        drop-shadow(0 0 10px rgba(21, 148, 71, 0.18));
+}
+
+.markaz-camera-progress.is-complete .markaz-camera-progress-value {
+    stroke: #e5c96d;
+    filter:
+        drop-shadow(0 0 5px rgba(229, 201, 109, 0.60))
+        drop-shadow(0 0 12px rgba(229, 201, 109, 0.24));
+}
+
+.markaz-camera-progress-check {
+    width: 64px;
+    height: 64px;
+    background: #123d2a;
+    border: 2px solid #e5c96d;
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.24),
+        0 0 0 5px rgba(229, 201, 109, 0.10);
+    font-size: 30px;
+}
+
+.markaz-camera-countdown {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    transform: translate(-50%, -50%) scale(.72);
+    border-radius: 50%;
+    background: rgba(18, 61, 42, 0.92);
+    border: 4px solid #e5c96d;
+    color: #ffffff;
+    font-size: clamp(64px, 13vw, 112px);
+    font-weight: 1000;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    text-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.35),
+        0 0 18px rgba(229, 201, 109, 0.25);
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.28),
+        0 0 0 8px rgba(229, 201, 109, 0.10);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.markaz-camera-countdown.is-visible {
+    opacity: 1;
+    animation: markazCameraCountdownPop 720ms cubic-bezier(.2,.85,.25,1);
+}
+
+@keyframes markazCameraCountdownPop {
+    0% {
+        transform: translate(-50%, -50%) scale(.58);
+        opacity: 0;
+    }
+
+    18% {
+        transform: translate(-50%, -50%) scale(1.06);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.markaz-camera-status {
+    z-index: 7;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.22),
+        0 0 0 3px rgba(229, 201, 109, 0.08);
+}
+
+.markaz-camera-switch-row {
+    z-index: 8;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    backdrop-filter: blur(8px);
+}
+
+.markaz-camera-requirements {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(18, 61, 42, 0.06);
+}
+
+.markaz-camera-checks span {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.markaz-camera-actions {
+    gap: 10px;
+}
+
+.markaz-camera-actions .secondary-button,
+.markaz-camera-actions .primary-button {
+    min-height: 46px;
+    min-width: 120px;
+    border-radius: 12px;
+    font-weight: 900;
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-progress {
+        width: min(78%, 320px);
+    }
+
+    .markaz-camera-countdown {
+        width: 122px;
+        height: 122px;
+        border-width: 3px;
+    }
+
+    .markaz-camera-actions {
+        gap: 8px;
+    }
+
+    .markaz-camera-actions .secondary-button,
+    .markaz-camera-actions .primary-button {
+        flex: 1;
+        min-width: 0;
+        min-height: 46px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .markaz-camera-countdown.is-visible {
+        animation: none;
+    }
+
+    .markaz-camera-guide,
+    .markaz-camera-checks span {
+        transition: none;
+    }
+}
+
+
+/* MARKAZ-CAMERA-FINAL-PREMIUM-POLISH */
+
+.markaz-camera-overlay {
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(33, 91, 62, 0.34),
+            rgba(5, 24, 16, 0.86) 72%
+        );
+    backdrop-filter: blur(10px) saturate(115%);
+}
+
+.markaz-camera-modal {
+    border: 1px solid rgba(229, 201, 109, 0.38);
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.38),
+        0 0 0 1px rgba(18, 61, 42, 0.08);
+    overflow: hidden;
+}
+
+.markaz-camera-header {
+    position: relative;
+    padding: 20px 22px;
+    background:
+        linear-gradient(
+            135deg,
+            #123d2a 0%,
+            #174c34 62%,
+            #123d2a 100%
+        );
+    border-bottom: 3px solid #e5c96d;
+}
+
+.markaz-camera-header::after {
+    content: "";
+    position: absolute;
+    left: 22px;
+    bottom: -3px;
+    width: 82px;
+    height: 3px;
+    background: #ffffff;
+    opacity: 0.9;
+}
+
+.markaz-camera-header .eyebrow {
+    color: #e5c96d;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+}
+
+.markaz-camera-header h2 {
+    margin-top: 6px;
+    color: #ffffff;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+}
+
+.markaz-camera-header p {
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.55;
+}
+
+.markaz-camera-header .modal-close {
+    border: 1px solid rgba(229, 201, 109, 0.72);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.markaz-camera-header .modal-close:hover {
+    background: rgba(229, 201, 109, 0.18);
+    border-color: #e5c96d;
+}
+
+.markaz-camera-header .modal-close:active {
+    transform: scale(0.95);
+}
+
+.markaz-camera-body {
+    padding: 20px;
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f7faf8 100%
+        );
+}
+
+.markaz-camera-stage {
+    border: 3px solid #123d2a;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow:
+        0 12px 34px rgba(18, 61, 42, 0.18),
+        0 0 0 5px rgba(229, 201, 109, 0.14);
+}
+
+.markaz-camera-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border: 1px solid rgba(229, 201, 109, 0.55);
+    border-radius: 16px;
+}
+
+.markaz-camera-stage::after {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18, 61, 42, 0.05),
+            transparent 22%,
+            transparent 74%,
+            rgba(18, 61, 42, 0.14)
+        );
+}
+
+.markaz-camera-guide::before {
+    border-color: rgba(255, 255, 255, 0.96);
+    box-shadow:
+        0 0 0 2px rgba(18, 61, 42, 0.18),
+        0 0 0 4px rgba(229, 201, 109, 0.20),
+        0 0 24px rgba(255, 255, 255, 0.16),
+        inset 0 0 30px rgba(255, 255, 255, 0.035);
+}
+
+.markaz-camera-guide::after {
+    border-color: rgba(255, 255, 255, 0.94);
+}
+
+.markaz-camera-progress {
+    width: min(76%, 350px);
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
+}
+
+.markaz-camera-progress-track {
+    stroke: rgba(255, 255, 255, 0.48);
+    stroke-width: 3;
+}
+
+.markaz-camera-progress-value {
+    stroke: #159447;
+    stroke-width: 4.2;
+}
+
+.markaz-camera-progress.is-complete .markaz-camera-progress-value {
+    stroke: #e5c96d;
+}
+
+.markaz-camera-countdown {
+    width: 164px;
+    height: 164px;
+    background:
+        radial-gradient(
+            circle at 50% 38%,
+            #1d6847 0%,
+            #123d2a 68%,
+            #0b2b1d 100%
+        );
+    border: 4px solid #e5c96d;
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.34),
+        0 0 0 8px rgba(229, 201, 109, 0.12),
+        0 0 32px rgba(229, 201, 109, 0.16);
+}
+
+.markaz-camera-countdown.is-visible {
+    animation:
+        markazCameraCountdownPop 720ms cubic-bezier(.2,.85,.25,1),
+        markazCameraCountdownGlow 720ms ease;
+}
+
+@keyframes markazCameraCountdownGlow {
+    0% {
+        box-shadow:
+            0 18px 44px rgba(0, 0, 0, 0.34),
+            0 0 0 8px rgba(229, 201, 109, 0.04),
+            0 0 8px rgba(229, 201, 109, 0.05);
+    }
+
+    35% {
+        box-shadow:
+            0 18px 44px rgba(0, 0, 0, 0.34),
+            0 0 0 12px rgba(229, 201, 109, 0.18),
+            0 0 38px rgba(229, 201, 109, 0.28);
+    }
+
+    100% {
+        box-shadow:
+            0 18px 44px rgba(0, 0, 0, 0.34),
+            0 0 0 8px rgba(229, 201, 109, 0.12),
+            0 0 32px rgba(229, 201, 109, 0.16);
+    }
+}
+
+.markaz-camera-status {
+    min-height: 42px;
+    padding: 10px 18px;
+    border: 2px solid rgba(229, 201, 109, 0.92);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(18, 61, 42, 0.97),
+            rgba(22, 83, 57, 0.97)
+        );
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.26),
+        0 0 0 4px rgba(229, 201, 109, 0.09);
+    font-size: 11px;
+    letter-spacing: 0.01em;
+}
+
+.markaz-camera-switch-row .secondary-button {
+    border: 2px solid #e5c96d;
+    background:
+        linear-gradient(
+            135deg,
+            #123d2a,
+            #19543b
+        );
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.28),
+        0 0 0 3px rgba(229, 201, 109, 0.10);
+}
+
+.markaz-camera-switch-row .secondary-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #19543b,
+            #216b48
+        );
+}
+
+.markaz-camera-requirements {
+    margin-top: 18px;
+    padding: 17px;
+    border: 1px solid #c8dcd0;
+    border-top: 4px solid #123d2a;
+    border-radius: 17px;
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f3f8f5 100%
+        );
+    box-shadow:
+        0 10px 28px rgba(18, 61, 42, 0.08);
+}
+
+.markaz-camera-requirements strong {
+    margin-bottom: 13px;
+    font-size: 13px;
+    color: #123d2a;
+}
+
+.markaz-camera-checks {
+    gap: 9px;
+}
+
+.markaz-camera-checks span {
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #d1e1d8;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #244638;
+    box-shadow: 0 3px 10px rgba(18, 61, 42, 0.04);
+}
+
+.markaz-camera-requirements small {
+    margin-top: 14px;
+    padding: 12px 13px;
+    border: 2px solid #e5c96d;
+    border-radius: 12px;
+    background:
+        linear-gradient(
+            135deg,
+            #fffaf0,
+            #fff6d9
+        );
+    color: #3f3010;
+    box-shadow: 0 4px 12px rgba(180, 145, 44, 0.08);
+}
+
+.markaz-camera-actions {
+    padding: 16px 20px 20px;
+    background: #ffffff;
+    border-top: 1px solid #dce8e1;
+}
+
+.markaz-camera-actions .secondary-button,
+.markaz-camera-actions .primary-button {
+    min-height: 46px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 950;
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease,
+        border-color 150ms ease;
+}
+
+.markaz-camera-actions .secondary-button {
+    border: 1px solid #c9dbd1;
+    background: #f5f9f7;
+    color: #123d2a;
+}
+
+.markaz-camera-actions .secondary-button:hover {
+    background: #eaf3ee;
+    border-color: #a9c4b5;
+}
+
+.markaz-camera-actions .primary-button {
+    border: 2px solid #e5c96d;
+    background:
+        linear-gradient(
+            135deg,
+            #123d2a,
+            #19543b
+        );
+    color: #ffffff;
+    box-shadow:
+        0 7px 18px rgba(18, 61, 42, 0.20),
+        0 0 0 3px rgba(229, 201, 109, 0.08);
+}
+
+.markaz-camera-actions .primary-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #19543b,
+            #216b48
+        );
+    transform: translateY(-1px);
+    box-shadow:
+        0 9px 22px rgba(18, 61, 42, 0.24),
+        0 0 0 4px rgba(229, 201, 109, 0.10);
+}
+
+.markaz-camera-actions button:active {
+    transform: translateY(1px);
+}
+
+@media (max-width: 560px) {
+    .markaz-camera-overlay {
+        padding: 7px;
+    }
+
+    .markaz-camera-modal {
+        border-radius: 19px;
+    }
+
+    .markaz-camera-header {
+        padding: 16px;
+    }
+
+    .markaz-camera-header h2 {
+        font-size: 18px;
+    }
+
+    .markaz-camera-body {
+        padding: 13px;
+    }
+
+    .markaz-camera-stage {
+        border-radius: 17px;
+    }
+
+    .markaz-camera-countdown {
+        width: 132px;
+        height: 132px;
+    }
+
+    .markaz-camera-requirements {
+        margin-top: 13px;
+        padding: 13px;
+    }
+
+    .markaz-camera-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 13px;
+    }
+
+    .markaz-camera-actions .primary-button {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+
+    .markaz-camera-actions .secondary-button,
+    .markaz-camera-actions .primary-button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .markaz-camera-countdown.is-visible {
+        animation: none;
+    }
+
+    .markaz-camera-actions button,
+    .markaz-camera-switch-row .secondary-button,
+    .markaz-camera-header .modal-close {
+        transition: none;
+    }
+}
+
+/* END MARKAZ-CAMERA-FINAL-PREMIUM-POLISH */
+
+
+/* MARKAZ-STUDENTS-TABLE-2026-V1 */
+
+.students-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #d7e3dc;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.students-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.students-table thead th {
+    padding: 13px 14px;
+    background: #123d2a;
+    color: #fff;
+    border-bottom: 3px solid #e5c96d;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.students-table thead th:first-child {
+    width: 22%;
+}
+
+.students-table thead th:nth-child(2) {
+    width: 19%;
+}
+
+.students-table thead th:nth-child(3) {
+    width: 12%;
+}
+
+.students-table thead th:nth-child(4) {
+    width: 12%;
+}
+
+.students-table thead th:nth-child(5) {
+    width: 7%;
+}
+
+.students-table thead th:nth-child(6) {
+    width: 8%;
+}
+
+.students-table thead th:nth-child(7) {
+    width: 9%;
+}
+
+.students-table thead th:nth-child(8) {
+    width: 7%;
+}
+
+.students-table thead th:nth-child(9) {
+    width: 12%;
+}
+
+.students-table tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #e7eee9;
+    color: #263b31;
+    font-size: 12px;
+    vertical-align: middle;
+    background: #fff;
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.students-table tbody tr:hover td {
+    background: #f5faf7;
+}
+
+.student-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.student-name-cell strong {
+    display: block;
+    min-width: 0;
+    color: #123d2a;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.student-avatar {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border: 2px solid #dce9e1;
+    border-radius: 50%;
+    background: #edf5f0;
+    color: #123d2a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 950;
+}
+
+.student-avatar.has-photo {
+    border-color: #e5c96d;
+    background: #fff;
+}
+
+.student-parent-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.student-parent-cell strong {
+    color: #203b2f;
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.student-parent-phone {
+    width: fit-content;
+    color: #567266;
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 1.3;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.student-parent-phone:hover {
+    color: #123d2a;
+    text-decoration: underline;
+}
+
+.student-parent-phone.is-empty {
+    color: #9aa9a1;
+    font-weight: 650;
+}
+
+.student-admission-number {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 5px 9px;
+    border: 1px solid rgba(229,201,109,.48);
+    border-radius: 8px;
+    background: #fffaf0;
+    color: #a27609;
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: .035em;
+    white-space: nowrap;
+}
+
+.student-arabiyya-class {
+    color: #48675a !important;
+    font-weight: 700;
+}
+
+.student-age {
+    color: #395449 !important;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.students-table .student-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    min-height: 27px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 950;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.students-table .student-status.active {
+    background: #e8f6ed;
+    color: #14713c;
+    border: 1px solid #b9dfc8;
+}
+
+.students-table .student-status.inactive {
+    background: #f3f4f4;
+    color: #69766f;
+    border: 1px solid #d9dfdc;
+}
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.student-actions button {
+    min-height: 32px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 900;
+}
+
+@media (max-width: 760px) {
+    .students-table-wrap {
+        border-radius: 13px;
+    }
+
+    .students-table {
+        min-width: 1080px;
+    }
+
+    .students-table thead th,
+    .students-table tbody td {
+        padding: 11px 10px;
+    }
+
+    .student-avatar {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+}
+
+
+/* MARKAZ-STUDENTS-TABLE-HIERARCHY-V2 */
+.students-table {
+    min-width: 1280px;
+    table-layout: fixed;
+}
+
+.students-table thead th:nth-child(1),
+.students-table tbody td:nth-child(1) { width: 18%; }
+
+.students-table thead th:nth-child(2),
+.students-table tbody td:nth-child(2) { width: 19%; }
+
+.students-table thead th:nth-child(3),
+.students-table tbody td:nth-child(3) { width: 11%; }
+
+.students-table thead th:nth-child(4),
+.students-table tbody td:nth-child(4) { width: 9%; }
+
+.students-table thead th:nth-child(5),
+.students-table tbody td:nth-child(5) { width: 10%; }
+
+.students-table thead th:nth-child(6),
+.students-table tbody td:nth-child(6) { width: 6%; }
+
+.students-table thead th:nth-child(7),
+.students-table tbody td:nth-child(7) { width: 7%; }
+
+.students-table thead th:nth-child(8),
+.students-table tbody td:nth-child(8) { width: 8%; }
+
+.students-table thead th:nth-child(9),
+.students-table tbody td:nth-child(9) { width: 6%; }
+
+.students-table thead th:nth-child(10),
+.students-table tbody td:nth-child(10) { width: 6%; }
+
+.student-parent-cell {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.student-parent-cell strong {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.student-parent-phone {
+    display: block;
+    margin-top: 3px;
+    white-space: nowrap;
+}
+
+.student-name-cell strong {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.student-admission-number {
+    white-space: nowrap;
+}
+
+.student-actions {
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+
+.students-table tbody td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+@media (max-width: 760px) {
+    .students-table {
+        min-width: 1180px;
+    }
+}
+
+/* END MARKAZ-STUDENTS-TABLE-HIERARCHY-V2 */
+
+/* MARKAZ-STUDENTS-TABLE-11COL-V3 */
+.students-table {
+    width: 100%;
+    min-width: 1320px;
+    table-layout: fixed;
+}
+
+.students-table thead th,
+.students-table tbody td {
+    box-sizing: border-box;
+}
+
+.students-table thead th:nth-child(1),
+.students-table tbody td:nth-child(1) { width: 19%; } /* Student */
+
+.students-table thead th:nth-child(2),
+.students-table tbody td:nth-child(2) { width: 16%; } /* Parent */
+
+.students-table thead th:nth-child(3),
+.students-table tbody td:nth-child(3) { width: 12%; } /* Phone */
+
+.students-table thead th:nth-child(4),
+.students-table tbody td:nth-child(4) { width: 11%; } /* Admission */
+
+.students-table thead th:nth-child(5),
+.students-table tbody td:nth-child(5) { width: 8%; } /* Class */
+
+.students-table thead th:nth-child(6),
+.students-table tbody td:nth-child(6) { width: 9%; } /* Arabiyya */
+
+.students-table thead th:nth-child(7),
+.students-table tbody td:nth-child(7) { width: 5%; } /* Age */
+
+.students-table thead th:nth-child(8),
+.students-table tbody td:nth-child(8) { width: 6%; } /* Gender */
+
+.students-table thead th:nth-child(9),
+.students-table tbody td:nth-child(9) { width: 7%; } /* Type */
+
+.students-table thead th:nth-child(10),
+.students-table tbody td:nth-child(10) { width: 4%; } /* Status */
+
+.students-table thead th:nth-child(11),
+.students-table tbody td:nth-child(11) { width: 3%; } /* Actions */
+
+.students-table thead th {
+    padding: 13px 12px;
+    white-space: nowrap;
+}
+
+.students-table tbody td {
+    padding: 13px 12px;
+    vertical-align: middle;
+}
+
+.student-parent-name-cell,
+.student-parent-phone-cell {
+    overflow: hidden;
+}
+
+.student-parent-name,
+.student-parent-name-cell strong {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #203b2f;
+    font-weight: 850;
+}
+
+.student-parent-phone-cell {
+    white-space: nowrap;
+}
+
+.student-parent-phone-cell .student-parent-phone {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.student-parent-phone.is-empty,
+.student-parent-name.is-empty {
+    color: #9aa9a1;
+    font-weight: 650;
+}
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.student-actions button {
+    flex: 0 0 auto;
+}
+
+.student-admission-number {
+    white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+    .students-table {
+        min-width: 1200px;
+    }
+}
+
+/* END MARKAZ-STUDENTS-TABLE-11COL-V3 */
+
+/* MARKAZ-STUDENTS-TABLE-SPACING-V4 */
+.students-table {
+    min-width: 1480px;
+}
+
+.students-table thead th {
+    padding: 15px 17px;
+}
+
+.students-table tbody td {
+    padding: 16px 17px;
+    line-height: 1.45;
+}
+
+.students-table tbody tr {
+    min-height: 64px;
+}
+
+.student-name-cell {
+    gap: 13px;
+    align-items: center;
+}
+
+.student-name-cell strong {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.35;
+}
+
+.student-parent-name-cell {
+    min-width: 0;
+}
+
+.student-parent-name {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.35;
+}
+
+.student-parent-phone-cell {
+    padding-left: 19px !important;
+    padding-right: 19px !important;
+}
+
+.student-parent-phone-cell .student-parent-phone {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.student-admission-number {
+    padding: 6px 11px;
+}
+
+.student-actions {
+    gap: 8px;
+    padding-left: 5px;
+}
+
+.student-actions button {
+    min-height: 34px;
+    padding: 7px 11px;
+}
+
+@media (max-width: 760px) {
+    .students-table {
+        min-width: 1380px;
+    }
+
+    .students-table thead th,
+    .students-table tbody td {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+}
+
+/* END MARKAZ-STUDENTS-TABLE-SPACING-V4 */
+
+/* MARKAZ-STUDENTS-TABLE-POLISH-V5 */
+
+/* Core table rhythm */
+.students-table {
+    min-width: 1480px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.students-table thead th {
+    height: 48px;
+    padding: 13px 16px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.students-table tbody td {
+    min-height: 68px;
+    padding: 16px 16px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Primary readable columns stay left aligned */
+.students-table thead th:nth-child(1),
+.students-table tbody td:nth-child(1),
+.students-table thead th:nth-child(2),
+.students-table tbody td:nth-child(2),
+.students-table thead th:nth-child(3),
+.students-table tbody td:nth-child(3) {
+    text-align: left;
+}
+
+/* Admission number gets a clean centered presentation */
+.students-table tbody td:nth-child(4) {
+    text-align: center;
+}
+
+/* Student identity */
+.student-name-cell {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    text-align: left;
+}
+
+.student-name-cell strong {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.4;
+}
+
+/* Parent */
+.student-parent-name-cell {
+    min-width: 0;
+    text-align: left !important;
+}
+
+.student-parent-name {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.4;
+}
+
+/* Phone */
+.student-parent-phone-cell {
+    min-width: 0;
+    text-align: left !important;
+}
+
+.student-parent-phone-cell .student-parent-phone {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Center all compact information */
+.students-table tbody td:nth-child(5),
+.students-table tbody td:nth-child(6),
+.students-table tbody td:nth-child(7),
+.students-table tbody td:nth-child(8),
+.students-table tbody td:nth-child(9),
+.students-table tbody td:nth-child(10),
+.students-table tbody td:nth-child(11) {
+    text-align: center;
+}
+
+/* Keep class information visually balanced */
+.students-table tbody td:nth-child(5),
+.students-table tbody td:nth-child(6) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+}
+
+/* Age and gender */
+.student-age {
+    white-space: nowrap;
+    text-align: center !important;
+}
+
+/* Status is centered as a complete component */
+.students-table tbody td:nth-child(10) {
+    text-align: center !important;
+}
+
+.students-table .student-status {
+    margin: 0 auto;
+}
+
+/* Actions are centered as a group */
+.students-table tbody td:nth-child(11) {
+    text-align: center !important;
+}
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: 0 auto;
+}
+
+.student-actions button {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+/* Admission badge */
+.student-admission-number {
+    margin: 0 auto;
+}
+
+/* Row separation */
+.students-table tbody tr {
+    min-height: 68px;
+}
+
+.students-table tbody tr:hover td {
+    background: #f7fbf8;
+}
+
+/* Keep empty states properly centered */
+.students-table tbody .empty-state {
+    text-align: center !important;
+    vertical-align: middle;
+    padding: 32px 20px;
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+    .students-table {
+        min-width: 1380px;
+    }
+
+    .students-table thead th,
+    .students-table tbody td {
+        padding: 13px 12px;
+    }
+
+    .student-name-cell {
+        gap: 11px;
+    }
+
+    .student-actions {
+        gap: 6px;
+    }
+}
+
+/* END MARKAZ-STUDENTS-TABLE-POLISH-V5 */
+
+/* MARKAZ-STUDENTS-TYPOGRAPHY-2026-V6 */
+
+.students-table {
+    font-family: Inter, Arial, sans-serif;
+    color: #17231c;
+}
+
+/* Table headings */
+.students-table thead th {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .055em;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+/* General table content */
+.students-table tbody td {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #263b31;
+}
+
+/* Student identity — strongest row content */
+.student-name-cell strong {
+    color: #123d2a;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    line-height: 1.4;
+}
+
+/* Parent / guardian */
+.student-parent-name {
+    color: #203b2f;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* Parent phone — secondary hierarchy */
+.student-parent-phone-cell .student-parent-phone {
+    color: #65756d;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: .01em;
+}
+
+.student-parent-phone-cell .student-parent-phone:hover {
+    color: #123d2a;
+}
+
+/* Admission number — gold emphasis */
+.student-admission-number {
+    color: #a27609;
+    background: #fffaf0;
+    border-color: rgba(200, 164, 58, .45);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .045em;
+}
+
+/* Class hierarchy */
+.students-table tbody td:nth-child(5) {
+    color: #203f31;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.students-table tbody td:nth-child(6) {
+    color: #567166;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+/* Compact demographic information */
+.student-age,
+.students-table tbody td:nth-child(8),
+.students-table tbody td:nth-child(9) {
+    color: #4c6258;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+/* Student type */
+.students-table tbody td:nth-child(9) {
+    color: #355447;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Status */
+.students-table .student-status {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .055em;
+    line-height: 1;
+}
+
+/* Actions */
+.student-actions button {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .01em;
+}
+
+/* Empty states */
+.students-table tbody .empty-state {
+    color: #7b8781;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Keep muted missing-data text intentionally quiet */
+.student-parent-phone.is-empty,
+.student-parent-name.is-empty {
+    color: #9aa9a1;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* END MARKAZ-STUDENTS-TYPOGRAPHY-2026-V6 */
+
+/* MARKAZ-STUDENTS-TABLE-ZEBRA-HOVER-V7 */
+
+.students-table tbody tr:nth-child(odd) td {
+    background: #ffffff;
+}
+
+.students-table tbody tr:nth-child(even) td {
+    background: #f4f8f5;
+}
+
+/* Smooth row interaction */
+.students-table tbody tr td {
+    transition:
+        background-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+/* Whole-row hover state */
+.students-table tbody tr:hover td {
+    background: #e8f3ec !important;
+}
+
+/* Subtle left visual anchor on hovered row */
+.students-table tbody tr:hover td:first-child {
+    box-shadow: inset 3px 0 0 #c6a542;
+}
+
+/* Keep the student's primary identity strong */
+.students-table tbody tr:hover .student-name-cell strong {
+    color: #0f3525;
+}
+
+/* Keep admission badge readable on alternating rows */
+.students-table tbody tr:nth-child(even) .student-admission-number {
+    background: #fff8e8;
+}
+
+.students-table tbody tr:hover .student-admission-number {
+    background: #fff3cf;
+}
+
+/* Don't apply zebra/hover treatment to empty states */
+.students-table tbody tr:has(.empty-state) td {
+    background: #ffffff;
+    box-shadow: none;
+}
+
+/* END MARKAZ-STUDENTS-TABLE-ZEBRA-HOVER-V7 */

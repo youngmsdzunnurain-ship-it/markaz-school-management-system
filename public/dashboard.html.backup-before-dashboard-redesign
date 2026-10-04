@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#166534">
+
+    <title>Dashboard | MARKAZ Result Management System</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-mark">M</div>
+
+                <div class="brand-text">
+                    <strong>MARKAZ</strong>
+                    <span>Result Management</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="./dashboard.html" class="nav-link active">
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="./students.html" class="nav-link">
+                    <span>Students</span>
+                </a>
+
+                <a href="./classes.html" class="nav-link" data-role-access="admin">
+                    <span>Classes</span>
+                </a>
+
+                <a href="./subjects/" class="nav-link" data-role-access="admin">
+                    <span>Subjects</span>
+                </a>
+
+                <a href="./classes.html" class="nav-link">
+                    <span>Results</span>
+                </a>
+
+                <a href="./classes.html" class="nav-link">
+                    <span>Print Results</span>
+                </a>
+
+                <a href="./settings.html" class="nav-link" data-role-access="admin">
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <button type="button" id="logoutButton" class="logout-button">
+                Logout
+            </button>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <button
+                    type="button"
+                    id="menuButton"
+                    class="menu-button"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>MARKAZ Result Management System</p>
+                </div>
+            </header>
+
+            <section class="page-content">
+
+                <div class="welcome-card">
+                    <div>
+                        <span class="eyebrow">ADMINISTRATOR</span>
+                        <h2>Welcome, <span id="adminName">Admin</span></h2>
+                        <p>
+                            Manage students, classes, subjects, examination
+                            results and academic settings from one place.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="stats-grid">
+
+                    <article class="stat-card">
+                        <span class="stat-label">Students</span>
+                        <strong>0</strong>
+                        <small>Registered students</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-label">Classes</span>
+                        <strong>0</strong>
+                        <small>Active classes</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-label">Subjects</span>
+                        <strong>0</strong>
+                        <small>Active subjects</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-label">Results</span>
+                        <strong>0</strong>
+                        <small>Recorded results</small>
+                    </article>
+
+                </section>
+
+                <section class="dashboard-grid">
+
+                    <article class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">QUICK ACCESS</span>
+                                <h3>Management</h3>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+                            <button type="button" data-role-access="exam_officer">Add Student</button>
+                            <button type="button" data-role-access="admin">Manage Classes</button>
+                            <button type="button" data-role-access="admin">Manage Subjects</button>
+                            <button type="button" data-role-access="exam_officer">Enter Results</button>
+                            <button type="button" data-role-access="exam_officer">Print Results</button>
+                            <button type="button" data-role-access="admin">System Settings</button>
+                        </div>
+                    </article>
+
+                    <article class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">SYSTEM</span>
+                                <h3>Administrator</h3>
+                            </div>
+                        </div>
+
+                        <div class="admin-profile-display">
+                            <div class="admin-profile-photo" id="dashboardAdminPhoto">
+                                <span>AD</span>
+                            </div>
+                            <div>
+                                <strong id="dashboardAdminName">Administrator</strong>
+                                <span id="dashboardAdminEmail">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="admin-details">
+                            <div>
+                                <span>Name</span>
+                                <strong id="adminDetailsName">Loading...</strong>
+                            </div>
+
+                            <div>
+                                <span>Email</span>
+                                <strong id="adminEmail">Loading...</strong>
+                            </div>
+
+                            <div>
+                                <span>Status</span>
+                                <strong class="status-active">Active</strong>
+                            </div>
+                        </div>
+                    </article>
+
+                </section>
+
+            </section>
+
+            <footer>
+                <span class="footer-brand">MARKAZ</span>
+                <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
+                <span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span>
+            </footer>
+
+        </main>
+
+    </div>
+
+    <script src="js/dashboard.js"></script>
+
+    <script src="/js/markaz-global.js"></script>
+</body>
+</html>

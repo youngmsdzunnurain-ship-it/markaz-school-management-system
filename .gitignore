@@ -1,14 +1,47 @@
+# Environment
 .env
 .env.*
 !.env.example
 
+# Dependencies
 /vendor/
 /node_modules/
 
+# Runtime / application data
 storage/logs/*
 !storage/logs/.gitkeep
 
+storage/sessions/*
+!storage/sessions/.gitkeep
+
+# User uploads / generated files
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Database backups
+database/backups/
+
+# Temporary / backup files
+*.before-*
+*.backup
+*.bak
+*.tmp
+*.old
+*.orig
+
+# OS files
 .DS_Store
 Thumbs.db
 
+# Logs
 *.log
+
+# Local/editor files
+.vscode/
+.idea/
+
+# Temporary scripts/files
+PY
+students-clean.html
+php-termux.ini
+check_role.php

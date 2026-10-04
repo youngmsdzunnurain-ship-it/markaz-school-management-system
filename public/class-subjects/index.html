@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Class Subjects | MARKAZ</title>
+
+    <meta
+        name="description"
+        content="Manage subjects assigned to a MARKAZ class."
+    >
+
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="./class-subjects.css">
+</head>
+
+<body>
+
+    <main class="class-subjects-page">
+
+        <header class="page-header">
+
+            <div class="page-header-left">
+                <a href="../classes.html" class="back-link">
+                    ← Back to Classes
+                </a>
+
+                <div>
+                    <p class="page-eyebrow">CLASS SUBJECTS</p>
+                    <h1 id="className">Class Subjects</h1>
+                    <p id="classDescription">
+                        Manage the subjects assigned to this class.
+                    </p>
+                </div>
+            </div>
+
+            <div class="page-header-actions">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="cancelButton"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="saveButton"
+                >
+                    Save Subjects
+                </button>
+            </div>
+
+        </header>
+
+
+        <section class="class-summary">
+
+            <div class="summary-card">
+                <span class="summary-label">Assigned Subjects</span>
+                <strong id="assignedCount">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span class="summary-label">Available Subjects</span>
+                <strong id="availableCount">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span class="summary-label">Class</span>
+                <strong id="summaryClassName">—</strong>
+            </div>
+
+        </section>
+
+
+        <section class="subjects-layout">
+
+            <div class="subjects-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Assigned Subjects</h2>
+                        <p>
+                            These subjects will appear in result entry
+                            and student result views.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="assignedSubjects"
+                    class="assigned-subjects"
+                >
+                    <div class="empty-state">
+                        Loading subjects...
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="subjects-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Subject Library</h2>
+                        <p>
+                            Select active subjects to add to this class.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="subject-search">
+                    <input
+                        type="search"
+                        id="subjectSearch"
+                        placeholder="Search subjects..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div
+                    id="availableSubjects"
+                    class="available-subjects"
+                >
+                    <div class="empty-state">
+                        Loading subjects...
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="./class-subjects.js"></script>
+
+    <script src="/js/markaz-global.js"></script>
+</body>
+</html>

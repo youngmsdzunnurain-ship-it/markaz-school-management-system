@@ -4,171 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#123d2a">
-
     <title>Students | MARKAZ</title>
-
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/students.css">
 </head>
 
 <body>
 
-    <div class="students-page">
+<div class="students-page">
 
-        <header class="students-topbar">
-            <div>
-                <span class="eyebrow">MARKAZ</span>
-                <h1>Students</h1>
-                <p>Manage student records and enrollment information.</p>
-            </div>
-
-            <button type="button" class="primary-button" id="addStudentButton">
-                + Add Student
-            </button>
-        </header>
-
-        <section class="student-summary">
-            <article class="student-summary-card">
-                <div class="student-summary-icon">T</div>
-                <div>
-                    <p class="student-summary-label">Total Students</p>
-                    <p class="student-summary-value" id="totalStudentCount">0</p>
-                </div>
-            </article>
-
-            <article class="student-summary-card active">
-                <div class="student-summary-icon">A</div>
-                <div>
-                    <p class="student-summary-label">Active Students</p>
-                    <p class="student-summary-value" id="activeStudentCount">0</p>
-                </div>
-            </article>
-
-            <article class="student-summary-card inactive">
-                <div class="student-summary-icon">I</div>
-                <div>
-                    <p class="student-summary-label">Inactive Students</p>
-                    <p class="student-summary-value" id="inactiveStudentCount">0</p>
-                </div>
-            </article>
-        </section>
-        <main>
-
-            <section class="students-toolbar">
-
-                <div class="search-box">
-                    <input
-                        type="search"
-                        id="studentSearch"
-                        placeholder="Search by name or admission number..."
-                        autocomplete="off"
-                    >
-                </div>
-
-                <select id="classFilter">
-                    <option value="">All Classes</option>
-                </select>
-
-                <select id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
-                </select>
-
-            </section>
-
-            <section class="students-panel">
-
-                <div class="panel-heading">
-                    <div>
-                        <span class="eyebrow">STUDENT RECORDS</span>
-                        <h2>All Students</h2>
-                    </div>
-
-                    <span id="studentCount" class="student-count">
-                        0 Students
-                    </span>
-                </div>
-
-                <div class="students-table-wrap">
-
-                    <table class="students-table">
-
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Admission No.</th>
-                                <th>Class</th>
-                                <th>Gender</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="studentsTableBody">
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    Loading students...
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-        </main>
-
-    </div>
-
-    <script src="./js/students.js"></script>
-
-</body>
-</html>
-
-<!-- Edit Student Modal -->
-<div class="modal-overlay" id="editStudentModal" hidden>
-
-    <div class="student-modal" role="dialog" aria-modal="true">
-
-        <div class="modal-header">
-            <div>
-                <span class="eyebrow">STUDENT RECORD</span>
-                <h2>Edit Student</h2>
-                <p>Update student information.</p>
-            </div>
-
-            <button type="button" class="modal-close" id="closeEditStudentModal">
-                &times;
-            </button>
+    <header class="students-topbar">
+        <div>
+            <span class="eyebrow">MARKAZ</span>
+            <h1>Students</h1>
+            <p>Manage student records and enrollment information.</p>
         </div>
 
-        <form id="editStudentForm" enctype="multipart/form-data">
+        <button type="button" class="primary-button" id="addStudentButton">
+            + Add Student
+        </button>
+    </header>
 
-            <input type="hidden" id="editStudentId" name="id">
+    <section class="student-summary">
+
+        <article class="student-summary-card">
+            <div class="student-summary-icon">T</div>
+            <div>
+                <p class="student-summary-label">Total Students</p>
+                <p class="student-summary-value" id="totalStudentCount">0</p>
+            </div>
+        </article>
+
+        <article class="student-summary-card active">
+            <div class="student-summary-icon">A</div>
+            <div>
+                <p class="student-summary-label">Active Students</p>
+                <p class="student-summary-value" id="activeStudentCount">0</p>
+            </div>
+        </article>
+
+        <article class="student-summary-card inactive">
+            <div class="student-summary-icon">I</div>
+            <div>
+                <p class="student-summary-label">Inactive Students</p>
+                <p class="student-summary-value" id="inactiveStudentCount">0</p>
+            </div>
+        </article>
+
+    </section>
+
+    <main>
+
+        <section class="students-toolbar">
+
+            <div class="search-box">
+                <input
+                    type="search"
+                    id="studentSearch"
+                    placeholder="Search by name or admission number..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <select id="classFilter">
+                <option value="">All Classes</option>
+            </select>
+
+            <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+            </select>
+
+        </section>
+
+        <section class="students-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <span class="eyebrow">STUDENT RECORDS</span>
+                    <h2>All Students</h2>
+                </div>
+
+                <span id="studentCount" class="student-count">
+                    0 Students
+                </span>
+            </div>
+
+            <div class="students-table-wrap">
+
+                <table class="students-table">
+
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Parent / Guardian</th>
+                            <th>Parent Phone</th>
+                            <th>Admission No.</th>
+                            <th>Class</th>
+                            <th>Arabiyya Class</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Student Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                Loading students...
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ADD STUDENT MODAL -->
+
+<div class="modal-overlay" id="addStudentModal" hidden>
+
+    <div
+        class="student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addStudentModalTitle"
+    >
+
+        <div class="modal-header">
+
+            <div>
+                <span class="eyebrow">STUDENT RECORD</span>
+                <h2 id="addStudentModalTitle">Add Student</h2>
+                <p>Create a new student record.</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeStudentModal"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <form id="addStudentForm" enctype="multipart/form-data">
 
             <div class="student-photo-upload">
 
-                <div class="student-photo-preview" id="editStudentPhotoPreview">
+                <div class="student-photo-preview" id="studentPhotoPreview">
                     <span>ST</span>
                 </div>
 
                 <div>
                     <strong>Student Photo</strong>
-                    <p>JPG, PNG or WEBP · Maximum 3MB</p>
+                    <p>JPG, PNG or WEBP · Maximum 5MB</p>
 
-                    <label class="secondary-button">
-                        Change Photo
+                    <div class="student-photo-actions">
                         <input
                             type="file"
-                            id="editStudentPhoto"
-                            name="student_photo"
+                            id="studentPhoto"
+                            name="profile_image"
                             accept="image/jpeg,image/png,image/webp"
                             hidden
                         >
-                    </label>
+
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            id="captureStudentPhotoButton"
+                            
+                        >
+                            Capture Photo
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -176,7 +196,217 @@
             <div class="form-grid">
 
                 <div class="form-field">
-                    <label for="editAdmissionNumber">Admission Number</label>
+                    <label for="admissionNumber">Admission Number</label>
+                    <input
+                        type="text"
+                        id="admissionNumber"
+                        value="Automatically generated"
+                        readonly
+                        aria-describedby="admissionNumberHelp"
+                    >
+                    <small id="admissionNumberHelp">
+                        Generated automatically when the student is admitted.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="studentClass">Class</label>
+                    <select
+                        id="studentClass"
+                        name="class_id"
+                        required
+                    >
+                        <option value="">Select class</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="firstName">First Name</label>
+                    <input
+                        type="text"
+                        id="firstName"
+                        name="first_name"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">Last Name</label>
+                    <input
+                        type="text"
+                        id="lastName"
+                        name="last_name"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="studentType">Student Type</label>
+                    <select id="studentType" name="student_type" required>
+                        <option value="Day Student">Day Student</option>
+                        <option value="Boarding">Boarding</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="parentGuardianName">Parent / Guardian Name</label>
+                    <input
+                        type="text"
+                        id="parentGuardianName"
+                        name="parent_guardian_name"
+                        placeholder="Enter parent or guardian name"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="parentGuardianPhone">Parent / Guardian Phone</label>
+                    <div class="phone-input-group">
+                        <span class="phone-prefix">+234</span>
+                        <input
+                            type="tel"
+                            id="parentGuardianPhone"
+                            name="parent_guardian_phone"
+                            inputmode="numeric"
+                            maxlength="10"
+                            placeholder="803 123 4567"
+                            autocomplete="tel"
+                        >
+                    </div>
+                    <small>Enter the remaining Nigerian mobile number after +234.</small>
+                </div>
+
+                <div class="form-field">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input
+                        type="date"
+                        id="dateOfBirth"
+                        name="date_of_birth"
+                    >
+                </div>
+
+            </div>
+
+            <!-- Arabic Class is added by students.js -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="cancelStudentButton"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                    id="saveStudentButton"
+                >
+                    Save Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- EDIT STUDENT MODAL -->
+
+<div class="modal-overlay" id="editStudentModal" hidden>
+
+    <div
+        class="student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editStudentModalTitle"
+    >
+
+        <div class="modal-header">
+
+            <div>
+                <span class="eyebrow">STUDENT RECORD</span>
+                <h2 id="editStudentModalTitle">Edit Student</h2>
+                <p>Update student information.</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeEditStudentModal"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <form id="editStudentForm" enctype="multipart/form-data">
+
+            <input
+                type="hidden"
+                id="editStudentId"
+                name="id"
+            >
+
+            <div class="student-photo-upload">
+    <div class="student-photo-preview" id="editStudentPhotoPreview">
+        <span>ST</span>
+    </div>
+
+    <div>
+        <strong>Student Photo</strong>
+        <p>JPG, PNG or WEBP · Maximum 3MB</p>
+
+        <div class="student-photo-actions">
+            <label class="secondary-button" id="editStudentPhotoButton">
+                Replace Photo
+                <input
+                    type="file"
+                    id="editStudentPhoto"
+                    name="profile_image"
+                    accept="image/jpeg,image/png,image/webp"
+                    hidden
+                >
+            </label>
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="captureEditStudentPhotoButton"
+            >
+                Capture Photo
+            </button>
+
+            <button
+                type="button"
+                class="remove-photo-button"
+                id="removeStudentPhotoButton"
+            >
+                Remove Photo
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="form-grid">
+
+                <div class="form-field">
+                    <label for="editAdmissionNumber">
+                        Admission Number
+                    </label>
                     <input
                         type="text"
                         id="editAdmissionNumber"
@@ -187,7 +417,11 @@
 
                 <div class="form-field">
                     <label for="editStudentClass">Class</label>
-                    <select id="editStudentClass" name="class_id" required>
+                    <select
+                        id="editStudentClass"
+                        name="class_id"
+                        required
+                    >
                         <option value="">Select class</option>
                     </select>
                 </div>
@@ -199,15 +433,6 @@
                         id="editFirstName"
                         name="first_name"
                         required
-                    >
-                </div>
-
-                <div class="form-field">
-                    <label for="editMiddleName">Middle Name</label>
-                    <input
-                        type="text"
-                        id="editMiddleName"
-                        name="middle_name"
                     >
                 </div>
 
@@ -231,24 +456,65 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="editDateOfBirth">Date of Birth</label>
-                    <input type="date" id="editDateOfBirth" name="date_of_birth">
+                    <label for="editStudentType">Student Type</label>
+                    <select id="editStudentType" name="student_type" required>
+                        <option value="Day Student">Day Student</option>
+                        <option value="Boarding">Boarding</option>
+                    </select>
                 </div>
 
                 <div class="form-field">
-                    <label for="editAdmissionDate">Admission Date</label>
-                    <input type="date" id="editAdmissionDate" name="admission_date">
+                    <label for="editParentGuardianName">Parent / Guardian Name</label>
+                    <input
+                        type="text"
+                        id="editParentGuardianName"
+                        name="parent_guardian_name"
+                        placeholder="Enter parent or guardian name"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="editParentGuardianPhone">Parent / Guardian Phone</label>
+                    <div class="phone-input-group">
+                        <span class="phone-prefix">+234</span>
+                        <input
+                            type="tel"
+                            id="editParentGuardianPhone"
+                            name="parent_guardian_phone"
+                            inputmode="numeric"
+                            maxlength="10"
+                            placeholder="803 123 4567"
+                            autocomplete="tel"
+                        >
+                    </div>
+                    <small>Enter the remaining Nigerian mobile number after +234.</small>
+                </div>
+
+                <div class="form-field">
+                    <label for="editDateOfBirth">Date of Birth</label>
+                    <input
+                        type="date"
+                        id="editDateOfBirth"
+                        name="date_of_birth"
+                    >
                 </div>
 
             </div>
 
+            <!-- Arabic Class is added by students.js -->
+
             <div class="form-field status-field">
+
                 <label for="editStudentStatus">Status</label>
 
-                <select id="editStudentStatus" name="is_active">
+                <select
+                    id="editStudentStatus"
+                    name="is_active"
+                >
                     <option value="1">Active</option>
                     <option value="0">Inactive</option>
                 </select>
+
             </div>
 
             <div class="modal-actions">
@@ -277,3 +543,210 @@
 
 </div>
 
+<!-- VIEW STUDENT MODAL -->
+
+<div class="modal-overlay" id="viewStudentModal" hidden>
+
+    <div
+        class="student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="viewStudentModalTitle"
+    >
+
+        <div class="modal-header">
+
+            <div>
+                <span class="eyebrow">STUDENT RECORD</span>
+                <h2 id="viewStudentModalTitle">Student Details</h2>
+                <p>View student information.</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeViewStudentModal"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <div id="viewStudentContent"></div>
+
+    </div>
+
+</div>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/vision_bundle.mjs"></script>
+    
+
+
+<!-- MARKAZ-AUTO-STUDENT-CAMERA -->
+<div class="markaz-camera-overlay" id="studentCameraModal" hidden>
+    <div class="markaz-camera-modal" role="dialog" aria-modal="true" aria-labelledby="studentCameraTitle">
+
+        <div class="markaz-camera-header">
+            <div>
+                <span class="eyebrow">MARKAZ PHOTO CAPTURE</span>
+                <h2 id="studentCameraTitle">Capture Student Photo</h2>
+                <p>Position the student from head to chest. Capture starts automatically.</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeStudentCamera"
+                aria-label="Close"
+            >&times;</button>
+        </div>
+
+        <div class="markaz-camera-body">
+
+            <div class="markaz-camera-stage">
+
+                <video
+                    id="studentCameraVideo"
+                    autoplay
+                    playsinline
+                    muted
+                ></video>
+
+                <div class="markaz-camera-guide">
+                    <div class="markaz-camera-head-guide"></div>
+                    <div class="markaz-camera-chest-guide"></div>
+
+                    <span class="markaz-camera-guide-label">
+                        HEAD → CHEST
+                    </span>
+                </div>
+
+                <div
+                    class="markaz-camera-progress"
+                    id="studentCameraProgress"
+                    aria-hidden="true"
+                >
+                    <svg viewBox="0 0 100 100" role="presentation">
+                        <circle
+                            class="markaz-camera-progress-track"
+                            cx="50"
+                            cy="50"
+                            r="45"
+                        ></circle>
+                        <circle
+                            class="markaz-camera-progress-value"
+                            id="studentCameraProgressValue"
+                            cx="50"
+                            cy="50"
+                            r="45"
+                        ></circle>
+                    </svg>
+                    <span
+                        class="markaz-camera-progress-check"
+                        id="studentCameraProgressCheck"
+                    >✓</span>
+
+                    <span
+                        class="markaz-camera-countdown"
+                        id="studentCameraCountdown"
+                        aria-hidden="true"
+                    ></span>
+                </div>
+<div
+                    class="markaz-camera-status"
+                    id="studentCameraStatus"
+                    aria-live="polite"
+                >
+                
+
+                    Starting camera…
+                </div>
+                    <div class="markaz-camera-switch-row">
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            id="switchStudentCamera"
+                        >
+                            Switch Camera
+                        </button>
+                    </div>
+
+            </div>
+
+            <div class="markaz-camera-requirements">
+
+                <strong>Photo requirements</strong>
+
+                <div class="markaz-camera-checks">
+
+                    <span id="cameraCheckFace">
+                        ○ Face visible
+                    </span>
+
+                    <span id="cameraCheckPosition">
+                        ○ Head centered
+                    </span>
+
+                    <span id="cameraCheckEars">
+                        ○ Both ears visible
+                    </span>
+
+                    <span id="cameraCheckClarity">
+                        ○ Image clear
+                    </span>
+
+                </div>
+
+                <small>
+                    Student should wear the complete school uniform,
+                    cap and white jacket.
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="markaz-camera-actions">
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="cancelStudentCamera"
+            >
+                Back
+            </button>
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="retakeStudentCamera"
+                hidden
+            >
+                Retake Photo
+            </button>
+
+            <button
+                type="button"
+                class="primary-button"
+                id="useStudentCameraPhoto"
+                hidden
+            >
+                Use Photo
+            </button>
+
+        </div>
+
+        <canvas
+            id="studentCameraCanvas"
+            hidden
+        ></canvas>
+
+    </div>
+</div>
+
+<script type="module" src="./js/markaz-camera-ai.js"></script>
+<script src="./js/students.js"></script>
+<script src="/js/markaz-global.js"></script>
+</body>
+</html>

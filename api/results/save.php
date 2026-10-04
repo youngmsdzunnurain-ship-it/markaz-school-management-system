@@ -1,0 +1,302 @@
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/config/app.php';
+
+requireResultStaff();
+
+header('Content-Type: application/json; charset=utf-8');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+
+    echo json_encode([
+        'success' => false,
+        'message' => 'POST request required.'
+    ]);
+
+    exit;
+}
+
+$input = json_decode(
+    file_get_contents('php://input'),
+    true
+);
+
+if (!is_array($input)) {
+    http_response_code(400);
+
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid request data.'
+    ]);
+
+    exit;
+}
+
+$classId = filter_var(
+    $input['class_id'] ?? null,
+    FILTER_VALIDATE_INT
+);
+
+$studentId = filter_var(
+    $input['student_id'] ?? null,
+    FILTER_VALIDATE_INT
+);
+
+$subjectId = filter_var(
+    $input['subject_id'] ?? null,
+    FILTER_VALIDATE_INT
+);
+
+if (!$classId || !$studentId || !$subjectId) {
+    http_response_code(422);
+
+    echo json_encode([
+        'success' => false,
+        'message' => 'Class, student and subject are required.'
+    ]);
+
+    exit;
+}
+
+function parseScore(mixed $value): ?float
+{
+    if ($value === null || $value === '') {
+        return null;
+    }
+
+    if (!is_numeric($value)) {
+        return null;
+    }
+
+    return round((float) $value, 2);
+}
+
+$ca1 = parseScore($input['ca1'] ?? null);
+$ca2 = parseScore($input['ca2'] ?? null);
+$exam = parseScore($input['exam'] ?? null);
+
+$teacherRemark = trim((string) ($input['teacher_remark'] ?? ''));
+$resultRemark = trim((string) ($input['result_remark'] ?? ''));
+
+try {
+    $pdo = db();
+
+    $periodStmt = $pdo->query(
+        'SELECT ap.id
+         FROM academic_periods ap
+         INNER JOIN academic_sessions s
+            ON s.id = ap.academic_session_id
+         WHERE s.is_current = 1
+         ORDER BY ap.id DESC
+         LIMIT 1'
+    );
+
+    $period = $periodStmt->fetch();
+
+    if (!$period) {
+        http_response_code(404);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No current academic period is configured.'
+        ]);
+
+        exit;
+    }
+
+    $studentStmt = $pdo->prepare(
+        'SELECT id
+         FROM students
+         WHERE id = ?
+           AND class_id = ?
+           AND is_active = 1
+         LIMIT 1'
+    );
+
+    $studentStmt->execute([
+        $studentId,
+        $classId
+    ]);
+
+    if (!$studentStmt->fetch()) {
+        http_response_code(422);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Student does not belong to this active class.'
+        ]);
+
+        exit;
+    }
+
+    $subjectStmt = $pdo->prepare(
+        'SELECT
+            s.id,
+            s.max_ca1,
+            s.max_ca2,
+            s.max_exam
+         FROM class_subjects cs
+         INNER JOIN subjects s
+            ON s.id = cs.subject_id
+         WHERE cs.class_id = ?
+           AND cs.subject_id = ?
+           AND s.is_active = 1
+         LIMIT 1'
+    );
+
+    $subjectStmt->execute([
+        $classId,
+        $subjectId
+    ]);
+
+    $subject = $subjectStmt->fetch();
+
+    if (!$subject) {
+        http_response_code(422);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Subject is not assigned to this class.'
+        ]);
+
+        exit;
+    }
+
+    $maxCa1 = (float) $subject['max_ca1'];
+    $maxCa2 = (float) $subject['max_ca2'];
+    $maxExam = (float) $subject['max_exam'];
+
+    if ($ca1 !== null && ($ca1 < 0 || $ca1 > $maxCa1)) {
+        http_response_code(422);
+
+        echo json_encode([
+            'success' => false,
+            'message' => "CA1 must be between 0 and {$maxCa1}."
+        ]);
+
+        exit;
+    }
+
+    if ($ca2 !== null && ($ca2 < 0 || $ca2 > $maxCa2)) {
+        http_response_code(422);
+
+        echo json_encode([
+            'success' => false,
+            'message' => "CA2 must be between 0 and {$maxCa2}."
+        ]);
+
+        exit;
+    }
+
+    if ($exam !== null && ($exam < 0 || $exam > $maxExam)) {
+        http_response_code(422);
+
+        echo json_encode([
+            'success' => false,
+            'message' => "Exam must be between 0 and {$maxExam}."
+        ]);
+
+        exit;
+    }
+
+    $checkStmt = $pdo->prepare(
+        'SELECT id
+         FROM results
+         WHERE student_id = ?
+           AND subject_id = ?
+           AND academic_period_id = ?
+         LIMIT 1'
+    );
+
+    $checkStmt->execute([
+        $studentId,
+        $subjectId,
+        $period['id']
+    ]);
+
+    $existing = $checkStmt->fetch();
+
+    if ($existing) {
+        $updateStmt = $pdo->prepare(
+            'UPDATE results
+             SET
+                ca1 = ?,
+                ca2 = ?,
+                exam = ?,
+                teacher_remark = ?,
+                result_remark = ?,
+                updated_at = CURRENT_TIMESTAMP
+             WHERE id = ?'
+        );
+
+        $updateStmt->execute([
+            $ca1 ?? 0,
+            $ca2 ?? 0,
+            $exam ?? 0,
+            $teacherRemark !== '' ? $teacherRemark : null,
+            $resultRemark !== '' ? $resultRemark : null,
+            $existing['id']
+        ]);
+
+        $resultId = (int) $existing['id'];
+    } else {
+        $insertStmt = $pdo->prepare(
+            'INSERT INTO results (
+                student_id,
+                subject_id,
+                academic_period_id,
+                ca1,
+                ca2,
+                exam,
+                teacher_remark,
+                result_remark
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $insertStmt->execute([
+            $studentId,
+            $subjectId,
+            $period['id'],
+            $ca1 ?? 0,
+            $ca2 ?? 0,
+            $exam ?? 0,
+            $teacherRemark !== '' ? $teacherRemark : null,
+            $resultRemark !== '' ? $resultRemark : null
+        ]);
+
+        $resultId = (int) $pdo->lastInsertId();
+    }
+
+    $total = round(
+        ($ca1 ?? 0)
+        + ($ca2 ?? 0)
+        + ($exam ?? 0),
+        2
+    );
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Result saved successfully.',
+        'result' => [
+            'id' => $resultId,
+            'student_id' => $studentId,
+            'subject_id' => $subjectId,
+            'academic_period_id' => (int) $period['id'],
+            'ca1' => $ca1 ?? 0,
+            'ca2' => $ca2 ?? 0,
+            'exam' => $exam ?? 0,
+            'total' => $total
+        ]
+    ]);
+} catch (Throwable $e) {
+    http_response_code(500);
+
+    echo json_encode([
+        'success' => false,
+        'message' => 'Unable to save result.'
+    ]);
+}

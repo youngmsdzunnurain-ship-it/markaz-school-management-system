@@ -22,7 +22,7 @@
         href="./css/classes.css">
 </head>
 
-<body>
+<body data-role-access="admin">
 
 <div class="classes-page">
 
@@ -51,6 +51,35 @@
 
 
     <main>
+
+        <section class="classes-overview" aria-label="Classes overview">
+            <article class="classes-stat-card">
+                <div class="classes-stat-icon">C</div>
+                <div>
+                    <span class="classes-stat-label">Total Classes</span>
+                    <strong id="totalClassesStat">—</strong>
+                    <small>Academic classes</small>
+                </div>
+            </article>
+
+            <article class="classes-stat-card">
+                <div class="classes-stat-icon">A</div>
+                <div>
+                    <span class="classes-stat-label">Active Classes</span>
+                    <strong id="activeClassesStat">—</strong>
+                    <small>Currently active</small>
+                </div>
+            </article>
+
+            <article class="classes-stat-card">
+                <div class="classes-stat-icon">S</div>
+                <div>
+                    <span class="classes-stat-label">Total Students</span>
+                    <strong id="totalStudentsStat">—</strong>
+                    <small>Across all classes</small>
+                </div>
+            </article>
+        </section>
 
         <section class="classes-toolbar">
 
@@ -127,6 +156,10 @@
                             </th>
 
                             <th>
+                                Students
+                            </th>
+
+                            <th>
                                 Status
                             </th>
 
@@ -143,7 +176,7 @@
                         <tr>
 
                             <td
-                                colspan="5"
+                                colspan="6"
                                 class="empty-state">
 
                                 Loading classes...
@@ -213,98 +246,41 @@
 
 
             <div class="class-form-grid">
-
                 <div class="form-field">
-
-                    <label for="className">
-                        Class Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="className"
-                        name="name"
-                        placeholder="e.g. JSS 1"
-                        required>
-
+                    <label for="className">Class Name</label>
+                    <input type="text" id="className" name="name"
+                           placeholder="e.g. JSS 1" required>
                 </div>
 
-
                 <div class="form-field">
-
-                    <label for="classLevelGroup">
-                        Level / Group
-                    </label>
-
-                    <input
-                        type="text"
-                        id="classLevelGroup"
-                        name="level_group"
-                        placeholder="e.g. Junior Secondary">
-
+                    <label for="classLevelGroup">Level / Group</label>
+                    <input type="text" id="classLevelGroup" name="level_group"
+                           placeholder="e.g. Junior Secondary">
                 </div>
 
-
                 <div class="form-field">
-
-                    <label for="classSortOrder">
-                        Display Order
-                    </label>
-
-                    <input
-                        type="number"
-                        id="classSortOrder"
-                        name="sort_order"
-                        value="0"
-                        min="0">
-
+                    <label for="classSortOrder">Display Order</label>
+                    <input type="number" id="classSortOrder" name="sort_order"
+                           value="0" min="0">
                 </div>
 
-
                 <div class="form-field">
-
-                    <label for="classStatus">
-                        Status
-                    </label>
-
-                    <select
-                        id="classStatus"
-                        name="is_active">
-
-                        <option value="1">
-                            Active
-                        </option>
-
-                        <option value="0">
-                            Inactive
-                        </option>
-
+                    <label for="classStatus">Status</label>
+                    <select id="classStatus" name="is_active">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
                     </select>
-
                 </div>
-
             </div>
 
-
             <div class="modal-actions">
-
-                <button
-                    type="button"
-                    class="secondary-button"
-                    id="cancelClassButton">
-
+                <button type="button" class="secondary-button" id="cancelClassButton">
                     Cancel
-
                 </button>
-
-                <button
-                    type="submit"
-                    class="primary-button"
-                    id="saveClassButton">
-
+                <button type="submit" class="primary-button">
                     Save Class
-
                 </button>
+            </div>
 
             </div>
 
@@ -317,6 +293,7 @@
 
 <script src="./js/classes.js"></script>
 
+    <script src="/js/markaz-global.js"></script>
 </body>
 
 </html>

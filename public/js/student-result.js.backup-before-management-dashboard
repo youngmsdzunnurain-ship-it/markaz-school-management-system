@@ -1,0 +1,1291 @@
+const params = new URLSearchParams(window.location.search);
+const studentId = params.get("student_id");
+const classId = params.get("class_id");
+
+const $ = (id) => document.getElementById(id);
+
+let studentData = null;
+let isEditMode = false;
+let originalEditState = null;
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function initials(name) {
+    return String(name || "Student")
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part.charAt(0))
+        .join("")
+        .toUpperCase();
+}
+
+function formatNumber(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toFixed(1) : "—";
+}
+
+function calculateAge(dateOfBirth) {
+    if (!dateOfBirth) return "—";
+
+    const dob = new Date(dateOfBirth);
+    if (Number.isNaN(dob.getTime())) return "—";
+
+    const today = new Date();
+
+    let age =
+        today.getFullYear() -
+        dob.getFullYear();
+
+    const monthDifference =
+        today.getMonth() -
+        dob.getMonth();
+
+    if (
+        monthDifference < 0 ||
+        (
+            monthDifference === 0 &&
+            today.getDate() < dob.getDate()
+        )
+    ) {
+        age--;
+    }
+
+    return age >= 0 ? String(age) : "—";
+}
+
+function getGrade(total) {
+    const score = Number(total);
+
+    if (!Number.isFinite(score)) return "—";
+    if (score >= 80) return "A";
+    if (score >= 70) return "B";
+    if (score >= 50) return "C";
+    if (score >= 30) return "D";
+    return "E";
+}
+
+async function loadStudentResult() {
+    if (!studentId) {
+        throw new Error("Student ID is missing.");
+    }
+
+    const response = await fetch(
+        `./api/results/student.php?student_id=${encodeURIComponent(studentId)}`,
+        {
+            credentials: "same-origin",
+            cache: "no-store"
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message || "Unable to load student result."
+        );
+    }
+
+    studentData = data;
+
+    renderStudentResult(data);
+
+    await loadBehaviouralReport();
+
+    setEditMode(false);
+    captureOriginalEditState();
+}
+function renderStudentResult(data) {
+    const student = data.student || {};
+    const period = data.academic_period || {};
+    const subjects = data.subjects || [];
+
+    $("studentName").textContent =
+        [student.first_name, student.middle_name, student.last_name]
+            .filter(Boolean)
+            .join(" ") || "—";
+
+    if ($("studentAdmissionNumber")) {
+        $("studentAdmissionNumber").textContent =
+            student.admission_number || "—";
+    }
+
+    $("studentClass").textContent =
+        student.class_name || "—";
+
+    $("studentArabicClass").textContent =
+        student.arabic_class || "—";
+
+    $("studentGender").textContent =
+        student.gender || "—";
+
+    if ($("studentDateOfBirth")) {
+        $("studentDateOfBirth").textContent =
+            student.date_of_birth || "—";
+    }
+
+    if ($("studentAge")) {
+        $("studentAge").textContent =
+            calculateAge(student.date_of_birth);
+    }
+
+    $("studentMemorizationPortion") &&
+        ($("studentMemorizationPortion").textContent =
+            student.memorization_portion || "—");
+
+    $("studentMemorizationInput") &&
+        ($("studentMemorizationInput").value =
+            student.memorization_portion_override || "");
+
+    $("studentStatus").textContent =
+        Number(student.is_active) === 1 ? "Active" : "Inactive";
+
+    $("studentPhotoInitials").textContent =
+        initials($("studentName").textContent);
+
+    $("sessionName").textContent =
+        period.session_name || "—";
+
+    $("termName").textContent =
+        period.term_name || "—";
+
+    $("examinationDate").textContent =
+        period.examination_date || "—";
+
+    renderResults(subjects, data.results || {});
+
+    const performance = data.performance || {};
+
+    $("studentAverage").textContent =
+        performance.student_average !== null &&
+        performance.student_average !== undefined
+            ? formatNumber(performance.student_average)
+            : "—";
+
+    $("highestClassAverage").textContent =
+        performance.highest_class_average !== null &&
+        performance.highest_class_average !== undefined
+            ? formatNumber(performance.highest_class_average)
+            : "—";
+
+    $("lowestClassAverage").textContent =
+        performance.lowest_class_average !== null &&
+        performance.lowest_class_average !== undefined
+            ? formatNumber(performance.lowest_class_average)
+            : "—";
+}
+
+
+function getBehaviourAssessment(average) {
+    if (!Number.isFinite(average)) return "Awaiting assessment";
+    if (average >= 4.5) return "Excellent";
+    if (average >= 3.5) return "Very Good";
+    if (average >= 2.5) return "Good";
+    if (average >= 1.5) return "Fair";
+    return "Poor";
+}
+
+function calculateBehaviourPerformance() {
+    const ratings = Array.from(
+        document.querySelectorAll(".behaviour-rating")
+    )
+        .map(select => Number(select.value))
+        .filter(value => Number.isFinite(value) && value >= 1 && value <= 5);
+
+    const average = ratings.length
+        ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length
+        : null;
+
+    const averageElement = $("behaviourAverage");
+    const assessmentElement = $("behaviourAssessment");
+    const labelElement = $("behaviourSummaryLabel");
+
+    if (!averageElement || !assessmentElement || !labelElement) {
+        return;
+    }
+
+    if (average === null) {
+        averageElement.textContent = "— / 5";
+        assessmentElement.textContent = "Awaiting assessment";
+        labelElement.textContent = "—";
+        return;
+    }
+
+    const roundedAverage = average.toFixed(1);
+    const assessment = getBehaviourAssessment(average);
+
+    averageElement.textContent = `${roundedAverage} / 5`;
+    assessmentElement.textContent = assessment;
+    labelElement.textContent = assessment;
+}
+
+function setupBehaviourCalculation() {
+    document.querySelectorAll(".behaviour-rating").forEach(select => {
+        select.addEventListener("change", calculateBehaviourPerformance);
+    });
+
+    calculateBehaviourPerformance();
+}
+
+function getGradeRemark(score) {
+    if (!Number.isFinite(score)) {
+        return {
+            grade: "—",
+            remark: "—"
+        };
+    }
+
+    if (score >= 80) {
+        return {
+            grade: "A",
+            remark: "Awesome"
+        };
+    }
+
+    if (score >= 70) {
+        return {
+            grade: "B",
+            remark: "Phenomenal"
+        };
+    }
+
+    if (score >= 50) {
+        return {
+            grade: "C",
+            remark: "Impressive"
+        };
+    }
+
+    if (score >= 30) {
+        return {
+            grade: "D",
+            remark: "Promising"
+        };
+    }
+
+    return {
+        grade: "E",
+        remark: "Poor"
+    };
+}
+
+function getEditedSubjectValues(subjectId) {
+    const values = {};
+
+    document
+        .querySelectorAll(
+            `.result-score-input[data-subject-id="${subjectId}"]`
+        )
+        .forEach(input => {
+            values[input.dataset.scoreField] =
+                input.value === ""
+                    ? null
+                    : Number(input.value);
+        });
+
+    return values;
+}
+
+function updateEditedResultRow(row) {
+    if (!row) return;
+
+    const subjectId =
+        row.querySelector(".result-score-input")
+            ?.dataset.subjectId;
+
+    if (!subjectId) return;
+
+    const subject =
+        (studentData?.subjects || [])
+            .find(item => String(item.id) === String(subjectId));
+
+    if (!subject) return;
+
+    const values =
+        getEditedSubjectValues(subjectId);
+
+    const ca1 =
+        Number.isFinite(values.ca1)
+            ? values.ca1
+            : 0;
+
+    const ca2 =
+        Number.isFinite(values.ca2)
+            ? values.ca2
+            : 0;
+
+    const exam =
+        Number.isFinite(values.exam)
+            ? values.exam
+            : 0;
+
+    const total = ca1 + ca2 + exam;
+
+    const hasAnyValue =
+        values.ca1 !== null ||
+        values.ca2 !== null ||
+        values.exam !== null;
+
+    const result =
+        getGradeRemark(total);
+
+    const totalCell =
+        row.querySelector(".result-total");
+
+    const gradeCell =
+        row.querySelector(".result-grade");
+
+    const remarkCell =
+        row.querySelector(".result-remark");
+
+    if (totalCell) {
+        totalCell.textContent =
+            hasAnyValue
+                ? formatNumber(total)
+                : "—";
+    }
+
+    if (gradeCell) {
+        gradeCell.textContent =
+            hasAnyValue
+                ? result.grade
+                : "—";
+    }
+
+    if (remarkCell) {
+        remarkCell.textContent =
+            hasAnyValue
+                ? result.remark
+                : "—";
+    }
+}
+
+function refreshEditedResultSummary() {
+    if (!studentData) return;
+
+    const subjects =
+        studentData.subjects || [];
+
+    let totalScore = 0;
+    let completed = 0;
+
+    subjects.forEach(subject => {
+        const values =
+            getEditedSubjectValues(subject.id);
+
+        const hasAnyValue =
+            values.ca1 !== null ||
+            values.ca2 !== null ||
+            values.exam !== null;
+
+        if (!hasAnyValue) return;
+
+        const ca1 =
+            Number.isFinite(values.ca1)
+                ? values.ca1
+                : 0;
+
+        const ca2 =
+            Number.isFinite(values.ca2)
+                ? values.ca2
+                : 0;
+
+        const exam =
+            Number.isFinite(values.exam)
+                ? values.exam
+                : 0;
+
+        totalScore += ca1 + ca2 + exam;
+        completed++;
+    });
+
+    const average =
+        completed
+            ? totalScore / completed
+            : null;
+
+    if ($("totalSubjects")) {
+        $("totalSubjects").textContent =
+            subjects.length;
+    }
+
+    if ($("totalScore")) {
+        $("totalScore").textContent =
+            completed
+                ? formatNumber(totalScore)
+                : "—";
+    }
+
+    if ($("summaryAverage")) {
+        $("summaryAverage").textContent =
+            average !== null
+                ? formatNumber(average)
+                : "—";
+    }
+
+    if ($("studentAverage")) {
+        $("studentAverage").textContent =
+            average !== null
+                ? formatNumber(average)
+                : "—";
+    }
+
+    if ($("overallGrade")) {
+        $("overallGrade").textContent =
+            average !== null
+                ? getGradeRemark(average).grade
+                : "—";
+    }
+
+    if ($("overallStatus")) {
+        $("overallStatus").textContent =
+            completed
+                ? "Current performance"
+                : "Awaiting results";
+    }
+
+    if ($("summaryStatus")) {
+        $("summaryStatus").textContent =
+            completed
+                ? "Available"
+                : "Awaiting results";
+    }
+}
+
+function renderResults(subjects, results) {
+    const body = $("studentResultsBody");
+
+    if (!body) return;
+
+    if (!subjects.length) {
+        body.innerHTML =
+            '<tr><td colspan="8">No subjects assigned to this class.</td></tr>';
+        return;
+    }
+
+    let totalScore = 0;
+    let completed = 0;
+
+    body.innerHTML = subjects.map((subject, index) => {
+        const result =
+            results[String(subject.id)] || null;
+
+        const hasResult =
+            Boolean(result);
+
+        const ca1 =
+            hasResult
+                ? Number(result.ca1)
+                : 0;
+
+        const ca2 =
+            hasResult
+                ? Number(result.ca2)
+                : 0;
+
+        const exam =
+            hasResult
+                ? Number(result.exam)
+                : 0;
+
+        const total =
+            hasResult
+                ? ca1 + ca2 + exam
+                : null;
+
+        if (hasResult) {
+            completed++;
+            totalScore += total;
+        }
+
+        const gradeInfo =
+            hasResult
+                ? getGradeRemark(total)
+                : {
+                    grade: "—",
+                    remark: "—"
+                };
+
+        const ca1Cell = isEditMode
+            ? `<input
+                    type="number"
+                    class="result-score-input"
+                    data-subject-id="${subject.id}"
+                    data-score-field="ca1"
+                    min="0"
+                    max="${Number(subject.max_ca1 ?? 20)}"
+                    step="0.01"
+                    value="${hasResult ? ca1 : ""}"
+                    aria-label="${escapeHtml(subject.name)} 1st CA"
+               >`
+            : (hasResult
+                ? formatNumber(ca1)
+                : "—");
+
+        const ca2Cell = isEditMode
+            ? `<input
+                    type="number"
+                    class="result-score-input"
+                    data-subject-id="${subject.id}"
+                    data-score-field="ca2"
+                    min="0"
+                    max="${Number(subject.max_ca2 ?? 20)}"
+                    step="0.01"
+                    value="${hasResult ? ca2 : ""}"
+                    aria-label="${escapeHtml(subject.name)} 2nd CA"
+               >`
+            : (hasResult
+                ? formatNumber(ca2)
+                : "—");
+
+        const examCell = isEditMode
+            ? `<input
+                    type="number"
+                    class="result-score-input"
+                    data-subject-id="${subject.id}"
+                    data-score-field="exam"
+                    min="0"
+                    max="${Number(subject.max_exam ?? 60)}"
+                    step="0.01"
+                    value="${hasResult ? exam : ""}"
+                    aria-label="${escapeHtml(subject.name)} Exam"
+               >`
+            : (hasResult
+                ? formatNumber(exam)
+                : "—");
+
+        return `
+            <tr>
+                <td>${index + 1}</td>
+
+                <td>
+                    ${escapeHtml(subject.name)}
+                </td>
+
+                <td>${ca1Cell}</td>
+
+                <td>${ca2Cell}</td>
+
+                <td>${examCell}</td>
+
+                <td class="result-total">
+                    ${hasResult
+                        ? formatNumber(total)
+                        : "—"}
+                </td>
+
+                <td>
+                    <span class="result-grade">
+                        ${gradeInfo.grade}
+                    </span>
+                </td>
+
+                <td class="result-remark">
+                    ${escapeHtml(gradeInfo.remark)}
+                </td>
+            </tr>
+        `;
+    }).join("");
+
+    const average =
+        completed
+            ? totalScore / completed
+            : 0;
+
+    if ($("totalSubjects")) {
+        $("totalSubjects").textContent =
+            subjects.length;
+    }
+
+    if ($("totalScore")) {
+        $("totalScore").textContent =
+            completed
+                ? formatNumber(totalScore)
+                : "—";
+    }
+
+    const performance =
+        studentData?.performance || {};
+
+    const displayedAverage =
+        isEditMode
+            ? average
+            : performance.student_average;
+
+    if ($("summaryAverage")) {
+        $("summaryAverage").textContent =
+            displayedAverage !== null &&
+            displayedAverage !== undefined
+                ? formatNumber(displayedAverage)
+                : "—";
+    }
+
+    if ($("studentAverage")) {
+        $("studentAverage").textContent =
+            displayedAverage !== null &&
+            displayedAverage !== undefined
+                ? formatNumber(displayedAverage)
+                : "—";
+    }
+
+    if ($("overallGrade")) {
+        $("overallGrade").textContent =
+            displayedAverage !== null &&
+            displayedAverage !== undefined
+                ? getGradeRemark(displayedAverage).grade
+                : "—";
+    }
+
+    if ($("overallStatus")) {
+        $("overallStatus").textContent =
+            completed
+                ? "Current performance"
+                : "Awaiting results";
+    }
+
+    if ($("summaryStatus")) {
+        $("summaryStatus").textContent =
+            completed
+                ? "Available"
+                : "Awaiting results";
+    }
+}
+
+
+function validateScoreInput(input) {
+    if (!input) return true;
+
+    const value =
+        input.value === ""
+            ? null
+            : Number(input.value);
+
+    const max =
+        Number(input.max);
+
+    const invalid =
+        value !== null &&
+        (
+            !Number.isFinite(value) ||
+            value < 0 ||
+            value > max
+        );
+
+    input.classList.toggle(
+        "score-invalid",
+        invalid
+    );
+
+    input.classList.toggle(
+        "score-valid",
+        !invalid && value !== null
+    );
+
+    return !invalid;
+}
+
+function validateAllScoreInputs() {
+    let valid = true;
+
+    document
+        .querySelectorAll(".result-score-input")
+        .forEach(input => {
+            if (!validateScoreInput(input)) {
+                valid = false;
+            }
+        });
+
+    return valid;
+}
+
+document.addEventListener("input", event => {
+    if (!isEditMode) return;
+
+    const input =
+        event.target.closest(".result-score-input");
+
+    if (!input) return;
+
+    validateScoreInput(input);
+
+    const row =
+        input.closest("tr");
+
+    updateEditedResultRow(row);
+    refreshEditedResultSummary();
+});
+
+$("backToClassButton")?.addEventListener("click", () => {
+    if (classId) {
+        window.location.href =
+            `./class.html?id=${encodeURIComponent(classId)}`;
+    } else {
+        window.history.back();
+    }
+});
+
+$("printStudentResultButton")?.addEventListener("click", () => {
+    window.print();
+});
+
+$("downloadStudentPdfButton")?.addEventListener("click", () => {
+    window.print();
+});
+
+setupBehaviourCalculation();
+
+loadStudentResult().catch(error => {
+    console.error(error);
+
+    $("studentResultsBody").innerHTML = `
+        <tr>
+            <td colspan="8">${escapeHtml(error.message)}</td>
+        </tr>
+    `;
+});
+
+const editScoresButton = $("editScoresButton");
+const saveScoresButton = $("saveScoresButton");
+const cancelScoresButton = $("cancelScoresButton");
+const memorizationInput = $("studentMemorizationInput");
+const memorizationDisplay = $("studentMemorizationPortion");
+
+const behaviourFieldIds = [
+    "behaviourAttendance",
+    "behaviourNeatness",
+    "behaviourContentment",
+    "behaviourObedience",
+    "behaviourResponsiveness",
+    "behaviourTolerance",
+    "behaviourAttentiveness",
+    "behaviourTruthfulness",
+    "behaviourCalmness"
+];
+
+function getBehaviourValues() {
+    const values = {};
+
+    behaviourFieldIds.forEach(id => {
+        const field = $(id);
+
+        if (field) {
+            values[id] = field.value;
+        }
+    });
+
+    return values;
+}
+
+function setBehaviourEditing(editing) {
+    document
+        .querySelectorAll(".behaviour-rating")
+        .forEach(select => {
+            select.disabled = !editing;
+        });
+}
+
+function getCurrentScoreValues() {
+    const values = [];
+
+    document
+        .querySelectorAll(".result-score-input")
+        .forEach(input => {
+            values.push({
+                subject_id: Number(input.dataset.subjectId),
+                field: input.dataset.scoreField,
+                value: input.value
+            });
+        });
+
+    return values;
+}
+
+function captureOriginalEditState() {
+    originalEditState = {
+        memorization: memorizationInput
+            ? memorizationInput.value
+            : "",
+
+        behaviour: getBehaviourValues(),
+
+        results: studentData
+            ? JSON.parse(
+                JSON.stringify(studentData.results || {})
+            )
+            : {}
+    };
+}
+
+function restoreOriginalEditState() {
+    if (!originalEditState) return;
+
+    if (memorizationInput) {
+        memorizationInput.value =
+            originalEditState.memorization;
+    }
+
+    if (memorizationDisplay) {
+        memorizationDisplay.textContent =
+            originalEditState.memorization || "—";
+    }
+
+    Object.entries(originalEditState.behaviour).forEach(
+        ([id, value]) => {
+            const field = $(id);
+
+            if (field) {
+                field.value = value;
+            }
+        }
+    );
+
+    if (studentData) {
+        studentData.results =
+            JSON.parse(
+                JSON.stringify(originalEditState.results)
+            );
+
+        renderResults(
+            studentData.subjects || [],
+            studentData.results || {}
+        );
+    }
+
+    calculateBehaviourPerformance();
+}
+
+function showSavedMessage() {
+    const toolbar =
+        $("scoreEditToolbar");
+
+    if (!toolbar) return;
+
+    const existing =
+        toolbar.querySelector(".global-saved-message");
+
+    if (existing) {
+        existing.remove();
+    }
+
+    const message =
+        document.createElement("span");
+
+    message.className =
+        "global-saved-message";
+
+    message.textContent = "✓ Saved";
+
+    toolbar
+        .querySelector(".score-edit-actions")
+        ?.appendChild(message);
+
+    setTimeout(() => {
+        message.remove();
+    }, 3000);
+}
+
+function setEditMode(editing) {
+    isEditMode = editing;
+
+    setBehaviourEditing(editing);
+
+    if (memorizationInput) {
+        memorizationInput.hidden = !editing;
+    }
+
+    if (memorizationDisplay) {
+        memorizationDisplay.hidden = editing;
+    }
+
+    if (editScoresButton) {
+        editScoresButton.textContent =
+            editing ? "Save" : "Edit";
+
+        editScoresButton.disabled = false;
+
+        editScoresButton.classList.toggle(
+            "primary-action",
+            editing
+        );
+
+        editScoresButton.classList.toggle(
+            "secondary-action",
+            !editing
+        );
+    }
+
+    if (saveScoresButton) {
+        saveScoresButton.hidden = true;
+    }
+
+    if (cancelScoresButton) {
+        cancelScoresButton.hidden = !editing;
+    }
+
+    if (studentData) {
+        renderResults(
+            studentData.subjects || [],
+            studentData.results || {}
+        );
+    }
+}
+
+async function loadBehaviouralReport() {
+    if (!studentId) return;
+
+    const response = await fetch(
+        `./api/results/behavioural.php?student_id=${encodeURIComponent(studentId)}`,
+        {
+            credentials: "same-origin",
+            cache: "no-store"
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message ||
+            "Unable to load behavioural report."
+        );
+    }
+
+    const behaviour = data.behaviour || {};
+
+    const columnMap = {
+        attendance: "behaviourAttendance",
+        neatness: "behaviourNeatness",
+        contentment: "behaviourContentment",
+        obedience: "behaviourObedience",
+        responsiveness: "behaviourResponsiveness",
+        tolerance: "behaviourTolerance",
+        attentiveness: "behaviourAttentiveness",
+        truthfulness: "behaviourTruthfulness",
+        calmness: "behaviourCalmness"
+    };
+
+    Object.entries(columnMap).forEach(
+        ([field, id]) => {
+            const element = $(id);
+
+            if (element) {
+                element.value =
+                    behaviour[field] === null ||
+                    behaviour[field] === undefined
+                        ? ""
+                        : String(behaviour[field]);
+            }
+        }
+    );
+
+    calculateBehaviourPerformance();
+}
+
+async function saveAllStudentChanges() {
+    if (!studentData || !studentId || !classId) {
+        throw new Error(
+            "Student result information is incomplete."
+        );
+    }
+
+    const scoreInputs =
+        getCurrentScoreValues();
+
+    const groupedScores = {};
+
+    scoreInputs.forEach(item => {
+        if (!groupedScores[item.subject_id]) {
+            groupedScores[item.subject_id] = {};
+        }
+
+        groupedScores[item.subject_id][item.field] =
+            item.value;
+    });
+
+    const subjects =
+        studentData.subjects || [];
+
+    for (const subject of subjects) {
+        const values =
+            groupedScores[subject.id] || {};
+
+        const ca1 =
+            values.ca1 === "" ||
+            values.ca1 === undefined
+                ? null
+                : Number(values.ca1);
+
+        const ca2 =
+            values.ca2 === "" ||
+            values.ca2 === undefined
+                ? null
+                : Number(values.ca2);
+
+        const exam =
+            values.exam === "" ||
+            values.exam === undefined
+                ? null
+                : Number(values.exam);
+
+        const maxCa1 =
+            Number(subject.max_ca1 ?? 20);
+
+        const maxCa2 =
+            Number(subject.max_ca2 ?? 20);
+
+        const maxExam =
+            Number(subject.max_exam ?? 60);
+
+        if (
+            ca1 !== null &&
+            (!Number.isFinite(ca1) ||
+             ca1 < 0 ||
+             ca1 > maxCa1)
+        ) {
+            throw new Error(
+                `${subject.name}: 1st CA must be between 0 and ${maxCa1}.`
+            );
+        }
+
+        if (
+            ca2 !== null &&
+            (!Number.isFinite(ca2) ||
+             ca2 < 0 ||
+             ca2 > maxCa2)
+        ) {
+            throw new Error(
+                `${subject.name}: 2nd CA must be between 0 and ${maxCa2}.`
+            );
+        }
+
+        if (
+            exam !== null &&
+            (!Number.isFinite(exam) ||
+             exam < 0 ||
+             exam > maxExam)
+        ) {
+            throw new Error(
+                `${subject.name}: Exam must be between 0 and ${maxExam}.`
+            );
+        }
+
+        const response = await fetch(
+            "./api/results/save.php",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    class_id: Number(classId),
+                    student_id: Number(studentId),
+                    subject_id: Number(subject.id),
+                    ca1,
+                    ca2,
+                    exam
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                `Unable to save ${subject.name}.`
+            );
+        }
+    }
+
+    const portion =
+        memorizationInput
+            ? memorizationInput.value.trim()
+            : "";
+
+    const memorizationResponse =
+        await fetch(
+            "./api/results/student-profile-save.php",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                body: (() => {
+                    const formData =
+                        new FormData();
+
+                    formData.append(
+                        "student_id",
+                        studentId
+                    );
+
+                    formData.append(
+                        "memorization_portion",
+                        portion
+                    );
+
+                    return formData;
+                })()
+            }
+        );
+
+    const memorizationData =
+        await memorizationResponse.json();
+
+    if (
+        !memorizationResponse.ok ||
+        !memorizationData.success
+    ) {
+        throw new Error(
+            memorizationData.message ||
+            "Unable to save memorization portion."
+        );
+    }
+
+    const behaviourPayload = {
+        student_id: Number(studentId)
+    };
+
+    behaviourFieldIds.forEach(id => {
+        const field = $(id);
+
+        const apiName =
+            id.replace(
+                "behaviour",
+                ""
+            ).replace(
+                /^[A-Z]/,
+                letter => letter.toLowerCase()
+            );
+
+        behaviourPayload[apiName] =
+            field && field.value !== ""
+                ? Number(field.value)
+                : null;
+    });
+
+    const behaviourResponse =
+        await fetch(
+            "./api/results/behavioural.php",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body:
+                    JSON.stringify(
+                        behaviourPayload
+                    )
+            }
+        );
+
+    const behaviourData =
+        await behaviourResponse.json();
+
+    if (
+        !behaviourResponse.ok ||
+        !behaviourData.success
+    ) {
+        throw new Error(
+            behaviourData.message ||
+            "Unable to save behavioural report."
+        );
+    }
+
+    await loadStudentResult();
+}
+
+editScoresButton?.addEventListener(
+    "click",
+    async () => {
+        if (!isEditMode) {
+            captureOriginalEditState();
+            setEditMode(true);
+            return;
+        }
+
+        editScoresButton.disabled = true;
+        editScoresButton.textContent = "Saving...";
+
+        try {
+            await saveAllStudentChanges();
+
+            setEditMode(false);
+            captureOriginalEditState();
+            showSavedMessage();
+
+        } catch (error) {
+            editScoresButton.disabled = false;
+            editScoresButton.textContent = "Save";
+
+            const existing =
+                document.querySelector(
+                    ".global-save-error"
+                );
+
+            if (existing) {
+                existing.remove();
+            }
+
+            const errorMessage =
+                document.createElement("span");
+
+            errorMessage.className =
+                "global-save-error";
+
+            errorMessage.textContent =
+                error.message ||
+                "Unable to save changes.";
+
+            $("scoreEditToolbar")
+                ?.querySelector(
+                    ".score-edit-actions"
+                )
+                ?.appendChild(errorMessage);
+        }
+    }
+);
+
+cancelScoresButton?.addEventListener(
+    "click",
+    () => {
+        restoreOriginalEditState();
+        setEditMode(false);
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    event => {
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "s" &&
+            isEditMode
+        ) {
+            event.preventDefault();
+        }
+    }
+);
+
+setupBehaviourCalculation();
+
+loadStudentResult().catch(error => {
+    console.error(error);
+
+    $("studentResultsBody").innerHTML = `
+        <tr>
+            <td colspan="8">
+                ${escapeHtml(error.message)}
+            </td>
+        </tr>
+    `;
+});

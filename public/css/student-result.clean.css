@@ -1,0 +1,1056 @@
+:root {
+    --green: #166534;
+    --green-dark: #14532d;
+    --green-light: #f0fdf4;
+    --gold: #c99a2e;
+    --gold-light: #fff8e7;
+    --text: #17211b;
+    --muted: #64748b;
+    --border: #dfe7e2;
+    --page: #f4f7f5;
+    --white: #ffffff;
+    --danger: #b91c1c;
+    --success: #15803d;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    background: var(--page);
+    color: var(--text);
+    font-family: Inter, Manrope, Arial, sans-serif;
+    line-height: 1.45;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+}
+
+.student-result-page {
+    width: 100%;
+    padding: 18px;
+}
+
+.report-card {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.result-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+}
+
+.header-navigation,
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-button,
+.primary-action,
+.secondary-action {
+    min-height: 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    background: var(--white);
+    color: var(--text);
+}
+
+.primary-action {
+    border-color: var(--green);
+    background: var(--green);
+    color: var(--white);
+}
+
+.primary-action:hover {
+    background: var(--green-dark);
+}
+
+.secondary-action:hover,
+.back-button:hover {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.header-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.school-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.school-brand {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.school-logo {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 96px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    background: var(--white);
+}
+
+.school-logo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.school-heading {
+    min-width: 0;
+}
+
+.school-arabic-name,
+.school-arabic-address,
+.school-kicker,
+.school-address {
+    margin: 0;
+}
+
+.school-arabic-name {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.school-arabic-address {
+    margin-top: 1px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.school-kicker {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--green);
+}
+
+.school-address {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.school-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px 12px;
+    margin-top: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.contact-item i {
+    color: var(--green);
+    font-size: 12px;
+}
+
+.contact-separator {
+    color: var(--border);
+}
+
+.report-title {
+    flex: 0 0 auto;
+    min-width: 170px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--gold);
+    background: var(--green-light);
+    border-radius: 8px;
+    text-align: right;
+}
+
+.report-title span,
+.report-title strong {
+    display: block;
+}
+
+.report-title span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    color: var(--muted);
+}
+
+.report-title strong {
+    margin-top: 2px;
+    font-size: 16px;
+    color: var(--green-dark);
+}
+
+.session-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 16px;
+    padding: 8px 16px;
+    background: var(--green);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.report-section {
+    padding: 16px 20px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    color: var(--green-dark);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.section-eyebrow {
+    margin: 0 0 3px;
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+    .student-result-page {
+        padding: 8px;
+    }
+
+    .school-header {
+        padding: 14px;
+        flex-direction: column;
+    }
+
+    .school-brand {
+        align-items: flex-start;
+    }
+
+    .school-logo {
+        width: 72px;
+        height: 72px;
+        flex-basis: 72px;
+    }
+
+    .school-arabic-name {
+        font-size: 17px;
+    }
+
+    .school-kicker {
+        font-size: 10px;
+    }
+
+    .school-address {
+        font-size: 10px;
+    }
+
+    .report-title {
+        width: 100%;
+        text-align: left;
+        border-left: 0;
+        border-top: 3px solid var(--gold);
+    }
+
+    .report-section {
+        padding: 13px 12px;
+    }
+}
+.student-information {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.student-profile-grid {
+    display: grid;
+    grid-template-columns: 122px minmax(0, 1fr);
+    gap: 15px;
+    align-items: start;
+}
+
+.student-photo {
+    width: 122px;
+    height: 148px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--green-light);
+}
+
+.student-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.student-photo-initials,
+#studentPhotoInitials {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.student-details {
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+        minmax(150px, 1.45fr)
+        minmax(75px, .65fr)
+        minmax(75px, .65fr)
+        minmax(150px, 1fr);
+    gap: 8px 9px;
+}
+
+.detail-item {
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #fbfdfb;
+}
+
+.detail-item .header-label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.detail-item > span:not(.header-label),
+.detail-item > strong,
+.detail-item > div {
+    min-width: 0;
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.student-name-item {
+    grid-column: auto;
+}
+
+.memorization-detail-item {
+    grid-column: 2 / 5;
+}
+
+.memorization-value-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.student-edit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 9px;
+}
+
+.student-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--green-light);
+    color: var(--success);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+@media (max-width: 900px) {
+    .student-details {
+        grid-template-columns: minmax(0, 1.5fr) minmax(75px, .7fr) minmax(75px, .7fr);
+    }
+
+    .memorization-detail-item {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 620px) {
+    .student-profile-grid {
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .student-photo {
+        width: 82px;
+        height: 105px;
+    }
+
+    .student-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .student-name-item {
+        grid-column: 1 / -1;
+    }
+
+    .memorization-detail-item {
+        grid-column: 1 / -1;
+    }
+
+    .detail-item {
+        padding: 7px 8px;
+    }
+
+    .detail-item .header-label {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 430px) {
+    .student-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-photo {
+        width: 88px;
+        height: 110px;
+    }
+}
+.performance-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 10px;
+}
+
+.performance-card {
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+
+.performance-card.highlight {
+    border-color: #b7d8c0;
+    background: var(--green-light);
+}
+
+.performance-card .header-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.performance-card strong {
+    display: block;
+    color: var(--green-dark);
+    font-size: 20px;
+    line-height: 1.15;
+}
+
+.performance-card small {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 10px;
+}
+
+.summary-box {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: #fbfdfb;
+}
+
+.summary-box .header-label {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.summary-box strong {
+    display: block;
+    color: var(--green-dark);
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+#overallStatus,
+#summaryStatus {
+    color: var(--green);
+}
+
+@media (max-width: 850px) {
+    .performance-overview,
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .performance-overview,
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .performance-card,
+    .summary-box {
+        padding: 9px 10px;
+    }
+
+    .performance-card strong {
+        font-size: 17px;
+    }
+
+    .summary-box strong {
+        font-size: 16px;
+    }
+}
+.results-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+
+.student-results-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.student-results-table th {
+    padding: 9px 8px;
+    background: var(--green);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, .18);
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.student-results-table th:first-child {
+    text-align: left;
+}
+
+.student-results-table td {
+    padding: 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.student-results-table td:first-child {
+    text-align: left;
+    font-weight: 700;
+}
+
+.student-results-table tbody tr:nth-child(even) td {
+    background: #fafcfb;
+}
+
+.student-results-table tbody tr:hover td {
+    background: var(--green-light);
+}
+
+.student-results-table input,
+.student-results-table select {
+    width: 100%;
+    min-width: 58px;
+    min-height: 32px;
+    padding: 5px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    text-align: center;
+}
+
+.student-results-table input:focus,
+.student-results-table select:focus {
+    outline: 2px solid rgba(22, 101, 52, .18);
+    border-color: var(--green);
+}
+
+.student-results-table .grade,
+.student-results-table .remark {
+    font-weight: 800;
+}
+
+.student-results-table tfoot td {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 800;
+}
+
+#totalScore,
+#overallGrade,
+#totalSubjects {
+    font-weight: 800;
+}
+
+@media (max-width: 600px) {
+    .results-table-container {
+        border-radius: 9px;
+    }
+
+    .student-results-table {
+        min-width: 680px;
+        font-size: 11px;
+    }
+
+    .student-results-table th {
+        padding: 8px 6px;
+    }
+
+    .student-results-table td {
+        padding: 7px 6px;
+    }
+}
+.behaviour-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 10px;
+}
+
+.behaviour-item {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+
+.behaviour-item > label,
+.behaviour-item .header-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.behaviour-rating {
+    width: 100%;
+    min-height: 34px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+}
+
+.behaviour-rating:focus {
+    outline: 2px solid rgba(22, 101, 52, .18);
+    border-color: var(--green);
+}
+
+.behaviour-summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 11px 13px;
+    border: 1px solid #b7d8c0;
+    border-radius: var(--radius-md);
+    background: var(--green-light);
+}
+
+.behaviour-summary-main {
+    min-width: 0;
+}
+
+.behaviour-summary-info {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+#behaviourSummaryLabel {
+    color: var(--green-dark);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+#behaviourAverage {
+    color: var(--green);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.affective-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+@media (max-width: 800px) {
+    .behaviour-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .behaviour-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .behaviour-summary-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+.remarks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.remark-card {
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+
+.remark-card.director-remark {
+    border-left: 3px solid var(--gold);
+    background: #fffdf7;
+}
+
+.remark-card .header-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.remark-card textarea,
+.remark-card input {
+    width: 100%;
+    min-height: 70px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+    resize: vertical;
+}
+
+.remark-card textarea:focus,
+.remark-card input:focus {
+    outline: 2px solid rgba(22, 101, 52, .18);
+    border-color: var(--green);
+}
+
+.signature-line {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.signature-space {
+    min-height: 44px;
+    border-bottom: 1px solid var(--text);
+}
+
+.report-footer,
+.report-card-footer {
+    padding: 10px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    text-align: center;
+}
+
+.report-card-footer {
+    background: #fafcfb;
+}
+
+@media (max-width: 700px) {
+    .remarks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .signature-line {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 14px;
+    }
+
+    .signature-space {
+        min-height: 38px;
+    }
+
+    .report-footer,
+    .report-card-footer {
+        padding: 9px 12px;
+    }
+}
+[data-theme="dark"] {
+    --text: #e5e7eb;
+    --muted: #a7b0ba;
+    --border: #334155;
+    --page: #0f172a;
+    --white: #111827;
+    --green-light: #123522;
+    --gold-light: #2b2411;
+}
+
+[data-theme="dark"] .report-card,
+[data-theme="dark"] .result-page-header,
+[data-theme="dark"] .school-header,
+[data-theme="dark"] .performance-card,
+[data-theme="dark"] .summary-box,
+[data-theme="dark"] .detail-item,
+[data-theme="dark"] .behaviour-item,
+[data-theme="dark"] .remark-card,
+[data-theme="dark"] .results-table-container,
+[data-theme="dark"] .student-results-table td,
+[data-theme="dark"] .student-results-table input,
+[data-theme="dark"] .student-results-table select,
+[data-theme="dark"] .behaviour-rating,
+[data-theme="dark"] .remark-card textarea,
+[data-theme="dark"] .remark-card input,
+[data-theme="dark"] .back-button,
+[data-theme="dark"] .secondary-action {
+    background: var(--white);
+    color: var(--text);
+}
+
+[data-theme="dark"] .student-results-table tbody tr:nth-child(even) td {
+    background: #16202c;
+}
+
+[data-theme="dark"] .report-card-footer {
+    background: #0f172a;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    html,
+    body {
+        background: #fff;
+    }
+
+    .student-result-page {
+        padding: 0;
+    }
+
+    .report-card {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .result-page-header,
+    .header-navigation,
+    .header-actions,
+    .student-edit-actions {
+        display: none !important;
+    }
+
+    .school-header {
+        padding: 8px 0 7px;
+    }
+
+    .school-logo {
+        width: 78px;
+        height: 78px;
+        flex-basis: 78px;
+    }
+
+    .school-arabic-name {
+        font-size: 17px;
+    }
+
+    .report-title {
+        min-width: 145px;
+    }
+
+    .session-bar {
+        padding: 5px 8px;
+    }
+
+    .report-section {
+        padding: 9px 0;
+        break-inside: avoid;
+    }
+
+    .section-heading {
+        margin-bottom: 7px;
+        font-size: 13px;
+    }
+
+    .student-profile-grid {
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 9px;
+    }
+
+    .student-photo {
+        width: 88px;
+        height: 110px;
+    }
+
+    .performance-overview,
+    .summary-grid,
+    .behaviour-grid {
+        gap: 5px;
+    }
+
+    .performance-card,
+    .summary-box,
+    .behaviour-item,
+    .remark-card {
+        padding: 7px 8px;
+    }
+
+    .student-results-table {
+        min-width: 0;
+        font-size: 9px;
+    }
+
+    .student-results-table th,
+    .student-results-table td {
+        padding: 5px 4px;
+    }
+
+    .remarks-grid,
+    .signature-line {
+        break-inside: avoid;
+    }
+
+    .report-footer,
+    .report-card-footer {
+        padding: 6px 0;
+    }
+}
+
+@media (max-width: 420px) {
+    .school-brand {
+        gap: 9px;
+    }
+
+    .school-contact {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .contact-separator {
+        display: none;
+    }
+
+    .session-bar {
+        justify-content: flex-start;
+        padding: 7px 10px;
+    }
+
+    .performance-overview,
+    .summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

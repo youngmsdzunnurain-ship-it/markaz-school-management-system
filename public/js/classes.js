@@ -29,13 +29,30 @@ async function loadClasses() {
 
         classRecords = data.classes || [];
 
+        const totalClassesStat = document.getElementById("totalClassesStat");
+        const activeClassesStat = document.getElementById("activeClassesStat");
+        const totalStudentsStat = document.getElementById("totalStudentsStat");
+
+        const totalClasses = classRecords.length;
+        const activeClasses = classRecords.filter(
+            classItem => Number(classItem.is_active) === 1
+        ).length;
+        const totalStudents = classRecords.reduce(
+            (sum, classItem) => sum + Number(classItem.student_count || 0),
+            0
+        );
+
+        if (totalClassesStat) totalClassesStat.textContent = totalClasses;
+        if (activeClassesStat) activeClassesStat.textContent = activeClasses;
+        if (totalStudentsStat) totalStudentsStat.textContent = totalStudents;
+
         renderClasses();
 
     } catch (error) {
 
         classesTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-state">
+                <td colspan="6" class="empty-state">
                     ${escapeHtml(error.message)}
                 </td>
             </tr>
@@ -94,7 +111,7 @@ function renderClasses() {
 
         classesTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-state">
+                <td colspan="6" class="empty-state">
                     No classes found.
                 </td>
             </tr>
@@ -114,9 +131,11 @@ function renderClasses() {
                 <tr>
 
                     <td>
-                        <span class="class-name">
+                        <a
+                            href="./class.html?id=${encodeURIComponent(classItem.id)}"
+                            class="class-name class-name-link">
                             ${escapeHtml(classItem.name)}
-                        </span>
+                        </a>
                     </td>
 
                     <td>
@@ -129,6 +148,12 @@ function renderClasses() {
 
                     <td>
                         ${escapeHtml(classItem.sort_order)}
+                    </td>
+
+                    <td>
+                        <span class="student-count-badge">
+                            ${escapeHtml(classItem.student_count ?? 0)}
+                        </span>
                     </td>
 
                     <td>
@@ -182,6 +207,8 @@ function openClassModal(classItem = null) {
 
     document.getElementById("classLevelGroup").value =
         classItem?.level_group || "";
+
+        classItem?.memorization_portion || "";
 
     document.getElementById("classSortOrder").value =
         classItem?.sort_order ?? 0;
@@ -485,3 +512,20 @@ function escapeHtml(value) {
 ================================ */
 
 loadClasses();
+
+document.addEventListener("click", (event) => {
+    const button = event.target.closest(".manage-subjects-button");
+
+    if (!button) {
+        return;
+    }
+
+    const classId = Number(button.dataset.classId);
+
+    if (!classId) {
+        return;
+    }
+
+    window.location.href =
+        `./class-subjects/index.html?class_id=${encodeURIComponent(classId)}`;
+});

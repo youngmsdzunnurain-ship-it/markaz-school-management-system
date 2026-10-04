@@ -1,0 +1,4008 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --markaz-green: #123d2a;
+    --markaz-green-dark: #0d2f20;
+    --markaz-green-soft: #eef6f1;
+    --markaz-gold: #b08b35;
+    --text: #183326;
+    --muted: #718078;
+    --border: #dfe8e2;
+    --surface: #ffffff;
+    --page: #f5f8f6;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--page);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.settings-page {
+    width: min(100% - 32px, 920px);
+    margin: 0 auto;
+    padding: 30px 0 42px;
+}
+
+/* HEADER */
+
+.settings-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--markaz-green);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 750;
+    transition: .2s ease;
+}
+
+.back-link:hover {
+    border-color: #b8cdbf;
+    background: var(--markaz-green-soft);
+}
+
+.settings-header > div {
+    min-width: 0;
+}
+
+.settings-header span,
+.settings-label {
+    display: block;
+    color: var(--markaz-gold);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.settings-header h1 {
+    margin: 5px 0 6px;
+    color: var(--markaz-green-dark);
+    font-size: clamp(25px, 4vw, 31px);
+    line-height: 1.15;
+}
+
+.settings-header p,
+.settings-card-heading p,
+.password-section p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* CARDS */
+
+.settings-card {
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 10px 32px rgba(18, 61, 42, .055);
+}
+
+.settings-card + .settings-card {
+    margin-top: 20px;
+}
+
+.settings-card-heading {
+    margin-bottom: 22px;
+}
+
+.settings-card-heading h2 {
+    margin: 5px 0 7px;
+    color: var(--markaz-green-dark);
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+/* PROFILE */
+
+.profile-preview {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 24px;
+    padding: 18px;
+    background: #f8faf8;
+    border: 1px solid #e5ece7;
+    border-radius: 16px;
+}
+
+.profile-photo {
+    width: 82px;
+    height: 82px;
+    flex: 0 0 82px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--markaz-green);
+    color: #f1d27a;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.profile-preview strong,
+.profile-preview span {
+    display: block;
+}
+
+.profile-preview strong {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.profile-preview span {
+    margin-top: 4px;
+    color: #78837b;
+    font-size: 12px;
+}
+
+.upload-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    margin-top: 10px;
+    padding: 0 11px;
+    border: 1px solid #cbdacf;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--markaz-green);
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    background: var(--markaz-green-soft);
+}
+
+.upload-button input {
+    display: none;
+}
+
+/* FORM */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+label > span {
+    display: block;
+    margin-bottom: 7px;
+    color: #435149;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+input {
+    width: 100%;
+    height: 46px;
+    padding: 0 13px;
+    border: 1px solid #d7e2db;
+    border-radius: 11px;
+    outline: none;
+    background: #fff;
+    color: #20362a;
+    font: inherit;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+input::placeholder {
+    color: #a0aaa4;
+}
+
+input:focus {
+    border-color: var(--markaz-gold);
+    box-shadow: 0 0 0 3px rgba(176, 139, 53, .12);
+}
+
+/* PASSWORD */
+
+.password-section {
+    margin-top: 24px;
+    padding: 19px;
+    background: #fbfcfa;
+    border: 1px solid #e3ebe5;
+    border-radius: 15px;
+}
+
+.password-section h3 {
+    margin: 6px 0;
+    color: var(--markaz-green-dark);
+    font-size: 15px;
+}
+
+.password-section label {
+    display: block;
+    margin-top: 17px;
+}
+
+/* MESSAGES */
+
+.form-message {
+    min-height: 20px;
+    margin: 12px 0 4px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-message.success {
+    color: #247044;
+}
+
+.form-message.error {
+    color: #a33b35;
+}
+
+/* PROFILE SAVE */
+
+#saveProfileButton {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--markaz-green);
+    color: #fff;
+    font: inherit;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease;
+}
+
+#saveProfileButton:hover {
+    background: var(--markaz-green-dark);
+}
+
+#saveProfileButton:active {
+    transform: translateY(1px);
+}
+
+#saveProfileButton:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+/* MEMORIZATION SETTINGS */
+
+.memorization-settings-card {
+    padding-bottom: 24px;
+}
+
+.memorization-settings-list {
+    display: grid;
+    gap: 10px;
+}
+
+.memorization-setting-row {
+    display: grid;
+    grid-template-columns: minmax(145px, .65fr) minmax(0, 1.35fr);
+    gap: 20px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e1e9e3;
+    border-radius: 14px;
+    background: #fbfdfb;
+}
+
+.memorization-class-info {
+    min-width: 0;
+}
+
+.memorization-class-info strong {
+    display: block;
+    color: var(--markaz-green-dark);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.memorization-class-info span {
+    display: block;
+    margin-top: 3px;
+    color: #87918b;
+    font-size: 11px;
+}
+
+.memorization-setting-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: end;
+}
+
+.memorization-setting-field label {
+    min-width: 0;
+}
+
+.memorization-setting-field label > span {
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.memorization-setting-field input {
+    height: 44px;
+}
+
+.save-memorization-button {
+    min-width: 76px;
+    height: 44px;
+    padding: 0 15px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--markaz-green);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .2s ease, opacity .2s ease;
+}
+
+.save-memorization-button:hover {
+    background: var(--markaz-green-dark);
+}
+
+.save-memorization-button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.settings-loading {
+    padding: 20px;
+    border: 1px dashed #d6e2da;
+    border-radius: 12px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 13px;
+}
+
+/* FOOTER */
+
+footer {
+    margin-top: 28px;
+    color: #8a938c;
+    font-size: 10px;
+    text-align: center;
+}
+
+/* TABLET / MOBILE */
+
+@media (max-width: 700px) {
+    .settings-page {
+        width: min(100% - 22px, 920px);
+        padding-top: 20px;
+    }
+
+    .settings-header {
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .settings-card {
+        padding: 21px 17px;
+        border-radius: 17px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .profile-preview {
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .memorization-setting-row {
+        grid-template-columns: 1fr;
+        gap: 13px;
+        padding: 14px;
+    }
+
+    .memorization-setting-field {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page {
+        width: min(100% - 16px, 920px);
+        padding-top: 15px;
+        padding-bottom: 28px;
+    }
+
+    .settings-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .back-link {
+        min-height: 36px;
+        font-size: 12px;
+    }
+
+    .settings-card {
+        padding: 18px 14px;
+        border-radius: 15px;
+    }
+
+    .settings-card-heading {
+        margin-bottom: 18px;
+    }
+
+    .settings-card-heading h2 {
+        font-size: 18px;
+    }
+
+    .profile-preview {
+        padding: 14px;
+    }
+
+    .profile-photo {
+        width: 68px;
+        height: 68px;
+        flex-basis: 68px;
+        font-size: 20px;
+    }
+
+    .memorization-setting-field {
+        grid-template-columns: 1fr;
+    }
+
+    .save-memorization-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   ADMIN PROFILE — SETTINGS ONLY
+   ========================================================= */
+
+.settings-page .profile-preview {
+    background: #ffffff !important;
+    border: 1px solid #dfe8e2 !important;
+    box-shadow: 0 8px 24px rgba(20, 92, 56, 0.06) !important;
+}
+
+.settings-page .profile-photo {
+    width: 96px !important;
+    height: 96px !important;
+    flex: 0 0 96px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: #e7f4eb !important;
+    color: #145c38 !important;
+    border: 2px solid #c7dfcf !important;
+    font-size: 26px !important;
+    font-weight: 900 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.settings-page .profile-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 14px !important;
+}
+
+.settings-page .profile-preview strong {
+    color: #173b2a !important;
+    font-size: 16px !important;
+    font-weight: 850 !important;
+}
+
+.settings-page .profile-preview span {
+    color: #64736a !important;
+}
+
+.settings-page .upload-button {
+    min-height: 38px !important;
+    margin-top: 12px !important;
+    padding: 0 14px !important;
+    border: 1px solid #b9d8c5 !important;
+    border-radius: 10px !important;
+    background: #f4faf6 !important;
+    color: #145c38 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease !important;
+}
+
+.settings-page .upload-button:hover {
+    background: #e7f4eb !important;
+    border-color: #91bea1 !important;
+}
+
+.settings-page .upload-button:active {
+    transform: translateY(1px);
+}
+
+@media (max-width: 480px) {
+    .settings-page .profile-photo {
+        width: 82px !important;
+        height: 82px !important;
+        flex-basis: 82px !important;
+        border-radius: 14px !important;
+        font-size: 23px !important;
+    }
+
+    .settings-page .profile-photo img {
+        border-radius: 12px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — ADMIN PROFILE REDESIGN
+   Settings page only
+   ========================================================= */
+
+.settings-page .profile-preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 26px;
+    padding: 22px;
+    background: linear-gradient(135deg, #ffffff 0%, #f7fbf8 100%) !important;
+    border: 1px solid #dce8e1 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 26px rgba(18, 61, 42, 0.07) !important;
+    overflow: hidden;
+}
+
+.settings-page .profile-preview::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(
+        180deg,
+        #123d2a,
+        #2c7a4d,
+        #b08b35
+    );
+}
+
+.settings-page .profile-photo {
+    position: relative;
+    width: 104px !important;
+    height: 104px !important;
+    flex: 0 0 104px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border-radius: 18px !important;
+    background: #e8f3ec !important;
+    color: #145c38 !important;
+    border: 2px solid #c7ddcf !important;
+    box-shadow: 0 6px 18px rgba(18, 61, 42, 0.10) !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+}
+
+.settings-page .profile-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    border-radius: 16px !important;
+}
+
+.settings-page .profile-preview > div:last-child {
+    min-width: 0;
+    flex: 1;
+}
+
+.settings-page .profile-preview strong {
+    display: block !important;
+    margin: 0 !important;
+    color: #173b2a !important;
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    font-weight: 850 !important;
+}
+
+.settings-page .profile-preview span {
+    display: block !important;
+    margin-top: 5px !important;
+    color: #68776f !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+.settings-page .upload-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    min-height: 40px !important;
+    margin-top: 14px !important;
+    padding: 0 15px !important;
+    border: 1px solid #b9d5c3 !important;
+    border-radius: 10px !important;
+    background: #f2f8f4 !important;
+    color: #145c38 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .18s ease !important;
+}
+
+.settings-page .upload-button:hover {
+    background: #e5f2e9 !important;
+    border-color: #8fbaa0 !important;
+    box-shadow: 0 5px 14px rgba(18, 61, 42, 0.08) !important;
+}
+
+.settings-page .upload-button:active {
+    transform: translateY(1px);
+}
+
+.settings-page .form-grid {
+    padding-top: 2px;
+}
+
+.settings-page .form-grid > label {
+    padding: 16px;
+    background: #fbfdfc;
+    border: 1px solid #e4ece7;
+    border-radius: 13px;
+}
+
+.settings-page .form-grid > label > span {
+    color: #435149 !important;
+    font-weight: 800 !important;
+}
+
+.settings-page .password-section {
+    background: linear-gradient(135deg, #fbfdfc, #f7faf8) !important;
+    border-color: #dfe9e3 !important;
+}
+
+@media (max-width: 600px) {
+    .settings-page .profile-preview {
+        align-items: flex-start;
+        gap: 16px;
+        padding: 18px;
+    }
+
+    .settings-page .profile-photo {
+        width: 86px !important;
+        height: 86px !important;
+        flex-basis: 86px !important;
+        border-radius: 15px !important;
+        font-size: 23px !important;
+    }
+
+    .settings-page .profile-photo img {
+        border-radius: 13px !important;
+    }
+
+    .settings-page .profile-preview strong {
+        font-size: 16px !important;
+    }
+
+    .settings-page .profile-preview span {
+        font-size: 12px !important;
+    }
+
+    .settings-page .upload-button {
+        min-height: 38px !important;
+        padding: 0 12px !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .settings-page .profile-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .settings-page .profile-photo {
+        width: 88px !important;
+        height: 88px !important;
+        flex-basis: 88px !important;
+    }
+}
+
+
+/* Profile photo action controls */
+.settings-page .profile-photo-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.settings-page .remove-photo-button {
+    min-height: 38px;
+    padding: 9px 14px;
+    border: 1px solid #e3caca;
+    border-radius: 10px;
+    background: #fff7f7;
+    color: #b42318;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.settings-page .remove-photo-button:hover {
+    background: #feecec;
+    border-color: #d8a4a4;
+}
+
+.settings-page .remove-photo-button:active {
+    transform: translateY(1px);
+}
+
+@media (max-width: 600px) {
+    .settings-page .profile-photo-actions {
+        width: 100%;
+    }
+
+    .settings-page .profile-photo-actions .upload-button,
+    .settings-page .profile-photo-actions .remove-photo-button {
+        flex: 1 1 auto;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Align profile photo action buttons */
+.settings-page .profile-photo-actions {
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+}
+
+.settings-page .profile-photo-actions .upload-button,
+.settings-page .profile-photo-actions .remove-photo-button {
+    min-height: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+}
+
+.settings-page .profile-photo-actions .upload-button {
+    padding: 0 14px !important;
+}
+
+.settings-page .profile-photo-actions .remove-photo-button {
+    padding: 0 14px !important;
+}
+
+/* Collapsible settings sections */
+.settings-page .settings-section-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+}
+
+.settings-page .settings-section-toggle-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.settings-page .settings-section-icon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #edf6f0;
+    color: #145c38;
+    font-size: 18px;
+}
+
+.settings-page .settings-section-toggle-content > span:last-child {
+    min-width: 0;
+}
+
+.settings-page .settings-section-toggle .settings-label {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.settings-page .settings-section-toggle strong {
+    display: block;
+    color: #183326;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.settings-page .settings-section-toggle small {
+    display: block;
+    margin-top: 4px;
+    color: #718078;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.settings-page .settings-section-chevron {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dce8e1;
+    border-radius: 11px;
+    background: #f7faf8;
+    color: #145c38;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.settings-page .settings-section-toggle.is-open .settings-section-chevron {
+    transform: rotate(180deg);
+    background: #edf6f0;
+}
+
+.settings-page .settings-collapsible-body {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid #e1e9e4;
+}
+
+@media (max-width: 600px) {
+    .settings-page .settings-section-toggle-content {
+        gap: 11px;
+    }
+
+    .settings-page .settings-section-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .settings-page .settings-section-toggle strong {
+        font-size: 14px;
+    }
+}
+
+/* SETTINGS WATERMARK */
+.settings-page {
+    position: relative;
+    z-index: 1;
+}
+
+.settings-page > * {
+    position: relative;
+    z-index: 2;
+}
+
+.settings-watermark {
+    position: fixed !important;
+    left: 50% !important;
+    top: 54% !important;
+    width: min(62vw, 620px) !important;
+    height: min(62vw, 620px) !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0.055 !important;
+}
+
+.settings-watermark img {
+    width: 72% !important;
+    height: 72% !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    filter: grayscale(1) sepia(0.25) saturate(0.65) !important;
+}
+
+.settings-watermark-ring {
+    position: absolute;
+    inset: 7%;
+    border: 2px solid rgba(18, 61, 42, 0.35);
+    border-radius: 50%;
+}
+
+.settings-watermark-ring::before,
+.settings-watermark-ring::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(176, 139, 53, 0.35);
+    border-radius: 50%;
+}
+
+.settings-watermark-ring::before {
+    inset: 7%;
+}
+
+.settings-watermark-ring::after {
+    inset: 15%;
+}
+
+.settings-page .settings-card {
+    background: rgba(255, 255, 255, 0.91) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.settings-page .settings-header {
+    background: rgba(245, 248, 246, 0.72);
+    border-radius: 18px;
+    padding: 14px 18px;
+}
+
+@media (max-width: 600px) {
+    .settings-watermark {
+        width: 88vw !important;
+        height: 88vw !important;
+        opacity: 0.045 !important;
+    }
+
+    .settings-page .settings-card {
+        background: rgba(255, 255, 255, 0.93) !important;
+    }
+}
+
+/* ACADEMIC PERIOD SETTINGS */
+.academic-period-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.academic-period-summary > div {
+    padding: 15px 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fbfdfb;
+}
+
+.academic-period-summary span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.academic-period-summary strong {
+    display: block;
+    margin-top: 5px;
+    color: var(--markaz-green-dark);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.academic-period-field {
+    max-width: 420px;
+}
+
+.academic-period-field label {
+    display: block;
+}
+
+.academic-period-field label > span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#saveAcademicPeriodButton {
+    margin-top: 16px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--markaz-green);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#saveAcademicPeriodButton:hover {
+    opacity: 0.92;
+}
+
+#saveAcademicPeriodButton:active {
+    transform: translateY(1px);
+}
+
+#saveAcademicPeriodButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.form-message.success {
+    color: #1d6b3d;
+}
+
+.form-message.error {
+    color: #b42318;
+}
+
+@media (max-width: 640px) {
+    .academic-period-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .academic-period-field {
+        max-width: none;
+    }
+
+    #saveAcademicPeriodButton {
+        width: 100%;
+    }
+}
+
+
+/* CURRENT TERM DROPDOWN */
+.academic-term-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.academic-term-setting > span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+#academicTermSelect {
+    width: 100%;
+    margin-top: 0;
+    padding: 9px 34px 9px 0;
+    border: 0;
+    border-bottom: 2px solid var(--markaz-green);
+    border-radius: 0;
+    background: transparent;
+    color: var(--markaz-green-dark);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+}
+
+#academicTermSelect:focus {
+    border-bottom-color: var(--markaz-gold);
+}
+
+
+/* =========================================================
+   ACADEMIC CALENDAR — FINAL SECTION POLISH
+   ========================================================= */
+
+.academic-period-settings-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(8, 127, 91, 0.16);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(8, 127, 91, 0.035),
+            rgba(255, 255, 255, 0.98) 48%,
+            rgba(201, 154, 36, 0.035)
+        );
+}
+
+.academic-period-settings-card::before {
+    content: "";
+    position: absolute;
+    top: -90px;
+    right: -110px;
+    width: 300px;
+    height: 190px;
+    border: 2px solid rgba(201, 154, 36, 0.18);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    transform: rotate(-18deg);
+    pointer-events: none;
+}
+
+.academic-period-settings-card::after {
+    content: "";
+    position: absolute;
+    right: -160px;
+    bottom: -150px;
+    width: 390px;
+    height: 230px;
+    border: 2px solid rgba(8, 127, 91, 0.10);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+    pointer-events: none;
+}
+
+.academic-period-settings-card .settings-card-heading {
+    position: relative;
+    z-index: 1;
+    padding-left: 13px;
+    border-left: 3px solid var(--markaz-green);
+}
+
+.academic-period-settings-card .settings-card-heading::after {
+    background: linear-gradient(
+        90deg,
+        var(--markaz-green),
+        #4c9d72,
+        var(--markaz-gold),
+        transparent
+    );
+}
+
+.academic-period-settings-card .settings-label {
+    color: var(--markaz-green);
+    font-weight: 800;
+}
+
+.academic-period-settings-card .academic-period-summary {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 22px 0 18px;
+}
+
+.academic-period-settings-card .academic-period-summary > div {
+    min-width: 0;
+    padding: 16px 17px;
+    border: 1px solid rgba(8, 127, 91, 0.13);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 7px 18px rgba(20, 83, 45, 0.055);
+}
+
+.academic-period-settings-card
+.academic-period-summary > div:first-child {
+    border-left: 3px solid var(--markaz-green);
+}
+
+.academic-period-settings-card
+.academic-period-summary > div:last-child {
+    border-left: 3px solid var(--markaz-gold);
+}
+
+.academic-period-settings-card .academic-period-summary span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.academic-period-settings-card .academic-session-setting,
+.academic-period-settings-card .academic-term-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.academic-period-settings-card #academicSessionSelect,
+.academic-period-settings-card #academicTermSelect {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 30px 7px 0;
+    border: 0;
+    border-bottom: 2px solid rgba(8, 127, 91, 0.25);
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--markaz-green-dark);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    outline: none;
+    cursor: pointer;
+}
+
+.academic-period-settings-card #academicSessionSelect:focus,
+.academic-period-settings-card #academicTermSelect:focus {
+    border-bottom-color: var(--markaz-gold);
+}
+
+.academic-period-settings-card .academic-period-field {
+    position: relative;
+    z-index: 1;
+    max-width: 430px;
+    margin-top: 8px;
+}
+
+.academic-period-settings-card .academic-period-field label {
+    display: block;
+}
+
+.academic-period-settings-card .academic-period-field label > span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.academic-period-settings-card #resumptionDate {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid rgba(8, 127, 91, 0.18);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.academic-period-settings-card #resumptionDate:focus {
+    border-color: var(--markaz-green);
+    box-shadow: 0 0 0 3px rgba(8, 127, 91, 0.08);
+}
+
+.academic-period-settings-card #academicPeriodMessage {
+    position: relative;
+    z-index: 1;
+    min-height: 20px;
+    margin-top: 12px;
+}
+
+.academic-period-settings-card #saveAcademicPeriodButton {
+    position: relative;
+    z-index: 1;
+    min-height: 42px;
+    margin-top: 8px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 11px;
+    background: linear-gradient(
+        135deg,
+        var(--markaz-green),
+        var(--markaz-green-dark)
+    );
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 7px 16px rgba(8, 127, 91, 0.16);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.academic-period-settings-card #saveAcademicPeriodButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 9px 20px rgba(8, 127, 91, 0.20);
+}
+
+.academic-period-settings-card #saveAcademicPeriodButton:active {
+    transform: translateY(0);
+}
+
+.academic-period-settings-card #saveAcademicPeriodButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+}
+
+@media (max-width: 640px) {
+    .academic-period-settings-card .academic-period-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .academic-period-settings-card .academic-period-field {
+        max-width: none;
+    }
+
+    .academic-period-settings-card #saveAcademicPeriodButton {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   SETTINGS — OVERALL VISUAL POLISH
+   ========================================================= */
+
+.settings-page {
+    position: relative;
+}
+
+.settings-header {
+    position: relative;
+    align-items: center;
+}
+
+.settings-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -12px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        var(--markaz-green),
+        rgba(176, 139, 53, 0.55),
+        transparent
+    );
+}
+
+.settings-header h1 {
+    letter-spacing: -0.02em;
+}
+
+.settings-card {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(18, 61, 42, 0.12);
+    box-shadow:
+        0 8px 24px rgba(18, 61, 42, 0.045),
+        0 1px 2px rgba(18, 61, 42, 0.04);
+}
+
+.settings-card-heading {
+    position: relative;
+    padding-left: 12px;
+    border-left: 3px solid var(--markaz-green);
+}
+
+.settings-card-heading::after {
+    content: "";
+    display: block;
+    width: min(280px, 75%);
+    height: 2px;
+    margin-top: 12px;
+    background: linear-gradient(
+        90deg,
+        var(--markaz-green),
+        rgba(176, 139, 53, 0.75),
+        transparent
+    );
+}
+
+.settings-card-heading h2 {
+    letter-spacing: -0.01em;
+}
+
+.settings-card-heading p {
+    max-width: 680px;
+}
+
+/* GENERAL INPUT POLISH */
+
+.settings-page input:not([type="file"]) {
+    background: #fcfefd;
+    border-color: #d5e1da;
+}
+
+.settings-page input:not([type="file"]):hover {
+    border-color: #bfd1c6;
+}
+
+.settings-page input:not([type="file"]):focus {
+    border-color: var(--markaz-green);
+    box-shadow: 0 0 0 3px rgba(18, 61, 42, 0.08);
+}
+
+.settings-page label > span {
+    color: #3f5047;
+    letter-spacing: 0.01em;
+}
+
+/* PASSWORD AREA */
+
+.settings-page .password-section {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(18, 61, 42, 0.025),
+            rgba(255, 255, 255, 0.98)
+        );
+    border-color: rgba(18, 61, 42, 0.11);
+}
+
+.settings-page .password-section h3 {
+    padding-left: 9px;
+    border-left: 2px solid var(--markaz-gold);
+}
+
+/* MEMORIZATION ROWS */
+
+.settings-page .memorization-setting-row {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(18, 61, 42, 0.11);
+    background: #fcfefd;
+    box-shadow: 0 4px 14px rgba(18, 61, 42, 0.035);
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.settings-page .memorization-setting-row::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+        180deg,
+        var(--markaz-green),
+        var(--markaz-gold)
+    );
+}
+
+.settings-page .memorization-setting-row:hover {
+    border-color: rgba(18, 61, 42, 0.18);
+    box-shadow: 0 7px 18px rgba(18, 61, 42, 0.055);
+    transform: translateY(-1px);
+}
+
+/* SAVE BUTTONS */
+
+.settings-page #saveProfileButton,
+.settings-page .save-memorization-button {
+    background: linear-gradient(
+        135deg,
+        var(--markaz-green),
+        var(--markaz-green-dark)
+    );
+    box-shadow: 0 6px 14px rgba(18, 61, 42, 0.13);
+}
+
+.settings-page #saveProfileButton:hover,
+.settings-page .save-memorization-button:hover {
+    background: linear-gradient(
+        135deg,
+        #174b34,
+        var(--markaz-green-dark)
+    );
+    box-shadow: 0 8px 18px rgba(18, 61, 42, 0.17);
+}
+
+/* MESSAGES */
+
+.settings-page .form-message.success,
+.settings-page .form-message.error {
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-weight: 650;
+}
+
+.settings-page .form-message.success {
+    background: rgba(36, 112, 68, 0.07);
+    border: 1px solid rgba(36, 112, 68, 0.12);
+}
+
+.settings-page .form-message.error {
+    background: rgba(163, 59, 53, 0.06);
+    border: 1px solid rgba(163, 59, 53, 0.11);
+}
+
+/* LOADING */
+
+.settings-page .settings-loading {
+    background: #fbfdfb;
+}
+
+/* MOBILE REFINEMENT */
+
+@media (max-width: 700px) {
+    .settings-header::after {
+        bottom: -9px;
+    }
+
+    .settings-card-heading {
+        padding-left: 10px;
+    }
+
+    .settings-card-heading::after {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-header h1 {
+        font-size: 26px;
+    }
+
+    .settings-header p,
+    .settings-card-heading p {
+        font-size: 12px;
+    }
+
+    .settings-card-heading h2 {
+        font-size: 17px;
+    }
+
+    .settings-card-heading::after {
+        width: 85%;
+    }
+}
+
+
+/* =========================================================
+   SETTINGS — MARKAZ WATERMARK + BACKGROUND BEAUTIFICATION
+   ========================================================= */
+
+.settings-page {
+    position: relative;
+    z-index: 1;
+}
+
+/* Keep the page light enough for the school mark to breathe */
+body {
+    background:
+        radial-gradient(
+            circle at 50% 12%,
+            rgba(8, 127, 91, 0.045),
+            transparent 34%
+        ),
+        linear-gradient(
+            180deg,
+            #f9fbfa 0%,
+            #f3f7f4 100%
+        );
+}
+
+/* MARKAZ WATERMARK */
+.settings-watermark {
+    width: min(68vw, 680px) !important;
+    height: min(68vw, 680px) !important;
+    top: 52% !important;
+    opacity: 0.095 !important;
+}
+
+.settings-watermark img {
+    width: 76% !important;
+    height: 76% !important;
+    filter:
+        grayscale(0.72)
+        sepia(0.12)
+        saturate(0.72)
+        brightness(1.04) !important;
+}
+
+.settings-watermark-ring {
+    inset: 6% !important;
+    border: 2px solid rgba(18, 61, 42, 0.18) !important;
+}
+
+.settings-watermark-ring::before {
+    border-color: rgba(176, 139, 53, 0.20) !important;
+}
+
+.settings-watermark-ring::after {
+    border-color: rgba(18, 61, 42, 0.12) !important;
+}
+
+/* LARGE FLOWING BACKGROUND CURVES */
+
+.settings-page::before {
+    content: "";
+    position: fixed;
+    top: -145px;
+    right: -120px;
+    width: 500px;
+    height: 310px;
+    border: 3px solid rgba(176, 139, 53, 0.22);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    transform: rotate(-17deg);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.settings-page::after {
+    content: "";
+    position: fixed;
+    right: -180px;
+    bottom: -175px;
+    width: 570px;
+    height: 340px;
+    border: 2px solid rgba(18, 61, 42, 0.13);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* HEADER — FLOATING MARKAZ PANEL */
+
+.settings-page .settings-header {
+    background: rgba(255, 255, 255, 0.78) !important;
+    border: 1px solid rgba(18, 61, 42, 0.10);
+    border-radius: 18px;
+    padding: 17px 19px !important;
+    box-shadow:
+        0 8px 24px rgba(18, 61, 42, 0.055),
+        0 1px 3px rgba(18, 61, 42, 0.04);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* HEADER ACCENT */
+
+.settings-page .settings-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 15px;
+    bottom: 15px;
+    width: 3px;
+    border-radius: 4px;
+    background: linear-gradient(
+        180deg,
+        var(--markaz-green),
+        var(--markaz-gold)
+    );
+}
+
+/* CARD SURFACES — KEEP WATERMARK VISIBLE */
+
+.settings-page .settings-card {
+    background: rgba(255, 255, 255, 0.86) !important;
+    border-color: rgba(18, 61, 42, 0.105);
+    box-shadow:
+        0 12px 32px rgba(18, 61, 42, 0.055),
+        0 2px 5px rgba(18, 61, 42, 0.035);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Don't over-shadow the inside components */
+
+.settings-page .profile-preview,
+.settings-page .password-section,
+.settings-page .memorization-setting-row,
+.settings-page .academic-period-summary > div {
+    box-shadow: 0 5px 16px rgba(18, 61, 42, 0.045);
+}
+
+/* GOLD MICRO-ACCENTS */
+
+.settings-page .settings-label {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.settings-page footer {
+    position: relative;
+    z-index: 2;
+    padding-top: 5px;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .settings-watermark {
+        width: 92vw !important;
+        height: 92vw !important;
+        top: 50% !important;
+        opacity: 0.075 !important;
+    }
+
+    .settings-page::before {
+        top: -110px;
+        right: -180px;
+        width: 400px;
+        height: 250px;
+    }
+
+    .settings-page::after {
+        right: -210px;
+        bottom: -150px;
+        width: 460px;
+        height: 280px;
+    }
+
+    .settings-page .settings-header {
+        padding: 15px 16px !important;
+    }
+
+    .settings-page .settings-card {
+        background: rgba(255, 255, 255, 0.89) !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — FULL PAGE REPEATING WATERMARK
+   ========================================================= */
+
+.settings-page {
+    position: relative !important;
+    isolation: isolate !important;
+    background: transparent !important;
+}
+
+.settings-page::before {
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+
+    background-image: url("../assets/images/markaz-logo.jpg") !important;
+    background-repeat: repeat !important;
+    background-position: center center !important;
+    background-size: 420px 420px !important;
+
+    opacity: 0.045 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.settings-page > * {
+    position: relative !important;
+}
+
+/* Disable the old single centered watermark */
+.settings-page > .settings-watermark {
+    display: none !important;
+}
+
+/* Keep the page itself light and clean */
+body {
+    background: #f5f8f6 !important;
+}
+
+@media (max-width: 850px) {
+    .settings-page::before {
+        background-size: 330px 330px !important;
+        opacity: 0.045 !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — COMPLETE GENERAL UI BEAUTIFICATION
+   ========================================================= */
+
+/* PAGE FOUNDATION */
+
+.settings-page {
+    width: min(100% - 36px, 980px) !important;
+    padding: 34px 0 52px !important;
+}
+
+body {
+    background:
+        linear-gradient(
+            180deg,
+            #eef5f1 0,
+            #f5f8f6 230px,
+            #f5f8f6 100%
+        ) !important;
+}
+
+/* =========================================================
+   TOP HEADER — MARKAZ GREEN
+   ========================================================= */
+
+.settings-page .settings-header {
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 22px !important;
+
+    min-height: 118px !important;
+    margin-bottom: 30px !important;
+    padding: 24px 27px !important;
+
+    border: 0 !important;
+    border-radius: 20px !important;
+
+    background:
+        radial-gradient(
+            circle at 88% 20%,
+            rgba(201, 154, 36, 0.22),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(255, 255, 255, 0.08),
+            transparent 35%
+        ),
+        linear-gradient(
+            120deg,
+            #0d2f20 0%,
+            #123d2a 48%,
+            #1b6543 100%
+        ) !important;
+
+    box-shadow:
+        0 16px 34px rgba(13, 47, 32, 0.18),
+        0 3px 8px rgba(13, 47, 32, 0.08) !important;
+
+    color: #fff !important;
+}
+
+/* Header decorative curves */
+
+.settings-page .settings-header::after {
+    content: "" !important;
+    position: absolute !important;
+    right: -95px !important;
+    top: -115px !important;
+    width: 360px !important;
+    height: 245px !important;
+
+    border: 2px solid rgba(240, 213, 126, 0.32) !important;
+    border-left-color: transparent !important;
+    border-bottom-color: transparent !important;
+    border-radius: 50% !important;
+
+    transform: rotate(-17deg) !important;
+    pointer-events: none !important;
+}
+
+.settings-page .settings-header::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 18px !important;
+    bottom: 18px !important;
+    width: 4px !important;
+
+    border-radius: 0 5px 5px 0 !important;
+    background: linear-gradient(
+        180deg,
+        #f0d37a,
+        #b08b35
+    ) !important;
+
+    z-index: 2 !important;
+}
+
+/* Header text */
+
+.settings-page .settings-header > div {
+    position: relative !important;
+    z-index: 3 !important;
+}
+
+.settings-page .settings-header span {
+    color: #f0d37a !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 2px !important;
+}
+
+.settings-page .settings-header h1 {
+    margin: 6px 0 7px !important;
+    color: #ffffff !important;
+    font-size: clamp(28px, 4vw, 35px) !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.025em !important;
+}
+
+.settings-page .settings-header p {
+    color: rgba(255, 255, 255, 0.76) !important;
+    font-size: 13px !important;
+}
+
+/* =========================================================
+   BACK TO DASHBOARD
+   ========================================================= */
+
+.settings-page .back-link {
+    position: relative !important;
+    z-index: 4 !important;
+
+    min-height: 40px !important;
+    padding: 0 15px !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    border-radius: 11px !important;
+
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.08) !important;
+
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+}
+
+.settings-page .back-link:hover {
+    border-color: rgba(240, 211, 122, 0.60) !important;
+    background: rgba(240, 211, 122, 0.14) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   SETTINGS CARDS — DEPTH + STRUCTURE
+   ========================================================= */
+
+.settings-page .settings-card {
+    padding: 29px !important;
+    border: 1px solid rgba(18, 61, 42, 0.105) !important;
+    border-radius: 20px !important;
+
+    background: rgba(255, 255, 255, 0.90) !important;
+
+    box-shadow:
+        0 15px 35px rgba(18, 61, 42, 0.065),
+        0 3px 8px rgba(18, 61, 42, 0.035) !important;
+
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+
+    transition:
+        box-shadow .25s ease,
+        transform .25s ease,
+        border-color .25s ease !important;
+}
+
+.settings-page .settings-card + .settings-card {
+    margin-top: 22px !important;
+}
+
+.settings-page .settings-card:hover {
+    border-color: rgba(18, 61, 42, 0.16) !important;
+    box-shadow:
+        0 18px 40px rgba(18, 61, 42, 0.075),
+        0 4px 10px rgba(18, 61, 42, 0.04) !important;
+}
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.settings-page .settings-card-heading {
+    position: relative !important;
+    margin-bottom: 24px !important;
+    padding-left: 14px !important;
+
+    border-left: 4px solid var(--markaz-green) !important;
+}
+
+.settings-page .settings-card-heading::after {
+    content: "" !important;
+    display: block !important;
+
+    width: min(330px, 75%) !important;
+    height: 2px !important;
+    margin-top: 13px !important;
+
+    background: linear-gradient(
+        90deg,
+        var(--markaz-green),
+        #4c9d72,
+        var(--markaz-gold),
+        transparent
+    ) !important;
+}
+
+.settings-page .settings-label {
+    color: var(--markaz-gold) !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.6px !important;
+}
+
+.settings-page .settings-card-heading h2 {
+    margin: 5px 0 7px !important;
+    color: var(--markaz-green-dark) !important;
+    font-size: 21px !important;
+    font-weight: 850 !important;
+}
+
+.settings-page .settings-card-heading p {
+    color: #718078 !important;
+    max-width: 720px !important;
+}
+
+/* =========================================================
+   PROFILE PREVIEW
+   ========================================================= */
+
+.settings-page .profile-preview {
+    position: relative !important;
+    overflow: hidden !important;
+
+    padding: 19px !important;
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 17px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(238, 246, 241, 0.95),
+            rgba(255, 255, 255, 0.96)
+        ) !important;
+
+    box-shadow:
+        0 8px 20px rgba(18, 61, 42, 0.055) !important;
+}
+
+.settings-page .profile-preview::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+
+    background: linear-gradient(
+        180deg,
+        var(--markaz-green),
+        var(--markaz-gold)
+    ) !important;
+}
+
+.settings-page .profile-photo {
+    box-shadow:
+        0 6px 16px rgba(18, 61, 42, 0.12) !important;
+}
+
+/* =========================================================
+   FORM CONTROLS
+   ========================================================= */
+
+.settings-page input:not([type="file"]),
+.settings-page select {
+    border-color: #d3e0d8 !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 2px 5px rgba(18, 61, 42, 0.025) !important;
+}
+
+.settings-page input:not([type="file"]):hover,
+.settings-page select:hover {
+    border-color: #b9cfc2 !important;
+}
+
+.settings-page input:not([type="file"]):focus,
+.settings-page select:focus {
+    border-color: var(--markaz-green) !important;
+    box-shadow:
+        0 0 0 3px rgba(18, 61, 42, 0.08),
+        0 3px 8px rgba(18, 61, 42, 0.045) !important;
+}
+
+.settings-page label > span {
+    color: #35483e !important;
+    font-weight: 800 !important;
+}
+
+/* =========================================================
+   UPLOAD BUTTON
+   ========================================================= */
+
+.settings-page .upload-button {
+    border-color: rgba(18, 61, 42, 0.18) !important;
+    background: #fff !important;
+    color: var(--markaz-green) !important;
+    box-shadow: 0 3px 8px rgba(18, 61, 42, 0.045) !important;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease !important;
+}
+
+.settings-page .upload-button:hover {
+    border-color: rgba(176, 139, 53, 0.45) !important;
+    background: var(--markaz-green-soft) !important;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   PASSWORD SECTION
+   ========================================================= */
+
+.settings-page .password-section {
+    position: relative !important;
+    overflow: hidden !important;
+    border-color: rgba(18, 61, 42, 0.11) !important;
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbf9,
+            #ffffff
+        ) !important;
+    box-shadow: 0 6px 16px rgba(18, 61, 42, 0.04) !important;
+}
+
+.settings-page .password-section::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 3px !important;
+    background: var(--markaz-gold) !important;
+}
+
+/* =========================================================
+   BUTTON SYSTEM
+   ========================================================= */
+
+.settings-page button {
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        border-color .18s ease !important;
+}
+
+.settings-page button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.settings-page button:not(:disabled):active {
+    transform: translateY(0);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.settings-page footer {
+    margin-top: 32px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid rgba(18, 61, 42, 0.09);
+    color: #7b8880 !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .settings-page {
+        width: min(100% - 24px, 980px) !important;
+        padding-top: 22px !important;
+        padding-bottom: 38px !important;
+    }
+
+    .settings-page .settings-header {
+        min-height: 108px !important;
+        padding: 21px 20px !important;
+        border-radius: 18px !important;
+    }
+
+    .settings-page .settings-card {
+        padding: 23px 19px !important;
+        border-radius: 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page {
+        width: min(100% - 16px, 980px) !important;
+        padding-top: 14px !important;
+    }
+
+    .settings-page .settings-header {
+        min-height: 0 !important;
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 13px !important;
+        padding: 19px 17px !important;
+        border-radius: 16px !important;
+    }
+
+    .settings-page .settings-header h1 {
+        font-size: 27px !important;
+    }
+
+    .settings-page .settings-card {
+        padding: 20px 15px !important;
+        border-radius: 16px !important;
+    }
+
+    .settings-page .settings-card-heading h2 {
+        font-size: 18px !important;
+    }
+
+    .settings-page .settings-card-heading {
+        padding-left: 11px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — DEEPER CARD DEPTH
+   ========================================================= */
+
+/* Major settings sections should sit clearly above the watermark */
+
+.settings-page > .settings-card {
+    box-shadow:
+        0 20px 42px rgba(18, 61, 42, 0.105),
+        0 6px 14px rgba(18, 61, 42, 0.055),
+        0 1px 3px rgba(18, 61, 42, 0.045) !important;
+}
+
+.settings-page > .settings-card:hover {
+    box-shadow:
+        0 24px 48px rgba(18, 61, 42, 0.125),
+        0 8px 18px rgba(18, 61, 42, 0.065),
+        0 1px 3px rgba(18, 61, 42, 0.05) !important;
+}
+
+/* =========================================================
+   MEMORIZATION — SECTION CONTAINER
+   ========================================================= */
+
+.settings-page .memorization-settings-card {
+    position: relative !important;
+    overflow: hidden !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.94),
+            rgba(247, 251, 248, 0.94)
+        ) !important;
+
+    box-shadow:
+        0 22px 44px rgba(18, 61, 42, 0.115),
+        0 7px 16px rgba(18, 61, 42, 0.06) !important;
+}
+
+/* Decorative edge */
+
+.settings-page .memorization-settings-card::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 5px !important;
+
+    background: linear-gradient(
+        180deg,
+        var(--markaz-green) 0%,
+        #3d8b61 48%,
+        var(--markaz-gold) 100%
+    ) !important;
+}
+
+/* Soft decorative curve */
+
+.settings-page .memorization-settings-card::after {
+    content: "" !important;
+    position: absolute !important;
+    right: -135px !important;
+    top: -145px !important;
+    width: 390px !important;
+    height: 250px !important;
+
+    border: 2px solid rgba(176, 139, 53, 0.13) !important;
+    border-left-color: transparent !important;
+    border-bottom-color: transparent !important;
+    border-radius: 50% !important;
+
+    transform: rotate(-18deg) !important;
+    pointer-events: none !important;
+}
+
+/* Keep content above decoration */
+
+.settings-page .memorization-settings-card > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* =========================================================
+   MEMORIZATION ROWS — MORE VISIBLE
+   ========================================================= */
+
+.settings-page .memorization-settings-list {
+    gap: 14px !important;
+}
+
+.settings-page .memorization-setting-row {
+    position: relative !important;
+    overflow: hidden !important;
+
+    min-height: 92px !important;
+    padding: 18px 18px 18px 21px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.13) !important;
+    border-radius: 16px !important;
+
+    background:
+        linear-gradient(
+            120deg,
+            #ffffff 0%,
+            #fbfdfb 70%,
+            #f5faf7 100%
+        ) !important;
+
+    box-shadow:
+        0 9px 20px rgba(18, 61, 42, 0.075),
+        0 2px 5px rgba(18, 61, 42, 0.035) !important;
+}
+
+/* Green vertical identity bar */
+
+.settings-page .memorization-setting-row::before {
+    left: 0 !important;
+    width: 4px !important;
+    border-radius: 0 5px 5px 0 !important;
+
+    background: linear-gradient(
+        180deg,
+        var(--markaz-green),
+        #4c9d72,
+        var(--markaz-gold)
+    ) !important;
+}
+
+/* Class information */
+
+.settings-page .memorization-class-info {
+    padding-left: 2px !important;
+}
+
+.settings-page .memorization-class-info strong {
+    color: var(--markaz-green-dark) !important;
+    font-size: 15px !important;
+    font-weight: 850 !important;
+}
+
+.settings-page .memorization-class-info span {
+    color: #7b8981 !important;
+    font-size: 11px !important;
+}
+
+/* Input area */
+
+.settings-page .memorization-setting-field {
+    gap: 12px !important;
+}
+
+.settings-page .memorization-setting-field input {
+    height: 45px !important;
+    border-radius: 11px !important;
+    background: #ffffff !important;
+    box-shadow:
+        inset 0 1px 2px rgba(18, 61, 42, 0.025),
+        0 3px 8px rgba(18, 61, 42, 0.035) !important;
+}
+
+/* Memorization save */
+
+.settings-page .save-memorization-button {
+    min-width: 92px !important;
+    height: 45px !important;
+    padding: 0 18px !important;
+
+    border-radius: 11px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--markaz-green),
+            var(--markaz-green-dark)
+        ) !important;
+
+    box-shadow:
+        0 7px 14px rgba(18, 61, 42, 0.15) !important;
+}
+
+.settings-page .save-memorization-button:hover {
+    box-shadow:
+        0 10px 18px rgba(18, 61, 42, 0.20) !important;
+}
+
+/* =========================================================
+   OTHER INNER BOXES
+   ========================================================= */
+
+.settings-page .profile-preview,
+.settings-page .password-section,
+.settings-page .academic-period-summary > div,
+.settings-page .settings-loading {
+    box-shadow:
+        0 9px 20px rgba(18, 61, 42, 0.065),
+        0 2px 5px rgba(18, 61, 42, 0.03) !important;
+}
+
+/* =========================================================
+   FOOTER SECTION CARD
+   ========================================================= */
+
+.settings-page .result-footer-settings-card {
+    box-shadow:
+        0 20px 42px rgba(18, 61, 42, 0.11),
+        0 7px 16px rgba(18, 61, 42, 0.055) !important;
+}
+
+/* =========================================================
+   ACADEMIC CALENDAR CARD — DEPTH ONLY
+   ========================================================= */
+
+.settings-page .academic-period-settings-card {
+    box-shadow:
+        0 20px 42px rgba(18, 61, 42, 0.11),
+        0 7px 16px rgba(18, 61, 42, 0.055) !important;
+}
+
+/* =========================================================
+   MOBILE MEMORIZATION
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .settings-page .memorization-setting-row {
+        min-height: 0 !important;
+        padding: 16px 16px 16px 19px !important;
+    }
+
+    .settings-page .memorization-setting-field {
+        gap: 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page > .settings-card {
+        box-shadow:
+            0 14px 30px rgba(18, 61, 42, 0.10),
+            0 5px 12px rgba(18, 61, 42, 0.05) !important;
+    }
+
+    .settings-page .memorization-setting-row {
+        padding: 15px 14px 15px 18px !important;
+        border-radius: 14px !important;
+    }
+}
+
+
+/* Memorization portion — subtle golden-grey top edge */
+.settings-page .memorization-setting-row {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.settings-page .memorization-setting-row::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+    height: 3px !important;
+    border-radius: 0 0 4px 4px !important;
+    background: linear-gradient(
+        90deg,
+        rgba(176, 139, 53, 0.42),
+        rgba(148, 163, 184, 0.72),
+        rgba(176, 139, 53, 0.42)
+    ) !important;
+    pointer-events: none !important;
+}
+
+
+/* Memorization input — top edge only */
+.settings-page .memorization-setting-field input {
+    position: relative !important;
+    border-top: 3px solid rgba(176, 139, 53, 0.55) !important;
+    border-left: 1px solid #d3e0d8 !important;
+    border-right: 1px solid #d3e0d8 !important;
+    border-bottom: 1px solid #d3e0d8 !important;
+}
+
+.settings-page .memorization-setting-field input:focus {
+    border-top-color: #b08b35 !important;
+    border-left-color: #b9cfc2 !important;
+    border-right-color: #b9cfc2 !important;
+    border-bottom-color: #b9cfc2 !important;
+}
+
+/* =========================================================
+   MARKAZ SETTINGS — GREEN + GOLD TOP EDGE
+   ========================================================= */
+
+.settings-page > .settings-card {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.settings-page > .settings-card::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 28px !important;
+    right: 28px !important;
+    height: 4px !important;
+
+    background: linear-gradient(
+        90deg,
+        #087f5b 0%,
+        #087f5b 42%,
+        #6f866f 62%,
+        #c99a24 82%,
+        #b08b35 100%
+    ) !important;
+
+    border-radius: 0 0 6px 6px !important;
+    pointer-events: none !important;
+}
+
+/* Keep the accent elegant on smaller screens */
+@media (max-width: 700px) {
+    .settings-page > .settings-card::after {
+        left: 20px !important;
+        right: 20px !important;
+        height: 3px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page > .settings-card::after {
+        left: 16px !important;
+        right: 16px !important;
+    }
+}
+
+/* =========================================================
+   MARKAZ SETTINGS — CLEAN CARD TOP EDGE
+   ========================================================= */
+
+.settings-page > .settings-card {
+    position: relative !important;
+    overflow: hidden !important;
+
+    /* Green + gold top edge that stays perfectly straight */
+    box-shadow:
+        inset 0 4px 0
+            rgba(8, 127, 91, 0.92),
+        0 20px 42px
+            rgba(18, 61, 42, 0.105),
+        0 6px 14px
+            rgba(18, 61, 42, 0.055),
+        0 1px 3px
+            rgba(18, 61, 42, 0.045) !important;
+}
+
+/* Remove the previous pseudo-element top strip */
+.settings-page > .settings-card::after {
+    display: none !important;
+}
+
+/* Keep the individual memorization-row decoration separate */
+.settings-page .memorization-setting-row::after {
+    display: block !important;
+}
+
+@media (max-width: 700px) {
+    .settings-page > .settings-card {
+        box-shadow:
+            inset 0 3px 0
+                rgba(8, 127, 91, 0.92),
+            0 16px 34px
+                rgba(18, 61, 42, 0.10),
+            0 5px 12px
+                rgba(18, 61, 42, 0.05) !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — INTERIOR CARD REDESIGN
+   PROFILE • ACADEMIC PERIOD • RESULT FOOTER
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   PROFILE INFORMATION
+   --------------------------------------------------------- */
+
+.settings-page .profile-preview {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 20px !important;
+
+    padding: 20px 22px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 16px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(238, 246, 241, 0.96),
+            rgba(255, 255, 255, 0.98) 58%,
+            rgba(201, 154, 36, 0.045)
+        ) !important;
+
+    box-shadow:
+        0 10px 24px rgba(18, 61, 42, 0.055) !important;
+}
+
+.settings-page .profile-preview::before {
+    width: 4px !important;
+    background:
+        linear-gradient(
+            180deg,
+            #087f5b,
+            #087f5b 55%,
+            #c99a24
+        ) !important;
+}
+
+.settings-page .profile-photo {
+    width: 78px !important;
+    height: 78px !important;
+    border-radius: 50% !important;
+
+    border: 3px solid #ffffff !important;
+
+    box-shadow:
+        0 0 0 2px rgba(8, 127, 91, 0.18),
+        0 7px 16px rgba(18, 61, 42, 0.14) !important;
+}
+
+.settings-page .profile-preview strong {
+    color: #123d2a !important;
+    font-size: 17px !important;
+    font-weight: 850 !important;
+}
+
+.settings-page .profile-preview span {
+    margin-top: 4px !important;
+    color: #718078 !important;
+    font-size: 12px !important;
+}
+
+/* ---------------------------------------------------------
+   CURRENT ACADEMIC PERIOD
+   --------------------------------------------------------- */
+
+.settings-page .academic-period-summary {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 14px !important;
+    margin-bottom: 18px !important;
+}
+
+.settings-page .academic-period-summary > div {
+    position: relative !important;
+    min-width: 0 !important;
+
+    padding: 16px 17px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f7faf8
+        ) !important;
+
+    box-shadow:
+        0 7px 17px rgba(18, 61, 42, 0.045) !important;
+}
+
+.settings-page .academic-period-summary > div::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+    height: 3px !important;
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 127, 91, 0.78),
+            rgba(148, 163, 184, 0.55),
+            rgba(176, 139, 53, 0.78)
+        ) !important;
+}
+
+.settings-page .academic-period-summary > div > span {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: #7a8780 !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+.settings-page .academic-period-summary select {
+    width: 100% !important;
+    height: 44px !important;
+    margin: 0 !important;
+
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 750 !important;
+    color: #183326 !important;
+}
+
+.settings-page .academic-period-field {
+    position: relative !important;
+
+    padding: 17px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(238, 246, 241, 0.76),
+            #ffffff
+        ) !important;
+
+    box-shadow:
+        0 7px 18px rgba(18, 61, 42, 0.045) !important;
+}
+
+.settings-page .academic-period-field::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+    height: 3px !important;
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b,
+            #6f866f,
+            #c99a24
+        ) !important;
+}
+
+.settings-page .academic-period-field label {
+    display: block !important;
+}
+
+.settings-page .academic-period-field label > span {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: #35483e !important;
+    font-size: 11px !important;
+    font-weight: 850 !important;
+    letter-spacing: .7px !important;
+    text-transform: uppercase !important;
+}
+
+.settings-page .academic-period-field input {
+    width: 100% !important;
+    height: 46px !important;
+    border-radius: 11px !important;
+}
+
+/* ---------------------------------------------------------
+   RESULT FOOTER / SIGNATURE PLACEHOLDERS
+   --------------------------------------------------------- */
+
+.settings-page .result-footer-settings-card .form-grid {
+    gap: 15px !important;
+}
+
+.settings-page .result-footer-settings-card .form-grid label {
+    position: relative !important;
+    display: block !important;
+
+    padding: 17px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f8faf9
+        ) !important;
+
+    box-shadow:
+        0 8px 18px rgba(18, 61, 42, 0.045) !important;
+}
+
+.settings-page .result-footer-settings-card .form-grid label::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+    height: 3px !important;
+
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b,
+            #7b8c82,
+            #c99a24
+        ) !important;
+}
+
+.settings-page .result-footer-settings-card .form-grid label > span {
+    display: block !important;
+    margin-bottom: 9px !important;
+
+    color: #35483e !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+}
+
+.settings-page .result-footer-settings-card .form-grid input {
+    width: 100% !important;
+    height: 46px !important;
+
+    border-radius: 10px !important;
+    background: #ffffff !important;
+
+    font-size: 13px !important;
+}
+
+.settings-page .result-footer-settings-card
+.form-grid input::placeholder {
+    color: #a1aaa5 !important;
+    font-style: italic !important;
+}
+
+/* Signature fields get a more official writing-area feel */
+.settings-page #classTeacherSignature,
+.settings-page #directorSignature {
+    border-color: rgba(176, 139, 53, 0.28) !important;
+    box-shadow:
+        inset 0 -2px 0 rgba(176, 139, 53, 0.10),
+        0 3px 8px rgba(18, 61, 42, 0.025) !important;
+}
+
+.settings-page #classTeacherSignature:focus,
+.settings-page #directorSignature:focus {
+    border-color: #087f5b !important;
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.07),
+        inset 0 -2px 0 rgba(176, 139, 53, 0.18) !important;
+}
+
+/* Date field remains clean and consistent */
+.settings-page #resultSignatureDate {
+    border-color: rgba(18, 61, 42, 0.13) !important;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .settings-page .profile-preview {
+        grid-template-columns: 76px minmax(0, 1fr) !important;
+        gap: 15px !important;
+        padding: 17px !important;
+    }
+
+    .settings-page .profile-photo {
+        width: 68px !important;
+        height: 68px !important;
+    }
+
+    .settings-page .academic-period-summary {
+        grid-template-columns: 1fr !important;
+    }
+
+    .settings-page .result-footer-settings-card .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .settings-page .profile-preview {
+        grid-template-columns: 1fr !important;
+        text-align: center !important;
+        justify-items: center !important;
+    }
+
+    .settings-page .profile-preview strong,
+    .settings-page .profile-preview span {
+        text-align: center !important;
+    }
+
+    .settings-page .academic-period-summary > div,
+    .settings-page .academic-period-field,
+    .settings-page .result-footer-settings-card .form-grid label {
+        padding: 15px !important;
+        border-radius: 13px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — PROFILE INFORMATION REFINEMENT
+   ========================================================= */
+
+.settings-page .profile-preview {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 112px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 24px !important;
+
+    min-height: 126px !important;
+    padding: 20px 24px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 18px !important;
+
+    background:
+        linear-gradient(
+            110deg,
+            #f1f8f4 0%,
+            #ffffff 48%,
+            #fffdf7 100%
+        ) !important;
+
+    box-shadow:
+        0 12px 28px rgba(18, 61, 42, 0.065),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Stronger left identity accent */
+.settings-page .profile-preview::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 16px !important;
+    bottom: 16px !important;
+    width: 5px !important;
+
+    border-radius: 0 6px 6px 0 !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #087f5b 0%,
+            #087f5b 55%,
+            #c99a24 100%
+        ) !important;
+}
+
+/* Small decorative gold detail */
+.settings-page .profile-preview::after {
+    content: "" !important;
+    position: absolute !important;
+    right: 18px !important;
+    top: 14px !important;
+
+    width: 34px !important;
+    height: 34px !important;
+
+    border-top: 2px solid rgba(176, 139, 53, 0.30) !important;
+    border-right: 2px solid rgba(176, 139, 53, 0.30) !important;
+    border-radius: 0 12px 0 0 !important;
+
+    pointer-events: none !important;
+}
+
+/* Profile photo — stronger focal point */
+.settings-page .profile-photo {
+    position: relative !important;
+    width: 92px !important;
+    height: 92px !important;
+
+    margin-left: 3px !important;
+
+    border-radius: 50% !important;
+    border: 4px solid #ffffff !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #eef6f1,
+            #ffffff
+        ) !important;
+
+    box-shadow:
+        0 0 0 2px rgba(8, 127, 91, 0.20),
+        0 0 0 5px rgba(201, 154, 36, 0.10),
+        0 10px 20px rgba(18, 61, 42, 0.15) !important;
+
+    overflow: hidden !important;
+}
+
+/* Photo gold/green ring detail */
+.settings-page .profile-photo::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: -1px !important;
+
+    border-radius: 50% !important;
+
+    border: 2px solid rgba(176, 139, 53, 0.42) !important;
+
+    pointer-events: none !important;
+}
+
+/* Profile text area */
+.settings-page .profile-preview > div:last-child {
+    min-width: 0 !important;
+    padding-right: 35px !important;
+}
+
+/* Student name */
+.settings-page .profile-preview strong {
+    display: block !important;
+
+    color: #123d2a !important;
+    font-size: 19px !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Supporting profile information */
+.settings-page .profile-preview span {
+    display: block !important;
+    margin-top: 7px !important;
+
+    color: #66766d !important;
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+}
+
+/* Small identity label if the existing markup contains one */
+.settings-page .profile-preview .profile-role,
+.settings-page .profile-preview .profile-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    margin-bottom: 6px !important;
+    padding: 4px 9px !important;
+
+    border: 1px solid rgba(176, 139, 53, 0.22) !important;
+    border-radius: 999px !important;
+
+    background: rgba(201, 154, 36, 0.07) !important;
+
+    color: #8a6a20 !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+/* Keep the profile preview above the card decoration */
+.settings-page .profile-preview > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Hover — very subtle */
+@media (hover: hover) and (pointer: fine) {
+    .settings-page .profile-preview:hover {
+        border-color: rgba(8, 127, 91, 0.18) !important;
+
+        box-shadow:
+            0 15px 32px rgba(18, 61, 42, 0.075),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .settings-page .profile-preview {
+        grid-template-columns: 88px minmax(0, 1fr) !important;
+        gap: 18px !important;
+        min-height: 110px !important;
+        padding: 18px !important;
+    }
+
+    .settings-page .profile-photo {
+        width: 76px !important;
+        height: 76px !important;
+    }
+
+    .settings-page .profile-preview strong {
+        font-size: 17px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page .profile-preview {
+        grid-template-columns: 1fr !important;
+        justify-items: center !important;
+        text-align: center !important;
+        gap: 12px !important;
+        padding: 20px 17px !important;
+    }
+
+    .settings-page .profile-preview > div:last-child {
+        padding-right: 0 !important;
+    }
+
+    .settings-page .profile-preview strong,
+    .settings-page .profile-preview span {
+        text-align: center !important;
+    }
+
+    .settings-page .profile-photo {
+        width: 82px !important;
+        height: 82px !important;
+        margin-left: 0 !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — PROFILE INFORMATION FORM FIELDS
+   ========================================================= */
+
+.settings-page .profile-form,
+.settings-page .profile-settings-form {
+    display: grid !important;
+    gap: 15px !important;
+}
+
+/* Each profile information field */
+.settings-page .profile-form label,
+.settings-page .profile-settings-form label {
+    position: relative !important;
+    display: block !important;
+
+    padding: 16px 17px 17px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f9fbfa 72%,
+            #fffdf8 100%
+        ) !important;
+
+    box-shadow:
+        0 8px 18px rgba(18, 61, 42, 0.045),
+        0 1px 3px rgba(18, 61, 42, 0.035) !important;
+
+    overflow: hidden !important;
+}
+
+/* Green → grey → gold top accent */
+.settings-page .profile-form label::before,
+.settings-page .profile-settings-form label::before {
+    content: "" !important;
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+
+    height: 3px !important;
+
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b 0%,
+            #087f5b 40%,
+            #89968e 65%,
+            #c99a24 100%
+        ) !important;
+
+    pointer-events: none !important;
+}
+
+/* Profile field labels */
+.settings-page .profile-form label > span,
+.settings-page .profile-settings-form label > span {
+    display: block !important;
+
+    margin-bottom: 8px !important;
+
+    color: #35483e !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+}
+
+/* Actual input boxes */
+.settings-page .profile-form input,
+.settings-page .profile-form select,
+.settings-page .profile-form textarea,
+.settings-page .profile-settings-form input,
+.settings-page .profile-settings-form select,
+.settings-page .profile-settings-form textarea {
+    width: 100% !important;
+    min-height: 45px !important;
+
+    border: 1px solid #d3e0d8 !important;
+    border-radius: 10px !important;
+
+    background: #ffffff !important;
+
+    color: #183326 !important;
+
+    box-shadow:
+        inset 0 1px 2px rgba(18, 61, 42, 0.025) !important;
+
+    font-size: 13px !important;
+}
+
+/* Focus */
+.settings-page .profile-form input:focus,
+.settings-page .profile-form select:focus,
+.settings-page .profile-form textarea:focus,
+.settings-page .profile-settings-form input:focus,
+.settings-page .profile-settings-form select:focus,
+.settings-page .profile-settings-form textarea:focus {
+    border-color: #087f5b !important;
+
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.07),
+        inset 0 -2px 0 rgba(201, 154, 36, 0.20) !important;
+
+    outline: none !important;
+}
+
+/* Hover */
+@media (hover: hover) and (pointer: fine) {
+    .settings-page .profile-form label:hover,
+    .settings-page .profile-settings-form label:hover {
+        border-color: rgba(8, 127, 91, 0.18) !important;
+
+        box-shadow:
+            0 11px 23px rgba(18, 61, 42, 0.06) !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .settings-page .profile-form label,
+    .settings-page .profile-settings-form label {
+        padding: 15px !important;
+        border-radius: 13px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS — PROFILE INFORMATION FIELDS
+   ========================================================= */
+
+/* Profile form field area */
+.settings-page #profileForm > .form-grid {
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Full Name + Email Address boxes */
+.settings-page #profileForm > .form-grid > label {
+    position: relative !important;
+    display: block !important;
+    overflow: hidden !important;
+
+    padding: 18px 18px 19px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 15px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f9fbfa 72%,
+            #fffdf8 100%
+        ) !important;
+
+    box-shadow:
+        0 9px 21px rgba(18, 61, 42, 0.055),
+        0 2px 5px rgba(18, 61, 42, 0.025) !important;
+}
+
+/* Green → muted grey → gold top edge */
+.settings-page #profileForm > .form-grid > label::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 15px !important;
+    right: 15px !important;
+    height: 3px !important;
+
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b 0%,
+            #087f5b 38%,
+            #89968e 64%,
+            #c99a24 100%
+        ) !important;
+
+    pointer-events: none !important;
+}
+
+/* Field label */
+.settings-page #profileForm > .form-grid > label > span {
+    display: block !important;
+    margin-bottom: 9px !important;
+
+    color: #35483e !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+
+    letter-spacing: .9px !important;
+    text-transform: uppercase !important;
+}
+
+/* Actual input */
+.settings-page #profileForm > .form-grid > label > input {
+    width: 100% !important;
+    height: 47px !important;
+
+    padding: 0 13px !important;
+
+    border: 1px solid #d3e0d8 !important;
+    border-radius: 10px !important;
+
+    background: #ffffff !important;
+
+    color: #183326 !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+
+    box-shadow:
+        inset 0 1px 2px rgba(18, 61, 42, 0.025) !important;
+}
+
+/* Focus */
+.settings-page #profileForm > .form-grid > label > input:focus {
+    outline: none !important;
+
+    border-color: #087f5b !important;
+
+    box-shadow:
+        0 0 0 3px rgba(8, 127, 91, 0.07),
+        inset 0 -2px 0 rgba(201, 154, 36, 0.20) !important;
+}
+
+/* Hover */
+@media (hover: hover) and (pointer: fine) {
+    .settings-page #profileForm > .form-grid > label:hover {
+        border-color: rgba(8, 127, 91, 0.18) !important;
+
+        box-shadow:
+            0 12px 25px rgba(18, 61, 42, 0.07),
+            0 2px 5px rgba(18, 61, 42, 0.03) !important;
+    }
+}
+
+/* ---------------------------------------------------------
+   SECURITY VERIFICATION — MATCH THE PROFILE FIELDS
+   --------------------------------------------------------- */
+
+.settings-page #profileForm .password-section {
+    position: relative !important;
+    overflow: hidden !important;
+
+    margin-top: 2px !important;
+    padding: 20px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 15px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8fbf9 0%,
+            #ffffff 70%,
+            #fffdf8 100%
+        ) !important;
+
+    box-shadow:
+        0 9px 21px rgba(18, 61, 42, 0.05) !important;
+}
+
+/* Security top accent */
+.settings-page #profileForm .password-section::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 15px !important;
+    right: 15px !important;
+    height: 3px !important;
+
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #c99a24 0%,
+            #89968e 42%,
+            #087f5b 100%
+        ) !important;
+}
+
+/* Security input becomes an inner field */
+.settings-page #profileForm .password-section > label {
+    display: block !important;
+
+    margin-top: 17px !important;
+    padding: 15px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.10) !important;
+    border-radius: 12px !important;
+
+    background: #ffffff !important;
+
+    box-shadow:
+        0 5px 13px rgba(18, 61, 42, 0.035) !important;
+}
+
+.settings-page #profileForm .password-section > label > span {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: #35483e !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+}
+
+.settings-page #profileForm .password-section > label > input {
+    width: 100% !important;
+    height: 45px !important;
+
+    border-radius: 10px !important;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .settings-page #profileForm > .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .settings-page #profileForm > .form-grid > label,
+    .settings-page #profileForm .password-section {
+        padding: 16px !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ SETTINGS
+   PROFILE INFORMATION — FULL INNER REDESIGN
+   ========================================================= */
+
+/* Main profile form area */
+.settings-page #profileForm {
+    position: relative !important;
+}
+
+/* ---------------------------------------------------------
+   PROFILE DETAILS GRID
+   --------------------------------------------------------- */
+
+.settings-page #profileForm > .form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin-top: 22px !important;
+    margin-bottom: 22px !important;
+}
+
+/* Individual information panel */
+.settings-page #profileForm > .form-grid > label {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+
+    min-height: 112px !important;
+    padding: 20px 20px 19px !important;
+
+    overflow: hidden !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.12) !important;
+    border-radius: 17px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #fbfdfc 58%,
+            #f5faf7 100%
+        ) !important;
+
+    box-shadow:
+        0 12px 26px rgba(18, 61, 42, 0.065),
+        0 2px 6px rgba(18, 61, 42, 0.025) !important;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease !important;
+}
+
+/* Top green → grey → gold decoration */
+.settings-page #profileForm > .form-grid > label::before {
+    content: "" !important;
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    height: 4px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b 0%,
+            #087f5b 38%,
+            #8b9890 65%,
+            #c99a24 100%
+        ) !important;
+}
+
+/* Small corner decoration */
+.settings-page #profileForm > .form-grid > label::after {
+    content: "" !important;
+    position: absolute !important;
+
+    right: -28px !important;
+    bottom: -35px !important;
+
+    width: 100px !important;
+    height: 100px !important;
+
+    border: 1px solid rgba(176, 139, 53, 0.13) !important;
+    border-radius: 50% !important;
+
+    pointer-events: none !important;
+}
+
+/* Label */
+.settings-page #profileForm > .form-grid > label > span {
+    position: relative !important;
+    z-index: 2 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+
+    margin-bottom: 10px !important;
+
+    color: #5b6c63 !important;
+
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.1px !important;
+    text-transform: uppercase !important;
+}
+
+/* Tiny gold indicator beside field name */
+.settings-page #profileForm > .form-grid > label > span::before {
+    content: "" !important;
+
+    width: 5px !important;
+    height: 5px !important;
+
+    flex: 0 0 5px !important;
+
+    border-radius: 50% !important;
+
+    background: #c99a24 !important;
+}
+
+/* Actual field */
+.settings-page #profileForm > .form-grid > label > input {
+    position: relative !important;
+    z-index: 2 !important;
+
+    width: 100% !important;
+    height: 48px !important;
+
+    padding: 0 14px !important;
+
+    border: 1px solid #d5e0da !important;
+    border-radius: 11px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #fbfcfb
+        ) !important;
+
+    color: #123d2a !important;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+
+    box-shadow:
+        inset 0 1px 2px rgba(18, 61, 42, 0.025),
+        0 2px 5px rgba(18, 61, 42, 0.025) !important;
+}
+
+/* Field focus */
+.settings-page #profileForm > .form-grid > label:focus-within {
+    border-color: rgba(8, 127, 91, 0.32) !important;
+
+    box-shadow:
+        0 14px 30px rgba(18, 61, 42, 0.085),
+        0 0 0 3px rgba(8, 127, 91, 0.045) !important;
+
+    transform: translateY(-1px) !important;
+}
+
+.settings-page #profileForm > .form-grid > label:focus-within::before {
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b,
+            #087f5b 48%,
+            #c99a24
+        ) !important;
+}
+
+.settings-page #profileForm > .form-grid > label > input:focus {
+    outline: none !important;
+
+    border-color: #087f5b !important;
+
+    box-shadow:
+        0 0 0 2px rgba(8, 127, 91, 0.06),
+        inset 0 -2px 0 rgba(201, 154, 36, 0.22) !important;
+}
+
+/* ---------------------------------------------------------
+   SECURITY VERIFICATION
+   --------------------------------------------------------- */
+
+.settings-page #profileForm .password-section {
+    position: relative !important;
+    overflow: hidden !important;
+
+    margin-top: 4px !important;
+    padding: 22px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.13) !important;
+    border-radius: 18px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5faf7 0%,
+            #ffffff 52%,
+            #fffaf0 100%
+        ) !important;
+
+    box-shadow:
+        0 15px 32px rgba(18, 61, 42, 0.075),
+        0 3px 8px rgba(18, 61, 42, 0.03) !important;
+}
+
+/* Strong security accent */
+.settings-page #profileForm .password-section::before {
+    content: "" !important;
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    height: 4px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #c99a24 0%,
+            #9a9b87 38%,
+            #087f5b 72%,
+            #087f5b 100%
+        ) !important;
+}
+
+/* Security heading */
+.settings-page #profileForm .password-section > .settings-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+
+    margin-bottom: 7px !important;
+
+    color: #9a7624 !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.5px !important;
+}
+
+/* Security heading icon dot */
+.settings-page #profileForm .password-section > .settings-label::before {
+    content: "●" !important;
+    color: #087f5b !important;
+    font-size: 7px !important;
+}
+
+/* Security title */
+.settings-page #profileForm .password-section > h3 {
+    position: relative !important;
+
+    margin: 0 0 6px !important;
+
+    color: #123d2a !important;
+    font-size: 17px !important;
+    font-weight: 900 !important;
+}
+
+/* Security description */
+.settings-page #profileForm .password-section > p {
+    max-width: 620px !important;
+
+    margin: 0 !important;
+
+    color: #75837b !important;
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+}
+
+/* Password field container */
+.settings-page #profileForm .password-section > label {
+    position: relative !important;
+
+    display: block !important;
+
+    margin-top: 18px !important;
+    padding: 17px !important;
+
+    border: 1px solid rgba(18, 61, 42, 0.11) !important;
+    border-radius: 14px !important;
+
+    background: rgba(255, 255, 255, 0.90) !important;
+
+    box-shadow:
+        0 8px 18px rgba(18, 61, 42, 0.045) !important;
+}
+
+/* Password field top accent */
+.settings-page #profileForm .password-section > label::before {
+    content: "" !important;
+
+    position: absolute !important;
+    top: 0 !important;
+    left: 14px !important;
+    right: 14px !important;
+
+    height: 3px !important;
+
+    border-radius: 0 0 5px 5px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #087f5b,
+            #8b9890,
+            #c99a24
+        ) !important;
+}
+
+/* Password label */
+.settings-page #profileForm .password-section > label > span {
+    display: block !important;
+
+    margin-bottom: 9px !important;
+
+    color: #4f6258 !important;
+
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: .9px !important;
+    text-transform: uppercase !important;
+}
+
+/* Password input */
+.settings-page #profileForm .password-section > label > input {
+    width: 100% !important;
+    height: 48px !important;
+
+    padding: 0 14px !important;
+
+    border: 1px solid #d3dfd8 !important;
+    border-radius: 11px !important;
+
+    background: #ffffff !important;
+
+    color: #123d2a !important;
+
+    font-size: 14px !important;
+    letter-spacing: 1px !important;
+
+    box-shadow:
+        inset 0 1px 2px rgba(18, 61, 42, 0.025) !important;
+}
+
+.settings-page #profileForm .password-section > label:focus-within {
+    border-color: rgba(176, 139, 53, 0.34) !important;
+
+    box-shadow:
+        0 10px 22px rgba(18, 61, 42, 0.06),
+        0 0 0 3px rgba(201, 154, 36, 0.045) !important;
+}
+
+.settings-page #profileForm .password-section > label > input:focus {
+    outline: none !important;
+
+    border-color: #087f5b !important;
+
+    box-shadow:
+        0 0 0 2px rgba(8, 127, 91, 0.06),
+        inset 0 -2px 0 rgba(201, 154, 36, 0.22) !important;
+}
+
+/* ---------------------------------------------------------
+   PROFILE SAVE AREA
+   --------------------------------------------------------- */
+
+.settings-page #profileForm #formMessage {
+    margin-top: 18px !important;
+    margin-bottom: 10px !important;
+}
+
+.settings-page #profileForm #saveProfileButton {
+    min-width: 145px !important;
+    min-height: 45px !important;
+    padding: 0 22px !important;
+
+    border: 0 !important;
+    border-radius: 11px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #087f5b,
+            #123d2a
+        ) !important;
+
+    color: #ffffff !important;
+
+    font-weight: 850 !important;
+
+    box-shadow:
+        0 8px 17px rgba(18, 61, 42, 0.16) !important;
+}
+
+.settings-page #profileForm #saveProfileButton:hover {
+    box-shadow:
+        0 11px 22px rgba(18, 61, 42, 0.21) !important;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .settings-page #profileForm > .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .settings-page #profileForm > .form-grid > label {
+        min-height: 105px !important;
+        padding: 18px !important;
+    }
+
+    .settings-page #profileForm .password-section {
+        padding: 19px !important;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .settings-page #profileForm > .form-grid > label {
+        min-height: 100px !important;
+        border-radius: 15px !important;
+    }
+
+    .settings-page #profileForm .password-section {
+        border-radius: 16px !important;
+    }
+
+    .settings-page #profileForm .password-section > label {
+        padding: 15px !important;
+    }
+}
+

@@ -1,0 +1,37 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/middleware/auth.php';
+
+header('Content-Type: application/json; charset=utf-8');
+
+requireAdmin();
+
+$pdo = db();
+
+$students = (int) $pdo->query(
+    "SELECT COUNT(*) FROM students WHERE is_active = 1"
+)->fetchColumn();
+
+$classes = (int) $pdo->query(
+    "SELECT COUNT(*) FROM classes WHERE is_active = 1"
+)->fetchColumn();
+
+$subjects = (int) $pdo->query(
+    "SELECT COUNT(*) FROM subjects WHERE is_active = 1"
+)->fetchColumn();
+
+$results = (int) $pdo->query(
+    "SELECT COUNT(*) FROM results"
+)->fetchColumn();
+
+echo json_encode([
+    'success' => true,
+    'stats' => [
+        'students' => $students,
+        'classes' => $classes,
+        'subjects' => $subjects,
+        'results' => $results,
+    ],
+]);

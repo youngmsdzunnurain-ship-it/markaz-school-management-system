@@ -1,0 +1,498 @@
+@page{
+size:A4 portrait;
+margin:7mm;
+}
+
+@media print{
+html,body{
+margin:0!important;
+padding:0!important;
+background:#fff!important;
+color:#17211b!important;
+-webkit-print-color-adjust:exact!important;
+print-color-adjust:exact!important;
+}
+
+.page-header,
+.header-actions,
+button,
+.btn,
+.no-print{
+display:none!important;
+}
+
+.student-result-page,
+.report-card{
+width:100%!important;
+max-width:none!important;
+margin:0!important;
+padding:0!important;
+border:0!important;
+box-shadow:none!important;
+background:#fff!important;
+}
+
+.report-card *{
+box-sizing:border-box!important;
+}
+
+/* SCHOOL HEADER */
+.report-card .school-header{
+display:grid!important;
+grid-template-columns:minmax(0,1fr) auto!important;
+gap:10px!important;
+align-items:center!important;
+padding:2px 0 5px!important;
+margin:0 0 4px!important;
+border-bottom:2px solid #1f6b45!important;
+}
+
+.report-card .school-brand{
+display:grid!important;
+grid-template-columns:48px minmax(0,1fr)!important;
+gap:7px!important;
+align-items:center!important;
+min-width:0!important;
+}
+
+.report-card .school-logo{
+width:48px!important;
+height:48px!important;
+border:1px solid #c6a34a!important;
+border-radius:50%!important;
+overflow:hidden!important;
+background:#fff!important;
+}
+
+.report-card .school-logo img{
+display:block!important;
+width:100%!important;
+height:100%!important;
+object-fit:cover!important;
+}
+
+.report-card .school-heading{
+min-width:0!important;
+text-align:left!important;
+}
+
+.report-card .school-arabic-name{
+margin:0!important;
+font-size:11px!important;
+line-height:1.1!important;
+}
+
+.report-card .school-arabic-address,
+.report-card .school-address{
+margin:0!important;
+font-size:5.5px!important;
+line-height:1.1!important;
+}
+
+.report-card .school-kicker{
+margin:1px 0!important;
+font-size:6.5px!important;
+line-height:1.1!important;
+}
+
+.report-card .school-contact{
+display:flex!important;
+gap:5px!important;
+align-items:center!important;
+font-size:5.5px!important;
+line-height:1!important;
+}
+
+.report-card .report-title{
+display:flex!important;
+flex-direction:column!important;
+align-items:flex-end!important;
+justify-content:center!important;
+text-align:right!important;
+white-space:nowrap!important;
+}
+
+.report-card .report-title span{
+font-size:7px!important;
+line-height:1!important;
+}
+
+.report-card .report-title strong{
+font-size:10px!important;
+line-height:1!important;
+}
+
+/* SESSION */
+.report-card .session-bar{
+display:grid!important;
+grid-template-columns:repeat(3,1fr)!important;
+gap:4px!important;
+padding:3px 5px!important;
+margin:0 0 4px!important;
+background:#f1f7f3!important;
+border:1px solid #c9ddcf!important;
+border-radius:3px!important;
+}
+
+.report-card .session-bar>div{
+display:flex!important;
+justify-content:space-between!important;
+gap:4px!important;
+min-width:0!important;
+}
+
+.report-card .session-bar span{
+font-size:5.5px!important;
+}
+
+.report-card .session-bar strong{
+font-size:6px!important;
+}
+
+/* STUDENT PROFILE */
+.report-card .student-profile-grid{
+display:grid!important;
+grid-template-columns:52px minmax(0,1fr)!important;
+gap:4px!important;
+align-items:stretch!important;
+}
+
+.report-card .student-details{
+display:grid!important;
+grid-template-rows:1fr 1fr!important;
+gap:4px!important;
+min-width:0!important;
+}
+
+.report-card .student-photo{
+width:52px!important;
+height:52px!important;
+max-width:52px!important;
+max-height:52px!important;
+align-self:stretch!important;
+object-fit:cover!important;
+border:1px solid #c6a34a!important;
+border-radius:3px!important;
+}
+
+.report-card .student-info-row{
+display:grid!important;
+grid-template-columns:minmax(0,1.8fr) minmax(0,.65fr) minmax(0,.65fr) minmax(0,1fr)!important;
+gap:4px!important;
+min-width:0!important;
+}
+
+.report-card .student-class-row{
+grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr)!important;
+}
+
+.report-card .detail-item{
+min-width:0!important;
+height:100%!important;
+padding:3px 5px!important;
+border:1px solid #dbe6df!important;
+border-radius:3px!important;
+background:#fbfdfb!important;
+overflow:hidden!important;
+}
+
+.report-card .detail-item span,
+.report-card .detail-item small{
+display:block!important;
+font-size:5px!important;
+line-height:1!important;
+white-space:nowrap!important;
+}
+
+.report-card .detail-item strong,
+.report-card .detail-item b,
+.report-card .detail-item .value{
+display:block!important;
+margin-top:2px!important;
+font-size:6.5px!important;
+line-height:1.05!important;
+white-space:nowrap!important;
+overflow:hidden!important;
+text-overflow:ellipsis!important;
+}
+
+.report-card .memorization-value-row{
+display:block!important;
+min-width:0!important;
+}
+
+.report-card .memorization-value-row input{
+display:none!important;
+}
+
+@media print{
+.report-card .result-management-grid{
+display:block!important;
+width:100%!important;
+padding:0!important;
+margin:4px 0 0!important;
+}
+
+.report-card .academic-management-panel,
+.report-card .behavioural-management-panel{
+display:block!important;
+width:100%!important;
+max-width:none!important;
+min-width:0!important;
+margin:0!important;
+padding:0!important;
+}
+
+.report-card .academic-management-panel{
+margin-bottom:4px!important;
+}
+
+.report-card .academic-management-panel .report-section{
+width:100%!important;
+margin:0 0 3px!important;
+padding:0!important;
+}
+
+.report-card .results-table-container{
+width:100%!important;
+overflow:visible!important;
+}
+
+.report-card .student-results-table{
+width:100%!important;
+border-collapse:collapse!important;
+table-layout:fixed!important;
+font-size:6px!important;
+}
+
+.report-card .student-results-table th,
+.report-card .student-results-table td{
+padding:2px 3px!important;
+line-height:1.1!important;
+border:1px solid #d5dfda!important;
+}
+
+.report-card .student-results-table th{
+background:#1f6b45!important;
+color:#fff!important;
+font-size:5.5px!important;
+font-weight:700!important;
+}
+
+.report-card .student-results-table td{
+background:#fff!important;
+}
+
+.report-card .student-results-table tr{
+break-inside:avoid!important;
+page-break-inside:avoid!important;
+}
+
+.report-card .section-heading{
+margin:0 0 2px!important;
+padding:2px 4px!important;
+}
+
+.report-card .section-heading h2{
+margin:0!important;
+font-size:7px!important;
+line-height:1!important;
+}
+
+.report-card .section-eyebrow{
+font-size:5px!important;
+line-height:1!important;
+}
+}
+@media print{
+.report-card .summary-grid{
+display:grid!important;
+grid-template-columns:repeat(4,minmax(0,1fr))!important;
+gap:3px!important;
+margin:3px 0 0!important;
+}
+
+.report-card .summary-box{
+min-width:0!important;
+min-height:24px!important;
+padding:3px 4px!important;
+border:1px solid #d5dfda!important;
+border-radius:3px!important;
+background:#f8fbf9!important;
+}
+
+.report-card .summary-box span{
+display:block!important;
+font-size:5px!important;
+line-height:1!important;
+}
+
+.report-card .summary-box strong{
+display:block!important;
+margin-top:2px!important;
+font-size:8px!important;
+line-height:1!important;
+}
+}
+@media print{
+.report-card .behavioural-management-panel{
+width:100%!important;
+margin:0!important;
+padding:0!important;
+}
+
+.report-card .behavioural-management-panel .report-section{
+width:100%!important;
+margin:0 0 3px!important;
+padding:0!important;
+}
+
+.report-card .behaviour-grid-container{
+width:100%!important;
+padding:3px!important;
+margin:0!important;
+overflow:visible!important;
+border:1px solid #d5dfda!important;
+border-radius:3px!important;
+box-shadow:none!important;
+}
+
+.report-card .behaviour-grid{
+display:grid!important;
+grid-template-columns:repeat(3,minmax(0,1fr))!important;
+gap:3px!important;
+}
+
+.report-card .behaviour-item{
+display:grid!important;
+grid-template-columns:1fr auto!important;
+align-items:center!important;
+min-width:0!important;
+min-height:20px!important;
+height:20px!important;
+padding:2px 4px!important;
+border:1px solid #dbe6df!important;
+border-radius:3px!important;
+background:#fff!important;
+box-shadow:none!important;
+}
+
+.report-card .behaviour-item span{
+font-size:5.5px!important;
+line-height:1!important;
+}
+
+.report-card .behaviour-rating{
+width:42px!important;
+min-width:42px!important;
+height:15px!important;
+padding:0!important;
+font-size:5px!important;
+}
+
+.report-card .behaviour-summary-card{
+display:grid!important;
+grid-template-columns:1fr 1fr!important;
+gap:5px!important;
+margin:3px 0!important;
+padding:3px 5px!important;
+min-height:23px!important;
+border-radius:3px!important;
+box-shadow:none!important;
+}
+
+.report-card .behaviour-summary-card span,
+.report-card .behaviour-summary-card small{
+font-size:4.8px!important;
+line-height:1!important;
+}
+
+.report-card .behaviour-summary-card strong{
+font-size:7px!important;
+line-height:1!important;
+}
+
+.report-card .behaviour-comment-card{
+margin:3px 0!important;
+padding:3px 5px!important;
+border-radius:3px!important;
+box-shadow:none!important;
+}
+
+.report-card .behaviour-comment-card p{
+margin:2px 0!important;
+font-size:5.5px!important;
+line-height:1.1!important;
+}
+
+.report-card .affective-key{
+margin:2px 0!important;
+padding:2px!important;
+font-size:4.5px!important;
+line-height:1!important;
+}
+}
+@media print{
+.report-card .remarks-section{
+width:100%!important;
+margin:3px 0!important;
+padding:0!important;
+}
+
+.report-card .remarks-grid{
+display:grid!important;
+grid-template-columns:1fr 1fr!important;
+gap:4px!important;
+}
+
+.report-card .remark-card{
+min-width:0!important;
+min-height:25px!important;
+padding:3px 5px!important;
+border:1px solid #d5dfda!important;
+border-radius:3px!important;
+box-shadow:none!important;
+}
+
+.report-card .remark-card .section-eyebrow{
+font-size:4.8px!important;
+}
+
+.report-card .remark-card p{
+margin:2px 0 0!important;
+font-size:5.5px!important;
+line-height:1.1!important;
+}
+
+.report-card .report-footer{
+display:grid!important;
+grid-template-columns:repeat(3,1fr)!important;
+gap:8px!important;
+width:100%!important;
+margin:5px 0 0!important;
+padding-top:3px!important;
+border-top:1px solid #d5dfda!important;
+}
+
+.report-card .signature-space{
+min-height:16px!important;
+font-size:5.5px!important;
+}
+
+.report-card .signature-line{
+min-width:0!important;
+}
+
+.report-card .signature-line span{
+display:block!important;
+font-size:5px!important;
+line-height:1!important;
+}
+
+.report-card .signature-line small{
+display:block!important;
+margin-top:1px!important;
+font-size:4.5px!important;
+line-height:1!important;
+}
+}

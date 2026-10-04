@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --green: #176b45;
+    --green-dark: #0f4d32;
+    --green-soft: #edf7f1;
+    --gold: #c9a227;
+    --gold-soft: #f8f1d8;
+    --text: #17221c;
+    --muted: #718078;
+    --border: #dfe7e2;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: #f5f8f6;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 455px;
+    background: var(--white);
+    border: 1px solid #e5ebe7;
+    border-radius: 24px;
+    padding: 38px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 20px 55px rgba(23, 107, 69, 0.10);
+}
+
+.brand {
+    text-align: center;
+}
+
+.logo-wrap {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, var(--gold), #ead78b);
+}
+
+.logo-wrap img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 50%;
+    background: white;
+}
+
+.brand h1 {
+    color: var(--green-dark);
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.brand p {
+    max-width: 330px;
+    margin: 7px auto 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.login-heading {
+    margin: 32px 0 23px;
+}
+
+.login-heading h2 {
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.login-heading p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-box {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fbfcfb;
+    transition: 0.2s ease;
+}
+
+.input-box:focus-within {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(23, 107, 69, 0.08);
+}
+
+.input-box > i {
+    color: var(--green);
+    width: 18px;
+    text-align: center;
+}
+
+.input-box input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.input-box input::placeholder {
+    color: #9aa59f;
+}
+
+.password-toggle {
+    border: 0;
+    background: transparent;
+    color: #7d8982;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.login-button {
+    width: 100%;
+    height: 52px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--green);
+    color: white;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-top: 7px;
+    transition: 0.2s ease;
+}
+
+.login-button:hover {
+    background: var(--green-dark);
+}
+
+.login-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.login-message {
+    display: none;
+    padding: 11px 12px;
+    border-radius: 10px;
+    margin-bottom: 13px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.login-message.error {
+    display: block;
+    background: #fff1f1;
+    color: #a33a3a;
+}
+
+.login-message.success {
+    display: block;
+    background: var(--green-soft);
+    color: var(--green-dark);
+}
+
+.login-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin-top: 24px;
+    color: #8a958f;
+    font-size: 11px;
+}
+
+.login-footer i {
+    color: var(--gold);
+}
+
+.decor {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.decor-one {
+    width: 330px;
+    height: 330px;
+    background: rgba(23, 107, 69, 0.06);
+    top: -120px;
+    left: -120px;
+}
+
+.decor-two {
+    width: 280px;
+    height: 280px;
+    border: 35px solid rgba(201, 162, 39, 0.07);
+    right: -120px;
+    bottom: -100px;
+}
+
+@media (max-width: 520px) {
+    .login-page {
+        padding: 18px 14px;
+    }
+
+    .login-card {
+        padding: 30px 22px;
+        border-radius: 20px;
+    }
+
+    .logo-wrap {
+        width: 82px;
+        height: 82px;
+    }
+
+    .brand h1 {
+        font-size: 22px;
+    }
+}
+
+/* =========================================================
+   MARKAZ LOGIN WATERMARK
+   ========================================================= */
+
+.login-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../assets/images/markaz-logo.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 430px auto;
+    opacity: 0.055;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.login-card {
+    z-index: 2;
+}
+
+@media (max-width: 520px) {
+    .login-page::before {
+        background-size: 300px auto;
+        opacity: 0.05;
+    }
+}
