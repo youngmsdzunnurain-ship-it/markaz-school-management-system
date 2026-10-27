@@ -1452,3 +1452,27 @@
   .report-card .report-card-footer p { font-size: 6.5pt !important; line-height: 1.12 !important; }
 }
 
+/* Final layout guard: keep all four performance summary cards on one aligned row in print. */
+@media print {
+  html body .report-card .performance-overview {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+    gap: 1.5mm !important;
+    width: 100% !important;
+  }
+  html body .report-card .performance-overview > .performance-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-self: stretch !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+  }
+}
+
