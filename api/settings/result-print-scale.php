@@ -5,6 +5,18 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
+
+set_exception_handler(static function (Throwable $error): void {
+    error_log('Result print scale settings error: ' . $error->getMessage());
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    echo json_encode([
+        'success' => false,
+        'message' => 'Unable to save or load print scale. Check the server error log.'
+    ]);
+});
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireSeniorAdmin();
 } else {
@@ -13,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pdo = db();
 $key = 'result_print_scale';
-$allowed = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+$allowed = range(50, 100, 5);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $pdo->prepare('SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1');
