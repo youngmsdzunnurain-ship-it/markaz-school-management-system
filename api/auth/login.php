@@ -51,6 +51,28 @@ if ($loginIdentifier === '' || $password === '') {
 
 $pdo = db();
 
+// Ensure failed-login tracking exists on installations that predate this table.
+try {
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS login_lockouts (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            role VARCHAR(40) NOT NULL,
+            identifier VARCHAR(190) NOT NULL,
+            failed_attempts INT UNSIGNED NOT NULL DEFAULT 0,
+            locked_until DATETIME NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_login_lockout_role_identifier (role, identifier),
+            KEY idx_login_lockout_expiry (locked_until)
+        ) ENGINE=InnoDB"
+    );
+} catch (Throwable $error) {
+    error_log('Login lockout initialization failed: ' . $error->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Account protection is temporarily unavailable. Please contact the administrator.']);
+    exit;
+}
+
 $setting = $pdo->prepare(
     "SELECT setting_value FROM settings WHERE setting_key = 'login_lockout_enabled' LIMIT 1"
 );
