@@ -37,6 +37,10 @@
   const form = section.querySelector("#markazSocialForm");
   const status = section.querySelector("#markazSocialStatus");
   const saveButton = section.querySelector("#markazSocialSave");
+  const setStatus = (message, kind = "") => {
+    status.textContent = message;
+    status.className = kind ? `form-message ${kind}` : "form-message";
+  };
 
   fetch("api/settings/social-links.php", {
     credentials: "same-origin",
@@ -52,16 +56,17 @@
         const input = form.elements.namedItem(platform);
         if (input) input.value = url || "";
       });
-      status.textContent = "Saved social links loaded.";
+      setStatus("Saved social links loaded.", "success");
     })
     .catch(error => {
-      status.textContent = error.message || "Could not load social links.";
+      setStatus(error.message || "Could not load social links.", "error");
     });
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
     saveButton.disabled = true;
-    status.textContent = "Saving social links…";
+    setStatus("Saving social links…");
+    saveButton.textContent = "Saving…";
 
     try {
       const response = await fetch("api/settings/social-links.php", {
@@ -75,12 +80,13 @@
         throw new Error(data.message || "Could not save social links.");
       }
 
-      status.textContent = data.message || "Social links saved.";
+      setStatus(data.message || "Social links saved.", "success");
       document.dispatchEvent(new Event("markaz:social-links-updated"));
     } catch (error) {
-      status.textContent = error.message || "Could not save social links.";
+      setStatus(error.message || "Could not save social links.", "error");
     } finally {
       saveButton.disabled = false;
+      saveButton.textContent = "Save Social Links";
     }
   });
 })();
