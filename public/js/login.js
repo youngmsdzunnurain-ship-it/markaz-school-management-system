@@ -47,7 +47,8 @@ loginForm.addEventListener('submit', async (event) => {
             credentials: 'same-origin',
             body: JSON.stringify({
                 email: email,
-                password: password
+                password: password,
+                expected_role: 'admin'
             })
         });
 
