@@ -1,264 +1,376 @@
-/* MARKAZ official student report — A4 print system.
-   Screen styles remain in student-result.css; this file only governs printing. */
-@page { size: A4 portrait; margin: 9mm 9mm 10mm; }
+/* MARKAZ student report — compact, print-only A4 layout.
+   Keep the screen experience in student-result.css; no duplicate markup or data. */
+@page { size: A4 portrait; margin: 5mm; }
 
 @media print {
   :root {
     color-scheme: light;
-    --markaz-forest: #164b35;
-    --markaz-deep: #103b2a;
-    --markaz-gold: #c6a04a;
-    --markaz-gold-pale: #f7f0dc;
-    --markaz-mint: #edf4ef;
-    --markaz-line: #d5e0d8;
-    --markaz-ink: #1c3026;
-    --markaz-muted: #52675b;
+    --markaz-forest: #174b35;
+    --markaz-deep: #123a2a;
+    --markaz-gold: #b99a4a;
+    --markaz-ink: #24342b;
+    --markaz-muted: #58665e;
+    --markaz-line: #d6ded8;
+    --markaz-soft: #f5f8f5;
   }
 
   html, body {
     width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important;
     background: #fff !important; color: var(--markaz-ink) !important;
-    font: 9pt/1.35 Arial, Helvetica, sans-serif !important;
+    font: 7.2pt/1.18 Arial, Helvetica, sans-serif !important;
     -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
   }
-  body * { box-sizing: border-box !important; text-shadow: none !important; box-shadow: none !important; }
-  .result-page-curve, .result-page-header, .header-navigation, .header-actions,
-  .document-actions, button, .btn, .no-print, .student-edit-actions,
-  #editScoresButton, #saveScoresButton, #cancelScoresButton, #studentMemorizationInput,
-  #unsavedChangesModal, .markaz-confirm-overlay { display: none !important; }
-
-  .student-result-page, .student-result-page.management-view, #studentReportCard, .report-card {
-    display: block !important; width: 100% !important; max-width: none !important; min-width: 0 !important;
-    margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
-    background: #fff !important; overflow: visible !important;
+  *, *::before, *::after { box-sizing: border-box !important; text-shadow: none !important; box-shadow: none !important; }
+  .result-page-curve, .result-page-header, .header-navigation, .header-actions, .document-actions,
+  button, .btn, .no-print, .student-edit-actions, #editScoresButton, #saveScoresButton,
+  #cancelScoresButton, #studentMemorizationInput, #unsavedChangesModal, .markaz-confirm-overlay {
+    display: none !important;
   }
-  .report-card { color: var(--markaz-ink) !important; font-size: 8.5pt !important; }
+  .student-result-page, .student-result-page.management-view, #studentReportCard {
+    display: block !important; width: 100% !important; max-width: none !important; min-width: 0 !important;
+    margin: 0 !important; padding: 0 !important; border: 0 !important; background: #fff !important; overflow: visible !important;
+  }
 
-  /* School identity */
+  /* Chromium print zoom compresses the complete report; compensating width keeps the page filled. */
+  .report-card {
+    display: block !important; width: 113.636% !important; max-width: none !important; min-width: 0 !important;
+    margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+    background: #fff !important; color: var(--markaz-ink) !important; font-size: 7.2pt !important;
+    zoom: .88; overflow: visible !important;
+  }
+
+  /* School identity: logo, school details and report title remain on one horizontal row. */
   .report-card .school-header {
-    display: grid !important; grid-template-columns: minmax(0, 1fr) 42mm !important;
-    gap: 5mm !important; align-items: center !important; position: relative !important;
-    margin: 0 0 3.5mm !important; padding: 0 0 3mm !important;
-    border: 0 !important; border-bottom: 1.2mm solid var(--markaz-forest) !important;
+    display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important;
+    align-items: center !important; justify-content: space-between !important; gap: 3mm !important;
+    position: relative !important; width: 100% !important; margin: 0 0 1.5mm !important;
+    padding: 0 0 1.5mm !important; border: 0 !important; border-bottom: .8mm solid var(--markaz-forest) !important;
     break-inside: avoid !important; page-break-inside: avoid !important;
   }
   .report-card .school-header::after {
-    content: "" !important; position: absolute !important; right: 0 !important; bottom: -1.2mm !important;
-    width: 35mm !important; height: 1.2mm !important; background: var(--markaz-gold) !important;
+    content: "" !important; position: absolute !important; right: 0 !important; bottom: -.8mm !important;
+    width: 28mm !important; height: .8mm !important; background: var(--markaz-gold) !important;
   }
   .report-card .school-brand {
-    display: grid !important; grid-template-columns: 19mm minmax(0, 1fr) !important;
-    gap: 3mm !important; align-items: center !important; min-width: 0 !important;
+    display: flex !important; flex: 1 1 auto !important; flex-direction: row !important; flex-wrap: nowrap !important;
+    align-items: center !important; gap: 2.5mm !important; min-width: 0 !important;
   }
   .report-card .school-logo {
-    display: flex !important; align-items: center !important; justify-content: center !important;
-    width: 19mm !important; height: 19mm !important; overflow: hidden !important;
-    border: .4mm solid var(--markaz-gold) !important; border-radius: 3mm !important; background: #fff !important;
+    display: flex !important; flex: 0 0 18mm !important; align-items: center !important; justify-content: center !important;
+    width: 18mm !important; min-width: 18mm !important; height: 18mm !important; min-height: 18mm !important;
+    margin: 0 !important; padding: 1mm !important; overflow: hidden !important;
+    border: .3mm solid var(--markaz-line) !important; border-radius: 1mm !important; background: #fff !important;
   }
-  .report-card .school-logo img { display: block !important; width: 100% !important; height: 100% !important; object-fit: contain !important; }
-  .report-card .school-heading { min-width: 0 !important; text-align: left !important; }
+  .report-card .school-logo img {
+    display: block !important; width: 100% !important; max-width: 100% !important;
+    height: 100% !important; max-height: 100% !important; margin: 0 !important;
+    object-fit: contain !important; object-position: center !important;
+  }
+  .report-card .school-heading {
+    display: block !important; flex: 1 1 auto !important; min-width: 0 !important;
+    margin: 0 !important; padding: 0 !important; text-align: left !important;
+  }
   .report-card .school-arabic-name {
-    margin: 0 0 1mm !important; color: var(--markaz-deep) !important;
-    font-size: 12pt !important; font-weight: 700 !important; line-height: 1.25 !important;
+    margin: 0 0 .5mm !important; color: var(--markaz-deep) !important;
+    font-size: 9pt !important; font-weight: 700 !important; line-height: 1.15 !important;
   }
-  .report-card .school-arabic-address { margin: 0 0 1mm !important; color: var(--markaz-muted) !important; font-size: 7.5pt !important; line-height: 1.2 !important; }
+  .report-card .school-arabic-address {
+    margin: 0 0 .5mm !important; color: var(--markaz-muted) !important; font-size: 6pt !important; line-height: 1.1 !important;
+  }
   .report-card .school-kicker {
-    margin: 0 0 1.2mm !important; color: var(--markaz-forest) !important;
-    font-size: 8pt !important; font-weight: 800 !important; letter-spacing: .25pt !important; line-height: 1.25 !important;
+    margin: 0 0 .6mm !important; color: var(--markaz-forest) !important;
+    font-size: 6.8pt !important; font-weight: 800 !important; letter-spacing: .1pt !important; line-height: 1.12 !important;
   }
-  .report-card .school-address { margin: 0 0 1.2mm !important; color: var(--markaz-muted) !important; font-size: 7.5pt !important; line-height: 1.25 !important; }
+  .report-card .school-address {
+    margin: 0 0 .6mm !important; color: var(--markaz-muted) !important; font-size: 6pt !important; line-height: 1.1 !important;
+  }
   .report-card .school-contact {
-    display: flex !important; flex-wrap: wrap !important; gap: 1mm 3mm !important; align-items: center !important;
-    margin: 0 !important; color: var(--markaz-ink) !important; font-size: 7.2pt !important; line-height: 1.25 !important; overflow: visible !important;
+    display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important;
+    gap: .5mm 2mm !important; margin: 0 !important; color: var(--markaz-ink) !important; font-size: 5.8pt !important; line-height: 1.1 !important;
   }
-  .report-card .school-contact .contact-item { display: inline-flex !important; flex-wrap: wrap !important; gap: 1mm !important; align-items: center !important; min-width: 0 !important; color: var(--markaz-ink) !important; }
+  .report-card .school-contact .contact-item {
+    display: inline-flex !important; flex-direction: row !important; flex-wrap: nowrap !important;
+    align-items: center !important; gap: .5mm !important; min-width: 0 !important; color: var(--markaz-ink) !important;
+  }
   .report-card .school-contact i { color: var(--markaz-forest) !important; }
   .report-card .report-title {
-    display: flex !important; flex-direction: column !important; align-items: flex-end !important; justify-content: center !important;
-    gap: 2mm !important; min-width: 0 !important; padding: 4mm 3mm !important;
-    border: .35mm solid #d8c58f !important; border-right: 1.2mm solid var(--markaz-gold) !important;
-    border-radius: 2mm !important; background: var(--markaz-gold-pale) !important; text-align: right !important; white-space: normal !important;
+    display: flex !important; flex: 0 0 33mm !important; flex-direction: column !important;
+    align-items: flex-end !important; justify-content: center !important; gap: 1mm !important;
+    width: 33mm !important; min-width: 33mm !important; margin: 0 !important; padding: 2mm !important;
+    border: .3mm solid var(--markaz-line) !important; border-right: 1mm solid var(--markaz-gold) !important;
+    border-radius: 1mm !important; background: #fff !important; text-align: right !important; white-space: normal !important;
   }
-  .report-card .report-title span { color: var(--markaz-muted) !important; font-size: 7.5pt !important; font-weight: 800 !important; letter-spacing: 1pt !important; line-height: 1.2 !important; }
-  .report-card .report-title strong { color: var(--markaz-deep) !important; font-size: 13pt !important; font-weight: 900 !important; line-height: 1.15 !important; }
+  .report-card .report-title span {
+    color: var(--markaz-muted) !important; font-size: 6pt !important; font-weight: 700 !important;
+    letter-spacing: .5pt !important; line-height: 1.1 !important;
+  }
+  .report-card .report-title strong {
+    color: var(--markaz-deep) !important; font-size: 9pt !important; font-weight: 800 !important; line-height: 1.1 !important;
+  }
 
-  /* Period and section hierarchy */
   .report-card .session-bar {
-    display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 2mm !important;
-    margin: 0 0 3.5mm !important; padding: 2.5mm 3mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-left: 1.2mm solid var(--markaz-gold) !important;
-    border-radius: 1.5mm !important; background: var(--markaz-mint) !important;
+    display: grid !important; grid-template-columns: 1.15fr .7fr 1fr !important; gap: 2mm !important;
+    margin: 0 0 1.5mm !important; padding: 1.4mm 2mm !important;
+    border: .25mm solid var(--markaz-line) !important; border-left: .8mm solid var(--markaz-gold) !important;
+    border-radius: 0 !important; background: var(--markaz-soft) !important;
     break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .session-bar > div { display: flex !important; flex-direction: column !important; justify-content: center !important; gap: .8mm !important; min-width: 0 !important; }
-  .report-card .session-bar span { color: var(--markaz-muted) !important; font-size: 7.2pt !important; font-weight: 600 !important; line-height: 1.2 !important; }
-  .report-card .session-bar strong { color: var(--markaz-deep) !important; font-size: 9pt !important; font-weight: 800 !important; line-height: 1.25 !important; overflow-wrap: anywhere !important; }
-  .report-card .report-section { min-width: 0 !important; margin: 0 0 3.5mm !important; padding: 0 !important; border: 0 !important; background: #fff !important; }
+  .report-card .session-bar > div {
+    display: flex !important; flex-direction: column !important; justify-content: center !important; gap: .3mm !important; min-width: 0 !important;
+  }
+  .report-card .session-bar span { color: var(--markaz-muted) !important; font-size: 5.8pt !important; line-height: 1.1 !important; }
+  .report-card .session-bar strong {
+    color: var(--markaz-deep) !important; font-size: 7pt !important; font-weight: 700 !important;
+    line-height: 1.1 !important; overflow-wrap: anywhere !important;
+  }
+  .report-card .report-section {
+    min-width: 0 !important; margin: 0 0 1.7mm !important; padding: 0 !important; border: 0 !important; background: #fff !important;
+  }
   .report-card .section-heading {
-    display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 3mm !important;
-    margin: 0 0 2.5mm !important; padding: 2mm 2.5mm !important;
-    border: 0 !important; border-left: 1.2mm solid var(--markaz-gold) !important; background: var(--markaz-mint) !important;
+    display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 2mm !important;
+    margin: 0 0 1mm !important; padding: 1mm 1.5mm !important; border: 0 !important;
+    border-left: .8mm solid var(--markaz-forest) !important; border-radius: 0 !important; background: var(--markaz-soft) !important;
     break-after: avoid !important; page-break-after: avoid !important;
   }
-  .report-card .section-heading h2 { margin: 0 !important; color: var(--markaz-deep) !important; font-size: 10pt !important; font-weight: 800 !important; line-height: 1.2 !important; }
-  .report-card .section-heading p { margin: 1mm 0 0 !important; color: var(--markaz-muted) !important; font-size: 7.5pt !important; line-height: 1.25 !important; }
-  .report-card .section-eyebrow { display: block !important; margin: 0 0 .7mm !important; color: var(--markaz-forest) !important; font-size: 6.8pt !important; font-weight: 800 !important; letter-spacing: .65pt !important; line-height: 1.2 !important; }
+  .report-card .section-heading h2 {
+    margin: 0 !important; color: var(--markaz-deep) !important; font-size: 8pt !important; font-weight: 800 !important; line-height: 1.1 !important;
+  }
+  .report-card .section-heading p {
+    margin: .4mm 0 0 !important; color: var(--markaz-muted) !important; font-size: 5.6pt !important; line-height: 1.1 !important;
+  }
+  .report-card .section-eyebrow {
+    display: block !important; margin: 0 0 .3mm !important; color: var(--markaz-forest) !important;
+    font-size: 5.3pt !important; font-weight: 700 !important; letter-spacing: .35pt !important; line-height: 1.05 !important;
+  }
 
-  /* Student identity */
-  .report-card .student-profile-grid { display: grid !important; grid-template-columns: 23mm minmax(0, 1fr) !important; gap: 3mm !important; align-items: stretch !important; min-width: 0 !important; }
+  /* Student information: consistent compact label/value cells, no oversized colourful badges. */
+  .report-card .student-information .section-heading { margin-bottom: 1mm !important; }
+  .report-card .student-profile-grid {
+    display: grid !important; grid-template-columns: 18mm minmax(0, 1fr) !important;
+    gap: 2mm !important; align-items: stretch !important; min-width: 0 !important;
+  }
   .report-card .student-photo {
     display: flex !important; align-items: center !important; justify-content: center !important;
-    width: 23mm !important; min-width: 23mm !important; min-height: 27mm !important; max-width: 23mm !important;
-    max-height: none !important; align-self: stretch !important; overflow: hidden !important;
-    border: .4mm solid var(--markaz-gold) !important; border-radius: 2mm !important; background: var(--markaz-mint) !important;
-    color: var(--markaz-forest) !important; font-size: 15pt !important; font-weight: 800 !important;
+    width: 18mm !important; min-width: 18mm !important; max-width: 18mm !important;
+    min-height: 19mm !important; max-height: 19mm !important; margin: 0 !important; padding: 0 !important;
+    overflow: hidden !important; border: .3mm solid var(--markaz-line) !important; border-radius: 0 !important;
+    background: #fff !important; color: var(--markaz-forest) !important; font-size: 10pt !important; font-weight: 700 !important;
   }
   .report-card .student-photo img { display: block !important; width: 100% !important; height: 100% !important; object-fit: cover !important; }
-  .report-card .student-details { display: grid !important; grid-template-rows: repeat(2, minmax(0, auto)) !important; gap: 2mm !important; min-width: 0 !important; }
-  .report-card .student-info-row { display: grid !important; grid-template-columns: minmax(0, 1.8fr) minmax(0, .65fr) minmax(0, .65fr) minmax(0, 1fr) !important; gap: 1.5mm !important; min-width: 0 !important; }
-  .report-card .student-class-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1.3fr) !important; }
-  .report-card .detail-item {
-    display: block !important; min-width: 0 !important; min-height: 12mm !important; height: auto !important; padding: 2mm 2.2mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-radius: 1.5mm !important; background: #fff !important; overflow: visible !important;
+  .report-card .student-details {
+    display: grid !important; grid-template-rows: repeat(2, minmax(0, auto)) !important;
+    gap: 1mm !important; min-width: 0 !important;
   }
-  .report-card .detail-item span, .report-card .detail-item small { display: block !important; color: var(--markaz-muted) !important; font-size: 6.8pt !important; line-height: 1.2 !important; white-space: normal !important; }
+  .report-card .student-info-row {
+    display: grid !important; grid-template-columns: minmax(0, 2.2fr) minmax(0, .65fr) minmax(0, .65fr) minmax(0, 1.15fr) !important;
+    gap: 1mm !important; min-width: 0 !important;
+  }
+  .report-card .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.45fr) !important;
+  }
+  .report-card .detail-item {
+    display: block !important; min-width: 0 !important; min-height: 8mm !important; height: auto !important;
+    margin: 0 !important; padding: 1mm 1.3mm !important; border: .25mm solid var(--markaz-line) !important;
+    border-radius: 0 !important; background: #fff !important; overflow: visible !important;
+  }
+  .report-card .detail-item span, .report-card .detail-item small {
+    display: block !important; margin: 0 !important; color: var(--markaz-muted) !important;
+    font-size: 5.4pt !important; line-height: 1.05 !important; white-space: normal !important;
+  }
   .report-card .detail-item strong, .report-card .detail-item b, .report-card .detail-item .value {
-    display: block !important; margin-top: 1.2mm !important; color: var(--markaz-ink) !important;
-    font-size: 8.3pt !important; font-weight: 700 !important; line-height: 1.25 !important;
+    display: block !important; margin: .7mm 0 0 !important; color: var(--markaz-ink) !important;
+    font-size: 6.6pt !important; font-weight: 700 !important; line-height: 1.08 !important;
     white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere !important;
   }
-  .report-card .student-name-item strong { color: var(--markaz-deep) !important; font-size: 10pt !important; font-weight: 800 !important; }
-  .report-card .student-status { display: inline-block !important; padding: 1.2mm 2.5mm !important; border: .3mm solid var(--markaz-line) !important; border-radius: 20mm !important; background: var(--markaz-mint) !important; color: var(--markaz-forest) !important; font-size: 7pt !important; font-weight: 800 !important; }
+  .report-card .student-name-item strong { color: var(--markaz-deep) !important; font-size: 7.2pt !important; font-weight: 800 !important; }
+  .report-card .student-status {
+    display: inline !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+    background: transparent !important; color: var(--markaz-ink) !important; font-size: 6pt !important; font-weight: 700 !important;
+  }
   .report-card .memorization-value-row { display: block !important; min-width: 0 !important; }
 
-  /* Performance overview */
-  .report-card .performance-overview { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 2mm !important; }
-  .report-card .performance-card {
-    display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 1mm !important;
-    min-width: 0 !important; min-height: 19mm !important; margin: 0 !important; padding: 2.5mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-top: 1mm solid var(--markaz-forest) !important;
-    border-radius: 1.5mm !important; background: #fff !important; break-inside: avoid !important; page-break-inside: avoid !important;
+  .report-card .performance-overview {
+    display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.2mm !important;
   }
-  .report-card .performance-card.highlight { border-top-color: var(--markaz-gold) !important; background: var(--markaz-gold-pale) !important; }
-  .report-card .performance-card > span { color: var(--markaz-muted) !important; font-size: 7pt !important; font-weight: 700 !important; line-height: 1.2 !important; }
-  .report-card .performance-card > strong { color: var(--markaz-deep) !important; font-size: 15pt !important; font-weight: 900 !important; line-height: 1.05 !important; overflow-wrap: anywhere !important; }
-  .report-card .performance-card > small { color: var(--markaz-muted) !important; font-size: 6.5pt !important; line-height: 1.2 !important; }
+  .report-card .performance-card {
+    display: flex !important; flex-direction: column !important; justify-content: center !important; gap: .5mm !important;
+    min-width: 0 !important; min-height: 12mm !important; margin: 0 !important; padding: 1.2mm !important;
+    border: .25mm solid var(--markaz-line) !important; border-top: .6mm solid var(--markaz-forest) !important;
+    border-radius: 0 !important; background: #fff !important; break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  .report-card .performance-card.highlight { border-top-color: var(--markaz-gold) !important; background: #fff !important; }
+  .report-card .performance-card > span { color: var(--markaz-muted) !important; font-size: 5.7pt !important; font-weight: 700 !important; line-height: 1.05 !important; }
+  .report-card .performance-card > strong {
+    color: var(--markaz-deep) !important; font-size: 10pt !important; font-weight: 800 !important; line-height: 1 !important; overflow-wrap: anywhere !important;
+  }
+  .report-card .performance-card > small { color: var(--markaz-muted) !important; font-size: 5.1pt !important; line-height: 1.05 !important; }
 
-  /* Academic results */
-  .report-card .result-management-grid { display: block !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; }
+  .report-card .result-management-grid {
+    display: block !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important;
+  }
   .report-card .academic-management-panel, .report-card .behavioural-management-panel {
     display: block !important; width: 100% !important; max-width: none !important; min-width: 0 !important;
     margin: 0 !important; padding: 0 !important; border: 0 !important; background: #fff !important;
+    break-before: auto !important; page-break-before: auto !important;
   }
-  .report-card .academic-management-panel .report-section { width: 100% !important; margin: 0 0 3.5mm !important; padding: 0 !important; }
-  .report-card .results-table-container { display: block !important; width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; border: 0 !important; }
-  .report-card .student-results-table { width: 100% !important; border-collapse: collapse !important; border-spacing: 0 !important; table-layout: fixed !important; margin: 0 !important; color: var(--markaz-ink) !important; font-size: 7.5pt !important; }
+  .report-card .academic-management-panel .report-section, .report-card .behavioural-management-panel .report-section {
+    width: 100% !important; margin: 0 0 1.5mm !important; padding: 0 !important;
+  }
+  .report-card .results-table-container {
+    display: block !important; width: 100% !important; max-width: none !important;
+    margin: 0 !important; padding: 0 !important; overflow: visible !important; border: 0 !important;
+  }
+  .report-card .student-results-table {
+    width: 100% !important; border-collapse: collapse !important; border-spacing: 0 !important;
+    table-layout: fixed !important; margin: 0 !important; color: var(--markaz-ink) !important; font-size: 6pt !important;
+  }
   .report-card .student-results-table th, .report-card .student-results-table td {
-    min-width: 0 !important; padding: 2mm 1.5mm !important; border: .25mm solid var(--markaz-line) !important;
-    font-size: 7.5pt !important; line-height: 1.25 !important; vertical-align: middle !important; overflow-wrap: anywhere !important;
+    min-width: 0 !important; height: auto !important; padding: .65mm .8mm !important;
+    border: .2mm solid var(--markaz-line) !important; font-size: 6pt !important;
+    line-height: 1.05 !important; vertical-align: middle !important; overflow-wrap: anywhere !important;
   }
   .report-card .student-results-table thead { display: table-header-group !important; }
   .report-card .student-results-table thead th {
-    background: var(--markaz-forest) !important; color: #fff !important; font-size: 7pt !important;
-    font-weight: 800 !important; text-align: center !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    background: #fff !important; color: var(--markaz-ink) !important;
+    border-bottom: .5mm solid var(--markaz-forest) !important; font-size: 5.8pt !important;
+    font-weight: 800 !important; text-align: center !important;
   }
-  .report-card .student-results-table th:nth-child(1), .report-card .student-results-table td:nth-child(1) { width: 5% !important; text-align: center !important; }
-  .report-card .student-results-table th:nth-child(2), .report-card .student-results-table td:nth-child(2) { width: 25% !important; text-align: left !important; }
+  .report-card .student-results-table th:nth-child(1), .report-card .student-results-table td:nth-child(1) { width: 4% !important; text-align: center !important; }
+  .report-card .student-results-table th:nth-child(2), .report-card .student-results-table td:nth-child(2) { width: 24% !important; text-align: left !important; }
   .report-card .student-results-table th:nth-child(3), .report-card .student-results-table td:nth-child(3),
-  .report-card .student-results-table th:nth-child(4), .report-card .student-results-table td:nth-child(4) { width: 8% !important; text-align: center !important; }
-  .report-card .student-results-table th:nth-child(5), .report-card .student-results-table td:nth-child(5) { width: 10% !important; text-align: center !important; }
-  .report-card .student-results-table th:nth-child(6), .report-card .student-results-table td:nth-child(6) { width: 10% !important; text-align: center !important; font-weight: 800 !important; }
-  .report-card .student-results-table th:nth-child(7), .report-card .student-results-table td:nth-child(7) { width: 9% !important; text-align: center !important; }
-  .report-card .student-results-table th:nth-child(8), .report-card .student-results-table td:nth-child(8) { width: 25% !important; text-align: left !important; }
-  .report-card .student-results-table tbody tr:nth-child(even) td { background: #f3f7f4 !important; }
+  .report-card .student-results-table th:nth-child(4), .report-card .student-results-table td:nth-child(4) { width: 7% !important; text-align: center !important; }
+  .report-card .student-results-table th:nth-child(5), .report-card .student-results-table td:nth-child(5) { width: 9% !important; text-align: center !important; }
+  .report-card .student-results-table th:nth-child(6), .report-card .student-results-table td:nth-child(6) { width: 8% !important; text-align: center !important; font-weight: 700 !important; }
+  .report-card .student-results-table th:nth-child(7), .report-card .student-results-table td:nth-child(7) { width: 7% !important; text-align: center !important; }
+  .report-card .student-results-table th:nth-child(8), .report-card .student-results-table td:nth-child(8) { width: 34% !important; text-align: left !important; }
+  .report-card .student-results-table tbody tr:nth-child(even) td,
   .report-card .student-results-table tbody tr:nth-child(odd) td { background: #fff !important; }
-  .report-card .student-results-table tbody tr, .report-card .student-results-table td { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .report-card .student-results-table tbody tr, .report-card .student-results-table td {
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+
+  /* Printed grades are plain text, never colourful badges. */
   .report-card .student-results-table .result-grade {
-    display: inline-block !important; min-width: 7mm !important; padding: .6mm 1mm !important;
-    border: .25mm solid var(--markaz-line) !important; border-radius: 1mm !important;
-    background: var(--markaz-mint) !important; color: var(--markaz-deep) !important; font-weight: 800 !important; text-align: center !important;
+    display: inline !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important;
+    border: 0 !important; border-radius: 0 !important; background: transparent !important;
+    color: var(--markaz-ink) !important; font: inherit !important; font-weight: 700 !important; text-align: inherit !important;
   }
 
-  /* Summary */
-  .report-card .summary-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 2mm !important; margin: 0 !important; }
+  .report-card .summary-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.2mm !important; margin: 0 !important; }
   .report-card .summary-box {
-    display: block !important; min-width: 0 !important; min-height: 16mm !important; padding: 2.5mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-radius: 1.5mm !important; background: var(--markaz-mint) !important;
+    display: block !important; min-width: 0 !important; min-height: 9mm !important; margin: 0 !important; padding: 1.2mm !important;
+    border: .25mm solid var(--markaz-line) !important; border-radius: 0 !important; background: #fff !important;
     break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .summary-box span { display: block !important; color: var(--markaz-muted) !important; font-size: 7pt !important; line-height: 1.2 !important; }
-  .report-card .summary-box strong { display: block !important; margin-top: 1.5mm !important; color: var(--markaz-deep) !important; font-size: 11pt !important; font-weight: 900 !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; }
+  .report-card .summary-box span { display: block !important; color: var(--markaz-muted) !important; font-size: 5.5pt !important; line-height: 1.05 !important; }
+  .report-card .summary-box strong {
+    display: block !important; margin-top: .7mm !important; color: var(--markaz-deep) !important;
+    font-size: 8pt !important; font-weight: 800 !important; line-height: 1.05 !important; overflow-wrap: anywhere !important;
+  }
 
-  /* Behaviour and development begin on a fresh page for a clear report structure. */
-  .report-card .behavioural-management-panel { break-before: page !important; page-break-before: always !important; margin-top: 0 !important; }
-  .report-card .behavioural-management-panel .report-section { margin: 0 0 4mm !important; padding: 0 !important; }
+  .report-card .behavioural-management-panel .report-section { margin-bottom: 1.2mm !important; }
   .report-card .behaviour-grid-container {
-    width: 100% !important; margin: 0 !important; padding: 3mm !important; overflow: visible !important;
-    border: .3mm solid var(--markaz-line) !important; border-radius: 2mm !important; background: #fff !important;
+    width: 100% !important; margin: 0 !important; padding: 1mm !important; overflow: visible !important;
+    border: .25mm solid var(--markaz-line) !important; border-radius: 0 !important; background: #fff !important;
   }
-  .report-card .behaviour-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 2mm !important; }
+  .report-card .behaviour-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: .8mm !important; }
   .report-card .behaviour-item {
-    display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; align-items: center !important; gap: 2mm !important;
-    min-width: 0 !important; min-height: 10mm !important; height: auto !important; margin: 0 !important; padding: 2mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-radius: 1.5mm !important; background: #fff !important;
-    break-inside: avoid !important; page-break-inside: avoid !important;
+    display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; align-items: center !important;
+    gap: 1mm !important; min-width: 0 !important; min-height: 5.5mm !important; height: auto !important;
+    margin: 0 !important; padding: .7mm 1mm !important; border: .2mm solid var(--markaz-line) !important;
+    border-radius: 0 !important; background: #fff !important; break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .behaviour-item > span { color: var(--markaz-ink) !important; font-size: 8pt !important; font-weight: 700 !important; line-height: 1.2 !important; }
+  .report-card .behaviour-item > span { color: var(--markaz-ink) !important; font-size: 5.8pt !important; font-weight: 600 !important; line-height: 1.05 !important; }
   .report-card .behaviour-rating {
-    width: 25mm !important; min-width: 25mm !important; height: auto !important; margin: 0 !important; padding: 1.2mm 1.5mm !important;
-    border: .3mm solid #cbd9cf !important; border-radius: 1mm !important; background: #f7faf8 !important; color: var(--markaz-deep) !important;
-    font-family: inherit !important; font-size: 7.5pt !important; font-weight: 700 !important; line-height: 1.2 !important;
+    width: 18mm !important; min-width: 18mm !important; height: auto !important; margin: 0 !important; padding: 0 !important;
+    border: 0 !important; border-radius: 0 !important; background: transparent !important; color: var(--markaz-ink) !important;
+    font-family: inherit !important; font-size: 5.4pt !important; font-weight: 600 !important; line-height: 1.05 !important;
     appearance: none !important; -webkit-appearance: none !important;
   }
   .report-card .behaviour-summary-card {
-    display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 4mm !important; margin: 3mm 0 !important; padding: 3mm 4mm !important;
-    border: .3mm solid #d8c58f !important; border-left: 1.2mm solid var(--markaz-gold) !important;
-    border-radius: 1.5mm !important; background: var(--markaz-gold-pale) !important;
+    display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 2mm !important; margin: 1mm 0 !important;
+    padding: 1.2mm 2mm !important; border: .25mm solid var(--markaz-line) !important;
+    border-left: .8mm solid var(--markaz-gold) !important; border-radius: 0 !important; background: #fff !important;
     break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .behaviour-summary-main, .report-card .behaviour-summary-info { display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 1mm !important; min-width: 0 !important; }
-  .report-card .behaviour-summary-card span, .report-card .behaviour-summary-card small { color: var(--markaz-muted) !important; font-size: 7pt !important; line-height: 1.25 !important; }
-  .report-card .behaviour-summary-card strong { color: var(--markaz-deep) !important; font-size: 12pt !important; font-weight: 900 !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; }
+  .report-card .behaviour-summary-main, .report-card .behaviour-summary-info {
+    display: flex !important; flex-direction: column !important; justify-content: center !important; gap: .3mm !important; min-width: 0 !important;
+  }
+  .report-card .behaviour-summary-card span, .report-card .behaviour-summary-card small {
+    color: var(--markaz-muted) !important; font-size: 5.5pt !important; line-height: 1.05 !important;
+  }
+  .report-card .behaviour-summary-card strong {
+    color: var(--markaz-deep) !important; font-size: 7.5pt !important; font-weight: 800 !important; line-height: 1.05 !important; overflow-wrap: anywhere !important;
+  }
   .report-card .behaviour-comment-card {
-    margin: 3mm 0 !important; padding: 3mm 4mm !important; border: .3mm solid var(--markaz-line) !important;
-    border-left: 1mm solid var(--markaz-forest) !important; border-radius: 1.5mm !important; background: #f8fbf9 !important;
+    margin: 1mm 0 !important; padding: 1.2mm 2mm !important; border: .25mm solid var(--markaz-line) !important;
+    border-left: .8mm solid var(--markaz-forest) !important; border-radius: 0 !important; background: #fff !important;
     break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .behaviour-comment-heading { display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 2mm !important; }
-  .report-card .behaviour-comment-badge { padding: .8mm 2mm !important; border: .25mm solid var(--markaz-line) !important; border-radius: 20mm !important; color: var(--markaz-muted) !important; font-size: 6.5pt !important; font-weight: 700 !important; }
-  .report-card .behaviour-comment-card p { margin: 2mm 0 0 !important; color: var(--markaz-ink) !important; font-size: 8.5pt !important; line-height: 1.45 !important; overflow-wrap: anywhere !important; }
-  .report-card .affective-key { display: flex !important; flex-wrap: wrap !important; gap: 2mm 5mm !important; margin: 2mm 0 0 !important; padding: 2mm 0 0 !important; border-top: .25mm solid var(--markaz-line) !important; color: var(--markaz-muted) !important; font-size: 7pt !important; line-height: 1.25 !important; }
+  .report-card .behaviour-comment-heading {
+    display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 1mm !important;
+  }
+  .report-card .behaviour-comment-badge {
+    padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+    color: var(--markaz-muted) !important; font-size: 5.2pt !important; font-weight: 600 !important;
+  }
+  .report-card .behaviour-comment-card p {
+    margin: .7mm 0 0 !important; color: var(--markaz-ink) !important; font-size: 6pt !important;
+    line-height: 1.1 !important; overflow-wrap: anywhere !important;
+  }
+  .report-card .affective-key {
+    display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: .5mm 3mm !important;
+    margin: .8mm 0 0 !important; padding: .8mm 0 0 !important; border-top: .2mm solid var(--markaz-line) !important;
+    color: var(--markaz-muted) !important; font-size: 5.2pt !important; line-height: 1.05 !important;
+  }
 
-  /* Remarks and formal sign-off */
-  .report-card .remarks-section { width: 100% !important; margin: 4mm 0 !important; padding: 0 !important; break-inside: avoid !important; page-break-inside: avoid !important; }
-  .report-card .remarks-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 3mm !important; }
+  .report-card .remarks-section {
+    width: 100% !important; margin: 1.2mm 0 !important; padding: 0 !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  .report-card .remarks-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 2mm !important; }
   .report-card .remark-card {
-    display: block !important; min-width: 0 !important; min-height: 23mm !important; margin: 0 !important; padding: 3mm !important;
-    border: .3mm solid var(--markaz-line) !important; border-top: 1mm solid var(--markaz-forest) !important;
-    border-radius: 1.5mm !important; background: #fff !important; break-inside: avoid !important; page-break-inside: avoid !important;
+    display: block !important; min-width: 0 !important; min-height: 10mm !important; margin: 0 !important; padding: 1.2mm 1.5mm !important;
+    border: .25mm solid var(--markaz-line) !important; border-top: .6mm solid var(--markaz-forest) !important;
+    border-radius: 0 !important; background: #fff !important; break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .remark-card.director-remark { border-top-color: var(--markaz-gold) !important; background: #fffdf7 !important; }
-  .report-card .remark-card .section-eyebrow { font-size: 7pt !important; }
-  .report-card .remark-card p { margin: 2mm 0 0 !important; color: var(--markaz-ink) !important; font-size: 8.5pt !important; line-height: 1.4 !important; overflow-wrap: anywhere !important; }
+  .report-card .remark-card.director-remark { border-top-color: var(--markaz-gold) !important; background: #fff !important; }
+  .report-card .remark-card .section-eyebrow { font-size: 5.4pt !important; }
+  .report-card .remark-card p {
+    margin: .8mm 0 0 !important; color: var(--markaz-ink) !important; font-size: 6pt !important; line-height: 1.1 !important; overflow-wrap: anywhere !important;
+  }
+
   .report-card .report-footer {
-    display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 5mm !important;
-    width: 100% !important; margin: 5mm 0 0 !important; padding: 4mm 0 0 !important;
-    border: 0 !important; border-top: .4mm solid var(--markaz-line) !important; break-inside: avoid !important; page-break-inside: avoid !important;
+    display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 4mm !important;
+    width: 100% !important; margin: 1.5mm 0 0 !important; padding: 1.5mm 0 0 !important;
+    border: 0 !important; border-top: .25mm solid var(--markaz-line) !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .signature-line { display: flex !important; flex-direction: column !important; min-width: 0 !important; text-align: center !important; }
+  .report-card .signature-line {
+    display: flex !important; flex-direction: column !important; min-width: 0 !important; margin: 0 !important;
+    padding: 0 !important; background: transparent !important; text-align: center !important;
+  }
   .report-card .signature-space {
     display: flex !important; align-items: flex-end !important; justify-content: center !important;
-    min-width: 0 !important; min-height: 17mm !important; margin: 0 0 2mm !important; padding: 0 1mm 1.5mm !important;
-    border-bottom: .35mm solid var(--markaz-forest) !important; color: var(--markaz-muted) !important; font-size: 7pt !important; overflow-wrap: anywhere !important;
+    min-width: 0 !important; min-height: 7mm !important; margin: 0 0 .7mm !important; padding: 0 1mm .5mm !important;
+    border-bottom: .25mm solid var(--markaz-forest) !important; color: var(--markaz-muted) !important;
+    font-size: 5.5pt !important; overflow-wrap: anywhere !important;
   }
-  .report-card .signature-line > span { color: var(--markaz-deep) !important; font-size: 8pt !important; font-weight: 800 !important; line-height: 1.2 !important; }
-  .report-card .signature-line small { display: block !important; margin-top: 1mm !important; color: var(--markaz-muted) !important; font-size: 6.5pt !important; line-height: 1.2 !important; }
+  .report-card .signature-line > span { color: var(--markaz-deep) !important; font-size: 5.8pt !important; font-weight: 700 !important; line-height: 1.05 !important; }
+  .report-card .signature-line small {
+    display: block !important; margin-top: .5mm !important; color: var(--markaz-muted) !important; font-size: 5pt !important; line-height: 1.05 !important;
+  }
   .report-card .report-card-footer {
-    display: block !important; margin: 5mm 0 0 !important; padding: 2.5mm 0 0 !important;
-    border: 0 !important; border-top: .3mm solid var(--markaz-line) !important; color: var(--markaz-muted) !important;
+    display: block !important; margin: 1mm 0 0 !important; padding: 1mm 0 0 !important;
+    border: 0 !important; border-top: .2mm solid var(--markaz-line) !important; color: var(--markaz-muted) !important;
     text-align: center !important; break-inside: avoid !important; page-break-inside: avoid !important;
   }
-  .report-card .report-card-footer p { margin: 0 !important; color: var(--markaz-forest) !important; font-size: 7.5pt !important; font-weight: 800 !important; line-height: 1.3 !important; }
-  .report-card .report-card-footer span { display: block !important; margin-top: 1mm !important; color: var(--markaz-muted) !important; font-size: 6.8pt !important; line-height: 1.25 !important; }
+  .report-card .report-card-footer p {
+    margin: 0 !important; color: var(--markaz-forest) !important; font-size: 5.5pt !important; font-weight: 700 !important; line-height: 1.05 !important;
+  }
+  .report-card .report-card-footer span {
+    display: block !important; margin-top: .3mm !important; color: var(--markaz-muted) !important; font-size: 5pt !important; line-height: 1.05 !important;
+  }
+
   a, a:visited { color: inherit !important; text-decoration: none !important; }
 }
