@@ -14,7 +14,16 @@
             headers: { "Content-Type": "application/json", "Accept": "application/json" },
             ...(method === "POST" ? { body: JSON.stringify({ scale: Number(scale) }) } : {})
         });
-        const data = await response.json();
+        const raw = await response.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch {
+            throw new Error(
+                "The server returned an invalid response instead of JSON (HTTP " +
+                response.status + "). Check the PHP server output for the underlying error."
+            );
+        }
         if (!response.ok || !data.success) {
             throw new Error(data.message || "Unable to load print scale settings.");
         }
