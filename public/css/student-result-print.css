@@ -1476,3 +1476,83 @@
   }
 }
 
+/* Readability correction: larger print typography and a wider memorization field. */
+@media print {
+  @page { size: A4 portrait; margin: 4mm; }
+
+  html body .report-card,
+  html body .report-card * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html body .report-card { font-size: 9pt !important; line-height: 1.2 !important; }
+  html body .report-card .school-arabic-name { font-size: 15pt !important; }
+  html body .report-card .school-kicker { font-size: 9pt !important; }
+  html body .report-card .school-address,
+  html body .report-card .school-contact { font-size: 7.8pt !important; }
+  html body .report-card .session-bar span,
+  html body .report-card .detail-item > span,
+  html body .report-card .detail-item > small { font-size: 7.8pt !important; line-height: 1.15 !important; }
+  html body .report-card .session-bar strong,
+  html body .report-card .detail-item > strong,
+  html body .report-card .detail-item > b,
+  html body .report-card .detail-item .value,
+  html body .report-card .memorization-value-row strong { font-size: 9pt !important; line-height: 1.15 !important; }
+  html body .report-card .section-heading h2 { font-size: 10pt !important; }
+  html body .report-card .section-eyebrow { font-size: 7.5pt !important; }
+  html body .report-card .student-name-item > strong { font-size: 9.5pt !important; }
+
+  /* Give the memorization entry enough horizontal room to be readable. */
+  html body .report-card .student-class-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(12mm, .55fr) minmax(0, 1.8fr) !important;
+    gap: 1mm !important;
+  }
+  html body .report-card .memorization-detail-item {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 1.2mm 1.5mm !important;
+  }
+  html body .report-card .memorization-detail-item > span { font-size: 7.8pt !important; white-space: normal !important; }
+  html body .report-card .memorization-value-row { min-width: 0 !important; width: 100% !important; }
+  html body .report-card .memorization-value-row strong {
+    display: block !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  html body .report-card .performance-overview {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 1.5mm !important;
+    align-items: stretch !important;
+  }
+  html body .report-card .performance-overview > .performance-card {
+    min-width: 0 !important;
+    min-height: 10mm !important;
+    margin: 0 !important;
+    padding: 1.2mm 1.5mm !important;
+  }
+  html body .report-card .performance-card > span { font-size: 7.8pt !important; line-height: 1.15 !important; }
+  html body .report-card .performance-card > strong { font-size: 12pt !important; line-height: 1.05 !important; }
+  html body .report-card .performance-card > small { font-size: 7pt !important; line-height: 1.1 !important; }
+
+  html body .report-card .student-results-table th { font-size: 8pt !important; line-height: 1.15 !important; padding: 1mm .8mm !important; }
+  html body .report-card .student-results-table td { font-size: 8pt !important; line-height: 1.15 !important; padding: .85mm .8mm !important; }
+  html body .report-card .summary-box span { font-size: 7.5pt !important; }
+  html body .report-card .summary-box strong { font-size: 9pt !important; }
+  html body .report-card .behaviour-item > span { font-size: 8pt !important; }
+  html body .report-card .behaviour-rating { font-size: 7.5pt !important; }
+  html body .report-card .behaviour-summary-card span,
+  html body .report-card .behaviour-summary-card small { font-size: 7.5pt !important; }
+  html body .report-card .behaviour-summary-card strong { font-size: 9pt !important; }
+  html body .report-card .behaviour-comment-heading,
+  html body .report-card .behaviour-comment-card p,
+  html body .report-card .remark-card p { font-size: 8pt !important; line-height: 1.18 !important; }
+  html body .report-card .affective-key { font-size: 7pt !important; }
+  html body .report-card .signature-line > span { font-size: 8pt !important; }
+  html body .report-card .signature-line small,
+  html body .report-card .report-card-footer p { font-size: 7pt !important; }
+}
+
