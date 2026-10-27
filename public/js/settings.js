@@ -916,14 +916,17 @@ loadResultFooterSettings();
     async function load() {
       refresh.disabled = true;
       status.textContent = "Loading locked accounts…";
+      status.className = "form-message";
       rows.replaceChildren();
       try {
         const data = await api();
         if (!data.accounts.length) {
           status.textContent = "There are no currently locked accounts.";
+          status.className = "form-message success";
           return;
         }
         status.textContent = `${data.accounts.length} locked account(s).`;
+        status.className = "form-message success";
         data.accounts.forEach(account => {
           const tr = document.createElement("tr");
           cell(tr, account.role);
@@ -943,9 +946,11 @@ loadResultFooterSettings();
             try {
               const result = await api("POST", { action: "unlock", id: Number(account.id) });
               status.textContent = result.message;
+              status.className = "form-message success";
               await load();
             } catch (error) {
               status.textContent = error.message;
+              status.className = "form-message error";
               button.disabled = false;
             }
           });
@@ -954,7 +959,8 @@ loadResultFooterSettings();
           rows.appendChild(tr);
         });
       } catch (error) {
-        status.textContent = error.message;
+        status.textContent = error.message || "Unable to load locked accounts.";
+        status.className = "form-message error";
       } finally {
         refresh.disabled = false;
       }
