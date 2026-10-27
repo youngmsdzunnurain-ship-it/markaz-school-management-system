@@ -10302,3 +10302,176 @@ button.primary:hover,
 .student-information .student-class-row .memorization-detail-item {
     align-self: stretch !important;
 }
+
+
+/* Round 2: align student profile fields and keep the four overview cards in one row. */
+.report-card .school-header,
+.report-card .school-brand,
+.report-card .school-heading {
+    position: relative !important;
+    z-index: 1 !important;
+}
+.report-card .school-header::before,
+.report-card .school-header::after,
+.report-card .school-brand::before,
+.report-card .school-brand::after,
+.report-card .school-logo::before,
+.report-card .school-logo::after {
+    content: none !important;
+    display: none !important;
+    pointer-events: none !important;
+}
+.report-card .school-logo {
+    position: relative !important;
+    z-index: 3 !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+}
+.report-card .school-logo img {
+    position: relative !important;
+    z-index: 4 !important;
+}
+.report-card .school-arabic-name {
+    font-size: clamp(19px, 2vw, 25px) !important;
+    line-height: 1.25 !important;
+}
+.report-card .school-kicker {
+    font-size: clamp(10px, 1vw, 12px) !important;
+}
+.report-card .performance-overview {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+}
+.report-card .performance-card {
+    min-width: 0 !important;
+    padding: 14px 12px !important;
+    overflow-wrap: anywhere !important;
+}
+.student-information .student-profile-grid {
+    grid-template-columns: 108px minmax(0, 1fr) !important;
+    column-gap: 18px !important;
+    align-items: stretch !important;
+}
+.student-information .student-photo {
+    align-self: stretch !important;
+    justify-self: stretch !important;
+    width: 108px !important;
+    min-width: 108px !important;
+    max-width: 108px !important;
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    grid-row: 1 !important;
+}
+.student-information .student-details {
+    justify-content: stretch !important;
+    gap: 10px !important;
+    overflow: visible !important;
+}
+.student-information .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.25fr) !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+}
+.student-information .student-class-row > .detail-item {
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 66px !important;
+    padding: 10px 11px !important;
+    overflow-wrap: anywhere !important;
+}
+.student-information .student-class-row .memorization-detail-item {
+    grid-column: auto !important;
+}
+.student-information .student-class-row .detail-item > span {
+    font-size: .58rem !important;
+    letter-spacing: .035em !important;
+}
+.student-information .memorization-value-row,
+.student-information .memorization-value-row strong,
+.student-information .memorization-value-row input {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+}
+@media (max-width: 900px) {
+    .report-card .performance-overview {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 7px !important;
+    }
+    .report-card .performance-card {
+        padding: 10px 7px !important;
+    }
+    .student-information .student-profile-grid {
+        grid-template-columns: 88px minmax(0, 1fr) !important;
+        column-gap: 12px !important;
+    }
+    .student-information .student-photo {
+        width: 88px !important;
+        min-width: 88px !important;
+        max-width: 88px !important;
+    }
+    .student-information .student-class-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+    .student-information .student-class-row .memorization-detail-item {
+        grid-column: auto !important;
+    }
+}
+@media (max-width: 560px) {
+    .report-card .performance-overview {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+    }
+    .report-card .performance-card {
+        padding: 8px 5px !important;
+        gap: 4px !important;
+    }
+    .report-card .performance-card > span {
+        font-size: .58rem !important;
+        line-height: 1.15 !important;
+    }
+    .report-card .performance-card > strong {
+        font-size: .9rem !important;
+    }
+    .report-card .performance-card > small {
+        font-size: .52rem !important;
+        line-height: 1.1 !important;
+    }
+    .student-information .student-profile-grid {
+        display: grid !important;
+        grid-template-columns: 72px minmax(0, 1fr) !important;
+        gap: 8px !important;
+        min-height: 0 !important;
+    }
+    .student-information .student-photo {
+        align-self: stretch !important;
+        width: 72px !important;
+        min-width: 72px !important;
+        max-width: 72px !important;
+        height: auto !important;
+        min-height: 100% !important;
+        max-height: none !important;
+    }
+    .student-information .student-details {
+        gap: 7px !important;
+    }
+    .student-information .student-top-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, .6fr) !important;
+        gap: 6px !important;
+    }
+    .student-information .student-top-row .student-name-item {
+        grid-column: 1 / -1 !important;
+    }
+    .student-information .student-class-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+    }
+    .student-information .student-class-row .detail-item {
+        min-height: 56px !important;
+        padding: 7px !important;
+    }
+}
