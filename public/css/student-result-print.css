@@ -987,3 +987,27 @@
     overflow-wrap: anywhere !important;
     white-space: normal !important;
 }
+
+
+/* Cascade repair: deterministic A4 profile and header alignment. */
+@media print {
+  html body .report-card .school-header::before,
+  html body .report-card .school-header::after,
+  html body .report-card .school-brand::before,
+  html body .report-card .school-brand::after,
+  html body .report-card .school-logo::before,
+  html body .report-card .school-logo::after { content: none !important; display: none !important; }
+  html body .report-card .school-logo { position: relative !important; isolation: isolate !important; overflow: hidden !important; flex: 0 0 17mm !important; width: 17mm !important; height: 17mm !important; }
+  html body .report-card .school-logo img { display: block !important; position: relative !important; z-index: 1 !important; width: 100% !important; height: 100% !important; object-fit: contain !important; }
+  html body .report-card .school-arabic-name { font-size: 12pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
+  html body .report-card .school-kicker,
+  html body .report-card .school-address,
+  html body .report-card .school-contact { font-size: 6pt !important; line-height: 1.15 !important; }
+  html body .report-card .student-profile-grid { display: grid !important; grid-template-columns: 19mm minmax(0, 1fr) !important; align-items: stretch !important; gap: 1.5mm !important; }
+  html body .report-card .student-photo { grid-column: 1 !important; grid-row: 1 !important; width: 19mm !important; min-width: 19mm !important; max-width: 19mm !important; height: auto !important; min-height: 100% !important; margin: 0 !important; }
+  html body .report-card .student-details { grid-column: 2 !important; min-width: 0 !important; display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: .8mm !important; }
+  html body .report-card .student-top-row { display: grid !important; grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, .7fr)) !important; gap: .8mm !important; }
+  html body .report-card .student-class-row { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: .8mm !important; }
+  html body .report-card .student-class-row > .detail-item { display: flex !important; flex-direction: column !important; justify-content: center !important; min-width: 0 !important; min-height: 8mm !important; height: 100% !important; margin: 0 !important; padding: .6mm .8mm !important; overflow-wrap: anywhere !important; }
+  html body .report-card .student-class-row .memorization-detail-item { grid-column: auto !important; }
+}
