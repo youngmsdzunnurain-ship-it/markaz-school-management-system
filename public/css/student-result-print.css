@@ -50,7 +50,7 @@
     border: 0 !important;
     border-radius: 0 !important;
     overflow: visible !important;
-    zoom: 1 !important;
+    zoom: var(--markaz-result-print-scale, 1) !important;
     transform: none !important;
     filter: none !important;
     background: #fff !important;
