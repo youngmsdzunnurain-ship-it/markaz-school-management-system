@@ -78,11 +78,11 @@ function getAcademicDescriptor(score) {
     const result = getGrade(score);
 
     const descriptors = {
-        A: "Awesome",
-        B: "Phenomenal",
-        C: "Impressive",
+        A: "Excellent",
+        B: "Very Good",
+        C: "Brilliant",
         D: "Promising",
-        E: "Poor"
+        E: "You Can Do Better"
     };
 
     return descriptors[result] || "Awaiting results";
@@ -92,11 +92,11 @@ function getTeacherOverallRemark(score) {
     const result = getGrade(score);
 
     const remarks = {
-        A: "Awesome performance. The student has shown excellent effort and consistency. Keep up the good work.",
-        B: "Phenomenal performance. The student is doing very well and is encouraged to maintain this strong effort.",
-        C: "Impressive performance. With continued effort and consistency, the student can achieve even more.",
+        A: "Excellent performance. The student has shown strong understanding, effort and consistency. Keep up the good work.",
+        B: "Very good performance. The student is doing well and is encouraged to maintain this strong effort.",
+        C: "Brilliant progress. With continued effort and consistency, the student can achieve even more.",
         D: "Promising performance. The student is encouraged to put in more effort and remain consistent for further improvement.",
-        E: "The student is encouraged to put in more effort and remain consistent. With continued support and practice, further improvement can be achieved."
+        E: "You can do better. With regular practice, guidance and consistent effort, the student can make meaningful progress."
     };
 
     return remarks[result] || "Awaiting final assessment.";
@@ -560,21 +560,21 @@ function getGradeRemark(score) {
     if (score >= 80) {
         return {
             grade: "A",
-            remark: "Awesome"
+            remark: "Excellent"
         };
     }
 
     if (score >= 70) {
         return {
             grade: "B",
-            remark: "Phenomenal"
+            remark: "Very Good"
         };
     }
 
     if (score >= 50) {
         return {
             grade: "C",
-            remark: "Impressive"
+            remark: "Brilliant"
         };
     }
 
@@ -587,7 +587,7 @@ function getGradeRemark(score) {
 
     return {
         grade: "E",
-        remark: "Poor"
+        remark: "You Can Do Better"
     };
 }
 
