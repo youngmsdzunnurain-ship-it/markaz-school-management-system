@@ -10267,3 +10267,38 @@ button.primary:hover,
         width: 100%;
     }
 }
+
+
+/* Recovery: keep the school mark above decorative rings and shared watermark layers. */
+.school-header .school-logo {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: visible !important;
+}
+.school-header .school-logo::before,
+.school-header .school-logo::after {
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+.school-header .school-logo img {
+    position: relative !important;
+    z-index: 2 !important;
+    display: block !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+.student-information .student-details {
+    min-width: 0;
+}
+.student-information .student-class-row {
+    align-items: stretch !important;
+}
+.student-information .student-class-row .conventional-class-item,
+.student-information .student-class-row .arabic-class-item,
+.student-information .student-class-row .arabic-class-count-item,
+.student-information .student-class-row .memorization-detail-item {
+    min-width: 0 !important;
+}
+.student-information .student-class-row .memorization-detail-item {
+    align-self: stretch !important;
+}
