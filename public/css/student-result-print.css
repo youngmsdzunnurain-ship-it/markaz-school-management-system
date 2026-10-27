@@ -90,6 +90,9 @@
   }
 
   .report-card .school-logo {
+    position: relative !important;
+    z-index: 2 !important;
+    isolation: isolate !important;
     display: flex !important;
     flex: 0 0 19mm !important;
     align-items: center !important;
@@ -110,6 +113,8 @@
   }
 
   .report-card .school-logo img {
+    position: relative !important;
+    z-index: 1 !important;
     display: block !important;
     width: 100% !important;
     height: 100% !important;
@@ -139,7 +144,7 @@
   .report-card .school-arabic-name {
     margin: 0 0 .5mm !important;
     color: var(--print-deep) !important;
-    font-size: 11pt !important;
+    font-size: 12pt !important;
     font-weight: 800 !important;
     line-height: 1.12 !important;
   }
@@ -358,7 +363,7 @@
   }
 
   .report-card .student-class-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.55fr) !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .72fr) minmax(0, 1.35fr) !important;
   }
 
   .report-card .detail-item {
