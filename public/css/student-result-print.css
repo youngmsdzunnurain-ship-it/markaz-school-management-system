@@ -1556,3 +1556,71 @@
   html body .report-card .report-card-footer p { font-size: 7pt !important; }
 }
 
+/* Screenshot correction: use substantially more of the printable sheet and make all report text readable. */
+@media print {
+  @page { size: A4 portrait; margin: 4mm; }
+  html body #studentReportCard.report-card {
+    zoom: 1.22 !important;
+    width: 100% !important;
+    font-size: 10pt !important;
+    line-height: 1.22 !important;
+  }
+  html body #studentReportCard.report-card .school-arabic-name { font-size: 16pt !important; }
+  html body #studentReportCard.report-card .school-kicker { font-size: 9.5pt !important; }
+  html body #studentReportCard.report-card .school-arabic-address,
+  html body #studentReportCard.report-card .school-address,
+  html body #studentReportCard.report-card .school-contact { font-size: 8pt !important; line-height: 1.18 !important; }
+  html body #studentReportCard.report-card .report-title span { font-size: 8pt !important; }
+  html body #studentReportCard.report-card .report-title strong { font-size: 11pt !important; }
+  html body #studentReportCard.report-card .session-bar span,
+  html body #studentReportCard.report-card .detail-item > span,
+  html body #studentReportCard.report-card .detail-item > small { font-size: 8.5pt !important; line-height: 1.2 !important; }
+  html body #studentReportCard.report-card .session-bar strong,
+  html body #studentReportCard.report-card .detail-item > strong,
+  html body #studentReportCard.report-card .detail-item > b,
+  html body #studentReportCard.report-card .detail-item .value,
+  html body #studentReportCard.report-card .memorization-value-row strong { font-size: 10pt !important; line-height: 1.2 !important; }
+  html body #studentReportCard.report-card .section-heading h2 { font-size: 11pt !important; }
+  html body #studentReportCard.report-card .section-eyebrow { font-size: 8pt !important; }
+  html body #studentReportCard.report-card .student-name-item > strong { font-size: 10.5pt !important; }
+
+  html body #studentReportCard.report-card .student-class-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, .9fr) minmax(0, .9fr) minmax(12mm, .45fr) minmax(0, 2fr) !important;
+    gap: 1.2mm !important;
+  }
+  html body #studentReportCard.report-card .memorization-detail-item {
+    min-width: 0 !important; width: 100% !important; padding: 1.5mm 1.8mm !important;
+  }
+  html body #studentReportCard.report-card .memorization-detail-item > span { font-size: 8.5pt !important; }
+  html body #studentReportCard.report-card .memorization-value-row { width: 100% !important; min-width: 0 !important; }
+  html body #studentReportCard.report-card .memorization-value-row strong { display: block !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+
+  html body #studentReportCard.report-card .performance-overview {
+    display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch !important; gap: 1.8mm !important;
+  }
+  html body #studentReportCard.report-card .performance-overview > .performance-card {
+    min-width: 0 !important; min-height: 12mm !important; margin: 0 !important; padding: 1.5mm !important;
+  }
+  html body #studentReportCard.report-card .performance-card > span { font-size: 8.5pt !important; line-height: 1.18 !important; }
+  html body #studentReportCard.report-card .performance-card > strong { font-size: 13pt !important; line-height: 1.08 !important; }
+  html body #studentReportCard.report-card .performance-card > small { font-size: 7.5pt !important; }
+  html body #studentReportCard.report-card .student-results-table th,
+  html body #studentReportCard.report-card .student-results-table td { font-size: 8.7pt !important; line-height: 1.18 !important; padding: 1.1mm 1mm !important; }
+  html body #studentReportCard.report-card .summary-box span { font-size: 8pt !important; }
+  html body #studentReportCard.report-card .summary-box strong { font-size: 10pt !important; }
+  html body #studentReportCard.report-card .behaviour-item > span { font-size: 8.7pt !important; }
+  html body #studentReportCard.report-card .behaviour-rating { font-size: 8pt !important; }
+  html body #studentReportCard.report-card .behaviour-summary-card span,
+  html body #studentReportCard.report-card .behaviour-summary-card small { font-size: 8pt !important; }
+  html body #studentReportCard.report-card .behaviour-summary-card strong { font-size: 10pt !important; }
+  html body #studentReportCard.report-card .behaviour-comment-heading,
+  html body #studentReportCard.report-card .behaviour-comment-card p,
+  html body #studentReportCard.report-card .remark-card p { font-size: 8.7pt !important; line-height: 1.2 !important; }
+  html body #studentReportCard.report-card .affective-key { font-size: 7.5pt !important; }
+  html body #studentReportCard.report-card .signature-line > span { font-size: 8.7pt !important; }
+  html body #studentReportCard.report-card .signature-line small,
+  html body #studentReportCard.report-card .report-card-footer p { font-size: 7.5pt !important; line-height: 1.18 !important; }
+}
+
