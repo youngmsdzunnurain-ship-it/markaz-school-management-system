@@ -305,20 +305,21 @@
     display: grid !important;
     grid-template-columns: 19mm minmax(0, 1fr) !important;
     gap: 1.7mm !important;
-    align-items: center !important;
+    align-items: stretch !important;
     min-width: 0 !important;
   }
 
   .report-card .student-photo {
     display: flex !important;
+    align-self: stretch !important;
     align-items: center !important;
     justify-content: center !important;
     width: 19mm !important;
     min-width: 19mm !important;
     max-width: 19mm !important;
-    height: 18.5mm !important;
-    min-height: 18.5mm !important;
-    max-height: 18.5mm !important;
+    height: auto !important;
+    min-height: 16mm !important;
+    max-height: none !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
