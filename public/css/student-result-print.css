@@ -1263,3 +1263,120 @@
   .report-card .student-results-table td { overflow: visible !important; overflow-wrap: anywhere !important; word-break: normal !important; }
   .report-card .results-table-container { overflow: visible !important; }
 }
+
+/* Final screenshot-led refinement: use more of the A4 page without creating a second page. */
+@media print {
+  @page { size: A4 portrait; margin: 5mm; }
+
+  html, body {
+    font-size: 8pt !important;
+    line-height: 1.2 !important;
+  }
+
+  .student-result-page, .student-result-page.management-view, #studentReportCard,
+  .report-card {
+    font-size: 8pt !important;
+  }
+
+  .report-card .school-header {
+    gap: 3mm !important;
+    margin-bottom: 1.8mm !important;
+    padding-bottom: 1.8mm !important;
+  }
+  .report-card .school-logo {
+    flex-basis: 20mm !important;
+    width: 20mm !important;
+    min-width: 20mm !important;
+    height: 20mm !important;
+    min-height: 20mm !important;
+  }
+  .report-card .school-arabic-name { font-size: 14pt !important; line-height: 1.15 !important; }
+  .report-card .school-kicker { font-size: 8.2pt !important; }
+  .report-card .school-address,
+  .report-card .school-contact { font-size: 7pt !important; line-height: 1.15 !important; }
+  .report-card .report-title { flex-basis: 32mm !important; width: 32mm !important; min-width: 32mm !important; }
+  .report-card .report-title span { font-size: 7pt !important; }
+  .report-card .report-title strong { font-size: 10pt !important; }
+
+  .report-card .session-bar {
+    gap: 2mm !important;
+    margin-bottom: 1.8mm !important;
+    padding: 1.5mm 2mm !important;
+  }
+  .report-card .session-bar span { font-size: 7pt !important; line-height: 1.12 !important; }
+  .report-card .session-bar strong { font-size: 8.2pt !important; line-height: 1.12 !important; }
+
+  .report-card .report-section { margin-bottom: 1.5mm !important; }
+  .report-card .section-heading { margin-bottom: .9mm !important; padding: .8mm 1.2mm !important; }
+  .report-card .section-heading h2 { font-size: 9pt !important; line-height: 1.12 !important; }
+  .report-card .section-eyebrow { font-size: 6.5pt !important; line-height: 1.1 !important; }
+
+  .report-card .student-profile-grid { gap: 1.8mm !important; grid-template-columns: 20mm minmax(0, 1fr) !important; }
+  .report-card .student-photo { width: 20mm !important; min-width: 20mm !important; max-width: 20mm !important; height: 20mm !important; min-height: 20mm !important; }
+  .report-card .student-details { gap: 1mm !important; }
+  .report-card .student-info-row { gap: 1mm !important; }
+  .report-card .student-top-row,
+  .report-card .student-class-row { gap: 1mm !important; }
+  .report-card .student-top-row > .detail-item,
+  .report-card .student-class-row > .detail-item,
+  .report-card .detail-item {
+    min-height: 7.2mm !important;
+    padding: .75mm 1mm !important;
+  }
+  .report-card .detail-item > span,
+  .report-card .detail-item > small,
+  .report-card .student-class-row .detail-item > span { font-size: 6.5pt !important; line-height: 1.12 !important; }
+  .report-card .detail-item > strong,
+  .report-card .detail-item > b,
+  .report-card .detail-item .value,
+  .report-card .memorization-value-row strong { font-size: 7.8pt !important; line-height: 1.12 !important; margin-top: .6mm !important; }
+  .report-card .student-name-item > strong { font-size: 8.5pt !important; }
+
+  .report-card .performance-overview { gap: 1.5mm !important; }
+  .report-card .performance-card { min-height: 11mm !important; padding: 1.2mm 1.4mm !important; gap: .6mm !important; }
+  .report-card .performance-card > span { font-size: 6.8pt !important; line-height: 1.12 !important; }
+  .report-card .performance-card > strong { font-size: 11pt !important; line-height: 1.05 !important; }
+  .report-card .performance-card > small { font-size: 6pt !important; line-height: 1.1 !important; }
+
+  .report-card .student-results-table th { font-size: 7pt !important; line-height: 1.15 !important; padding: 1mm .8mm !important; }
+  .report-card .student-results-table td { font-size: 7.2pt !important; line-height: 1.15 !important; padding: .9mm .8mm !important; }
+
+  .report-card .summary-grid { gap: 1.5mm !important; }
+  .report-card .summary-box { min-height: 8mm !important; padding: 1mm 1.2mm !important; }
+  .report-card .summary-box span { font-size: 6.2pt !important; line-height: 1.1 !important; }
+  .report-card .summary-box strong { font-size: 8.5pt !important; line-height: 1.1 !important; }
+
+  .report-card .behaviour-grid-container { padding: 1.5mm !important; }
+  .report-card .behaviour-grid { gap: 1.2mm !important; }
+  .report-card .behaviour-item { min-height: 6.2mm !important; padding: .7mm 1mm !important; gap: 1.5mm !important; }
+  .report-card .behaviour-item > span { font-size: 7pt !important; line-height: 1.1 !important; }
+  .report-card .behaviour-rating { font-size: 6.5pt !important; }
+  .report-card .behaviour-summary-card { gap: 2.5mm !important; margin: 1.2mm 0 !important; padding: 1.3mm 1.8mm !important; }
+  .report-card .behaviour-summary-card span,
+  .report-card .behaviour-summary-card small { font-size: 6.2pt !important; line-height: 1.1 !important; }
+  .report-card .behaviour-summary-card strong { font-size: 8.5pt !important; line-height: 1.1 !important; }
+  .report-card .behaviour-comment-card { margin: 1.2mm 0 !important; padding: 1.3mm 1.8mm !important; }
+  .report-card .behaviour-comment-heading { font-size: 7pt !important; }
+  .report-card .behaviour-comment-card p { font-size: 7pt !important; line-height: 1.15 !important; }
+  .report-card .affective-key { gap: 1mm 3mm !important; margin-top: 1.2mm !important; padding-top: 1.2mm !important; font-size: 6pt !important; }
+
+  .report-card .remarks-section { margin: 1.5mm 0 !important; }
+  .report-card .remarks-grid { gap: 2.5mm !important; }
+  .report-card .remark-card { min-height: 9mm !important; padding: 1.2mm 1.6mm !important; }
+  .report-card .remark-card .section-eyebrow { font-size: 6.5pt !important; }
+  .report-card .remark-card p { font-size: 7pt !important; line-height: 1.15 !important; }
+
+  .report-card .report-footer { gap: 5mm !important; margin-top: 2mm !important; padding-top: 2mm !important; }
+  .report-card .signature-space { min-height: 7mm !important; margin-bottom: 1mm !important; font-size: 6.5pt !important; }
+  .report-card .signature-line > span { font-size: 7pt !important; line-height: 1.1 !important; }
+  .report-card .signature-line small { margin-top: .8mm !important; font-size: 6pt !important; line-height: 1.1 !important; }
+  .report-card .report-card-footer { margin-top: 1.5mm !important; padding-top: 1.5mm !important; }
+  .report-card .report-card-footer p { font-size: 6.5pt !important; line-height: 1.12 !important; }
+
+  /* Keep the report as one intact A4 sheet. */
+  .report-card, .report-card .report-footer, .report-card .report-card-footer {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+
