@@ -1098,3 +1098,119 @@
     margin-top: 0 !important;
   }
 }
+
+
+/* Final compact A4 print layout: profile fields, circular logo and intact score grid. */
+@media print {
+  .report-card .school-logo {
+    flex: 0 0 17mm !important;
+    width: 17mm !important;
+    min-width: 17mm !important;
+    height: 17mm !important;
+    min-height: 17mm !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    overflow: hidden !important;
+  }
+  .report-card .school-logo img {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    object-fit: contain !important;
+    background: transparent !important;
+  }
+
+  .report-card .student-profile-grid {
+    grid-template-columns: 15mm minmax(0, 1fr) !important;
+    gap: 1mm !important;
+    align-items: start !important;
+  }
+  .report-card .student-photo {
+    width: 15mm !important;
+    min-width: 15mm !important;
+    max-width: 15mm !important;
+    min-height: 15mm !important;
+    height: 15mm !important;
+    align-self: start !important;
+  }
+  .report-card .student-details {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: .45mm !important;
+  }
+  .report-card .student-top-row,
+  .report-card .student-class-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: .55mm !important;
+    min-width: 0 !important;
+  }
+  .report-card .student-class-row > .detail-item,
+  .report-card .student-top-row > .detail-item {
+    min-width: 0 !important;
+    min-height: 5.2mm !important;
+    height: auto !important;
+    padding: .35mm .6mm !important;
+    overflow: visible !important;
+    overflow-wrap: anywhere !important;
+  }
+  .report-card .detail-item > span,
+  .report-card .detail-item > small,
+  .report-card .student-class-row .detail-item > span {
+    font-size: 5.1pt !important;
+    line-height: 1 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .report-card .detail-item > strong,
+  .report-card .detail-item > b,
+  .report-card .detail-item .value,
+  .report-card .memorization-value-row strong {
+    font-size: 6.2pt !important;
+    line-height: 1.02 !important;
+    margin-top: .25mm !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+  .report-card .student-name-item > strong { font-size: 7pt !important; }
+  .report-card .memorization-value-row { min-width: 0 !important; }
+
+  .report-card .school-header { margin-bottom: .5mm !important; padding-bottom: .5mm !important; }
+  .report-card .session-bar { margin-bottom: .5mm !important; padding: .5mm 1mm !important; }
+  .report-card .session-bar span { font-size: 5.3pt !important; }
+  .report-card .session-bar strong { font-size: 6.3pt !important; }
+  .report-card .report-section { margin-bottom: .45mm !important; }
+  .report-card .section-heading { margin-bottom: .3mm !important; padding: .25mm .7mm !important; }
+  .report-card .section-heading h2 { font-size: 7pt !important; }
+  .report-card .performance-overview { gap: .7mm !important; }
+  .report-card .performance-card { min-height: 7mm !important; padding: .5mm .7mm !important; gap: .25mm !important; }
+  .report-card .summary-box { min-height: 5mm !important; padding: .4mm .6mm !important; }
+
+  /* Prevent subject, grade and remark cells from clipping at print boundaries. */
+  .report-card .results-table-container { overflow: visible !important; }
+  .report-card .student-results-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+  .report-card .student-results-table th,
+  .report-card .student-results-table td {
+    box-sizing: border-box !important;
+    padding: .4mm .55mm !important;
+    border: .2mm solid #c5d1c8 !important;
+    line-height: 1.05 !important;
+    overflow: visible !important;
+    word-break: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .report-card .student-results-table th:nth-child(2),
+  .report-card .student-results-table td:nth-child(2) { width: 22% !important; }
+  .report-card .student-results-table th:nth-child(8),
+  .report-card .student-results-table td:nth-child(8) { width: 30% !important; }
+}
