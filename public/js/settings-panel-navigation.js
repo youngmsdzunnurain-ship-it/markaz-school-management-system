@@ -67,13 +67,6 @@
         elements: [page.querySelector(".result-print-scale-card")].filter(Boolean)
       },
       {
-        id: "result-print-scale",
-        label: "Result Print Scale",
-        icon: "fa-print",
-        description: "Choose the scale used when printing student results.",
-        elements: [page.querySelector(".result-print-scale-card")].filter(Boolean)
-      },
-      {
         id: "memorization",
         label: "Qur’an Memorization",
         icon: "fa-book-open",
