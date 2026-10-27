@@ -42,7 +42,8 @@ document.querySelectorAll('.preview-form[data-role="exam-officer"]').forEach((fo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email.value.trim(),
-          password: password.value
+          password: password.value,
+          expected_role: 'exam_officer'
         })
       });
 
@@ -143,7 +144,8 @@ document.querySelectorAll('.preview-form[data-role="teacher"]').forEach((form) =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: username.value.trim(),
-          password: password.value
+          password: password.value,
+          expected_role: 'teacher'
         })
       });
 
@@ -222,7 +224,8 @@ document.querySelectorAll('.preview-form[data-role="management"]').forEach((form
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email.value.trim(),
-          password: password.value
+          password: password.value,
+          expected_role: 'management'
         })
       });
 
