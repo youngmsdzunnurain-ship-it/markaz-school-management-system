@@ -1237,7 +1237,31 @@ function checkStudentResultCompletion() {
     return required ? Math.round(entered / required * 100) : 0;
 }
 
-function printStudentResult() {
+async function applyResultPrintScale() {
+    // Keep printing available at the default size if the setting cannot be read.
+    document.documentElement.style.setProperty("--markaz-result-print-scale", "1");
+    try {
+        const response = await fetch("./api/settings/result-print-scale.php", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+        const data = await response.json();
+        if (response.ok && data.success) {
+            const scale = Number(data.scale);
+            if ([10, 20, 30, 40, 50, 60, 70, 80, 90, 100].includes(scale)) {
+                document.documentElement.style.setProperty(
+                    "--markaz-result-print-scale",
+                    String(scale / 100)
+                );
+            }
+        }
+    } catch (error) {
+        console.warn("Using the default 100% result print scale.", error);
+    }
+}
+
+async function printStudentResult() {
+    await applyResultPrintScale();
     window.print();
 }
 
@@ -1253,6 +1277,7 @@ async function authorizeAndPrint(permission) {
             throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
+        await applyResultPrintScale();
         window.print();
     } catch (error) {
         alert(error.message || "Unable to verify permission.");
