@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
-requireSeniorAdmin();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    requireSeniorAdmin();\n} else {\n    requireResultStaff();\n}
 
 $pdo = db();
 $key = 'result_print_scale';
