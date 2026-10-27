@@ -20,9 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-$isUsernameLogin = isset($input['username']) && !isset($input['email']);
+$requestedRole = strtolower(trim((string) ($input['expected_role'] ?? '')));
+$allowedLoginRoles = ['admin', 'exam_officer', 'teacher', 'management'];
+$isUsernameLogin = $requestedRole === 'teacher'
+    && isset($input['username'])
+    && !isset($input['email']);
 $loginIdentifier = trim((string) ($isUsernameLogin ? $input['username'] : ($input['email'] ?? '')));
 $password = (string) ($input['password'] ?? '');
+
+if (!in_array($requestedRole, $allowedLoginRoles, true)
+    || ($requestedRole === 'teacher' && !$isUsernameLogin)
+    || ($requestedRole !== 'teacher' && $isUsernameLogin)) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'This login page is not configured for the requested account role.'
+    ]);
+    exit;
+}
 
 if ($loginIdentifier === '' || $password === '') {
     http_response_code(422);
@@ -53,10 +68,13 @@ if ($isUsernameLogin) {
     $accountStmt->execute(['username' => $loginIdentifier]);
 } else {
     $accountStmt = $pdo->prepare(
-        "SELECT id, name, email, username, role, password_hash, is_active, is_frozen
-         FROM admins WHERE email = :email AND role <> 'teacher' LIMIT 1"
+        'SELECT id, name, email, username, role, password_hash, is_active, is_frozen
+         FROM admins WHERE email = :email AND role = :role LIMIT 1'
     );
-    $accountStmt->execute(['email' => $loginIdentifier]);
+    $accountStmt->execute([
+        'email' => $loginIdentifier,
+        'role' => $requestedRole
+    ]);
 }
 $admin = $accountStmt->fetch(PDO::FETCH_ASSOC);
 
