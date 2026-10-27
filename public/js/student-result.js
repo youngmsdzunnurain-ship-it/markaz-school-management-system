@@ -1248,7 +1248,7 @@ async function applyResultPrintScale() {
         const data = await response.json();
         if (response.ok && data.success) {
             const scale = Number(data.scale);
-            if ([10, 20, 30, 40, 50, 60, 70, 80, 90, 100].includes(scale)) {
+            if (Number.isInteger(scale) && scale >= 50 && scale <= 100 && scale % 5 === 0) {
                 document.documentElement.style.setProperty(
                     "--markaz-result-print-scale",
                     String(scale / 100)
