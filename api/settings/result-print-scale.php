@@ -46,7 +46,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $scale = filter_var($input['scale'] ?? null, FILTER_VALIDATE_INT);
 if ($scale === false || !in_array($scale, $allowed, true)) {
     http_response_code(422);
-    echo json_encode(['success' => false, 'message' => 'Choose a print scale from 10% to 100%.']);
+    echo json_encode(['success' => false, 'message' => 'Choose a print scale from 50% to 100% in 5% steps.']);
     exit;
 }
 
