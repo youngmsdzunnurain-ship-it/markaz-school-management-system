@@ -1694,3 +1694,54 @@
   html body #studentReportCard.report-card .report-card-footer p { font-size: 6pt !important; line-height: 1.05 !important; }
 }
 
+/* Fine tuning requested: shorter student-information block, smaller profile column, clearer labels and subject table. */
+@media print {
+  html body #studentReportCard.report-card .student-profile-grid {
+    grid-template-columns: 13mm minmax(0,1fr) !important;
+    gap: 1mm !important;
+  }
+  html body #studentReportCard.report-card .student-photo {
+    width: 13mm !important;
+    min-width: 13mm !important;
+    max-width: 13mm !important;
+    height: 13mm !important;
+    min-height: 13mm !important;
+    align-self: stretch !important;
+  }
+  html body #studentReportCard.report-card .student-details { gap: .5mm !important; }
+  html body #studentReportCard.report-card .student-info-row { gap: .6mm !important; }
+  html body #studentReportCard.report-card .detail-item {
+    min-height: 5.2mm !important;
+    padding: .55mm .9mm !important;
+  }
+  html body #studentReportCard.report-card .student-top-row .detail-item,
+  html body #studentReportCard.report-card .student-class-row .detail-item {
+    min-height: 5.2mm !important;
+  }
+  html body #studentReportCard.report-card .detail-item > span,
+  html body #studentReportCard.report-card .detail-item > small,
+  html body #studentReportCard.report-card .memorization-detail-item > span {
+    font-size: 7.2pt !important;
+    line-height: 1.08 !important;
+  }
+  html body #studentReportCard.report-card .detail-item > strong,
+  html body #studentReportCard.report-card .detail-item > b,
+  html body #studentReportCard.report-card .detail-item .value,
+  html body #studentReportCard.report-card .memorization-value-row strong {
+    font-size: 8.6pt !important;
+    line-height: 1.1 !important;
+  }
+  html body #studentReportCard.report-card .student-name-item > strong {
+    font-size: 9.2pt !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th,
+  html body #studentReportCard.report-card .student-results-table td {
+    font-size: 8pt !important;
+    line-height: 1.1 !important;
+    padding: .7mm .8mm !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th {
+    font-weight: 700 !important;
+  }
+}
+
