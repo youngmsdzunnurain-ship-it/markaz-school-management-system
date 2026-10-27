@@ -89,6 +89,12 @@
     min-width: 0 !important;
   }
 
+  .report-card .school-logo::before,
+  .report-card .school-logo::after {
+    content: none !important;
+    display: none !important;
+  }
+
   .report-card .school-logo {
     position: relative !important;
     z-index: 2 !important;
