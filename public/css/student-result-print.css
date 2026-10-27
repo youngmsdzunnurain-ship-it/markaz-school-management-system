@@ -372,5 +372,219 @@
     display: block !important; margin-top: .3mm !important; color: var(--markaz-muted) !important; font-size: 5pt !important; line-height: 1.05 !important;
   }
 
+
+  /* Final alignment and page-fit correction. */
+  html, body, .student-result-page, .student-result-page.management-view, #studentReportCard {
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  .report-card {
+    width: 131.58% !important;
+    zoom: .76 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  /* Keep the original logo colours; no tint, opacity, blend or filter effects. */
+  .report-card .school-logo,
+  .report-card .school-logo img {
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+    background-color: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .report-card .school-logo {
+    flex-basis: 16mm !important;
+    width: 16mm !important;
+    min-width: 16mm !important;
+    height: 16mm !important;
+    min-height: 16mm !important;
+    padding: .5mm !important;
+  }
+  .report-card .school-logo img {
+    object-fit: contain !important;
+    object-position: center center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Header details stay beside the logo and report title, not below the header. */
+  .report-card .school-header {
+    align-items: center !important;
+    gap: 2mm !important;
+  }
+  .report-card .school-brand {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    gap: 2mm !important;
+  }
+  .report-card .school-heading {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .report-card .school-kicker {
+    font-size: 6.1pt !important;
+    letter-spacing: 0 !important;
+    overflow-wrap: normal !important;
+  }
+  .report-card .school-address {
+    font-size: 5.6pt !important;
+  }
+  .report-card .school-contact {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 1mm !important;
+    font-size: 5.1pt !important;
+  }
+  .report-card .school-contact .contact-item {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+  .report-card .school-contact .contact-item span {
+    white-space: nowrap !important;
+  }
+  .report-card .report-title {
+    flex: 0 0 29mm !important;
+    width: 29mm !important;
+    min-width: 29mm !important;
+    padding: 1.2mm !important;
+  }
+
+  /* Align each student field to a stable grid, mirroring Student Management. */
+  .report-card .student-profile-grid {
+    grid-template-columns: 16mm minmax(0, 1fr) !important;
+    gap: 1.5mm !important;
+    align-items: stretch !important;
+  }
+  .report-card .student-photo {
+    width: 16mm !important;
+    min-width: 16mm !important;
+    max-width: 16mm !important;
+    min-height: 16mm !important;
+    max-height: 16mm !important;
+  }
+  .report-card .student-details {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 1mm !important;
+    align-content: stretch !important;
+  }
+  .report-card .student-info-row {
+    display: grid !important;
+    align-items: stretch !important;
+    gap: 1mm !important;
+    min-width: 0 !important;
+  }
+  .report-card .student-top-row {
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, .55fr) minmax(0, .55fr) minmax(0, 1.2fr) !important;
+  }
+  .report-card .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.4fr) !important;
+  }
+  .report-card .detail-item {
+    min-height: 7mm !important;
+    padding: .8mm 1mm !important;
+  }
+  .report-card .detail-item span,
+  .report-card .detail-item small {
+    font-size: 5.1pt !important;
+  }
+  .report-card .detail-item strong,
+  .report-card .detail-item b,
+  .report-card .detail-item .value {
+    font-size: 6.2pt !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
+  .report-card .student-name-item strong {
+    font-size: 6.8pt !important;
+  }
+
+  /* Plain, normal ink-coloured subject grades; bold enough to scan quickly. */
+  .report-card .student-results-table td .result-grade,
+  .report-card .student-results-table td .grade,
+  .report-card .student-results-table td [class*="grade"],
+  .report-card .student-results-table td .badge {
+    display: inline !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    color: var(--markaz-ink) !important;
+    -webkit-text-fill-color: var(--markaz-ink) !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+
+  /* Reduce vertical waste while retaining every report section and signature. */
+  .report-card .report-section,
+  .report-card .academic-management-panel .report-section,
+  .report-card .behavioural-management-panel .report-section {
+    margin-bottom: .9mm !important;
+  }
+  .report-card .section-heading {
+    margin-bottom: .6mm !important;
+    padding: .6mm 1mm !important;
+  }
+  .report-card .section-heading p {
+    display: none !important;
+  }
+  .report-card .performance-card {
+    min-height: 9mm !important;
+    padding: .8mm !important;
+  }
+  .report-card .summary-box {
+    min-height: 7mm !important;
+    padding: .8mm !important;
+  }
+  .report-card .behaviour-grid-container {
+    padding: .6mm !important;
+  }
+  .report-card .behaviour-item {
+    min-height: 4.5mm !important;
+    padding: .4mm .7mm !important;
+  }
+  .report-card .behaviour-rating {
+    width: 16mm !important;
+    min-width: 16mm !important;
+  }
+  .report-card .behaviour-summary-card,
+  .report-card .behaviour-comment-card {
+    margin: .6mm 0 !important;
+    padding: .8mm 1.2mm !important;
+  }
+  .report-card .remarks-section {
+    margin: .7mm 0 !important;
+  }
+  .report-card .remark-card {
+    min-height: 7mm !important;
+    padding: .8mm 1mm !important;
+  }
+  .report-card .remark-card p {
+    margin-top: .4mm !important;
+  }
+  .report-card .report-footer {
+    margin-top: .7mm !important;
+    padding-top: .7mm !important;
+  }
+  .report-card .signature-space {
+    min-height: 5mm !important;
+  }
+  .report-card .report-card-footer {
+    margin-top: .5mm !important;
+    padding-top: .5mm !important;
+  }
+
   a, a:visited { color: inherit !important; text-decoration: none !important; }
 }
