@@ -127,7 +127,7 @@
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 18px;
-    margin-bottom: 24px;
+    margin-bottom: 0;
 }
 
 .summary-card {
@@ -712,7 +712,7 @@
    ========================================================= */
 
 .subjects-panel {
-    margin-top: 8px;
+    margin-top: 0;
     border-radius: 20px;
     box-shadow:
         0 18px 45px rgba(23, 100, 58, .09),
@@ -783,19 +783,6 @@
     background: rgba(255,255,255,.72);
 }
 
-.filter-box::before {
-    content: "FILTER";
-    position: absolute;
-    left: 12px;
-    top: -7px;
-    z-index: 3;
-    padding: 0 4px;
-    color: #9b7a21;
-    background: #f8fbf9;
-    font-size: 8px;
-    font-weight: 850;
-    letter-spacing: .8px;
-}
 
 .filter-box select {
     background: rgba(255,255,255,.72);
@@ -836,7 +823,7 @@
    ========================================================= */
 
 .summary-grid {
-    gap: 20px;
+    gap: 14px;
 }
 
 .summary-card {
@@ -1175,91 +1162,121 @@
     }
 }
 
-/* SUBJECT LIBRARY — CURRENT HTML STRUCTURE */
-.panel-heading {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-    padding: 26px 30px !important;
-    overflow: hidden !important;
-    color: #fff !important;
-    background: linear-gradient(135deg,#17643a 0%,#145531 65%,#9b7b27 100%) !important;
-    border-bottom: 3px solid #c8a43a !important;
+/* SUBJECT LIBRARY HEADING — CONSOLIDATED DESIGN */
+.subjects-page .subjects-panel > .panel-heading {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 28px 30px;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(115deg, #071f16 0%, #10452f 62%, #17613e 100%);
+    border-bottom: 3px solid #d4b45f;
 }
 
-.panel-heading::after {
+.subjects-page .subjects-panel > .panel-heading::after {
     content: "";
     position: absolute;
     width: 180px;
     height: 180px;
-    right: -65px;
-    top: -95px;
-    border: 1px solid rgba(255,255,255,.18);
+    top: -105px;
+    right: -55px;
+    border: 1px solid rgba(255,255,255,.16);
     border-radius: 50%;
-    box-shadow: 0 0 0 20px rgba(255,255,255,.025);
+    box-shadow: 0 0 0 22px rgba(255,255,255,.025);
+    pointer-events: none;
 }
 
-.panel-icon {
+.subjects-page .panel-title-area {
     position: relative;
-    z-index: 2;
-    width: 46px !important;
-    height: 46px !important;
-    flex: 0 0 46px;
-    display: grid !important;
-    place-items: center !important;
-    border: 1px solid rgba(255,255,255,.24) !important;
-    border-radius: 14px !important;
-    color: #f5df9c !important;
-    background: rgba(255,255,255,.10) !important;
-    font-size: 20px !important;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    min-width: 0;
+    text-align: left;
 }
 
-.panel-title-area {
-    position: relative;
-    z-index: 2;
+.subjects-page .panel-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    color: #f0d78f;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(240,215,143,.48);
+    border-radius: 14px;
+    font-size: 21px;
 }
 
-.panel-kicker {
-    display: inline-block !important;
-    margin-bottom: 6px !important;
-    color: #f1d98d !important;
-    font-size: 9px !important;
-    font-weight: 800 !important;
-    letter-spacing: 1.5px !important;
+.subjects-page .panel-kicker {
+    display: block;
+    margin: 0 0 7px;
+    color: #f0d78f;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
 }
 
-.panel-title-area h2 {
-    margin: 0 !important;
-    color: #fff !important;
-    font-size: 23px !important;
-    font-weight: 800 !important;
+.subjects-page .panel-title-area h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(21px, 2.2vw, 26px);
+    font-weight: 750;
+    line-height: 1.25;
 }
 
-.panel-title-area p {
-    margin: 6px 0 0 !important;
-    color: rgba(255,255,255,.76) !important;
-    font-size: 12px !important;
+.subjects-page .panel-title-area p {
+    max-width: 560px;
+    margin: 8px 0 0;
+    color: rgba(255,255,255,.82);
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 @media (max-width: 600px) {
-    .panel-heading {
-        padding: 22px 20px !important;
+    .subjects-page .subjects-panel > .panel-heading {
+        padding: 22px 18px;
     }
 
-    .panel-icon {
-        width: 40px !important;
-        height: 40px !important;
+    .subjects-page .panel-title-area {
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+    .subjects-page .panel-icon {
         flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 18px;
+    }
+
+    .subjects-page .panel-kicker {
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+
+    .subjects-page .panel-title-area h2 {
+        font-size: 21px;
+    }
+
+    .subjects-page .panel-title-area p {
+        font-size: 12px;
     }
 }
 
 /* SUBJECT TOOLS — CURRENT HTML */
 .subject-tools {
     display: grid !important;
-    grid-template-columns: minmax(0,1fr) 210px !important;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px) !important;
+    align-items: end !important;
     gap: 16px !important;
-    padding: 20px 30px !important;
+    padding: 14px 22px !important;
     background: rgba(248,251,249,.82) !important;
     border-bottom: 1px solid rgba(23,100,58,.10) !important;
 }
@@ -1300,17 +1317,14 @@
 
 .filter-box {
     display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
 }
 
 .filter-label {
-    flex: 0 0 auto !important;
-    color: #17643a !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    letter-spacing: .8px !important;
-    text-transform: uppercase !important;
+    color: #20352a !important;
+    flex: 0 0 auto !important; color: #20352a !important; font: inherit !important;
 }
 
 .filter-box select {
@@ -1803,6 +1817,291 @@
     }
 
     .modal-backdrop .modal-actions button {
+        width: 100% !important;
+    }
+}
+
+/* MARKAZ SUBJECTS TABLE — CONSISTENT THEME */
+.subjects-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.subjects-table thead th {
+    padding: 13px 14px !important;
+    background: #123d2a !important;
+    color: #ffffff !important;
+    border-bottom: 3px solid #e5c96d !important;
+    text-align: left;
+    vertical-align: middle;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.subjects-table tbody td {
+    padding: 13px 14px !important;
+    line-height: 1.45;
+    vertical-align: middle;
+    border-bottom: 1px solid #e7eee9;
+}
+
+.subjects-table tbody tr:nth-child(odd) td {
+    background: #ffffff !important;
+}
+
+.subjects-table tbody tr:nth-child(even) td {
+    background: #f4f8f5 !important;
+}
+
+/* Soft green hover so the active row is easy to identify */
+.subjects-table tbody tr:hover td {
+    background: #e1f0e5 !important;
+    transition: background-color 140ms ease;
+}
+
+.subjects-table .table-action:hover {
+    background: #e1f0e5;
+}
+
+/* SUBJECTS PAGE LAYOUT — single authoritative layout block */
+.subjects-page {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page > .page-content {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 18px 24px 32px;
+    box-sizing: border-box;
+}
+
+.subjects-page .summary-grid {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page .subjects-panel {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page .table-wrapper {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+}
+
+.subjects-page .subjects-table {
+    width: 100%;
+    min-width: 760px;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+    .subjects-page > .page-content {
+        padding: 14px 8px 28px;
+    }
+}
+
+/* END SUBJECTS PAGE LAYOUT */
+
+/* SUBJECTS HEADER — CLEAN PREMIUM EMERALD AND GOLD */
+.subjects-page .subjects-class-topbar {
+    position: relative !important;
+    isolation: isolate !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 28px !important;
+    min-height: 166px !important;
+    margin: 0 14px 8px !important;
+    padding: 30px 32px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(230, 195, 108, .24) !important;
+    border-radius: 22px !important;
+    background:
+        radial-gradient(ellipse at 88% 12%, rgba(230, 195, 108, .16), transparent 30%),
+        linear-gradient(120deg, #071f16 0%, #0c3525 48%, #15543a 100%) !important;
+    box-shadow: 0 18px 42px rgba(7, 31, 22, .19),
+                inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+    color: #fff !important;
+}
+
+/* Remove inherited mosque/minaret decoration and green bubble */
+.subjects-page .subjects-class-topbar::before {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Top stripe intentionally removed */
+.subjects-page .subjects-class-topbar::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.subjects-page .subjects-class-topbar .class-heading-copy {
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+.subjects-page .subjects-class-topbar .class-heading-copy .eyebrow {
+    display: block !important;
+    margin: 0 0 9px !important;
+    color: #efd58d !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 2.2px !important;
+    line-height: 1.5 !important;
+    text-transform: uppercase !important;
+}
+
+.subjects-page .subjects-class-topbar h1 {
+    margin: 0 0 9px !important;
+    color: #fff !important;
+    font-size: clamp(30px, 4vw, 38px) !important;
+    font-weight: 780 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.8px !important;
+}
+
+.subjects-page .subjects-class-topbar p {
+    max-width: 540px !important;
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
+}
+
+.subjects-page .subjects-class-topbar .class-back-link {
+    position: relative !important;
+    z-index: 2 !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+    padding: 0 16px !important;
+    border: 1px solid rgba(239, 213, 141, .42) !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, .055) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: background .2s ease, border-color .2s ease,
+                transform .2s ease !important;
+}
+
+.subjects-page .subjects-class-topbar .class-back-link:hover {
+    border-color: rgba(239, 213, 141, .72) !important;
+    background: rgba(239, 213, 141, .12) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Gold Add Subject action */
+.subjects-page .subjects-class-topbar .class-header-actions {
+    position: relative !important;
+    z-index: 2 !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    width: auto !important;
+    margin-left: auto !important;
+}
+
+.subjects-page .subjects-class-topbar .primary-button {
+    width: auto !important;
+    min-height: 44px !important;
+    padding: 0 18px !important;
+    border: 1px solid #d4b45f !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #f8edc9, #e6c36c) !important;
+    color: #102b1e !important;
+    box-shadow: 0 7px 18px rgba(7, 31, 22, .12) !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    transition: transform .2s ease, box-shadow .2s ease !important;
+}
+
+.subjects-page .subjects-class-topbar .primary-button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 10px 22px rgba(7, 31, 22, .2) !important;
+}
+
+@media (max-width: 600px) {
+    .subjects-page .subjects-class-topbar {
+        align-items: flex-start !important;
+        flex-direction: column-reverse !important;
+        flex-wrap: nowrap !important;
+        gap: 18px !important;
+        min-height: 0 !important;
+        padding: 25px 22px !important;
+        margin: 0 8px 8px !important;
+        border-radius: 18px !important;
+    }
+
+
+
+    .subjects-page .subjects-class-topbar .class-heading-copy {
+        order: 3 !important;
+        width: 100% !important;
+    }
+
+    .subjects-page .subjects-class-topbar h1 {
+        font-size: 30px !important;
+    }
+
+    .subjects-page .subjects-class-topbar .class-back-link {
+        order: 2 !important;
+        align-self: flex-start !important;
+    }
+
+    .subjects-page .subjects-class-topbar .class-header-actions {
+        order: 1 !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .subjects-page .subjects-class-topbar .primary-button {
         width: 100% !important;
     }
 }

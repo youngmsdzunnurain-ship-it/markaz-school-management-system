@@ -1,0 +1,131 @@
+/* MARKAZ shared screen watermark — matches login pattern */
+html {
+    min-height: 100%;
+    background: #fbfdfc;
+}
+
+body {
+    position: relative;
+    isolation: isolate;
+    background: #fbfdfc;
+}
+
+/* Single watermark layer: behind page content, never over text */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+    background-image: url("../assets/images/markaz-logo.jpg");
+    background-repeat: repeat;
+    background-size: 140px 140px;
+    background-position: center center;
+    opacity: 0.055;
+    transform: none;
+    filter: none;
+}
+
+/* Keep page content above the watermark */
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Transparent page canvases let the watermark show through */
+.main-content,
+.dashboard-main,
+.dashboard-content,
+.page-content,
+.students-page,
+.students-page > main,
+.classes-page,
+.class-page,
+.class-content,
+.class-list,
+.class-selection,
+.class-students,
+.students-content,
+.subjects-page,
+.subjects-content,
+.class-subjects-page,
+.results-page,
+.content-area,
+.page-container,
+main {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Keep the green navigation sidebar clear and above the watermark */
+.sidebar {
+    z-index: 1000 !important;
+    background: linear-gradient(180deg, #123d2a 0%, #0d2b1c 100%) !important;
+}
+
+/* Keep overlays and dialogs above the page */
+.sidebar-overlay,
+.modal-overlay,
+.markaz-camera-overlay {
+    z-index: 1100 !important;
+}
+
+/* Print layout retains its own watermark rules */
+@media print {
+    body::before {
+        display: none !important;
+    }
+}
+
+/* Dashboard-specific watermark: content area only, never the green sidebar */
+body > .main-content {
+    position: relative;
+    isolation: isolate;
+    background-color: #f7f8f4 !important;
+    background-image: none !important;
+}
+
+body > .main-content::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("../assets/images/markaz-logo.jpg");
+    background-repeat: repeat;
+    background-size: 140px 140px;
+    background-position: center center;
+    opacity: 0.055;
+}
+
+body > .sidebar {
+    background: linear-gradient(180deg, #123d2a 0%, #0d2b1c 100%) !important;
+}
+
+
+/* Dashboard watermark: main-content is nested inside .app, not directly under body. */
+.app > .main-content {
+    position: relative;
+    isolation: isolate;
+    background-color: #f7f8f4 !important;
+    background-image: none !important;
+}
+
+.app > .main-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("../assets/images/markaz-logo.jpg");
+    background-repeat: repeat;
+    background-size: 140px 140px;
+    background-position: center center;
+    opacity: 0.065;
+}
+
+.app > .main-content > * {
+    position: relative;
+    z-index: 1;
+}

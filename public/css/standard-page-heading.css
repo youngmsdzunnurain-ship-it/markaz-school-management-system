@@ -1,0 +1,571 @@
+/* ==========================================================
+   MARKAZ RESULT SYSTEM — UNIFIED PAGE DESIGN
+   Green • Gold • White
+   Shared visual system for existing application pages.
+   Preserves page structure, forms, and JavaScript behavior.
+   ========================================================== */
+
+:root {
+    --markaz-green: #123d2a;
+    --markaz-green-dark: #0b2b1d;
+    --markaz-green-mid: #1d6543;
+    --markaz-green-soft: #eaf3ed;
+    --markaz-gold: #c5a24b;
+    --markaz-gold-light: #f5edda;
+    --markaz-page: #f2f6f3;
+    --markaz-white: #ffffff;
+    --markaz-text: #20362a;
+    --markaz-muted: #6d7d73;
+    --markaz-border: #dce6df;
+    --markaz-shadow: 0 8px 24px rgba(18, 61, 42, .07);
+    --markaz-radius: 16px;
+}
+
+body:has(.classes-page),
+body:has(.class-page),
+body:has(.students-page),
+body:has(.subjects-page),
+body:has(.class-subjects-page),
+body:has(.student-result-page),
+body:has(.settings-page) {
+    background: var(--markaz-page);
+    color: var(--markaz-text);
+}
+
+.classes-page,
+.class-page,
+.students-page,
+.subjects-page,
+.class-subjects-page,
+.student-result-page,
+.settings-page {
+    color: var(--markaz-text);
+}
+
+.classes-page *,
+.class-page *,
+.students-page *,
+.subjects-page *,
+.class-subjects-page *,
+.student-result-page *,
+.settings-page * {
+    box-sizing: border-box;
+}
+
+/* PAGE HEADERS */
+.classes-topbar,
+.class-topbar,
+.students-topbar,
+.class-subjects-page > .page-header,
+.class-subjects-page .page-header,
+.subjects-page > .page-header,
+.subjects-page .page-header,
+.result-page-header,
+.settings-header {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(125deg, var(--markaz-green-dark), var(--markaz-green) 65%, #246744);
+    border: 1px solid rgba(197, 162, 75, .72);
+    border-bottom: 4px solid var(--markaz-gold);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(11, 43, 29, .15);
+}
+
+.classes-topbar,
+.class-topbar,
+.students-topbar,
+.result-page-header,
+.settings-header {
+    margin-bottom: 24px;
+}
+
+.classes-topbar h1,
+.classes-topbar h2,
+.class-topbar h1,
+.class-topbar h2,
+.students-topbar h1,
+.students-topbar h2,
+.class-subjects-page .page-header h1,
+.class-subjects-page .page-header h2,
+.subjects-page .page-header h1,
+.subjects-page .page-header h2,
+.result-page-header h1,
+.result-page-header h2,
+.settings-header h1,
+.settings-header h2,
+.classes-topbar .page-title,
+.class-topbar .page-title,
+.students-topbar .page-title {
+    color: #fff;
+}
+
+.classes-topbar p,
+.class-topbar p,
+.students-topbar p,
+.class-subjects-page .page-header p,
+.subjects-page .page-header p,
+.result-page-header p,
+.settings-header p {
+    color: rgba(255, 255, 255, .82);
+}
+
+.classes-topbar .eyebrow,
+.class-topbar .eyebrow,
+.students-topbar .eyebrow,
+.class-subjects-page .page-eyebrow,
+.subjects-page .page-eyebrow {
+    color: #f0d68d;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.classes-topbar a,
+.class-topbar a,
+.students-topbar a,
+.class-subjects-page .page-header a,
+.subjects-page .page-header a,
+.result-page-header a,
+.settings-header a {
+    transition: background .2s ease, transform .2s ease;
+}
+
+.classes-topbar .back-link,
+.class-topbar .back-link,
+.students-topbar .back-link,
+.class-subjects-page .back-link,
+.subjects-page .back-link,
+.result-page-header .back-link,
+.settings-header .back-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    background: rgba(255, 255, 255, .10);
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 10px;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.classes-topbar .back-link:hover,
+.class-topbar .back-link:hover,
+.students-topbar .back-link:hover,
+.class-subjects-page .back-link:hover,
+.subjects-page .back-link:hover,
+.result-page-header .back-link:hover,
+.settings-header .back-link:hover {
+    background: rgba(255, 255, 255, .19);
+    transform: translateY(-1px);
+}
+
+/* PAGE CONTENT AND PANELS */
+.classes-page main,
+.class-page main,
+.students-page main,
+.subjects-page .page-content,
+.class-subjects-page,
+.student-result-page,
+.settings-page {
+    min-width: 0;
+}
+
+.classes-panel,
+.class-panel,
+.students-panel,
+.subjects-panel,
+.class-subjects-page .subjects-panel,
+.settings-card,
+.management-panel,
+.academic-management-panel {
+    background: var(--markaz-white);
+    border: 1px solid var(--markaz-border);
+    border-radius: var(--markaz-radius);
+    box-shadow: var(--markaz-shadow);
+}
+
+.classes-panel,
+.class-panel,
+.students-panel,
+.subjects-panel,
+.class-subjects-page .subjects-panel,
+.settings-card,
+.management-panel {
+    margin-bottom: 22px;
+}
+
+.panel-heading,
+.classes-panel .panel-heading,
+.class-panel .panel-heading,
+.students-panel .panel-heading,
+.subjects-panel .panel-header,
+.settings-card-heading {
+    color: var(--markaz-green);
+    border-bottom: 1px solid var(--markaz-border);
+}
+
+.panel-heading h2,
+.panel-heading h3,
+.panel-header h2,
+.panel-header h3,
+.settings-card-heading h2,
+.settings-card-heading h3 {
+    color: var(--markaz-green);
+}
+
+/* SUMMARY AND STAT CARDS */
+.classes-stat-card,
+.class-summary-card,
+.student-summary-card,
+.summary-card,
+.performance-card,
+.result-summary-card {
+    border: 1px solid var(--markaz-border);
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(18, 61, 42, .055);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.classes-stat-card:hover,
+.class-summary-card:hover,
+.student-summary-card:hover,
+.summary-card:hover,
+.performance-card:hover,
+.result-summary-card:hover {
+    border-color: rgba(197, 162, 75, .8);
+    box-shadow: 0 9px 22px rgba(18, 61, 42, .09);
+}
+
+.classes-stat-card h2,
+.classes-stat-card h3,
+.class-summary-card h2,
+.class-summary-card h3,
+.student-summary-card h2,
+.student-summary-card h3,
+.summary-card h2,
+.summary-card h3,
+.performance-card h2,
+.performance-card h3,
+.result-summary-card h2,
+.result-summary-card h3 {
+    color: var(--markaz-green);
+}
+
+.student-summary-card.active,
+.summary-card.summary-active,
+.summary-card.summary-total,
+.performance-card.highlight {
+    border-top: 3px solid var(--markaz-gold);
+}
+
+.student-summary-card.inactive {
+    border-top: 3px solid #b9c5bd;
+}
+
+/* TABLES */
+.classes-table-wrap,
+.students-table-wrap,
+.classes-table-container,
+.students-table-container,
+.results-table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+.classes-table,
+.students-table,
+.student-results-table,
+.class-page table,
+.subjects-page table,
+.class-subjects-page table,
+.settings-page table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    color: var(--markaz-text);
+}
+
+.classes-table thead th,
+.students-table thead th,
+.student-results-table thead th,
+.class-page table thead th,
+.subjects-page table thead th,
+.class-subjects-page table thead th,
+.settings-page table thead th {
+    background: var(--markaz-green);
+    color: #fff;
+    border-bottom: 2px solid var(--markaz-gold);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.classes-table th,
+.classes-table td,
+.students-table th,
+.students-table td,
+.student-results-table th,
+.student-results-table td,
+.class-page table th,
+.class-page table td,
+.subjects-page table th,
+.subjects-page table td,
+.class-subjects-page table th,
+.class-subjects-page table td,
+.settings-page table th,
+.settings-page table td {
+    padding: 13px 15px;
+    border-bottom: 1px solid #e5ece7;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.classes-table tbody tr:nth-child(even),
+.students-table tbody tr:nth-child(even),
+.student-results-table tbody tr:nth-child(even),
+.class-page table tbody tr:nth-child(even),
+.subjects-page table tbody tr:nth-child(even),
+.class-subjects-page table tbody tr:nth-child(even) {
+    background: #f7faf8;
+}
+
+.classes-table tbody tr:hover,
+.students-table tbody tr:hover,
+.student-results-table tbody tr:hover,
+.class-page table tbody tr:hover,
+.subjects-page table tbody tr:hover,
+.class-subjects-page table tbody tr:hover {
+    background: #edf5ef;
+}
+
+/* INPUTS AND SELECTS */
+.classes-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.class-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.students-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.subjects-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.class-subjects-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.settings-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.classes-page select,
+.class-page select,
+.students-page select,
+.subjects-page select,
+.class-subjects-page select,
+.settings-page select,
+.classes-page textarea,
+.class-page textarea,
+.students-page textarea,
+.subjects-page textarea,
+.class-subjects-page textarea,
+.settings-page textarea {
+    max-width: 100%;
+    color: var(--markaz-text);
+    background-color: #fff;
+    border: 1px solid #cfdcd3;
+    border-radius: 9px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.classes-page input:focus,
+.class-page input:focus,
+.students-page input:focus,
+.subjects-page input:focus,
+.class-subjects-page input:focus,
+.settings-page input:focus,
+.classes-page select:focus,
+.class-page select:focus,
+.students-page select:focus,
+.subjects-page select:focus,
+.class-subjects-page select:focus,
+.settings-page select:focus,
+.classes-page textarea:focus,
+.class-page textarea:focus,
+.students-page textarea:focus,
+.subjects-page textarea:focus,
+.class-subjects-page textarea:focus,
+.settings-page textarea:focus {
+    outline: none;
+    border-color: var(--markaz-green-mid);
+    box-shadow: 0 0 0 3px rgba(29, 101, 67, .12);
+}
+
+/* BUTTONS — preserve existing sizing and layout */
+.classes-page button,
+.class-page button,
+.students-page button,
+.subjects-page button,
+.class-subjects-page button,
+.student-result-page button,
+.settings-page button {
+    transition: background-color .18s ease, border-color .18s ease,
+                box-shadow .18s ease, transform .18s ease;
+}
+
+.classes-page button:not(.close):not(.modal-close),
+.class-page button:not(.close):not(.modal-close),
+.students-page button:not(.close):not(.modal-close),
+.subjects-page button:not(.close):not(.modal-close),
+.class-subjects-page button:not(.close):not(.modal-close),
+.student-result-page button:not(.close):not(.modal-close),
+.settings-page button:not(.close):not(.modal-close) {
+    border-radius: 9px;
+}
+
+.classes-page .btn-primary,
+.class-page .btn-primary,
+.students-page .btn-primary,
+.subjects-page .btn-primary,
+.class-subjects-page .btn-primary,
+.student-result-page .btn-primary,
+.settings-page .btn-primary,
+.classes-page button.primary,
+.class-page button.primary,
+.students-page button.primary,
+.subjects-page button.primary,
+.class-subjects-page button.primary,
+.settings-page button.primary {
+    color: #fff;
+    background: var(--markaz-green);
+    border-color: var(--markaz-green);
+}
+
+.classes-page .btn-primary:hover,
+.class-page .btn-primary:hover,
+.students-page .btn-primary:hover,
+.subjects-page .btn-primary:hover,
+.class-subjects-page .btn-primary:hover,
+.student-result-page .btn-primary:hover,
+.settings-page .btn-primary:hover {
+    background: var(--markaz-green-dark);
+    border-color: var(--markaz-gold);
+}
+
+.classes-page .btn-secondary,
+.class-page .btn-secondary,
+.students-page .btn-secondary,
+.subjects-page .btn-secondary,
+.class-subjects-page .btn-secondary,
+.student-result-page .btn-secondary,
+.settings-page .btn-secondary {
+    color: var(--markaz-green);
+    background: #fff;
+    border: 1px solid #cfdcd3;
+}
+
+/* FILTERS AND TOOLBARS */
+.classes-toolbar,
+.students-toolbar,
+.class-toolbar,
+.subjects-toolbar,
+.page-toolbar,
+.table-toolbar,
+.filter-bar {
+    border-radius: 12px;
+}
+
+/* LINKS AND SMALL DETAILS */
+.classes-page a,
+.class-page a,
+.students-page a,
+.subjects-page a,
+.class-subjects-page a,
+.settings-page a {
+    text-underline-offset: 3px;
+}
+
+.classes-page label,
+.class-page label,
+.students-page label,
+.subjects-page label,
+.class-subjects-page label,
+.settings-page label {
+    color: var(--markaz-text);
+    font-weight: 600;
+}
+
+.classes-page .muted,
+.class-page .muted,
+.students-page .muted,
+.subjects-page .muted,
+.class-subjects-page .muted,
+.settings-page .muted {
+    color: var(--markaz-muted);
+}
+
+/* MODALS */
+.classes-page .modal-content,
+.class-page .modal-content,
+.students-page .modal-content,
+.subjects-page .modal-content,
+.class-subjects-page .modal-content,
+.settings-page .modal-content {
+    background: #fff;
+    border: 1px solid var(--markaz-border);
+    border-top: 3px solid var(--markaz-gold);
+    border-radius: 16px;
+    box-shadow: 0 18px 55px rgba(11, 43, 29, .2);
+}
+
+.classes-page .modal-header,
+.class-page .modal-header,
+.students-page .modal-header,
+.subjects-page .modal-header,
+.class-subjects-page .modal-header,
+.settings-page .modal-header {
+    border-bottom: 1px solid var(--markaz-border);
+}
+
+/* RESPONSIVE SPACING */
+@media (max-width: 768px) {
+    .classes-topbar,
+    .class-topbar,
+    .students-topbar,
+    .result-page-header,
+    .settings-header,
+    .subjects-page .page-header,
+    .class-subjects-page .page-header {
+        border-radius: 13px;
+        margin-bottom: 17px;
+    }
+
+    .classes-panel,
+    .class-panel,
+    .students-panel,
+    .subjects-panel,
+    .class-subjects-page .subjects-panel,
+    .settings-card,
+    .management-panel {
+        border-radius: 13px;
+        margin-bottom: 16px;
+    }
+
+    .classes-table th,
+    .classes-table td,
+    .students-table th,
+    .students-table td,
+    .student-results-table th,
+    .student-results-table td,
+    .class-page table th,
+    .class-page table td,
+    .subjects-page table th,
+    .subjects-page table td,
+    .class-subjects-page table th,
+    .class-subjects-page table td {
+        padding: 10px 11px;
+    }
+}
+
+/* Printing results must retain the dedicated print stylesheet. */
+@media print {
+    body:has(.student-result-page) {
+        background: #fff !important;
+    }
+
+    .student-result-page,
+    .student-result-page .report-card,
+    .student-result-page .management-panel {
+        box-shadow: none !important;
+    }
+}

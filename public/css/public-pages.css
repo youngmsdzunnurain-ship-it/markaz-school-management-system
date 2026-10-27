@@ -1,0 +1,1155 @@
+/* MARKAZ public information pages — consolidated stylesheet */
+
+.public-page {
+    color: #24352c;
+    background: #fff;
+}
+
+.public-page .container {
+    width: min(1120px, calc(100% - 40px));
+    margin-inline: auto;
+}
+
+/* Page banner */
+.public-page-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 38px 0 36px;
+    background: linear-gradient(135deg, #103e2b, #176343);
+    color: #fff;
+}
+
+.public-page-hero::after {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: -100px;
+    top: -130px;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 50%;
+    box-shadow: 0 0 0 35px rgba(255,255,255,.035),
+                0 0 0 70px rgba(255,255,255,.025);
+    pointer-events: none;
+}
+
+.public-eyebrow {
+    margin: 0 0 10px;
+    color: #b18b35;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.public-page-hero .public-eyebrow {
+    color: #f0d88e;
+    font-size: .84rem;
+}
+
+.public-page-hero h1 {
+    max-width: 780px;
+    margin: 0 0 12px;
+    font-size: clamp(2.25rem, 4.5vw, 3.2rem);
+    line-height: 1.14;
+    letter-spacing: -.025em;
+}
+
+.public-page-hero p:last-child {
+    max-width: 720px;
+    margin: 0;
+    color: #fff;
+    font-size: 1.08rem;
+    line-height: 1.7;
+}
+
+/* Sections and headings */
+.public-section {
+    padding: 46px 0;
+}
+
+.public-section-soft {
+    background: #f5f8f5;
+}
+
+.public-section-heading {
+    max-width: 720px;
+    margin: 0 auto 25px;
+    text-align: center;
+}
+
+.public-section-heading h2,
+.public-copy h2 {
+    margin: 0 0 11px;
+    color: #124b32;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    line-height: 1.25;
+}
+
+.public-section-heading p,
+.public-copy p {
+    color: #607066;
+    line-height: 1.75;
+}
+
+.public-copy p {
+    margin: 0 0 12px;
+}
+
+/* School introduction and photograph */
+.public-intro-grid,
+.director-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 30px;
+}
+
+.public-intro-grid {
+    align-items: stretch;
+    gap: 28px;
+}
+
+.public-photo {
+    min-height: 300px;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    overflow: hidden;
+    border: 1px dashed #a7bba9;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #f0f5ef, #e3ece3);
+    text-align: center;
+}
+
+.public-intro-grid .public-photo {
+    min-height: 340px;
+    height: 100%;
+}
+
+.public-photo-placeholder {
+    width: 100%;
+    max-width: 340px;
+    color: #567361;
+}
+
+.public-photo-placeholder svg {
+    display: block;
+    width: 94px;
+    height: 94px;
+    margin: 0 auto 18px;
+    color: #377451;
+}
+
+.public-photo-placeholder strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #174b32;
+    font-size: 1.08rem;
+}
+
+.public-photo-placeholder span {
+    display: block;
+    font-size: .9rem;
+    line-height: 1.7;
+}
+
+/* Mission, Vision and Values cards */
+.public-values {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 16px;
+}
+
+.public-value-card {
+    padding: 22px 20px;
+    border: 1px solid #e0e9e0;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(18,75,50,.07);
+    transform: translateY(0) scale(1);
+    transition: transform .18s ease-out,
+                box-shadow .18s ease-out,
+                border-color .18s ease-out;
+}
+
+.public-value-number {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    place-items: center;
+    border-radius: 12px;
+    background: #e8f1e8;
+    color: #145337;
+    font-weight: 800;
+    transition: background-color .18s ease-out,
+                transform .18s ease-out;
+}
+
+.public-value-card h3 {
+    margin: 0 0 8px;
+    color: #174b32;
+    font-size: 1.15rem;
+}
+
+.public-value-card p {
+    margin: 0;
+    color: #647368;
+    font-size: .96rem;
+    line-height: 1.7;
+}
+
+/* Mouse and trackpad: lift while hovered, return when the pointer leaves */
+@media (hover: hover) and (pointer: fine) {
+    .public-value-card:hover {
+        z-index: 1;
+        transform: translateY(-6px) scale(1.025);
+        border-color: #b5ceb9;
+        box-shadow: 0 12px 25px rgba(18,75,50,.14);
+    }
+
+    .public-value-card:hover .public-value-number {
+        background: #dcebdc;
+        transform: scale(1.04);
+    }
+}
+
+/* Touchscreens: animate only while the card is being pressed */
+@media (hover: none) {
+    .public-value-card:active {
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 10px 22px rgba(18,75,50,.12);
+    }
+
+    .public-value-card:active .public-value-number {
+        background: #dcebdc;
+        transform: scale(1.04);
+    }
+}
+
+.public-value-card:focus-within {
+    outline: 2px solid #377451;
+    outline-offset: 3px;
+}
+
+/* Director's portrait and message */
+.director-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 30px;
+}
+
+.director-grid .public-photo {
+    width: 100%;
+    max-width: 420px;
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+    padding: 22px;
+    justify-self: center;
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(18,75,50,.10);
+}
+
+.director-grid .public-photo-placeholder svg {
+    width: 112px;
+    height: 112px;
+}
+
+.public-quote {
+    margin: 0;
+    padding: 20px 22px;
+    border-left: 4px solid #c5a34b;
+    border-radius: 0 12px 12px 0;
+    background: #f5f8f3;
+    color: #526458;
+    line-height: 1.8;
+}
+
+.public-signature {
+    margin-top: 14px;
+}
+
+.public-signature strong {
+    display: block;
+    color: #124b32;
+    font-size: 1.08rem;
+}
+
+.public-signature span {
+    display: block;
+    margin-top: 5px;
+    color: #718075;
+    font-size: .9rem;
+}
+
+/* Call-to-action */
+.public-cta {
+    padding: 32px 28px;
+    border-radius: 20px;
+    background: #124b32;
+    color: #fff;
+    text-align: center;
+}
+
+.public-cta h2 {
+    margin: 0 0 12px;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.public-cta p {
+    max-width: 650px;
+    margin: 0 auto 18px;
+    color: rgba(255,255,255,.86);
+    line-height: 1.7;
+}
+
+.public-cta-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.public-cta-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
+    padding: 11px 19px;
+    border: 1px solid rgba(255,255,255,.65);
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .18s ease-out,
+                color .18s ease-out;
+}
+
+.public-cta-links a:hover {
+    background: #fff;
+    color: #124b32;
+}
+
+/* Tablet and mobile layout */
+@media (max-width: 760px) {
+    .public-page .container {
+        width: min(100% - 32px, 600px);
+    }
+
+    .public-page-hero {
+        padding: 32px 0 30px;
+    }
+
+    .public-page-hero h1 {
+        font-size: clamp(2rem, 8vw, 2.6rem);
+    }
+
+    .public-page-hero p:last-child {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .public-section {
+        padding: 34px 0;
+    }
+
+    .public-intro-grid,
+    .director-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+    }
+
+    .public-intro-grid .public-photo {
+        min-height: 270px;
+    }
+
+    .director-grid .public-photo {
+        width: min(100%, 360px);
+        max-width: 360px;
+        aspect-ratio: 4 / 5;
+        justify-self: center;
+    }
+
+    .public-values {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .public-value-card {
+        padding: 20px;
+    }
+
+    .public-quote {
+        padding: 18px;
+    }
+
+    .public-cta {
+        padding: 26px 18px;
+    }
+}
+
+/* Accessibility: avoid unnecessary motion */
+@media (prefers-reduced-motion: reduce) {
+    .public-value-card,
+    .public-value-number,
+    .public-cta-links a {
+        transition: none;
+    }
+
+    .public-value-card:hover {
+        transform: none;
+    }
+}
+
+
+/* MARKAZ public Explore pages — refined spacing, photography and footer layout */
+html:has(body.public-page) {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body.public-page {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.public-page > main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+body.public-page > footer.footer {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+body.public-page .footer-bottom {
+  margin-bottom: 0;
+}
+.markaz-explore-page .public-section {
+  padding-top: clamp(42px, 6vw, 76px);
+  padding-bottom: clamp(48px, 6vw, 80px);
+}
+.markaz-explore-page .public-section-heading {
+  max-width: 760px;
+  margin: 0 auto 34px;
+}
+.markaz-explore-page .public-section-heading p:last-child {
+  line-height: 1.8;
+}
+.markaz-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  align-items: stretch;
+}
+.markaz-photo-card,
+.markaz-facility-card {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(18, 75, 50, .12);
+  border-radius: 16px;
+  box-shadow: 0 8px 26px rgba(19, 49, 34, .07);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.markaz-photo-card:hover,
+.markaz-facility-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(19, 49, 34, .12);
+}
+.markaz-photo-card img,
+.markaz-facility-card img {
+  display: block;
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  background: #edf2ed;
+}
+.markaz-photo-feature img {
+  height: 230px;
+}
+.markaz-photo-card figcaption,
+.markaz-facility-card > div {
+  padding: 22px 22px 24px;
+}
+.markaz-photo-card h3,
+.markaz-facility-card h3 {
+  margin: 0 0 9px;
+  color: #124b32;
+  font-size: 1.12rem;
+  line-height: 1.4;
+}
+.markaz-photo-card p,
+.markaz-facility-card p {
+  margin: 0;
+  color: #5d6b62;
+  line-height: 1.75;
+}
+.markaz-facility-intro {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
+  margin-bottom: 76px;
+}
+.markaz-facility-copy h2,
+.markaz-facility-note h2 {
+  margin: 10px 0 18px;
+  color: #124b32;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1.25;
+}
+.markaz-facility-copy p:not(.public-eyebrow),
+.markaz-facility-note p {
+  color: #536258;
+  line-height: 1.85;
+  margin: 0 0 14px;
+}
+.markaz-facility-intro > img {
+  display: block;
+  width: 100%;
+  min-height: 300px;
+  max-height: 440px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(19, 49, 34, .12);
+}
+.markaz-facility-heading {
+  margin-top: 0 !important;
+}
+.markaz-facility-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+.markaz-facility-card img {
+  height: 225px;
+}
+.markaz-facility-note {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 36px;
+  align-items: center;
+  margin-top: 68px;
+  padding: clamp(22px, 4vw, 38px);
+  background: #f4f8f4;
+  border: 1px solid rgba(18, 75, 50, .1);
+  border-radius: 18px;
+}
+.markaz-facility-note img {
+  display: block;
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.markaz-faq-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, .7fr) minmax(0, 1.6fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: start;
+}
+.markaz-faq-aside {
+  padding: 30px 26px;
+  background: #f3f8f3;
+  border: 1px solid rgba(18, 75, 50, .12);
+  border-radius: 16px;
+}
+.markaz-faq-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #124b32;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.markaz-faq-aside h2 {
+  margin: 0 0 12px;
+  color: #124b32;
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+.markaz-faq-aside p {
+  margin: 0 0 22px;
+  color: #536258;
+  line-height: 1.8;
+}
+.markaz-faq-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 8px;
+  background: #124b32;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+.markaz-faq-contact:hover {
+  background: #0b3825;
+}
+.markaz-faq-email {
+  display: inline-block;
+  margin-top: 17px;
+  color: #124b32;
+  overflow-wrap: anywhere;
+}
+.markaz-faq-group + .markaz-faq-group {
+  margin-top: 32px;
+}
+.markaz-faq-group > h3 {
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  color: #124b32;
+  font-size: 1.15rem;
+  border-bottom: 2px solid #e5eee6;
+}
+.markaz-faq-content .public-faq-item {
+  margin: 0 0 12px;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e1e9e2;
+  border-radius: 10px;
+}
+.markaz-faq-content .public-faq-item[open] {
+  border-color: rgba(18, 75, 50, .4);
+  box-shadow: 0 5px 18px rgba(19, 49, 34, .05);
+}
+.markaz-faq-content .public-faq-item summary {
+  position: relative;
+  padding: 19px 48px 19px 20px;
+  color: #183f2d;
+  font-weight: 700;
+  line-height: 1.55;
+  cursor: pointer;
+  list-style: none;
+}
+.markaz-faq-content .public-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.markaz-faq-content .public-faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 19px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a17a28;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.markaz-faq-content .public-faq-item[open] summary::after {
+  content: "−";
+}
+.markaz-faq-content .public-faq-item > p {
+  margin: 0;
+  padding: 0 20px 21px;
+  color: #59665d;
+  line-height: 1.85;
+}
+@media (max-width: 900px) {
+  .markaz-photo-grid,
+  .markaz-facility-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .markaz-faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .markaz-faq-aside {
+    max-width: none;
+  }
+}
+@media (max-width: 600px) {
+  .markaz-explore-page .public-section {
+    padding-top: 38px;
+    padding-bottom: 46px;
+  }
+  .markaz-photo-grid,
+  .markaz-facility-grid,
+  .markaz-facility-intro,
+  .markaz-facility-note {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .markaz-photo-card img,
+  .markaz-photo-feature img,
+  .markaz-facility-card img {
+    height: 215px;
+  }
+  .markaz-photo-card figcaption,
+  .markaz-facility-card > div {
+    padding: 19px;
+  }
+  .markaz-facility-intro {
+    margin-bottom: 48px;
+  }
+  .markaz-facility-intro > img {
+    min-height: 220px;
+    max-height: 300px;
+  }
+  .markaz-facility-note {
+    margin-top: 44px;
+    padding: 20px;
+  }
+  .markaz-facility-note img {
+    height: 215px;
+  }
+  .markaz-faq-aside {
+    padding: 23px 20px;
+  }
+  .markaz-faq-content .public-faq-item summary {
+    padding: 17px 44px 17px 16px;
+  }
+  .markaz-faq-content .public-faq-item > p {
+    padding: 0 16px 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .markaz-photo-card,
+  .markaz-facility-card {
+    transition: none;
+  }
+}
+
+
+/* FAQ category headings and reserved gallery photo slots */
+.markaz-faq-group > h3 {
+  padding: 15px 18px 15px 20px;
+  margin-bottom: 16px;
+  background: #eaf3ec;
+  border: 0;
+  border-left: 5px solid #124b32;
+  border-radius: 8px;
+  color: #124b32;
+  line-height: 1.45;
+}
+.markaz-photo-slot .markaz-photo-placeholder {
+  display: flex;
+  width: 100%;
+  height: 230px;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 22px;
+  text-align: center;
+  color: #124b32;
+  background: linear-gradient(145deg, #f2f7f2, #e5eee6);
+  border-bottom: 1px solid rgba(18, 75, 50, .1);
+}
+.markaz-photo-slot .markaz-photo-placeholder > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #fff;
+  background: #124b32;
+  font-size: 1.2rem;
+}
+.markaz-photo-slot .markaz-photo-placeholder strong {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.markaz-photo-slot .markaz-photo-placeholder small {
+  color: #5d6b62;
+  font-size: .88rem;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .markaz-faq-group > h3 { padding: 13px 15px; }
+  .markaz-photo-slot .markaz-photo-placeholder { height: 215px; }
+}
+
+/* MARKAZ Gallery: show the complete photo without cropping */
+.markaz-photo-card img {
+    object-fit: contain;
+    background: #edf2ed;
+}
+
+
+/* MARKAZ About photos: preserve the complete image */
+.public-photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+/* ==========================================
+   MARKAZ GALLERY — MODERN 2026 CARD DESIGN
+   ========================================== */
+
+.markaz-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    align-items: stretch;
+}
+
+.markaz-photo-card {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid rgba(18, 75, 50, 0.12);
+    border-radius: 18px;
+    box-shadow:
+        0 3px 8px rgba(18, 50, 32, 0.04),
+        0 12px 28px rgba(18, 50, 32, 0.08);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.markaz-photo-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(18, 75, 50, 0.25);
+    box-shadow:
+        0 6px 14px rgba(18, 50, 32, 0.06),
+        0 20px 38px rgba(18, 50, 32, 0.13);
+}
+
+/* Uniform image frames; show the entire photograph */
+.markaz-photo-card img,
+.markaz-photo-feature img {
+    display: block;
+    width: 100%;
+    height: 245px;
+    object-fit: contain;
+    object-position: center;
+    padding: 8px;
+    box-sizing: border-box;
+    background: #f2f6f1;
+    border-bottom: 1px solid rgba(18, 75, 50, 0.08);
+}
+
+.markaz-photo-card figcaption {
+    flex: 1;
+    padding: 22px 22px 24px;
+    background: #fff;
+    overflow-wrap: anywhere;
+}
+
+.markaz-photo-card figcaption h2,
+.markaz-photo-card figcaption h3,
+.markaz-photo-card figcaption h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #164b32;
+    line-height: 1.4;
+}
+
+.markaz-photo-card figcaption p {
+    margin-bottom: 0;
+    color: #59665d;
+    line-height: 1.75;
+}
+
+@media (max-width: 900px) {
+    .markaz-photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .markaz-photo-card img,
+    .markaz-photo-feature img {
+        height: 230px;
+    }
+}
+
+@media (max-width: 600px) {
+    .markaz-photo-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .markaz-photo-card {
+        border-radius: 16px;
+    }
+
+    .markaz-photo-card img,
+    .markaz-photo-feature img {
+        height: 240px;
+    }
+
+    .markaz-photo-card figcaption {
+        padding: 19px 20px 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .markaz-photo-card {
+        transition: none;
+    }
+
+    .markaz-photo-card:hover {
+        transform: none;
+    }
+}
+
+/* MARKAZ About page — fitted school and director photos */
+
+/* School building: fill the complete photo frame */
+.public-intro-grid .public-photo {
+    padding: 0;
+    min-height: 340px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background: #edf2ed;
+    box-shadow: 0 12px 30px rgba(18, 75, 50, 0.12);
+}
+
+.public-intro-grid .public-photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Director portrait: angled, refined edges */
+.director-grid .public-photo {
+    width: 100%;
+    max-width: 420px;
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: #edf2ed;
+    clip-path: polygon(9% 0, 100% 0, 100% 90%, 91% 100%, 0 100%, 0 10%);
+    box-shadow: 0 14px 32px rgba(18, 75, 50, 0.14);
+    justify-self: center;
+}
+
+.director-grid .public-photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+@media (max-width: 700px) {
+    .public-intro-grid .public-photo,
+    .public-intro-grid .public-photo > img {
+        min-height: 260px;
+    }
+
+    .director-grid .public-photo {
+        width: min(100%, 340px);
+    }
+}
+
+/* MARKAZ ABOUT PAGE — REFINED SPACING AND ROUNDED PHOTO CORNERS */
+
+/* Consistent spacing between About page sections */
+.public-intro-grid,
+.director-grid {
+    gap: 36px;
+    align-items: center;
+}
+
+.public-intro-grid {
+    margin-bottom: 64px;
+}
+
+.director-grid {
+    margin-top: 36px;
+    margin-bottom: 56px;
+}
+
+/* School building photo: fill the frame neatly */
+.public-intro-grid .public-photo {
+    width: 100%;
+    min-width: 0;
+    min-height: 340px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(18, 75, 50, 0.10);
+    border-radius: 20px;
+    background: #edf2ed;
+    box-shadow: 0 10px 28px rgba(18, 75, 50, 0.10);
+}
+
+.public-intro-grid .public-photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Director portrait: balanced frame with softly rounded diagonal corners */
+.director-grid .public-photo {
+    width: 100%;
+    max-width: 400px;
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: #edf2ed;
+    clip-path: polygon(
+        10% 0, 90% 0,
+        100% 10%, 100% 90%,
+        90% 100%, 10% 100%,
+        0 90%, 0 10%
+    );
+    filter: drop-shadow(0 12px 16px rgba(18, 75, 50, 0.12));
+    justify-self: center;
+}
+
+.director-grid .public-photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+/* Keep About page text comfortable to read */
+.public-intro-grid p,
+.director-grid p {
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.public-intro-grid h2,
+.director-grid h2,
+.director-grid h3 {
+    line-height: 1.3;
+    margin-bottom: 18px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .public-intro-grid,
+    .director-grid {
+        gap: 28px;
+    }
+
+    .public-intro-grid {
+        margin-bottom: 48px;
+    }
+
+    .public-intro-grid .public-photo,
+    .public-intro-grid .public-photo > img {
+        min-height: 280px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .public-intro-grid,
+    .director-grid {
+        gap: 24px;
+        margin-top: 28px;
+        margin-bottom: 40px;
+    }
+
+    .public-intro-grid .public-photo,
+    .public-intro-grid .public-photo > img {
+        min-height: 250px;
+    }
+
+    .director-grid .public-photo {
+        width: min(100%, 320px);
+        margin: 0 auto 8px;
+    }
+
+    .public-intro-grid p,
+    .director-grid p {
+        line-height: 1.75;
+        margin-bottom: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .public-intro-grid .public-photo,
+    .director-grid .public-photo {
+        transition: none;
+    }
+}
+
+/* Director portrait — same rounded-corner style as school photo */
+.director-grid .public-photo {
+    border-radius: 20px !important;
+    clip-path: none !important;
+    overflow: hidden;
+    filter: none;
+    box-shadow: 0 10px 28px rgba(18, 75, 50, 0.10);
+}
+
+.director-grid .public-photo > img {
+    border-radius: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+/* ABOUT PAGE — SOFT PROFESSIONAL SHADOWS */
+
+/* School building photo */
+.public-intro-grid .public-photo {
+    border-radius: 20px;
+    box-shadow:
+        0 4px 10px rgba(18, 75, 50, 0.06),
+        0 14px 30px rgba(18, 75, 50, 0.13);
+}
+
+/* Director portrait */
+.director-grid .public-photo {
+    border-radius: 20px !important;
+    clip-path: none !important;
+    filter: none;
+    box-shadow:
+        0 4px 10px rgba(18, 75, 50, 0.07),
+        0 14px 32px rgba(18, 75, 50, 0.16) !important;
+    overflow: hidden;
+}
+
+/* Give the text/content sides subtle depth too */
+.public-intro-grid > :not(.public-photo),
+.director-grid > :not(.public-photo) {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(18, 75, 50, 0.07);
+}
+
+/* Keep spacing comfortable around both sections */
+.public-intro-grid,
+.director-grid {
+    gap: 32px;
+    align-items: center;
+}
+
+@media (max-width: 700px) {
+    .public-intro-grid,
+    .director-grid {
+        gap: 24px;
+    }
+}

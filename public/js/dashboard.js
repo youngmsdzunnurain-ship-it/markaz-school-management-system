@@ -69,6 +69,7 @@ async function loadAdmin() {
         const name = data.admin.name || "Administrator";
         const email = data.admin.email || "";
         const role = data.admin.role || "";
+        window.markazCurrentRole = role;
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
 
@@ -80,7 +81,7 @@ async function loadAdmin() {
             topUpdaterReady: typeof window.markazUpdateTopAdmin === "function"
         });
 
-        applyDashboardRoleAccess(role);
+        applyDashboardRoleAccess(role, data.admin);
 
         if (adminName) adminName.textContent = name;
         if (welcomeAdminName) welcomeAdminName.textContent = name;
@@ -197,19 +198,46 @@ async function logout() {
         profileLogoutButton.disabled = true;
     }
 
+    document.querySelectorAll(".profile-dropdown-item.logout").forEach(button => {
+        button.disabled = true;
+    });
+
     try {
-        await fetch("./api/auth/logout.php", {
+        const response = await fetch("./api/auth/logout.php", {
             method: "POST",
             credentials: "same-origin",
+            cache: "no-store",
             headers: {
                 "Accept": "application/json"
             }
         });
+
+        if (!response.ok) {
+            throw new Error("Logout request failed with HTTP " + response.status);
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.message || "The server did not confirm logout.");
+        }
     } catch (error) {
         console.error("Logout request failed:", error);
+        alert("We couldn't confirm logout with the server. Please try again.");
+        if (logoutButton) {
+            logoutButton.disabled = false;
+            logoutButton.innerHTML =
+                '<i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>';
+        }
+        if (profileLogoutButton) {
+            profileLogoutButton.disabled = false;
+        }
+        document.querySelectorAll(".profile-dropdown-item.logout").forEach(button => {
+            button.disabled = false;
+        });
+        return;
     }
 
-    window.location.href = "login.html";
+    window.location.replace("./login.html");
 }
 
 if (menuButton) {
@@ -255,6 +283,10 @@ document.querySelectorAll(".nav-link").forEach((link) => {
         }
     });
 });
+
+if (logoutButton) {
+    logoutButton.addEventListener("click", logout);
+}
 
 if (profileLogoutButton) {
     profileLogoutButton.addEventListener("click", logout);
@@ -343,7 +375,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         <div class="profile-dropdown-divider"></div>
 
-        <button type="button" class="profile-dropdown-item logout">
+        <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
             Logout
         </button>
     `;
@@ -398,8 +430,8 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     }
 
     profileButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-
+        event.preventDefault();
+        event.stopImmediatePropagation();
         const isOpen = dropdown.classList.toggle("open");
 
         profileButton.setAttribute(
@@ -446,42 +478,40 @@ loadAdmin();
    ========================================================= */
 
 document.addEventListener("click", (event) => {
-
-    const item = event.target.closest(
-        ".profile-dropdown-item"
-    );
-
+    const item = event.target.closest(".profile-dropdown-item");
     if (!item) return;
 
     const label = item.textContent.trim().toLowerCase();
+    if (label !== "profile" && label !== "settings") return;
 
-    if (label === "profile") {
-        window.location.href = "settings.html";
+    if (window.markazCurrentRole !== "admin") {
+        window.location.href = "dashboard.html";
+        return;
     }
 
-    if (label === "settings") {
-        window.location.href = "settings.html";
-    }
-
+    window.location.href = "settings.html";
 });
 
 
-function applyDashboardRoleAccess(role) {
+function applyDashboardRoleAccess(role, permissions = {}) {
     document.querySelectorAll("[data-role-access]").forEach((element) => {
         const requiredRole = element.dataset.roleAccess;
-
         let allowed = true;
 
         if (requiredRole === "admin") {
             allowed = role === "admin";
-        }
-
-        if (requiredRole === "exam_officer") {
+        } else if (requiredRole === "exam_officer") {
             allowed = role === "admin" || role === "exam_officer";
+        } else if (requiredRole === "print_results") {
+            allowed = permissions.can_print_results === true;
+        } else if (requiredRole === "export_results") {
+            allowed = permissions.can_export_results === true;
         }
 
         element.style.display = allowed ? "" : "none";
+        element.style.visibility = "visible";
     });
+    document.body.classList.add("role-access-ready");
 }
 
 /* =========================================================
@@ -507,6 +537,108 @@ async function loadDashboardStats() {
 
         if (!response.ok || !data.success || !data.stats) {
             console.error("Dashboard statistics request failed:", data);
+            return;
+        }
+
+        if (data.role === "teacher") {
+            const labels = document.querySelectorAll(".stat-card .stat-label");
+            const descriptions = document.querySelectorAll(".stat-card small");
+            const values = [
+                data.stats.assigned_students ?? 0,
+                data.stats.assigned_classes ?? 0,
+                data.stats.assigned_subjects ?? 0,
+                `${data.stats.completion_percentage ?? 0}%`
+            ];
+            const names = ["Assigned Students", "Assigned Classes", "Assigned Subjects", "Entry Completion"];
+            const notes = [
+                "Students in your assigned classes",
+                "Classes assigned to you",
+                "Subjects assigned to you",
+                `${data.stats.completed_entries ?? 0} of ${data.stats.expected_entries ?? 0} complete entries`
+            ];
+
+            statCards.forEach((node, index) => node.textContent = values[index]);
+            labels.forEach((node, index) => node.textContent = names[index]);
+            descriptions.forEach((node, index) => node.textContent = notes[index]);
+
+            const charts = document.querySelector(".dashboard-completion-charts");
+            if (charts) charts.style.display = "none";
+
+            const progress = document.querySelector(".result-progress-section");
+            if (progress) {
+                const complete = document.getElementById("completeStudents");
+                const incomplete = document.getElementById("incompleteStudents");
+                const noResults = document.getElementById("noResultStudents");
+                const entries = document.getElementById("resultEntriesProgress");
+                const percent = document.getElementById("resultCompletionPercentage");
+                if (complete) complete.textContent = data.stats.completed_entries ?? 0;
+                if (incomplete) incomplete.textContent = Math.max(
+                    0,
+                    Number(data.stats.expected_entries ?? 0) - Number(data.stats.completed_entries ?? 0)
+                );
+                if (noResults) noResults.textContent = "—";
+                if (entries) entries.textContent =
+                    `${data.stats.completed_entries ?? 0} / ${data.stats.expected_entries ?? 0}`;
+                if (percent) percent.textContent = `${data.stats.completion_percentage ?? 0}%`;
+            }
+
+            const section = document.getElementById("teacherAssignmentsSection");
+            const list = document.getElementById("teacherAssignmentsList");
+            if (section && list) {
+                section.style.display = "";
+                list.replaceChildren();
+
+                const assignments = Array.isArray(data.assignments) ? data.assignments : [];
+                if (!assignments.length) {
+                    const empty = document.createElement("p");
+                    empty.textContent = "No active teaching assignments yet.";
+                    list.appendChild(empty);
+                }
+
+                assignments.forEach(item => {
+                    const card = document.createElement("article");
+                    card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
+
+                    const heading = document.createElement("h3");
+                    heading.textContent = `${item.class_name} · ${item.class_type === "arabic" ? "Arabic" : "Conventional"}`;
+                    heading.style.marginTop = "0";
+
+                    const students = document.createElement("p");
+                    students.textContent = `${item.student_count} assigned students`;
+
+                    const subjects = document.createElement("p");
+                    subjects.textContent = item.full_class
+                        ? "Full class access · Behavioural assessments included"
+                        : (Array.isArray(item.subjects) && item.subjects.length
+                            ? `Subjects: ${item.subjects.join(", ")}`
+                            : "No active subjects assigned");
+
+                    const progressLine = document.createElement("p");
+                    progressLine.textContent =
+                        `Entry progress: ${item.completed_entries}/${item.expected_entries} (${item.completion_percentage}%)`;
+
+                    const track = document.createElement("div");
+                    track.style.cssText = "height:8px;background:#e8eee9;border-radius:8px;overflow:hidden;";
+                    const bar = document.createElement("div");
+                    bar.style.cssText = `height:100%;width:${Math.max(0, Math.min(100, Number(item.completion_percentage) || 0))}%;background:#198754;border-radius:8px;`;
+                    track.appendChild(bar);
+
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "btn btn-primary";
+                    button.textContent = "Open Class";
+                    button.addEventListener("click", () => {
+                        const params = new URLSearchParams({
+                            class_id: String(item.class_id),
+                            class_type: String(item.class_type)
+                        });
+                        window.location.href = `./class.html?id=${encodeURIComponent(item.class_id)}&class_type=${encodeURIComponent(item.class_type)}`;
+                    });
+
+                    card.append(heading, students, subjects, progressLine, track, button);
+                    list.appendChild(card);
+                });
+            }
             return;
         }
 
@@ -543,6 +675,33 @@ async function loadDashboardStats() {
                 `${data.stats.completion_percentage ?? 0}%`;
         }
 
+        const overall = Number(data.stats.completion_percentage ?? 0);
+        const donut = document.getElementById("dashboardCompletionDonut");
+        const donutValue = document.getElementById("dashboardCompletionDonutValue");
+        if (donut) {
+            donut.style.setProperty("--completion", `${overall}%`);
+            donut.setAttribute("aria-label", `Overall result completion ${overall}%`);
+        }
+        if (donutValue) donutValue.textContent = `${overall}%`;
+
+        const classChart = document.getElementById("dashboardClassProgressChart");
+        if (classChart) {
+            const classes = data.stats.class_progress || [];
+            classChart.innerHTML = classes.length ? classes.map(item => {
+                const value = Math.max(0, Math.min(100, Number(item.completion_percentage) || 0));
+                const name = String(item.class_name || "Class");
+                const safeName = name.replace(/[&<>"']/g, ch => ({
+                    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+                    '"': "&quot;", "'": "&#039;"
+                })[ch]);
+                return `<div class="dashboard-class-progress-row">
+                    <span title="${safeName}">${safeName}</span>
+                    <div class="dashboard-class-progress-track" role="progressbar" aria-valuenow="${value}" aria-valuemin="0" aria-valuemax="100" aria-label="${safeName} completion"><i class="${value > 0 ? "has-progress" : "no-progress"}" style="width:${value}%"></i></div>
+                    <strong>${value}%</strong>
+                </div>`;
+            }).join("") : "<p>No class progress available yet.</p>";
+        }
+
     } catch (error) {
         console.error("Unable to load dashboard statistics:", error);
     }
@@ -561,7 +720,7 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Manage Classes": "classes.html",
             "Manage Subjects": "subjects/index.html",
             "Enter Results": "classes.html",
-            "Print Results": "classes.html",
+            "Print Results": "print-results.html",
             "System Settings": "settings.html"
         };
 

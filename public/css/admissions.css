@@ -1,0 +1,315 @@
+/* MARKAZ Admission page */
+.admissions-page {
+    --admission-green: #124b32;
+    --admission-deep: #0b3524;
+    --admission-gold: #c9a44c;
+    --admission-muted: #647368;
+}
+
+.admissions-page main {
+    overflow: hidden;
+}
+
+.admission-hero {
+    min-height: 390px;
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(105deg, rgba(8, 43, 28, .96), rgba(18, 75, 50, .84)),
+        url("../assets/images/main-building.jpg") center / cover no-repeat;
+}
+
+.admission-hero-content {
+    position: relative;
+    z-index: 1;
+    padding-block: 20px;
+}
+
+.admission-hero .public-eyebrow,
+.admissions-page .public-eyebrow {
+    color: #c9a44c;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.admission-hero h1 {
+    max-width: 780px;
+    margin: 0 0 16px;
+    color: #fff;
+    font-size: clamp(2.1rem, 5.5vw, 3.8rem);
+    line-height: 1.12;
+    letter-spacing: -.025em;
+}
+
+.admission-hero p:not(.public-eyebrow) {
+    max-width: 700px;
+    margin: 0 0 18px;
+    color: rgba(255,255,255,.9);
+    font-size: 1.04rem;
+    line-height: 1.8;
+}
+
+.admission-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 19px;
+    border-radius: 7px;
+    font-weight: 750;
+    text-align: center;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease;
+}
+
+.admission-button:hover {
+    transform: translateY(-2px);
+}
+
+.admission-button-gold {
+    color: #183c29;
+    background: #e4c36f;
+    border: 1px solid #e4c36f;
+}
+
+.admission-button-gold:hover {
+    background: #f0d88e;
+}
+
+.admission-programmes {
+    padding-block: 42px;
+}
+
+.admission-programmes .public-section-heading {
+    margin-bottom: 22px;
+}
+
+.admission-priorities {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admission-priority-card {
+    padding: 23px;
+    border: 1px solid #e0e9e0;
+    border-top: 4px solid var(--admission-green);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(18,75,50,.06);
+}
+
+.admission-quran-card {
+    border-top-color: var(--admission-gold);
+}
+
+.admission-card-mark {
+    display: inline-grid;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+    place-items: center;
+    border-radius: 12px;
+    color: var(--admission-green);
+    background: #edf4ed;
+    font-size: 1.5rem;
+}
+
+.admission-priority-card h3,
+.admission-contact-card h3 {
+    margin: 0 0 10px;
+    color: var(--admission-green);
+    font-size: 1.25rem;
+}
+
+.admission-priority-card p,
+.admission-contact-card p {
+    margin: 0;
+    color: var(--admission-muted);
+    line-height: 1.75;
+}
+
+.admission-how {
+    padding-block: 42px;
+}
+
+.admission-how-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+    align-items: center;
+    gap: 26px;
+}
+
+.admission-how .public-copy h2 {
+    margin-top: 0;
+}
+
+.admission-contact-card {
+    padding: 22px;
+    border: 1px solid #dfe8df;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(18,75,50,.06);
+}
+
+.admission-contact-card > p:first-of-type {
+    margin-bottom: 14px;
+}
+
+.admission-button-whatsapp {
+    display: flex;
+    width: 100%;
+    color: #fff;
+    background: #18794e;
+    border: 1px solid #18794e;
+}
+
+.admission-button-whatsapp:hover {
+    background: #126640;
+}
+
+.admission-email-link {
+    display: block;
+    margin-top: 12px;
+    color: var(--admission-green);
+    font-weight: 650;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.admission-email-link:hover {
+    text-decoration: underline;
+}
+
+.admission-phone-note {
+    margin-top: 10px !important;
+    font-size: .9rem;
+}
+
+@media (max-width: 700px) {
+    .admission-hero {
+        min-height: 360px;
+        padding-block: 28px;
+    }
+
+    .admission-priorities,
+    .admission-how-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admission-priority-card,
+    .admission-contact-card {
+        padding: 22px;
+    }
+
+    .admission-programmes,
+    .admission-how {
+        padding-block: 38px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admission-button {
+        transition: none;
+    }
+
+    .admission-button:hover {
+        transform: none;
+    }
+}
+
+
+/* Keep the Admission footer at the bottom on short pages. */
+body.admissions-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admissions-page > .header {
+    flex: 0 0 auto;
+}
+
+.admissions-page > main {
+    flex: 1 0 auto;
+}
+
+.admissions-page > footer.footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+
+/* Admission guidance cards */
+.admission-guidance {
+    padding-block: 36px 42px;
+}
+
+.admission-guidance .public-section-heading {
+    margin-bottom: 22px;
+}
+
+.admission-guidance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admission-guidance-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+    border: 1px solid #dfe8df;
+    border-top: 4px solid var(--admission-green);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(18, 75, 50, .06);
+}
+
+.admission-guidance-card:nth-child(2) {
+    border-top-color: var(--admission-gold);
+}
+
+.admission-guidance-card h3 {
+    margin: 0 0 8px;
+    color: var(--admission-green);
+    font-size: 1.15rem;
+}
+
+.admission-guidance-card p {
+    margin: 0 0 14px;
+    color: var(--admission-muted);
+    line-height: 1.75;
+}
+
+.admission-guidance-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    color: var(--admission-green);
+    font-weight: 750;
+    line-height: 1.6;
+    text-decoration: none;
+}
+
+.admission-guidance-link:hover {
+    text-decoration: underline;
+}
+
+.admission-guidance-link span {
+    color: #a47b20;
+}
+
+@media (max-width: 850px) {
+    .admission-guidance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admission-guidance-card {
+        padding: 22px;
+    }
+}

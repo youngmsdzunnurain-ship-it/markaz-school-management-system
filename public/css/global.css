@@ -8,22 +8,6 @@ body {
     isolation: isolate;
 }
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 360px auto;
-
-    opacity: 0.035;
-    filter: grayscale(15%);
-}
-
 /* Keep watermark visible on printed pages */
 @media print {
     body::before {
@@ -38,33 +22,6 @@ body::before {
 }
 
 
-
-/* =========================================================
-   MARKAZ — LARGE SCREEN WATERMARK
-========================================================= */
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-repeat: no-repeat;
-
-    /* Large enough to remain recognizable on desktop mode */
-    background-size: min(620px, 78vw) auto;
-    background-position: center 48%;
-
-    opacity: 0.085;
-    filter: grayscale(5%) contrast(0.92);
-
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-
 /* Additional visual branding on very tall pages */
 @media screen and (min-height: 850px) {
     body::before {
@@ -72,16 +29,6 @@ body::before {
         background-position: center 42%;
         opacity: 0.09;
     }
-}
-
-
-/* =========================================================
-   RESULTS — KEEP WATERMARK MORE SUBTLE
-========================================================= */
-
-body.results-page::before,
-.results-page body::before {
-    opacity: 0.045;
 }
 
 
@@ -124,33 +71,6 @@ body {
     isolation: isolate;
     border-top: 4px solid #17643a;
     background: #ffffff;
-}
-
-
-/* ---------------------------------------------------------
-   LARGE MARKAZ WATERMARK
---------------------------------------------------------- */
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-repeat: no-repeat;
-    background-position: center 42%;
-    background-size: min(680px, 82vw) auto;
-
-    /*
-       Multiply makes the white area of the JPG blend
-       into the page instead of looking like a white block.
-    */
-    mix-blend-mode: multiply;
-
-    opacity: 0.13;
-    filter: saturate(0.9) contrast(0.9);
 }
 
 
@@ -226,18 +146,6 @@ body::before {
 
 
 /* ---------------------------------------------------------
-   RESULTS / DATA-ENTRY PAGES
-   Keep watermark more subtle behind important data.
---------------------------------------------------------- */
-
-.results-page::before,
-body.results-page::before,
-body.student-result-page::before {
-    opacity: 0.065;
-}
-
-
-/* ---------------------------------------------------------
    PRINT
 --------------------------------------------------------- */
 
@@ -294,3 +202,10 @@ body.student-result-page::before {
     }
 }
 
+
+/* MARKAZ SHARED SOFT-GREEN HOVER */
+.subjects-table tbody tr:hover td,
+.student-results-table tbody tr:hover td {
+    background: #e1f0e5 !important;
+    transition: background-color 140ms ease;
+}

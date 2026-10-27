@@ -496,3 +496,15 @@ font-size:4.5px!important;
 line-height:1!important;
 }
 }
+/* MARKAZ TABLE THEME FIX 2026 - PRINT */
+@media print {
+  .student-results-table thead th {
+    background: #123d2a !important;
+    color: #ffffff !important;
+    border-bottom: 3px solid #e5c96d !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  .student-results-table tbody tr:nth-child(odd) td { background: #ffffff !important; }
+  .student-results-table tbody tr:nth-child(even) td { background: #f4f8f5 !important; }
+}

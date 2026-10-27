@@ -7,6 +7,9 @@
     <title>Students | MARKAZ</title>
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/students.css">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
+    <link rel="stylesheet" href="css/standard-page-heading.css">
 </head>
 
 <body>
@@ -14,7 +17,9 @@
 <div class="students-page">
 
     <header class="students-topbar">
-        <div>
+        <a href="dashboard.html" class="students-back-link" data-go-back>← Go Back</a>
+
+        <div class="students-heading-copy">
             <span class="eyebrow">MARKAZ</span>
             <h1>Students</h1>
             <p>Manage student records and enrollment information.</p>
@@ -184,7 +189,7 @@
                             type="button"
                             class="secondary-button"
                             id="captureStudentPhotoButton"
-                            
+
                         >
                             Capture Photo
                         </button>
@@ -580,7 +585,7 @@
 </div>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/vision_bundle.mjs"></script>
-    
+
 
 
 <!-- MARKAZ-AUTO-STUDENT-CAMERA -->
@@ -658,7 +663,7 @@
                     id="studentCameraStatus"
                     aria-live="polite"
                 >
-                
+
 
                     Starting camera…
                 </div>
@@ -748,5 +753,8 @@
 <script type="module" src="./js/markaz-camera-ai.js"></script>
 <script src="./js/students.js"></script>
 <script src="/js/markaz-global.js"></script>
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
 </body>
 </html>

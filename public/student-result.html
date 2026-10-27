@@ -23,21 +23,14 @@
     <link rel="stylesheet"
         href="./css/student-result.css">
     <link rel="stylesheet" href="./css/student-result-print.css" media="print">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
+    <link rel="stylesheet" href="css/standard-page-heading.css">
 </head>
 
 <body>
     <div class="result-page-curve" aria-hidden="true"></div>
-    <button
-        type="button"
-        id="mobileBackButton"
-        class="mobile-back-button"
-        aria-label="Go back"
-        title="Go back"
-    >
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-    </button>
-
-    <main class="student-result-page management-view">
+<main class="student-result-page management-view">
 
         <!-- PAGE HEADER -->
         <header class="result-page-header">
@@ -47,7 +40,7 @@
                     type="button"
                     class="back-button"
                     id="backToClassButton">
-                    ← Back to Class
+                    ← Go Back
                 </button>
 
                 <span class="header-label">
@@ -61,20 +54,8 @@
                     <button type="button" class="primary-action" id="saveScoresButton" hidden>Save</button>
                     <button type="button" class="secondary-action" id="cancelScoresButton" hidden>Cancel</button>
                 </div>
-                <div class="document-actions">
-                    <button
-                        type="button"
-                        class="secondary-action"
-                        id="printStudentResultButton">
-                        Print Result
-                    </button>
 
-                    <button
-                        type="button"
-                        class="primary-action"
-                        id="downloadStudentPdfButton">
-                        Download PDF
-                    </button>
+                <div class="document-actions">
                 </div>
             </div>
 
@@ -667,6 +648,9 @@
 
     <script src="./js/student-result.js"></script>
 
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
 </body>
 </html>
 

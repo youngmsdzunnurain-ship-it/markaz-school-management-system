@@ -36,6 +36,13 @@ if (!is_array($input)) {
     exit;
 }
 
+$classType = (string) ($input['class_type'] ?? 'conventional');
+if (!in_array($classType, ['conventional', 'arabic'], true)) {
+    http_response_code(422);
+    echo json_encode(['success' => false, 'message' => 'Invalid class type.']);
+    exit;
+}
+
 $classId = filter_var(
     $input['class_id'] ?? null,
     FILTER_VALIDATE_INT
@@ -61,6 +68,13 @@ if (!$classId || !$studentId || !$subjectId) {
 
     exit;
 }
+
+// Teachers may save results only for their assigned class and subject.
+requireTeacherAssignment(
+    (int) $classId,
+    (int) $subjectId,
+    $classType
+);
 
 function parseScore(mixed $value): ?float
 {
@@ -108,13 +122,17 @@ try {
         exit;
     }
 
+    $studentClassColumn = $classType === 'arabic'
+        ? 'arabic_class_id'
+        : 'class_id';
+
     $studentStmt = $pdo->prepare(
-        'SELECT id
+        "SELECT id
          FROM students
          WHERE id = ?
-           AND class_id = ?
+           AND {$studentClassColumn} = ?
            AND is_active = 1
-         LIMIT 1'
+         LIMIT 1"
     );
 
     $studentStmt->execute([
@@ -133,19 +151,26 @@ try {
         exit;
     }
 
+    $mappingTable = $classType === 'arabic'
+        ? 'arabic_class_subjects'
+        : 'class_subjects';
+    $mappingClassColumn = $classType === 'arabic'
+        ? 'arabic_class_id'
+        : 'class_id';
+
     $subjectStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             s.id,
             s.max_ca1,
             s.max_ca2,
             s.max_exam
-         FROM class_subjects cs
+         FROM {$mappingTable} cs
          INNER JOIN subjects s
             ON s.id = cs.subject_id
-         WHERE cs.class_id = ?
+         WHERE cs.{$mappingClassColumn} = ?
            AND cs.subject_id = ?
            AND s.is_active = 1
-         LIMIT 1'
+         LIMIT 1"
     );
 
     $subjectStmt->execute([
@@ -207,6 +232,8 @@ try {
         'SELECT id
          FROM results
          WHERE student_id = ?
+           AND class_type = ?
+           AND class_id = ?
            AND subject_id = ?
            AND academic_period_id = ?
          LIMIT 1'
@@ -214,6 +241,8 @@ try {
 
     $checkStmt->execute([
         $studentId,
+        $classType,
+        $classId,
         $subjectId,
         $period['id']
     ]);
@@ -230,16 +259,20 @@ try {
                 teacher_remark = ?,
                 result_remark = ?,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = ?'
+             WHERE id = ?
+               AND class_type = ?
+               AND class_id = ?'
         );
 
         $updateStmt->execute([
-            $ca1 ?? 0,
-            $ca2 ?? 0,
-            $exam ?? 0,
+            $ca1,
+            $ca2,
+            $exam,
             $teacherRemark !== '' ? $teacherRemark : null,
             $resultRemark !== '' ? $resultRemark : null,
-            $existing['id']
+            $existing['id'],
+            $classType,
+            $classId
         ]);
 
         $resultId = (int) $existing['id'];
@@ -247,6 +280,8 @@ try {
         $insertStmt = $pdo->prepare(
             'INSERT INTO results (
                 student_id,
+                class_type,
+                class_id,
                 subject_id,
                 academic_period_id,
                 ca1,
@@ -254,16 +289,18 @@ try {
                 exam,
                 teacher_remark,
                 result_remark
-             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
 
         $insertStmt->execute([
             $studentId,
+            $classType,
+            $classId,
             $subjectId,
             $period['id'],
-            $ca1 ?? 0,
-            $ca2 ?? 0,
-            $exam ?? 0,
+            $ca1,
+            $ca2,
+            $exam,
             $teacherRemark !== '' ? $teacherRemark : null,
             $resultRemark !== '' ? $resultRemark : null
         ]);
@@ -286,9 +323,9 @@ try {
             'student_id' => $studentId,
             'subject_id' => $subjectId,
             'academic_period_id' => (int) $period['id'],
-            'ca1' => $ca1 ?? 0,
-            'ca2' => $ca2 ?? 0,
-            'exam' => $exam ?? 0,
+            'ca1' => $ca1,
+            'ca2' => $ca2,
+            'exam' => $exam,
             'total' => $total
         ]
     ]);

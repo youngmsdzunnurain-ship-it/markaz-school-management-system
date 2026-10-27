@@ -1,43 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>body:not(.role-access-ready) [data-role-access] { visibility: hidden !important; }</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#166534">
 
     <title>Dashboard | MARKAZ Result Management System</title>
 
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261020-mobile-sidebarfinish1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
 </head>
 
-<body>
+<body data-role-check-pending="true">
 
-    <div class="dashboard-watermark" aria-hidden="true">
-        <div class="dashboard-watermark-ring"></div>
-        <img src="assets/images/markaz-logo.jpg" alt="">
-    </div>
+
 
     <div class="app">
 
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="brand-mark">M</div>
+                <div class="brand-logo">
+                <img src="assets/images/markaz-logo.jpg" alt="MARKAZ school logo">
+            </div>
 
                 <div class="brand-text">
                     <strong>MARKAZ</strong>
                     <span>Result Management</span>
                 </div>
-
-                <button
-                    type="button"
-                    id="sidebarCloseButton"
-                    class="sidebar-close-button"
-                    aria-label="Close menu"
-                    title="Close menu"
-                >
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                </button>
             </div>
 
             <nav class="sidebar-nav">
@@ -66,7 +58,7 @@
                     <span>Results</span>
                 </a>
 
-                <a href="./classes.html" class="nav-link">
+                <a href="./print-results.html" class="nav-link" data-role-access="print_results">
                     <i class="fa-solid fa-print" aria-hidden="true"></i>
                     <span>Print Results</span>
                 </a>
@@ -77,9 +69,12 @@
                 </a>
             </nav>
 
-            <button type="button" id="logoutButton" class="logout-button">
+            <div class="sidebar-bottom">
+                <div class="sidebar-divider"></div>
+                <button type="button" id="logoutButton" class="logout-button">
                 Logout
             </button>
+            </div>
         </aside>
 
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -149,6 +144,34 @@
 
                 </section>
 
+                <section id="teacherAssignmentsSection" class="panel" style="display:none; margin:24px 0; padding:24px;">
+                    <div class="panel-header">
+                        <div>
+                            <span class="eyebrow">YOUR WORK</span>
+                            <h2>My Teaching Assignments</h2>
+                            <p>Open an assigned class to continue result entry.</p>
+                        </div>
+                    </div>
+                    <div id="teacherAssignmentsList" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;"></div>
+                </section>
+
+                <section class="dashboard-completion-charts" aria-label="Result completion charts">
+  <article class="dashboard-chart-card">
+    <span class="eyebrow">SCHOOL OVERVIEW</span>
+    <h2>Overall Result Completion</h2>
+    <div id="dashboardCompletionDonut" class="dashboard-completion-donut" role="img" aria-label="Overall result completion">
+      <div><strong id="dashboardCompletionDonutValue">0%</strong><span>Complete</span></div>
+    </div>
+  </article>
+  <article class="dashboard-chart-card dashboard-class-chart-card">
+    <span class="eyebrow">CLASS PERFORMANCE</span>
+    <h2>Completion by Class</h2>
+    <div id="dashboardClassProgressChart" class="dashboard-class-progress-chart">
+      <p>Loading class progress...</p>
+    </div>
+  </article>
+</section>
+
                 <section class="result-progress-section">
                     <div class="panel-header">
                         <div>
@@ -215,7 +238,7 @@
 
                 <section class="dashboard-grid">
 
-                    <article class="panel">
+                    <article class="panel quick-access-panel">
                         <div class="panel-header">
                             <div>
                                 <span class="eyebrow">QUICK ACCESS</span>
@@ -224,16 +247,16 @@
                         </div>
 
                         <div class="quick-actions">
-                            <button type="button" data-role-access="exam_officer">Add Student</button>
+                            <button type="button" data-role-access="admin">Add Student</button>
                             <button type="button" data-role-access="admin">Manage Classes</button>
                             <button type="button" data-role-access="admin">Manage Subjects</button>
                             <button type="button" data-role-access="exam_officer">Enter Results</button>
-                            <button type="button" data-role-access="exam_officer">Print Results</button>
+                            <button type="button" data-role-access="print_results">Print Results</button>
                             <button type="button" data-role-access="admin">System Settings</button>
                         </div>
                     </article>
 
-                    <article class="panel">
+                    <article class="panel administrator-panel">
                         <div class="panel-header">
                             <div>
                                 <span class="eyebrow">SYSTEM</span>
@@ -274,18 +297,25 @@
 
             </section>
 
+
+
             <footer>
                 <span class="footer-brand">MARKAZ</span>
                 <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
                 <span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span>
             </footer>
 
-        </main>
+
+
+
+</main>
 
     </div>
 
-    <script src="js/dashboard.js"></script>
+    <script src="js/dashboard.js?v=20261025-teacher-assignments1"></script>
 
     <script src="/js/markaz-global.js"></script>
+
+<script src="js/website-image-overrides.js"></script>
 </body>
 </html>

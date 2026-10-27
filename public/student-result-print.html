@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="MARKAZ Student Result">
+
+    <meta
+        name="theme-color"
+        content="#166534">
+
+    <title>Student Result | MARKAZ</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="./css/student-result.css">
+    <link rel="stylesheet" href="./css/student-result-print.css" media="print">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
+    <link rel="stylesheet" href="css/standard-page-heading.css">
+
+<style id="print-results-hide-edit-controls">
+.student-edit-actions,
+#editScoresButton,
+#saveScoresButton,
+#cancelScoresButton {
+    display: none !important;
+}
+</style>
+
+</head>
+
+<body>
+    <div class="result-page-curve" aria-hidden="true"></div>
+<main class="student-result-page management-view">
+
+        <!-- PAGE HEADER -->
+        <header class="result-page-header">
+
+            <div class="header-navigation">
+                <button
+                    type="button"
+                    class="back-button"
+                    id="backToClassButton">
+                    ← Go Back
+                </button>
+
+                <span class="header-label">
+                    STUDENT RESULT
+                </span>
+            </div>
+
+            <div class="header-actions">
+<div class="document-actions">
+                    <button
+                        type="button"
+                        class="secondary-action"
+                        id="printStudentResultButton">
+                        Print
+                    </button>
+
+                    <button
+                        type="button"
+                        class="primary-action"
+                        id="downloadStudentPdfButton">
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- REPORT CARD -->
+        <section
+            class="report-card"
+            id="studentReportCard">
+
+            <!-- SCHOOL HEADER -->
+        <div class="school-header">
+            <div class="school-brand">
+                <div class="school-logo" id="schoolLogo">
+                    <img src="./assets/images/markaz-logo.jpg" alt="MARKAZ School Logo">
+                </div>
+
+                <div class="school-heading">
+                    <p class="school-arabic-name">مركز تعليم و تحفيظ القرآن الكريم</p>
+                    <p class="school-arabic-address">غواغوالد، أبوجا</p>
+
+                    <p class="school-kicker">
+                        CENTER FOR LEARNING AND MEMORIZING THE GLORIOUS QUR'AN
+                    </p>
+
+
+                    <p class="school-address">
+                        COMPENSATION LAYOUT, OLD KUTUNKU GWAGWALADA, ABUJA
+                    </p>
+
+                    <div class="school-contact">
+                        <span class="contact-item">
+                            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                            <span>+2348073191275</span>
+                            <span class="contact-separator">/</span>
+                            <span>+2348070955833</span>
+                        </span>
+                        <span class="contact-item">
+                            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                            <span>markazilquran@gmail.com</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-title">
+                <span>ACADEMIC REPORT</span>
+                <strong id="reportTitle">RESULT STATEMENT</strong>
+            </div>
+        </div>
+
+        <!-- SESSION BAR -->
+            <div class="session-bar">
+
+                <div>
+                    <span>Academic Session</span>
+                    <strong id="sessionName">
+                        —
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Term</span>
+                    <strong id="termName">
+                        —
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Next Term Begins</span>
+                    <strong id="resumptionDate">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT INFORMATION -->
+            <section class="report-section student-information">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            STUDENT PROFILE
+                        </span>
+
+                        <h2>
+                            Student Information
+                        </h2>
+                    </div>
+
+                    <span
+                        class="student-status"
+                        id="studentStatus">
+                        Active
+                    </span>
+
+                </div>
+
+
+                <div class="student-profile-grid">
+
+                    <div class="student-photo">
+                        <span id="studentPhotoInitials">
+                            ST
+                        </span>
+                    </div>
+
+                    <div class="student-details">
+
+                        <div class="student-info-row student-top-row">
+                            <div class="detail-item student-name-item">
+                                <span>Student Name</span>
+                                <strong id="studentName">Loading...</strong>
+                            </div>
+
+                            <div class="detail-item">
+                                <span>Sex</span>
+                                <strong id="studentGender">—</strong>
+                            </div>
+
+                            <div class="detail-item">
+                                <span>Age</span>
+                                <strong id="studentAge">—</strong>
+                            </div>
+
+                            <div class="detail-item">
+                                <span>Student Type</span>
+                                <strong id="studentType">—</strong>
+                            </div>
+                        </div>
+
+                        <div class="student-info-row student-class-row">
+                            <div class="detail-item conventional-class-item">
+                                <span>Conventional Class</span>
+                                <strong id="studentClass">—</strong>
+                            </div>
+
+                            <div class="detail-item arabic-class-item">
+                                <span>Arabic Class</span>
+                                <strong id="studentArabicClass">—</strong>
+                            </div>
+
+                            <div class="detail-item arabic-class-count-item">
+                                <span>Number of Students</span>
+                                <strong id="studentArabicClassCount">—</strong>
+                            </div>
+                            <div class="detail-item memorization-detail-item">
+                                <span>Portion of Memorization</span>
+                                <div class="memorization-value-row">
+                                    <strong id="studentMemorizationPortion">—</strong>
+                                    <input
+                                        type="text"
+                                        id="studentMemorizationInput"
+                                        value=""
+                                        maxlength="500"
+                                        hidden
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- PERFORMANCE OVERVIEW -->
+            <section class="report-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            PERFORMANCE
+                        </span>
+
+                        <h2>
+                            Academic Overview
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="performance-overview">
+
+                    <article class="performance-card highlight">
+
+                        <span>
+                            My Average
+                        </span>
+
+                        <strong id="studentAverage">
+                            —
+                        </strong>
+
+                        <small>
+                            Overall class performance
+                        </small>
+
+                    </article>
+
+
+                    <article class="performance-card">
+
+                        <span>
+                            Highest Class Average
+                        </span>
+
+                        <strong id="highestClassAverage">
+                            —
+                        </strong>
+
+                        <small>
+                            Highest average in this class
+                        </small>
+
+                    </article>
+
+
+                    <article class="performance-card">
+
+                        <span>
+                            Lowest Class Average
+                        </span>
+
+                        <strong id="lowestClassAverage">
+                            —
+                        </strong>
+
+                        <small>
+                            Lowest average in this class
+                        </small>
+
+                    </article>
+
+
+                    <article class="performance-card">
+
+                        <span>
+                            Overall Grade
+                        </span>
+
+                        <strong id="overallGrade">
+                            —
+                        </strong>
+
+                        <small id="overallStatus">
+                            Awaiting results
+                        </small>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- RESULT MANAGEMENT AREA -->
+<div class="result-management-grid">
+
+    <!-- ACADEMIC SIDE -->
+    <div class="management-panel academic-management-panel">
+
+        <!-- SUBJECT RESULTS -->
+        <section class="report-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-eyebrow">ACADEMIC RECORD</span>
+                    <h2>Subject Results</h2>
+                    <p>Continuous assessment and examination performance.</p>
+                </div>
+            </div>
+
+            <div class="results-table-container">
+                <table class="student-results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>1st CA</th>
+                            <th>2nd CA</th>
+                            <th>Exam</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentResultsBody">
+                        <tr>
+                            <td colspan="8">Loading results...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- RESULT SUMMARY -->
+        <section class="report-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-eyebrow">PERFORMANCE SUMMARY</span>
+                    <h2>Result Summary</h2>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-box">
+                    <span>Total Subjects</span>
+                    <strong id="totalSubjects">—</strong>
+                </div>
+
+                <div class="summary-box">
+                    <span>Total Score</span>
+                    <strong id="totalScore">—</strong>
+                </div>
+
+                <div class="summary-box">
+                    <span>Average</span>
+                    <strong id="summaryAverage">—</strong>
+                </div>
+
+                <div class="summary-box">
+                    <span>Overall Status</span>
+                    <strong id="summaryStatus">—</strong>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- BEHAVIOURAL SIDE -->
+    <div class="management-panel behavioural-management-panel">
+
+        <!-- BEHAVIOURAL REPORT -->
+        <section class="report-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-eyebrow">AFFECTIVE DOMAIN</span>
+                    <h2>Behavioural Report</h2>
+                    <p>Student character, conduct and personal development.</p>
+                </div>
+            </div>
+
+            <div class="behaviour-grid-container">
+            <div class="behaviour-grid">
+
+                <div class="behaviour-item">
+                    <span>Punctuality</span>
+                    <select class="behaviour-rating" id="behaviourAttendance" aria-label="Punctuality rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Neatness</span>
+                    <select class="behaviour-rating" id="behaviourNeatness" aria-label="Neatness rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Contentment</span>
+                    <select class="behaviour-rating" id="behaviourContentment" aria-label="Contentment rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Obedience</span>
+                    <select class="behaviour-rating" id="behaviourObedience" aria-label="Obedience rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Responsiveness</span>
+                    <select class="behaviour-rating" id="behaviourResponsiveness" aria-label="Responsiveness rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Calmness</span>
+                    <select class="behaviour-rating" id="behaviourCalmness" aria-label="Calmness rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Tolerance</span>
+                    <select class="behaviour-rating" id="behaviourTolerance" aria-label="Tolerance rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Attentiveness</span>
+                    <select class="behaviour-rating" id="behaviourAttentiveness" aria-label="Attentiveness rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+                <div class="behaviour-item">
+                    <span>Truthfulness</span>
+                    <select class="behaviour-rating" id="behaviourTruthfulness" aria-label="Truthfulness rating">
+                        <option value="">—</option>
+                        <option value="5">5 — Excellent</option>
+                        <option value="4">4 — Very Good</option>
+                        <option value="3">3 — Good</option>
+                        <option value="2">2 — Fair</option>
+                        <option value="1">1 — Poor</option>
+                    </select>
+                </div>
+
+            </div>
+            </div>
+
+            <div class="behaviour-summary-card">
+                <div class="behaviour-summary-main">
+                    <span class="section-eyebrow">BEHAVIOURAL PERFORMANCE</span>
+                    <strong id="behaviourAverage">— / 5</strong>
+                    <span id="behaviourAssessment">Awaiting assessment</span>
+                </div>
+
+                <div class="behaviour-summary-info">
+                    <span>Overall Behaviour</span>
+                    <strong id="behaviourSummaryLabel">—</strong>
+                    <small>Based on the 9 assessed areas</small>
+                </div>
+            </div>
+
+            <div class="behaviour-comment-card">
+    <div class="behaviour-comment-heading">
+        <span class="section-eyebrow">BEHAVIOURAL COMMENT</span>
+        <span class="behaviour-comment-badge">Auto-assessed</span>
+    </div>
+    <p id="behaviourComment">Awaiting behavioural assessment.</p>
+</div>
+
+<div class="affective-key">
+                <span>5 — Excellent</span>
+                <span>4 — Very Good</span>
+                <span>3 — Good</span>
+                <span>2 — Fair</span>
+                <span>1 — Poor</span>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<!-- REMARKS -->
+            <section class="report-section remarks-section">
+
+                <div class="remarks-grid">
+
+                    <div class="remark-card">
+
+                        <span class="section-eyebrow">
+                            TEACHER'S REMARK
+                        </span>
+
+                        <p id="teacherOverallRemark">
+                            Awaiting final assessment.
+                        </p>
+
+                    </div>
+
+
+                    <div class="remark-card director-remark">
+
+                        <span class="section-eyebrow">
+                            DIRECTOR'S REMARK
+                        </span>
+
+                        <p id="directorRemark">
+                            Awaiting final assessment.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SIGNATURES -->
+            <section class="report-footer">
+
+                <div class="signature-line">
+
+                    <div class="signature-space" id="classTeacherSignatureDisplay">—</div>
+
+                    <span>
+                        Class Teacher
+                    </span>
+                    <small>Signature &amp; School Stamp</small>
+
+                </div>
+
+
+                <div class="signature-line">
+
+                    <div class="signature-space" id="directorSignatureDisplay">—</div>
+
+                    <span>
+                        Director / Principal
+                    </span>
+                    <small>Signature &amp; Official Approval</small>
+
+                </div>
+
+
+                <div class="signature-line">
+
+                    <div class="signature-space" id="resultSignatureDateDisplay">—</div>
+
+                    <span>
+                        Date
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+            <footer class="report-card-footer">
+
+                <p>
+                    MARKAZ — Centre for Learning and Memorization
+                    of the Glorious Qur’an
+                </p>
+
+                <span>
+                    Academic Report • Official School Record
+                </span>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+
+    <script src="./js/student-result.js"></script>
+
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
+</body>
+</html>
+
+<!-- MARKAZ UNSAVED CHANGES CONFIRMATION -->
+<div class="markaz-confirm-overlay" id="unsavedChangesModal" hidden>
+    <div class="markaz-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="unsavedChangesTitle">
+        <div class="markaz-confirm-icon">!</div>
+
+        <div class="markaz-confirm-content">
+            <h3 id="unsavedChangesTitle">Unsaved Changes</h3>
+            <p>You have changes that haven't been saved yet.</p>
+            <p class="markaz-confirm-warning">
+                If you leave this page, your unsaved changes will be lost.
+            </p>
+        </div>
+
+        <div class="markaz-confirm-actions">
+            <button type="button" class="markaz-confirm-stay" id="stayOnResultButton">
+                Stay &amp; Continue Editing
+            </button>
+            <button type="button" class="markaz-confirm-leave" id="leaveResultButton">
+                Leave Without Saving
+            </button>
+        </div>
+    </div>
+</div>

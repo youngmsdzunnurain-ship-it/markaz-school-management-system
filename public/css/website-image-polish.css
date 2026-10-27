@@ -1,0 +1,284 @@
+/* MARKAZ public website: consistent, responsive image presentation */
+img {
+    max-width: 100%;
+}
+
+/* School and organisation logos must remain fully visible. */
+.brand img,
+.footer-brand img,
+.logo img,
+img.site-logo,
+img[alt*="logo" i] {
+    object-fit: contain;
+}
+
+/* Photographs fill their designated frames without distortion. */
+.hero .building-frame img,
+.hero-visual img,
+.building-frame img,
+.gallery-item img,
+.gallery-grid img,
+.director-photo img,
+.intro-visual img,
+.facility-card img,
+.facility-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Keep the building framed well while filling the hero image area. */
+.hero .building-frame,
+.hero-visual .building-frame {
+    overflow: hidden;
+}
+
+.hero .building-frame img,
+.hero-visual .building-frame img {
+    object-position: center center;
+}
+
+/* Portraits stay centred and don't stretch. */
+.director-photo {
+    overflow: hidden;
+}
+
+.director-photo img {
+    object-position: center top;
+}
+
+/* Gallery tiles have consistent image coverage. */
+.gallery-item,
+.gallery-grid img {
+    overflow: hidden;
+}
+
+.gallery-item img,
+.gallery-grid img {
+    object-position: center center;
+}
+
+/* Prevent inline images from overflowing small screens. */
+@media (max-width: 640px) {
+    .hero .building-frame img,
+    .hero-visual img,
+    .building-frame img,
+    .gallery-item img,
+    .gallery-grid img,
+    .director-photo img,
+    .intro-visual img,
+    .facility-card img,
+    .facility-image img {
+        max-width: 100%;
+    }
+}
+
+
+/* Refined director portrait: a stable frame with a clean, full-bleed photo. */
+.director-photo {
+    position: relative;
+    width: min(320px, 100%);
+    aspect-ratio: 4 / 5;
+    height: auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    isolation: isolate;
+    border: 5px solid #e7f0e8;
+    border-radius: 18px;
+    background: #edf4ee;
+    box-shadow: 0 16px 36px rgba(16, 60, 37, 0.16);
+}
+
+.director-photo img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    object-fit: cover;
+    object-position: center 20%;
+    border-radius: 12px;
+}
+
+.director-grid {
+    align-items: center;
+}
+
+@media (max-width: 760px) {
+    .director-photo {
+        width: min(290px, 100%);
+        margin-inline: auto;
+    }
+}
+
+/* Consistent, polished Website Image Manager cards and controls. */
+.website-image-manager {
+    padding: clamp(16px, 2.5vw, 28px);
+    border: 1px solid #dce8df;
+    border-radius: 18px;
+    background: #fbfdfb;
+}
+
+.website-image-list {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    align-items: stretch;
+    gap: 20px;
+}
+
+.website-image-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #dfe8e1;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(20, 55, 35, 0.05);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.website-image-item:hover {
+    border-color: #a8cbb4;
+    box-shadow: 0 10px 26px rgba(20, 55, 35, 0.09);
+    transform: translateY(-2px);
+}
+
+.website-image-preview {
+    height: 190px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #edf2ee;
+    border-radius: 11px;
+    background: linear-gradient(145deg, #f5f8f5, #eaf1eb);
+}
+
+.website-image-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.website-image-details h3 {
+    line-height: 1.4;
+    font-size: 1rem;
+    color: #174b31;
+    overflow-wrap: anywhere;
+}
+
+.website-image-url {
+    display: block;
+    max-height: 4.5em;
+    overflow: auto;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background: #f5f8f5;
+    color: #52635a;
+    font-size: .76rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.website-image-state {
+    margin: 10px 0;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.website-image-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.website-image-upload label {
+    margin: 0;
+    color: #294b37;
+    font-size: .9rem;
+}
+
+.website-image-upload input[type="file"] {
+    box-sizing: border-box;
+    padding: 9px;
+    border: 1px solid #d7e2d9;
+    border-radius: 8px;
+    background: #f9fbf9;
+    line-height: 1.5;
+}
+
+.website-image-upload button,
+.website-image-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 43px;
+    margin: 0;
+    padding: 11px 15px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: #17613e;
+    color: #fff;
+    font: inherit;
+    font-weight: 650;
+    line-height: 1.35;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.website-image-upload button:hover {
+    background: #104b2f;
+}
+
+.website-image-reset {
+    margin-top: 9px;
+    border-color: #e6d9b9;
+    background: #fff8e9;
+    color: #72531a;
+}
+
+.website-image-reset:hover {
+    background: #f7edda;
+}
+
+.website-image-upload button:focus-visible,
+.website-image-reset:focus-visible,
+#websiteImageSearch:focus-visible {
+    outline: 3px solid rgba(36, 132, 80, .28);
+    outline-offset: 2px;
+}
+
+#websiteImageSearch {
+    box-sizing: border-box;
+    min-height: 46px;
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+    .website-image-manager {
+        padding: 14px;
+        border-radius: 13px;
+    }
+
+    .website-image-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .website-image-item {
+        padding: 13px;
+    }
+
+    .website-image-preview {
+        height: 175px;
+    }
+}

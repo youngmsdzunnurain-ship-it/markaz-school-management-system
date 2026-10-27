@@ -259,22 +259,6 @@ body {
     }
 }
 
-/* =========================================================
-   MARKAZ LOGIN WATERMARK
-   ========================================================= */
-
-.login-page::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 430px auto;
-    opacity: 0.055;
-    pointer-events: none;
-    z-index: 0;
-}
 
 .login-card {
     z-index: 2;
@@ -285,4 +269,2008 @@ body {
         background-size: 300px auto;
         opacity: 0.05;
     }
+}
+
+/* =========================================================
+   MARKAZ LOGIN SCENE — CLEAN BUILD
+   ========================================================= */
+
+/* ---------- SCENE ---------- */
+
+.markaz-scene{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    overflow:hidden;
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            180deg,
+            #edf7f1 0%,
+            #e4f1e9 62%,
+            #d1e5d8 100%
+        );
+}
+
+
+/* ---------- SKY ---------- */
+
+.scene-sky{
+    position:absolute;
+    inset:0;
+}
+
+.scene-glow{
+    position:absolute;
+
+    width:320px;
+    height:320px;
+
+    top:5%;
+    right:12%;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,225,120,.22),
+            transparent 70%
+        );
+}
+
+
+/* ---------- CLOUDS ---------- */
+
+.scene-cloud{
+    position:absolute;
+
+    width:125px;
+    height:28px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.72);
+
+    filter:blur(.2px);
+}
+
+.scene-cloud::before,
+.scene-cloud::after{
+    content:"";
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:inherit;
+}
+
+.scene-cloud::before{
+    width:48px;
+    height:48px;
+
+    left:18px;
+    bottom:5px;
+}
+
+.scene-cloud::after{
+    width:62px;
+    height:62px;
+
+    right:18px;
+    bottom:3px;
+}
+
+.cloud-one{
+    top:17%;
+    left:6%;
+}
+
+.cloud-two{
+    top:27%;
+    right:10%;
+    transform:scale(.72);
+}
+
+
+/* =========================================================
+   SCHOOL BUILDING
+   ========================================================= */
+
+.scene-building{
+    position:absolute;
+
+    right:8%;
+    bottom:19%;
+
+    width:390px;
+    height:355px;
+
+    z-index:3;
+
+    filter:
+        drop-shadow(
+            0 22px 25px rgba(15,77,50,.16)
+        );
+}
+
+
+/* Main building */
+
+.building-body{
+    position:absolute;
+
+    left:25px;
+    right:25px;
+
+    top:105px;
+    bottom:0;
+
+    border-radius:
+        12px
+        12px
+        4px
+        4px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #dfe8e2 0%,
+            #ffffff 12%,
+            #ffffff 88%,
+            #dfe8e2 100%
+        );
+
+    border:
+        2px solid
+        rgba(23,107,69,.16);
+
+    box-shadow:
+        0 20px 35px rgba(15,77,50,.13);
+
+    overflow:visible;
+}
+
+
+/* Roof */
+
+.building-roof{
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    top:75px;
+
+    height:58px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #d7b83e 0%,
+            #bd961f 100%
+        );
+
+    clip-path:
+        polygon(
+            4% 100%,
+            50% 0,
+            96% 100%
+        );
+
+    z-index:2;
+}
+
+
+/* Roof trim */
+
+.building-roof::after{
+    content:"";
+
+    position:absolute;
+
+    left:8%;
+    right:8%;
+
+    bottom:3px;
+
+    height:5px;
+
+    border-radius:5px;
+
+    background:#0f4d32;
+}
+
+
+/* Dome */
+
+.building-dome{
+    position:absolute;
+
+    left:50%;
+    top:15px;
+
+    width:112px;
+    height:80px;
+
+    transform:translateX(-50%);
+
+    border-radius:
+        100px
+        100px
+        0
+        0;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 25%,
+            #49ad73 0%,
+            #176b45 52%,
+            #0c4c31 100%
+        );
+
+    border:
+        3px solid #c9a227;
+
+    box-shadow:
+        0 9px 17px rgba(15,77,50,.18);
+
+    z-index:4;
+}
+
+
+/* Dome neck + finial */
+
+.building-dome::before{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:-25px;
+
+    width:5px;
+    height:27px;
+
+    transform:translateX(-50%);
+
+    border-radius:5px;
+
+    background:#c9a227;
+}
+
+
+/* Crescent */
+
+.building-dome::after{
+    content:"☾";
+
+    position:absolute;
+
+    left:50%;
+    top:-50px;
+
+    transform:
+        translateX(-50%)
+        rotate(-18deg);
+
+    color:#c9a227;
+
+    font-size:29px;
+}
+
+
+/* ---------- MINARETS ---------- */
+
+.building-body::before,
+.building-body::after{
+    content:"";
+
+    position:absolute;
+
+    top:-52px;
+
+    width:31px;
+    height:125px;
+
+    border-radius:
+        12px
+        12px
+        4px
+        4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d5dfd9,
+            #ffffff 25%,
+            #ffffff 75%,
+            #d5dfd9
+        );
+
+    border:
+        2px solid
+        rgba(23,107,69,.14);
+
+    box-shadow:
+        0 8px 14px rgba(15,77,50,.10);
+
+    z-index:-1;
+}
+
+.building-body::before{
+    left:-45px;
+}
+
+.building-body::after{
+    right:-45px;
+}
+
+
+/* ---------- SCHOOL SIGN ---------- */
+
+.building-sign{
+    position:absolute;
+
+    left:50%;
+    top:22px;
+
+    transform:translateX(-50%);
+
+    z-index:10;
+
+    min-width:210px;
+
+    padding:
+        7px
+        18px
+        9px;
+
+    text-align:center;
+
+    background:
+        rgba(255,255,255,.97);
+
+    border:
+        1px solid
+        rgba(201,162,39,.55);
+
+    border-radius:10px;
+
+    box-shadow:
+        0 5px 14px rgba(15,77,50,.09);
+}
+
+.building-sign strong{
+    display:block;
+
+    direction:rtl;
+
+    font-family:
+        "Noto Naskh Arabic",
+        "Amiri",
+        "Tahoma",
+        serif;
+
+    font-size:28px;
+    line-height:1.2;
+
+    color:#0f4d32;
+}
+
+.building-sign span{
+    display:block;
+
+    direction:rtl;
+
+    margin-top:3px;
+
+    font-family:
+        "Noto Naskh Arabic",
+        "Amiri",
+        "Tahoma",
+        serif;
+
+    font-size:10px;
+
+    line-height:1.4;
+
+    color:#967614;
+
+    white-space:nowrap;
+}
+
+
+/* ---------- WINDOWS ---------- */
+
+.building-window{
+    position:absolute;
+
+    top:92px;
+
+    width:55px;
+    height:68px;
+
+    border:
+        6px solid
+        #d5dfd9;
+
+    border-radius:
+        30px
+        30px
+        5px
+        5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #c2e1ce,
+            #76b897
+        );
+
+    box-shadow:
+        0 6px 11px rgba(15,77,50,.10);
+
+    z-index:3;
+}
+
+.window-left{
+    left:28px;
+}
+
+.window-right{
+    right:28px;
+}
+
+
+/* Window crossbars */
+
+.building-window::after{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:0;
+    bottom:0;
+
+    width:3px;
+
+    transform:translateX(-50%);
+
+    background:#d5dfd9;
+
+    box-shadow:
+        0 29px 0 #d5dfd9;
+}
+
+
+/* ---------- ENTRANCE ---------- */
+
+.building-entrance{
+    position:absolute;
+
+    left:50%;
+    bottom:0;
+
+    transform:translateX(-50%);
+
+    width:108px;
+    height:158px;
+
+    border:
+        8px solid
+        #d5dfd9;
+
+    border-bottom:0;
+
+    border-radius:
+        56px
+        56px
+        0
+        0;
+
+    background:#0b3424;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 18px rgba(0,0,0,.17);
+
+    z-index:7;
+}
+
+
+/* Door */
+
+.door{
+    position:absolute;
+
+    top:0;
+    bottom:0;
+
+    width:50%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #0b432d,
+            #176b45,
+            #0b432d
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+}
+
+
+/* Door handles */
+
+.door::after{
+    content:"";
+
+    position:absolute;
+
+    top:51%;
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#d9b93f;
+}
+
+.door-left::after{
+    right:6px;
+}
+
+.door-right::after{
+    left:6px;
+}
+
+
+/* Entrance gold frame */
+
+.entrance-frame{
+    position:absolute;
+
+    inset:-8px;
+
+    border:
+        2px solid
+        rgba(201,162,39,.75);
+
+    border-bottom:0;
+
+    border-radius:
+        58px
+        58px
+        0
+        0;
+
+    z-index:10;
+}
+
+
+/* Building step */
+
+.building-step{
+    position:absolute;
+
+    left:-7px;
+    right:-7px;
+
+    bottom:-1px;
+
+    height:17px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #dfe7e2,
+            #aebbb4
+        );
+
+    box-shadow:
+        0 4px 8px rgba(0,0,0,.12);
+
+    z-index:9;
+}
+
+
+/* =========================================================
+   ROAD
+   ========================================================= */
+
+
+
+
+/*
+   Straight walkway:
+   starts at student and terminates at school.
+*/
+
+
+
+
+/* Centre marking */
+
+
+
+
+/* Kerb */
+
+
+
+
+/* =========================================================
+   STUDENT
+   ========================================================= */
+
+.student-character{
+    position:absolute;
+
+    left:8%;
+
+    bottom:18%;
+
+    width:100px;
+    height:185px;
+
+    z-index:5;
+}
+
+
+/* Shadow */
+
+.student-shadow{
+    position:absolute;
+
+    left:7px;
+    bottom:0;
+
+    width:86px;
+    height:13px;
+
+    border-radius:50%;
+
+    background:
+        rgba(15,77,50,.20);
+
+    filter:blur(1px);
+}
+
+
+/* Character */
+
+.student{
+    position:absolute;
+
+    left:13px;
+    bottom:7px;
+
+    width:74px;
+    height:170px;
+}
+
+
+/* Head */
+
+.student-head{
+    position:absolute;
+
+    left:11px;
+    top:0;
+
+    width:52px;
+    height:57px;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #b8754c,
+            #8f5536
+        );
+}
+
+
+/* Proper turban */
+
+.student-cap{
+    position:absolute;
+
+    left:-4px;
+    top:-10px;
+
+    width:60px;
+    height:30px;
+
+    border-radius:
+        50%
+        50%
+        42%
+        42%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #e8ede9
+        );
+
+    border:
+        2px solid
+        #d2dbd6;
+
+    border-bottom:
+        4px solid
+        #176b45;
+
+    box-shadow:
+        0 4px 8px rgba(15,77,50,.10);
+}
+
+
+/* Turban folds */
+
+.student-cap::before{
+    content:"";
+
+    position:absolute;
+
+    left:6px;
+    right:6px;
+    top:8px;
+
+    height:8px;
+
+    border-top:
+        3px solid
+        #176b45;
+
+    border-bottom:
+        2px solid
+        #c9a227;
+
+    border-radius:50%;
+}
+
+
+/* Neck */
+
+.student-neck{
+    position:absolute;
+
+    left:28px;
+    top:52px;
+
+    width:17px;
+    height:13px;
+
+    background:#9d6040;
+}
+
+
+/* Long thobe */
+
+.student-body{
+    position:absolute;
+
+    left:10px;
+    top:61px;
+
+    width:53px;
+    height:83px;
+
+    border-radius:
+        14px
+        14px
+        8px
+        8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d7e0db,
+            #ffffff 18%,
+            #ffffff 82%,
+            #d7e0db
+        );
+
+    border:
+        2px solid
+        #d0dad4;
+
+    box-shadow:
+        0 6px 10px rgba(15,77,50,.10);
+}
+
+
+/* Thobe collar */
+
+.student-body::before{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:5px;
+
+    width:17px;
+    height:22px;
+
+    transform:translateX(-50%);
+
+    border-left:
+        3px solid
+        #176b45;
+
+    border-right:
+        3px solid
+        #176b45;
+
+    border-radius:
+        0
+        0
+        10px
+        10px;
+}
+
+
+/* Thobe hem */
+
+.student-body::after{
+    content:"";
+
+    position:absolute;
+
+    left:8px;
+    right:8px;
+    bottom:5px;
+
+    height:3px;
+
+    border-radius:5px;
+
+    background:#c9a227;
+}
+
+
+/* Arms */
+
+.student-arm{
+    position:absolute;
+
+    top:64px;
+
+    width:14px;
+    height:58px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #ffffff 0 72%,
+            #9d6040 73%
+        );
+
+    border:
+        1px solid
+        #d2dcd6;
+
+    transform-origin:top center;
+}
+
+
+/* Legs */
+
+.student-leg{
+    position:absolute;
+
+    top:133px;
+
+    width:13px;
+    height:48px;
+
+    border-radius:8px;
+
+    background:#333c3b;
+
+    transform-origin:top center;
+}
+
+
+/* Shoes */
+
+.student-leg::after{
+    content:"";
+
+    position:absolute;
+
+    left:-5px;
+    bottom:-4px;
+
+    width:23px;
+    height:8px;
+
+    border-radius:8px;
+
+    background:#202422;
+}
+
+
+/* =========================================================
+   WALK TOWARD SCHOOL
+   ========================================================= */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Activate only after successful login */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Door opens as student approaches */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Hide login card during transition */
+
+@keyframes loginSceneExit{
+
+    to{
+        opacity:0;
+        transform:
+            translateY(-12px)
+            scale(.98);
+    }
+}
+
+
+.login-page.login-success
+.login-card{
+
+    animation:
+        loginSceneExit
+        .65s
+        2.65s
+        ease
+        forwards;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    .markaz-scene{
+        display:none !important;
+    }
+
+    .decor{
+        display:none !important;
+    }
+
+    .login-page{
+        min-height:100svh;
+        padding:18px 14px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #f6faf7,
+                #eaf3ed
+            );
+    }
+
+    .login-card{
+        width:100%;
+        max-width:455px;
+        z-index:10;
+    }
+}
+
+
+/* Reduced motion */
+
+@media(prefers-reduced-motion:reduce){
+
+    .student-character,
+    .student-leg,
+    .student-arm,
+    .door,
+    .login-card{
+        animation:none !important;
+    }
+}
+
+
+/* =========================================================
+   MARKAZ STUDENT — FULL JALABIYYAH
+   ========================================================= */
+
+.student-body{
+    top:58px !important;
+    width:62px !important;
+    height:108px !important;
+
+    left:6px !important;
+
+    border-radius:
+        16px 16px 8px 8px !important;
+
+    /* Long white jalabiyyah */
+    background:
+        linear-gradient(
+            90deg,
+            #cfd9d3 0%,
+            #f8faf9 16%,
+            #ffffff 50%,
+            #f8faf9 84%,
+            #cfd9d3 100%
+        ) !important;
+
+    border:2px solid #c9d5ce !important;
+
+    box-shadow:
+        0 7px 12px rgba(15,77,50,.12) !important;
+
+    z-index:5 !important;
+}
+
+/* Jalabiyyah collar */
+
+.student-body::before{
+    left:50% !important;
+    top:5px !important;
+
+    width:18px !important;
+    height:24px !important;
+
+    border-left:3px solid #176b45 !important;
+    border-right:3px solid #176b45 !important;
+
+    border-radius:
+        0 0 10px 10px !important;
+
+    background:transparent !important;
+}
+
+/* Jalabiyyah bottom/hem */
+
+.student-body::after{
+    left:5px !important;
+    right:5px !important;
+    bottom:5px !important;
+
+    height:3px !important;
+
+    background:#c9a227 !important;
+}
+
+/* Hide the actual legs behind the long garment */
+
+.student-leg{
+    top:145px !important;
+
+    width:13px !important;
+    height:32px !important;
+
+    background:#333c3b !important;
+
+    z-index:1 !important;
+}
+
+/* Left shoe */
+
+.student-leg-left{
+    left:8px !important;
+}
+
+/* Right shoe */
+
+.student-leg-right{
+    right:8px !important;
+}
+
+/* Make the shoes visible below the jalabiyyah */
+
+.student-leg::after{
+    left:-5px !important;
+    bottom:-3px !important;
+
+    width:23px !important;
+    height:9px !important;
+
+    border-radius:9px !important;
+
+    background:#202422 !important;
+
+    z-index:3 !important;
+}
+
+/* Put the jalabiyyah in front of the legs */
+
+.student-body{
+    z-index:6 !important;
+}
+
+/* Keep the two shoes above the ground */
+
+.student-leg{
+    z-index:2 !important;
+}
+
+/* Slightly longer overall character */
+
+.student{
+    height:180px !important;
+}
+
+.student-character{
+    height:195px !important;
+}
+
+
+/* =========================================================
+   MARKAZ SCENE — FINAL SCHOOL / ROAD / WALKING SEQUENCE
+   ========================================================= */
+
+/* ---------- SCHOOL ---------- */
+
+.scene-building{
+    right:8% !important;
+    bottom:19% !important;
+    z-index:3 !important;
+}
+
+/*
+   Keep the minarets physically connected to the building.
+   They overlap the upper wall instead of floating behind it.
+*/
+.building-body::before,
+.building-body::after{
+    top:-20px !important;
+    z-index:2 !important;
+}
+
+.building-body::before{
+    left:-45px !important;
+}
+
+.building-body::after{
+    right:-45px !important;
+}
+
+/* ---------- MARKAZ SIGN ---------- */
+
+.building-sign{
+    min-width:190px !important;
+    padding:8px 22px 10px !important;
+    border-radius:10px !important;
+}
+
+.building-sign strong{
+    direction:ltr !important;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif !important;
+    font-size:24px !important;
+    font-weight:800 !important;
+    letter-spacing:2.5px !important;
+    line-height:1.2 !important;
+    color:#0f4d32 !important;
+}
+
+.building-sign span{
+    display:none !important;
+}
+
+/* ---------- GROUND ---------- */
+
+
+
+/*
+   The road now runs mathematically from the student's
+   starting point to the centre of the school entrance.
+
+   School:
+   right = 8%
+   width = 390px
+   entrance centre = 195px from its left edge
+
+   Therefore the road ends at:
+   right = 8% + 195px
+*/
+
+
+/* Road centre marking */
+
+
+/* Road lower edge */
+
+
+/* ---------- STUDENT STARTING POSITION ---------- */
+
+.student-character{
+    left:7% !important;
+    bottom:19% !important;
+    z-index:5 !important;
+}
+
+/*
+   The entrance centre is:
+   92vw - 195px
+
+   The student's centre starts around:
+   7vw + 50px
+
+   Required travel:
+   approximately 85vw - 245px
+*/
+
+
+
+
+/* ---------- DOORS OPEN BEFORE THE STUDENT ENTERS ---------- */
+
+@keyframes markazDoorLeftOpen{
+    0%,
+    42%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(-34px);
+    }
+}
+
+@keyframes markazDoorRightOpen{
+    0%,
+    42%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(34px);
+    }
+}
+
+
+
+
+
+/* ---------- FAILED LOGIN REACTION ---------- */
+
+@keyframes studentFailedReaction{
+    0%,
+    100%{
+        transform:translateX(0) rotate(0);
+    }
+
+    20%{
+        transform:translateX(-5px) rotate(-2deg);
+    }
+
+    45%{
+        transform:translateX(4px) rotate(2deg);
+    }
+
+    70%{
+        transform:translateX(-3px) rotate(-1deg);
+    }
+}
+
+@keyframes studentHandToHead{
+    0%,
+    100%{
+        transform:rotate(0);
+    }
+
+    45%{
+        transform:rotate(-58deg) translate(-4px,-8px);
+    }
+
+    75%{
+        transform:rotate(-48deg) translate(-3px,-5px);
+    }
+}
+
+@keyframes studentOtherHandReaction{
+    0%,
+    100%{
+        transform:rotate(0);
+    }
+
+    45%{
+        transform:rotate(28deg) translateY(5px);
+    }
+
+    70%{
+        transform:rotate(15deg);
+    }
+}
+
+
+
+
+
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width:700px){
+    .markaz-scene{
+        display:none !important;
+    }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion:reduce){
+    .login-page.login-success .student-character,
+    .login-page.login-success .door-left,
+    .login-page.login-success .door-right,
+    .login-page.login-failed .student-character,
+    .login-page.login-failed .student-arm-left,
+
+}
+
+/* =========================================================
+   MARKAZ SCENE — DEFINITIVE SCENE OVERRIDE
+   ========================================================= */
+
+/* =========================================================
+   SCHOOL POSITION
+   ========================================================= */
+
+.scene-building{
+    right:8% !important;
+    bottom:19% !important;
+    width:390px !important;
+    height:355px !important;
+    z-index:3 !important;
+}
+
+
+/* =========================================================
+   CONNECTED MINARETS
+   ========================================================= */
+
+/*
+   The minarets belong to the building wall.
+   They overlap the wall so there is no floating gap.
+*/
+
+.building-body::before,
+.building-body::after{
+    top:-18px !important;
+    height:125px !important;
+    z-index:4 !important;
+}
+
+.building-body::before{
+    left:-42px !important;
+}
+
+.building-body::after{
+    right:-42px !important;
+}
+
+
+/* =========================================================
+   MARKAZ SIGN
+   ========================================================= */
+
+.building-sign{
+    min-width:180px !important;
+    padding:8px 20px 10px !important;
+    border-radius:10px !important;
+}
+
+.building-sign strong{
+    direction:ltr !important;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif !important;
+    font-size:24px !important;
+    font-weight:800 !important;
+    letter-spacing:3px !important;
+    line-height:1.2 !important;
+    color:#0f4d32 !important;
+}
+
+.building-sign span{
+    display:none !important;
+}
+
+
+/* =========================================================
+   ROAD
+   ========================================================= */
+
+/*
+   Exact geometry:
+
+   Building:
+       right = 8%
+       width = 390px
+
+   Entrance:
+       centered inside building
+       therefore entrance centre =
+       92% of viewport - 195px
+
+   Road:
+       starts where the student starts
+       ends exactly at entrance centre
+*/
+
+
+
+
+
+/* Road centre markings */
+
+
+
+/* Road bottom kerb */
+
+
+
+
+/* =========================================================
+   STUDENT POSITION
+   ========================================================= */
+
+.student-character{
+    left:7% !important;
+    bottom:19% !important;
+    width:100px !important;
+    height:195px !important;
+
+    z-index:5 !important;
+}
+
+
+/* =========================================================
+   WHITE + RED TURBAN
+   ========================================================= */
+
+.student-cap{
+    left:-7px !important;
+    top:-13px !important;
+
+    width:66px !important;
+    height:35px !important;
+
+    border-radius:
+        50%
+        50%
+        44%
+        44% !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f4f5f3 48%,
+            #dfe5e1 100%
+        ) !important;
+
+    border:2px solid #d6ddd9 !important;
+
+    border-bottom:
+        5px solid #a71919 !important;
+
+    box-shadow:
+        0 4px 9px rgba(0,0,0,.13) !important;
+}
+
+
+/* Red turban wrapping */
+
+.student-cap::before{
+    content:"" !important;
+
+    position:absolute !important;
+
+    left:4px !important;
+    right:4px !important;
+    top:9px !important;
+
+    height:9px !important;
+
+    border-top:
+        3px solid #b51f1f !important;
+
+    border-bottom:
+        3px solid #b51f1f !important;
+
+    border-radius:50% !important;
+
+    transform:rotate(-3deg) !important;
+}
+
+
+/* =========================================================
+   JALABIYYAH
+   ========================================================= */
+
+.student-body{
+    top:58px !important;
+    left:6px !important;
+
+    width:62px !important;
+    height:108px !important;
+
+    border-radius:
+        16px
+        16px
+        9px
+        9px !important;
+
+    z-index:6 !important;
+}
+
+
+/*
+   Hide the visible legs behind the long garment.
+   Only the shoes remain visible.
+*/
+
+.student-leg{
+    top:145px !important;
+    width:13px !important;
+    height:31px !important;
+
+    z-index:2 !important;
+}
+
+.student-leg-left{
+    left:8px !important;
+}
+
+.student-leg-right{
+    right:8px !important;
+}
+
+.student-leg::after{
+    width:23px !important;
+    height:8px !important;
+}
+
+
+/* =========================================================
+   ARMS — TWO CLEARLY VISIBLE HANDS
+   ========================================================= */
+
+.student-arm{
+    top:64px !important;
+    width:14px !important;
+    height:62px !important;
+
+    z-index:7 !important;
+}
+
+.student-arm-left{
+    left:0 !important;
+}
+
+.student-arm-right{
+    right:0 !important;
+}
+
+
+/* Hands */
+
+.student-arm::after{
+    content:"" !important;
+
+    position:absolute !important;
+
+    left:50% !important;
+    bottom:-5px !important;
+
+    width:14px !important;
+    height:14px !important;
+
+    transform:translateX(-50%) !important;
+
+    border-radius:50% !important;
+
+    background:#9d6040 !important;
+
+    border:1px solid #81482f !important;
+}
+
+
+/* =========================================================
+   REMOVE ALL PREVIOUS WALK ANIMATIONS
+   ========================================================= */
+
+.login-page.login-success .student-character,
+.login-page.login-success .student-leg-left,
+.login-page.login-success .student-leg-right,
+.login-page.login-success .student-arm-left,
+.login-page.login-success .student-arm-right,
+.login-page.login-success .door-left,
+
+
+
+/* =========================================================
+   SUCCESS WALK
+   ========================================================= */
+
+/*
+   Student centre starts approximately at:
+
+       7vw + 50px
+
+   Door centre is:
+
+       92vw - 195px
+
+   Therefore the walking distance is:
+
+       85vw - 245px
+*/
+
+
+
+
+
+
+/* =========================================================
+   WALKING ARMS + FEET
+   ========================================================= */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   DOOR OPENS BEFORE STUDENT ENTERS
+   ========================================================= */
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   FAILED LOGIN — "WHAT?!" REACTION
+   ========================================================= */
+
+
+
+
+/*
+   Right hand goes clearly up toward the face/head.
+*/
+
+
+
+
+/*
+   Left hand drops toward the thigh/foot area.
+*/
+
+
+
+
+/*
+   Small foot-stomp reaction.
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width:700px){
+
+    .markaz-scene{
+        display:none !important;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion:reduce){
+
+    .login-page.login-success .student-character,
+    .login-page.login-success .student-leg-left,
+    .login-page.login-success .student-leg-right,
+    .login-page.login-success .student-arm-left,
+    .login-page.login-success .student-arm-right,
+    .login-page.login-success .door-left,
+    .login-page.login-success .door-right,
+    .login-page.login-failed .student-character,
+    .login-page.login-failed .student-leg-left,
+    .login-page.login-failed .student-arm-left,
+
+}
+
+
+/* =========================================================
+   MARKAZ STATIC LOGIN SCENE
+   No walking/door/failed-login animation.
+   ========================================================= */
+
+.login-page{
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+}
+
+
+.markaz-scene{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    z-index:1;
+}
+
+/* Keep the school and student above the watermark. */
+
+.scene-building{
+    z-index:5 !important;
+}
+
+.student-character{
+    /*
+       Static position only.
+       The student's feet remain on the same ground level
+       as the school entrance area without a separate road.
+    */
+    left:8% !important;
+    bottom:19% !important;
+    z-index:6 !important;
+}
+
+/* Keep the entrance visually prominent. */
+
+.building-entrance{
+    z-index:7 !important;
+}
+
+.entrance-frame{
+    z-index:10 !important;
+}
+
+/* No scene animation. */
+
+.student-character,
+.student-leg-left,
+.student-leg-right,
+.student-arm-left,
+.student-arm-right,
+.door-left,
+.door-right{
+    animation:none !important;
+}
+
+/* Mobile keeps the clean login form. */
+
+@media (max-width:760px){
+    .markaz-scene{
+        display:none !important;
+    }
+
+}
+
+
+/* =========================================================
+   MARKAZ LOGIN — CLEAN WATERMARK BACKGROUND
+   ========================================================= */
+
+.login-page{
+    position:relative !important;
+    isolation:isolate !important;
+    overflow:hidden !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.98),
+            rgba(246,250,247,.98)
+        ) !important;
+}
+
+
+/* Keep every actual login element above the watermark. */
+
+.login-page > *{
+    position:relative;
+    z-index:1;
+}
+
+
+/* Mobile: keep the watermark subtle and uncluttered. */
+
+@media (max-width:760px){
+    .login-page::before{
+        font-size:24px !important;
+        line-height:6.5 !important;
+        letter-spacing:4px !important;
+        word-spacing:14px !important;
+        color:rgba(15,77,50,.028) !important;
+    }
+}
+
+/* =========================================================
+   FINAL MARKAZ LOGIN CLEANUP
+   ========================================================= */
+
+/* Clean page background */
+.login-page{
+    position:relative !important;
+    isolation:isolate !important;
+    overflow:hidden !important;
+    background:#f7faf8 !important;
+}
+
+/* Remove any remaining old visual scene if its HTML still exists */
+.markaz-scene{
+    display:none !important;
+}
+
+/* Keep the actual login interface above the watermark */
+.login-page > *{
+    position:relative;
+    z-index:1;
+}
+
+/* Slightly cleaner login card */
+.login-card{
+    background:rgba(255,255,255,.96) !important;
+    border:1px solid rgba(15,77,50,.10) !important;
+    border-radius:20px !important;
+    box-shadow:
+        0 18px 45px rgba(15,77,50,.10),
+        0 4px 14px rgba(0,0,0,.04) !important;
+    backdrop-filter:blur(6px) !important;
+    -webkit-backdrop-filter:blur(6px) !important;
+}
+
+/* Gentle input refinement */
+.login-card input{
+    border-radius:11px !important;
+    transition:border-color .2s ease, box-shadow .2s ease !important;
+}
+
+.login-card input:focus{
+    border-color:rgba(15,77,50,.45) !important;
+    box-shadow:0 0 0 3px rgba(15,77,50,.07) !important;
+}
+
+
+/* =========================================================
+   MARKAZ LOGO WATERMARK
+   ========================================================= */
+
+.login-page{
+    position:relative !important;
+    isolation:isolate !important;
+    overflow:hidden !important;
+    background:#f7faf8 !important;
+}
+
+
+.login-page > *{
+    position:relative !important;
+    z-index:1 !important;
+}
+
+/* Subtle login-card refinement */
+.login-card{
+    background:rgba(255,255,255,.97) !important;
+    border:1px solid rgba(15,77,50,.10) !important;
+    border-radius:20px !important;
+    box-shadow:0 16px 40px rgba(15,77,50,.10) !important;
+}
+
+@media (max-width:760px){
+    .login-page::before{
+        width:75vw !important;
+        opacity:.045 !important;
+    }
+
+    .login-card{
+        border-radius:17px !important;
+    }
+}
+
+
+.login-page > *{
+    position:relative !important;
+    z-index:1 !important;
+}
+
+/* Keep the login card crisp over the watermark pattern */
+.login-card{
+    background:rgba(255,255,255,.97) !important;
+}
+
+
+/* Make the pattern cover the complete page evenly */
+.login-page{
+    overflow:hidden !important;
 }

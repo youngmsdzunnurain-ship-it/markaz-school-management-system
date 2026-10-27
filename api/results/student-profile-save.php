@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-requireResultStaff();
+requireSeniorAdmin();
 
 $studentId = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
 $portion = trim((string) ($_POST['memorization_portion'] ?? ''));

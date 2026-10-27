@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b45">
+  <title>Student Results | MARKAZ</title>
+  <link rel="icon" href="assets/images/markaz-logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/login-roles.css">
+  <link rel="stylesheet" href="css/login-shared.css">
+  <script src="js/login-roles.js" defer></script>
+
+    <link rel="stylesheet" href="css/website-image-polish.css">
+</head>
+<body>
+<main class="role-login-page">
+  <div class="role-decor role-decor-one"></div><div class="role-decor role-decor-two"></div>
+  <section class="role-login-card student-login-card">
+
+    <div class="role-brand">
+      <div class="role-logo"><img src="assets/images/markaz-logo.jpg" alt="MARKAZ school logo"></div>
+      <h1>MARKAZ</h1>
+      <p>Centre for Learning and Memorization of the Glorious Qur’an</p>
+    </div>
+    <div class="role-heading">
+      <span class="role-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+      <h2>Student Results</h2>
+      <p>Enter your details to look up your examination results.</p>
+    </div>
+    <form class="preview-form" data-role="student">
+      <div class="role-field">
+        <label for="admissionNumber">Admission Number / Student ID</label>
+        <div class="role-input"><i class="fa-solid fa-id-card"></i><input id="admissionNumber" name="admissionNumber" placeholder="Enter your admission number" autocomplete="off" required></div>
+      </div>
+      <div class="role-field">
+        <label for="studentClass">Conventional Class</label>
+        <div class="role-input"><i class="fa-solid fa-school"></i>
+          <select id="studentClass" name="studentClass" required>
+<option value="">Select your class</option>
+<option value="3">Kindergarten</option>
+<option value="4">Pre Nursery 1</option>
+<option value="5">Pre Nursery 2</option>
+<option value="6">Nursery 1</option>
+<option value="7">Nursery 2</option>
+<option value="8">Basic 1</option>
+<option value="2">Basic 2</option>
+<option value="9">Basic 3</option>
+<option value="10">Basic 4</option>
+<option value="11">Basic 5</option>
+<option value="12">Jss 1</option>
+<option value="13">Jss 2</option>
+<option value="1">Jss 3</option>
+<option value="14">SSS 1</option>
+<option value="15">SSS 2</option>
+<option value="16">SSS 3</option>
+</select><i class="fa-solid fa-chevron-down select-chevron"></i>
+        </div>
+      </div>
+      <div class="role-field">
+        <label for="academicTerm">Academic Term</label>
+        <div class="role-input"><i class="fa-regular fa-calendar"></i>
+          <select id="academicTerm" name="academicTerm" required>
+            <option value="">Select Academic Term</option>
+            <option value="1">First Term</option>
+            <option value="2">Second Term</option>
+            <option value="3">Third Term</option>
+          </select><i class="fa-solid fa-chevron-down select-chevron"></i>
+        </div>
+      </div>
+      <div class="role-field">
+        <label for="academicSession">Academic Session</label>
+        <div class="role-input"><i class="fa-solid fa-calendar-days"></i>
+          <select id="academicSession" name="academicSession" required>
+<option value="">Select Academic Session</option>
+<option value="1">2026/2027</option>
+<option value="2">2027/2028</option>
+<option value="3">2028/2029</option>
+<option value="4">2029/2030</option>
+<option value="5">2030/2031</option>
+<option value="6">2031/2032</option>
+<option value="7">2032/2033</option>
+<option value="8">2033/2034</option>
+<option value="9">2034/2035</option>
+<option value="10">2035/2036</option>
+</select><i class="fa-solid fa-chevron-down select-chevron"></i>
+        </div>
+      </div>
+      <p class="preview-notice"><i class="fa-solid fa-circle-info"></i> Enter all four details exactly as registered with the school.</p>
+      <div class="role-message" aria-live="polite"></div>
+      <button class="role-submit" type="submit">Check Results <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
+
+    <section id="studentResultsPanel" class="student-results-panel" aria-live="polite" hidden></section>
+    <div class="role-footer"><i class="fa-solid fa-book-open"></i> Learning, memorization and good character</div>
+  </section>
+</main>
+  <script src="js/login-shared.js"></script>
+
+<script src="js/website-image-overrides.js"></script>
+</body>
+</html>

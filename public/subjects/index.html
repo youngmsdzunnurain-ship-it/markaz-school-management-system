@@ -12,7 +12,11 @@
     >
 
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="./subjects.css?v=20260927">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="./subjects.css?v=20261020-widthfix1">
+    <link rel="stylesheet" href="../css/app-watermark.css">
+    <link rel="stylesheet" href="../css/standard-page-heading.css">
+    <link rel="stylesheet" href="../css/class.css">
 </head>
 
 <body>
@@ -23,56 +27,21 @@
          TOP HEADER
     ====================================================== -->
 
-    <header class="page-header">
+    <header class="class-topbar subjects-class-topbar">
+    <a href="../dashboard.html" class="class-back-link">← Go Back</a>
 
-        <div class="header-accent"></div>
+    <div class="class-heading-copy">
+        <span class="eyebrow">MARKAZ SUBJECTS</span>
+        <h1>Subjects</h1>
+        <p>Create, manage and organize the subjects used across MARKAZ classes.</p>
+    </div>
 
-        <div class="page-header-content">
-
-            <div class="page-heading">
-
-                <a href="../dashboard.html" class="back-link">
-                    <span>←</span>
-                    Dashboard
-                </a>
-
-                <div class="heading-main">
-
-                    <div class="heading-kicker">
-                        <span class="kicker-line"></span>
-                        ACADEMIC MANAGEMENT
-                    </div>
-
-                    <div class="heading-title-row">
-                        <div class="heading-icon">
-                            <span>◈</span>
-                        </div>
-
-                        <div>
-                            <h1>Subjects</h1>
-
-                            <p class="page-description">
-                                Create, manage and organize the subjects used across MARKAZ classes.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="primary-button add-subject-button"
-                id="addSubjectButton"
-            >
-                <span class="add-icon" aria-hidden="true">+</span>
-                <span>Add Subject</span>
-            </button>
-
-        </div>
-
-    </header>
+    <div class="class-header-actions">
+        <button type="button" class="primary-button" id="addSubjectButton">
+            + Add Subject
+        </button>
+    </div>
+</header>
 
 
     <!-- =====================================================
@@ -163,8 +132,8 @@
 
                 <div class="panel-title-area">
 
-                    <div class="panel-icon">
-                        ◈
+                    <div class="panel-icon" aria-hidden="true">
+                        <i class="fa-solid fa-book-open" aria-hidden="true"></i>
                     </div>
 
                     <div>
@@ -181,11 +150,6 @@
 
                 </div>
 
-                <div class="panel-count">
-                    <span class="panel-count-dot"></span>
-                    <span>Academic Subjects</span>
-                </div>
-
             </div>
 
 
@@ -197,7 +161,7 @@
 
                     <label
                         for="subjectSearch"
-                        class="sr-only"
+                        class="filter-label"
                     >
                         Search subjects
                     </label>
@@ -207,7 +171,7 @@
                     <input
                         type="search"
                         id="subjectSearch"
-                        placeholder="Search by subject, code or category..."
+                        placeholder="Search by subject, code or school level..."
                         autocomplete="off"
                     >
 
@@ -218,14 +182,10 @@
 
                     <label
                         for="subjectStatusFilter"
-                        class="sr-only"
+                        class="filter-label"
                     >
                         Filter subjects by status
                     </label>
-
-                    <span class="filter-label">
-                        Status
-                    </span>
 
                     <select id="subjectStatusFilter">
 
@@ -420,19 +380,14 @@
 
 
                 <div class="form-field">
-
-                    <label for="subjectCategory">
-                        Category
-                    </label>
-
-                    <input
-                        type="text"
-                        id="subjectCategory"
-                        name="category"
-                        placeholder="e.g. Core, Science"
-                        maxlength="100"
-                    >
-
+                    <label for="subjectCategory">School Level</label>
+                    <select id="subjectCategory" name="category" required>
+                        <option value="">Select school level</option>
+                        <option value="Nursery">Nursery</option>
+                        <option value="Primary">Primary</option>
+                        <option value="Junior Secondary">Junior Secondary</option>
+                        <option value="Senior Secondary">Senior Secondary</option>
+                    </select>
                 </div>
 
             </div>
@@ -572,6 +527,13 @@
 
 <script src="./subjects.js"></script>
 <script src="/js/markaz-global.js"></script>
+
+    <script src="../js/go-back.js"></script>
+    <footer class="markaz-global-footer">
+        <span class="footer-brand">MARKAZ</span>
+        <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
+        <span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span>
+    </footer>
 
 </body>
 </html>

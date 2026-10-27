@@ -7,7 +7,27 @@ require_once __DIR__ . '/../../app/config/app.php';
 
 requireResultStaff();
 
+// Printing requires the independently assigned permission for every role.
+if (($_GET['print'] ?? '') === '1') {
+    requireRolePermission('print_results');
+}
 header('Content-Type: application/json; charset=utf-8');
+
+$classType = (string) ($_GET['class_type'] ?? 'conventional');
+if (!in_array($classType, ['conventional', 'arabic'], true)) {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid class type.'
+    ]);
+    exit;
+}
+
+$requestedClassId = filter_input(
+    INPUT_GET,
+    'class_id',
+    FILTER_VALIDATE_INT
+);
 
 $studentId = filter_input(
     INPUT_GET,
@@ -58,7 +78,7 @@ try {
 
         FROM students st
 
-        INNER JOIN classes c
+        LEFT JOIN classes c
             ON c.id = st.class_id
 
         LEFT JOIN arabic_classes ac
@@ -90,6 +110,32 @@ try {
     /*
      * CURRENT ACADEMIC PERIOD
      */
+    $classId = $classType === 'arabic'
+        ? (int) ($student['arabic_class_id'] ?? 0)
+        : (int) ($student['class_id'] ?? 0);
+
+    if ($classId < 1) {
+        http_response_code(422);
+        echo json_encode([
+            'success' => false,
+            'message' => $classType === 'arabic'
+                ? 'Student is not assigned to an Arabic class.'
+                : 'Student is not assigned to a conventional class.'
+        ]);
+        exit;
+    }
+
+    if ($requestedClassId !== null
+        && $requestedClassId !== false
+        && (int) $requestedClassId !== $classId) {
+        http_response_code(422);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Student does not belong to the requested class.'
+        ]);
+        exit;
+    }
+
     $periodStmt = $pdo->query(
         'SELECT
             ap.id,
@@ -130,8 +176,15 @@ try {
     /*
      * CLASS SUBJECTS
      */
+    $mappingTable = $classType === 'arabic'
+        ? 'arabic_class_subjects'
+        : 'class_subjects';
+    $mappingClassColumn = $classType === 'arabic'
+        ? 'arabic_class_id'
+        : 'class_id';
+
     $subjectStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             s.id,
             s.name,
             s.code,
@@ -140,23 +193,17 @@ try {
             s.max_exam,
             cs.is_required,
             cs.sort_order
-
-        FROM class_subjects cs
-
+        FROM {$mappingTable} cs
         INNER JOIN subjects s
             ON s.id = cs.subject_id
-
-        WHERE cs.class_id = ?
+        WHERE cs.{$mappingClassColumn} = ?
           AND s.is_active = 1
-
         ORDER BY
             cs.sort_order,
-            s.name'
+            s.name"
     );
 
-    $subjectStmt->execute([
-        $student['class_id']
-    ]);
+    $subjectStmt->execute([$classId]);
 
     $subjects = $subjectStmt->fetchAll();
 
@@ -172,19 +219,127 @@ try {
             exam,
             teacher_remark,
             result_remark
-
         FROM results
-
         WHERE student_id = ?
+          AND class_type = ?
+          AND class_id = ?
           AND academic_period_id = ?'
     );
 
     $resultStmt->execute([
         $studentId,
+        $classType,
+        $classId,
         $period['id']
     ]);
 
     $resultRows = $resultStmt->fetchAll();
+
+    /*
+     * SERVER-SIDE RESULT COMPLETION AND PRINT ELIGIBILITY
+     * Blank/missing values are incomplete; a saved zero is complete.
+     */
+    $behaviourFields = [
+        'attendance' => 'Punctuality',
+        'neatness' => 'Neatness',
+        'contentment' => 'Contentment',
+        'obedience' => 'Obedience',
+        'responsiveness' => 'Responsiveness',
+        'calmness' => 'Calmness',
+        'tolerance' => 'Tolerance',
+        'attentiveness' => 'Attentiveness',
+        'truthfulness' => 'Truthfulness',
+    ];
+
+    $scoreRowsBySubject = [];
+    foreach ($resultRows as $savedRow) {
+        $scoreRowsBySubject[(int) $savedRow['subject_id']] = $savedRow;
+    }
+
+    $requiredCount = 0;
+    $completedCount = 0;
+    $missingFields = [];
+
+    foreach ($subjects as $subject) {
+        if (!in_array($subject['is_required'], [true, 1, '1'], true)) {
+            continue;
+        }
+
+        $subjectId = (int) $subject['id'];
+        $saved = $scoreRowsBySubject[$subjectId] ?? null;
+
+        foreach (['ca1' => 'CA1', 'ca2' => 'CA2', 'exam' => 'Exam'] as $field => $label) {
+            $requiredCount++;
+            $value = $saved[$field] ?? null;
+
+            if ($value !== null && trim((string) $value) !== '') {
+                $completedCount++;
+            } else {
+                $missingFields[] = (string) $subject['name'] . ' — ' . $label;
+            }
+        }
+    }
+
+    $behaviourStmt = $pdo->prepare(
+        'SELECT attendance, neatness, contentment, obedience, responsiveness,
+                calmness, tolerance, attentiveness, truthfulness
+         FROM behavioural_reports
+         WHERE student_id = ? AND academic_period_id = ?
+         LIMIT 1'
+    );
+    $behaviourStmt->execute([$studentId, $period['id']]);
+    $savedBehaviour = $behaviourStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+    foreach ($behaviourFields as $field => $label) {
+        $requiredCount++;
+        $value = $savedBehaviour[$field] ?? null;
+
+        if ($value !== null && trim((string) $value) !== '') {
+            $completedCount++;
+        } else {
+            $missingFields[] = $label;
+        }
+    }
+
+    $completionPercent = $requiredCount > 0
+        ? round(($completedCount / $requiredCount) * 100, 2)
+        : 0.0;
+
+    $thresholdStmt = $pdo->prepare(
+        'SELECT setting_value FROM settings
+         WHERE setting_key = ?
+         LIMIT 1'
+    );
+    $thresholdStmt->execute(['result_print_completion_threshold']);
+    $savedThreshold = $thresholdStmt->fetchColumn();
+
+    $printThreshold = $savedThreshold !== false && is_numeric($savedThreshold)
+        ? max(0.0, min(100.0, (float) $savedThreshold))
+        : 95.0;
+
+    $completionSummary = [
+        'percentage' => $completionPercent,
+        'completed_fields' => $completedCount,
+        'required_fields' => $requiredCount,
+        'threshold' => $printThreshold,
+        'eligible' => $completionPercent >= $printThreshold,
+        'missing_fields' => $missingFields,
+    ];
+
+    if (($_GET['print'] ?? '') === '1'
+        && $completionPercent < $printThreshold) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'code' => 'RESULT_INCOMPLETE',
+            'message' => 'This result is ' . $completionPercent
+                . '% complete. Printing requires at least '
+                . $printThreshold . '% completion.',
+            'completion' => $completionSummary,
+        ]);
+        exit;
+    }
+
 
     $resultMap = [];
 
@@ -193,9 +348,9 @@ try {
 
         $resultMap[$subjectId] = [
             'id' => (int) $row['id'],
-            'ca1' => (float) $row['ca1'],
-            'ca2' => (float) $row['ca2'],
-            'exam' => (float) $row['exam'],
+            'ca1' => $row['ca1'] === null ? null : (float) $row['ca1'],
+            'ca2' => $row['ca2'] === null ? null : (float) $row['ca2'],
+            'exam' => $row['exam'] === null ? null : (float) $row['exam'],
             'total' => round(
                 (float) $row['ca1']
                 + (float) $row['ca2']
@@ -211,29 +366,29 @@ try {
      * CLASS AVERAGES
      */
     $classAverageStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             st.id AS student_id,
             COALESCE(
                 SUM(r.ca1 + r.ca2 + r.exam),
                 0
             ) AS total_score,
             COUNT(r.id) AS completed_subjects
-
         FROM students st
-
         LEFT JOIN results r
             ON r.student_id = st.id
+           AND r.class_type = ?
+           AND r.class_id = ?
            AND r.academic_period_id = ?
-
-        WHERE st.class_id = ?
+        WHERE st.{$mappingClassColumn} = ?
           AND st.is_active = 1
-
-        GROUP BY st.id'
+        GROUP BY st.id"
     );
 
     $classAverageStmt->execute([
+        $classType,
+        $classId,
         $period['id'],
-        $student['class_id']
+        $classId
     ]);
 
     $classAverageRows =
@@ -424,6 +579,7 @@ try {
          * Keep BOTH structures so the existing frontend
          * can use whichever it expects.
          */
+        'completion' => $completionSummary,
         'results' => $resultMap,
 
         'subjects' => array_map(

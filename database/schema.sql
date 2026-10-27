@@ -11,6 +11,8 @@ CREATE TABLE admins (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(120) NOT NULL,
     email VARCHAR(190) NOT NULL UNIQUE,
+    role ENUM('admin','exam_officer','teacher','student','management') NOT NULL DEFAULT 'exam_officer',
+    student_id BIGINT UNSIGNED NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     last_login_at DATETIME NULL,
@@ -50,6 +52,7 @@ CREATE TABLE academic_periods (
     examination_date DATE NULL,
     vacation_date DATE NULL,
     resumption_date DATE NULL,
+    results_released TINYINT(1) NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
@@ -190,9 +193,9 @@ CREATE TABLE results (
     subject_id BIGINT UNSIGNED NOT NULL,
     academic_period_id BIGINT UNSIGNED NOT NULL,
 
-    ca1 DECIMAL(5,2) NOT NULL DEFAULT 0.00,
-    ca2 DECIMAL(5,2) NOT NULL DEFAULT 0.00,
-    exam DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    ca1 DECIMAL(5,2) NULL DEFAULT NULL,
+    ca2 DECIMAL(5,2) NULL DEFAULT NULL,
+    exam DECIMAL(5,2) NULL DEFAULT NULL,
 
     teacher_remark VARCHAR(255) NULL,
     result_remark VARCHAR(255) NULL,
@@ -291,3 +294,50 @@ CREATE TABLE exemption_dates (
         REFERENCES academic_periods(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- ACCOUNT-SPECIFIC PERMISSIONS
+-- =========================================================
+CREATE TABLE account_permissions (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT UNSIGNED NOT NULL,
+    permission_key VARCHAR(100) NOT NULL,
+    is_allowed TINYINT(1) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_account_permission (account_id, permission_key),
+    CONSTRAINT fk_account_permissions_account
+        FOREIGN KEY (account_id) REFERENCES admins(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- TEACHER CLASS AND SUBJECT ASSIGNMENTS
+-- NULL subject_id means all subjects in that class.
+-- class_type distinguishes conventional and Arabic class IDs.
+-- =========================================================
+CREATE TABLE teacher_assignments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT UNSIGNED NOT NULL,
+    class_type ENUM('conventional','arabic') NOT NULL,
+    class_id BIGINT UNSIGNED NOT NULL,
+    subject_id BIGINT UNSIGNED NULL,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_teacher_assignment_lookup
+        (account_id, class_type, class_id, subject_id),
+    KEY idx_teacher_class (class_type, class_id),
+    CONSTRAINT fk_teacher_assignments_account
+        FOREIGN KEY (account_id) REFERENCES admins(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_teacher_assignments_subject
+        FOREIGN KEY (subject_id) REFERENCES subjects(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE admins
+    ADD CONSTRAINT fk_admins_student
+        FOREIGN KEY (student_id) REFERENCES students(id)
+        ON DELETE SET NULL;

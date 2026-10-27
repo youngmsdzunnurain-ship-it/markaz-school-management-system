@@ -1655,19 +1655,6 @@ body {
     padding: 34px 32px 56px !important;
 }
 
-.students-page::before {
-    content: "" !important;
-    position: fixed !important;
-    inset: 0 !important;
-    background-image: url("../assets/images/markaz-logo.jpg") !important;
-    background-repeat: repeat !important;
-    background-position: center center !important;
-    background-size: 430px 430px !important;
-    opacity: 0.032 !important;
-    pointer-events: none !important;
-    z-index: -1 !important;
-}
-
 /* HEADER */
 
 .students-topbar {
@@ -5688,3 +5675,174 @@ body {
 }
 
 /* END MARKAZ-STUDENTS-TABLE-ZEBRA-HOVER-V7 */
+/* SHARED SOFT GREEN TABLE HOVER */
+.students-table tbody tr:hover td {
+    background: #e1f0e5 !important;
+    transition: background-color 140ms ease;
+}
+
+/* STUDENTS HEADER — PREMIUM 2026 */
+.students-page .students-topbar {
+    position: relative !important;
+    isolation: isolate !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    min-height: 166px !important;
+    margin: 0 0 30px !important;
+    padding: 30px 32px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(230,195,108,.24) !important;
+    border-radius: 22px !important;
+    background:
+        radial-gradient(ellipse at 88% 12%, rgba(230,195,108,.16), transparent 30%),
+        linear-gradient(120deg, #071f16 0%, #0c3525 48%, #15543a 100%) !important;
+    box-shadow: 0 18px 42px rgba(7,31,22,.19), inset 0 1px 0 rgba(255,255,255,.07) !important;
+    color: #fff !important;
+}
+.students-page .students-topbar::before {
+    content: "" !important;
+    position: absolute !important;
+    z-index: -1 !important;
+    right: -56px !important;
+    top: -92px !important;
+    width: 280px !important;
+    height: 280px !important;
+    border: 1px solid rgba(239,213,141,.25) !important;
+    border-radius: 38% !important;
+    transform: rotate(45deg) !important;
+    box-shadow: 0 0 0 18px rgba(239,213,141,.025), 0 0 0 38px rgba(239,213,141,.025) !important;
+    background: repeating-linear-gradient(45deg, transparent 0 17px, rgba(239,213,141,.045) 18px 19px) !important;
+    pointer-events: none !important;
+}
+.students-page .students-topbar::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 32px !important;
+    top: 0 !important;
+    width: 58px !important;
+    height: 4px !important;
+    border-radius: 0 0 5px 5px !important;
+    background: linear-gradient(90deg, #f0d98f, #bd963f) !important;
+    pointer-events: none !important;
+}
+.students-page .students-topbar > div {
+    position: relative !important;
+    z-index: 1 !important;
+    min-width: 0 !important;
+}
+.students-page .students-topbar .eyebrow {
+    display: block !important;
+    margin: 0 0 9px !important;
+    color: #efd58d !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 2.4px !important;
+    text-transform: uppercase !important;
+}
+.students-page .students-topbar h1 {
+    margin: 0 0 9px !important;
+    color: #fff !important;
+    font-size: clamp(30px, 4vw, 38px) !important;
+    font-weight: 780 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.8px !important;
+}
+.students-page .students-topbar p {
+    max-width: 540px !important;
+    margin: 0 !important;
+    color: rgba(255,255,255,.76) !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
+}
+.students-page .students-topbar #addStudentButton {
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+    padding: 0 18px !important;
+    border: 1px solid #efd58d !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #f2dfaa, #d4b45f) !important;
+    color: #102b1e !important;
+    box-shadow: 0 7px 18px rgba(0,0,0,.14) !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    transition: transform .2s ease, box-shadow .2s ease !important;
+}
+.students-page .students-topbar #addStudentButton:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 10px 22px rgba(0,0,0,.2) !important;
+}
+@media (max-width: 600px) {
+    .students-page .students-topbar {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 18px !important;
+        min-height: 0 !important;
+        padding: 25px 22px !important;
+        border-radius: 18px !important;
+    }
+    .students-page .students-topbar::after {
+        left: 22px !important;
+    }
+    .students-page .students-topbar #addStudentButton {
+        align-self: flex-start !important;
+    }
+}
+
+/* STUDENTS HEADER — SETTINGS-STYLE BACK LINK */
+.students-page .students-topbar {
+    justify-content: flex-start !important;
+    gap: 24px !important;
+}
+.students-page .students-topbar .students-back-link {
+    position: relative !important;
+    z-index: 2 !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+    padding: 0 16px !important;
+    border: 1px solid rgba(239,213,141,.42) !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,.055) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease !important;
+}
+.students-page .students-topbar .students-back-link:hover {
+    border-color: rgba(239,213,141,.72) !important;
+    background: rgba(239,213,141,.12) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+.students-page .students-topbar .students-heading-copy {
+    flex: 1 1 auto !important;
+}
+.students-page .students-topbar #addStudentButton {
+    margin-left: auto !important;
+}
+@media (max-width: 600px) {
+    .students-page .students-topbar {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 18px !important;
+    }
+    .students-page .students-topbar .students-back-link {
+        order: 2 !important;
+    }
+    .students-page .students-topbar .students-heading-copy {
+        order: 1 !important;
+    }
+    .students-page .students-topbar #addStudentButton {
+        order: 3 !important;
+        margin-left: 0 !important;
+    }
+}

@@ -1,0 +1,337 @@
+/* MARKAZ shared login styling — one source of truth */
+:root {
+  --markaz-green: #176b45;
+  --markaz-green-dark: #104c32;
+  --markaz-gold: #d5ad43;
+  --markaz-ink: #18352a;
+  --markaz-muted: #68766f;
+}
+.login-page,
+.role-login-page {
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 32px 20px;
+  overflow-x: hidden;
+  background-color: #f5f8f5;
+  flex-direction: column;
+  gap: 0;
+}
+.login-page::before,
+.role-login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("../assets/images/markaz-logo.jpg");
+  background-repeat: repeat;
+  background-position: 18px 18px;
+  background-size: 132px 132px;
+  opacity: .045;
+}
+.login-card,
+.role-login-card {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  width: min(100%, 500px);
+  max-width: 500px;
+  min-height: 480px;
+  margin: 0 auto;
+  flex: 0 1 500px;
+}
+.role-login-card { max-width: 500px; }
+.student-login-card {
+  width: min(100%, 780px);
+  max-width: 780px;
+  min-height: 520px;
+  flex-basis: 780px;
+}
+.login-page .logo-wrap,
+.role-login-page .role-logo {
+  border: 3px solid var(--markaz-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(213,173,67,.18);
+}
+.login-page .logo-wrap { padding: 3px; }
+.role-login-page .role-logo {
+  background: #fff;
+  padding: 3px;
+}
+.login-page .login-button,
+.role-login-page .login-button,
+.role-login-page button[type="submit"] {
+  background: var(--markaz-green);
+}
+.login-page .login-button:hover,
+.role-login-page .login-button:hover,
+.role-login-page button[type="submit"]:hover {
+  background: var(--markaz-green-dark);
+}
+/* The brand logo is enough; remove redundant decorative role icons. */
+.role-login-page .role-icon { display: none !important; }
+/* Student fields use two columns on desktop and one on narrow screens. */
+.student-login-card .preview-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 22px;
+}
+.markaz-shared-login-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 520px);
+  margin: 12px auto 0;
+  padding: 0 12px 12px;
+  border: 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.markaz-shared-login-footer a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--markaz-green);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.markaz-shared-login-footer a:hover { text-decoration: underline; }
+.markaz-shared-login-footer .support-line {
+  color: var(--markaz-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.markaz-shared-login-footer .support-whatsapp { color: var(--markaz-green); }
+.markaz-support-settings {
+  box-sizing: border-box;
+  width: min(100% - 32px, 900px);
+  margin: 24px auto;
+  padding: 22px;
+  border: 1px solid #e0e9e2;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(20,65,43,.06);
+  color: #18352a;
+}
+.markaz-support-settings h2 { margin: 0 0 8px; font-size: 20px; }
+.markaz-support-settings p { color: #68766f; line-height: 1.5; }
+.markaz-support-settings label {
+  display: block;
+  margin: 14px 0 6px;
+  font-weight: 600;
+}
+.markaz-support-settings input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 460px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd8cf;
+  border-radius: 8px;
+  font: inherit;
+}
+.markaz-support-settings button {
+  min-height: 42px;
+  margin-top: 14px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--markaz-green);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.markaz-support-settings button:hover { background: var(--markaz-green-dark); }
+#markazSupportStatus { min-height: 1.4em; margin-bottom: 0; }
+@media (max-width: 600px) {
+  .login-card,
+  .role-login-card,
+  .student-login-card {
+    min-height: 0;
+  }
+
+  .login-page,
+  .role-login-page {
+    min-height: 100vh;
+    padding: 22px 13px;
+  }
+  .login-card,
+  .role-login-card {
+    width: 100%;
+    max-width: 460px;
+    flex-basis: auto;
+    margin-inline: auto;
+  }
+  .student-login-card {
+    width: 100%;
+    max-width: 740px;
+    flex-basis: auto;
+    margin-inline: auto;
+  }
+  .student-login-card .preview-form {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
+  .login-page::before,
+  .role-login-page::before { background-size: 108px 108px; }
+  .markaz-shared-login-footer { gap: 9px; margin-top: 13px; }
+  .markaz-support-settings { width: calc(100% - 24px); padding: 18px; }
+}
+
+
+.markaz-login-copyright {
+  display: block;
+  margin-top: 2px;
+  color: #171717;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+
+.login-page .login-heading,
+.login-page .login-heading h2 {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* MARKAZ LOGIN CARD FIX — content-driven sizing */
+.login-page,
+.role-login-page {
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.login-page .login-card,
+.role-login-page .role-login-card {
+  box-sizing: border-box;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  flex: 0 1 auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.login-page .login-card {
+  width: min(100%, 500px);
+  padding: 32px 34px;
+}
+
+.role-login-page .role-login-card {
+  width: min(100%, 500px);
+}
+
+.role-login-page .student-login-card {
+  width: min(100%, 780px);
+  max-width: 780px;
+}
+
+.login-page .brand,
+.login-page .login-heading {
+  width: 100%;
+  text-align: center;
+}
+
+.login-page .login-heading {
+  margin: 22px 0 20px;
+}
+
+.login-page .login-heading h2,
+.login-page .login-heading p {
+  text-align: center;
+}
+
+.login-page .form-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.login-page .input-box {
+  width: 100%;
+  min-width: 0;
+}
+
+.login-page .input-box input {
+  min-width: 0;
+  width: 100%;
+}
+
+.login-page .login-button,
+.role-login-page button[type="submit"] {
+  width: 100%;
+  min-height: 48px;
+}
+
+.login-page .back-home,
+.role-login-page .back-home {
+  position: static;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 16px auto 0;
+}
+
+.markaz-shared-login-footer {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(100%, 520px);
+  margin: 12px auto 0;
+  padding: 0 12px 12px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .login-page,
+  .role-login-page {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 20px 13px;
+  }
+
+  .login-page .login-card,
+  .role-login-page .role-login-card {
+    width: 100%;
+    max-width: 460px;
+    min-height: 0;
+    padding: 26px 21px;
+    flex: 0 0 auto;
+  }
+
+  .login-page .login-heading {
+    margin: 20px 0 18px;
+  }
+
+  .role-login-page .student-login-card {
+    max-width: 740px;
+  }
+
+  .student-login-card .preview-form {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
+
+  .markaz-shared-login-footer {
+    margin-top: 12px;
+    padding-bottom: 8px;
+  }
+}

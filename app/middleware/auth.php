@@ -10,15 +10,59 @@ function requireLogin(): void
     if (empty($_SESSION['admin_id'])) {
         http_response_code(401);
         header('Content-Type: application/json; charset=utf-8');
-
         echo json_encode([
             'success' => false,
             'message' => 'Authentication required.'
         ]);
         exit;
     }
-}
 
+    // Recheck persistent account freezes on every authenticated request.
+    require_once __DIR__ . '/../config/app.php';
+    $freezeStmt = db()->prepare(
+        'SELECT is_frozen FROM admins WHERE id = ? LIMIT 1'
+    );
+    $freezeStmt->execute([(int) $_SESSION['admin_id']]);
+    $isFrozen = $freezeStmt->fetchColumn();
+
+    if ($isFrozen === false || (bool) $isFrozen) {
+        $_SESSION = [];
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+
+        http_response_code($isFrozen === false ? 401 : 403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'account_frozen' => $isFrozen !== false,
+            'message' => $isFrozen === false
+                ? 'This account is no longer available.'
+                : 'This account has been frozen by the Senior Admin. Contact the school administrator.'
+        ]);
+        exit;
+    }
+
+    // Admin is exempt from portal switches; other roles are rechecked per request.
+    $role = (string) ($_SESSION['admin_role'] ?? '');
+    $portalSettings = [
+        'exam_officer' => 'exam_officer_access',
+        'teacher' => 'teacher_access',
+        'student' => 'student_result_access',
+        'management' => 'management_access',
+    ];
+
+    if (isset($portalSettings[$role]) && !systemAccessEnabled($portalSettings[$role])) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'portal_closed' => true,
+            'message' => 'Your portal access is currently closed by the Admin.'
+        ]);
+        exit;
+    }
+}
 function currentAdminRole(): string
 {
     requireLogin();
@@ -41,7 +85,7 @@ function systemAccessEnabled(string $settingKey): bool
 
     $value = $stmt->fetchColumn();
 
-    return $value === '1' || strtolower((string) $value) === 'true';
+    return in_array(strtolower(trim((string) $value)), ['1', 'true', 'yes', 'on'], true);
 }
 
 /**
@@ -155,4 +199,115 @@ function requireResultStaff(): void
         'message' => 'Result access required.'
     ]);
     exit;
+}
+
+/**
+ * Enforce independently assigned role permissions.
+ * Super Admin retains full access. Printing/exporting is never
+ * automatically granted by a non-admin role.
+ */
+
+/**
+ * Verify that a teacher is assigned to a conventional class and subject.
+ * A NULL subject_id assignment grants all subjects in that class.
+ */
+function requireTeacherAssignment(
+    int $classId,
+    int $subjectId,
+    string $classType = 'conventional'
+): void
+{
+    if (currentAdminRole() !== 'teacher') {
+        return;
+    }
+
+    if (!in_array($classType, ['conventional', 'arabic'], true)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid class type.'
+        ]);
+        exit;
+    }
+
+    $accountId = (int)($_SESSION['admin_id'] ?? 0);
+
+    if ($accountId < 1 || $classId < 1 || $subjectId < 1) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'message' => 'You are not assigned to this class and subject.'
+        ]);
+        exit;
+    }
+
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        "SELECT 1
+         FROM teacher_assignments
+         WHERE account_id = ?
+           AND class_type = ?
+           AND class_id = ?
+           AND is_active = 1
+           AND (subject_id = ? OR subject_id IS NULL)
+         LIMIT 1"
+    );
+    $stmt->execute([$accountId, $classType, $classId, $subjectId]);
+
+    if (!$stmt->fetchColumn()) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'message' => 'You are not assigned to this class and subject.'
+        ]);
+        exit;
+    }
+}
+
+function requireRolePermission(string $permission): void
+{
+    $role = currentAdminRole();
+
+    $permissionKeys = [
+        "print_results",
+        "export_results",
+    ];
+
+    if (!in_array($permission, $permissionKeys, true)) {
+        http_response_code(403);
+        echo json_encode([
+            "success" => false,
+            "message" => "Permission denied."
+        ]);
+        exit;
+    }
+
+    $roleSettings = [
+        "admin" => "admin",
+        "exam_officer" => "exam_officer",
+        "teacher" => "teacher",
+        "student" => "student",
+        "management" => "management",
+    ];
+
+    if (!isset($roleSettings[$role])) {
+        http_response_code(403);
+        echo json_encode([
+            "success" => false,
+            "message" => "Permission denied."
+        ]);
+        exit;
+    }
+
+    $settingKey = $roleSettings[$role] . "_" . $permission;
+    $allowed = systemAccessEnabled($settingKey);
+
+    if (!$allowed) {
+        http_response_code(403);
+        echo json_encode([
+            "success" => false,
+            "message" => "You do not have permission to perform this action."
+        ]);
+        exit;
+    }
 }

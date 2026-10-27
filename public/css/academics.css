@@ -1,0 +1,978 @@
+/* ========================================
+   MARKAZ ACADEMICS PAGE
+   Base styles and hero section
+======================================== */
+
+.academics-page {
+    --academics-green: #124b32;
+    --academics-deep-green: #0b3524;
+    --academics-gold: #c9a44c;
+    --academics-cream: #f7f8f3;
+    --academics-text: #26352d;
+    --academics-muted: #66736b;
+}
+
+.academics-page main {
+    overflow: hidden;
+}
+
+.academics-page .academics-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 440px;
+    padding: 88px 0;
+    color: #fff;
+    background:
+        linear-gradient(
+            110deg,
+            rgba(8, 43, 28, .97),
+            rgba(18, 75, 50, .90)
+        ),
+        url("../assets/images/main-building.jpg") center / cover no-repeat;
+}
+
+.academics-page .academics-hero::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 340px;
+    height: 340px;
+    right: 8%;
+    top: 50%;
+    border: 1px solid rgba(201, 164, 76, .30);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow:
+        0 0 0 35px rgba(255, 255, 255, .025),
+        0 0 0 70px rgba(255, 255, 255, .02);
+}
+
+.academics-page .academics-hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.academics-page .academics-eyebrow {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: var(--academics-gold);
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1.6;
+}
+
+.academics-page .academics-hero h1 {
+    max-width: 680px;
+    margin: 0 0 20px;
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+}
+
+.academics-page .academics-hero p {
+    max-width: 620px;
+    margin: 0 0 30px;
+    color: rgba(255, 255, 255, .88);
+    font-size: 1.05rem;
+    line-height: 1.9;
+}
+
+.academics-page .academics-hero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 50px;
+    padding: 13px 23px;
+    border: 1px solid var(--academics-gold);
+    border-radius: 5px;
+    color: var(--academics-deep-green);
+    background: var(--academics-gold);
+    font-weight: 750;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease;
+}
+
+.academics-page .academics-hero-button:hover {
+    background: #e0c16f;
+    transform: translateY(-2px);
+}
+
+.academics-page .academics-intro {
+    padding: 76px 0 35px;
+    text-align: center;
+}
+
+.academics-page .academics-intro .container {
+    max-width: 850px;
+}
+
+.academics-page .academics-intro h2 {
+    margin: 0 0 18px;
+    color: var(--academics-green);
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    line-height: 1.25;
+}
+
+.academics-page .academics-intro p {
+    margin: 0 auto;
+    color: var(--academics-muted);
+    font-size: 1rem;
+    line-height: 1.9;
+}
+/* ========================================
+   LEARNING PATHWAY CARDS
+======================================== */
+
+.academics-page .pathways-section {
+    padding: 35px 0 85px;
+    background: #fff;
+}
+
+.academics-page .pathways-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    align-items: stretch;
+}
+
+.academics-page .pathway-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 35px;
+    border: 1px solid #e4eae4;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(15, 55, 35, .06);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.academics-page .pathway-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 42px rgba(15, 55, 35, .11);
+}
+
+.academics-page .conventional-card {
+    border-top: 4px solid var(--academics-green);
+}
+
+.academics-page .quran-card {
+    border-top: 4px solid var(--academics-gold);
+}
+
+.academics-page .pathway-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    color: #fff;
+    background: var(--academics-green);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.academics-page .quran-card .pathway-icon {
+    color: var(--academics-deep-green);
+    background: #f4e9c9;
+}
+
+.academics-page .pathway-label {
+    margin-bottom: 10px;
+    color: var(--academics-muted);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.academics-page .pathway-card > h2 {
+    margin: 0 0 16px;
+    color: var(--academics-green);
+    font-size: clamp(1.45rem, 2.5vw, 2rem);
+    line-height: 1.3;
+}
+
+.academics-page .pathway-card > p {
+    margin: 0 0 25px;
+    color: var(--academics-muted);
+    font-size: .96rem;
+    line-height: 1.85;
+}
+
+.academics-page .pathway-highlights {
+    display: grid;
+    gap: 22px;
+    margin-bottom: 28px;
+}
+
+.academics-page .pathway-highlights > div,
+.academics-page .quran-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.academics-page .highlight-mark {
+    display: flex;
+    flex: 0 0 27px;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    color: var(--academics-green);
+    background: #eaf3ec;
+    font-size: .85rem;
+    font-weight: 800;
+}
+
+.academics-page .pathway-card h3 {
+    margin: 0 0 7px;
+    color: var(--academics-text);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.academics-page .pathway-highlights p,
+.academics-page .quran-feature p {
+    margin: 0;
+    color: var(--academics-muted);
+    font-size: .9rem;
+    line-height: 1.75;
+}
+
+.academics-page .quran-feature {
+    margin-bottom: 23px;
+}
+
+.academics-page .quran-feature-icon {
+    display: flex;
+    flex: 0 0 29px;
+    align-items: center;
+    justify-content: center;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    color: #8c6b1e;
+    background: #fbf2d9;
+    font-size: 1rem;
+}
+
+.academics-page .pathway-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    margin-top: auto;
+    padding-top: 15px;
+    color: var(--academics-green);
+    font-size: .92rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.academics-page .pathway-link span {
+    transition: transform .2s ease;
+}
+
+.academics-page .pathway-link:hover span {
+    transform: translateX(5px);
+}
+
+.academics-page .pathway-link:focus-visible,
+.academics-page .academics-hero-button:focus-visible {
+    outline: 3px solid var(--academics-gold);
+    outline-offset: 4px;
+}
+/* ========================================
+   QUR'AN MEMORISATION PROGRESSION
+======================================== */
+
+.academics-page .memorisation-section {
+    padding: 80px 0;
+    background: var(--academics-cream);
+}
+
+.academics-page .memorisation-heading {
+    max-width: 760px;
+    margin: 0 auto 42px;
+    text-align: center;
+}
+
+.academics-page .memorisation-heading h2 {
+    margin: 0 0 16px;
+    color: var(--academics-green);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1.25;
+}
+
+.academics-page .memorisation-heading p {
+    margin: 0;
+    color: var(--academics-muted);
+    line-height: 1.9;
+}
+
+.academics-page .memorisation-stages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.academics-page .stage-card {
+    padding: 30px;
+    border: 1px solid #e4e9df;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(15, 55, 35, .045);
+}
+
+.academics-page .stage-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    color: var(--academics-deep-green);
+    background: #f4e9c9;
+    font-size: .9rem;
+    font-weight: 800;
+}
+
+.academics-page .stage-card h3 {
+    margin: 0 0 12px;
+    color: var(--academics-green);
+    font-size: 1.25rem;
+}
+
+.academics-page .stage-card p {
+    margin: 0;
+    color: var(--academics-muted);
+    font-size: .94rem;
+    line-height: 1.85;
+}
+
+.academics-page .memorisation-note {
+    margin: 25px 0 0;
+    color: var(--academics-muted);
+    font-size: .85rem;
+    line-height: 1.7;
+    text-align: center;
+}
+
+/* ========================================
+   CLOSING CALL TO ACTION
+======================================== */
+
+.academics-page .academics-cta {
+    position: relative;
+    padding: 75px 0;
+    overflow: hidden;
+    color: #fff;
+    background: var(--academics-green);
+}
+
+.academics-page .academics-cta::after {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 330px;
+    height: 330px;
+    border: 1px solid rgba(201, 164, 76, .35);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 35px rgba(255, 255, 255, .025),
+        0 0 0 70px rgba(255, 255, 255, .02);
+    pointer-events: none;
+}
+
+.academics-page .academics-cta-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.academics-page .academics-cta h2 {
+    margin: 0 0 16px;
+    color: #fff;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    line-height: 1.25;
+}
+
+.academics-page .academics-cta p {
+    max-width: 650px;
+    margin: 0 auto 28px;
+    color: rgba(255, 255, 255, .85);
+    line-height: 1.9;
+}
+
+.academics-page .academics-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.academics-page .academics-cta-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 22px;
+    border: 1px solid var(--academics-gold);
+    border-radius: 5px;
+    font-size: .92rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background .2s ease, color .2s ease;
+}
+
+.academics-page .academics-cta-primary {
+    color: var(--academics-deep-green);
+    background: var(--academics-gold);
+}
+
+.academics-page .academics-cta-primary:hover {
+    background: #e0c16f;
+}
+
+.academics-page .academics-cta-secondary {
+    color: #fff;
+    background: transparent;
+}
+
+.academics-page .academics-cta-secondary:hover {
+    color: var(--academics-deep-green);
+    background: #fff;
+}
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 900px) {
+    .academics-page .academics-hero {
+        min-height: 390px;
+        padding: 70px 0;
+    }
+
+    .academics-page .academics-hero::after {
+        right: -110px;
+        width: 280px;
+        height: 280px;
+    }
+
+    .academics-page .pathways-grid {
+        gap: 20px;
+    }
+
+    .academics-page .pathway-card {
+        padding: 26px;
+    }
+
+    .academics-page .memorisation-stages {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .academics-page .stage-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .academics-page .academics-hero {
+        min-height: 370px;
+        padding: 60px 0;
+    }
+
+    .academics-page .academics-hero::after {
+        top: auto;
+        right: -150px;
+        bottom: -100px;
+        width: 240px;
+        height: 240px;
+        transform: none;
+    }
+
+    .academics-page .academics-hero h1 {
+        font-size: clamp(2.35rem, 10vw, 3.2rem);
+        letter-spacing: -1px;
+    }
+
+    .academics-page .academics-hero p {
+        font-size: .96rem;
+        line-height: 1.8;
+    }
+
+    .academics-page .academics-intro {
+        padding: 55px 0 25px;
+    }
+
+    .academics-page .pathways-section {
+        padding: 25px 0 55px;
+    }
+
+    .academics-page .pathways-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .academics-page .pathway-card {
+        padding: 25px 22px;
+        border-radius: 11px;
+    }
+
+    .academics-page .pathway-card > h2 {
+        font-size: 1.6rem;
+    }
+
+    .academics-page .memorisation-section {
+        padding: 55px 0;
+    }
+
+    .academics-page .memorisation-heading {
+        margin-bottom: 30px;
+    }
+
+    .academics-page .memorisation-stages {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .academics-page .stage-card:last-child {
+        grid-column: auto;
+    }
+
+    .academics-page .stage-card {
+        padding: 25px 22px;
+    }
+
+    .academics-page .academics-cta {
+        padding: 55px 0;
+    }
+
+    .academics-page .academics-cta-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .academics-page .academics-cta-actions a {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .academics-page .pathway-card,
+    .academics-page .pathway-link span,
+    .academics-page .academics-hero-button,
+    .academics-page .academics-cta-actions a {
+        transition: none;
+    }
+
+    .academics-page .pathway-card:hover,
+    .academics-page .academics-hero-button:hover {
+        transform: none;
+    }
+}
+
+
+/* Academics hero: keep text comfortably away from screen edges */
+.academics-page .academics-hero-content {
+    box-sizing: border-box;
+    padding-inline: clamp(18px, 4vw, 48px);
+}
+
+/* English and Arabic programme headings */
+.academics-page .heading-arabic {
+    display: block;
+    margin-top: 7px;
+    color: var(--academics-gold);
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: .78em;
+    font-weight: 600;
+    line-height: 1.7;
+    letter-spacing: 0;
+    text-align: inherit;
+}
+
+/* Tahfiz progression */
+.academics-page .memorisation-stages {
+    position: relative;
+    gap: 24px;
+}
+
+.academics-page .stage-card {
+    position: relative;
+    border-top: 3px solid var(--academics-gold);
+}
+
+.academics-page .stage-number {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 18px;
+    color: #fff;
+    background: var(--academics-green);
+}
+
+.academics-page .stage-card h3 {
+    line-height: 1.45;
+}
+
+@media (min-width: 901px) {
+    .academics-page .memorisation-stages {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .academics-page .stage-card {
+        min-height: 220px;
+    }
+}
+
+@media (max-width: 640px) {
+    .academics-page .heading-arabic {
+        font-size: .75em;
+    }
+
+    .academics-page .memorisation-stages {
+        gap: 14px;
+    }
+
+    .academics-page .stage-card {
+        min-height: 0;
+    }
+}
+
+/* Tahfiz stages: horizontal progression on larger screens */
+@media (min-width: 901px) {
+    .academics-page .memorisation-stages {
+        position: relative;
+        gap: 24px;
+    }
+
+    .academics-page .memorisation-stages::before {
+        content: "";
+        position: absolute;
+        top: 52px;
+        left: 16%;
+        right: 16%;
+        height: 2px;
+        background: var(--academics-gold);
+        opacity: 0.65;
+    }
+
+    .academics-page .stage-card {
+        z-index: 1;
+        background: #fff;
+    }
+
+    .academics-page .stage-number {
+        position: relative;
+        z-index: 2;
+        border: 4px solid #fff;
+        box-sizing: content-box;
+    }
+}
+
+/* Keep the Tahfiz stages comfortable on smaller screens */
+@media (max-width: 900px) {
+    .academics-page .memorisation-stages::before {
+        content: none;
+    }
+}
+
+/* Unavailable public pages */
+.academics-page .nav-unavailable,
+.academics-page .nav-dropdown .nav-unavailable {
+    display: block;
+    color: #777;
+    cursor: default;
+    opacity: 0.85;
+}
+
+.academics-page .nav-unavailable small {
+    margin-left: 5px;
+    font-size: 0.68em;
+    color: var(--academics-gold);
+    white-space: nowrap;
+}
+
+.academics-page .footer-unavailable {
+    display: block;
+    color: inherit;
+    opacity: 0.7;
+    cursor: default;
+    font-size: inherit;
+}
+
+/* ========================================
+   CONSISTENT ACADEMICS PAGE SPACING
+======================================== */
+
+.academics-page main > section {
+    box-sizing: border-box;
+}
+
+.academics-page main .container {
+    width: min(1120px, calc(100% - 48px));
+    margin-inline: auto;
+    box-sizing: border-box;
+}
+
+.academics-page .academics-hero {
+    min-height: 400px;
+    padding: 76px 0;
+}
+
+.academics-page .academics-hero-content {
+    padding-inline: 0;
+}
+
+.academics-page .academics-hero h1 {
+    margin-bottom: 20px;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+}
+
+.academics-page .academics-hero p {
+    margin-bottom: 26px;
+    line-height: 1.75;
+}
+
+.academics-page .academics-intro {
+    padding: 64px 0 30px;
+}
+
+.academics-page .academics-intro h2,
+.academics-page .memorisation-heading h2,
+.academics-page .academics-cta h2 {
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.academics-page .academics-intro p,
+.academics-page .pathway-card > p,
+.academics-page .memorisation-heading p,
+.academics-page .stage-card p,
+.academics-page .academics-cta p {
+    line-height: 1.75;
+}
+
+.academics-page .pathways-section {
+    padding: 30px 0 68px;
+}
+
+.academics-page .pathways-grid {
+    gap: 24px;
+    align-items: stretch;
+}
+
+.academics-page .pathway-card {
+    min-width: 0;
+    padding: 28px;
+    border-radius: 12px;
+}
+
+.academics-page .pathway-card > h2 {
+    margin-bottom: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.academics-page .pathway-card > p {
+    margin-bottom: 22px;
+}
+
+.academics-page .pathway-highlights {
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.academics-page .pathway-highlights > div,
+.academics-page .quran-feature {
+    min-width: 0;
+    gap: 12px;
+}
+
+.academics-page .pathway-highlights p,
+.academics-page .quran-feature p {
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.academics-page .memorisation-section {
+    padding: 68px 0;
+}
+
+.academics-page .memorisation-heading {
+    margin-bottom: 34px;
+}
+
+.academics-page .memorisation-heading h2 {
+    margin-bottom: 14px;
+}
+
+.academics-page .memorisation-stages {
+    align-items: stretch;
+    gap: 22px;
+}
+
+.academics-page .stage-card {
+    min-width: 0;
+    padding: 26px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.academics-page .stage-number {
+    margin-bottom: 16px;
+}
+
+.academics-page .stage-card h3 {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.academics-page .stage-card p {
+    font-size: .94rem;
+}
+
+.academics-page .memorisation-note {
+    margin-top: 22px;
+}
+
+.academics-page .academics-cta {
+    padding: 64px 0;
+}
+
+.academics-page .academics-cta h2 {
+    margin-bottom: 14px;
+}
+
+.academics-page .academics-cta p {
+    margin-bottom: 24px;
+}
+
+.academics-page .academics-cta-actions {
+    gap: 12px;
+}
+
+.academics-page .academics-cta-actions a {
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .academics-page .pathways-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .academics-page .pathway-card {
+        padding: 26px;
+    }
+
+    .academics-page .memorisation-stages {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .academics-page .stage-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .academics-page main .container {
+        width: calc(100% - 32px);
+    }
+
+    .academics-page .academics-hero {
+        min-height: 0;
+        padding: 58px 0;
+    }
+
+    .academics-page .academics-hero h1 {
+        font-size: clamp(2rem, 9vw, 3rem);
+        letter-spacing: -.7px;
+    }
+
+    .academics-page .academics-hero p {
+        font-size: .98rem;
+    }
+
+    .academics-page .academics-intro {
+        padding: 46px 0 22px;
+    }
+
+    .academics-page .pathways-section {
+        padding: 22px 0 48px;
+    }
+
+    .academics-page .pathway-card {
+        padding: 22px;
+    }
+
+    .academics-page .pathway-icon {
+        margin-bottom: 18px;
+    }
+
+    .academics-page .memorisation-section {
+        padding: 48px 0;
+    }
+
+    .academics-page .memorisation-heading {
+        margin-bottom: 26px;
+    }
+
+    .academics-page .memorisation-stages {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .academics-page .stage-card,
+    .academics-page .stage-card:last-child {
+        grid-column: auto;
+        padding: 22px;
+        min-height: 0;
+    }
+
+    .academics-page .stage-number {
+        margin-bottom: 12px;
+    }
+
+    .academics-page .memorisation-note {
+        margin-top: 18px;
+    }
+
+    .academics-page .academics-cta {
+        padding: 48px 0;
+    }
+
+    .academics-page .academics-cta-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .academics-page .academics-cta-actions a {
+        width: 100%;
+    }
+}
+
+/* Keep hero text comfortably inset */
+.academics-page .academics-hero-content {
+    box-sizing: border-box;
+    padding-inline: clamp(18px, 4vw, 48px);
+}

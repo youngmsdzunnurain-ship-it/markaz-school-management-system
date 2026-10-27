@@ -9,6 +9,17 @@ requireResultStaff();
 
 header('Content-Type: application/json; charset=utf-8');
 
+$classType = (string) ($_GET['class_type'] ?? 'conventional');
+
+if (!in_array($classType, ['conventional', 'arabic'], true)) {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid class type.'
+    ]);
+    exit;
+}
+
 $classId = filter_input(INPUT_GET, 'class_id', FILTER_VALIDATE_INT);
 
 if (!$classId || $classId < 1) {
@@ -24,13 +35,38 @@ if (!$classId || $classId < 1) {
 
 try {
     $pdo = db();
+    $isTeacher = currentAdminRole() === 'teacher';
+    $accountId = (int) ($_SESSION['admin_id'] ?? 0);
 
-    $classStmt = $pdo->prepare(
-        'SELECT id, name, level_group, is_active
-         FROM classes
-         WHERE id = ?
-         LIMIT 1'
-    );
+    if ($isTeacher) {
+        $assignmentStmt = $pdo->prepare(
+            'SELECT 1
+             FROM teacher_assignments
+             WHERE account_id = ?
+               AND class_type = ?
+               AND class_id = ?
+               AND is_active = 1
+             LIMIT 1'
+        );
+        $assignmentStmt->execute([$accountId, $classType, $classId]);
+
+        if (!$assignmentStmt->fetchColumn()) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'message' => 'You are not assigned to this class.'
+            ]);
+            exit;
+        }
+    }
+
+    $classSql = $classType === 'arabic'
+        ? 'SELECT id, name, NULL AS level_group, is_active
+           FROM arabic_classes WHERE id = ? LIMIT 1'
+        : 'SELECT id, name, level_group, is_active
+           FROM classes WHERE id = ? LIMIT 1';
+
+    $classStmt = $pdo->prepare($classSql);
 
     $classStmt->execute([$classId]);
     $class = $classStmt->fetch();
@@ -77,8 +113,18 @@ try {
         exit;
     }
 
-    $subjectStmt = $pdo->prepare(
-        'SELECT
+    $mappingTable = $classType === 'arabic'
+        ? 'arabic_class_subjects'
+        : 'class_subjects';
+    $mappingClassColumn = $classType === 'arabic'
+        ? 'arabic_class_id'
+        : 'class_id';
+    $studentClassColumn = $classType === 'arabic'
+        ? 'arabic_class_id'
+        : 'class_id';
+
+    $subjectSql = "
+        SELECT
             s.id,
             s.name,
             s.code,
@@ -87,19 +133,36 @@ try {
             s.max_exam,
             cs.is_required,
             cs.sort_order
-         FROM class_subjects cs
-         INNER JOIN subjects s
-            ON s.id = cs.subject_id
-         WHERE cs.class_id = ?
-           AND s.is_active = 1
-         ORDER BY cs.sort_order, s.name'
-    );
+        FROM {$mappingTable} cs
+        INNER JOIN subjects s ON s.id = cs.subject_id
+        WHERE cs.{$mappingClassColumn} = ?
+          AND s.is_active = 1";
 
-    $subjectStmt->execute([$classId]);
+    $subjectParams = [$classId];
+
+    if ($isTeacher) {
+        $subjectSql .= "
+          AND EXISTS (
+              SELECT 1
+              FROM teacher_assignments ta
+              WHERE ta.account_id = ?
+                AND ta.class_type = ?
+                AND ta.class_id = ?
+                AND ta.is_active = 1
+                AND (ta.subject_id = s.id OR ta.subject_id IS NULL)
+          )";
+        $subjectParams[] = $accountId;
+        $subjectParams[] = $classType;
+        $subjectParams[] = $classId;
+    }
+
+    $subjectSql .= ' ORDER BY cs.sort_order, s.name';
+    $subjectStmt = $pdo->prepare($subjectSql);
+    $subjectStmt->execute($subjectParams);
     $subjects = $subjectStmt->fetchAll();
 
     $studentStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             id,
             admission_number,
             first_name,
@@ -109,16 +172,16 @@ try {
             date_of_birth,
             is_active
          FROM students
-         WHERE class_id = ?
+         WHERE {$studentClassColumn} = ?
            AND is_active = 1
-         ORDER BY first_name, middle_name, last_name, admission_number'
+         ORDER BY first_name, middle_name, last_name, admission_number"
     );
 
     $studentStmt->execute([$classId]);
     $students = $studentStmt->fetchAll();
 
-    $resultStmt = $pdo->prepare(
-        'SELECT
+    $resultSql = "
+        SELECT
             r.id,
             r.student_id,
             r.subject_id,
@@ -127,18 +190,38 @@ try {
             r.exam,
             r.teacher_remark,
             r.result_remark
-         FROM results r
-         INNER JOIN students st
-            ON st.id = r.student_id
-         WHERE st.class_id = ?
-           AND r.academic_period_id = ?'
-    );
+        FROM results r
+        INNER JOIN students st ON st.id = r.student_id
+        WHERE st.{$studentClassColumn} = ?
+          AND r.class_type = ?
+          AND r.class_id = ?
+          AND r.academic_period_id = ?";
 
-    $resultStmt->execute([
+    $resultParams = [
+        $classId,
+        $classType,
         $classId,
         $period['id']
-    ]);
+    ];
 
+    if ($isTeacher) {
+        $resultSql .= "
+          AND EXISTS (
+              SELECT 1
+              FROM teacher_assignments ta
+              WHERE ta.account_id = ?
+                AND ta.class_type = ?
+                AND ta.class_id = ?
+                AND ta.is_active = 1
+                AND (ta.subject_id = r.subject_id OR ta.subject_id IS NULL)
+          )";
+        $resultParams[] = $accountId;
+        $resultParams[] = $classType;
+        $resultParams[] = $classId;
+    }
+
+    $resultStmt = $pdo->prepare($resultSql);
+    $resultStmt->execute($resultParams);
     $resultRows = $resultStmt->fetchAll();
 
     $results = [];
@@ -148,9 +231,9 @@ try {
             'id' => (int) $row['id'],
             'student_id' => (int) $row['student_id'],
             'subject_id' => (int) $row['subject_id'],
-            'ca1' => (float) $row['ca1'],
-            'ca2' => (float) $row['ca2'],
-            'exam' => (float) $row['exam'],
+            'ca1' => $row['ca1'] === null ? null : (float) $row['ca1'],
+            'ca2' => $row['ca2'] === null ? null : (float) $row['ca2'],
+            'exam' => $row['exam'] === null ? null : (float) $row['exam'],
             'total' => round(
                 (float) $row['ca1']
                 + (float) $row['ca2']

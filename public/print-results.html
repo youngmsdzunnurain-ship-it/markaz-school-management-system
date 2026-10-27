@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Print Results | MARKAZ</title>
+<link rel="stylesheet" href="./css/dashboard.css">
+<link rel="stylesheet" href="./css/app-watermark.css">
+<link rel="stylesheet" href="./css/website-image-polish.css">
+<link rel="stylesheet" href="./css/standard-page-heading.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f4;color:#172b22;
+font-family:Arial,sans-serif}
+header{background:linear-gradient(120deg,#071f16,#15543a);
+color:white;padding:28px max(20px,calc((100% - 1050px)/2));
+border-bottom:4px solid #d4b45f}
+header a{color:#efd58d;text-decoration:none}
+header h1{margin:18px 0 8px;font-size:clamp(25px,4vw,36px)}
+header p{color:#dce9e0;margin:0}
+main{max-width:1050px;margin:28px auto;padding:0 18px}
+.panel{background:white;border:1px solid #e0e8e2;border-radius:16px;
+padding:22px;margin-bottom:20px;box-shadow:0 5px 20px #102d1b0a}
+h2{font-size:19px;margin:0 0 16px}
+#message{color:#58685e;margin:8px 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:12px}
+button{font:inherit;cursor:pointer;border-radius:9px;padding:13px 16px;
+border:1px solid #d6e1d8;background:white;color:#173b2a;text-align:left}
+button:hover{border-color:#b99a4b;background:#fbfaf4}
+.class-button strong,.class-button small{display:block}
+.class-button small{margin-top:7px;color:#64746a}
+.student{display:flex;align-items:center;justify-content:space-between;
+gap:14px;border-bottom:1px solid #edf0ed;padding:14px 0}
+.student:last-child{border-bottom:0}
+.student-name{font-weight:600}
+.student button{background:#15543a;color:white;border:0;
+text-align:center;white-space:nowrap}
+.student button:hover{background:#0b3524}
+#backToClasses{margin-bottom:14px}
+.hidden{display:none!important}
+@media(max-width:480px){.student{align-items:flex-start;flex-direction:column}
+.student button{width:100%}}
+
+/* MARKAZ PRINT RESULTS — PREMIUM INTERNAL PAGE */
+body.print-results-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f3f6f4;
+  color: #172b22;
+}
+
+.print-results-page > header {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 28px max(20px, calc((100% - 1050px) / 2));
+  background: linear-gradient(120deg, #071f16, #0c3525 52%, #15543a);
+  color: #fff;
+  border-bottom: 4px solid #d4b45f;
+  box-shadow: 0 12px 30px rgba(7, 31, 22, .14);
+}
+
+.print-results-page > header a {
+  color: #efd58d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.print-results-page > header a:hover {
+  color: #fff2c6;
+}
+
+.print-results-page > header h1 {
+  margin: 18px 0 8px;
+  color: #fff;
+  font-size: clamp(27px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.print-results-page > header p {
+  max-width: 650px;
+  margin: 0;
+  color: #dce9e0;
+  line-height: 1.65;
+}
+
+.print-results-page > main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  max-width: 1086px;
+  margin: 30px auto;
+  padding: 0 18px;
+  background: transparent !important;
+}
+
+.print-results-page .panel {
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 28px);
+  margin-bottom: 22px;
+  border: 1px solid #dce7df;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .91);
+  box-shadow: 0 12px 34px rgba(16, 45, 27, .075);
+  backdrop-filter: blur(2px);
+}
+
+.print-results-page .panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  color: #103c29;
+  font-size: clamp(19px, 2.5vw, 23px);
+  font-weight: 800;
+}
+
+.print-results-page .panel h2::before {
+  width: 4px;
+  height: 25px;
+  flex: 0 0 4px;
+  border-radius: 5px;
+  background: linear-gradient(#efd58d, #bd963f);
+  content: "";
+}
+
+.print-results-page #classMessage,
+.print-results-page #studentMessage {
+  margin: 8px 0 18px;
+  color: #64746a;
+  line-height: 1.6;
+}
+
+.print-results-page .grid {
+  gap: 14px;
+}
+
+.print-results-page button {
+  min-height: 48px;
+  padding: 13px 16px;
+  border: 1px solid #d7e3da;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .96);
+  color: #173b2a;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease,
+              box-shadow .18s ease, transform .18s ease;
+}
+
+.print-results-page button:hover {
+  border-color: #c5a34c;
+  background: #fbfaf4;
+  box-shadow: 0 5px 14px rgba(16, 45, 27, .07);
+  transform: translateY(-1px);
+}
+
+.print-results-page .class-button {
+  min-height: 92px;
+  padding: 18px;
+  border-left: 3px solid #d4b45f;
+  text-align: left;
+}
+
+.print-results-page .class-button strong {
+  display: block;
+  color: #123d2a;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.print-results-page .class-button small {
+  display: block;
+  margin-top: 8px;
+  color: #64746a;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.print-results-page .student {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 2px;
+  border-bottom: 1px solid #e8eee9;
+}
+
+.print-results-page .student:last-child {
+  border-bottom: 0;
+}
+
+.print-results-page .student-name {
+  color: #203b2d;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.print-results-page .student button {
+  min-width: 145px;
+  padding: 12px 17px;
+  border: 1px solid #c7a54e;
+  background: linear-gradient(120deg, #0c3525, #15543a);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.print-results-page .student button:hover {
+  border-color: #efd58d;
+  background: #071f16;
+}
+
+.print-results-page #backToClasses {
+  min-height: 42px;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  border-color: #d4b45f;
+  background: #fbfaf4;
+  color: #17432e;
+  font-weight: 700;
+}
+
+.print-results-page .hidden {
+  display: none !important;
+}
+
+/* INTERNAL MARKAZ DASHBOARD FOOTER */
+.print-results-page > footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 18px;
+  width: 100%;
+  margin-top: auto;
+  padding: 23px 18px;
+  border-top: 1px solid rgba(212, 180, 95, .65);
+  background: linear-gradient(120deg, #071f16, #103d2a 58%, #15543a);
+  color: #dce9e0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.print-results-page > footer .footer-brand {
+  color: #efd58d;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.print-results-page > footer .footer-school {
+  color: #edf4ef;
+  font-size: 13px;
+}
+
+.print-results-page > footer .footer-copyright {
+  width: 100%;
+  color: #c6d8cc;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .print-results-page > header {
+    padding: 23px 20px 25px;
+  }
+
+  .print-results-page > main {
+    margin: 20px auto;
+    padding: 0 12px;
+  }
+
+  .print-results-page .panel {
+    border-radius: 16px;
+  }
+
+  .print-results-page .student {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .print-results-page .student button {
+    width: 100%;
+  }
+
+  .print-results-page > footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+
+/* PRINT RESULTS NAVIGATION POLISH */
+body.print-results-page > header.print-results-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 24px max(20px, calc((100% - 1050px) / 2)) 28px;
+  background: linear-gradient(120deg, #071f16, #0c3525 55%, #15543a);
+  border-bottom: 3px solid #d4b45f;
+  color: #fff;
+}
+
+.print-results-page .print-results-header h1 {
+  margin: 0 0 5px;
+  color: #fff;
+  font-size: clamp(27px, 4vw, 36px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.print-results-page .print-results-header p {
+  margin: 0;
+  color: #dce9e0;
+  line-height: 1.65;
+}
+
+.print-results-page #backToClasses {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  margin: 0;
+  padding: 8px 13px;
+  border: 1px solid rgba(239, 213, 141, .65);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .08);
+  color: #efd58d;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.print-results-page #backToClasses:hover {
+  border-color: #efd58d;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+}
+
+/* Class selection cards */
+.print-results-page #classesPanel,
+.print-results-page #studentsPanel {
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid #dce7df;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(16, 45, 27, .065);
+}
+
+.print-results-page .class-button {
+  min-height: 94px;
+  padding: 18px;
+  border: 1px solid #dce7df;
+  border-left: 4px solid #d4b45f;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .94);
+}
+
+.print-results-page .class-button strong {
+  color: #123d2a;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.print-results-page .class-button small {
+  margin-top: 7px;
+  color: #64746a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Individual student rows */
+.print-results-page #studentMessage {
+  margin: 0 0 18px;
+  color: #64746a;
+  line-height: 1.6;
+}
+
+.print-results-page .student {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 12px;
+  padding: 16px 18px;
+  border: 1px solid #e0e8e2;
+  border-left: 3px solid #d4b45f;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 3px 12px rgba(16, 45, 27, .035);
+}
+
+.print-results-page .student:last-child {
+  margin-bottom: 0;
+}
+
+.print-results-page .student-name {
+  flex: 1;
+  min-width: 0;
+  color: #173b2a;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.print-results-page .student button {
+  flex: 0 0 auto;
+  min-width: 145px;
+  min-height: 43px;
+  padding: 10px 15px;
+  border: 1px solid #c7a54e;
+  border-radius: 9px;
+  background: #15543a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.print-results-page .student button:hover {
+  background: #071f16;
+  border-color: #efd58d;
+}
+
+/* Light internal footer; no green gradient */
+.print-results-page > footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 7px 16px;
+  margin-top: auto;
+  padding: 21px 18px;
+  border-top: 1px solid #e0e8e2;
+  background: rgba(255, 255, 255, .94);
+  color: #64746a;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.print-results-page > footer .footer-brand {
+  color: #15543a;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.print-results-page > footer .footer-school {
+  color: #46594d;
+  font-size: 13px;
+}
+
+.print-results-page > footer .footer-copyright {
+  width: 100%;
+  color: #738076;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .print-results-page > header.print-results-header {
+    padding: 21px 18px 24px;
+  }
+
+  .print-results-page #classesPanel,
+  .print-results-page #studentsPanel {
+    padding: 17px 13px;
+  }
+
+  .print-results-page .student {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .print-results-page .student button {
+    width: 100%;
+  }
+}
+
+</style>
+<style id="print-results-footer-alignment">
+.print-results-page > footer {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 0;
+    margin: 28px 0 0;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    background: #fff;
+    border-top: 1px solid #e0e8e2;
+}
+.print-results-page > footer .footer-brand,
+.print-results-page > footer .footer-school,
+.print-results-page > footer .footer-copyright {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    margin: 0;
+    text-align: center;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+.print-results-page > footer .footer-brand {
+    color: #15543a;
+    font-size: 15px;
+}
+.print-results-page > footer .footer-school {
+    color: #46594d;
+    font-size: 13px;
+}
+.print-results-page > footer .footer-copyright {
+    color: #738076;
+    font-size: 12px;
+}
+</style>
+
+<style id="print-results-header-alignment">
+body.print-results-page > header.print-results-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(20px, 4vw, 42px);
+    row-gap: 12px;
+    box-sizing: border-box;
+}
+.print-results-page .print-results-header #backToClasses {
+    justify-self: start;
+    align-self: center;
+    margin: 0;
+    white-space: nowrap;
+}
+.print-results-page .print-results-heading-content {
+    min-width: 0;
+    text-align: left;
+}
+.print-results-page .print-results-heading-content h1 {
+    margin: 0 0 7px;
+    text-align: left;
+}
+.print-results-page .print-results-heading-content p {
+    margin: 0;
+    max-width: 650px;
+    text-align: left;
+    line-height: 1.65;
+}
+@media (max-width: 600px) {
+    body.print-results-page > header.print-results-header {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: start;
+        row-gap: 16px;
+    }
+    .print-results-page .print-results-header #backToClasses {
+        justify-self: start;
+    }
+    .print-results-page .print-results-heading-content {
+        width: 100%;
+    }
+}
+</style>
+
+</head>
+<body class="print-results-page">
+<header class="print-results-header">
+<button id="backToClasses" type="button">← Go Back</button>
+<div class="print-results-heading-content">
+<h1>Print Results</h1>
+<p>Select a class, then print an individual student's result.</p>
+</div>
+</header>
+<main>
+<section class="panel" id="classesPanel">
+<h2>Select Class</h2>
+<p id="classMessage">Loading classes…</p>
+<div class="grid" id="classesList"></div>
+</section>
+<section class="panel hidden" id="studentsPanel">
+
+<h2 id="selectedClassTitle">Students</h2>
+<p id="studentMessage"></p>
+<div id="studentsList"></div>
+</section>
+</main>
+
+<footer>
+  <span class="footer-brand">MARKAZ</span>
+  <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
+  <span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span>
+</footer>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+let classes = [];
+let students = [];
+
+function listFrom(payload, key) {
+    if (Array.isArray(payload)) return payload;
+    if (!payload || typeof payload !== "object") return [];
+    if (Array.isArray(payload[key])) return payload[key];
+    if (Array.isArray(payload.data)) return payload.data;
+    if (payload.data && Array.isArray(payload.data[key])) {
+        return payload.data[key];
+    }
+    if (payload.success === false) {
+        throw new Error(payload.message || "Unable to load records.");
+    }
+    return [];
+}
+
+async function getList(url, key) {
+    const response = await fetch(url, {
+        credentials: "same-origin",
+        cache: "no-store"
+    });
+    const payload = await response.json();
+    if (!response.ok || payload.success === false) {
+        throw new Error(payload.message || "Request failed.");
+    }
+    return listFrom(payload, key);
+}
+
+function classId(item) {
+    return String(item.id ?? item.class_id ?? "");
+}
+
+function className(item) {
+    return item.class_name || item.name || item.title ||
+           item.className || "Unnamed class";
+}
+
+function isConventionalClass(name) {
+    const normalized = String(name || "")
+        .trim()
+        .replace(/[._-]+/g, " ")
+        .replace(/\s+/g, " ");
+
+    const compact = normalized.replace(/\s+/g, "").toLowerCase();
+
+    if (/^(?:ss|sss)[1-3]$/.test(compact)) return true;
+    if (/^seniorsecondary(?:school)?(?:1|2|3|one|two|three)$/i.test(compact)) return true;
+
+    return /^(?:Pre\s*Nursery\s*[12]|KG(?:\s*[1-3])?|Kindergarten(?:\s*[1-3])?|Nursery\s*[1-3]?|Basic\s*[1-6]|Primary\s*[1-6]|JSS\s*[1-3]|Junior\s*Secondary\s*[1-3]|SSS?\s*[1-3]|Senior\s*Secondary(?:\s*School)?\s*(?:[1-3]|One|Two|Three))$/i.test(normalized);
+}
+
+function studentId(item) {
+    return String(item.id ?? item.student_id ?? "");
+}
+
+function studentName(item) {
+    return [item.first_name, item.middle_name, item.last_name]
+        .filter(Boolean).join(" ") ||
+        item.full_name || item.name || "Unnamed student";
+}
+
+function showClasses() {
+    $("classesPanel").classList.remove("hidden");
+    $("studentsPanel").classList.add("hidden");
+    $("backToClasses").textContent = "← Go Back";
+}
+
+function renderClasses() {
+    const container = $("classesList");
+    container.replaceChildren();
+
+    const conventionalClasses = classes.filter(item =>
+        isConventionalClass(className(item))
+    );
+
+    if (!conventionalClasses.length) {
+        $("classMessage").textContent = "No classes were found.";
+        return;
+    }
+
+    $("classMessage").textContent = "Choose the class to print.";
+    conventionalClasses.forEach(item => {
+        const id = classId(item);
+        if (!id) return;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "class-button";
+
+        const title = document.createElement("strong");
+        title.textContent = className(item);
+        const hint = document.createElement("small");
+        hint.textContent = "View students and print results";
+
+        button.append(title, hint);
+        button.addEventListener("click", () => showStudents(item));
+        container.append(button);
+    });
+}
+
+function printStudent(sid, cid) {
+    window.location.href = "./student-result-print.html?student_id=" +
+        encodeURIComponent(sid) + "&class_id=" +
+        encodeURIComponent(cid) + "&print=1";
+}
+
+
+async function getClassCompletion(classIdValue) {
+  const response = await fetch(
+    "./api/results/class-completion.php?class_id=" + encodeURIComponent(classIdValue),
+    { credentials: "same-origin", cache: "no-store" }
+  );
+  const payload = await response.json();
+
+  if (!response.ok || payload.success === false) {
+    throw new Error(payload.message || "Unable to verify result completion.");
+  }
+
+  return {
+    threshold: Number(payload.threshold ?? 95),
+    byStudent: new Map(
+      (Array.isArray(payload.students) ? payload.students : [])
+        .map(item => [String(item.student_id), item])
+    )
+  };
+}
+
+async function showStudents(selectedClass) {
+  $("classesPanel").classList.add("hidden");
+  $("studentsPanel").classList.remove("hidden");
+  $("backToClasses").textContent = "← Go Back";
+  $("selectedClassTitle").textContent = className(selectedClass);
+
+  const id = classId(selectedClass);
+  const matching = students.filter(item =>
+    String(item.class_id ?? item.main_class_id ?? "") === id
+  );
+  const container = $("studentsList");
+  container.replaceChildren();
+
+  $("studentMessage").textContent = matching.length
+    ? "Checking each student's results and print eligibility…"
+    : "No students were found for this class.";
+
+  const rows = new Map();
+
+  matching.forEach(item => {
+    const sid = studentId(item);
+    if (!sid) return;
+
+    const row = document.createElement("div");
+    row.className = "student";
+
+    const details = document.createElement("div");
+    details.style.cssText = "display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;";
+
+    const name = document.createElement("span");
+    name.className = "student-name";
+    name.textContent = studentName(item);
+
+    const status = document.createElement("span");
+    status.style.cssText = "font-size:0.85rem;line-height:1.45;overflow-wrap:anywhere;";
+    status.textContent = "Checking eligibility…";
+
+    const missing = document.createElement("span");
+    missing.style.cssText = "font-size:0.8rem;line-height:1.4;overflow-wrap:anywhere;";
+    missing.textContent = "";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "Checking…";
+    button.disabled = true;
+    button.addEventListener("click", () => {
+      if (!button.disabled) printStudent(sid, id);
+    });
+
+    details.append(name, status, missing);
+    row.append(details, button);
+    container.append(row);
+    rows.set(sid, { status, missing, button });
+  });
+
+  if (!matching.length) return;
+
+  try {
+    const completion = await getClassCompletion(id);
+
+    // Ignore a late response if the user has navigated to another class.
+    if ($("selectedClassTitle").textContent !== className(selectedClass)) return;
+
+    rows.forEach(({ status, missing, button }, sid) => {
+      const item = completion.byStudent.get(sid);
+
+      if (!item) {
+        status.textContent = "Eligibility could not be verified — printing disabled.";
+        status.style.color = "#b42318";
+        button.textContent = "Unavailable";
+        return;
+      }
+
+      const percentage = Number(item.percentage);
+      const threshold = Number(item.threshold ?? completion.threshold);
+      const eligible = item.eligible === true || item.eligible === 1 || item.eligible === "1";
+
+      status.textContent = eligible
+        ? `Eligible to print · Completion ${percentage}% (required ${threshold}%)`
+        : `Not eligible to print · Completion ${percentage}% (required ${threshold}%)`;
+      status.style.color = eligible ? "#18794e" : "#b42318";
+
+      const missingFields = Array.isArray(item.missing_fields)
+        ? item.missing_fields
+        : [];
+
+      missing.textContent = missingFields.length
+        ? "Missing: " + missingFields.join(", ")
+        : (eligible ? "All required fields are complete." : "Required fields remain incomplete.");
+
+      button.disabled = !eligible;
+      button.textContent = eligible ? "Print Results" : "Incomplete";
+    });
+
+    $("studentMessage").textContent =
+      "Students remain listed individually. Printing is enabled only for students who meet the configured threshold.";
+  } catch (error) {
+    rows.forEach(({ status, button }) => {
+      status.textContent = "Eligibility could not be verified — printing disabled.";
+      status.style.color = "#b42318";
+      button.disabled = true;
+      button.textContent = "Unavailable";
+    });
+    $("studentMessage").textContent =
+      "Could not verify completion. Students are still listed, but printing stays disabled until verification works.";
+    console.error("Class completion check failed:", error);
+  }
+}
+
+$("backToClasses").addEventListener("click", () => {
+    if (!$("studentsPanel").classList.contains("hidden")) {
+        showClasses();
+    } else {
+        window.location.href = "./dashboard.html";
+    }
+});
+
+async function initialize() {
+    try {
+        const results = await Promise.all([
+            getList("./api/classes/list.php", "classes"),
+            getList("./api/students/list.php", "students")
+        ]);
+        classes = results[0];
+        students = results[1];
+        renderClasses();
+    } catch (error) {
+        $("classMessage").textContent =
+            error.message || "Unable to load classes and students.";
+    }
+}
+
+const directParams = new URLSearchParams(window.location.search);
+if (directParams.get("student_id") && directParams.get("class_id")) {
+    $("classesPanel").classList.add("hidden");
+    $("studentsPanel").classList.add("hidden");
+    printStudent(directParams.get("student_id"), directParams.get("class_id"));
+} else {
+    initialize();
+}
+</script>
+</body>
+</html>

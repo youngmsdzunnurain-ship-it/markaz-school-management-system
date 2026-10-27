@@ -58,11 +58,23 @@ loginForm.addEventListener('submit', async (event) => {
         }
 
         loginMessage.className = 'login-message success';
-        loginMessage.textContent = 'Login successful. Redirecting...';
+        loginMessage.textContent = 'Login successful. Welcome to MARKAZ.';
 
         window.location.href = 'dashboard.html';
 
     } catch (error) {
+        const loginPage = document.querySelector('.login-page');
+
+        loginPage.classList.remove('login-success');
+        loginPage.classList.remove('login-failed');
+
+        /*
+         * Wrong login reaction:
+         * the student reacts briefly instead of walking to MARKAZ.
+         */
+        void loginPage.offsetWidth;
+        loginPage.classList.add('login-failed');
+
         loginMessage.className = 'login-message error';
         loginMessage.textContent =
             error.message || 'Something went wrong.';
@@ -70,5 +82,5 @@ loginForm.addEventListener('submit', async (event) => {
         loginButton.disabled = false;
         loginButton.innerHTML =
             '<span>Sign In</span><i class="fa-solid fa-arrow-right"></i>';
-    }
+}
 });

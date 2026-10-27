@@ -9,6 +9,9 @@
 
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/class.css">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
+    <link rel="stylesheet" href="css/standard-page-heading.css">
 </head>
 
 <body>
@@ -17,11 +20,9 @@
 
     <header class="class-topbar">
 
-        <div>
-            <a href="./classes.html" class="back-link">
-                ← Back to Classes
-            </a>
+        <a href="./classes.html" class="class-back-link" data-go-back>← Go Back</a>
 
+        <div class="class-heading-copy">
             <span class="eyebrow">MARKAZ CLASS</span>
 
             <h1 id="classTitle">Loading class...</h1>
@@ -188,6 +189,22 @@
         </article>
     </div>
 
+    <section class="results-completion-charts" aria-label="Result completion charts">
+        <article class="completion-chart-card">
+            <span class="eyebrow">CLASS OVERVIEW</span>
+            <h3>Overall Completion</h3>
+            <div id="classCompletionDonut" class="completion-donut" role="img" aria-label="Class result completion 0%">
+                <div><strong id="classCompletionDonutValue">0%</strong><span>Complete</span></div>
+            </div>
+        </article>
+        <article class="completion-chart-card completion-students-card">
+            <span class="eyebrow">STUDENT PROGRESS</span>
+            <h3>Completion by Student</h3>
+            <div id="studentCompletionChart" class="student-completion-chart">
+                <p class="empty-state">Loading student progress...</p>
+            </div>
+        </article>
+    </section>
     <div class="results-toolbar">
         <div class="result-subject-field">
             <label for="resultSubjectSelect">Select Subject</label>
@@ -201,7 +218,9 @@
             <input
                 type="search"
                 id="resultStudentSearch"
+                list="resultStudentSuggestions"
                 placeholder="Search by name or admission number">
+            <div id="resultStudentSuggestions" class="result-student-suggestions" hidden></div>
         </div>
     </div>
 
@@ -228,5 +247,8 @@
 <script src="./js/class.js"></script>
 
     <script src="/js/markaz-global.js"></script>
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
 </body>
 </html>

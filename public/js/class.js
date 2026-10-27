@@ -2,7 +2,8 @@
     "use strict";
 
     const params = new URLSearchParams(window.location.search);
-    const classId = params.get("id");
+    const classId = params.get("id") || params.get("class_id");
+    const classType = params.get("class_type") === "arabic" ? "arabic" : "conventional";
 
     const classTitle = document.getElementById("classTitle");
     const classDescription = document.getElementById("classDescription");
@@ -72,36 +73,31 @@
             return false;
         }
 
-        const response = await fetch("./api/classes/list.php", {
-            credentials: "same-origin",
-            cache: "no-store"
-        });
-
+        const response = await fetch(
+            `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
+            { credentials: "same-origin", cache: "no-store" }
+        );
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-            throw new Error(data.message || "Unable to load classes.");
+            throw new Error(data.message || "Unable to load the assigned class.");
         }
 
-        selectedClass = (data.classes || []).find(
-            item => String(item.id) === String(classId)
-        );
+        selectedClass = {
+            ...data.class,
+            id: data.class?.id ?? Number(classId),
+            name: data.class?.name || "Class",
+            class_type: classType
+        };
 
-        if (!selectedClass) {
-            showError("The selected class could not be found.");
-            return false;
-        }
-
-        classTitle.textContent = selectedClass.name || "Class";
-        classDescription.textContent =
-            selectedClass.level_group || "Academic class";
-
-        classStatus.textContent =
-            Number(selectedClass.is_active) === 1
-                ? "Active"
-                : "Inactive";
-
-        document.title = `${selectedClass.name || "Class"} | MARKAZ`;
+        classTitle.textContent = selectedClass.name;
+        classDescription.textContent = classType === "arabic"
+            ? "Arabic class"
+            : (selectedClass.level_group || "Academic class");
+        classStatus.textContent = Number(selectedClass.is_active) === 1
+            ? "Active"
+            : "Inactive";
+        document.title = `${selectedClass.name} | MARKAZ`;
 
         return true;
     }
@@ -118,9 +114,13 @@
             throw new Error(data.message || "Unable to load students.");
         }
 
+        const studentClassField = classType === "arabic"
+            ? "arabic_class_id"
+            : "class_id";
+
         classStudents = (data.students || []).filter(
             student =>
-                String(student.class_id) === String(selectedClass.id)
+                String(student[studentClassField]) === String(selectedClass.id)
         );
 
         studentCount.textContent = classStudents.length;
@@ -197,7 +197,7 @@
                                             type="button"
                                             class="class-student-button"
                                             data-student-id="${escapeHtml(student.id)}">
-                                            View Student
+                                            View Results
                                         </button>
                                     </td>
                                 </tr>
@@ -211,7 +211,7 @@
 
     async function loadResults() {
         const response = await fetch(
-            `./api/results/class.php?class_id=${encodeURIComponent(classId)}`,
+            `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
             {
                 credentials: "same-origin",
                 cache: "no-store"
@@ -250,7 +250,7 @@
         }
 
         populateSubjectSelect();
-        calculateCompletion();
+        await calculateCompletion();
     }
 
     function populateSubjectSelect() {
@@ -274,23 +274,65 @@
         `;
     }
 
-    function calculateCompletion() {
-        if (!resultsCompletion) {
-            return;
+    async function calculateCompletion() {
+        const bars = document.getElementById("studentCompletionChart");
+        const donut = document.getElementById("classCompletionDonut");
+        const donutValue = document.getElementById("classCompletionDonutValue");
+
+        try {
+            const response = await fetch(
+                `./api/results/class-completion.php?class_id=${encodeURIComponent(classId)}`,
+                { credentials: "same-origin", cache: "no-store" }
+            );
+            const data = await response.json();
+            if (!response.ok || !data.success || !Array.isArray(data.students)) {
+                throw new Error(data.message || "Unable to load completion details.");
+            }
+
+            const rows = data.students;
+            const required = rows.reduce(
+                (sum, item) => sum + Number(item.required_fields || 0), 0
+            );
+            const completed = rows.reduce(
+                (sum, item) => sum + Number(item.completed_fields || 0), 0
+            );
+            const percentage = required ? Math.round(completed / required * 100) : 0;
+
+            if (resultsCompletion) resultsCompletion.textContent = `${percentage}%`;
+
+            if (bars) {
+                bars.innerHTML = rows.length ? rows.map(item => {
+                    const name = [
+                        item.first_name, item.middle_name, item.last_name
+                    ].filter(Boolean).join(" ");
+                    const pct = Number(item.percentage) || 0;
+                    return `<div class="completion-bar-row">
+                        <span class="completion-bar-name" title="${escapeHtml(name)}">${escapeHtml(name || "Student")}</span>
+                        <div class="completion-bar-track"><span style="width:${pct}%"></span></div>
+                        <strong>${pct}%</strong>
+                    </div>`;
+                }).join("") : '<p class="empty-state">No students to display yet.</p>';
+            }
+
+            if (donut) {
+                donut.style.setProperty("--completion", `${percentage}%`);
+                donut.setAttribute("aria-label", `Class result completion ${percentage}%`);
+            }
+            if (donutValue) donutValue.textContent = `${percentage}%`;
+
+            const button = document.getElementById("printClassResultsButton");
+            if (button) {
+                button.dataset.completion = String(percentage);
+                button.title = "Class completion is for monitoring only; individual print eligibility is checked separately.";
+            }
+        } catch (error) {
+            console.error("Class completion monitor error:", error);
+            if (resultsCompletion) resultsCompletion.textContent = "—";
+            if (bars) bars.innerHTML =
+                '<p class="empty-state">Completion details could not be loaded. Refresh to try again.</p>';
+            if (donut) donut.setAttribute("aria-label", "Class result completion unavailable");
+            if (donutValue) donutValue.textContent = "—";
         }
-
-        const total =
-            classStudents.length * resultSubjects.length;
-
-        if (!total) {
-            resultsCompletion.textContent = "0%";
-            return;
-        }
-
-        const completed = classResults.length;
-
-        resultsCompletion.textContent =
-            `${Math.min(100, Math.round((completed / total) * 100))}%`;
     }
 
     function getSelectedSubject() {
@@ -307,7 +349,73 @@
         ) || null;
     }
 
+    function renderStudentSuggestions() {
+        const box = document.getElementById("resultStudentSuggestions");
+        if (!box) return;
+
+        if (!document.getElementById("resultStudentSuggestionStyles")) {
+            const style = document.createElement("style");
+            style.id = "resultStudentSuggestionStyles";
+            style.textContent = `
+                .result-search-field { position: relative; }
+                .result-student-suggestions {
+                    position: absolute; top: 100%; left: 0; right: 0;
+                    z-index: 1000; max-height: 260px; overflow-y: auto;
+                    background: #fff; color: #222; border: 1px solid #ccc;
+                    border-radius: 8px; box-shadow: 0 6px 18px #0002;
+                }
+                .result-student-suggestions[hidden] { display: none; }
+                .result-student-suggestion {
+                    display: block; width: 100%; padding: 10px 12px;
+                    border: 0; border-bottom: 1px solid #eee;
+                    background: #fff; color: #222; text-align: left;
+                    cursor: pointer;
+                }
+                .result-student-suggestion:hover,
+                .result-student-suggestion:focus { background: #f0f5f0; }
+                .result-student-suggestion small {
+                    display: block; margin-top: 3px; color: #666;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        const term = (resultStudentSearch?.value || "").trim().toLowerCase();
+        if (!term) {
+            box.hidden = true;
+            box.innerHTML = "";
+            return;
+        }
+
+        const matches = classStudents.filter(student => {
+            const name = [
+                student.first_name, student.middle_name, student.last_name
+            ].filter(Boolean).join(" ").toLowerCase();
+            const admission = String(student.admission_number || "").toLowerCase();
+            return name.includes(term) || admission.includes(term);
+        }).slice(0, 8);
+
+        if (!matches.length) {
+            box.innerHTML = '<div class="result-student-suggestion">No matching students found.</div>';
+        } else {
+            box.innerHTML = matches.map(student => {
+                const name = [
+                    student.first_name, student.middle_name, student.last_name
+                ].filter(Boolean).join(" ");
+                return `
+                    <button type="button" class="result-student-suggestion"
+                        data-student-id="${escapeHtml(student.id)}">
+                        <strong>${escapeHtml(name)}</strong>
+                        <small>Admission No.: ${escapeHtml(student.admission_number || "—")}</small>
+                    </button>`;
+            }).join("");
+        }
+        box.hidden = false;
+    }
+
     function renderResultsTable() {
+        renderStudentSuggestions();
+
         if (!resultsTableContainer) {
             return;
         }
@@ -317,7 +425,7 @@
         if (!subject) {
             resultsTableContainer.innerHTML = `
                 <div class="empty-state">
-                    Select a subject to enter results.
+                    Select a subject and search for a student to enter results.
                 </div>
             `;
             return;
@@ -378,9 +486,9 @@
                                 subject.id
                             );
 
-                            const ca1 = result?.ca1 ?? 0;
-                            const ca2 = result?.ca2 ?? 0;
-                            const exam = result?.exam ?? 0;
+                            const ca1 = result?.ca1 ?? "";
+                            const ca2 = result?.ca2 ?? "";
+                            const exam = result?.exam ?? "";
                             const total =
                                 Number(ca1) +
                                 Number(ca2) +
@@ -502,8 +610,15 @@
 
     function openStudent(studentId) {
         window.location.href =
-            `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}`;
+            `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`;
     }
+
+    classStudentsContainer.addEventListener("click", event => {
+        const button = event.target.closest(".class-student-button");
+        if (button) {
+            openStudent(button.dataset.studentId);
+        }
+    });
 
     function openAddStudent() {
         window.location.href =
@@ -545,6 +660,11 @@
         renderResultsTable();
     });
 
+    document.getElementById("resultStudentSuggestions")?.addEventListener("click", event => {
+        const button = event.target.closest("[data-student-id]");
+        if (button) openStudent(button.dataset.studentId);
+    });
+
     async function saveResult(studentId, button) {
         const subject = getSelectedSubject();
 
@@ -560,28 +680,26 @@
             return;
         }
 
-        const ca1 =
-            Number(row.querySelector('[data-field="ca1"]')?.value) || 0;
+        const readScore = field => {
+            const value = row.querySelector(`[data-field="${field}"]`)?.value ?? "";
+            return value.trim() === "" ? null : Number(value);
+        };
+        const ca1 = readScore("ca1");
+        const ca2 = readScore("ca2");
+        const exam = readScore("exam");
+        const total = (ca1 ?? 0) + (ca2 ?? 0) + (exam ?? 0);
 
-        const ca2 =
-            Number(row.querySelector('[data-field="ca2"]')?.value) || 0;
-
-        const exam =
-            Number(row.querySelector('[data-field="exam"]')?.value) || 0;
-
-        const total = ca1 + ca2 + exam;
-
-        if (ca1 > Number(subject.max_ca1)) {
+        if (ca1 !== null && ca1 > Number(subject.max_ca1)) {
             alert(`CA1 cannot be more than ${subject.max_ca1}.`);
             return;
         }
 
-        if (ca2 > Number(subject.max_ca2)) {
+        if (ca2 !== null && ca2 > Number(subject.max_ca2)) {
             alert(`CA2 cannot be more than ${subject.max_ca2}.`);
             return;
         }
 
-        if (exam > Number(subject.max_exam)) {
+        if (exam !== null && exam > Number(subject.max_exam)) {
             alert(`Exam cannot be more than ${subject.max_exam}.`);
             return;
         }
@@ -712,11 +830,26 @@
     });
 
     enterResultsButton?.addEventListener("click", () => {
-        alert("Result entry will be connected here after the class workspace is completed.");
+        const resultsSection = document.querySelector(".results-entry-table")?.closest("section, .panel, .card");
+        if (resultsSection) {
+            resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            resultSubjectSelect?.focus();
+        } else {
+            document.querySelector(".results-entry-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     });
 
     printClassResultsButton?.addEventListener("click", () => {
-        alert("Class result printing will be connected here after the result module is completed.");
+        window.print();
+    });
+
+    window.addEventListener("focus", async () => {
+        if (document.visibilityState === "hidden" || !classId) return;
+        try {
+            await loadResults();
+        } catch (error) {
+            console.error("Class workspace refresh error:", error);
+        }
     });
 
     initialize();

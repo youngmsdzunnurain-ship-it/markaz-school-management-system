@@ -8,6 +8,40 @@ header('Content-Type: application/json; charset=utf-8');
 
 requireResultStaff();
 
+function requireFullClassBehaviourAccess(PDO $pdo, int $studentId, string $classType, int $classId): void
+{
+    if (!in_array($classType, ['conventional', 'arabic'], true) || $classId < 1) {
+        http_response_code(422);
+        echo json_encode(['success' => false, 'message' => 'Valid class context is required.']);
+        exit;
+    }
+
+    $column = $classType === 'arabic' ? 'arabic_class_id' : 'class_id';
+    $student = $pdo->prepare("SELECT id FROM students WHERE id = ? AND {$column} = ? LIMIT 1");
+    $student->execute([$studentId, $classId]);
+
+    if (!$student->fetch()) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Student does not belong to this class.']);
+        exit;
+    }
+
+    $assignment = $pdo->prepare(
+        'SELECT 1 FROM teacher_assignments
+         WHERE account_id = ? AND class_type = ? AND class_id = ?
+           AND is_active = 1 AND subject_id IS NULL LIMIT 1'
+    );
+    $assignment->execute([(int) ($_SESSION['admin_id'] ?? 0), $classType, $classId]);
+
+    if (!$assignment->fetch()) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Full-class assignment required for behavioural assessments.']);
+        exit;
+    }
+}
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $studentId = filter_input(INPUT_GET, 'student_id', FILTER_VALIDATE_INT);
 
@@ -21,6 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     $pdo = db();
+
+    if (currentAdminRole() === 'teacher') {
+        $classId = filter_input(INPUT_GET, 'class_id', FILTER_VALIDATE_INT);
+        requireFullClassBehaviourAccess(
+            $pdo, (int) $studentId,
+            (string) ($_GET['class_type'] ?? ''),
+            (int) ($classId ?: 0)
+        );
+    }
 
     $periodStmt = $pdo->query(
         'SELECT ap.id
@@ -70,6 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo json_encode([
         'success' => true,
         'behaviour' => $report ?: null
+    ]);
+    exit;
+}
+
+if (!in_array(currentAdminRole(), ['admin', 'teacher'], true)) {
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Only the Admin can edit behavioural assessments.'
     ]);
     exit;
 }
@@ -151,6 +203,15 @@ foreach ($fields as $field) {
 
 try {
     $pdo = db();
+
+    if (currentAdminRole() === 'teacher') {
+        $classId = filter_var($input['class_id'] ?? null, FILTER_VALIDATE_INT);
+        requireFullClassBehaviourAccess(
+            $pdo, (int) $studentId,
+            (string) ($input['class_type'] ?? ''),
+            (int) ($classId ?: 0)
+        );
+    }
 
     $periodStmt = $pdo->query(
         'SELECT ap.id

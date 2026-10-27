@@ -31,8 +31,56 @@ try {
     }
 
     $name = trim((string) ($input['name'] ?? ''));
-    $code = trim((string) ($input['code'] ?? ''));
+    $code = strtoupper(trim((string) ($input['code'] ?? '')));
     $category = trim((string) ($input['category'] ?? ''));
+
+    $allowedLevels = [
+        'Nursery',
+        'Primary',
+        'Junior Secondary',
+        'Senior Secondary'
+    ];
+
+    if ($code === '') {
+        $words = preg_split('/[^A-Za-z0-9]+/', strtoupper($name), -1, PREG_SPLIT_NO_EMPTY);
+        if (!$words) {
+            throw new RuntimeException('A valid subject name is required to generate its code.');
+        }
+
+        if (count($words) > 1) {
+            $base = '';
+            foreach ($words as $word) {
+                $base .= $word[0];
+            }
+        } else {
+            $base = substr($words[0], 0, 4);
+        }
+
+        $base = substr($base, 0, 12);
+        $candidate = $base;
+        $suffix = 2;
+
+        while (true) {
+            $codeSql = 'SELECT id FROM subjects WHERE code = ?'
+                . ' LIMIT 1';
+            $codeCheck = db()->prepare($codeSql);
+            $codeParams = [$candidate];
+            $codeCheck->execute($codeParams);
+            if (!$codeCheck->fetch()) {
+                break;
+            }
+            $candidate = $base . $suffix;
+            $suffix++;
+            if ($suffix > 99999) {
+                throw new RuntimeException('Could not generate a unique subject code.');
+            }
+        }
+        $code = $candidate;
+    }
+
+    if (!in_array($category, $allowedLevels, true)) {
+        throw new RuntimeException('Choose a valid school level.');
+    }
 
     $maxCa1 = isset($input['max_ca1'])
         ? (float) $input['max_ca1']

@@ -1,6 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 const studentId = params.get("student_id");
 const classId = params.get("class_id");
+const classType = params.get("class_type") || "conventional";
+const isPrintMode = params.get("print") === "1";
 
 const $ = (id) => document.getElementById(id);
 
@@ -123,7 +125,7 @@ async function loadStudentResult() {
     }
 
     const response = await fetch(
-        `./api/results/student.php?student_id=${encodeURIComponent(studentId)}`,
+        `./api/results/student.php?student_id=${encodeURIComponent(studentId)}&class_type=${encodeURIComponent(classType)}${classId ? `&class_id=${encodeURIComponent(classId)}` : ""}${location.pathname.endsWith("student-result-print.html") ? "&print=1" : ""}`,
         {
             credentials: "same-origin",
             cache: "no-store"
@@ -1134,11 +1136,18 @@ document.addEventListener("input", event => {
 
 
 function leaveStudentResultPage() {
-    if (classId) {
-        window.location.href =
-            `./class.html?id=${encodeURIComponent(classId)}`;
+    if (isPrintMode) {
+        window.location.href = "./print-results.html";
+        return;
+    }
+    const fallback = classId
+        ? `./class.html?id=${encodeURIComponent(classId)}`
+        : "./dashboard.html";
+
+    if (typeof window.markazGoBack === "function") {
+        window.markazGoBack(fallback);
     } else {
-        window.history.back();
+        window.location.href = fallback;
     }
 }
 
@@ -1194,18 +1203,79 @@ $("unsavedChangesModal")?.addEventListener("click", event => {
     }
 });
 
-$("printStudentResultButton")?.addEventListener("click", () => {
-    window.print();
-});
+function checkStudentResultCompletion() {
+    const subjects = (studentData?.subjects || []).filter(subject =>
+        subject.is_required === true ||
+        subject.is_required === 1 ||
+        subject.is_required === "1"
+    );
+    const fields = ["ca1", "ca2", "exam"];
+    let required = 0;
+    let entered = 0;
 
-$("downloadStudentPdfButton")?.addEventListener("click", () => {
+    subjects.forEach(subject => {
+        const values = getEditedSubjectValues(subject.id) || {};
+        fields.forEach(field => {
+            required++;
+            const value = values[field];
+            if (value !== null && value !== undefined && value !== "") entered++;
+        });
+    });
+
+    const behaviour = getBehaviourValues() || {};
+    const behaviourFields = [
+        "attendance", "neatness", "contentment", "obedience",
+        "responsiveness", "tolerance", "attentiveness",
+        "truthfulness", "calmness"
+    ];
+    behaviourFields.forEach(field => {
+        required++;
+        const value = behaviour[field];
+        if (value !== null && value !== undefined && value !== "") entered++;
+    });
+
+    return required ? Math.round(entered / required * 100) : 0;
+}
+
+function printStudentResult() {
     window.print();
-});
+}
+
+async function authorizeAndPrint(permission) {
+    try {
+        const response = await fetch(
+            `./api/results/authorize-action.php?action=${encodeURIComponent(permission)}`,
+            { credentials: "same-origin" }
+        );
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "You are not permitted to perform this action.");
+        }
+
+        window.print();
+    } catch (error) {
+        alert(error.message || "Unable to verify permission.");
+    }
+}
+
+$("printStudentResultButton")?.addEventListener(
+    "click",
+    () => authorizeAndPrint("print_results")
+);
+$("downloadStudentPdfButton")?.addEventListener(
+    "click",
+    () => authorizeAndPrint("export_results")
+);
 
 setupBehaviourCalculation();
 
 loadStudentResult().catch(error => {
     console.error(error);
+    if (isPrintMode) {
+        $("printStudentResultButton")?.setAttribute("disabled", "disabled");
+        $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
+    }
 
     $("studentResultsBody").innerHTML = `
         <tr>
@@ -1217,6 +1287,10 @@ loadStudentResult().catch(error => {
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
 const cancelScoresButton = $("cancelScoresButton");
+if (isPrintMode) {
+    document.querySelector(".student-edit-actions")?.remove();
+}
+
 const memorizationInput = $("studentMemorizationInput");
 const memorizationDisplay = $("studentMemorizationPortion");
 
@@ -1349,8 +1423,8 @@ function showSavedMessage() {
 }
 
 function setEditMode(editing) {
+    if (isPrintMode) editing = false;
     isEditMode = editing;
-
     setBehaviourEditing(editing);
 
     if (memorizationInput) {
@@ -1398,7 +1472,7 @@ async function loadBehaviouralReport() {
     if (!studentId) return;
 
     const response = await fetch(
-        `./api/results/behavioural.php?student_id=${encodeURIComponent(studentId)}`,
+        `./api/results/behavioural.php?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId || "")}&class_type=${encodeURIComponent(classType)}`,
         {
             credentials: "same-origin",
             cache: "no-store"
@@ -1543,6 +1617,7 @@ async function saveAllStudentChanges() {
                         "application/json"
                 },
                 body: JSON.stringify({
+                    class_type: classType,
                     class_id: Number(classId),
                     student_id: Number(studentId),
                     subject_id: Number(subject.id),
@@ -1607,6 +1682,8 @@ async function saveAllStudentChanges() {
     }
 
     const behaviourPayload = {
+        class_id: Number(classId),
+        class_type: classType,
         student_id: Number(studentId)
     };
 
@@ -1735,6 +1812,10 @@ setupBehaviourCalculation();
 
 loadStudentResult().catch(error => {
     console.error(error);
+    if (isPrintMode) {
+        $("printStudentResultButton")?.setAttribute("disabled", "disabled");
+        $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
+    }
 
     $("studentResultsBody").innerHTML = `
         <tr>

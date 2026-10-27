@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 
-requireAdmin();
+requireSeniorAdmin();
 
 header('Content-Type: application/json; charset=utf-8');
 

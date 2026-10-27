@@ -1326,22 +1326,6 @@ body {
     overflow: hidden;
 }
 
-.page-content::before {
-    content: "";
-    position: absolute;
-    width: 430px;
-    height: 430px;
-    right: -130px;
-    top: 80px;
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: .035;
-    pointer-events: none;
-    z-index: 0;
-}
-
 .page-content > * {
     position: relative;
     z-index: 1;
@@ -1547,13 +1531,6 @@ footer {
     .quick-actions {
         grid-template-columns: 1fr;
     }
-
-    .page-content::before {
-        width: 300px;
-        height: 300px;
-        right: -120px;
-        top: 130px;
-    }
 }
 
 
@@ -1568,22 +1545,6 @@ footer {
     display: flex;
     align-items: center;
     gap: 13px;
-}
-
-.brand-mark {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background-color: #ffffff;
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-size: 82%;
-    background-position: center;
-    background-repeat: no-repeat;
-    font-size: 0;
 }
 
 .sidebar-nav {
@@ -1975,19 +1936,6 @@ footer::before {
     }
 }
 
-
-/* Sharper visible MARKAZ logo */
-.brand-mark {
-    background-color: #ffffff;
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-size: 88%;
-    background-position: center;
-    background-repeat: no-repeat;
-    image-rendering: auto;
-    filter: none;
-    opacity: 1;
-}
-
 .brand-mark::before {
     content: "";
     position: absolute;
@@ -2003,14 +1951,6 @@ footer::before {
     box-shadow:
         0 5px 16px rgba(0,0,0,.16),
         inset 0 0 0 2px rgba(255,255,255,.65);
-}
-
-.page-content::before {
-    background-image: url("../assets/images/markaz-logo.jpg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: .035;
 }
 
 
@@ -2435,8 +2375,11 @@ footer::before {
    ========================================================= */
 
 .topbar {
-    position: relative;
-}
+    position: sticky;
+    top: 0;
+    z-index: 1300;
+
+    overflow: visible;}
 
 .topbar-actions {
     margin-left: auto;
@@ -2674,19 +2617,6 @@ footer::before {
     background: #c9a94b;
 }
 
-footer::after {
-    content: "RESULT MANAGEMENT SYSTEM";
-    display: block;
-
-    margin-top: 7px;
-
-    color: #9a7c2f;
-
-    font-size: 9px;
-    font-weight: 700;
-
-    letter-spacing: 1.5px;
-}
 
 .footer-brand {
     display: block;
@@ -3876,6 +3806,18 @@ footer::before {
     letter-spacing: 1.5px !important;
 }
 
+/* Scoped MARKAZ green-and-gold accents for the two management panels. */
+.quick-access-panel .panel-header,
+.administrator-panel .panel-header {
+    padding-left: 12px !important;
+    border-left: 3px solid #c9a94b !important;
+}
+
+.quick-access-panel .panel-header h3,
+.administrator-panel .panel-header h3 {
+    color: #145c38 !important;
+}
+
 button {
     font-family: inherit;
 }
@@ -4412,53 +4354,6 @@ button:focus-visible {
     border-color: rgba(255, 255, 255, 0.20);
 }
 
-/* DASHBOARD MARKAZ WATERMARK */
-.dashboard-watermark {
-    position: fixed !important;
-    left: 58% !important;
-    top: 55% !important;
-    width: min(58vw, 620px) !important;
-    height: min(58vw, 620px) !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 0 !important;
-    pointer-events: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 0.075 !important;
-}
-
-.dashboard-watermark img {
-    width: 72% !important;
-    height: 72% !important;
-    object-fit: contain !important;
-    border-radius: 50% !important;
-    filter: grayscale(1) sepia(0.25) saturate(0.65) !important;
-}
-
-.dashboard-watermark-ring {
-    position: absolute;
-    inset: 7%;
-    border: 2px solid rgba(18, 61, 42, 0.28);
-    border-radius: 50%;
-}
-
-.dashboard-watermark-ring::before,
-.dashboard-watermark-ring::after {
-    content: "";
-    position: absolute;
-    border: 1px solid rgba(200, 164, 58, 0.30);
-    border-radius: 50%;
-}
-
-.dashboard-watermark-ring::before {
-    inset: 7%;
-}
-
-.dashboard-watermark-ring::after {
-    inset: 15%;
-}
-
 .dashboard-main,
 .dashboard-content,
 .main-content {
@@ -4467,62 +4362,9 @@ button:focus-visible {
 }
 
 @media (max-width: 850px) {
-    .dashboard-watermark {
-        left: 58% !important;
-        width: 82vw !important;
-        height: 82vw !important;
-        opacity: 0.055 !important;
-    }
-}
-
-/* Dashboard watermark visibility override */
-body > .dashboard-watermark {
-    position: fixed !important;
-    left: 60% !important;
-    top: 55% !important;
-    width: 520px !important;
-    height: 520px !important;
-    transform: translate(-50%, -50%) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 0.14 !important;
-    z-index: 0 !important;
-    pointer-events: none !important;
-}
-
-body > .dashboard-watermark img {
-    width: 72% !important;
-    height: 72% !important;
-    object-fit: contain !important;
-    opacity: 0.9 !important;
-}
-
-body > .dashboard-watermark .dashboard-watermark-ring {
-    position: absolute !important;
-    inset: 5% !important;
-    border: 3px solid rgba(176, 139, 53, 0.30) !important;
-    border-radius: 50% !important;
-}
-
-body > .dashboard-watermark .dashboard-watermark-ring::before {
-    inset: 7% !important;
-    border-color: rgba(18, 61, 42, 0.24) !important;
-}
-
-body > .dashboard-watermark .dashboard-watermark-ring::after {
-    inset: 15% !important;
-    border-color: rgba(176, 139, 53, 0.20) !important;
 }
 
 @media (max-width: 850px) {
-    body > .dashboard-watermark {
-        left: 58% !important;
-        top: 55% !important;
-        width: 400px !important;
-        height: 400px !important;
-        opacity: 0.11 !important;
-    }
 }
 
 /* =========================================================
@@ -4612,19 +4454,6 @@ body > .dashboard-watermark .dashboard-watermark-ring::after {
     }
 }
 
-/* FINAL DASHBOARD WATERMARK */
-.page-content::before {
-    opacity: 0.09 !important;
-    background-size: 420px auto !important;
-    background-position: center 42% !important;
-    background-repeat: no-repeat !important;
-    pointer-events: none !important;
-}
-
-.dashboard-watermark {
-    display: none !important;
-}
-
 /* =========================================================
    FINAL DASHBOARD WATERMARK + GLASS SURFACES
    ========================================================= */
@@ -4632,15 +4461,6 @@ body > .dashboard-watermark .dashboard-watermark-ring::after {
 /* Let the existing MARKAZ watermark show through */
 .page-content {
     background: transparent !important;
-}
-
-.page-content::before {
-    opacity: 0.10 !important;
-    width: 520px !important;
-    height: 520px !important;
-    right: -80px !important;
-    top: 120px !important;
-    background-size: contain !important;
 }
 
 /* Welcome surface */
@@ -4674,19 +4494,7 @@ body > .dashboard-watermark .dashboard-watermark-ring::after {
     background: rgba(251,253,252,.78) !important;
 }
 
-/* Remove the extra fixed watermark layer we added earlier */
-body > .dashboard-watermark {
-    display: none !important;
-}
-
 @media (max-width: 850px) {
-    .page-content::before {
-        width: 420px !important;
-        height: 420px !important;
-        right: -120px !important;
-        top: 160px !important;
-        opacity: 0.085 !important;
-    }
 
     .page-content .welcome-card,
     .page-content .stat-card,
@@ -4729,36 +4537,7 @@ body > .dashboard-watermark {
     background: #fbfdfc !important;
 }
 
-/* Remove the old watermark placement */
-.page-content::before {
-    width: 100% !important;
-    height: 100% !important;
-    right: auto !important;
-    top: auto !important;
-    left: 0 !important;
-    bottom: 0 !important;
-
-    background-image: url("../assets/images/markaz-logo.jpg") !important;
-    background-repeat: no-repeat !important;
-    background-position: center center !important;
-    background-size: 430px auto !important;
-
-    opacity: 0.075 !important;
-    z-index: 0 !important;
-    pointer-events: none !important;
-}
-
-/* The extra watermark element is no longer needed */
-body > .dashboard-watermark {
-    display: none !important;
-}
-
 @media (max-width: 850px) {
-    .page-content::before {
-        background-size: 330px auto !important;
-        background-position: center center !important;
-        opacity: 0.065 !important;
-    }
 }
 
 /* =========================================================
@@ -4820,30 +4599,7 @@ body > .dashboard-watermark {
     }
 }
 
-/* =========================================================
-   LARGE REPEATING MARKAZ WATERMARK
-   ========================================================= */
-
-.page-content::before {
-    width: 100% !important;
-    height: 100% !important;
-    inset: 0 !important;
-
-    background-image: url("../assets/images/markaz-logo.jpg") !important;
-    background-repeat: repeat !important;
-    background-position: center center !important;
-    background-size: 420px 420px !important;
-
-    opacity: 0.045 !important;
-    z-index: 0 !important;
-    pointer-events: none !important;
-}
-
 @media (max-width: 850px) {
-    .page-content::before {
-        background-size: 330px 330px !important;
-        opacity: 0.045 !important;
-    }
 }
 
 /* =========================================================
@@ -4959,4 +4715,512 @@ body > .dashboard-watermark {
     body.sidebar-desktop-closed .menu-button {
         display: flex !important;
     }
+}
+
+/* MARKAZ SHARED SOFT-GREEN HOVER */
+.students-table tbody tr:hover td,
+.classes-table tbody tr:hover td,
+.class-students-table tbody tr:hover td,
+.results-entry-table tbody tr:hover td {
+    background: #e1f0e5 !important;
+    transition: background-color 140ms ease;
+}
+
+
+/* Dashboard result completion charts — premium green and gold */
+.dashboard-completion-charts {
+    display: grid;
+    grid-template-columns: minmax(220px, .78fr) minmax(0, 1.65fr);
+    gap: 22px;
+    width: 100%;
+    margin: 24px 0 28px;
+    align-items: stretch;
+}
+.dashboard-chart-card {
+    position: relative;
+    min-width: 0;
+    padding: 25px 27px 25px 25px;
+    overflow: hidden;
+    color: #294637;
+    background: #fff;
+    border: 1px solid #dfe8e2;
+    border-radius: 18px;
+    box-shadow: 0 7px 20px rgba(18,61,42,.055);
+}
+.dashboard-chart-card::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 0;
+    bottom: 18px;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    background: linear-gradient(180deg,#efd98e,#c9a94b,#a48635);
+}
+.dashboard-chart-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,#145c38,#237a4d);
+}
+.dashboard-chart-card .eyebrow {
+    display: inline-block;
+    margin: 0 0 8px;
+    color: #a48635;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.dashboard-chart-card h2 {
+    margin: 0 0 22px;
+    color: #185c3b;
+    font-size: 19px;
+    font-weight: 850;
+    line-height: 1.35;
+}
+.dashboard-completion-donut {
+    --completion: 0%;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(195px,100%);
+    aspect-ratio: 1;
+    margin: 10px auto 8px;
+    border: 2px solid #c9a94b;
+    border-radius: 50%;
+    background: conic-gradient(#237a4d var(--completion),#e8eee9 var(--completion) 100%);
+    box-shadow: 0 0 0 4px #f7f0d9;
+}
+.dashboard-completion-donut::before {
+    content: "";
+    position: absolute;
+    inset: 13px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #edf1ed;
+}
+.dashboard-completion-donut > div {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+.dashboard-completion-donut strong {
+    color: #145c38;
+    font-size: 40px;
+    font-weight: 850;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.dashboard-completion-donut span {
+    color: #78867e;
+    font-size: 12px;
+    font-weight: 650;
+}
+.dashboard-class-progress-chart {
+    display: grid;
+    align-content: start;
+    gap: 15px;
+    max-height: 390px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 3px 10px 5px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #c9a94b #edf1ed;
+}
+.dashboard-class-progress-chart::-webkit-scrollbar {
+    width: 6px;
+}
+.dashboard-class-progress-chart::-webkit-scrollbar-track {
+    background: #edf1ed;
+    border-radius: 10px;
+}
+.dashboard-class-progress-chart::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg,#efd98e,#c9a94b);
+    border-radius: 10px;
+}
+.dashboard-class-progress-row {
+    display: grid;
+    grid-template-columns: minmax(80px,.9fr) minmax(55px,1.5fr) 44px;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    padding: 3px 0 7px;
+    border-bottom: 1px solid #edf1ed;
+}
+.dashboard-class-progress-row > span {
+    min-width: 0;
+    color: #28533e;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.dashboard-class-progress-track {
+    height: 8px;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #f1dede;
+    border: 1px solid #f0d2d2;
+}
+.dashboard-class-progress-track i {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    border-radius: inherit;
+    transition: width .35s ease;
+}
+.dashboard-class-progress-track i.has-progress {
+    background: linear-gradient(90deg,#65ae7c,#237a4d);
+}
+.dashboard-class-progress-track i.no-progress {
+    background: #d94b4b;
+}
+.dashboard-class-progress-row > strong {
+    color: #a48635;
+    font-size: 12px;
+    font-weight: 850;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.dashboard-class-progress-chart > p {
+    margin: 0;
+    padding: 16px;
+    color: #78867e;
+    background: #f8faf8;
+    border: 1px dashed #dfe8e2;
+    border-radius: 12px;
+    font-size: 13px;
+}
+@media (max-width: 900px) {
+    .dashboard-completion-charts {
+        grid-template-columns: minmax(0,1fr);
+        gap: 16px;
+    }
+    .dashboard-chart-card {
+        padding: 22px 25px 22px 22px;
+    }
+    .dashboard-completion-donut {
+        width: 180px;
+    }
+    .dashboard-class-progress-chart {
+        max-height: 340px;
+    }
+}
+@media (max-width: 480px) {
+    .dashboard-completion-charts {
+        margin: 18px 0 22px;
+        gap: 14px;
+    }
+    .dashboard-chart-card {
+        padding: 20px 22px 20px 16px;
+        border-radius: 16px;
+    }
+    .dashboard-class-progress-row {
+        grid-template-columns: minmax(72px,.9fr) minmax(45px,1.3fr) 40px;
+        gap: 8px;
+    }
+    .dashboard-class-progress-row > span,
+    .dashboard-class-progress-row > strong {
+        font-size: 11px;
+    }
+}
+
+
+/* MARKAZ DASHBOARD CONTROLS VISIBILITY FIX */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 3000 !important;
+    overflow: visible !important;
+}
+.topbar-actions,
+.admin-profile-wrap {
+    position: relative;
+}
+.profile-dropdown {
+    z-index: 3100 !important;
+}
+.profile-dropdown.open {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+.sidebar-bottom {
+    flex-shrink: 0;
+}
+.sidebar-nav {
+    min-height: 0;
+}
+
+
+/* MARKAZ SIDEBAR LOGOUT RED FIX */
+.sidebar-bottom .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    color: #ffffff !important;
+    background: #c62828 !important;
+    border: 1px solid #b71c1c !important;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.sidebar-bottom .logout-button:hover {
+    background: #b71c1c !important;
+}
+.sidebar-bottom .logout-button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+
+/* MARKAZ SIDEBAR BOTTOM-POSITION FIX */
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#sidebar .sidebar-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+    background: inherit;
+    position: relative;
+    z-index: 2;
+}
+
+#sidebar .sidebar-bottom .logout-button {
+    display: flex;
+    width: 100%;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+
+
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+}
+
+#sidebar .sidebar-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+    position: relative;
+    z-index: 5;
+}
+
+#sidebar .sidebar-bottom .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    color: #d7e4dc;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+#sidebar .sidebar-bottom .logout-button:hover,
+#sidebar .sidebar-bottom .logout-button:focus-visible {
+    color: #ffffff;
+    background: #c62828;
+    border-color: #ef5350;
+    outline: none;
+}
+
+#sidebar .sidebar-bottom .logout-button:active {
+    background: #b71c1c;
+}
+
+#sidebar .sidebar-bottom .logout-button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+/* MARKAZ SIDEBAR LOGOUT HOVER FIX */
+
+
+/* MARKAZ MOBILE SIDEBAR TAP AND ALIGNMENT FIX */
+@media (max-width: 850px) {
+    #sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        width: min( min(86vw, 320px), calc(100vw - 48px) ) !important;
+        max-width: calc(100vw - 48px) !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        transform: translateX(-105%) !important;
+        z-index: 1200 !important;
+        overflow: hidden !important;
+        border-radius: 0 18px 18px 0 !important;
+        pointer-events: none !important;
+    }
+
+    #sidebar.open {
+        transform: translateX(0) !important;
+        pointer-events: auto !important;
+    }
+
+    #sidebar .sidebar-nav {
+        position: relative !important;
+        z-index: 1 !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        pointer-events: auto !important;
+    }
+
+    #sidebar .nav-link,
+    #sidebar .sidebar-bottom,
+    #sidebar .sidebar-bottom button {
+        position: relative;
+        pointer-events: auto !important;
+    }
+
+    #sidebar .sidebar-bottom {
+        flex: 0 0 auto !important;
+        margin-top: auto !important;
+        z-index: 2 !important;
+    }
+
+    #sidebarOverlay {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 1190 !important;
+    }
+
+    #sidebarOverlay.visible {
+        pointer-events: auto !important;
+    }
+}
+
+
+/* MARKAZ MOBILE SIDEBAR PREMIUM FINISH */
+@media (max-width: 850px) {
+    #sidebar {
+        background: linear-gradient(
+            165deg,
+            #071f16 0%,
+            #0c3525 55%,
+            #15543a 100%
+        ) !important;
+        color: #f5f7f2 !important;
+        border-right: 1px solid rgba(212, 180, 95, 0.42) !important;
+        box-shadow: 12px 0 32px rgba(0, 0, 0, 0.24) !important;
+        transition:
+            transform 0.19s cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0.19s ease !important;
+        will-change: transform;
+    }
+
+    #sidebar .brand-text strong,
+    #sidebar .brand-text span {
+        color: #f5f7f2 !important;
+    }
+
+    #sidebar .nav-link {
+        color: #e1ece5 !important;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease !important;
+    }
+
+    #sidebar .nav-link:hover,
+    #sidebar .nav-link:focus-visible,
+    #sidebar .nav-link.active {
+        color: #fff !important;
+        background: rgba(212, 180, 95, 0.16) !important;
+        border-color: rgba(239, 217, 143, 0.35) !important;
+    }
+
+    #sidebar .nav-link i {
+        color: #efd58d !important;
+    }
+
+    #sidebar .sidebar-divider {
+        border-color: rgba(239, 217, 143, 0.22) !important;
+    }
+
+    #sidebar .sidebar-bottom .logout-button {
+        color: #ffe7e7 !important;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease !important;
+    }
+
+    #sidebar .sidebar-bottom .logout-button:hover,
+    #sidebar .sidebar-bottom .logout-button:focus-visible {
+        color: #fff !important;
+        background: #c62828 !important;
+        border-color: #ef5350 !important;
+    }
+
+    #sidebarOverlay {
+        transition: opacity 0.16s ease, visibility 0.16s ease !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #sidebar,
+    #sidebarOverlay,
+    #sidebar .nav-link,
+    #sidebar .sidebar-bottom .logout-button {
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* Keep role-controlled dashboard actions hidden until permissions are checked. */
+[data-role-access][data-access-pending="true"] {
+    visibility: hidden !important;
 }

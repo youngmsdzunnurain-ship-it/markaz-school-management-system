@@ -45,3 +45,18 @@ PY
 students-clean.html
 php-termux.ini
 check_role.php
+
+# Local backups and temporary recovery files
+/backups/
+/watermark-recovery-*/
+/watermark-replacement-backup-*/
+*.backup-*
+*.nav-backup
+*.corrupted-backup
+*.damaged-*
+*.tar.gz
+/false,
+/tall apache php-apache
+/Unable to save academic calendar.
+
+/public/subjects/*.bak-*
