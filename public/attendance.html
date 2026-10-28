@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#123d2a">
+    <meta name="description" content="Record and review daily student attendance at MARKAZ.">
+    <title>Daily Attendance | MARKAZ</title>
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/attendance.css?v=20261028-daily1">
+    <link rel="stylesheet" href="./css/app-watermark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body class="attendance-page">
+    <main class="attendance-shell">
+        <header class="attendance-header">
+            <a class="attendance-back" href="./dashboard.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Dashboard</a>
+            <div class="attendance-brand">
+                <img src="./assets/images/markaz-logo.jpg" alt="MARKAZ school logo">
+                <div>
+                    <span class="attendance-eyebrow">MARKAZ · ACADEMIC OPERATIONS</span>
+                    <h1>Daily Attendance</h1>
+                    <p>Keep a clear, reliable record of every class day.</p>
+                </div>
+            </div>
+            <div class="attendance-header-actions">
+                <button type="button" class="button button-light" id="printRegisterButton" disabled>
+                    <i class="fa-solid fa-print" aria-hidden="true"></i><span>Print</span>
+                </button>
+                <button type="button" class="button button-light" id="exportRegisterButton" disabled>
+                    <i class="fa-solid fa-file-csv" aria-hidden="true"></i><span>Export CSV</span>
+                </button>
+            </div>
+        </header>
+
+        <section class="attendance-intro">
+            <div>
+                <span class="attendance-eyebrow">CLASS REGISTER</span>
+                <h2>Attendance, made simple.</h2>
+                <p>Choose the class and date, mark each student, then save the complete register. Existing records can be corrected by authorised staff.</p>
+            </div>
+            <div class="attendance-date-chip" aria-label="Today's date">
+                <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                <div><span>School date</span><strong id="todayLabel">Loading date…</strong></div>
+            </div>
+        </section>
+
+        <section class="attendance-filter-panel" aria-labelledby="registerSetupTitle">
+            <div class="section-heading">
+                <div>
+                    <span class="attendance-eyebrow">STEP 1</span>
+                    <h2 id="registerSetupTitle">Choose your register</h2>
+                </div>
+                <span class="secure-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Access-controlled</span>
+            </div>
+            <div class="attendance-filters">
+                <label class="attendance-field" for="attendanceDate">
+                    <span>Attendance date</span>
+                    <input type="date" id="attendanceDate" required>
+                </label>
+                <label class="attendance-field" for="attendanceClassType">
+                    <span>Class category</span>
+                    <select id="attendanceClassType">
+                        <option value="conventional">Conventional class</option>
+                        <option value="arabic">Arabic class</option>
+                    </select>
+                </label>
+                <label class="attendance-field attendance-class-field" for="attendanceClass">
+                    <span>Class</span>
+                    <select id="attendanceClass" required>
+                        <option value="">Loading classes…</option>
+                    </select>
+                </label>
+                <button type="button" class="button button-primary load-register-button" id="loadRegisterButton">
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Load register
+                </button>
+            </div>
+            <p class="filter-help" id="classHelpText">Classes and student totals are loaded from MARKAZ records.</p>
+        </section>
+
+        <section class="attendance-summary-grid" aria-label="Attendance summary" aria-live="polite">
+            <article class="attendance-summary-card summary-total">
+                <span class="summary-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                <div><span>Total students</span><strong id="totalCount">—</strong><small>Active students in class</small></div>
+            </article>
+            <article class="attendance-summary-card summary-present">
+                <span class="summary-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                <div><span>Present</span><strong id="presentCount">—</strong><small>Marked present</small></div>
+            </article>
+            <article class="attendance-summary-card summary-absent">
+                <span class="summary-icon"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i></span>
+                <div><span>Absent</span><strong id="absentCount">—</strong><small>Not in attendance</small></div>
+            </article>
+            <article class="attendance-summary-card summary-other">
+                <span class="summary-icon"><i class="fa-solid fa-clock" aria-hidden="true"></i></span>
+                <div><span>Late / Excused</span><strong id="otherCount">—</strong><small>Late arrivals and approved absence</small></div>
+            </article>
+        </section>
+
+        <section class="attendance-register-panel" aria-labelledby="registerTitle">
+            <div class="register-panel-header">
+                <div>
+                    <span class="attendance-eyebrow">STEP 2</span>
+                    <h2 id="registerTitle">Student register</h2>
+                    <p id="registerSubtitle">Select a class and date to begin.</p>
+                </div>
+                <div class="register-progress" id="registerProgress" aria-live="polite">
+                    <span class="progress-track"><span id="progressBar"></span></span>
+                    <strong id="progressLabel">0 of 0 marked</strong>
+                </div>
+            </div>
+
+            <div class="register-toolbar">
+                <label class="attendance-search" for="studentSearch">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" id="studentSearch" placeholder="Find student by name or admission number…" autocomplete="off" disabled>
+                </label>
+                <div class="register-actions">
+                    <button type="button" class="button button-outline" id="markAllPresentButton" disabled>
+                        <i class="fa-solid fa-check-double" aria-hidden="true"></i> Mark all present
+                    </button>
+                    <button type="button" class="button button-outline" id="clearMarksButton" disabled>
+                        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Clear marks
+                    </button>
+                </div>
+            </div>
+
+            <div class="attendance-legend" aria-label="Attendance status legend">
+                <span><i class="legend-dot dot-present"></i> Present</span>
+                <span><i class="legend-dot dot-absent"></i> Absent</span>
+                <span><i class="legend-dot dot-late"></i> Late</span>
+                <span><i class="legend-dot dot-excused"></i> Excused</span>
+            </div>
+
+            <div class="attendance-table-wrap">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Student</th>
+                            <th scope="col">Admission number</th>
+                            <th scope="col">Attendance status</th>
+                            <th scope="col">Note (optional)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <tr><td colspan="5" class="register-empty"><span class="empty-icon"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i></span><strong>Your register is waiting</strong><span>Choose a class and date above, then load the register.</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="attendance-mobile-hint"><i class="fa-solid fa-arrows-left-right" aria-hidden="true"></i> On a small screen, swipe the register sideways to see every column.</div>
+
+            <footer class="register-footer">
+                <div class="save-status" id="saveStatus" role="status" aria-live="polite">No register loaded yet.</div>
+                <button type="button" class="button button-primary save-attendance-button" id="saveAttendanceButton" disabled>
+                    <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Save attendance</span>
+                </button>
+            </footer>
+        </section>
+
+        <footer class="attendance-page-footer">
+            <span>MARKAZ Result Management System</span>
+            <span>Daily attendance records are separate from termly report-card assessments.</span>
+        </footer>
+    </main>
+    <script src="./js/attendance.js?v=20261028-daily1"></script>
+</body>
+</html>
