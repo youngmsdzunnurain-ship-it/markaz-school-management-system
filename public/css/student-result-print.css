@@ -2167,3 +2167,178 @@
     font-size: 9.5pt !important;
   }
 }
+
+
+/* Print reliability pass: reclaim profile whitespace and explicitly draw every table rule. */
+#studentReportCard.report-card .student-information {
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+}
+#studentReportCard.report-card .student-information .section-heading {
+  margin-top: 0 !important;
+  margin-bottom: .7mm !important;
+  padding: 0 !important;
+}
+#studentReportCard.report-card .student-profile-grid {
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: stretch !important;
+  gap: 1mm !important;
+}
+#studentReportCard.report-card .student-photo {
+  margin: 0 !important;
+  align-self: stretch !important;
+  min-height: 0 !important;
+}
+#studentReportCard.report-card .student-details {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: .55mm !important;
+  justify-content: center !important;
+}
+#studentReportCard.report-card .student-info-row {
+  margin: 0 !important;
+  gap: .65mm !important;
+}
+#studentReportCard.report-card .student-top-row > .detail-item,
+#studentReportCard.report-card .student-class-row > .detail-item {
+  min-height: 5.8mm !important;
+  padding: .55mm 1.1mm !important;
+  border-radius: 1mm !important;
+}
+#studentReportCard.report-card .student-top-row .detail-item > span,
+#studentReportCard.report-card .student-class-row .detail-item > span {
+  font-size: 6.1pt !important;
+  line-height: 1.08 !important;
+  letter-spacing: .1px !important;
+}
+#studentReportCard.report-card .student-top-row .detail-item > strong,
+#studentReportCard.report-card .student-class-row .detail-item > strong,
+#studentReportCard.report-card .student-class-row .memorization-value-row > strong {
+  margin-top: .2mm !important;
+  font-size: 8pt !important;
+  line-height: 1.08 !important;
+}
+#studentReportCard.report-card .student-name-item > strong {
+  font-size: 8.5pt !important;
+}
+
+#studentReportCard.report-card .results-table-container {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#studentReportCard.report-card .student-results-table {
+  display: table !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-top: .35mm solid #aabbb0 !important;
+  border-left: .35mm solid #aabbb0 !important;
+  overflow: visible !important;
+}
+#studentReportCard.report-card .student-results-table thead {
+  display: table-header-group !important;
+}
+#studentReportCard.report-card .student-results-table tbody {
+  display: table-row-group !important;
+}
+#studentReportCard.report-card .student-results-table tr {
+  display: table-row !important;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+#studentReportCard.report-card .student-results-table th,
+#studentReportCard.report-card .student-results-table td {
+  box-sizing: border-box !important;
+  border: 0 !important;
+  border-right: .35mm solid #aabbb0 !important;
+  border-bottom: .35mm solid #aabbb0 !important;
+  background-clip: padding-box !important;
+  overflow: visible !important;
+}
+#studentReportCard.report-card .student-results-table th {
+  padding: 1.5mm .8mm !important;
+  color: #fff !important;
+  background: #1f5a3a !important;
+  font-size: 7.2pt !important;
+  line-height: 1.15 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+#studentReportCard.report-card .student-results-table td {
+  padding: 1.25mm .8mm !important;
+  color: #1c2b24 !important;
+  font-size: 8.2pt !important;
+  line-height: 1.15 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+#studentReportCard.report-card .student-results-table tbody tr:nth-child(even) td {
+  background-color: #fafcfb !important;
+}
+#studentReportCard.report-card .student-results-table th:first-child,
+#studentReportCard.report-card .student-results-table td:first-child { width: 5% !important; }
+#studentReportCard.report-card .student-results-table th:nth-child(2),
+#studentReportCard.report-card .student-results-table td:nth-child(2) { width: 25% !important; text-align: left !important; }
+#studentReportCard.report-card .student-results-table th:nth-child(3),
+#studentReportCard.report-card .student-results-table td:nth-child(3),
+#studentReportCard.report-card .student-results-table th:nth-child(4),
+#studentReportCard.report-card .student-results-table td:nth-child(4) { width: 8% !important; }
+#studentReportCard.report-card .student-results-table th:nth-child(5),
+#studentReportCard.report-card .student-results-table td:nth-child(5) { width: 9% !important; }
+#studentReportCard.report-card .student-results-table th:nth-child(6),
+#studentReportCard.report-card .student-results-table td:nth-child(6) {
+  width: 9% !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+#studentReportCard.report-card .student-results-table th:nth-child(7),
+#studentReportCard.report-card .student-results-table td:nth-child(7) { width: 8% !important; font-weight: 700 !important; }
+#studentReportCard.report-card .student-results-table th:nth-child(8),
+#studentReportCard.report-card .student-results-table td:nth-child(8) { width: 28% !important; text-align: left !important; }
+
+@media print {
+  html body #studentReportCard.report-card .student-information,
+  html body #studentReportCard.report-card .student-information .section-heading,
+  html body #studentReportCard.report-card .student-profile-grid,
+  html body #studentReportCard.report-card .student-details,
+  html body #studentReportCard.report-card .student-info-row {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-profile-grid {
+    padding: 0 !important;
+    gap: 1mm !important;
+  }
+  html body #studentReportCard.report-card .student-top-row > .detail-item,
+  html body #studentReportCard.report-card .student-class-row > .detail-item {
+    min-height: 5.8mm !important;
+    padding: .55mm 1.1mm !important;
+  }
+  html body #studentReportCard.report-card .results-table-container,
+  html body #studentReportCard.report-card .student-results-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  html body #studentReportCard.report-card .student-results-table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-top: .35mm solid #aabbb0 !important;
+    border-left: .35mm solid #aabbb0 !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th,
+  html body #studentReportCard.report-card .student-results-table td {
+    border: 0 !important;
+    border-right: .35mm solid #aabbb0 !important;
+    border-bottom: .35mm solid #aabbb0 !important;
+  }
+}
