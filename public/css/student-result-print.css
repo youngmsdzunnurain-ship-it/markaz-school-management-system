@@ -1619,3 +1619,108 @@
     font-size: 9pt !important;
   }
 }
+
+/* Focused correction: keep report title beside school identity; keep student
+   photo fixed-size and remove excess space below Student Information. */
+@media print {
+  html body #studentReportCard.report-card .school-header {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 2mm !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  html body #studentReportCard.report-card .school-brand {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+  html body #studentReportCard.report-card .school-heading {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  html body #studentReportCard.report-card .report-title {
+    display: flex !important;
+    flex: 0 0 32mm !important;
+    width: 32mm !important;
+    min-width: 32mm !important;
+    max-width: 32mm !important;
+    align-self: center !important;
+    margin: 0 !important;
+  }
+
+  html body #studentReportCard.report-card .student-information {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information > .section-heading {
+    margin: 0 0 .6mm !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-profile-grid {
+    display: grid !important;
+    grid-template-columns: 18mm minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 1.2mm !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-photo {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    align-self: start !important;
+    width: 18mm !important;
+    min-width: 18mm !important;
+    max-width: 18mm !important;
+    height: 21mm !important;
+    min-height: 21mm !important;
+    max-height: 21mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-photo > span,
+  html body #studentReportCard.report-card .student-information .student-photo > img {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-details {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-content: start !important;
+    align-self: start !important;
+    gap: .6mm !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-info-row {
+    align-items: stretch !important;
+    gap: .8mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .detail-item {
+    min-height: 6.4mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: .55mm 1mm !important;
+  }
+}
