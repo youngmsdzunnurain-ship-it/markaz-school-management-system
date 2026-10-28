@@ -1,0 +1,49 @@
+name: Daily Attendance Validation
+
+on:
+  pull_request:
+    paths:
+      - "api/attendance/**"
+      - "public/attendance.html"
+      - "public/css/attendance.css"
+      - "public/js/attendance.js"
+      - "public/dashboard.html"
+      - "public/js/dashboard.js"
+      - "database/migrations/20261028_daily_attendance.sql"
+      - "tests/attendance-validation.test.php"
+      - ".github/workflows/attendance-validation.yml"
+  push:
+    branches:
+      - "feature/daily-attendance-20261028"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring
+          coverage: none
+
+      - name: Check PHP syntax
+        run: |
+          php -l api/attendance/_common.php
+          php -l api/attendance/classes.php
+          php -l api/attendance/register.php
+          php -l tests/attendance-validation.test.php
+
+      - name: Run attendance validation tests
+        run: php tests/attendance-validation.test.php
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/js/attendance.js
+          node --check public/js/dashboard.js
