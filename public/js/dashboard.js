@@ -506,6 +506,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = permissions.can_print_results === true;
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
+        } else if (requiredRole === "attendance") {
+            allowed = ["admin", "exam_officer", "teacher"].includes(role);
         }
 
         element.style.display = allowed ? "" : "none";
