@@ -3,6 +3,9 @@
 
     const params = new URLSearchParams(window.location.search);
     const classId = params.get("id");
+    const classType = params.get("class_type") === "arabic"
+        ? "arabic"
+        : "conventional";
 
     const classTitle = document.getElementById("classTitle");
     const classDescription = document.getElementById("classDescription");
@@ -252,8 +255,14 @@
     }
 
     async function loadResults() {
+        if (resultSubjectSelect) {
+            resultSubjectSelect.innerHTML =
+                '<option value="">Loading subjects...</option>';
+            resultSubjectSelect.disabled = true;
+        }
+
         const response = await fetch(
-            `./api/results/class.php?class_id=${encodeURIComponent(classId)}`,
+            `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
             {
                 credentials: "same-origin",
                 cache: "no-store"
@@ -282,10 +291,10 @@
             renderStudents();
         }
 
-        if (resultsPeriodText && data.academic_period) {
-            resultsPeriodText.textContent =
-                `${data.academic_period.session_name} • ` +
-                `${data.academic_period.term_name}`;
+        if (resultsPeriodText) {
+            resultsPeriodText.textContent = data.academic_period
+                ? `${data.academic_period.session_name} • ${data.academic_period.term_name}`
+                : "No current academic period configured";
         }
 
         if (resultsSubjectCount) {
@@ -295,6 +304,11 @@
 
         populateSubjectSelect();
         calculateCompletion();
+
+        if (!resultSubjects.length && resultsTableContainer) {
+            resultsTableContainer.innerHTML =
+                '<div class="empty-state">No active subjects are assigned to this class. Check Class Subjects to assign subjects.</div>';
+        }
     }
 
     function populateSubjectSelect() {
@@ -304,8 +318,8 @@
 
         if (!resultSubjects.length) {
             resultSubjectSelect.innerHTML =
-                `<option value="">No subjects assigned</option>`;
-
+                '<option value="">No active subjects assigned</option>';
+            resultSubjectSelect.disabled = true;
             return;
         }
 
@@ -317,6 +331,7 @@
                 </option>
             `).join("")}
         `;
+        resultSubjectSelect.disabled = false;
     }
 
     function calculateCompletion() {
@@ -612,7 +627,24 @@
             }
 
             await loadStudents();
-            await loadResults();
+
+            try {
+                await loadResults();
+            } catch (error) {
+                console.error("Class results load error:", error);
+                if (resultSubjectSelect) {
+                    resultSubjectSelect.innerHTML =
+                        '<option value="">Could not load subjects — refresh to retry</option>';
+                    resultSubjectSelect.disabled = true;
+                }
+                if (resultsTableContainer) {
+                    resultsTableContainer.innerHTML =
+                        `<div class="empty-state">${escapeHtml(error.message || "Unable to load subjects. Please refresh and try again.")}</div>`;
+                }
+                if (resultsSubjectCount) {
+                    resultsSubjectCount.textContent = "—";
+                }
+            }
 
         } catch (error) {
             console.error(
