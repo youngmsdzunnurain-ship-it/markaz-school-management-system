@@ -52,13 +52,14 @@
 .attendance-field input:focus,.attendance-field select:focus,.attendance-search:focus-within { border-color:var(--att-green); box-shadow:0 0 0 3px rgba(23,100,58,.1); }
 .load-register-button { min-height:46px; white-space:nowrap; }
 .filter-help { margin:12px 0 0; color:#849087; font-size:11px; }
-.attendance-summary-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:18px 0; }
+.attendance-summary-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; margin:18px 0; }
 .attendance-summary-card { display:flex; align-items:center; gap:13px; min-width:0; padding:17px; border:1px solid var(--att-border); border-radius:16px; background:#fff; box-shadow:0 5px 18px rgba(17,55,35,.035); }
 .summary-icon { display:grid; place-items:center; width:44px; height:44px; flex:0 0 44px; border-radius:13px; font-size:17px; }
 .summary-total .summary-icon { color:#17643a; background:#e8f4ec; }
 .summary-present .summary-icon { color:#167346; background:#e6f6ec; }
 .summary-absent .summary-icon { color:#b33d43; background:#fff0f0; }
-.summary-other .summary-icon { color:#8a690d; background:#fff7dc; }
+.summary-late .summary-icon { color:#8a690d; background:#fff7dc; }
+.summary-excused .summary-icon { color:#526678; background:#f0f4f8; }
 .attendance-summary-card div { min-width:0; }
 .attendance-summary-card div>span,.attendance-summary-card strong,.attendance-summary-card small { display:block; }
 .attendance-summary-card div>span { color:#67756b; font-size:11px; font-weight:700; }
@@ -118,7 +119,7 @@
 @media (max-width:1050px) {
     .attendance-filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .load-register-button { width:100%; }
-    .attendance-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .attendance-summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
 @media (max-width:720px) {
     .attendance-shell { padding:12px 10px 22px; }
