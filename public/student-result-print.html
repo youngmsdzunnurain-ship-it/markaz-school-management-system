@@ -17,10 +17,6 @@
 
     <title>Student Result | MARKAZ</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +24,7 @@
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css">
     <link rel="stylesheet" href="./css/student-result.css">
-    <link rel="stylesheet" href="./css/student-result-print.css?v=20261028-reference-layout" media="print">
+    <link rel="stylesheet" href="./css/student-result-print.css?v=20261028-profile-fixed2" media="print">
 
 <style id="print-results-hide-edit-controls">
 .student-edit-actions,
@@ -161,10 +157,22 @@
                 <div class="section-heading">
 
                     <div>
+                        <span class="section-eyebrow">
+                            STUDENT PROFILE
+                        </span>
+
                         <h2>
                             Student Information
                         </h2>
-                    </div></div>
+                    </div>
+
+                    <span
+                        class="student-status"
+                        id="studentStatus">
+                        Active
+                    </span>
+
+                </div>
 
 
                 <div class="student-profile-grid">
@@ -592,8 +600,7 @@
                 </div>
 
             </section>
-            <!-- Flexible print spacer: keeps signatures and footer at the bottom of the sheet. -->
-            <div class="print-flex-spacer" aria-hidden="true"></div>
+
 
             <!-- SIGNATURES -->
             <section class="report-footer">
