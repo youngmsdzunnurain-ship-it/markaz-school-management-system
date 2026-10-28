@@ -1876,3 +1876,131 @@
   html body #studentReportCard.report-card .student-profile-grid { break-inside: avoid !important; page-break-inside: avoid !important; }
 }
 
+
+/* Targeted layout correction: keep the report title beside the school identity
+   and align the student information fields into consistent rows. */
+#studentReportCard.report-card .school-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 38mm !important;
+  align-items: center !important;
+  column-gap: 3mm !important;
+  width: 100% !important;
+}
+#studentReportCard.report-card .school-brand {
+  display: grid !important;
+  grid-template-columns: 17mm minmax(0, 1fr) !important;
+  align-items: center !important;
+  column-gap: 2.5mm !important;
+  min-width: 0 !important;
+}
+#studentReportCard.report-card .school-heading {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+#studentReportCard.report-card .report-title {
+  display: flex !important;
+  width: 38mm !important;
+  min-width: 38mm !important;
+  max-width: 38mm !important;
+  align-self: center !important;
+  justify-self: end !important;
+  box-sizing: border-box !important;
+  overflow-wrap: anywhere !important;
+}
+#studentReportCard.report-card .student-information .section-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 2mm !important;
+}
+#studentReportCard.report-card .student-profile-grid {
+  display: grid !important;
+  grid-template-columns: 17mm minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  gap: 1.8mm !important;
+  min-width: 0 !important;
+}
+#studentReportCard.report-card .student-photo {
+  width: 17mm !important;
+  min-width: 17mm !important;
+  max-width: 17mm !important;
+  align-self: stretch !important;
+}
+#studentReportCard.report-card .student-details {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 1.2mm !important;
+  min-width: 0 !important;
+}
+#studentReportCard.report-card .student-info-row {
+  display: grid !important;
+  gap: 1mm !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+}
+#studentReportCard.report-card .student-top-row {
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, .7fr) minmax(0, .7fr) minmax(0, 1.15fr) !important;
+}
+#studentReportCard.report-card .student-class-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .65fr) minmax(0, 1.65fr) !important;
+}
+#studentReportCard.report-card .student-top-row > .detail-item,
+#studentReportCard.report-card .student-class-row > .detail-item {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 8mm !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 1.2mm 1.5mm !important;
+  overflow-wrap: anywhere !important;
+}
+#studentReportCard.report-card .student-top-row .detail-item > span,
+#studentReportCard.report-card .student-class-row .detail-item > span {
+  line-height: 1.12 !important;
+  overflow-wrap: anywhere !important;
+}
+#studentReportCard.report-card .student-top-row .detail-item > strong,
+#studentReportCard.report-card .student-class-row .detail-item > strong,
+#studentReportCard.report-card .memorization-value-row {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+@media print {
+  html body #studentReportCard.report-card .school-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 38mm !important;
+    align-items: center !important;
+    column-gap: 3mm !important;
+    width: 100% !important;
+  }
+  html body #studentReportCard.report-card .report-title {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 38mm !important;
+    min-width: 38mm !important;
+    max-width: 38mm !important;
+    justify-self: end !important;
+  }
+  html body #studentReportCard.report-card .school-brand {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: 17mm minmax(0, 1fr) !important;
+    min-width: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-profile-grid {
+    grid-template-columns: 17mm minmax(0, 1fr) !important;
+    gap: 1.8mm !important;
+    padding: 1.2mm !important;
+    align-items: stretch !important;
+  }
+  html body #studentReportCard.report-card .student-top-row {
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, .7fr) minmax(0, .7fr) minmax(0, 1.15fr) !important;
+  }
+  html body #studentReportCard.report-card .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .65fr) minmax(0, 1.65fr) !important;
+  }
+}
