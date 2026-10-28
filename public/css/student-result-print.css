@@ -1876,3 +1876,114 @@
   html body #studentReportCard.report-card .student-profile-grid { break-inside: avoid !important; page-break-inside: avoid !important; }
 }
 
+
+/* Student Information only — final scoped layout correction.
+   This block intentionally overrides earlier profile-only experiments without
+   changing the header, subject table, behavioural report, or other sections. */
+@media print {
+  html body #studentReportCard.report-card .student-information {
+    margin-top: 0 !important;
+    margin-bottom: 1.2mm !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information > .section-heading {
+    margin: 0 0 .8mm !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-profile-grid {
+    display: grid !important;
+    grid-template-columns: 19mm minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    gap: 1.4mm !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-photo {
+    grid-column: 1 !important;
+    grid-row: 1 / span 2 !important;
+    align-self: stretch !important;
+    width: 19mm !important;
+    min-width: 19mm !important;
+    max-width: 19mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-photo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-details {
+    grid-column: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: .7mm !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-info-row {
+    display: grid !important;
+    align-items: stretch !important;
+    gap: .8mm !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-top-row {
+    grid-template-columns: minmax(0, 2.25fr) minmax(0, .68fr) minmax(0, .68fr) minmax(0, 1.12fr) !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .68fr) minmax(0, 1.65fr) !important;
+  }
+  html body #studentReportCard.report-card .student-information .detail-item {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    min-height: 7mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: .75mm 1.2mm !important;
+    overflow: visible !important;
+    overflow-wrap: anywhere !important;
+  }
+  html body #studentReportCard.report-card .student-information .detail-item > span,
+  html body #studentReportCard.report-card .student-information .detail-item > small,
+  html body #studentReportCard.report-card .student-information .memorization-detail-item > span {
+    display: block !important;
+    margin: 0 !important;
+    font-size: 7pt !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  html body #studentReportCard.report-card .student-information .detail-item > strong,
+  html body #studentReportCard.report-card .student-information .detail-item > b,
+  html body #studentReportCard.report-card .student-information .detail-item .value,
+  html body #studentReportCard.report-card .student-information .memorization-value-row strong {
+    display: block !important;
+    margin: .35mm 0 0 !important;
+    font-size: 9pt !important;
+    line-height: 1.12 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  html body #studentReportCard.report-card .student-information .student-name-item > strong {
+    font-size: 9.5pt !important;
+  }
+  html body #studentReportCard.report-card .student-information .memorization-value-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
