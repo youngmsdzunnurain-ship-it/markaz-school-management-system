@@ -112,7 +112,8 @@
         $("totalCount").textContent = summary.total;
         $("presentCount").textContent = summary.present;
         $("absentCount").textContent = summary.absent;
-        $("otherCount").textContent = summary.late + summary.excused;
+        $("lateCount").textContent = summary.late;
+        $("excusedCount").textContent = summary.excused;
         const marked = summary.total - summary.unmarked;
         const percent = summary.total ? Math.round(marked / summary.total * 100) : 0;
         els.progressBar.style.width = percent + "%";
