@@ -2004,3 +2004,166 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .65fr) minmax(0, 1.65fr) !important;
   }
 }
+
+
+/* Readability pass: compact student profile; give marks and conduct more room. */
+@media print {
+  /* Keep the profile as two tidy, aligned rows rather than tall cards. */
+  html body #studentReportCard.report-card .student-information {
+    margin-bottom: 1.1mm !important;
+  }
+  html body #studentReportCard.report-card .student-information .section-heading {
+    margin-bottom: .8mm !important;
+  }
+  html body #studentReportCard.report-card .student-profile-grid {
+    grid-template-columns: 15mm minmax(0, 1fr) !important;
+    gap: 1.2mm !important;
+    padding: .8mm !important;
+    align-items: stretch !important;
+  }
+  html body #studentReportCard.report-card .student-photo {
+    width: 15mm !important;
+    min-width: 15mm !important;
+    max-width: 15mm !important;
+    min-height: 0 !important;
+    height: auto !important;
+    align-self: stretch !important;
+  }
+  html body #studentReportCard.report-card .student-details {
+    gap: .8mm !important;
+    justify-content: center !important;
+  }
+  html body #studentReportCard.report-card .student-info-row {
+    gap: .8mm !important;
+  }
+  html body #studentReportCard.report-card .student-top-row {
+    grid-template-columns: minmax(0, 2.3fr) minmax(0, .65fr) minmax(0, .65fr) minmax(0, 1.15fr) !important;
+  }
+  html body #studentReportCard.report-card .student-class-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.65fr) !important;
+  }
+  html body #studentReportCard.report-card .student-top-row > .detail-item,
+  html body #studentReportCard.report-card .student-class-row > .detail-item {
+    min-height: 6.3mm !important;
+    padding: .65mm 1mm !important;
+    border-radius: 1.3mm !important;
+  }
+  html body #studentReportCard.report-card .student-top-row .detail-item > span,
+  html body #studentReportCard.report-card .student-class-row .detail-item > span {
+    font-size: 5.8pt !important;
+    line-height: 1.04 !important;
+    letter-spacing: .15px !important;
+  }
+  html body #studentReportCard.report-card .student-top-row .detail-item > strong,
+  html body #studentReportCard.report-card .student-class-row .detail-item > strong,
+  html body #studentReportCard.report-card .student-class-row .memorization-value-row > strong {
+    margin-top: .25mm !important;
+    font-size: 7.6pt !important;
+    line-height: 1.05 !important;
+  }
+  html body #studentReportCard.report-card .student-name-item > strong {
+    font-size: 8.2pt !important;
+  }
+
+  /* Larger, clearer subject table cells; keep the data columns aligned. */
+  html body #studentReportCard.report-card .student-results-table {
+    font-size: 8.8pt !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th {
+    padding: 1.65mm 1.1mm !important;
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
+    vertical-align: middle !important;
+    white-space: normal !important;
+  }
+  html body #studentReportCard.report-card .student-results-table td {
+    padding: 1.35mm 1.1mm !important;
+    font-size: 8.8pt !important;
+    line-height: 1.18 !important;
+    vertical-align: middle !important;
+    overflow-wrap: anywhere !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:first-child,
+  html body #studentReportCard.report-card .student-results-table td:first-child {
+    width: 5% !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(2),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(2) {
+    width: 25% !important;
+    text-align: left !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(3),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(3),
+  html body #studentReportCard.report-card .student-results-table th:nth-child(4),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(4) {
+    width: 8% !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(5),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(5) {
+    width: 9% !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(6),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(6) {
+    width: 9% !important;
+    font-weight: 700 !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(7),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(7) {
+    width: 8% !important;
+    font-weight: 700 !important;
+  }
+  html body #studentReportCard.report-card .student-results-table th:nth-child(8),
+  html body #studentReportCard.report-card .student-results-table td:nth-child(8) {
+    width: 28% !important;
+    text-align: left !important;
+  }
+
+  /* Behaviour traits: clearer labels and controls with consistent row height. */
+  html body #studentReportCard.report-card .behaviour-grid-container {
+    padding: 1.8mm !important;
+    border-radius: 2mm !important;
+  }
+  html body #studentReportCard.report-card .behaviour-grid {
+    gap: 1.4mm !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  html body #studentReportCard.report-card .behaviour-item {
+    min-width: 0 !important;
+    min-height: 7.8mm !important;
+    padding: 1.2mm 1.6mm !important;
+    gap: 1mm !important;
+    border-radius: 1.5mm !important;
+    align-items: center !important;
+  }
+  html body #studentReportCard.report-card .behaviour-item > span {
+    font-size: 7.8pt !important;
+    line-height: 1.12 !important;
+  }
+  html body #studentReportCard.report-card .behaviour-rating {
+    max-width: 25mm !important;
+    font-size: 7.2pt !important;
+    line-height: 1.1 !important;
+  }
+  html body #studentReportCard.report-card .behaviour-summary-card {
+    padding: 1.8mm 2.5mm !important;
+  }
+  html body #studentReportCard.report-card .behaviour-comment-card {
+    padding: 1.7mm 2.5mm !important;
+  }
+  html body #studentReportCard.report-card .behaviour-comment-card p,
+  html body #studentReportCard.report-card .remark-card p {
+    font-size: 8pt !important;
+    line-height: 1.18 !important;
+  }
+  html body #studentReportCard.report-card .summary-box {
+    padding: 1.8mm 2.5mm !important;
+  }
+  html body #studentReportCard.report-card .summary-box > span {
+    font-size: 6.5pt !important;
+  }
+  html body #studentReportCard.report-card .summary-box > strong {
+    font-size: 9.5pt !important;
+  }
+}
