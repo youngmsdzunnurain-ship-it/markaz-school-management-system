@@ -67,10 +67,10 @@ function getGrade(total) {
     const score = Number(total);
 
     if (!Number.isFinite(score)) return "—";
-    if (score >= 80) return "A";
-    if (score >= 70) return "B";
+    if (score >= 70) return "A";
+    if (score >= 60) return "B";
     if (score >= 50) return "C";
-    if (score >= 30) return "D";
+    if (score >= 40) return "D";
     return "E";
 }
 
@@ -78,11 +78,11 @@ function getAcademicDescriptor(score) {
     const result = getGrade(score);
 
     const descriptors = {
-        A: "Excellent",
-        B: "Very Good",
-        C: "Brilliant",
+        A: "Awesome",
+        B: "Phenomenal",
+        C: "Impressive",
         D: "Promising",
-        E: "You Can Do Better"
+        E: "Needs Improvement"
     };
 
     return descriptors[result] || "Awaiting results";
@@ -92,11 +92,11 @@ function getTeacherOverallRemark(score) {
     const result = getGrade(score);
 
     const remarks = {
-        A: "Excellent performance. The student has shown strong understanding, effort and consistency. Keep up the good work.",
-        B: "Very good performance. The student is doing well and is encouraged to maintain this strong effort.",
-        C: "Brilliant progress. With continued effort and consistency, the student can achieve even more.",
-        D: "Promising performance. The student is encouraged to put in more effort and remain consistent for further improvement.",
-        E: "You can do better. With regular practice, guidance and consistent effort, the student can make meaningful progress."
+        A: "Awesome performance. Keep up this excellent standard.",
+        B: "Phenomenal performance. The student is encouraged to aim even higher.",
+        C: "Impressive performance. The student should keep working steadily.",
+        D: "Promising performance. The student is encouraged to put in more effort to achieve consistent improvement.",
+        E: "The student needs more effort and close support to improve."
     };
 
     return remarks[result] || "Awaiting final assessment.";
@@ -557,38 +557,23 @@ function getGradeRemark(score) {
         };
     }
 
-    if (score >= 80) {
-        return {
-            grade: "A",
-            remark: "Excellent"
-        };
+    if (score >= 70) {
+        return { grade: "A", remark: "Awesome" };
     }
 
-    if (score >= 70) {
-        return {
-            grade: "B",
-            remark: "Very Good"
-        };
+    if (score >= 60) {
+        return { grade: "B", remark: "Phenomenal" };
     }
 
     if (score >= 50) {
-        return {
-            grade: "C",
-            remark: "Brilliant"
-        };
+        return { grade: "C", remark: "Impressive" };
     }
 
-    if (score >= 30) {
-        return {
-            grade: "D",
-            remark: "Promising"
-        };
+    if (score >= 40) {
+        return { grade: "D", remark: "Promising" };
     }
 
-    return {
-        grade: "E",
-        remark: "You Can Do Better"
-    };
+    return { grade: "E", remark: "Needs Improvement" };
 }
 
 function getEditedSubjectValues(subjectId) {
