@@ -113,7 +113,7 @@ foreach ($records as $record) {
     if (!attendanceIsValidStatus($status)) {
         attendanceJsonError(422, 'Each student must be marked Present, Absent, Late or Excused.');
     }
-    if (mb_strlen($remarks) > 500) {
+    if ((function_exists('mb_strlen') ? mb_strlen($remarks, 'UTF-8') : strlen($remarks)) > 500) {
         attendanceJsonError(422, 'Student remarks must be 500 characters or fewer.');
     }
     if (isset($normalized[(int) $studentId])) {
