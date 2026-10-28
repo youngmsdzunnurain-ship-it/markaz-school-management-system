@@ -427,6 +427,7 @@
         state.classId = "";
         state.students = [];
         state.dirty = false;
+        els.classSelect.value = "";
         populateClasses();
         updateSummary();
         renderRegister();
