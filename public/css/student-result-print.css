@@ -20,12 +20,12 @@
     --goldl: #fdf7e6;
     --ink: #1c2b24;
     --mut: #66746d;
-    --k: calc(.81 * var(--markaz-result-print-scale, 1));
+    --k: .81;
   }
 
   /* Shorter paper (Letter, about 269mm printable height): slightly smaller sizes so everything still fits on one page */
   @media (max-height: 275mm) {
-    :root { --k: calc(.76 * var(--markaz-result-print-scale, 1)); }
+    :root { --k: .76; }
   }
 
   html,
@@ -105,6 +105,7 @@
   #studentReportCard {
     display: flex !important;
     flex-direction: column !important;
+    justify-content: space-between !important;
     gap: calc(2.2mm * var(--k)) !important;
     width: 100% !important;
     max-width: none !important;
@@ -867,7 +868,7 @@
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
     gap: calc(9mm * var(--k)) !important;
-    margin: auto 0 0 !important;
+    margin: 0 !important;
     padding: calc(3mm * var(--k)) 0 0 !important;
     border: 0 !important;
     background: none !important;
