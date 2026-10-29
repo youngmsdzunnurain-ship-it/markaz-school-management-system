@@ -930,3 +930,27 @@
     color: var(--mut) !important;
   }
 }
+
+/* Final print-layout guard: use the printable page width and prevent viewport-height overflow. */
+@media print {
+  html,
+  body {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  html body main.student-result-page,
+  html body main.student-result-page.management-view,
+  html body #studentReportCard {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  #studentReportCard {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
