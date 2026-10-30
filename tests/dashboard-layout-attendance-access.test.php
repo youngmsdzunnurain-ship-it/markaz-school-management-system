@@ -14,6 +14,8 @@ $html = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $js = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $stats = file_get_contents(__DIR__ . '/../api/dashboard/stats.php');
 $attendance = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
+$attendanceRegister = file_get_contents(__DIR__ . '/../api/attendance/register.php');
+$attendanceClasses = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 
 dashboardAssert(
     str_contains($css, 'grid-template-columns: minmax(260px, 35fr) minmax(230px, 30fr) minmax(260px, 35fr)'),
@@ -57,7 +59,9 @@ dashboardAssert(
 );
 dashboardAssert(
     str_contains($attendance, "ar.class_type = ?") &&
-    str_contains($attendance, "ar.class_id = c.id"),
+    str_contains($attendance, "ar.class_id = c.id") &&
+    str_contains($attendanceRegister, 's.arabia_class_id') &&
+    str_contains($attendanceClasses, 's.arabia_class_id'),
     'Attendance report queries must isolate each category by class_type and class_id'
 );
 
