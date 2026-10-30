@@ -162,87 +162,44 @@
                     <div id="teacherAssignmentsList" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;"></div>
                 </section>
 
-                <section class="dashboard-result-overview" aria-label="School result progress">
-                <section class="dashboard-completion-charts" aria-label="Result completion charts">
-  <article class="dashboard-chart-card">
-    <span class="eyebrow">SCHOOL OVERVIEW</span>
-    <h2>Overall Result Completion</h2>
-    <div id="dashboardCompletionDonut" class="dashboard-completion-donut" role="img" aria-label="Overall result completion">
-      <div><strong id="dashboardCompletionDonutValue">0%</strong><span>Complete</span></div>
-    </div>
-  </article>
-  <article class="dashboard-chart-card dashboard-class-chart-card">
-    <span class="eyebrow">CLASS PERFORMANCE</span>
-    <h2>Completion by Class</h2>
-    <div id="dashboardClassProgressChart" class="dashboard-class-progress-chart">
-      <p>Loading class progress...</p>
-    </div>
-  </article>
-</section>
-
-                <section class="result-progress-section">
-                    <div class="panel-header">
-                        <div>
-                            <span class="eyebrow">RESULT PROGRESS</span>
-                            <h3>Examination Entry Status</h3>
-                            <p class="progress-description">
-                                Track how far result entry has progressed for the current academic period.
-                            </p>
-                        </div>
-                        <div class="completion-badge">
-                            <strong id="resultCompletionPercentage">0%</strong>
-                            <span>Complete</span>
-                        </div>
-                    </div>
-
-                    <div class="result-progress-grid">
-
-                        <article class="progress-card progress-complete">
-                            <div class="progress-card-icon">
-                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                            </div>
+                <section class="dashboard-exam-section" aria-label="Examination entry overview">
+                    <section class="result-progress-section">
+                        <div class="panel-header">
                             <div>
+                                <span class="eyebrow">RESULT PROGRESS</span>
+                                <h3>Examination Entry Status</h3>
+                                <p class="progress-description">Current academic period · CA1, CA2 and Examination</p>
+                            </div>
+                            <div class="completion-badge">
+                                <strong id="resultCompletionPercentage">0%</strong>
                                 <span>Complete</span>
-                                <strong id="completeStudents">0</strong>
-                                <small>Students with all required results</small>
                             </div>
-                        </article>
-
-                        <article class="progress-card progress-incomplete">
-                            <div class="progress-card-icon">
-                                <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
-                            </div>
-                            <div>
-                                <span>In Progress</span>
-                                <strong id="incompleteStudents">0</strong>
-                                <small>Students with partial results</small>
-                            </div>
-                        </article>
-
-                        <article class="progress-card progress-none">
-                            <div class="progress-card-icon">
-                                <i class="fa-regular fa-circle" aria-hidden="true"></i>
-                            </div>
-                            <div>
-                                <span>Not Started</span>
-                                <strong id="noResultStudents">0</strong>
-                                <small>Students with no results entered</small>
-                            </div>
-                        </article>
-
-                        <article class="progress-card progress-total">
-                            <div class="progress-card-icon">
-                                <i class="fa-solid fa-chart-simple" aria-hidden="true"></i>
-                            </div>
-                            <div>
-                                <span>Result Entries</span>
-                                <strong id="resultEntriesProgress">0 / 0</strong>
-                                <small>Entered results / expected results</small>
-                            </div>
-                        </article>
-
-                    </div>
+                        </div>
+                        <div class="result-progress-grid">
+                            <article class="progress-card progress-complete"><div class="progress-card-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div><div><span>Complete</span><strong id="completeStudents">0</strong><small>Students with all required subject scores</small></div></article>
+                            <article class="progress-card progress-incomplete"><div class="progress-card-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div><div><span>In Progress</span><strong id="incompleteStudents">0</strong><small>Students with partially entered scores</small></div></article>
+                            <article class="progress-card progress-none"><div class="progress-card-icon"><i class="fa-regular fa-circle" aria-hidden="true"></i></div><div><span>Not Started</span><strong id="noResultStudents">0</strong><small>Students with no scores entered</small></div></article>
+                            <article class="progress-card progress-total"><div class="progress-card-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></div><div><span>Completed Entries</span><strong id="resultEntriesProgress">0 / 0</strong><small>Complete subject entries / required entries</small></div></article>
+                        </div>
+                    </section>
                 </section>
+
+                <section class="dashboard-exam-charts" aria-label="School and class examination charts">
+                    <article class="dashboard-chart-card dashboard-school-donut-card">
+                        <span class="eyebrow">WHOLE SCHOOL</span><h2>Overall Examination Completion</h2>
+                        <div id="dashboardCompletionDonut" class="dashboard-completion-donut" role="img" aria-label="Overall examination completion">
+                            <div><strong id="dashboardCompletionDonutValue">0%</strong><span>Complete</span></div>
+                        </div>
+                        <p class="dashboard-chart-caption" id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
+                    </article>
+                    <article class="dashboard-chart-card dashboard-class-pie-card">
+                        <span class="eyebrow">CONVENTIONAL</span><h2>Completion by Conventional Class</h2>
+                        <div id="dashboardConventionalPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
+                    </article>
+                    <article class="dashboard-chart-card dashboard-class-pie-card">
+                        <span class="eyebrow">ARABIC CLASSES</span><h2>Completion by Arabic Class</h2>
+                        <div id="dashboardArabicPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
+                    </article>
                 </section>
 
                 <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
@@ -250,26 +207,30 @@
                         <div><span class="eyebrow">SCHOOL-WIDE DAILY OVERVIEW</span><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div>
                         <a href="./attendance.html" class="dashboard-attendance-link"><i class="fa-solid fa-calendar-check"></i> Open attendance management</a>
                     </div>
-                    <div class="dashboard-attendance-content">
+                    <div class="dashboard-attendance-summary">
                         <div class="dashboard-attendance-donut-wrap">
                             <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
                             <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
                         </div>
                         <div class="dashboard-attendance-stats">
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students at school</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students not present</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Arrived late</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Approved absence</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students present</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students absent</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Students late</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Excused absences</small></a>
                         </div>
                     </div>
                     <div class="dashboard-attendance-groups">
-                        <section><h3><i class="fa-solid fa-school"></i> Conventional classes</h3><div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div></section>
-                        <section><h3><i class="fa-solid fa-book-quran"></i> Arabic classes</h3><div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div></section>
+                        <section class="dashboard-attendance-category" aria-labelledby="conventionalAttendanceHeading">
+                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional · Left</h3>
+                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                        </section>
+                        <section class="dashboard-attendance-category" aria-labelledby="arabicAttendanceHeading">
+                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic · Right</h3>
+                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                        </section>
                     </div>
                     <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Unmarked students are not counted as present.</p>
                 </section>
-
-
 
                 <section class="dashboard-grid">
 
