@@ -123,6 +123,20 @@
             </div>
         </section>
 
+        <section class="attendance-filter-panel" aria-labelledby="attendanceReportsTitle">
+            <div class="section-heading">
+                <div><span class="attendance-eyebrow">ATTENDANCE MANAGEMENT</span><h2 id="attendanceReportsTitle">Attendance reports</h2></div>
+                <span class="secure-note">Class and school summaries</span>
+            </div>
+            <div class="attendance-filters">
+                <label class="attendance-field" for="reportFrom"><span>From</span><input type="date" id="reportFrom"></label>
+                <label class="attendance-field" for="reportTo"><span>To</span><input type="date" id="reportTo"></label>
+                <button type="button" class="button button-primary" id="loadAttendanceReport">View report</button>
+            </div>
+            <p class="filter-help">Reports count saved attendance marks only. Unmarked school days are not treated as present.</p>
+            <div id="attendanceReportOutput" role="status" aria-live="polite">Choose a date range to view attendance totals.</div>
+        </section>
+
         <section class="attendance-register-panel" aria-labelledby="registerTitle">
             <div class="register-panel-header">
                 <div>
