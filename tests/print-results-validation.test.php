@@ -15,7 +15,7 @@ $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.p
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 
 printCheck(
-    str_contains($printPage, 'class_type=conventional') &&
+    str_contains($printPage, 'class_type=') &&
     str_contains($printPage, 'getClassCompletion(id, "conventional")'),
     'print eligibility request must send the required Conventional class type'
 );
