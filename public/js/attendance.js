@@ -547,7 +547,49 @@
         refreshActions();
     });
 
+    async function loadAttendanceReport() {
+        const output = $("attendanceReportOutput");
+        const from = $("reportFrom").value;
+        const to = $("reportTo").value;
+        if (!from || !to || from > to) {
+            output.textContent = "Choose a valid date range.";
+            return;
+        }
+        const params = new URLSearchParams({ from, to });
+        if (state.role === "teacher" || state.classId) {
+            if (!state.classId) {
+                output.textContent = "Select one of your assigned classes before viewing its report.";
+                return;
+            }
+            params.set("class_type", state.classType);
+            params.set("class_id", state.classId);
+        }
+        output.textContent = "Loading attendance report…";
+        try {
+            const report = await requestJson("./api/attendance/reports.php?" + params.toString());
+            const totals = report.summary;
+            const rows = report.classes.map(item =>
+                "<tr><td>" + escapeHtml(item.class_name || "Unknown class") + "</td>" +
+                "<td>" + item.marked_records + "</td><td>" + item.present_count + "</td>" +
+                "<td>" + item.absent_count + "</td><td>" + item.late_count + "</td>" +
+                "<td>" + item.excused_count + "</td><td>" + item.days_with_records + "</td></tr>"
+            ).join("");
+            output.innerHTML =
+                '<div class="attendance-report-summary"><strong>' + totals.marked_records +
+                '</strong> saved marks · <strong>' + totals.present + '</strong> present · <strong>' +
+                totals.absent + '</strong> absent · <strong>' + totals.late + '</strong> late · <strong>' +
+                totals.excused + '</strong> excused</div>' +
+                '<div class="attendance-table-wrap"><table class="attendance-table"><thead><tr>' +
+                '<th>Class</th><th>Saved marks</th><th>Present</th><th>Absent</th><th>Late</th><th>Excused</th><th>Days recorded</th>' +
+                '</tr></thead><tbody>' + (rows || '<tr><td colspan="7">No saved attendance records in this period.</td></tr>') +
+                '</tbody></table></div>';
+        } catch (error) {
+            output.textContent = error.message;
+        }
+    }
+
     els.load.addEventListener("click", loadRegister);
+    $("loadAttendanceReport").addEventListener("click", loadAttendanceReport);
     
     els.studentSelect.addEventListener("change", focusSelectedStudent);
     
@@ -567,6 +609,10 @@
 
     els.date.max = localDateValue();
     els.date.value = localDateValue();
+    $("reportTo").value = localDateValue();
+    const reportStart = new Date();
+    reportStart.setDate(reportStart.getDate() - 29);
+    $("reportFrom").value = localDateValue(reportStart);
     state.date = els.date.value;
     updateDateLabel();
     updateSummary();
