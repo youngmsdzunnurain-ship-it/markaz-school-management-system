@@ -94,6 +94,7 @@
   html body main.student-result-page,
   html body main.student-result-page.management-view {
     display: block !important;
+    height: 100% !important;
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -109,10 +110,12 @@
   #studentReportCard {
     display: flex !important;
     flex-direction: column !important;
+    justify-content: space-between !important;
     gap: calc(2.2 * var(--u)) !important;
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
+    min-height: 100% !important;
     margin: 0 !important;
     padding: 0 0 calc(25 * var(--u)) !important;
     border: 0 !important;
