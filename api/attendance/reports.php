@@ -21,10 +21,9 @@ if ((new DateTimeImmutable($from))->diff(new DateTimeImmutable($to))->days > 366
 
 $classType = (string) ($_GET['class_type'] ?? '');
 $classId = filter_var($_GET['class_id'] ?? null, FILTER_VALIDATE_INT);
-$params = [$from, $to];
-$where = 'ar.attendance_date BETWEEN ? AND ?';
+$hasClassId = $classId !== false && $classId !== null;
 
-if ($classType !== '' || $classId !== null) {
+if ($classType !== '' || $hasClassId) {
     if (!in_array($classType, ['conventional', 'arabic'], true) || !$classId || $classId < 1) {
         attendanceJsonError(422, 'Choose both a valid class category and class.');
     }
