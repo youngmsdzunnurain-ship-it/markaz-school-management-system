@@ -20,7 +20,7 @@
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
         body: $("attendanceTableBody"),
-        search: $("studentSearch"),
+        studentSelect: $("attendanceStudent"),
         markAll: $("markAllPresentButton"),
         clear: $("clearMarksButton"),
         save: $("saveAttendanceButton"),
@@ -32,7 +32,7 @@
         today: $("todayLabel"),
         progressBar: $("progressBar"),
         progressLabel: $("progressLabel"),
-        studentSuggestions: $("studentNameSuggestions"),
+        
         pie: $("attendancePieChart"),
         chartLegend: $("attendanceChartLegend"),
         chartDate: $("attendanceChartDate"),
@@ -97,13 +97,7 @@
     }
 
     function visibleStudents() {
-        const term = els.search.value.trim().toLocaleLowerCase();
-        if (!term) return state.students;
-        return state.students.filter((student) => {
-            const name = fullName(student).toLocaleLowerCase();
-            const admission = String(student.admission_number || "").toLocaleLowerCase();
-            return name.includes(term) || admission.includes(term);
-        });
+        return state.students;
     }
 
     function updateSummary() {
@@ -152,21 +146,27 @@
         els.chartDate.textContent = selected && state.date ? formatDate(state.date) + " · " + selected.name : "Load a register to view its breakdown";
     }
 
-    function populateStudentSuggestions() {
-        if (!els.studentSuggestions) return;
-        els.studentSuggestions.innerHTML = state.students.map(student =>
-            '<option value="' + escapeHtml(fullName(student)) + '" label="' + escapeHtml(student.admission_number || "") + '"></option>'
-        ).join("");
+    function populateStudentDropdown() {
+        const select = els.studentSelect;
+        if (!select) return;
+        select.replaceChildren();
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = state.students.length ? "Select a student…" : "No students in this class";
+        select.appendChild(placeholder);
+        state.students.forEach(student => {
+            const option = document.createElement("option");
+            option.value = String(student.id);
+            option.textContent = fullName(student) + (student.admission_number ? " — " + student.admission_number : "");
+            select.appendChild(option);
+        });
+        select.disabled = state.students.length === 0 || state.loading || state.saving;
     }
 
     function focusSelectedStudent() {
-        const term = els.search.value.trim().toLocaleLowerCase();
-        const student = state.students.find(item =>
-            fullName(item).toLocaleLowerCase() === term ||
-            String(item.admission_number || "").toLocaleLowerCase() === term
-        );
-        if (!student) return;
-        const row = els.body.querySelector('[data-student-row="' + Number(student.id) + '"]');
+        const studentId = Number(els.studentSelect.value);
+        if (!studentId) return;
+        const row = els.body.querySelector('[data-student-row="' + studentId + '"]');
         if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -210,7 +210,7 @@
     function refreshActions() {
         const hasRegister = Boolean(state.classId && state.date && state.students.length);
         const isBusy = state.loading || state.saving;
-        els.search.disabled = !hasRegister || isBusy;
+        els.studentSelect.disabled = !hasRegister || isBusy;
         els.markAll.disabled = !hasRegister || isBusy;
         els.clear.disabled = !hasRegister || isBusy;
         els.save.disabled = !hasRegister || isBusy;
@@ -318,11 +318,11 @@
                 remarks: student.remarks || "",
             }));
             state.dirty = false;
-            els.search.value = "";
+            
             const typeLabel = classType === "arabic" ? "Arabic class" : "Conventional class";
             els.subtitle.textContent = data.class.name + " · " + typeLabel + " · " + formatDate(data.date);
             const summary = updateSummary();
-            populateStudentSuggestions();
+            populateStudentDropdown();
             renderRegister();
             if (!state.students.length) {
                 setNotice("This class has no active students to mark.", "error");
@@ -547,9 +547,9 @@
     });
 
     els.load.addEventListener("click", loadRegister);
-    els.search.addEventListener("input", renderRegister);
-    els.search.addEventListener("change", focusSelectedStudent);
-    els.search.addEventListener("keydown", (event) => { if (event.key === "Enter") focusSelectedStudent(); });
+    
+    els.studentSelect.addEventListener("change", focusSelectedStudent);
+    
     els.body.addEventListener("change", handleRegisterChange);
     els.body.addEventListener("input", handleRegisterChange);
     els.markAll.addEventListener("click", markAllPresent);
