@@ -67,7 +67,7 @@ $classProgressByType = [
     'conventional' => [],
     'arabic' => [],
 ];
-$schoolProgressRows = [];
+$schoolProgressByStudent = [];
 
 $classDefinitions = [
     [
@@ -145,7 +145,19 @@ foreach ($classDefinitions as $definition) {
         ]);
         $studentRows = $studentProgressStmt->fetchAll(PDO::FETCH_ASSOC);
         $summary = dashboardSummariseStudentProgress($studentRows);
-        $schoolProgressRows = array_merge($schoolProgressRows, $studentRows);
+        foreach ($studentRows as $studentRow) {
+            $studentId = (int) $studentRow['student_id'];
+            if (!isset($schoolProgressByStudent[$studentId])) {
+                $schoolProgressByStudent[$studentId] = [
+                    'expected_subjects' => 0,
+                    'completed_subjects' => 0,
+                    'started_subjects' => 0,
+                ];
+            }
+            $schoolProgressByStudent[$studentId]['expected_subjects'] += (int) $studentRow['expected_subjects'];
+            $schoolProgressByStudent[$studentId]['completed_subjects'] += (int) $studentRow['completed_subjects'];
+            $schoolProgressByStudent[$studentId]['started_subjects'] += (int) $studentRow['started_subjects'];
+        }
 
         $classEntry = [
             'class_type' => $type,
@@ -167,7 +179,7 @@ foreach ($classDefinitions as $definition) {
     }
 }
 
-$schoolSummary = dashboardSummariseStudentProgress($schoolProgressRows);
+$schoolSummary = dashboardSummariseStudentProgress(array_values($schoolProgressByStudent));
 
 echo json_encode([
     'success' => true,
