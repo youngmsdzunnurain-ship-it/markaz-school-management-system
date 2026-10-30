@@ -48,6 +48,7 @@ $periodStmt = $pdo->query(
 );
 
 $period = $periodStmt->fetch();
+$periodId = $period ? (int) $period['id'] : 0;
 
 $results = 0;
 $expectedResults = 0;
