@@ -58,12 +58,12 @@
                     <span>Results</span>
                 </a>
 
-                <a href="./attendance.html" class="nav-link" data-role-access="attendance">
+                <a href="./attendance.html" class="nav-link" data-role-access="admin">
                     <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
                     <span>Attendance</span>
                 </a>
 
-                <a href="./school-fees.html" class="nav-link"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
+                <a href="./school-fees.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
 
                 <a href="./print-results.html" class="nav-link" data-role-access="print_results">
                     <i class="fa-solid fa-print" aria-hidden="true"></i>
@@ -185,16 +185,16 @@
                 </section>
 
                 <section class="dashboard-exam-charts" aria-label="Conventional, whole-school and Arabic examination completion pie charts">
+                    <article class="dashboard-chart-card dashboard-class-pie-card">
+                        <span class="eyebrow">CONVENTIONAL</span><h2>Completion by Conventional Class</h2>
+                        <div id="dashboardConventionalPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
+                    </article>
                     <article class="dashboard-chart-card dashboard-school-pie-card">
                         <span class="eyebrow">WHOLE SCHOOL</span><h2>Overall Examination Completion</h2>
                         <div id="dashboardCompletionPie" class="dashboard-completion-pie" role="img" aria-label="Whole-school examination completion pie chart">
                             <div><strong id="dashboardCompletionPieValue">0%</strong><span>Complete</span></div>
                         </div>
                         <p class="dashboard-chart-caption" id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
-                    </article>
-                    <article class="dashboard-chart-card dashboard-class-pie-card">
-                        <span class="eyebrow">CONVENTIONAL</span><h2>Completion by Conventional Class</h2>
-                        <div id="dashboardConventionalPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
                     </article>
                     <article class="dashboard-chart-card dashboard-class-pie-card">
                         <span class="eyebrow">ARABIC CLASSES</span><h2>Completion by Arabic Class</h2>
@@ -207,29 +207,33 @@
                         <div><span class="eyebrow">SCHOOL-WIDE DAILY OVERVIEW</span><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div>
                         <a href="./attendance.html" class="dashboard-attendance-link"><i class="fa-solid fa-calendar-check"></i> Open attendance management</a>
                     </div>
-                    <div class="dashboard-attendance-summary">
-                        <div class="dashboard-attendance-donut-wrap">
-                            <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
-                            <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
-                        </div>
-                        <div class="dashboard-attendance-stats">
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students present</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students absent</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Students late</small></a>
-                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Excused absences</small></a>
-                        </div>
-                    </div>
-                    <div class="dashboard-attendance-groups">
-                        <section class="dashboard-attendance-category" aria-labelledby="conventionalAttendanceHeading">
-                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional · Left</h3>
-                            <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div><div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div><div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                    <div class="dashboard-attendance-layout">
+                        <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
+                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
+                            <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
+                            <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
+                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
-                        <section class="dashboard-attendance-category" aria-labelledby="arabicAttendanceHeading">
-                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic · Right</h3>
-                            <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div><div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div><div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                        <div class="dashboard-attendance-summary">
+                            <div class="dashboard-attendance-donut-wrap">
+                                <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
+                                <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
+                            </div>
+                            <div class="dashboard-attendance-stats">
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students present</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students absent</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Students late</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Excused absences</small></a>
+                            </div>
+                        </div>
+                        <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
+                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
+                            <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
+                            <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
+                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
                     </div>
-                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Unmarked students are not counted as present.</p>
+                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
                 </section>
 
                 <section class="dashboard-grid">
@@ -248,8 +252,8 @@
                             <button type="button" data-role-access="admin">Manage Subjects</button>
                             <button type="button" data-role-access="exam_officer">Enter Results</button>
                             <button type="button" data-role-access="print_results">Print Results</button>
-                            <button type="button" data-role-access="attendance">Attendance</button>
-                            <button type="button">School Fees</button>
+                            <button type="button" data-role-access="admin">Attendance</button>
+                            <button type="button" data-role-access="admin">School Fees</button>
                             <button type="button" data-role-access="admin">System Settings</button>
                         </div>
                     </article>

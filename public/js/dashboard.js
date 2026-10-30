@@ -514,7 +514,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = ["admin", "exam_officer", "teacher", "management"].includes(role);
+            allowed = role === "admin";
         }
 
         element.style.display = allowed ? "" : "none";
@@ -545,7 +545,11 @@ function dashboardRenderClassPie(targetId, classes) {
     const palette=["#17643a","#c9a94b","#4d8fbd","#d47758","#7b6ab2","#45a59a","#a36b91","#8a9b57","#d29a42","#5c7d9d"];
     const totalExpected=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.expected_entries)||0),0);
     const totalCompleted=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.entered_entries)||0),0);
-    const segments=classes.map((item,index)=>({value:Math.max(0,Number(item.expected_entries)||0),color:palette[index%palette.length]}));
+    const totalRemaining=Math.max(0,totalExpected-totalCompleted);
+    const segments=[
+        {value:totalCompleted,color:"#17643a"},
+        {value:totalRemaining,color:"#e8eee9"}
+    ];
     const gradient=dashboardDonutGradient(segments);
     const legend=classes.map((item,index)=>{
         const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
@@ -558,7 +562,7 @@ function dashboardRenderClassPie(targetId, classes) {
 
 async function loadDashboardAttendance() {
     const panel=document.getElementById("dashboardAttendancePanel"); if(!panel)return;
-    const role=window.markazCurrentRole||""; if(!["admin","exam_officer","management"].includes(role)){panel.hidden=true;return;} panel.hidden=false;
+    const role=window.markazCurrentRole||""; if(role!=="admin"){panel.hidden=true;return;} panel.hidden=false;
     const date=new Date(), localDate=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10);
     const dateLabel=document.getElementById("dashboardAttendanceDate"); if(dateLabel)dateLabel.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"full"}).format(date);
     try {

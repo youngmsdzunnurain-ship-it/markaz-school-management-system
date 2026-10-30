@@ -23,7 +23,9 @@ if ($method === 'GET') {
     }
 
     $class = attendanceRequireClassAccess($pdo, $classType, (int) $classId);
-    $studentClassColumn = $classType === 'arabic' ? 'arabic_class_id' : 'class_id';
+    $studentClassExpression = $classType === 'arabic'
+        ? 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)'
+        : 's.class_id';
 
     $stmt = $pdo->prepare(
         "SELECT s.id, s.admission_number, s.first_name, s.middle_name, s.last_name,
@@ -35,7 +37,7 @@ if ($method === 'GET') {
           AND ar.attendance_date = ?
           AND ar.class_type = ?
           AND ar.class_id = ?
-         WHERE s.{$studentClassColumn} = ?
+         WHERE {$studentClassExpression} = ?
            AND s.is_active = 1
          ORDER BY s.last_name, s.first_name, s.middle_name, s.admission_number"
     );
@@ -90,7 +92,9 @@ if ($classId === false || $classId === null || $classId < 1) {
 }
 
 $class = attendanceRequireClassAccess($pdo, $classType, (int) $classId);
-$studentClassColumn = $classType === 'arabic' ? 'arabic_class_id' : 'class_id';
+$studentClassExpression = $classType === 'arabic'
+    ? 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)'
+    : 's.class_id';
 $records = $input['records'] ?? null;
 
 if (!is_array($records) || count($records) < 1) {
@@ -127,8 +131,8 @@ foreach ($records as $record) {
 }
 
 $rosterStmt = $pdo->prepare(
-    "SELECT id FROM students
-     WHERE {$studentClassColumn} = ? AND is_active = 1
+    "SELECT s.id FROM students s
+     WHERE {$studentClassExpression} = ? AND s.is_active = 1
      ORDER BY id"
 );
 $rosterStmt->execute([(int) $classId]);

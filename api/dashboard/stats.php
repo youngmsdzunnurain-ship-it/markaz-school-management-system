@@ -75,14 +75,14 @@ $classDefinitions = [
         'class_table' => 'classes',
         'mapping_table' => 'class_subjects',
         'mapping_class_column' => 'class_id',
-        'student_class_column' => 'class_id',
+        'student_class_expression' => 'st.class_id',
     ],
     [
         'type' => 'arabic',
         'class_table' => 'arabic_classes',
         'mapping_table' => 'arabic_class_subjects',
         'mapping_class_column' => 'arabic_class_id',
-        'student_class_column' => 'arabic_class_id',
+        'student_class_expression' => 'COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)',
     ],
 ];
 
@@ -91,7 +91,7 @@ foreach ($classDefinitions as $definition) {
     $classTable = $definition['class_table'];
     $mappingTable = $definition['mapping_table'];
     $mappingClassColumn = $definition['mapping_class_column'];
-    $studentClassColumn = $definition['student_class_column'];
+    $studentClassExpression = $definition['student_class_expression'];
 
     $classRows = $pdo->query(
         "SELECT id, name, sort_order
@@ -130,7 +130,7 @@ foreach ($classDefinitions as $definition) {
            AND r.class_type = ?
            AND r.class_id = ?
          WHERE st.is_active = 1
-           AND st.{$studentClassColumn} = ?
+           AND {$studentClassExpression} = ?
          GROUP BY st.id"
     );
 
