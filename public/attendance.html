@@ -9,19 +9,21 @@
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/settings.css">
-    <link rel="stylesheet" href="./css/attendance.css?v=20261028-daily1">
+    <link rel="stylesheet" href="./css/attendance.css?v=20261030-ui-polish1">
     <link rel="stylesheet" href="./css/standard-page-heading.css">
     <link rel="stylesheet" href="./css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body class="attendance-page">
     <main class="attendance-shell">
-        <header class="settings-header">
-            <a href="dashboard.html" class="back-link" data-go-back>← Go Back</a>
-            <div>
-                <span>MARKAZ</span>
-                <h1>Daily Attendance</h1>
-                <p>Manage daily attendance records for your authorised classes.</p>
+        <header class="attendance-header">
+            <a href="dashboard.html" class="attendance-back" data-go-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Dashboard</a>
+            <div class="attendance-brand">
+                <div>
+                    <span class="attendance-eyebrow">MARKAZ · SCHOOL MANAGEMENT</span>
+                    <h1>Daily Attendance</h1>
+                    <p>Record, monitor and review student attendance across the school.</p>
+                </div>
             </div>
             <div class="attendance-header-actions">
                 <button type="button" class="button button-light" id="printRegisterButton" disabled>
@@ -204,7 +206,7 @@
         </footer>
     </main>
     <script src="./js/go-back.js"></script>
-    <script src="./js/attendance.js?v=20261030-attendance2"></script>
+    <script src="./js/attendance.js?v=20261030-ui-polish1"></script>
     <script src="/js/markaz-global.js"></script>
 </body>
 </html>

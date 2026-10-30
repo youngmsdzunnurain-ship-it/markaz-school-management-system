@@ -70,6 +70,7 @@ async function loadAdmin() {
         const email = data.admin.email || "";
         const role = data.admin.role || "";
         window.markazCurrentRole = role;
+        loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
 
@@ -519,6 +520,55 @@ function applyDashboardRoleAccess(role, permissions = {}) {
 /* =========================================================
    MARKAZ — DASHBOARD LIVE STATISTICS
    ========================================================= */
+
+
+async function loadDashboardAttendance() {
+    const panel = document.getElementById("dashboardAttendancePanel");
+    if (!panel) return;
+    const role = window.markazCurrentRole || "";
+    if (!["admin", "exam_officer", "management"].includes(role)) {
+        panel.hidden = true;
+        return;
+    }
+    const date = new Date();
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const dateLabel = document.getElementById("dashboardAttendanceDate");
+    if (dateLabel) dateLabel.textContent = new Intl.DateTimeFormat(undefined, {dateStyle:"full"}).format(date);
+    try {
+        const response = await fetch("./api/attendance/reports.php?from=" + localDate + "&to=" + localDate, {credentials:"same-origin", cache:"no-store", headers:{Accept:"application/json"}});
+        const report = await response.json();
+        if (!response.ok || !report.success) throw new Error(report.message || "Attendance summary unavailable.");
+        const s = report.summary || {};
+        const present = Number(s.present || 0), absent = Number(s.absent || 0), late = Number(s.late || 0), excused = Number(s.excused || 0);
+        const total = present + absent + late + excused;
+        const values = [["Present",present,"#21945b"],["Absent",absent,"#d65359"],["Late",late,"#d8a72c"],["Excused",excused,"#7d8b9a"]];
+        let cursor = 0;
+        const gradient = values.map((item) => { const start=cursor; cursor += total ? item[1]/total*100 : 0; return item[2]+" "+start+"% "+cursor+"%"; }).join(", ");
+        const donut = document.getElementById("dashboardAttendanceDonut");
+        donut.style.background = total ? "conic-gradient("+gradient+")" : "conic-gradient(#dfe8e1 0 100%)";
+        document.getElementById("dashboardAttendanceMarked").textContent = total;
+        document.getElementById("dashboardAttendancePresent").textContent = present;
+        document.getElementById("dashboardAttendanceAbsent").textContent = absent;
+        document.getElementById("dashboardAttendanceLate").textContent = late;
+        document.getElementById("dashboardAttendanceExcused").textContent = excused;
+        document.getElementById("dashboardAttendanceLegend").innerHTML = values.map(v=>'<span><i style="background:'+v[2]+'"></i>'+v[0]+': <strong>'+v[1]+'</strong></span>').join("");
+        for (const [type, targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]) {
+            const rows = report.classes.filter(item=>item.class_type===type);
+            const target=document.getElementById(targetId);
+            target.innerHTML = rows.length ? rows.map(item=>{
+                const params=new URLSearchParams({class_id:String(item.class_id),class_type:type,date:localDate});
+                const name=String(item.class_name||"Class").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+                return '<a class="dashboard-attendance-class-row" href="./attendance.html?'+params.toString()+'"><span>'+name+'</span><strong>'+Number(item.present_count||0)+' / '+Number(item.marked_records||0)+'</strong><small>'+Number(item.absent_count||0)+' absent · '+Number(item.late_count||0)+' late · '+Number(item.excused_count||0)+' excused</small></a>';
+            }).join("") : "<p>No saved attendance marks today.</p>";
+        }
+        donut.setAttribute("aria-label", "Present "+present+", absent "+absent+", late "+late+", excused "+excused);
+    } catch (error) {
+        dateLabel.textContent = "Today’s attendance could not be loaded: " + error.message;
+    }
+}
+
+window.setInterval(loadDashboardAttendance, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) loadDashboardAttendance(); });
 
 async function loadDashboardStats() {
     const statCards = document.querySelectorAll(".stat-card > strong");
