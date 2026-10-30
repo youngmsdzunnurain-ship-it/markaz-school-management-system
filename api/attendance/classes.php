@@ -55,7 +55,7 @@ if ($role === 'teacher') {
         "SELECT 'arabic' AS class_type, ac.id, ac.name, ac.sort_order,
                 COUNT(s.id) AS student_count
          FROM arabic_classes ac
-         LEFT JOIN students s ON s.arabic_class_id = ac.id AND s.is_active = 1
+         LEFT JOIN students s ON COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1
          WHERE ac.is_active = 1
          GROUP BY ac.id, ac.name, ac.sort_order"
     );
