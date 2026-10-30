@@ -171,3 +171,25 @@
 
 /* Visually hidden labels remain available to assistive technology. */
 .attendance-page .sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+
+
+.attendance-chart-panel { margin:18px 0; padding:22px 24px; border:1px solid var(--att-border); border-radius:19px; background:#fff; box-shadow:var(--att-shadow); }
+.attendance-chart-date { color:var(--att-muted); font-size:11px; }
+.attendance-chart-content { display:flex; align-items:center; gap:30px; padding:22px 6px 4px; }
+.attendance-pie-chart { display:grid; place-items:center; width:190px; height:190px; flex:0 0 190px; border-radius:50%; position:relative; }
+.attendance-pie-chart::before { content:""; position:absolute; inset:28px; border-radius:50%; background:#fff; }
+.attendance-pie-chart span { position:relative; z-index:1; color:var(--att-ink); font-size:30px; font-weight:850; }
+.attendance-chart-legend { display:grid; grid-template-columns:repeat(2,minmax(130px,1fr)); gap:12px 24px; width:min(520px,100%); }
+.chart-legend-item { display:grid; grid-template-columns:12px 1fr auto; align-items:center; gap:9px; color:#607066; font-size:12px; }
+.chart-legend-item strong { color:var(--att-ink); font-variant-numeric:tabular-nums; }
+.chart-legend-swatch { width:10px; height:10px; border-radius:3px; }
+.chart-empty { color:var(--att-muted); font-size:12px; }
+.student-row-focused { outline:2px solid var(--att-gold); outline-offset:-2px; background:#fffdf5!important; }
+@media(max-width:600px) {
+    .attendance-chart-panel { padding:17px 14px; border-radius:15px; }
+    .attendance-chart-content { align-items:center; flex-direction:column; gap:18px; }
+    .attendance-pie-chart { width:160px; height:160px; flex-basis:160px; }
+    .attendance-pie-chart::before { inset:24px; }
+    .attendance-chart-legend { width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .attendance-chart-date { text-align:right; }
+}
