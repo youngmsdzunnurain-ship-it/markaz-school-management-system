@@ -18,6 +18,7 @@ on:
       - "api/dashboard/**"
       - "tests/dashboard-progress-validation.test.php"
       - "tests/dashboard-report-regression.test.php"
+      - "tests/dashboard-layout-attendance-access.test.php"
       - "database/migrations/20261028_daily_attendance.sql"
       - "tests/attendance-validation.test.php"
       - ".github/workflows/attendance-validation.yml"
@@ -60,6 +61,7 @@ jobs:
           php -l api/dashboard/stats.php
           php -l tests/dashboard-progress-validation.test.php
           php -l tests/dashboard-report-regression.test.php
+          php -l tests/dashboard-layout-attendance-access.test.php
 
       - name: Run result class-type validation tests
         run: php tests/results-class-type-validation.test.php
@@ -72,6 +74,9 @@ jobs:
 
       - name: Run dashboard report regression tests
         run: php tests/dashboard-report-regression.test.php
+
+      - name: Run dashboard layout and access regression tests
+        run: php tests/dashboard-layout-attendance-access.test.php
 
       - name: Check JavaScript syntax
         run: |
