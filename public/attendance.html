@@ -14,14 +14,12 @@
 </head>
 <body class="attendance-page">
     <main class="attendance-shell">
-        <header class="attendance-header settings-header">
-            <a class="attendance-back back-link" href="./dashboard.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Dashboard</a>
-            <div class="attendance-brand">
-                <div>
-                    <span class="attendance-eyebrow">MARKAZ</span>
-                    <h1>Daily Attendance</h1>
-                    <p>Keep a clear, reliable record of every class day.</p>
-                </div>
+        <header class="settings-header">
+            <a href="dashboard.html" class="back-link" data-go-back>← Go Back</a>
+            <div>
+                <span>MARKAZ</span>
+                <h1>Daily Attendance</h1>
+                <p>Manage daily attendance records for your authorised classes.</p>
             </div>
             <div class="attendance-header-actions">
                 <button type="button" class="button button-light" id="printRegisterButton" disabled>
@@ -69,6 +67,12 @@
                     <span>Class</span>
                     <select id="attendanceClass" required>
                         <option value="">Loading classes…</option>
+                    </select>
+                </label>
+                <label class="attendance-field" for="attendanceStudent">
+                    <span>Student name</span>
+                    <select id="attendanceStudent" disabled>
+                        <option value="">Select a class first</option>
                     </select>
                 </label>
                 <button type="button" class="button button-primary load-register-button" id="loadRegisterButton">
@@ -133,11 +137,6 @@
             </div>
 
             <div class="register-toolbar">
-                <label class="attendance-search" for="studentSearch">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input type="search" id="studentSearch" list="studentNameSuggestions" placeholder="Find or select a student by name or admission number…" autocomplete="off" disabled>
-                    <datalist id="studentNameSuggestions"></datalist>
-                </label>
                 <div class="register-actions">
                     <button type="button" class="button button-outline" id="markAllPresentButton" disabled>
                         <i class="fa-solid fa-check-double" aria-hidden="true"></i> Mark all present
@@ -182,11 +181,13 @@
             </footer>
         </section>
 
-        <footer class="attendance-page-footer">
-            <span>MARKAZ Result Management System</span>
-            <span>Daily attendance records are separate from termly report-card assessments.</span>
+        <footer class="markaz-global-footer">
+            <span class="footer-brand">MARKAZ</span>
+            <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
+            <span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span>
         </footer>
     </main>
-    <script src="./js/attendance.js?v=20261028-daily1"></script>
+    <script src="./js/go-back.js"></script>
+    <script src="./js/attendance.js?v=20261030-attendance2"></script>
 </body>
 </html>
