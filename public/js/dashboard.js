@@ -567,6 +567,9 @@ async function loadDashboardAttendance() {
     }
 }
 
+window.setInterval(loadDashboardAttendance, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) loadDashboardAttendance(); });
+
 async function loadDashboardStats() {
     const statCards = document.querySelectorAll(".stat-card > strong");
 
