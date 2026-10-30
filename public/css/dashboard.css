@@ -5592,3 +5592,28 @@ button:focus-visible {
 .dashboard-attendance-category {position:relative;padding:20px;background:#fff;}
 .dashboard-attendance-category h3 {padding-top:4px;}
 @media(max-width:600px) {.dashboard-class-pie-empty {flex-direction:column;text-align:center;}}
+
+
+/* Keep the page-level navigation headers pinned across MARKAZ management views */
+.students-topbar,
+.classes-topbar,
+.class-topbar,
+.attendance-header,
+.settings-header {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 1100;
+    background: rgba(250, 252, 250, .86);
+    -webkit-backdrop-filter: saturate(165%) blur(16px);
+    backdrop-filter: saturate(165%) blur(16px);
+    border-bottom: 1px solid rgba(201, 169, 75, .32);
+    box-shadow: 0 7px 22px rgba(16, 52, 34, .055);
+}
+@media (prefers-reduced-transparency: reduce) {
+    .students-topbar,.classes-topbar,.class-topbar,.attendance-header,.settings-header {
+        background: #fafcfa;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
