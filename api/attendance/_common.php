@@ -56,17 +56,25 @@ function attendanceRequireStaff(): string
 {
     $role = currentAdminRole();
 
-    if (in_array($role, ['admin', 'exam_officer'], true)) {
+    if (in_array($role, ['admin', 'exam_officer', 'management'], true)) {
         requireAdmin();
         return $role;
     }
 
     if ($role === 'teacher') {
         requireResultStaff();
+        $permission = db()->prepare(
+            'SELECT is_allowed FROM account_permissions
+             WHERE account_id = ? AND permission_key = ? LIMIT 1'
+        );
+        $permission->execute([(int) ($_SESSION['admin_id'] ?? 0), 'attendance_records']);
+        if ((int) $permission->fetchColumn() !== 1) {
+            attendanceJsonError(403, 'Attendance recording has not been enabled for your teacher account.');
+        }
         return $role;
     }
 
-    attendanceJsonError(403, 'Admin, Exam Officer or an assigned Teacher account is required.');
+    attendanceJsonError(403, 'An authorised staff account is required.');
 }
 
 function attendanceRequireClassAccess(PDO $pdo, string $classType, int $classId): array
