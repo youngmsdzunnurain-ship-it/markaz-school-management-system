@@ -619,9 +619,26 @@
     renderAttendanceChart({ total: 0, present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 });
     refreshActions();
     loadClasses().then(() => {
-        if (state.classes.some((item) => item.class_type === "conventional")) {
-            els.classSelect.value = "";
-            setNotice("Choose your class and load the daily register.");
+        const params = new URLSearchParams(window.location.search);
+        const requestedType = params.get("class_type");
+        const requestedClass = params.get("class_id");
+        const requestedDate = params.get("date");
+        if (requestedType && ["conventional", "arabic"].includes(requestedType)) {
+            els.type.value = requestedType;
+            state.classType = requestedType;
+            populateClasses();
         }
+        if (requestedDate && /^\\d{4}-\\d{2}-\\d{2}$/.test(requestedDate) && requestedDate <= localDateValue()) {
+            els.date.value = requestedDate;
+            state.date = requestedDate;
+            updateDateLabel();
+        }
+        if (requestedClass && state.classes.some(item => item.class_type === state.classType && String(item.id) === requestedClass)) {
+            els.classSelect.value = requestedClass;
+            state.classId = requestedClass;
+            loadRegister();
+            return;
+        }
+        setNotice("Choose your class and load the daily register.");
     });
 })();
