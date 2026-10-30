@@ -36,33 +36,64 @@ if ($classType !== '' || $classId !== null) {
     attendanceJsonError(403, 'Teachers must select one of their assigned classes to view a report.');
 }
 
-$sql = "SELECT ar.class_type, ar.class_id,
-        CASE WHEN ar.class_type = 'arabic' THEN ac.name ELSE c.name END AS class_name,
-        COUNT(*) AS marked_records,
-        SUM(ar.status = 'present') AS present_count,
-        SUM(ar.status = 'absent') AS absent_count,
-        SUM(ar.status = 'late') AS late_count,
-        SUM(ar.status = 'excused') AS excused_count,
-        COUNT(DISTINCT ar.student_id) AS students_recorded,
-        COUNT(DISTINCT ar.attendance_date) AS days_with_records
-    FROM attendance_records ar
-    LEFT JOIN classes c ON ar.class_type = 'conventional' AND c.id = ar.class_id
-    LEFT JOIN arabic_classes ac ON ar.class_type = 'arabic' AND ac.id = ar.class_id
-    WHERE {$where}
-    GROUP BY ar.class_type, ar.class_id, class_name
-    ORDER BY ar.class_type, class_name";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$classDefinitions = [
+    ['type' => 'conventional', 'table' => 'classes'],
+    ['type' => 'arabic', 'table' => 'arabic_classes'],
+];
+$classes = [];
+
+foreach ($classDefinitions as $definition) {
+    $type = $definition['type'];
+    $table = $definition['table'];
+    $sql = "SELECT
+                ? AS class_type,
+                c.id AS class_id,
+                c.name AS class_name,
+                COUNT(ar.id) AS marked_records,
+                COALESCE(SUM(ar.status = 'present'), 0) AS present_count,
+                COALESCE(SUM(ar.status = 'absent'), 0) AS absent_count,
+                COALESCE(SUM(ar.status = 'late'), 0) AS late_count,
+                COALESCE(SUM(ar.status = 'excused'), 0) AS excused_count,
+                COUNT(DISTINCT ar.student_id) AS students_recorded,
+                COUNT(DISTINCT ar.attendance_date) AS days_with_records
+            FROM {$table} c
+            LEFT JOIN attendance_records ar
+              ON ar.class_type = ?
+             AND ar.class_id = c.id
+             AND ar.attendance_date BETWEEN ? AND ?
+            WHERE c.is_active = 1";
+
+    $classParams = [$type, $type, $from, $to];
+
+    if ($classType !== '') {
+        if ($classType !== $type) {
+            continue;
+        }
+        $sql .= " AND c.id = ?";
+        $classParams[] = (int) $classId;
+    }
+
+    $sql .= " GROUP BY c.id, c.name ORDER BY c.sort_order, c.name";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($classParams);
+
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        foreach (['class_id', 'marked_records', 'present_count', 'absent_count', 'late_count', 'excused_count', 'students_recorded', 'days_with_records'] as $key) {
+            $row[$key] = (int) $row[$key];
+        }
+        $classes[] = $row;
+    }
+}
 
 $summary = [
-    'marked_records' => 0, 'present' => 0, 'absent' => 0,
-    'late' => 0, 'excused' => 0, 'students_recorded' => 0,
+    'marked_records' => 0,
+    'present' => 0,
+    'absent' => 0,
+    'late' => 0,
+    'excused' => 0,
+    'students_recorded' => 0,
 ];
-foreach ($classes as &$row) {
-    foreach (['marked_records', 'present_count', 'absent_count', 'late_count', 'excused_count', 'students_recorded', 'days_with_records'] as $key) {
-        $row[$key] = (int) $row[$key];
-    }
+foreach ($classes as $row) {
     $summary['marked_records'] += $row['marked_records'];
     $summary['present'] += $row['present_count'];
     $summary['absent'] += $row['absent_count'];
@@ -70,7 +101,6 @@ foreach ($classes as &$row) {
     $summary['excused'] += $row['excused_count'];
     $summary['students_recorded'] += $row['students_recorded'];
 }
-unset($row);
 
 echo json_encode([
     'success' => true,
