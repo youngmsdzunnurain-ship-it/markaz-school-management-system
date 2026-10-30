@@ -34,7 +34,7 @@ check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes th
 
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 check(str_contains($classesApi, 'sort_order') && str_contains($classesApi, '$a[\'sort_order\'] <=> $b[\'sort_order\']'), 'preserves configured class hierarchy after combining categories');
-check(str_contains($classesApi, 's.arabic_class_id = ac.id AND s.is_active = 1'), 'counts active Arabic students against Arabic class assignments');
+check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
 
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
