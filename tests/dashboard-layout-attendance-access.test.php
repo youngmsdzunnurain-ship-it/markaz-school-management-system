@@ -16,7 +16,7 @@ $stats = file_get_contents(__DIR__ . '/../api/dashboard/stats.php');
 $attendance = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 
 dashboardAssert(
-    str_contains($css, 'grid-template-columns: minmax(0, 35fr) minmax(0, 30fr) minmax(0, 35fr)'),
+    str_contains($css, 'grid-template-columns: minmax(260px, 35fr) minmax(230px, 30fr) minmax(260px, 35fr)'),
     'Examination cards must use 35/30/35 columns in Conventional, Whole School, Arabic order'
 );
 dashboardAssert(
@@ -26,7 +26,7 @@ dashboardAssert(
     'Examination cards must be ordered Conventional, Whole School, Arabic'
 );
 dashboardAssert(
-    str_contains($html, 'dashboard-attendance-groups') &&
+    str_contains($html, 'dashboard-attendance-layout') &&
     strpos($html, 'dashboardArabicAttendanceDonut') < strpos($html, 'dashboardAttendanceDonut') &&
     strpos($html, 'dashboardAttendanceDonut') < strpos($html, 'dashboardConventionalAttendanceDonut'),
     'Attendance cards must be ordered Arabic, Whole School, Conventional'
@@ -46,13 +46,13 @@ dashboardAssert(
     'Quick links for Attendance and School Fees must be restricted to Senior Admin'
 );
 dashboardAssert(
-    str_contains($js, '["admin", "management"].includes(role)') ||
-    str_contains($js, '["admin","management"].includes(role)'),
+    str_contains($js, 'if(role!=="admin"){panel.hidden=true;return;} panel.hidden=false;'),
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
-    str_contains($stats, "'arabic_class_id'") &&
-    str_contains($stats, "'arabia_class_id'"),
+    str_contains($stats, 'st.arabic_class_id') &&
+    str_contains($stats, 'st.arabia_class_id') &&
+    str_contains($stats, '$enrollmentKey = $type'),
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
