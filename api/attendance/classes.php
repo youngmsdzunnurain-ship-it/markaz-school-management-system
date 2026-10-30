@@ -17,55 +17,54 @@ if ($role === 'teacher') {
 
     $stmt = $pdo->prepare(
         "SELECT DISTINCT 'conventional' AS class_type, c.id, c.name,
+                c.sort_order,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.class_id = c.id AND s.is_active = 1) AS student_count
          FROM teacher_assignments ta
          INNER JOIN classes c ON c.id = ta.class_id
          WHERE ta.account_id = ? AND ta.class_type = 'conventional'
-           AND ta.is_active = 1 AND c.is_active = 1
-         ORDER BY c.name"
+           AND ta.is_active = 1 AND c.is_active = 1"
     );
     $stmt->execute([$accountId]);
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
 
     $stmt = $pdo->prepare(
         "SELECT DISTINCT 'arabic' AS class_type, ac.id, ac.name,
+                ac.sort_order,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.arabic_class_id = ac.id AND s.is_active = 1) AS student_count
          FROM teacher_assignments ta
          INNER JOIN arabic_classes ac ON ac.id = ta.class_id
          WHERE ta.account_id = ? AND ta.class_type = 'arabic'
-           AND ta.is_active = 1 AND ac.is_active = 1
-         ORDER BY ac.name"
+           AND ta.is_active = 1 AND ac.is_active = 1"
     );
     $stmt->execute([$accountId]);
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
 } else {
     $stmt = $pdo->query(
-        "SELECT 'conventional' AS class_type, c.id, c.name,
+        "SELECT 'conventional' AS class_type, c.id, c.name, c.sort_order,
                 COUNT(s.id) AS student_count
          FROM classes c
          LEFT JOIN students s ON s.class_id = c.id AND s.is_active = 1
          WHERE c.is_active = 1
-         GROUP BY c.id, c.name, c.sort_order
-         ORDER BY c.sort_order, c.name"
+         GROUP BY c.id, c.name, c.sort_order"
     );
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
 
     $stmt = $pdo->query(
-        "SELECT 'arabic' AS class_type, ac.id, ac.name,
+        "SELECT 'arabic' AS class_type, ac.id, ac.name, ac.sort_order,
                 COUNT(s.id) AS student_count
          FROM arabic_classes ac
          LEFT JOIN students s ON s.arabic_class_id = ac.id AND s.is_active = 1
          WHERE ac.is_active = 1
-         GROUP BY ac.id, ac.name, ac.sort_order
-         ORDER BY ac.sort_order, ac.name"
+         GROUP BY ac.id, ac.name, ac.sort_order"
     );
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
 foreach ($classes as &$class) {
     $class['id'] = (int) $class['id'];
+    $class['sort_order'] = (int) $class['sort_order'];
     $class['student_count'] = (int) $class['student_count'];
 }
 unset($class);
@@ -73,7 +72,8 @@ unset($class);
 usort($classes, static function (array $a, array $b): int {
     $typeOrder = ['conventional' => 0, 'arabic' => 1];
     return ($typeOrder[$a['class_type']] <=> $typeOrder[$b['class_type']])
-        ?: strcasecmp((string) $a['name'], (string) $b['name']);
+        ?: (($a['sort_order'] <=> $b['sort_order'])
+        ?: strcasecmp((string) $a['name'], (string) $b['name']));
 });
 
 echo json_encode([
