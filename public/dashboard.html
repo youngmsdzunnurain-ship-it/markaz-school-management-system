@@ -8,7 +8,7 @@
 
     <title>Dashboard | MARKAZ Result Management System</title>
 
-    <link rel="stylesheet" href="css/dashboard.css?v=20261020-mobile-sidebarfinish1">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261030-attendance-overview1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -147,6 +147,30 @@
                         <small>Recorded results</small>
                     </article>
 
+                </section>
+
+                <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
+                    <div class="dashboard-attendance-heading">
+                        <div><span class="eyebrow">SCHOOL-WIDE DAILY OVERVIEW</span><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div>
+                        <a href="./attendance.html" class="dashboard-attendance-link"><i class="fa-solid fa-calendar-check"></i> Open attendance management</a>
+                    </div>
+                    <div class="dashboard-attendance-content">
+                        <div class="dashboard-attendance-donut-wrap">
+                            <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
+                            <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
+                        </div>
+                        <div class="dashboard-attendance-stats">
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students at school</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students not present</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Arrived late</small></a>
+                            <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Approved absence</small></a>
+                        </div>
+                    </div>
+                    <div class="dashboard-attendance-groups">
+                        <section><h3><i class="fa-solid fa-school"></i> Conventional classes</h3><div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div></section>
+                        <section><h3><i class="fa-solid fa-book-quran"></i> Arabic classes</h3><div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div></section>
+                    </div>
+                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Unmarked students are not counted as present.</p>
                 </section>
 
                 <section id="teacherAssignmentsSection" class="panel" style="display:none; margin:24px 0; padding:24px;">
