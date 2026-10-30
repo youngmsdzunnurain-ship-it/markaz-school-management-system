@@ -739,15 +739,6 @@ async function loadDashboardStats() {
                 `${data.stats.completion_percentage ?? 0}%`;
         }
 
-        const overall = Number(data.stats.completion_percentage ?? 0);
-        const donut = document.getElementById("dashboardCompletionDonut");
-        const donutValue = document.getElementById("dashboardCompletionDonutValue");
-        if (donut) {
-            donut.style.setProperty("--completion", `${overall}%`);
-            donut.setAttribute("aria-label", `Overall result completion ${overall}%`);
-        }
-        if (donutValue) donutValue.textContent = `${overall}%`;
-
         const classGroups = data.stats.class_progress_by_type || {};
         dashboardRenderClassPie("dashboardConventionalPie", classGroups.conventional || []);
         dashboardRenderClassPie("dashboardArabicPie", classGroups.arabic || []);
