@@ -18,6 +18,12 @@ $attendanceRegister = file_get_contents(__DIR__ . '/../api/attendance/register.p
 $attendanceClasses = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 
 dashboardAssert(
+    str_contains($css, '.dashboard-attendance-category') &&
+    str_contains($css, 'linear-gradient(135deg') &&
+    str_contains($css, 'rgba(177, 139, 50'),
+    'Dashboard surfaces must use a consistent green-and-gold visual system'
+);
+dashboardAssert(
     str_contains($css, 'grid-template-columns: minmax(260px, 35fr) minmax(230px, 30fr) minmax(260px, 35fr)'),
     'Examination cards must use 35/30/35 columns in Conventional, Whole School, Arabic order'
 );
@@ -59,6 +65,9 @@ dashboardAssert(
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
+    str_contains($js, 'class_type=conventional') &&
+    str_contains($js, 'class_type=arabic') &&
+    str_contains($js, 'report.classes') &&
     str_contains($attendance, "ar.class_type = ?") &&
     str_contains($attendance, "ar.class_id = c.id") &&
     str_contains($attendanceRegister, 's.arabia_class_id') &&
