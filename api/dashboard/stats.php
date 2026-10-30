@@ -6,12 +6,16 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (currentAdminRole() === 'teacher') {
+$dashboardRole = currentAdminRole();
+
+if ($dashboardRole === 'teacher') {
     require __DIR__ . '/teacher-stats.php';
     exit;
 }
 
-requireAdmin();
+if ($dashboardRole !== 'management') {
+    requireAdmin();
+}
 
 $pdo = db();
 
