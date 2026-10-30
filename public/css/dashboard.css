@@ -5359,3 +5359,14 @@ button:focus-visible {
  .dashboard-exam-section .result-progress-grid { grid-template-columns:1fr; }
  .dashboard-pie-summary { gap:10px; }
 }
+
+.dashboard-category-attendance-donut { width:116px;height:116px;margin:6px auto 12px;display:grid;place-items:center;position:relative;border-radius:50%;background:conic-gradient(#e7eee9 0 100%); }
+.dashboard-category-attendance-donut:before { content:"";position:absolute;inset:20px;border-radius:50%;background:#fff; }
+.dashboard-category-attendance-donut>div { position:relative;z-index:1;text-align:center; }
+.dashboard-category-attendance-donut strong,.dashboard-category-attendance-donut span { display:block; }
+.dashboard-category-attendance-donut strong { color:#174a30;font-size:22px; }
+.dashboard-category-attendance-donut span { color:#829087;font-size:9px; }
+.dashboard-category-attendance-legend { display:flex;flex-wrap:wrap;justify-content:center;gap:8px 13px;margin-bottom:14px; }
+.dashboard-category-attendance-legend span { display:inline-flex;align-items:center;gap:5px;color:#6e7c73;font-size:9px; }
+.dashboard-category-attendance-legend i { width:7px;height:7px;border-radius:2px; }
+.dashboard-category-attendance-legend strong { color:#234b36;font-size:9px; }
