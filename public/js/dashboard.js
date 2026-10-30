@@ -528,51 +528,57 @@ function applyDashboardRoleAccess(role, permissions = {}) {
    ========================================================= */
 
 
-async function loadDashboardAttendance() {
-    const panel = document.getElementById("dashboardAttendancePanel");
-    if (!panel) return;
-    const role = window.markazCurrentRole || "";
-    if (!["admin", "exam_officer", "management"].includes(role)) {
-        panel.hidden = true;
-        return;
-    }
-    const date = new Date();
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    const dateLabel = document.getElementById("dashboardAttendanceDate");
-    if (dateLabel) dateLabel.textContent = new Intl.DateTimeFormat(undefined, {dateStyle:"full"}).format(date);
-    try {
-        const response = await fetch("./api/attendance/reports.php?from=" + localDate + "&to=" + localDate, {credentials:"same-origin", cache:"no-store", headers:{Accept:"application/json"}});
-        const report = await response.json();
-        if (!response.ok || !report.success) throw new Error(report.message || "Attendance summary unavailable.");
-        const s = report.summary || {};
-        const present = Number(s.present || 0), absent = Number(s.absent || 0), late = Number(s.late || 0), excused = Number(s.excused || 0);
-        const total = present + absent + late + excused;
-        const values = [["Present",present,"#21945b"],["Absent",absent,"#d65359"],["Late",late,"#d8a72c"],["Excused",excused,"#7d8b9a"]];
-        let cursor = 0;
-        const gradient = values.map((item) => { const start=cursor; cursor += total ? item[1]/total*100 : 0; return item[2]+" "+start+"% "+cursor+"%"; }).join(", ");
-        const donut = document.getElementById("dashboardAttendanceDonut");
-        donut.style.background = total ? "conic-gradient("+gradient+")" : "conic-gradient(#dfe8e1 0 100%)";
-        document.getElementById("dashboardAttendanceMarked").textContent = total;
-        document.getElementById("dashboardAttendancePresent").textContent = present;
-        document.getElementById("dashboardAttendanceAbsent").textContent = absent;
-        document.getElementById("dashboardAttendanceLate").textContent = late;
-        document.getElementById("dashboardAttendanceExcused").textContent = excused;
-        document.getElementById("dashboardAttendanceLegend").innerHTML = values.map(v=>'<span><i style="background:'+v[2]+'"></i>'+v[0]+': <strong>'+v[1]+'</strong></span>').join("");
-        for (const [type, targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]) {
-            const rows = report.classes.filter(item=>item.class_type===type);
-            const target=document.getElementById(targetId);
-            target.innerHTML = rows.length ? rows.map(item=>{
-                const params=new URLSearchParams({class_id:String(item.class_id),class_type:type,date:localDate});
-                const name=String(item.class_name||"Class").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
-                return '<a class="dashboard-attendance-class-row" href="./attendance.html?'+params.toString()+'"><span>'+name+'</span><strong>'+Number(item.present_count||0)+' / '+Number(item.marked_records||0)+'</strong><small>'+Number(item.absent_count||0)+' absent · '+Number(item.late_count||0)+' late · '+Number(item.excused_count||0)+' excused</small></a>';
-            }).join("") : "<p>No saved attendance marks today.</p>";
-        }
-        donut.setAttribute("aria-label", "Present "+present+", absent "+absent+", late "+late+", excused "+excused);
-    } catch (error) {
-        dateLabel.textContent = "Today’s attendance could not be loaded: " + error.message;
-    }
+function dashboardDonutGradient(values) {
+    const total = values.reduce((sum, item) => sum + Math.max(0, Number(item.value) || 0), 0);
+    if (!total) return "conic-gradient(#e7eee9 0 100%)";
+    let cursor = 0;
+    const parts = values.map(item => { const start=cursor; cursor += Math.max(0,Number(item.value)||0)/total*100; return item.color+" "+start.toFixed(2)+"% "+cursor.toFixed(2)+"%"; });
+    return "conic-gradient("+parts.join(",")+")";
 }
 
+function dashboardRenderClassPie(targetId, classes) {
+    const target=document.getElementById(targetId); if(!target)return;
+    if(!Array.isArray(classes)||!classes.length){target.innerHTML='<p class="dashboard-chart-empty">No active classes found in this category.</p>';return;}
+    const palette=["#17643a","#c9a94b","#4d8fbd","#d47758","#7b6ab2","#45a59a","#a36b91","#8a9b57","#d29a42","#5c7d9d"];
+    const totalExpected=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.expected_entries)||0),0);
+    const totalCompleted=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.entered_entries)||0),0);
+    const segments=classes.map((item,index)=>({value:Math.max(0,Number(item.expected_entries)||0),color:palette[index%palette.length]}));
+    const gradient=dashboardDonutGradient(segments);
+    const legend=classes.map((item,index)=>{
+        const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
+        const percent=Math.max(0,Math.min(100,Number(item.completion_percentage)||0));
+        const expected=Math.max(0,Number(item.expected_entries)||0), completed=Math.max(0,Number(item.entered_entries)||0);
+        return '<div class="dashboard-class-pie-row"><span class="dashboard-chart-dot" style="--dot:'+palette[index%palette.length]+'"></span><div class="dashboard-class-pie-meta"><strong>'+name+'</strong><small>'+completed+' / '+expected+' complete entries</small><div class="dashboard-class-bar" role="progressbar" aria-valuenow="'+percent+'" aria-valuemin="0" aria-valuemax="100" aria-label="'+name+' completion"><i style="width:'+percent+'%;--bar:'+palette[index%palette.length]+'"></i></div></div><b>'+percent.toFixed(1)+'%</b></div>';
+    }).join("");
+    target.innerHTML='<div class="dashboard-pie-summary"><div class="dashboard-pie-visual" role="img" aria-label="'+totalCompleted+' of '+totalExpected+' complete entries across '+classes.length+' classes" style="background:'+gradient+'"><div><strong>'+(totalExpected?Math.round(totalCompleted/totalExpected*100):0)+'%</strong><span>Complete</span></div></div><div class="dashboard-pie-totals"><strong>'+classes.length+'</strong><span>Active classes</span><small>'+totalCompleted+' / '+totalExpected+' entries</small></div></div><div class="dashboard-class-pie-legend">'+legend+'</div>';
+}
+
+async function loadDashboardAttendance() {
+    const panel=document.getElementById("dashboardAttendancePanel"); if(!panel)return;
+    const role=window.markazCurrentRole||""; if(!["admin","exam_officer","management"].includes(role)){panel.hidden=true;return;} panel.hidden=false;
+    const date=new Date(), localDate=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const dateLabel=document.getElementById("dashboardAttendanceDate"); if(dateLabel)dateLabel.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"full"}).format(date);
+    try {
+        const response=await fetch("./api/attendance/reports.php?from="+localDate+"&to="+localDate,{credentials:"same-origin",cache:"no-store",headers:{Accept:"application/json"}});
+        const report=await response.json(); if(!response.ok||!report.success)throw new Error(report.message||"Attendance summary unavailable.");
+        const s=report.summary||{}, values=[{label:"Present",value:Number(s.present||0),color:"#21945b"},{label:"Absent",value:Number(s.absent||0),color:"#d65359"},{label:"Late",value:Number(s.late||0),color:"#d8a72c"},{label:"Excused",value:Number(s.excused||0),color:"#7d8b9a"}];
+        const total=values.reduce((sum,item)=>sum+item.value,0), donut=document.getElementById("dashboardAttendanceDonut");
+        if(donut){donut.style.background=dashboardDonutGradient(values);donut.setAttribute("aria-label",values.map(item=>item.label+" "+item.value).join(", "));}
+        const setText=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=String(value);};
+        setText("dashboardAttendanceMarked",total);setText("dashboardAttendancePresent",values[0].value);setText("dashboardAttendanceAbsent",values[1].value);setText("dashboardAttendanceLate",values[2].value);setText("dashboardAttendanceExcused",values[3].value);
+        const legend=document.getElementById("dashboardAttendanceLegend");if(legend)legend.innerHTML=values.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+': <strong>'+item.value+'</strong></span>').join("");
+        for(const [type,targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]){
+            const rows=(Array.isArray(report.classes)?report.classes:[]).filter(item=>item.class_type===type),target=document.getElementById(targetId);if(!target)continue;
+            const maxMarked=Math.max(1,...rows.map(item=>Number(item.marked_records)||0));
+            target.innerHTML=rows.length?rows.map(item=>{
+                const params=new URLSearchParams({class_id:String(item.class_id),class_type:type,date:localDate});
+                const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
+                const marked=Number(item.marked_records)||0,present=Number(item.present_count)||0,width=Math.max(0,Math.min(100,marked/maxMarked*100));
+                return '<a class="dashboard-attendance-class-row" href="./attendance.html?'+params.toString()+'"><span>'+name+'</span><strong>'+present+' present</strong><div class="dashboard-attendance-bar"><i style="width:'+width+'%"></i></div><small>'+marked+' marked · '+Number(item.absent_count||0)+' absent · '+Number(item.late_count||0)+' late · '+Number(item.excused_count||0)+' excused</small></a>';
+            }).join(""):'<p class="dashboard-chart-empty">No saved attendance marks today.</p>';
+        }
+    } catch(error){if(dateLabel)dateLabel.textContent="Today’s attendance could not be loaded: "+error.message;console.error("Dashboard attendance report failed:",error);}
+}
 window.setInterval(loadDashboardAttendance, 60000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) loadDashboardAttendance(); });
 
@@ -725,7 +731,7 @@ async function loadDashboardStats() {
 
         if (resultEntriesProgress) {
             resultEntriesProgress.textContent =
-                `${data.stats.results ?? 0} / ${data.stats.expected_results ?? 0}`;
+                `${data.stats.completed_results ?? 0} / ${data.stats.expected_results ?? 0}`;
         }
 
         if (resultCompletionPercentage) {
@@ -742,23 +748,16 @@ async function loadDashboardStats() {
         }
         if (donutValue) donutValue.textContent = `${overall}%`;
 
-        const classChart = document.getElementById("dashboardClassProgressChart");
-        if (classChart) {
-            const classes = data.stats.class_progress || [];
-            classChart.innerHTML = classes.length ? classes.map(item => {
-                const value = Math.max(0, Math.min(100, Number(item.completion_percentage) || 0));
-                const name = String(item.class_name || "Class");
-                const safeName = name.replace(/[&<>"']/g, ch => ({
-                    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-                    '"': "&quot;", "'": "&#039;"
-                })[ch]);
-                return `<div class="dashboard-class-progress-row">
-                    <span title="${safeName}">${safeName}</span>
-                    <div class="dashboard-class-progress-track" role="progressbar" aria-valuenow="${value}" aria-valuemin="0" aria-valuemax="100" aria-label="${safeName} completion"><i class="${value > 0 ? "has-progress" : "no-progress"}" style="width:${value}%"></i></div>
-                    <strong>${value}%</strong>
-                </div>`;
-            }).join("") : "<p>No class progress available yet.</p>";
-        }
+        const classGroups = data.stats.class_progress_by_type || {};
+        dashboardRenderClassPie("dashboardConventionalPie", classGroups.conventional || []);
+        dashboardRenderClassPie("dashboardArabicPie", classGroups.arabic || []);
+        const overall = Number(data.stats.completion_percentage ?? 0);
+        const donut = document.getElementById("dashboardCompletionDonut");
+        const donutValue = document.getElementById("dashboardCompletionDonutValue");
+        const overallCaption = document.getElementById("dashboardSchoolCompletionCaption");
+        if (donut) { donut.style.setProperty("--completion", overall + "%"); donut.setAttribute("aria-label", "Overall examination completion " + overall + "%"); }
+        if (donutValue) donutValue.textContent = overall + "%";
+        if (overallCaption) overallCaption.textContent = (data.stats.completed_results ?? 0) + " of " + (data.stats.expected_results ?? 0) + " required subject entries completed";
 
     } catch (error) {
         console.error("Unable to load dashboard statistics:", error);
