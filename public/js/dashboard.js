@@ -566,8 +566,20 @@ async function loadDashboardAttendance() {
     const date=new Date(), localDate=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10);
     const dateLabel=document.getElementById("dashboardAttendanceDate"); if(dateLabel)dateLabel.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"full"}).format(date);
     try {
-        const response=await fetch("./api/attendance/reports.php?from="+localDate+"&to="+localDate,{credentials:"same-origin",cache:"no-store",headers:{Accept:"application/json"}});
-        const report=await response.json(); if(!response.ok||!report.success)throw new Error(report.message||"Attendance summary unavailable.");
+        const reportUrl="./api/attendance/reports.php?from="+encodeURIComponent(localDate)+"&to="+encodeURIComponent(localDate);
+        const requestReport=async(url)=>{
+            const response=await fetch(url,{credentials:"same-origin",cache:"no-store",headers:{Accept:"application/json"}});
+            const payload=await response.json();
+            if(!response.ok||!payload.success)throw new Error(payload.message||"Attendance summary unavailable.");
+            return payload;
+        };
+        // Keep the school summary separate, and request each class system from its own server-side scope.
+        const [report,conventionalReport,arabicReport]=await Promise.all([
+            requestReport(reportUrl),
+            requestReport(reportUrl+"&class_type=conventional"),
+            requestReport(reportUrl+"&class_type=arabic")
+        ]);
+        const categoryReports={conventional:conventionalReport,arabic:arabicReport};
         const s=report.summary||{}, values=[{label:"Present",value:Number(s.present||0),color:"#21945b"},{label:"Absent",value:Number(s.absent||0),color:"#d65359"},{label:"Late",value:Number(s.late||0),color:"#d8a72c"},{label:"Excused",value:Number(s.excused||0),color:"#7d8b9a"}];
         const total=values.reduce((sum,item)=>sum+item.value,0), donut=document.getElementById("dashboardAttendanceDonut");
         if(donut){donut.style.background=dashboardDonutGradient(values);donut.setAttribute("aria-label",values.map(item=>item.label+" "+item.value).join(", "));}
@@ -575,7 +587,8 @@ async function loadDashboardAttendance() {
         setText("dashboardAttendanceMarked",total);setText("dashboardAttendancePresent",values[0].value);setText("dashboardAttendanceAbsent",values[1].value);setText("dashboardAttendanceLate",values[2].value);setText("dashboardAttendanceExcused",values[3].value);
         const legend=document.getElementById("dashboardAttendanceLegend");if(legend)legend.innerHTML=values.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+': <strong>'+item.value+'</strong></span>').join("");
         for(const [type,targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]){
-            const rows=(Array.isArray(report.classes)?report.classes:[]).filter(item=>item.class_type===type),target=document.getElementById(targetId);if(!target)continue;
+            const scopedRows=categoryReports[type]&&Array.isArray(categoryReports[type].classes)?categoryReports[type].classes:[];
+            const rows=scopedRows.filter(item=>item.class_type===type),target=document.getElementById(targetId);if(!target)continue;
             const categoryValues=[
                 {label:"Present",value:rows.reduce((sum,item)=>sum+Number(item.present_count||0),0),color:"#21945b"},
                 {label:"Absent",value:rows.reduce((sum,item)=>sum+Number(item.absent_count||0),0),color:"#d65359"},
