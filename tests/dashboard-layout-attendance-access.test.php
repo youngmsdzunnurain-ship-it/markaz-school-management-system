@@ -67,10 +67,12 @@ dashboardAssert(
 dashboardAssert(
     str_contains($js, 'class_type=conventional') &&
     str_contains($js, 'class_type=arabic') &&
-    str_contains($js, 'report.classes') &&
+    str_contains($js, 'categoryReports[type]') &&
     str_contains($attendance, "ar.class_type = ?") &&
     str_contains($attendance, 'FROM arabic_classes arabic_class') &&
     str_contains($attendance, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
+    str_contains($attendanceClasses, 'NOT EXISTS') &&
+    str_contains($attendanceClasses, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
     substr_count($attendanceClasses, 'FROM arabic_classes arabic_class') === 2 &&
     str_contains($attendance, "ar.class_id = c.id") &&
     str_contains($attendanceRegister, 's.arabia_class_id') &&
