@@ -5292,7 +5292,7 @@ button:focus-visible {
 .dashboard-exam-section .progress-card { min-height:112px; padding:14px 12px; gap:10px; }
 .dashboard-exam-section .progress-card strong { font-size:clamp(20px,2vw,27px); }
 .dashboard-exam-section .progress-card small { font-size:10px; }
-.dashboard-exam-charts { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr) minmax(0,1.3fr); gap:16px; margin:0 0 24px; align-items:stretch; }
+.dashboard-exam-charts { display:grid; grid-template-columns:minmax(0,35fr) minmax(0,30fr) minmax(0,35fr); gap:16px; margin:0 0 24px; align-items:stretch; }
 .dashboard-exam-charts .dashboard-chart-card { min-width:0; padding:20px; border:1px solid #e2eae4; border-radius:18px; background:#fff; box-shadow:0 5px 18px rgba(18,61,42,.055); }
 .dashboard-exam-charts .dashboard-chart-card h2 { margin:6px 0 15px; color:#173f2b; font-size:15px; line-height:1.35; }
 .dashboard-school-donut-card { display:flex; flex-direction:column; align-items:center; }

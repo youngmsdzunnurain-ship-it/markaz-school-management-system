@@ -281,7 +281,7 @@
 
         try {
             const response = await fetch(
-                `./api/results/class-completion.php?class_id=${encodeURIComponent(classId)}`,
+                `./api/results/class-completion.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
                 { credentials: "same-origin", cache: "no-store" }
             );
             const data = await response.json();
@@ -717,6 +717,7 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    class_type: classType,
                     class_id: Number(classId),
                     student_id: Number(studentId),
                     subject_id: Number(subject.id),

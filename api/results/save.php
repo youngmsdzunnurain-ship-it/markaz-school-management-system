@@ -36,7 +36,7 @@ if (!is_array($input)) {
     exit;
 }
 
-$classType = (string) ($input['class_type'] ?? 'conventional');
+$classType = (string) ($input['class_type'] ?? '');
 if (!in_array($classType, ['conventional', 'arabic'], true)) {
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => 'Invalid class type.']);
