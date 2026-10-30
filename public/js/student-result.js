@@ -1286,28 +1286,20 @@ async function authorizeAndPrint(permission) {
 
 $("printStudentResultButton")?.addEventListener(
     "click",
-    () => authorizeAndPrint("print_results")
+    () => {
+        if (isPrintMode) {
+            // The print-mode result API already verifies print permission on the server.
+            // Call synchronously from the click to preserve browser user activation.
+            window.print();
+            return;
+        }
+        authorizeAndPrint("print_results");
+    }
 );
 $("downloadStudentPdfButton")?.addEventListener(
     "click",
     () => authorizeAndPrint("export_results")
 );
-
-setupBehaviourCalculation();
-
-loadStudentResult().catch(error => {
-    console.error(error);
-    if (isPrintMode) {
-        $("printStudentResultButton")?.setAttribute("disabled", "disabled");
-        $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
-    }
-
-    $("studentResultsBody").innerHTML = `
-        <tr>
-            <td colspan="8">${escapeHtml(error.message)}</td>
-        </tr>
-    `;
-});
 
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
