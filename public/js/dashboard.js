@@ -569,6 +569,18 @@ async function loadDashboardAttendance() {
         const legend=document.getElementById("dashboardAttendanceLegend");if(legend)legend.innerHTML=values.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+': <strong>'+item.value+'</strong></span>').join("");
         for(const [type,targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]){
             const rows=(Array.isArray(report.classes)?report.classes:[]).filter(item=>item.class_type===type),target=document.getElementById(targetId);if(!target)continue;
+            const categoryValues=[
+                {label:"Present",value:rows.reduce((sum,item)=>sum+Number(item.present_count||0),0),color:"#21945b"},
+                {label:"Absent",value:rows.reduce((sum,item)=>sum+Number(item.absent_count||0),0),color:"#d65359"},
+                {label:"Late",value:rows.reduce((sum,item)=>sum+Number(item.late_count||0),0),color:"#d8a72c"},
+                {label:"Excused",value:rows.reduce((sum,item)=>sum+Number(item.excused_count||0),0),color:"#7d8b9a"}
+            ];
+            const categoryTotal=categoryValues.reduce((sum,item)=>sum+item.value,0);
+            const categoryPrefix=type==="conventional"?"dashboardConventional":"dashboardArabic";
+            const categoryDonut=document.getElementById(categoryPrefix+"AttendanceDonut");
+            if(categoryDonut){categoryDonut.style.background=dashboardDonutGradient(categoryValues);const number=categoryDonut.querySelector("strong");if(number)number.textContent=String(categoryTotal);categoryDonut.setAttribute("aria-label",type+" attendance: "+categoryValues.map(item=>item.label+" "+item.value).join(", "));}
+            const categoryLegend=document.getElementById(categoryPrefix+"AttendanceLegend");
+            if(categoryLegend)categoryLegend.innerHTML=categoryValues.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+' <strong>'+item.value+'</strong></span>').join("");
             const maxMarked=Math.max(1,...rows.map(item=>Number(item.marked_records)||0));
             target.innerHTML=rows.length?rows.map(item=>{
                 const params=new URLSearchParams({class_id:String(item.class_id),class_type:type,date:localDate});
