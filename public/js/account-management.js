@@ -104,6 +104,14 @@
                         </fieldset>
                     </div>
 
+                    <div id="accountAttendancePermission" hidden>
+                        <label class="account-check">
+                            <input type="checkbox" id="accountCanTakeAttendance">
+                            Teacher can record attendance for assigned classes
+                        </label>
+                        <small>Attendance access is limited to the teacher’s assigned classes.</small>
+                    </div>
+
                     <label class="account-check account-active-check">
                         <input type="checkbox" id="accountIsActive" checked>
                         Account is active
@@ -141,6 +149,8 @@
     const studentLink = $('#accountStudentLink');
     const studentSelect = $('#accountStudentId');
     const assignmentsWrap = $('#accountTeacherAssignments');
+    const attendancePermissionWrap = $('#accountAttendancePermission');
+    const attendancePermission = $('#accountCanTakeAttendance');
     const assignmentRows = $('#accountAssignmentRows');
     const saveButton = $('#saveManagedAccount');
 
@@ -263,6 +273,7 @@
         studentLink.hidden = !isStudent;
         studentSelect.required = isStudent;
         assignmentsWrap.hidden = !isTeacher;
+        attendancePermissionWrap.hidden = !isTeacher;
         emailField.hidden = isTeacher;
         emailInput.required = !isTeacher;
         emailInput.disabled = isTeacher;
@@ -525,6 +536,7 @@ assignmentRows.innerHTML = '';
         $('#accountIsActive').disabled = isSeniorAdmin;
 populateStudents(account.student_id || '');
         assignmentRows.innerHTML = '';
+        attendancePermission.checked = Boolean(account.permissions && account.permissions.attendance_records);
         const groupedAssignments = new Map();
         (account.assignments || []).forEach(assignment => {
             const key = `${assignment.class_type}:${assignment.class_id}`;
@@ -658,6 +670,7 @@ populateStudents(account.student_id || '');
             is_active: $('#accountIsActive').checked,
             student_id: role.value === 'student' && studentSelect.value
                 ? Number(studentSelect.value) : null,
+            attendance_records: role.value === 'teacher' && attendancePermission.checked,
         };
 
     if (id) {

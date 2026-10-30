@@ -156,7 +156,7 @@ if ($method === 'GET') {
     $permissionStmt = $pdo->query(
         'SELECT account_id, permission_key, is_allowed
          FROM account_permissions
-         WHERE permission_key IN ("print_results", "export_results")'
+         WHERE permission_key IN ("print_results", "export_results", "attendance_records")'
     );
 
     $permissions = [];
@@ -247,6 +247,7 @@ if ($method === 'GET') {
                 : false;
         }
 
+        $effectivePermissions['attendance_records'] = $permissions[$id]['attendance_records'] ?? false;
         $account['permissions'] = $effectivePermissions;
         $account['assignments'] = $assignments[$id] ?? [];
     }
@@ -570,6 +571,12 @@ try {
             'DELETE FROM teacher_assignments WHERE account_id = ?'
         );
         $delete->execute([$targetId]);
+    }
+
+    if ($role === 'teacher') {
+        saveAccountPermission($pdo, $targetId, 'attendance_records', filter_var($data['attendance_records'] ?? false, FILTER_VALIDATE_BOOLEAN));
+    } else {
+        saveAccountPermission($pdo, $targetId, 'attendance_records', false);
     }
 
     $pdo->commit();

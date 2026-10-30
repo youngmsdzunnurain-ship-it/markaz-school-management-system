@@ -39,8 +39,16 @@ check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'count
 
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 check(str_contains($attendanceJs, 'setInterval') && str_contains($attendanceJs, 'updateDateLabel'), 'refreshes displayed school date while page remains open');
-check(str_contains($attendanceJs, 'studentNameSuggestions'), 'provides a searchable student-name selector');
+check(str_contains($attendanceJs, 'attendanceStudent') && str_contains($attendanceJs, 'populateStudentDropdown'), 'provides a real class-populated student dropdown');
 check(str_contains($attendanceJs, 'attendancePieChart'), 'renders the attendance status pie chart');
+check(is_file(__DIR__ . '/../api/attendance/reports.php'), 'publishes the attendance reporting endpoint');
+$attendanceCommon = file_get_contents(__DIR__ . '/../api/attendance/_common.php');
+check(str_contains($attendanceCommon, "'management'"), 'recognises Management as an attendance role');
+check(str_contains($attendanceCommon, 'attendance_records'), 'enforces the teacher attendance permission');
+$accountsApi = file_get_contents(__DIR__ . '/../api/settings/accounts.php');
+check(str_contains($accountsApi, "'attendance_records'"), 'persists the individual teacher attendance permission');
+$attendancePage = file_get_contents(__DIR__ . '/../public/attendance.html');
+check(str_contains($attendancePage, 'markaz-global-footer'), 'uses the standard MARKAZ footer');
 check(str_contains($attendanceJs, 'clearInterval') || str_contains($attendanceJs, 'visibilitychange'), 'handles page visibility for date refresh');
 
 echo "Attendance validation tests passed ({$checks} checks).\n";

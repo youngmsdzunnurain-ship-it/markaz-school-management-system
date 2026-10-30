@@ -193,3 +193,12 @@
     .attendance-chart-legend { width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .attendance-chart-date { text-align:right; }
 }
+
+
+/* Attendance controls and school reporting */
+.attendance-filters { grid-template-columns: minmax(150px,.8fr) minmax(170px,1fr) minmax(190px,1.1fr) minmax(190px,1.1fr) auto; }
+#attendanceReportOutput { margin-top:18px; color:var(--att-ink); }
+.attendance-report-summary { margin-bottom:14px; padding:13px 15px; border:1px solid var(--att-border); border-radius:11px; background:#f7faf7; color:#4c5c52; font-size:12px; line-height:1.8; }
+.attendance-report-summary strong { color:#17643a; font-size:15px; }
+@media (max-width:1050px) { .attendance-filters { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:720px) { .attendance-filters { grid-template-columns:minmax(0,1fr); } }

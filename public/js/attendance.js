@@ -20,7 +20,7 @@
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
         body: $("attendanceTableBody"),
-        search: $("studentSearch"),
+        studentSelect: $("attendanceStudent"),
         markAll: $("markAllPresentButton"),
         clear: $("clearMarksButton"),
         save: $("saveAttendanceButton"),
@@ -32,7 +32,7 @@
         today: $("todayLabel"),
         progressBar: $("progressBar"),
         progressLabel: $("progressLabel"),
-        studentSuggestions: $("studentNameSuggestions"),
+        
         pie: $("attendancePieChart"),
         chartLegend: $("attendanceChartLegend"),
         chartDate: $("attendanceChartDate"),
@@ -97,13 +97,7 @@
     }
 
     function visibleStudents() {
-        const term = els.search.value.trim().toLocaleLowerCase();
-        if (!term) return state.students;
-        return state.students.filter((student) => {
-            const name = fullName(student).toLocaleLowerCase();
-            const admission = String(student.admission_number || "").toLocaleLowerCase();
-            return name.includes(term) || admission.includes(term);
-        });
+        return state.students;
     }
 
     function updateSummary() {
@@ -152,21 +146,27 @@
         els.chartDate.textContent = selected && state.date ? formatDate(state.date) + " · " + selected.name : "Load a register to view its breakdown";
     }
 
-    function populateStudentSuggestions() {
-        if (!els.studentSuggestions) return;
-        els.studentSuggestions.innerHTML = state.students.map(student =>
-            '<option value="' + escapeHtml(fullName(student)) + '" label="' + escapeHtml(student.admission_number || "") + '"></option>'
-        ).join("");
+    function populateStudentDropdown() {
+        const select = els.studentSelect;
+        if (!select) return;
+        select.replaceChildren();
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = state.students.length ? "Select a student…" : "No students in this class";
+        select.appendChild(placeholder);
+        state.students.forEach(student => {
+            const option = document.createElement("option");
+            option.value = String(student.id);
+            option.textContent = fullName(student) + (student.admission_number ? " — " + student.admission_number : "");
+            select.appendChild(option);
+        });
+        select.disabled = state.students.length === 0 || state.loading || state.saving;
     }
 
     function focusSelectedStudent() {
-        const term = els.search.value.trim().toLocaleLowerCase();
-        const student = state.students.find(item =>
-            fullName(item).toLocaleLowerCase() === term ||
-            String(item.admission_number || "").toLocaleLowerCase() === term
-        );
-        if (!student) return;
-        const row = els.body.querySelector('[data-student-row="' + Number(student.id) + '"]');
+        const studentId = Number(els.studentSelect.value);
+        if (!studentId) return;
+        const row = els.body.querySelector('[data-student-row="' + studentId + '"]');
         if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -210,7 +210,7 @@
     function refreshActions() {
         const hasRegister = Boolean(state.classId && state.date && state.students.length);
         const isBusy = state.loading || state.saving;
-        els.search.disabled = !hasRegister || isBusy;
+        els.studentSelect.disabled = !hasRegister || isBusy;
         els.markAll.disabled = !hasRegister || isBusy;
         els.clear.disabled = !hasRegister || isBusy;
         els.save.disabled = !hasRegister || isBusy;
@@ -318,11 +318,11 @@
                 remarks: student.remarks || "",
             }));
             state.dirty = false;
-            els.search.value = "";
+            
             const typeLabel = classType === "arabic" ? "Arabic class" : "Conventional class";
             els.subtitle.textContent = data.class.name + " · " + typeLabel + " · " + formatDate(data.date);
             const summary = updateSummary();
-            populateStudentSuggestions();
+            populateStudentDropdown();
             renderRegister();
             if (!state.students.length) {
                 setNotice("This class has no active students to mark.", "error");
@@ -333,7 +333,7 @@
             }
         } catch (error) {
             state.students = [];
-            populateStudentSuggestions();
+            populateStudentDropdown();
             state.dirty = false;
             updateSummary();
             renderRegister();
@@ -506,7 +506,7 @@
         state.classType = els.type.value;
         state.classId = "";
         state.students = [];
-        populateStudentSuggestions();
+        populateStudentDropdown();
         state.dirty = false;
         els.classSelect.value = "";
         populateClasses();
@@ -529,6 +529,7 @@
         renderRegister();
         els.subtitle.textContent = "Select Load register to view students.";
         refreshActions();
+        if (state.classId) loadRegister();
     });
 
     els.date.addEventListener("change", () => {
@@ -546,10 +547,52 @@
         refreshActions();
     });
 
+    async function loadAttendanceReport() {
+        const output = $("attendanceReportOutput");
+        const from = $("reportFrom").value;
+        const to = $("reportTo").value;
+        if (!from || !to || from > to) {
+            output.textContent = "Choose a valid date range.";
+            return;
+        }
+        const params = new URLSearchParams({ from, to });
+        if (state.role === "teacher" || state.classId) {
+            if (!state.classId) {
+                output.textContent = "Select one of your assigned classes before viewing its report.";
+                return;
+            }
+            params.set("class_type", state.classType);
+            params.set("class_id", state.classId);
+        }
+        output.textContent = "Loading attendance report…";
+        try {
+            const report = await requestJson("./api/attendance/reports.php?" + params.toString());
+            const totals = report.summary;
+            const rows = report.classes.map(item =>
+                "<tr><td>" + escapeHtml(item.class_name || "Unknown class") + "</td>" +
+                "<td>" + item.marked_records + "</td><td>" + item.present_count + "</td>" +
+                "<td>" + item.absent_count + "</td><td>" + item.late_count + "</td>" +
+                "<td>" + item.excused_count + "</td><td>" + item.days_with_records + "</td></tr>"
+            ).join("");
+            output.innerHTML =
+                '<div class="attendance-report-summary"><strong>' + totals.marked_records +
+                '</strong> saved marks · <strong>' + totals.present + '</strong> present · <strong>' +
+                totals.absent + '</strong> absent · <strong>' + totals.late + '</strong> late · <strong>' +
+                totals.excused + '</strong> excused</div>' +
+                '<div class="attendance-table-wrap"><table class="attendance-table"><thead><tr>' +
+                '<th>Class</th><th>Saved marks</th><th>Present</th><th>Absent</th><th>Late</th><th>Excused</th><th>Days recorded</th>' +
+                '</tr></thead><tbody>' + (rows || '<tr><td colspan="7">No saved attendance records in this period.</td></tr>') +
+                '</tbody></table></div>';
+        } catch (error) {
+            output.textContent = error.message;
+        }
+    }
+
     els.load.addEventListener("click", loadRegister);
-    els.search.addEventListener("input", renderRegister);
-    els.search.addEventListener("change", focusSelectedStudent);
-    els.search.addEventListener("keydown", (event) => { if (event.key === "Enter") focusSelectedStudent(); });
+    $("loadAttendanceReport").addEventListener("click", loadAttendanceReport);
+    
+    els.studentSelect.addEventListener("change", focusSelectedStudent);
+    
     els.body.addEventListener("change", handleRegisterChange);
     els.body.addEventListener("input", handleRegisterChange);
     els.markAll.addEventListener("click", markAllPresent);
@@ -566,6 +609,10 @@
 
     els.date.max = localDateValue();
     els.date.value = localDateValue();
+    $("reportTo").value = localDateValue();
+    const reportStart = new Date();
+    reportStart.setDate(reportStart.getDate() - 29);
+    $("reportFrom").value = localDateValue(reportStart);
     state.date = els.date.value;
     updateDateLabel();
     updateSummary();
