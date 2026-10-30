@@ -19,6 +19,7 @@ on:
       - ".github/workflows/attendance-validation.yml"
   push:
     branches:
+      - "main"
       - "feature/daily-attendance-20261028"
 
 permissions:
