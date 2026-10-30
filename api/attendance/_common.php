@@ -56,8 +56,12 @@ function attendanceRequireStaff(): string
 {
     $role = currentAdminRole();
 
-    if (in_array($role, ['admin', 'exam_officer', 'management'], true)) {
+    if (in_array($role, ['admin', 'exam_officer'], true)) {
         requireAdmin();
+        return $role;
+    }
+
+    if ($role === 'management') {
         return $role;
     }
 
