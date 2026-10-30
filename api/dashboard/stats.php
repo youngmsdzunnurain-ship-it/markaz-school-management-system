@@ -144,104 +144,78 @@ if ($period) {
 }
 
 
-  $classProgress = [];
-  if ($period) {
-      $classRows = $pdo->query(
-          "SELECT id, name FROM classes WHERE is_active = 1 ORDER BY name"
-      )->fetchAll();
+$classProgress = [];
+$classRows = $pdo->query(
+    "SELECT id, name, sort_order FROM classes WHERE is_active = 1 ORDER BY sort_order, name"
+)->fetchAll(PDO::FETCH_ASSOC);
 
-      $behaviourTableExists = (bool) $pdo->query(
-          "SHOW TABLES LIKE 'behavioural_reports'"
-      )->fetchColumn();
+$assessmentFields = ['attendance', 'punctuality', 'neatness', 'conduct', 'cooperation', 'attentiveness'];
+$assessmentTableExists = (bool) $pdo->query("SHOW TABLES LIKE 'student_assessments'")->fetchColumn();
 
-      $scoreFields = ['ca1', 'ca2', 'exam'];
-      $behaviourFields = [
-          'attendance', 'neatness', 'contentment', 'obedience',
-          'responsiveness', 'tolerance', 'attentiveness',
-          'truthfulness', 'calmness'
-      ];
+foreach ($classRows as $classRow) {
+    $classId = (int) $classRow['id'];
+    $studentStmt = $pdo->prepare("SELECT COUNT(*) FROM students WHERE class_id = ? AND is_active = 1");
+    $studentStmt->execute([$classId]);
+    $studentCount = (int) $studentStmt->fetchColumn();
 
-      foreach ($classRows as $classRow) {
-          $classId = (int) $classRow['id'];
-          $studentStmt = $pdo->prepare(
-              "SELECT id FROM students WHERE class_id = ? AND is_active = 1"
-          );
-          $studentStmt->execute([$classId]);
-          $classStudentIds = array_map('intval', $studentStmt->fetchAll(PDO::FETCH_COLUMN));
+    $requiredStmt = $pdo->prepare(
+        "SELECT COUNT(*) FROM class_subjects cs
+         INNER JOIN subjects s ON s.id = cs.subject_id AND s.is_active = 1
+         WHERE cs.class_id = ? AND cs.is_required = 1"
+    );
+    $requiredStmt->execute([$classId]);
+    $requiredSubjects = (int) $requiredStmt->fetchColumn();
 
-          $requiredStmt = $pdo->prepare(
-              "SELECT COUNT(*) FROM class_subjects cs
-               INNER JOIN subjects s ON s.id = cs.subject_id AND s.is_active = 1
-               WHERE cs.class_id = ? AND cs.is_required = 1"
-          );
-          $requiredStmt->execute([$classId]);
-          $requiredSubjects = (int) $requiredStmt->fetchColumn();
+    $expected = $studentCount * (($requiredSubjects * 3) + count($assessmentFields));
+    $entered = 0;
 
-          $expected = count($classStudentIds) * (($requiredSubjects * 3) + 9);
-          $entered = 0;
+    if ($studentCount > 0 && $requiredSubjects > 0) {
+        $scoreStmt = $pdo->prepare(
+            "SELECT
+                COALESCE(SUM(r.ca1 IS NOT NULL), 0) AS ca1_count,
+                COALESCE(SUM(r.ca2 IS NOT NULL), 0) AS ca2_count,
+                COALESCE(SUM(r.exam IS NOT NULL), 0) AS exam_count
+             FROM students st
+             INNER JOIN class_subjects cs ON cs.class_id = st.class_id AND cs.is_required = 1
+             INNER JOIN subjects s ON s.id = cs.subject_id AND s.is_active = 1
+             LEFT JOIN results r ON r.student_id = st.id
+                 AND r.subject_id = cs.subject_id AND r.academic_period_id = ?
+                 AND r.class_type = 'conventional' AND r.class_id = ?
+             WHERE st.class_id = ? AND st.is_active = 1"
+        );
+        $scoreStmt->execute([$periodId, $classId, $classId]);
+        $counts = $scoreStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        foreach (['ca1_count', 'ca2_count', 'exam_count'] as $field) {
+            $entered += (int) ($counts[$field] ?? 0);
+        }
+    }
 
-          if ($classStudentIds && $requiredSubjects) {
-              $scoreStmt = $pdo->prepare(
-                  "SELECT
-                      SUM(r.ca1 IS NOT NULL) AS ca1_count,
-                      SUM(r.ca2 IS NOT NULL) AS ca2_count,
-                      SUM(r.exam IS NOT NULL) AS exam_count
-                   FROM students st
-                   INNER JOIN class_subjects cs
-                       ON cs.class_id = st.class_id AND cs.is_required = 1
-                   INNER JOIN subjects s
-                       ON s.id = cs.subject_id AND s.is_active = 1
-                   LEFT JOIN results r
-                       ON r.student_id = st.id
-                       AND r.subject_id = cs.subject_id
-                       AND r.academic_period_id = ?
-                   WHERE st.class_id = ? AND st.is_active = 1"
-              );
-              $scoreStmt->execute([$periodId, $classId]);
-              $scoreCounts = $scoreStmt->fetch() ?: [];
-              foreach (['ca1_count', 'ca2_count', 'exam_count'] as $field) {
-                  $entered += (int) ($scoreCounts[$field] ?? 0);
-              }
-          }
+    if ($assessmentTableExists && $studentCount > 0) {
+        $assessmentStmt = $pdo->prepare(
+            "SELECT " . implode(', ', array_map(
+                fn($field) => "COALESCE(SUM(sa.`$field` IS NOT NULL AND sa.`$field` <> ''), 0) AS `$field`",
+                $assessmentFields
+            )) . "
+             FROM student_assessments sa
+             INNER JOIN students st ON st.id = sa.student_id
+             WHERE st.class_id = ? AND st.is_active = 1 AND sa.academic_period_id = ?"
+        );
+        $assessmentStmt->execute([$classId, $periodId]);
+        $assessmentCounts = $assessmentStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        foreach ($assessmentFields as $field) {
+            $entered += (int) ($assessmentCounts[$field] ?? 0);
+        }
+    }
 
-          if ($behaviourTableExists && $classStudentIds) {
-              $behaviourStmt = $pdo->prepare(
-                  "SELECT " . implode(', ', array_map(
-                      fn($field) => "SUM(`$field` IS NOT NULL AND `$field` <> '') AS `$field`",
-                      $behaviourFields
-                  )) . "
-                   FROM behavioural_reports br
-                   INNER JOIN students st ON st.id = br.student_id
-                   WHERE st.class_id = ? AND st.is_active = 1
-                     AND br.academic_period_id = ?"
-              );
-              $behaviourStmt->execute([$classId, $periodId]);
-              $behaviourCounts = $behaviourStmt->fetch() ?: [];
-              foreach ($behaviourFields as $field) {
-                  $entered += (int) ($behaviourCounts[$field] ?? 0);
-              }
-          }
-
-          $classProgress[] = [
-              'class_name' => $classRow['name'],
-              'completion_percentage' => $expected
-                  ? min(100, round($entered / $expected * 100, 1))
-                  : 0
-          ];
-      }
-  } else {
-      // Keep active classes visible when no academic period is configured.
-      $classNames = $pdo->query(
-          "SELECT name FROM classes WHERE is_active = 1 ORDER BY name"
-      )->fetchAll(PDO::FETCH_COLUMN);
-
-      foreach ($classNames as $className) {
-          $classProgress[] = [
-              'class_name' => $className,
-              'completion_percentage' => 0
-          ];
-      }
-  }
+    $classProgress[] = [
+        'class_id' => $classId,
+        'class_name' => $classRow['name'],
+        'student_count' => $studentCount,
+        'entered_entries' => $entered,
+        'expected_entries' => $expected,
+        'completion_percentage' => $expected > 0 ? min(100, round($entered / $expected * 100, 1)) : 0
+    ];
+}
 
 echo json_encode([
     'success' => true,
