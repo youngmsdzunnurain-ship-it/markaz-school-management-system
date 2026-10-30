@@ -5617,3 +5617,11 @@ button:focus-visible {
         backdrop-filter: none;
     }
 }
+
+
+/* Full pie charts: explicitly remove the legacy white centre masks. */
+.dashboard-completion-pie::before,
+.dashboard-pie-visual::before {
+    content: none !important;
+    display: none !important;
+}
