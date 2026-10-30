@@ -1,12 +1,12 @@
 /*
  * MARKAZ - single-page student result for A4 or Letter paper (print only).
  * Loaded with media="print" by student-result.html and student-result-print.html.
- * One clean stylesheet. Flat design: no shadows, no gradients, no blur.
- * Every size is multiplied by --k = .81 (A4) or .76 (shorter Letter paper) x the admin print scale setting
- * (--markaz-result-print-scale, 50%-100%, default 100%). No CSS zoom is used, so the
- * layout is identical in every browser. No paper size is forced: the page adapts to the
- * paper chosen in the print dialog (choose A4). The card height follows that paper, so the
- * signatures and footer always sit at the bottom of the sheet.
+ * Flat design: no shadows, no gradients, no blur. No CSS zoom, no vh heights.
+ * Every size = design value x --u (mm) or --p (pt). --k is the page scale: .77 on A4,
+ * .74 on Letter (page height below 283mm), smaller again for 13+ subjects.
+ * The saved admin print-scale setting is intentionally ignored.
+ * Signatures and footer are pinned to the bottom of the paper (position: fixed);
+ * the card keeps room for them with padding-bottom.
  */
 @page { margin: 5mm; }
 
@@ -20,12 +20,14 @@
     --goldl: #fdf7e6;
     --ink: #1c2b24;
     --mut: #66746d;
-    --k: .83;
+    --k: .77;
+    --u: calc(1mm * var(--k));
+    --p: calc(1pt * var(--k));
   }
 
-  /* Shorter paper (Letter, about 269mm printable height): slightly smaller sizes so everything still fits on one page */
-  @media (max-height: 275mm) {
-    :root { --k: .78; }
+  /* Shorter paper (Letter): slightly smaller sizes so everything still fits on one page */
+  @media (max-height: 283mm) {
+    :root { --k: .74; }
   }
 
   html,
@@ -37,7 +39,7 @@
     background: #fff !important;
     color: var(--ink) !important;
     font-family: Figtree, "Segoe UI", Arial, Helvetica, sans-serif !important;
-    font-size: calc(9pt * var(--k)) !important;
+    font-size: calc(9 * var(--p)) !important;
     line-height: 1.3 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -80,7 +82,7 @@
   html body button,
   html body .btn,
   html body .no-print,
-  #studentReportCard .student-information .section-eyebrow,
+  #studentReportCard .section-heading .section-eyebrow,
   #studentReportCard .student-status,
   #studentReportCard .section-heading p {
     display: none !important;
@@ -105,19 +107,17 @@
   #studentReportCard {
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    height: calc(100vh - 13mm) !important;
-    min-height: 0 !important;
-    gap: calc(2.2mm * var(--k)) !important;
+    gap: calc(2.2 * var(--u)) !important;
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 0 calc(25 * var(--u)) !important;
     border: 0 !important;
     border-radius: 0 !important;
     background: #fff !important;
-    overflow: hidden !important;
+    overflow: visible !important;
+    zoom: 1 !important;
     transform: none !important;
   }
 
@@ -130,12 +130,12 @@
   /* Header: logo | school text | result statement box */
   #studentReportCard .school-header {
     display: grid !important;
-    grid-template-columns: calc(22mm * var(--k)) 1fr calc(38mm * var(--k)) !important;
-    gap: calc(4mm * var(--k)) !important;
+    grid-template-columns: calc(27 * var(--u)) 1fr calc(44 * var(--u)) !important;
+    gap: calc(4 * var(--u)) !important;
     align-items: center !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0 0 calc(1.6mm * var(--k)) !important;
+    padding: 0 0 calc(2 * var(--u)) !important;
     border: 0 !important;
     background: none !important;
     break-inside: avoid !important;
@@ -144,8 +144,8 @@
     display: contents !important;
   }
   #studentReportCard .school-logo {
-    width: calc(21mm * var(--k)) !important;
-    height: calc(21mm * var(--k)) !important;
+    width: calc(25 * var(--u)) !important;
+    height: calc(25 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
@@ -171,7 +171,7 @@
   }
   #studentReportCard .school-arabic-name {
     font-family: Amiri, "Traditional Arabic", serif !important;
-    font-size: calc(18pt * var(--k)) !important;
+    font-size: calc(21 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.2 !important;
     color: var(--gd) !important;
@@ -179,34 +179,34 @@
   #studentReportCard .school-arabic-name::after {
     content: "" !important;
     display: block !important;
-    width: calc(18mm * var(--k)) !important;
+    width: calc(18 * var(--u)) !important;
     height: 2px !important;
     background: var(--g) !important;
-    margin: calc(1mm * var(--k)) auto 0 !important;
+    margin: calc(1 * var(--u)) auto 0 !important;
   }
   #studentReportCard .school-arabic-address {
     font-family: Amiri, "Traditional Arabic", serif !important;
-    font-size: calc(9pt * var(--k)) !important;
+    font-size: calc(10 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
     color: var(--ink) !important;
-    margin-top: calc(1mm * var(--k)) !important;
+    margin-top: calc(1 * var(--u)) !important;
   }
   #studentReportCard .school-kicker {
-    font-size: calc(7.8pt * var(--k)) !important;
+    font-size: calc(8.8 * var(--p)) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     color: var(--gd) !important;
-    margin-top: calc(1.2mm * var(--k)) !important;
+    margin-top: calc(1.2 * var(--u)) !important;
     line-height: 1.25 !important;
     letter-spacing: 0 !important;
   }
   #studentReportCard .school-address {
-    font-size: calc(6.3pt * var(--k)) !important;
+    font-size: calc(7 * var(--p)) !important;
     font-weight: 400 !important;
     text-transform: uppercase !important;
     color: var(--mut) !important;
-    margin-top: calc(.5mm * var(--k)) !important;
+    margin-top: calc(.5 * var(--u)) !important;
     line-height: 1.25 !important;
   }
   #studentReportCard .school-contact {
@@ -214,38 +214,38 @@
     justify-content: center !important;
     align-items: center !important;
     flex-wrap: wrap !important;
-    gap: 0 calc(4mm * var(--k)) !important;
-    margin-top: calc(.8mm * var(--k)) !important;
-    font-size: calc(6.6pt * var(--k)) !important;
+    gap: 0 calc(4 * var(--u)) !important;
+    margin-top: calc(.8 * var(--u)) !important;
+    font-size: calc(7.4 * var(--p)) !important;
     color: var(--ink) !important;
     line-height: 1.25 !important;
   }
   #studentReportCard .contact-item {
     display: inline-flex !important;
     align-items: center !important;
-    gap: calc(1.2mm * var(--k)) !important;
+    gap: calc(1.2 * var(--u)) !important;
     white-space: nowrap !important;
   }
   #studentReportCard .contact-item i {
-    font-size: calc(6.6pt * var(--k)) !important;
+    font-size: calc(6.6 * var(--p)) !important;
     color: var(--g) !important;
   }
   #studentReportCard .contact-separator {
-    margin: 0 calc(.6mm * var(--k)) !important;
+    margin: 0 calc(.6 * var(--u)) !important;
   }
   #studentReportCard .report-title {
     display: block !important;
     text-align: center !important;
     margin: 0 !important;
-    padding: calc(2.6mm * var(--k)) calc(2mm * var(--k)) !important;
+    padding: calc(3 * var(--u)) calc(2 * var(--u)) !important;
     border: 1px solid var(--line) !important;
     border-left: 2.5px solid var(--gold) !important;
-    border-radius: calc(1.6mm * var(--k)) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
     background: #fff !important;
   }
   #studentReportCard .report-title span {
     display: block !important;
-    font-size: calc(5.8pt * var(--k)) !important;
+    font-size: calc(6.4 * var(--p)) !important;
     font-weight: 600 !important;
     letter-spacing: .8px !important;
     text-transform: uppercase !important;
@@ -253,8 +253,8 @@
   }
   #studentReportCard .report-title strong {
     display: block !important;
-    margin-top: calc(.8mm * var(--k)) !important;
-    font-size: calc(8.6pt * var(--k)) !important;
+    margin-top: calc(.8 * var(--u)) !important;
+    font-size: calc(9.8 * var(--p)) !important;
     font-weight: 700 !important;
     color: var(--gd) !important;
     white-space: nowrap !important;
@@ -264,9 +264,9 @@
   #studentReportCard .session-bar {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: calc(2.4mm * var(--k)) !important;
+    gap: calc(2.4 * var(--u)) !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(4mm * var(--k)) !important;
+    padding: calc(2.2 * var(--u)) calc(4 * var(--u)) !important;
     border: 0 !important;
     border-radius: 0 !important;
     border-top: 1.5px solid var(--gold) !important;
@@ -283,7 +283,7 @@
   }
   #studentReportCard .session-bar span {
     display: block !important;
-    font-size: calc(6.5pt * var(--k)) !important;
+    font-size: calc(7 * var(--p)) !important;
     font-weight: 600 !important;
     letter-spacing: .5px !important;
     text-transform: uppercase !important;
@@ -291,8 +291,8 @@
   }
   #studentReportCard .session-bar strong {
     display: block !important;
-    margin-top: calc(.4mm * var(--k)) !important;
-    font-size: calc(9.5pt * var(--k)) !important;
+    margin-top: calc(.4 * var(--u)) !important;
+    font-size: calc(10.5 * var(--p)) !important;
     font-weight: 700 !important;
     color: #6b4f12 !important;
   }
@@ -311,7 +311,7 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: flex-end !important;
-    margin: 0 0 calc(1.4mm * var(--k)) !important;
+    margin: 0 0 calc(1.6 * var(--u)) !important;
     padding: 0 !important;
     border: 0 !important;
     background: none !important;
@@ -323,11 +323,11 @@
   }
   #studentReportCard .section-eyebrow {
     display: block !important;
-    margin: 0 0 calc(.3mm * var(--k)) !important;
+    margin: 0 0 calc(.3 * var(--u)) !important;
     padding: 0 !important;
     border: 0 !important;
     background: none !important;
-    font-size: calc(6.3pt * var(--k)) !important;
+    font-size: calc(6.3 * var(--p)) !important;
     font-weight: 700 !important;
     letter-spacing: .8px !important;
     text-transform: uppercase !important;
@@ -338,7 +338,7 @@
     padding: 0 !important;
     border: 0 !important;
     background: none !important;
-    font-size: calc(10.5pt * var(--k)) !important;
+    font-size: calc(11.5 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.15 !important;
     color: var(--gd) !important;
@@ -355,7 +355,7 @@
     display: block !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-size: calc(6.5pt * var(--k)) !important;
+    font-size: calc(6.5 * var(--p)) !important;
     font-weight: 600 !important;
     letter-spacing: .5px !important;
     text-transform: uppercase !important;
@@ -365,8 +365,8 @@
   #studentReportCard .detail-item strong,
   #studentReportCard .summary-box strong {
     display: block !important;
-    margin: calc(.4mm * var(--k)) 0 0 !important;
-    font-size: calc(9.5pt * var(--k)) !important;
+    margin: calc(.4 * var(--u)) 0 0 !important;
+    font-size: calc(10 * var(--p)) !important;
     font-weight: 600 !important;
     color: var(--ink) !important;
     line-height: 1.3 !important;
@@ -376,14 +376,14 @@
   /* Student information */
   #studentReportCard .student-profile-grid {
     display: grid !important;
-    grid-template-columns: calc(17mm * var(--k)) 1fr !important;
-    gap: calc(2.6mm * var(--k)) !important;
+    grid-template-columns: calc(17 * var(--u)) 1fr !important;
+    gap: calc(2.6 * var(--u)) !important;
     align-items: stretch !important;
     margin: 0 !important;
-    padding: calc(2.6mm * var(--k)) !important;
+    padding: calc(2.6 * var(--u)) !important;
     border: 1px solid var(--line) !important;
     border-top: 2px solid var(--g) !important;
-    border-radius: calc(3mm * var(--k)) !important;
+    border-radius: calc(3 * var(--u)) !important;
     background: var(--pale) !important;
   }
   #studentReportCard .student-photo {
@@ -397,12 +397,12 @@
     margin: 0 !important;
     padding: 0 !important;
     border: 1px solid #cfe0d5 !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: #fff !important;
     overflow: hidden !important;
   }
   #studentReportCard .student-photo span {
-    font-size: calc(21pt * var(--k)) !important;
+    font-size: calc(21 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1 !important;
     color: var(--gd) !important;
@@ -417,14 +417,14 @@
   #studentReportCard .student-details {
     display: flex !important;
     flex-direction: column !important;
-    gap: calc(2.4mm * var(--k)) !important;
+    gap: calc(2.4 * var(--u)) !important;
     min-width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   #studentReportCard .student-info-row {
     display: grid !important;
-    gap: calc(2.2mm * var(--k)) !important;
+    gap: calc(2.2 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -433,18 +433,18 @@
   }
   #studentReportCard .student-class-row {
     grid-template-columns: 1fr 1fr 1fr 1.9fr !important;
-    gap: calc(2.4mm * var(--k)) !important;
+    gap: calc(2.4 * var(--u)) !important;
   }
   #studentReportCard .detail-item {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     min-width: 0 !important;
-    min-height: calc(9mm * var(--k)) !important;
+    min-height: calc(10 * var(--u)) !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
     border: 1px solid var(--line) !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: #fff !important;
   }
   #studentReportCard .student-name-item strong {
@@ -469,7 +469,7 @@
   #studentReportCard .performance-overview {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: calc(2.2mm * var(--k)) !important;
+    gap: calc(2.2 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -477,13 +477,13 @@
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    gap: calc(.8mm * var(--k)) !important;
-    min-height: calc(13mm * var(--k)) !important;
+    gap: calc(.8 * var(--u)) !important;
+    min-height: calc(14 * var(--u)) !important;
     margin: 0 !important;
-    padding: calc(1.3mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(1.3 * var(--u)) calc(3 * var(--u)) !important;
     border: 1px solid var(--line) !important;
     border-left: 3px solid var(--g) !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: #fff !important;
   }
   #studentReportCard .performance-card:nth-child(even) {
@@ -493,7 +493,7 @@
   #studentReportCard .performance-card strong {
     display: block !important;
     margin: 0 !important;
-    font-size: calc(14pt * var(--k)) !important;
+    font-size: calc(16 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.1 !important;
     color: var(--gd) !important;
@@ -501,7 +501,7 @@
   #studentReportCard .performance-card small {
     display: block !important;
     margin: 0 !important;
-    font-size: calc(6.8pt * var(--k)) !important;
+    font-size: calc(6.8 * var(--p)) !important;
     line-height: 1.25 !important;
     color: var(--mut) !important;
   }
@@ -509,14 +509,14 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: calc(9mm * var(--k)) !important;
-    height: calc(9mm * var(--k)) !important;
+    width: calc(9 * var(--u)) !important;
+    height: calc(9 * var(--u)) !important;
     border: 1.5px solid var(--g) !important;
-    border-radius: calc(1.4mm * var(--k)) !important;
+    border-radius: calc(1.4 * var(--u)) !important;
     background: #fff !important;
   }
   #studentReportCard .performance-card:nth-child(4) small {
-    font-size: calc(9.5pt * var(--k)) !important;
+    font-size: calc(9.5 * var(--p)) !important;
     font-weight: 600 !important;
     color: var(--ink) !important;
   }
@@ -526,7 +526,7 @@
   #studentReportCard .management-panel {
     display: flex !important;
     flex-direction: column !important;
-    gap: calc(2.2mm * var(--k)) !important;
+    gap: calc(2.2 * var(--u)) !important;
     width: 100% !important;
     min-width: 0 !important;
     margin: 0 !important;
@@ -552,16 +552,16 @@
     margin: 0 !important;
     border-collapse: collapse !important;
     border-spacing: 0 !important;
-    font-size: calc(8.8pt * var(--k)) !important;
+    font-size: calc(9.8 * var(--p)) !important;
     background: none !important;
     table-layout: auto !important;
   }
   #studentReportCard .student-results-table th {
-    padding: calc(1.5mm * var(--k)) calc(1.6mm * var(--k)) !important;
+    padding: calc(1.8 * var(--u)) calc(1.8 * var(--u)) !important;
     background: var(--g) !important;
     color: #fff !important;
     border: 0 !important;
-    font-size: calc(7pt * var(--k)) !important;
+    font-size: calc(7.6 * var(--p)) !important;
     font-weight: 600 !important;
     letter-spacing: .5px !important;
     text-transform: uppercase !important;
@@ -569,18 +569,18 @@
     line-height: 1.3 !important;
   }
   #studentReportCard .student-results-table th:first-child {
-    width: calc(7mm * var(--k)) !important;
-    border-top-left-radius: calc(2.2mm * var(--k)) !important;
+    width: calc(7 * var(--u)) !important;
+    border-top-left-radius: calc(2.2 * var(--u)) !important;
   }
   #studentReportCard .student-results-table th:last-child {
-    border-top-right-radius: calc(2.2mm * var(--k)) !important;
+    border-top-right-radius: calc(2.2 * var(--u)) !important;
   }
   #studentReportCard .student-results-table th:nth-child(2),
   #studentReportCard .student-results-table th:nth-child(8) {
     text-align: left !important;
   }
   #studentReportCard .student-results-table td {
-    padding: calc(.6mm * var(--k)) calc(1.8mm * var(--k)) !important;
+    padding: calc(.85 * var(--u)) calc(2 * var(--u)) !important;
     border: 0 !important;
     border-bottom: 1px solid var(--line) !important;
     background: none !important;
@@ -624,18 +624,18 @@
   #studentReportCard .summary-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: calc(2.4mm * var(--k)) !important;
+    gap: calc(2.4 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   #studentReportCard .summary-box {
     display: block !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(2.2 * var(--u)) calc(3 * var(--u)) !important;
     min-height: 0 !important;
     border: 1px solid var(--line) !important;
     border-left: 3px solid var(--g) !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: var(--pale) !important;
   }
 
@@ -653,7 +653,7 @@
   #studentReportCard .behaviour-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: calc(1.8mm * var(--k)) !important;
+    gap: calc(1.8 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -661,20 +661,20 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    gap: calc(2mm * var(--k)) !important;
+    gap: calc(2 * var(--u)) !important;
     min-height: 0 !important;
     height: auto !important;
     margin: 0 !important;
-    padding: calc(1.2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(1.6 * var(--u)) calc(3 * var(--u)) !important;
     border: 1px solid var(--line) !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: #fff !important;
-    font-size: calc(8.6pt * var(--k)) !important;
+    font-size: calc(9.4 * var(--p)) !important;
     color: var(--ink) !important;
     break-inside: avoid !important;
   }
   #studentReportCard .behaviour-item > span {
-    font-size: calc(8.6pt * var(--k)) !important;
+    font-size: calc(8.6 * var(--p)) !important;
     font-weight: 400 !important;
     color: var(--ink) !important;
     text-transform: none !important;
@@ -693,7 +693,7 @@
     background: none !important;
     outline: 0 !important;
     font-family: inherit !important;
-    font-size: calc(8pt * var(--k)) !important;
+    font-size: calc(8.6 * var(--p)) !important;
     font-weight: 400 !important;
     line-height: 1.2 !important;
     color: var(--mut) !important;
@@ -704,8 +704,8 @@
   #studentReportCard .behaviour-summary-card {
     display: grid !important;
     grid-template-columns: 1.1fr 1fr !important;
-    gap: calc(1.8mm * var(--k)) !important;
-    margin: calc(1.6mm * var(--k)) 0 0 !important;
+    gap: calc(1.8 * var(--u)) !important;
+    margin: calc(1.6 * var(--u)) 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
     background: none !important;
@@ -715,41 +715,41 @@
     position: relative !important;
     display: block !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
     border: 1px solid #b9d0c0 !important;
     border-left: 3px solid var(--g) !important;
-    border-radius: calc(1.6mm * var(--k)) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
     background: var(--goldl) !important;
   }
   #studentReportCard .behaviour-summary-main::after {
     content: "\2713" !important;
     position: absolute !important;
-    right: calc(3mm * var(--k)) !important;
+    right: calc(3 * var(--u)) !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: calc(5.5mm * var(--k)) !important;
-    height: calc(5.5mm * var(--k)) !important;
+    width: calc(5.5 * var(--u)) !important;
+    height: calc(5.5 * var(--u)) !important;
     border-radius: 50% !important;
     background: var(--g) !important;
     color: #fff !important;
-    font-size: calc(8pt * var(--k)) !important;
+    font-size: calc(8 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1 !important;
   }
   #studentReportCard .behaviour-summary-main strong {
     display: block !important;
     margin: 0 !important;
-    font-size: calc(15pt * var(--k)) !important;
+    font-size: calc(17 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.1 !important;
     color: var(--gd) !important;
   }
   #studentReportCard .behaviour-summary-main > span:last-child {
     display: block !important;
-    font-size: calc(6.8pt * var(--k)) !important;
+    font-size: calc(6.8 * var(--p)) !important;
     font-weight: 400 !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
@@ -758,16 +758,16 @@
   #studentReportCard .behaviour-summary-info {
     display: block !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
     text-align: center !important;
     border: 1px solid var(--line) !important;
-    border-radius: calc(1.6mm * var(--k)) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
     background: #fff !important;
   }
   #studentReportCard .behaviour-summary-info strong {
     display: block !important;
     margin: 0 !important;
-    font-size: calc(11pt * var(--k)) !important;
+    font-size: calc(12 * var(--p)) !important;
     font-weight: 600 !important;
     line-height: 1.3 !important;
     color: var(--gd) !important;
@@ -775,12 +775,12 @@
   #studentReportCard .behaviour-summary-info small {
     display: block !important;
     margin: 0 !important;
-    font-size: calc(6.8pt * var(--k)) !important;
+    font-size: calc(6.8 * var(--p)) !important;
     color: var(--mut) !important;
   }
   #studentReportCard .behaviour-comment-card {
     display: block !important;
-    margin: calc(1.8mm * var(--k)) 0 0 !important;
+    margin: calc(1.8 * var(--u)) 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -800,32 +800,32 @@
     border: 0 !important;
     border-radius: 0 !important;
     background: none !important;
-    font-size: calc(6pt * var(--k)) !important;
+    font-size: calc(6 * var(--p)) !important;
     font-weight: 600 !important;
     letter-spacing: .5px !important;
     text-transform: uppercase !important;
     color: var(--mut) !important;
   }
   #studentReportCard .behaviour-comment-card p {
-    margin: calc(.6mm * var(--k)) 0 0 !important;
-    font-size: calc(8.2pt * var(--k)) !important;
+    margin: calc(.6 * var(--u)) 0 0 !important;
+    font-size: calc(9 * var(--p)) !important;
     line-height: 1.3 !important;
     color: var(--ink) !important;
   }
   #studentReportCard .affective-key {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: calc(1.4mm * var(--k)) !important;
-    margin: calc(1.4mm * var(--k)) 0 0 !important;
+    gap: calc(1.4 * var(--u)) !important;
+    margin: calc(1.4 * var(--u)) 0 0 !important;
     padding: 0 !important;
   }
   #studentReportCard .affective-key span {
     margin: 0 !important;
-    padding: calc(.4mm * var(--k)) calc(2mm * var(--k)) !important;
+    padding: calc(.4 * var(--u)) calc(2 * var(--u)) !important;
     border: 1px solid var(--line) !important;
-    border-radius: calc(1.2mm * var(--k)) !important;
+    border-radius: calc(1.2 * var(--u)) !important;
     background: #fff !important;
-    font-size: calc(6.8pt * var(--k)) !important;
+    font-size: calc(7.2 * var(--p)) !important;
     font-weight: 400 !important;
     color: var(--mut) !important;
     line-height: 1.3 !important;
@@ -843,36 +843,40 @@
   #studentReportCard .remarks-grid {
     display: grid !important;
     grid-template-columns: 1.6fr 1fr !important;
-    gap: calc(2.4mm * var(--k)) !important;
+    gap: calc(2.4 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   #studentReportCard .remark-card {
     display: block !important;
     margin: 0 !important;
-    padding: calc(2mm * var(--k)) calc(3mm * var(--k)) !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
     min-height: 0 !important;
     border: 1px solid #ead9a8 !important;
     border-left: 3px solid var(--gold) !important;
-    border-radius: calc(2.4mm * var(--k)) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
     background: var(--goldl) !important;
   }
   #studentReportCard .remark-card p {
-    margin: calc(.6mm * var(--k)) 0 0 !important;
-    font-size: calc(8.4pt * var(--k)) !important;
+    margin: calc(.6 * var(--u)) 0 0 !important;
+    font-size: calc(9 * var(--p)) !important;
     line-height: 1.3 !important;
     color: var(--ink) !important;
   }
 
   /* Signatures (pushed to the bottom of the page) and footer */
   #studentReportCard .report-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(7.5 * var(--u)) !important;
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: calc(9mm * var(--k)) !important;
+    gap: calc(9 * var(--u)) !important;
     margin: 0 !important;
-    padding: calc(3mm * var(--k)) 0 0 !important;
+    padding: 0 !important;
     border: 0 !important;
-    background: none !important;
+    background: #fff !important;
     break-inside: avoid !important;
   }
   #studentReportCard .signature-line {
@@ -886,56 +890,68 @@
     display: flex !important;
     align-items: flex-end !important;
     justify-content: center !important;
-    min-height: calc(6mm * var(--k)) !important;
-    margin: 0 0 calc(1mm * var(--k)) !important;
-    padding: 0 0 calc(.6mm * var(--k)) !important;
+    min-height: calc(6 * var(--u)) !important;
+    margin: 0 0 calc(1 * var(--u)) !important;
+    padding: 0 0 calc(.6 * var(--u)) !important;
     border: 0 !important;
     border-bottom: 1px solid var(--ink) !important;
-    font-size: calc(8pt * var(--k)) !important;
+    font-size: calc(8 * var(--p)) !important;
     font-weight: 600 !important;
     color: var(--ink) !important;
   }
   #studentReportCard .signature-line > span {
     display: block !important;
-    font-size: calc(7.8pt * var(--k)) !important;
+    font-size: calc(7.8 * var(--p)) !important;
     font-weight: 600 !important;
     color: var(--ink) !important;
   }
   #studentReportCard .signature-line small {
     display: block !important;
-    font-size: calc(6.8pt * var(--k)) !important;
+    font-size: calc(6.8 * var(--p)) !important;
     font-weight: 400 !important;
     color: var(--mut) !important;
   }
   #studentReportCard .report-card-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    gap: calc(4mm * var(--k)) !important;
+    gap: calc(4 * var(--u)) !important;
     margin: 0 !important;
-    padding: calc(1.6mm * var(--k)) 0 0 !important;
+    padding: calc(1.6 * var(--u)) 0 0 !important;
     border: 0 !important;
     border-top: 2px solid var(--g) !important;
-    background: none !important;
-    font-size: calc(7pt * var(--k)) !important;
+    background: #fff !important;
+    font-size: calc(7 * var(--p)) !important;
     color: var(--mut) !important;
     break-inside: avoid !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
   }
   #studentReportCard .report-card-footer p {
     margin: 0 !important;
-    font-size: calc(7pt * var(--k)) !important;
+    font-size: calc(7 * var(--p)) !important;
     color: var(--mut) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
   #studentReportCard .report-card-footer span {
-    font-size: calc(7pt * var(--k)) !important;
+    font-size: calc(7 * var(--p)) !important;
     color: var(--mut) !important;
+    white-space: nowrap !important;
   }
-  #studentReportCard > * {
-    flex-shrink: 0 !important;
-  }
+
   /* 13 or more subjects: slightly smaller sizes so everything still fits on one page */
-  :root:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) { --k: .74; }
-  @media (max-height: 275mm) {
-    :root:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) { --k: .69; }
+  html:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) {
+    --k: .72;
+  }
+  @media (max-height: 283mm) {
+    html:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) {
+    --k: .68;
+  }
   }
 }
