@@ -61,7 +61,7 @@ dashboardAssert(
     str_contains($attendance, "ar.class_type = ?") &&
     str_contains($attendance, "ar.class_id = c.id") &&
     str_contains($attendanceRegister, 's.arabia_class_id') &&
-    str_contains($attendanceClasses, 's.arabia_class_id'),
+    substr_count($attendanceClasses, 's.arabia_class_id') >= 2,
     'Attendance report queries must isolate each category by class_type and class_id'
 );
 
