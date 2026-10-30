@@ -13,11 +13,11 @@
 .attendance-page { background:var(--att-canvas); color:var(--att-ink); }
 .attendance-shell { width:min(1480px,100%); margin:0 auto; padding:26px clamp(14px,3vw,42px) 28px; }
 .attendance-header { position:relative; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; padding:22px 26px; border-radius:22px; color:#fff; background:linear-gradient(115deg,#123d2a 0%,#17643a 68%,#1c7043 100%); box-shadow:0 18px 38px rgba(17,61,42,.17); overflow:hidden; }
-.attendance-header::after { content:""; position:absolute; width:250px; height:250px; right:13%; top:-175px; border:1px solid rgba(236,216,151,.23); border-radius:50%; box-shadow:0 0 0 25px rgba(236,216,151,.035),0 0 0 55px rgba(236,216,151,.025); pointer-events:none; }
+.attendance-header::after { display:none; content:""; position:absolute; width:250px; height:250px; right:13%; top:-175px; border:1px solid rgba(236,216,151,.23); border-radius:50%; box-shadow:0 0 0 25px rgba(236,216,151,.035),0 0 0 55px rgba(236,216,151,.025); pointer-events:none; }
 .attendance-back { z-index:1; align-self:flex-start; display:inline-flex; gap:9px; align-items:center; color:#f4e8b7; text-decoration:none; font-size:13px; font-weight:700; white-space:nowrap; }
 .attendance-back:hover { color:#fff; text-decoration:underline; }
 .attendance-brand { z-index:1; display:flex; align-items:center; gap:16px; flex:1 1 380px; min-width:220px; }
-.attendance-brand img { width:62px; height:62px; flex:0 0 62px; object-fit:contain; padding:5px; border-radius:15px; background:#fff; }
+
 .attendance-eyebrow { display:block; color:var(--att-gold); font-size:10px; font-weight:850; letter-spacing:1.45px; line-height:1.5; }
 .attendance-brand .attendance-eyebrow { color:#e7d48a; }
 .attendance-brand h1 { margin:4px 0 5px; color:#fff; font-size:clamp(24px,3vw,34px); line-height:1.1; letter-spacing:-.7px; }
@@ -126,7 +126,6 @@
     .attendance-header { align-items:flex-start; gap:14px; padding:17px; border-radius:17px; }
     .attendance-back { flex-basis:100%; }
     .attendance-brand { gap:12px; flex-basis:100%; }
-    .attendance-brand img { width:49px; height:49px; flex-basis:49px; border-radius:12px; }
     .attendance-brand h1 { font-size:25px; }
     .attendance-brand p { font-size:11px; }
     .attendance-header-actions { width:100%; }

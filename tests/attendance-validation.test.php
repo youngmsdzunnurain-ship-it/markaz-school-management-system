@@ -29,5 +29,7 @@ check(!attendanceIsValidStatus(''), 'rejects an empty attendance status');
 check(attendanceClassTable('conventional') === 'classes', 'maps conventional class type to the expected table');
 check(attendanceClassTable('arabic') === 'arabic_classes', 'maps Arabic class type to the expected table');
 check(attendanceClassTable('classes; DROP TABLE students') === null, 'rejects untrusted table names');
+check(is_file(__DIR__ . '/../public/api/attendance/classes.php'), 'publishes the class-list endpoint under the public API path');
+check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes the register endpoint under the public API path');
 
 echo "Attendance validation tests passed ({$checks} checks).\n";

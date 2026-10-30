@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - "api/attendance/**"
+      - "public/api/attendance/**"
       - "public/attendance.html"
+      - "public/css/standard-page-heading.css"
       - "public/css/attendance.css"
       - "public/js/attendance.js"
       - "public/dashboard.html"
@@ -38,6 +40,8 @@ jobs:
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
           php -l api/attendance/register.php
+          php -l public/api/attendance/classes.php
+          php -l public/api/attendance/register.php
           php -l tests/attendance-validation.test.php
 
       - name: Run attendance validation tests
