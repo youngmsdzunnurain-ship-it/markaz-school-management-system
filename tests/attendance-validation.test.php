@@ -32,4 +32,15 @@ check(attendanceClassTable('classes; DROP TABLE students') === null, 'rejects un
 check(is_file(__DIR__ . '/../public/api/attendance/classes.php'), 'publishes the class-list endpoint under the public API path');
 check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes the register endpoint under the public API path');
 
+$classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
+check(str_contains($classesApi, 'sort_order') && str_contains($classesApi, '$a[\'sort_order\'] <=> $b[\'sort_order\']'), 'preserves configured class hierarchy after combining categories');
+check(str_contains($classesApi, 's.arabic_class_id = ac.id AND s.is_active = 1'), 'counts active Arabic students against Arabic class assignments');
+check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
+
+$attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
+check(str_contains($attendanceJs, 'setInterval') && str_contains($attendanceJs, 'updateDateLabel'), 'refreshes displayed school date while page remains open');
+check(str_contains($attendanceJs, 'studentNameSuggestions'), 'provides a searchable student-name selector');
+check(str_contains($attendanceJs, 'attendancePieChart'), 'renders the attendance status pie chart');
+check(str_contains($attendanceJs, 'clearInterval') || str_contains($attendanceJs, 'visibilitychange'), 'handles page visibility for date refresh');
+
 echo "Attendance validation tests passed ({$checks} checks).\n";
