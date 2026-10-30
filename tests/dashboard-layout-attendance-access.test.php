@@ -54,7 +54,8 @@ dashboardAssert(
 dashboardAssert(
     str_contains($stats, 'st.arabic_class_id') &&
     str_contains($stats, 'st.arabia_class_id') &&
-    str_contains($stats, '$enrollmentKey = $type'),
+    str_contains($stats, '$schoolProgressByStudent[$studentId][\'expected_subjects\'] +=') &&
+    str_contains($stats, '$schoolProgressByStudent[$studentId][\'completed_subjects\'] +='),
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
