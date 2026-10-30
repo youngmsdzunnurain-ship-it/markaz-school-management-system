@@ -28,9 +28,6 @@ if ($classType !== '' || $hasClassId) {
         attendanceJsonError(422, 'Choose both a valid class category and class.');
     }
     attendanceRequireClassAccess($pdo, $classType, (int) $classId);
-    $where .= ' AND ar.class_type = ? AND ar.class_id = ?';
-    $params[] = $classType;
-    $params[] = (int) $classId;
 } elseif ($role === 'teacher') {
     attendanceJsonError(403, 'Teachers must select one of their assigned classes to view a report.');
 }
