@@ -32,6 +32,10 @@
         today: $("todayLabel"),
         progressBar: $("progressBar"),
         progressLabel: $("progressLabel"),
+        studentSuggestions: $("studentNameSuggestions"),
+        pie: $("attendancePieChart"),
+        chartLegend: $("attendanceChartLegend"),
+        chartDate: $("attendanceChartDate"),
     };
 
     function localDateValue(date = new Date()) {
@@ -114,11 +118,56 @@
         $("absentCount").textContent = summary.absent;
         $("lateCount").textContent = summary.late;
         $("excusedCount").textContent = summary.excused;
+        renderAttendanceChart(summary);
         const marked = summary.total - summary.unmarked;
         const percent = summary.total ? Math.round(marked / summary.total * 100) : 0;
         els.progressBar.style.width = percent + "%";
         els.progressLabel.textContent = marked + " of " + summary.total + " marked";
         return summary;
+    }
+
+
+    function renderAttendanceChart(summary) {
+        const parts = [
+            ["present", "Present", "#21945b"],
+            ["absent", "Absent", "#d65359"],
+            ["late", "Late", "#d8a72c"],
+            ["excused", "Excused", "#7d8b9a"],
+            ["unmarked", "Unmarked", "#dce5de"]
+        ];
+        const total = summary.total || 0;
+        let cursor = 0;
+        const gradient = total ? parts.map(([key, label, color]) => {
+            const start = cursor;
+            cursor += (Number(summary[key] || 0) / total) * 100;
+            return color + " " + start + "% " + cursor + "%";
+        }).join(", ") : "#e8eee9 0% 100%";
+        els.pie.style.background = "conic-gradient(" + gradient + ")";
+        els.pie.innerHTML = "<span>" + total + "</span>";
+        els.pie.setAttribute("aria-label", parts.map(([key, label]) => label + ": " + (summary[key] || 0)).join(", "));
+        els.chartLegend.innerHTML = total ? parts.map(([key, label, color]) =>
+            '<div class="chart-legend-item"><span class="chart-legend-swatch" style="background:' + color + '"></span><span>' + label + '</span><strong>' + (summary[key] || 0) + '</strong></div>'
+        ).join("") : '<span class="chart-empty">No student records are available for this class.</span>';
+        const selected = state.classes.find(item => item.class_type === state.classType && String(item.id) === String(state.classId));
+        els.chartDate.textContent = selected && state.date ? formatDate(state.date) + " · " + selected.name : "Load a register to view its breakdown";
+    }
+
+    function populateStudentSuggestions() {
+        if (!els.studentSuggestions) return;
+        els.studentSuggestions.innerHTML = state.students.map(student =>
+            '<option value="' + escapeHtml(fullName(student)) + '" label="' + escapeHtml(student.admission_number || "") + '"></option>'
+        ).join("");
+    }
+
+    function focusSelectedStudent() {
+        const term = els.search.value.trim().toLocaleLowerCase();
+        const student = state.students.find(item =>
+            fullName(item).toLocaleLowerCase() === term ||
+            String(item.admission_number || "").toLocaleLowerCase() === term
+        );
+        if (!student) return;
+        const row = els.body.querySelector('[data-student-row="' + Number(student.id) + '"]');
+        if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function statusOptions(current) {
@@ -273,6 +322,7 @@
             const typeLabel = classType === "arabic" ? "Arabic class" : "Conventional class";
             els.subtitle.textContent = data.class.name + " · " + typeLabel + " · " + formatDate(data.date);
             const summary = updateSummary();
+            populateStudentSuggestions();
             renderRegister();
             if (!state.students.length) {
                 setNotice("This class has no active students to mark.", "error");
@@ -283,6 +333,7 @@
             }
         } catch (error) {
             state.students = [];
+            populateStudentSuggestions();
             state.dirty = false;
             updateSummary();
             renderRegister();
@@ -415,9 +466,37 @@
     }
 
     function updateDateLabel() {
-        const date = els.date.value || localDateValue();
-        els.today.textContent = formatDate(date);
+        els.today.textContent = formatDate(localDateValue());
+        els.date.max = localDateValue();
     }
+
+    let observedToday = localDateValue();
+    window.setInterval(() => {
+        const today = localDateValue();
+        if (today === observedToday) return;
+        const previousToday = observedToday;
+        observedToday = today;
+        updateDateLabel();
+        if (!state.dirty && !state.students.length && els.date.value === previousToday) {
+            els.date.value = today;
+            state.date = today;
+        }
+    }, 30000);
+
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            const today = localDateValue();
+            if (today !== observedToday) {
+                const previousToday = observedToday;
+                observedToday = today;
+                if (!state.dirty && !state.students.length && els.date.value === previousToday) {
+                    els.date.value = today;
+                    state.date = today;
+                }
+            }
+            updateDateLabel();
+        }
+    });
 
     els.type.addEventListener("change", () => {
         if (state.dirty && !window.confirm("Discard unsaved changes and switch class category?")) {
@@ -427,6 +506,7 @@
         state.classType = els.type.value;
         state.classId = "";
         state.students = [];
+        populateStudentSuggestions();
         state.dirty = false;
         els.classSelect.value = "";
         populateClasses();
@@ -468,6 +548,8 @@
 
     els.load.addEventListener("click", loadRegister);
     els.search.addEventListener("input", renderRegister);
+    els.search.addEventListener("change", focusSelectedStudent);
+    els.search.addEventListener("keydown", (event) => { if (event.key === "Enter") focusSelectedStudent(); });
     els.body.addEventListener("change", handleRegisterChange);
     els.body.addEventListener("input", handleRegisterChange);
     els.markAll.addEventListener("click", markAllPresent);
@@ -487,6 +569,7 @@
     state.date = els.date.value;
     updateDateLabel();
     updateSummary();
+    renderAttendanceChart({ total: 0, present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 });
     refreshActions();
     loadClasses().then(() => {
         if (state.classes.some((item) => item.class_type === "conventional")) {
