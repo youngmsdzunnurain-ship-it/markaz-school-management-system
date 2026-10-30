@@ -5,6 +5,10 @@ on:
     paths:
       - "api/attendance/**"
       - "api/results/**"
+      - "public/print-results.html"
+      - "public/js/student-result.js"
+      - "public/student-result-print.html"
+      - "tests/print-results-validation.test.php"
       - "public/js/class.js"
       - "public/css/dashboard.css"
       - "tests/results-class-type-validation.test.php"
@@ -49,6 +53,7 @@ jobs:
           php -l api/results/class.php
           php -l api/results/save.php
           php -l api/results/class-completion.php
+          php -l tests/print-results-validation.test.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
@@ -81,5 +86,6 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check public/js/class.js
+          node --check public/js/student-result.js
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
