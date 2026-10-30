@@ -711,15 +711,20 @@ function renderClasses() {
 }
 
 function printStudent(sid, cid) {
-    window.location.href = "./student-result-print.html?student_id=" +
-        encodeURIComponent(sid) + "&class_id=" +
-        encodeURIComponent(cid) + "&print=1";
+    const params = new URLSearchParams({
+        student_id: String(sid),
+        class_id: String(cid),
+        class_type: "conventional",
+        print: "1"
+    });
+    window.location.href = "./student-result-print.html?" + params.toString();
 }
 
 
-async function getClassCompletion(classIdValue) {
+async function getClassCompletion(classIdValue, classType = "conventional") {
   const response = await fetch(
-    "./api/results/class-completion.php?class_id=" + encodeURIComponent(classIdValue),
+    "./api/results/class-completion.php?class_type=" + encodeURIComponent(classType) +
+      "&class_id=" + encodeURIComponent(classIdValue),
     { credentials: "same-origin", cache: "no-store" }
   );
   const payload = await response.json();
@@ -795,7 +800,7 @@ async function showStudents(selectedClass) {
   if (!matching.length) return;
 
   try {
-    const completion = await getClassCompletion(id);
+    const completion = await getClassCompletion(id, "conventional");
 
     // Ignore a late response if the user has navigated to another class.
     if ($("selectedClassTitle").textContent !== className(selectedClass)) return;
