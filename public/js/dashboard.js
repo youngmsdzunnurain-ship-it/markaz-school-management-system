@@ -538,7 +538,10 @@ function dashboardDonutGradient(values) {
 
 function dashboardRenderClassPie(targetId, classes) {
     const target=document.getElementById(targetId); if(!target)return;
-    if(!Array.isArray(classes)||!classes.length){target.innerHTML='<p class="dashboard-chart-empty">No active classes found in this category.</p>';return;}
+    if(!Array.isArray(classes)||!classes.length){
+        target.innerHTML='<div class="dashboard-class-pie-empty"><div class="dashboard-class-pie-empty-visual"><strong>0%</strong><span>Complete</span></div><div><strong>0 active classes</strong><p>No class progress data is available yet. The chart will populate when classes and required subjects are configured.</p></div></div>';
+        return;
+    }
     const palette=["#17643a","#c9a94b","#4d8fbd","#d47758","#7b6ab2","#45a59a","#a36b91","#8a9b57","#d29a42","#5c7d9d"];
     const totalExpected=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.expected_entries)||0),0);
     const totalCompleted=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.entered_entries)||0),0);
@@ -587,9 +590,22 @@ async function loadDashboardAttendance() {
                 const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
                 const marked=Number(item.marked_records)||0,present=Number(item.present_count)||0,width=Math.max(0,Math.min(100,marked/maxMarked*100));
                 return '<a class="dashboard-attendance-class-row" href="./attendance.html?'+params.toString()+'"><span>'+name+'</span><strong>'+present+' present</strong><div class="dashboard-attendance-bar"><i style="width:'+width+'%"></i></div><small>'+marked+' marked · '+Number(item.absent_count||0)+' absent · '+Number(item.late_count||0)+' late · '+Number(item.excused_count||0)+' excused</small></a>';
-            }).join(""):'<p class="dashboard-chart-empty">No saved attendance marks today.</p>';
+            }).join(""):'<div class="dashboard-chart-empty dashboard-chart-empty-state"><i class="fa-regular fa-calendar-check"></i><strong>0 classes to display</strong><span>No active classes were returned for this category.</span></div>';
         }
-    } catch(error){if(dateLabel)dateLabel.textContent="Today’s attendance could not be loaded: "+error.message;console.error("Dashboard attendance report failed:",error);}
+    } catch(error){
+        const message=String(error&&error.message||"Unknown error");
+        if(dateLabel)dateLabel.textContent="Attendance summary unavailable · "+message;
+        const safeMessage=message.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+        for(const id of ["dashboardConventionalAttendance","dashboardArabicAttendance"]){
+            const node=document.getElementById(id);
+            if(node)node.innerHTML='<div class="dashboard-chart-empty dashboard-chart-error"><i class="fa-solid fa-triangle-exclamation"></i><strong>Could not load attendance</strong><span>'+safeMessage+'</span></div>';
+        }
+        for(const id of ["dashboardConventionalAttendanceDonut","dashboardArabicAttendanceDonut"]){
+            const node=document.getElementById(id);
+            if(node){node.style.background="conic-gradient(#c9a94b 0 100%)";const value=node.querySelector("strong");if(value)value.textContent="—";}
+        }
+        console.error("Dashboard attendance report failed:",error);
+    }
 }
 window.setInterval(loadDashboardAttendance, 60000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) loadDashboardAttendance(); });
