@@ -71,6 +71,9 @@ jobs:
       - name: Run result class-type validation tests
         run: php tests/results-class-type-validation.test.php
 
+      - name: Run print results validation tests
+        run: php tests/print-results-validation.test.php
+
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
 
