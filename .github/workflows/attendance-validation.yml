@@ -13,6 +13,7 @@ on:
       - "public/js/dashboard.js"
       - "api/dashboard/**"
       - "tests/dashboard-progress-validation.test.php"
+      - "tests/dashboard-report-regression.test.php"
       - "database/migrations/20261028_daily_attendance.sql"
       - "tests/attendance-validation.test.php"
       - ".github/workflows/attendance-validation.yml"
@@ -42,18 +43,23 @@ jobs:
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
           php -l api/attendance/register.php
+          php -l api/attendance/reports.php
           php -l public/api/attendance/classes.php
           php -l public/api/attendance/register.php
           php -l tests/attendance-validation.test.php
           php -l api/dashboard/_progress.php
           php -l api/dashboard/stats.php
           php -l tests/dashboard-progress-validation.test.php
+          php -l tests/dashboard-report-regression.test.php
 
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
 
       - name: Run dashboard progress regression tests
         run: php tests/dashboard-progress-validation.test.php
+
+      - name: Run dashboard report regression tests
+        run: php tests/dashboard-report-regression.test.php
 
       - name: Check JavaScript syntax
         run: |
