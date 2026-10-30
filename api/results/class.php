@@ -9,7 +9,7 @@ requireResultStaff();
 
 header('Content-Type: application/json; charset=utf-8');
 
-$classType = (string) ($_GET['class_type'] ?? 'conventional');
+$classType = (string) ($_GET['class_type'] ?? '');
 
 if (!in_array($classType, ['conventional', 'arabic'], true)) {
     http_response_code(422);

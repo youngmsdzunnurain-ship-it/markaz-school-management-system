@@ -4782,7 +4782,7 @@ button:focus-visible {
     font-weight: 850;
     line-height: 1.35;
 }
-.dashboard-completion-donut {
+.dashboard-completion-pie {
     --completion: 0%;
     position: relative;
     display: grid;
@@ -4795,7 +4795,7 @@ button:focus-visible {
     background: conic-gradient(#237a4d var(--completion),#e8eee9 var(--completion) 100%);
     box-shadow: 0 0 0 4px #f7f0d9;
 }
-.dashboard-completion-donut::before {
+.dashboard-completion-pie::before {
     content: "";
     position: absolute;
     inset: 13px;
@@ -4803,7 +4803,7 @@ button:focus-visible {
     background: #fff;
     border: 1px solid #edf1ed;
 }
-.dashboard-completion-donut > div {
+.dashboard-completion-pie > div {
     position: relative;
     z-index: 1;
     display: flex;
@@ -4811,14 +4811,14 @@ button:focus-visible {
     align-items: center;
     gap: 5px;
 }
-.dashboard-completion-donut strong {
+.dashboard-completion-pie strong {
     color: #145c38;
     font-size: 40px;
     font-weight: 850;
     line-height: 1;
     font-variant-numeric: tabular-nums;
 }
-.dashboard-completion-donut span {
+.dashboard-completion-pie span {
     color: #78867e;
     font-size: 12px;
     font-weight: 650;
@@ -4908,7 +4908,7 @@ button:focus-visible {
     .dashboard-chart-card {
         padding: 22px 25px 22px 22px;
     }
-    .dashboard-completion-donut {
+    .dashboard-completion-pie {
         width: 180px;
     }
     .dashboard-class-progress-chart {
@@ -5292,21 +5292,21 @@ button:focus-visible {
 .dashboard-exam-section .progress-card { min-height:112px; padding:14px 12px; gap:10px; }
 .dashboard-exam-section .progress-card strong { font-size:clamp(20px,2vw,27px); }
 .dashboard-exam-section .progress-card small { font-size:10px; }
-.dashboard-exam-charts { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr) minmax(0,1.3fr); gap:16px; margin:0 0 24px; align-items:stretch; }
+.dashboard-exam-charts { display:grid; grid-template-columns:minmax(0,35fr) minmax(0,30fr) minmax(0,35fr); gap:16px; margin:0 0 24px; align-items:stretch; }
 .dashboard-exam-charts .dashboard-chart-card { min-width:0; padding:20px; border:1px solid #e2eae4; border-radius:18px; background:#fff; box-shadow:0 5px 18px rgba(18,61,42,.055); }
 .dashboard-exam-charts .dashboard-chart-card h2 { margin:6px 0 15px; color:#173f2b; font-size:15px; line-height:1.35; }
-.dashboard-school-donut-card { display:flex; flex-direction:column; align-items:center; }
-.dashboard-school-donut-card .eyebrow,.dashboard-school-donut-card h2 { align-self:flex-start; }
-.dashboard-completion-donut { width:clamp(145px,14vw,190px); height:clamp(145px,14vw,190px); margin:12px auto; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(#17643a var(--completion,0%),#e8eee9 0); box-shadow:0 8px 24px rgba(18,61,42,.08); }
-.dashboard-completion-donut:before { content:""; position:absolute; inset:17%; border-radius:50%; background:#fff; }
-.dashboard-completion-donut>div { position:relative; z-index:1; display:grid; text-align:center; gap:4px; }
-.dashboard-completion-donut strong { color:#164b31; font-size:clamp(25px,3vw,36px); font-weight:850; }
-.dashboard-completion-donut span { color:#7b8a80; font-size:11px; }
+.dashboard-school-pie-card { display:flex; flex-direction:column; align-items:center; }
+.dashboard-school-pie-card .eyebrow,.dashboard-school-pie-card h2 { align-self:flex-start; }
+.dashboard-completion-pie { width:clamp(145px,14vw,190px); height:clamp(145px,14vw,190px); margin:12px auto; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(#17643a var(--completion,0%),#e8eee9 0); box-shadow:0 8px 24px rgba(18,61,42,.08); }
+.dashboard-completion-pie:before { content:none; }
+.dashboard-completion-pie>div { position:relative; z-index:1; display:grid; text-align:center; gap:4px; }
+.dashboard-completion-pie strong { color:#164b31; font-size:clamp(25px,3vw,36px); font-weight:850; }
+.dashboard-completion-pie span { color:#7b8a80; font-size:11px; }
 .dashboard-chart-caption { margin:4px auto 0; color:#7a897f; text-align:center; font-size:10px; line-height:1.5; }
 .dashboard-class-pie-list { min-width:0; }
 .dashboard-pie-summary { display:flex; align-items:center; gap:14px; padding:4px 0 14px; border-bottom:1px solid #edf1ee; }
 .dashboard-pie-visual { width:104px; height:104px; flex:0 0 104px; display:grid; place-items:center; border-radius:50%; position:relative; }
-.dashboard-pie-visual:before { content:""; position:absolute; inset:23%; border-radius:50%; background:#fff; }
+.dashboard-pie-visual:before { content:none; }
 .dashboard-pie-visual>div { position:relative; z-index:1; display:grid; text-align:center; }
 .dashboard-pie-visual strong { color:#194832; font-size:21px; }
 .dashboard-pie-visual span { color:#7a897f; font-size:9px; }
@@ -5339,8 +5339,8 @@ button:focus-visible {
 .dashboard-grid .administrator-panel { align-self:stretch; }
 @media(max-width:1100px) {
  .dashboard-exam-charts { grid-template-columns:repeat(2,minmax(0,1fr)); }
- .dashboard-school-donut-card { grid-column:1/-1; }
- .dashboard-school-donut-card .dashboard-completion-donut { width:150px;height:150px; }
+ .dashboard-school-pie-card { grid-column:1/-1; }
+ .dashboard-school-pie-card .dashboard-completion-pie { width:150px;height:150px; }
  .dashboard-exam-section .result-progress-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
  .dashboard-grid { grid-template-columns:minmax(0,1.4fr) minmax(230px,.8fr); }
  .dashboard-grid .quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -5348,7 +5348,7 @@ button:focus-visible {
 @media(max-width:760px) {
  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
  .dashboard-exam-charts { grid-template-columns:1fr; }
- .dashboard-school-donut-card { grid-column:auto; }
+ .dashboard-school-pie-card { grid-column:auto; }
  .dashboard-exam-section .result-progress-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
  .dashboard-attendance-summary { grid-template-columns:1fr; }
  .dashboard-attendance-groups { grid-template-columns:1fr; }
@@ -5616,4 +5616,12 @@ button:focus-visible {
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
     }
+}
+
+
+/* Full pie charts: explicitly remove the legacy white centre masks. */
+.dashboard-completion-pie::before,
+.dashboard-pie-visual::before {
+    content: none !important;
+    display: none !important;
 }

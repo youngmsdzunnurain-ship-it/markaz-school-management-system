@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - "api/attendance/**"
+      - "api/results/**"
+      - "public/js/class.js"
+      - "public/css/dashboard.css"
+      - "tests/results-class-type-validation.test.php"
       - "public/api/attendance/**"
       - "public/attendance.html"
       - "public/css/standard-page-heading.css"
@@ -41,6 +45,10 @@ jobs:
 
       - name: Check PHP syntax
         run: |
+          php -l api/results/class.php
+          php -l api/results/save.php
+          php -l api/results/class-completion.php
+          php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
           php -l api/attendance/register.php
@@ -53,6 +61,9 @@ jobs:
           php -l tests/dashboard-progress-validation.test.php
           php -l tests/dashboard-report-regression.test.php
 
+      - name: Run result class-type validation tests
+        run: php tests/results-class-type-validation.test.php
+
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
 
@@ -64,5 +75,6 @@ jobs:
 
       - name: Check JavaScript syntax
         run: |
+          node --check public/js/class.js
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
