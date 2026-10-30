@@ -589,3 +589,20 @@ body:has(.settings-page) {
     z-index: 1200;
     scroll-margin-top: 12px;
 }
+
+
+/* Sticky positioning must override legacy page-level position:relative !important
+   rules in classes.css, class.css and students.css. */
+body .classes-page .classes-topbar,
+body .class-page .class-topbar,
+body .students-page .students-topbar,
+body .attendance-page .attendance-header,
+body .subjects-page .class-topbar,
+body .student-result-page .result-page-header,
+body .settings-page .settings-header {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1200;
+    scroll-margin-top: 12px;
+}
