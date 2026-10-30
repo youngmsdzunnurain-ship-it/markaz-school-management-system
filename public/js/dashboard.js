@@ -514,7 +514,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = ["admin", "exam_officer", "teacher", "management"].includes(role);
+            allowed = role === "admin";
         }
 
         element.style.display = allowed ? "" : "none";
@@ -558,7 +558,7 @@ function dashboardRenderClassPie(targetId, classes) {
 
 async function loadDashboardAttendance() {
     const panel=document.getElementById("dashboardAttendancePanel"); if(!panel)return;
-    const role=window.markazCurrentRole||""; if(!["admin","exam_officer","management"].includes(role)){panel.hidden=true;return;} panel.hidden=false;
+    const role=window.markazCurrentRole||""; if(role!=="admin"){panel.hidden=true;return;} panel.hidden=false;
     const date=new Date(), localDate=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10);
     const dateLabel=document.getElementById("dashboardAttendanceDate"); if(dateLabel)dateLabel.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"full"}).format(date);
     try {
