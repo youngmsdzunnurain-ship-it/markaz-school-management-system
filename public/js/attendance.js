@@ -485,7 +485,15 @@
 
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
-            observedToday = localDateValue();
+            const today = localDateValue();
+            if (today !== observedToday) {
+                const previousToday = observedToday;
+                observedToday = today;
+                if (!state.dirty && !state.students.length && els.date.value === previousToday) {
+                    els.date.value = today;
+                    state.date = today;
+                }
+            }
             updateDateLabel();
         }
     });
@@ -498,6 +506,7 @@
         state.classType = els.type.value;
         state.classId = "";
         state.students = [];
+        populateStudentSuggestions();
         state.dirty = false;
         els.classSelect.value = "";
         populateClasses();
