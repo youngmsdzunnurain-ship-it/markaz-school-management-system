@@ -5267,7 +5267,9 @@ button:focus-visible {
 .dashboard-result-overview .dashboard-completion-charts { display:contents; }
 .dashboard-result-overview .dashboard-chart-card { height:100%; min-height:100%; }
 .dashboard-result-overview .result-progress-section { min-width:0; margin:0; }
-.dashboard-result-overview .dashboard-chart-card:first-child { grid-column:1; grid-row:1; }\n.dashboard-result-overview .dashboard-class-chart-card { display:block; grid-column:1; grid-row:2; }\n.dashboard-result-overview .result-progress-section { grid-column:2; grid-row:1 / span 2; }
+.dashboard-result-overview .dashboard-chart-card:first-child { grid-column:1; grid-row:1; }
+.dashboard-result-overview .dashboard-class-chart-card { display:block; grid-column:1; grid-row:2; }
+.dashboard-result-overview .result-progress-section { grid-column:2; grid-row:1 / span 2; }
 .dashboard-attendance-panel { margin:0 0 24px; }
 .dashboard-grid { grid-template-columns:minmax(0,1.6fr) minmax(250px,1fr); }
 .administrator-panel { margin:22px 0 0; }
