@@ -69,6 +69,12 @@ async function loadAdmin() {
         const name = data.admin.name || "Administrator";
         const email = data.admin.email || "";
         const role = data.admin.role || "";
+        const hour = new Date().getHours();
+        const greeting = hour < 12 ? "Good morning" : (hour < 17 ? "Good afternoon" : "Good evening");
+        const greetingNode = document.getElementById("welcomeGreeting");
+        if (greetingNode) greetingNode.textContent = greeting;
+        const roleLabel = document.getElementById("welcomeRoleLabel");
+        if (roleLabel) roleLabel.textContent = ({admin:"SCHOOL ADMINISTRATION",exam_officer:"EXAMINATION OFFICE",teacher:"TEACHER WORKSPACE",management:"SCHOOL MANAGEMENT",student:"STUDENT PORTAL"})[role] || "MARKAZ SCHOOL PORTAL";
         window.markazCurrentRole = role;
         loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
@@ -508,7 +514,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = ["admin", "exam_officer", "teacher"].includes(role);
+            allowed = ["admin", "exam_officer", "teacher", "management"].includes(role);
         }
 
         element.style.display = allowed ? "" : "none";
@@ -773,6 +779,8 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Manage Subjects": "subjects/index.html",
             "Enter Results": "classes.html",
             "Print Results": "print-results.html",
+            "Attendance": "attendance.html",
+            "School Fees": "school-fees.html",
             "System Settings": "settings.html"
         };
 
