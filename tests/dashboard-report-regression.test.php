@@ -18,7 +18,7 @@ dashboardReportCheck(
     str_contains($attendanceReport, "'table' => 'classes'")
         && str_contains($attendanceReport, "'table' => 'arabic_classes'")
         && str_contains($attendanceReport, "LEFT JOIN attendance_records")
-        && str_contains($attendanceReport, "$hasClassId = $classId !== false && $classId !== null"),
+        && str_contains($attendanceReport, '$hasClassId = $classId !== false && $classId !== null'),
     'school-wide attendance query includes active classes with zero saved marks and accepts empty filters'
 );dashboardReportCheck(
     str_contains($dashboardScript, 'dashboardConventionalAttendance')
