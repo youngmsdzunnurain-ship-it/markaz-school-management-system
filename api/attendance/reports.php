@@ -57,9 +57,17 @@ foreach ($classDefinitions as $definition) {
               ON ar.class_type = ?
              AND ar.class_id = c.id
              AND ar.attendance_date BETWEEN ? AND ?
-            WHERE c.is_active = 1";
+            WHERE c.is_active = 1
+              AND (
+                  ? <> 'conventional'
+                  OR NOT EXISTS (
+                      SELECT 1
+                      FROM arabic_classes arabic_class
+                      WHERE LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))
+                  )
+              )";
 
-    $classParams = [$type, $type, $from, $to];
+    $classParams = [$type, $type, $from, $to, $type];
 
     if ($classType !== '') {
         if ($classType !== $type) {
