@@ -32,7 +32,7 @@ if ($role === 'teacher') {
         "SELECT DISTINCT 'arabic' AS class_type, ac.id, ac.name,
                 ac.sort_order,
                 (SELECT COUNT(*) FROM students s
-                 WHERE s.arabic_class_id = ac.id AND s.is_active = 1) AS student_count
+                 WHERE COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1) AS student_count
          FROM teacher_assignments ta
          INNER JOIN arabic_classes ac ON ac.id = ta.class_id
          WHERE ta.account_id = ? AND ta.class_type = 'arabic'
