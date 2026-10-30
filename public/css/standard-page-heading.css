@@ -569,3 +569,23 @@ body:has(.settings-page) {
         box-shadow: none !important;
     }
 }
+
+
+/* Shared sticky page header: keep the Settings-page header behavior consistent
+   across every MARKAZ management workspace. */
+.classes-topbar,
+.class-topbar,
+.students-topbar,
+.attendance-header,
+.class-subjects-page > .page-header,
+.class-subjects-page .page-header,
+.subjects-page > .page-header,
+.subjects-page .page-header,
+.result-page-header,
+.settings-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    scroll-margin-top: 12px;
+}
