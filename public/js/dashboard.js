@@ -771,8 +771,8 @@ async function loadDashboardStats() {
         dashboardRenderClassPie("dashboardConventionalPie", classGroups.conventional || []);
         dashboardRenderClassPie("dashboardArabicPie", classGroups.arabic || []);
         const overall = Number(data.stats.completion_percentage ?? 0);
-        const donut = document.getElementById("dashboardCompletionDonut");
-        const donutValue = document.getElementById("dashboardCompletionDonutValue");
+        const donut = document.getElementById("dashboardCompletionPie");
+        const donutValue = document.getElementById("dashboardCompletionPieValue");
         const overallCaption = document.getElementById("dashboardSchoolCompletionCaption");
         if (donut) { donut.style.setProperty("--completion", overall + "%"); donut.setAttribute("aria-label", "Overall examination completion " + overall + "%"); }
         if (donutValue) donutValue.textContent = overall + "%";
