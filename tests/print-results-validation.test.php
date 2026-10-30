@@ -20,7 +20,8 @@ printCheck(
     'print eligibility request must send the required Conventional class type'
 );
 printCheck(
-    str_contains($printPage, '&class_type='),
+    str_contains($printPage, 'class_type: "conventional"') &&
+    str_contains($printPage, 'new URLSearchParams'),
     'individual print navigation must preserve the selected class type'
 );
 printCheck(
