@@ -333,7 +333,7 @@
             }
         } catch (error) {
             state.students = [];
-            populateStudentSuggestions();
+            populateStudentDropdown();
             state.dirty = false;
             updateSummary();
             renderRegister();
@@ -506,7 +506,7 @@
         state.classType = els.type.value;
         state.classId = "";
         state.students = [];
-        populateStudentSuggestions();
+        populateStudentDropdown();
         state.dirty = false;
         els.classSelect.value = "";
         populateClasses();
@@ -529,6 +529,7 @@
         renderRegister();
         els.subtitle.textContent = "Select Load register to view students.";
         refreshActions();
+        if (state.classId) loadRegister();
     });
 
     els.date.addEventListener("change", () => {
