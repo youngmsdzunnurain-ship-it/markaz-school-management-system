@@ -780,6 +780,11 @@ async function loadDashboardStats() {
 
     } catch (error) {
         console.error("Unable to load dashboard statistics:", error);
+        const message=String(error&&error.message||"The statistics API could not be reached.");
+        for(const id of ["dashboardConventionalPie","dashboardArabicPie"]){
+            const node=document.getElementById(id);
+            if(node)node.innerHTML='<div class="dashboard-class-pie-empty dashboard-chart-error"><div class="dashboard-class-pie-empty-visual"><strong>—</strong><span>Unavailable</span></div><div><strong>Class progress could not load</strong><p>'+message.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]))+'</p></div></div>';
+        }
     }
 }
 
