@@ -20,20 +20,22 @@
     --goldl: #fdf7e6;
     --ink: #1c2b24;
     --mut: #66746d;
-    --k: .77;
+    --k: .79;
     --u: calc(1mm * var(--k));
     --p: calc(1pt * var(--k));
   }
 
   /* Shorter paper (Letter): slightly smaller sizes so everything still fits on one page */
   @media (max-height: 283mm) {
-    :root { --k: .74; }
+    :root { --k: .75; }
   }
 
   html,
   body {
     width: auto !important;
     min-width: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
@@ -947,11 +949,16 @@
 
   /* 13 or more subjects: slightly smaller sizes so everything still fits on one page */
   html:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) {
-    --k: .72;
+    --k: .74;
   }
   @media (max-height: 283mm) {
     html:has(#studentReportCard .student-results-table tbody tr:nth-child(13)) {
-    --k: .68;
+    --k: .71;
   }
+  }
+  /* 12 subjects or fewer: taller table rows to use the free space */
+  html:not(:has(#studentReportCard .student-results-table tbody tr:nth-child(13))) #studentReportCard .student-results-table td {
+    padding-top: calc(1.05 * var(--u)) !important;
+    padding-bottom: calc(1.05 * var(--u)) !important;
   }
 }
