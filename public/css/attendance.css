@@ -254,3 +254,153 @@
  .attendance-table tbody tr:nth-child(even) { background:#f1f1f1!important; }
  .admission-number { border:0; padding:0; color:#111; background:transparent; }
 }
+
+
+/* MARKAZ attendance page — coordinated green/gold register UI. */
+.attendance-page {
+    background:
+        radial-gradient(ellipse at 90% 2%, rgba(200,164,58,.10), transparent 28%),
+        radial-gradient(ellipse at 4% 34%, rgba(23,100,58,.07), transparent 30%),
+        linear-gradient(180deg,#f7faf7 0%,#eef4ef 100%);
+}
+.attendance-shell { padding-top:22px; }
+.attendance-header {
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(18,61,42,.88);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    backdrop-filter:blur(18px) saturate(140%);
+    border:1px solid rgba(200,164,58,.30);
+    box-shadow:0 12px 30px rgba(17,55,35,.15);
+}
+.attendance-header::before {
+    content:"";
+    position:absolute;
+    inset:0 0 auto;
+    height:3px;
+    background:linear-gradient(90deg,#17643a 0%,#4d9866 34%,#c8a43a 68%,#17643a 100%);
+}
+.attendance-header::after { display:block; opacity:.55; }
+.attendance-intro,
+.attendance-filter-panel,
+.attendance-chart-panel,
+.attendance-register-panel {
+    border:1px solid transparent;
+    background:
+        linear-gradient(145deg,#fff 0%,#fbfdf9 100%) padding-box,
+        linear-gradient(120deg,rgba(23,100,58,.75),rgba(200,164,58,.72),rgba(23,100,58,.75)) border-box;
+    box-shadow:0 10px 28px rgba(17,55,35,.065);
+}
+.attendance-intro {
+    border-radius:20px;
+    padding:24px clamp(18px,3vw,30px);
+}
+.attendance-summary-card {
+    border:1px solid transparent;
+    border-radius:17px;
+    background:
+        linear-gradient(145deg,#fff 0%,#f9fcf9 100%) padding-box,
+        linear-gradient(135deg,rgba(23,100,58,.68),rgba(200,164,58,.66),rgba(23,100,58,.68)) border-box;
+    box-shadow:0 8px 22px rgba(17,55,35,.055);
+    transition:transform .18s ease,box-shadow .18s ease;
+}
+.attendance-summary-card:hover { transform:translateY(-2px); box-shadow:0 13px 26px rgba(17,55,35,.09); }
+.attendance-summary-card::after {
+    height:3px;
+    background:linear-gradient(90deg,#17643a,#4d9866,#c8a43a,#17643a);
+    opacity:1;
+}
+.summary-icon { border-radius:13px; box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
+.attendance-field input,
+.attendance-field select,
+.attendance-search,
+.attendance-status-select,
+.attendance-remarks {
+    border:1px solid #dbe7dd;
+    border-radius:11px;
+    background:#fbfdfb;
+    transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.attendance-field input:focus,
+.attendance-field select:focus,
+.attendance-search:focus,
+.attendance-status-select:focus,
+.attendance-remarks:focus {
+    outline:none;
+    border-color:#39845a;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(23,100,58,.12);
+}
+.attendance-page .button {
+    border-radius:11px;
+    min-height:43px;
+    font-weight:750;
+    transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.attendance-page .button-primary {
+    background:linear-gradient(110deg,#145b35,#24784a 62%,#98762a);
+    box-shadow:0 6px 15px rgba(23,100,58,.16);
+}
+.attendance-page .button-primary:hover:not(:disabled) {
+    transform:translateY(-1px);
+    box-shadow:0 9px 19px rgba(23,100,58,.22);
+}
+.register-panel-header {
+    border-bottom:1px solid #e7eee8;
+    background:linear-gradient(110deg,#f7fbf7,#fffdf7);
+}
+.register-progress {
+    border:1px solid rgba(23,100,58,.14);
+    border-radius:13px;
+    background:linear-gradient(135deg,#f0f7f1,#fffaf0);
+    padding:10px 13px;
+}
+.progress-track { background:#e4ece5; border-radius:99px; overflow:hidden; }
+.progress-bar { background:linear-gradient(90deg,#17643a,#4d9866,#c8a43a); border-radius:99px; }
+.attendance-table-wrap {
+    border:1px solid #e1eae2;
+    border-radius:15px;
+    background:#fff;
+    box-shadow:0 4px 15px rgba(17,55,35,.035);
+}
+.attendance-table thead th {
+    background:linear-gradient(100deg,#edf5ef,#f9f5e9);
+    color:#174a30;
+    letter-spacing:.35px;
+}
+.attendance-table tbody tr { transition:background .14s ease; }
+.attendance-table tbody tr:hover { background:#edf6ef; }
+.attendance-status-select { min-height:39px; font-weight:700; }
+.attendance-status-select.status-present { color:#17643a; border-color:#b7d9c1; background:#edf8ef; }
+.attendance-status-select.status-absent { color:#a83f45; border-color:#efc7c8; background:#fff1f1; }
+.attendance-status-select.status-late { color:#8c6815; border-color:#ead99c; background:#fff9e8; }
+.attendance-status-select.status-excused { color:#53677c; border-color:#cbd7e2; background:#f1f5f9; }
+.register-footer {
+    border-top:1px solid #e6eee7;
+    background:linear-gradient(100deg,#f7fbf7,#fffdf7);
+}
+.save-status { border-radius:10px; }
+.save-status.is-success { color:#17643a; background:#edf7ef; }
+.save-status.is-error { color:#a83f45; background:#fff0f0; }
+.attendance-report-summary {
+    border:1px solid transparent;
+    background:linear-gradient(120deg,#f1f8f2,#fffaf0) padding-box,
+        linear-gradient(110deg,#17643a,#c8a43a,#17643a) border-box;
+    border-radius:13px;
+}
+.attendance-report-summary strong { color:#17643a; }
+.register-empty { padding:42px 18px !important; }
+.register-empty .empty-icon { color:#17643a; background:#eaf4ec; border-radius:50%; }
+@media(max-width:720px) {
+    .attendance-shell { padding:12px 11px 22px; }
+    .attendance-header { border-radius:15px; padding:17px 15px; }
+    .attendance-intro { padding:18px 15px; border-radius:15px; }
+    .attendance-summary-card { min-height:98px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .attendance-summary-card,.attendance-page .button,.attendance-table tbody tr {
+        transition:none !important;
+    }
+    .attendance-summary-card:hover,.attendance-page .button:hover { transform:none !important; }
+}
