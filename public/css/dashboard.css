@@ -6398,7 +6398,8 @@ body {
     backdrop-filter:blur(22px) saturate(155%) !important;
     box-shadow:0 8px 25px rgba(18,61,42,.055) !important;
 }
-.classes-topbar,.students-topbar,.class-topbar,.attendance-header {
+.classes-topbar,.students-topbar,.class-topbar,.attendance-header,
+.settings-header,.fees-placeholder-top,.print-results-header {
     position:sticky !important;
     top:0 !important;
     z-index:1100 !important;
@@ -6420,4 +6421,20 @@ body {
 }
 @media(prefers-reduced-motion:reduce) {
     .page-content .stats-grid .stat-card { animation:none !important; transition:none !important; }
+}
+
+.settings-header,.fees-placeholder-top,.print-results-header {
+    background:rgba(247,250,247,.68) !important;
+    -webkit-backdrop-filter:blur(20px) saturate(150%) !important;
+    backdrop-filter:blur(20px) saturate(150%) !important;
+    border-bottom:1px solid rgba(23,100,58,.20) !important;
+    box-shadow:0 8px 22px rgba(18,61,42,.065) !important;
+}
+.settings-header::after,.fees-placeholder-top::after,.print-results-header::after {
+    content:"";
+    position:absolute;
+    inset:auto 0 0;
+    height:3px;
+    background:linear-gradient(90deg,#17643a,#4d9866,#c8a43a,#17643a);
+    pointer-events:none;
 }
