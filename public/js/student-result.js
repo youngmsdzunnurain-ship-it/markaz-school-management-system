@@ -19,6 +19,38 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+function buildStudentResultDocumentTitle(data) {
+    const student = data?.student || {};
+    const period = data?.academic_period || {};
+
+    const cleanPart = value => String(value ?? "")
+        .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace(/[. ]+$/g, "");
+
+    const studentName = cleanPart([
+        student.first_name,
+        student.middle_name,
+        student.last_name
+    ].filter(Boolean).join(" ")) || "Student";
+
+    const filenameParts = [
+        studentName,
+        cleanPart(student.class_name),
+        cleanPart(period.term_name),
+        cleanPart(period.session_name)
+    ].filter(Boolean);
+
+    return `${filenameParts.join(" - ")} - MARKAZ Result`;
+}
+
+function setStudentResultDocumentTitle() {
+    if (studentData) {
+        document.title = buildStudentResultDocumentTitle(studentData);
+    }
+}
+
 function initials(name) {
     return String(name || "Student")
         .trim()
@@ -235,6 +267,8 @@ function renderStudentResult(data) {
 
     $("resumptionDate").textContent =
         period.resumption_date || "—";
+
+    setStudentResultDocumentTitle();
 
     renderResults(subjects, data.results || {});
 
@@ -1261,6 +1295,7 @@ async function applyResultPrintScale() {
 }
 
 async function printStudentResult() {
+    setStudentResultDocumentTitle();
     await applyResultPrintScale();
     window.print();
 }
@@ -1277,6 +1312,7 @@ async function authorizeAndPrint(permission) {
             throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
+        setStudentResultDocumentTitle();
         await applyResultPrintScale();
         window.print();
     } catch (error) {
@@ -1289,7 +1325,9 @@ $("printStudentResultButton")?.addEventListener(
     () => {
         if (isPrintMode) {
             // The print-mode result API already verifies print permission on the server.
-            // Call synchronously from the click to preserve browser user activation.
+            // Set the suggested PDF filename before opening the print dialog.
+            setStudentResultDocumentTitle();
+            // Keep the print call synchronous to preserve browser user activation.
             window.print();
             return;
         }
