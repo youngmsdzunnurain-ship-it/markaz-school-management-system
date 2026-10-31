@@ -114,8 +114,12 @@ foreach ($records as $record) {
     if ($studentId === false || $studentId === null || $studentId < 1) {
         attendanceJsonError(422, 'A student record has an invalid ID.');
     }
-    if (!attendanceIsValidStatus($status)) {
-        attendanceJsonError(422, 'Each student must be marked Present, Absent, Late or Excused.');
+    // Empty status means intentionally clear this student's saved mark.
+    if ($status !== '' && !attendanceIsValidStatus($status)) {
+        attendanceJsonError(422, 'Choose Present, Absent, Late or Excused, or leave the status empty to clear it.');
+    }
+    if ($status === '') {
+        $remarks = '';
     }
     if ((function_exists('mb_strlen') ? mb_strlen($remarks, 'UTF-8') : strlen($remarks)) > 500) {
         attendanceJsonError(422, 'Student remarks must be 500 characters or fewer.');
@@ -159,8 +163,20 @@ try {
             marked_by = VALUES(marked_by),
             updated_at = CURRENT_TIMESTAMP'
     );
+    $clearStmt = $pdo->prepare(
+        'DELETE FROM attendance_records
+         WHERE attendance_date = ? AND class_type = ? AND class_id = ? AND student_id = ?'
+    );
+    $savedCount = 0;
+    $clearedCount = 0;
 
     foreach ($normalized as $studentId => $record) {
+        if ($record['status'] === '') {
+            $clearStmt->execute([$date, $classType, (int) $classId, $studentId]);
+            $clearedCount += $clearStmt->rowCount();
+            continue;
+        }
+
         $saveStmt->execute([
             $date,
             $classType,
@@ -170,6 +186,7 @@ try {
             $record['remarks'],
             $markedBy,
         ]);
+        $savedCount++;
     }
 
     $pdo->commit();
@@ -186,5 +203,6 @@ echo json_encode([
     'message' => 'Attendance saved successfully.',
     'class' => $class['name'],
     'date' => $date,
-    'saved_count' => count($normalized),
+    'saved_count' => $savedCount,
+    'cleared_count' => $clearedCount,
 ], JSON_UNESCAPED_UNICODE);
