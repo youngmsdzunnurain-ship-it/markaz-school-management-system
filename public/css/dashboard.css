@@ -6328,3 +6328,96 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* Dashboard motion and stat-card finish. */
+@keyframes markazDashboardCardIn {
+    from { opacity:0; transform:translateY(13px) scale(.985); }
+    to { opacity:1; transform:translateY(0) scale(1); }
+}
+.page-content .stats-grid .stat-card {
+    position:relative;
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr);
+    grid-template-rows:auto auto auto;
+    align-content:center;
+    column-gap:13px;
+    row-gap:4px;
+    min-height:116px;
+    padding:18px 17px;
+    overflow:hidden;
+    border:1px solid transparent !important;
+    border-radius:16px !important;
+    background:
+        linear-gradient(145deg,#fff 0%,#f8fbf8 100%) padding-box,
+        linear-gradient(125deg,#17643a 0%,#65a477 37%,#c8a43a 72%,#17643a 100%) border-box !important;
+    box-shadow:0 7px 21px rgba(18,61,42,.065),inset 0 1px 0 #fff !important;
+    animation:markazDashboardCardIn .48s cubic-bezier(.2,.7,.25,1) both;
+}
+.page-content .stats-grid .stat-card:nth-child(2) { animation-delay:70ms; }
+.page-content .stats-grid .stat-card:nth-child(3) { animation-delay:140ms; }
+.page-content .stats-grid .stat-card:nth-child(4) { animation-delay:210ms; }
+.page-content .stats-grid .stat-card::after {
+    content:"";
+    position:absolute;
+    left:0;top:13px;bottom:13px;
+    width:3px;height:auto;
+    border-radius:0 5px 5px 0;
+    background:linear-gradient(180deg,#17643a,#c8a43a,#17643a) !important;
+}
+.page-content .stats-grid .stat-icon {
+    grid-column:1;grid-row:1 / 4;
+    align-self:center;
+    display:grid;place-items:center;
+    width:42px;height:42px;
+    border-radius:13px;
+    color:#17643a;
+    background:linear-gradient(145deg,#e7f3e9,#fff8e7);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+    font-size:17px;
+}
+.page-content .stats-grid .stat-label,
+.page-content .stats-grid .stat-card strong,
+.page-content .stats-grid .stat-card small { grid-column:2; }
+.page-content .stats-grid .stat-label { color:#587064; font-size:11px; font-weight:750; letter-spacing:.35px; }
+.page-content .stats-grid .stat-card strong { color:#174a30; font-size:27px; line-height:1.1; font-weight:850; font-variant-numeric:tabular-nums; }
+.page-content .stats-grid .stat-card small { color:#89958d; font-size:10px; }
+.page-content .stats-grid .stat-card:hover {
+    transform:translateY(-3px) !important;
+    box-shadow:0 13px 27px rgba(18,61,42,.105) !important;
+}
+.page-content .welcome-card::after { display:none !important; content:none !important; }
+@keyframes markazHeaderGlassIn {
+    from { opacity:.55; transform:translateY(-5px); }
+    to { opacity:1; transform:translateY(0); }
+}
+.topbar {
+    background:rgba(247,250,247,.54) !important;
+    background-image:linear-gradient(rgba(247,250,247,.54),rgba(247,250,247,.54)),var(--dashboard-border-flow) !important;
+    -webkit-backdrop-filter:blur(22px) saturate(155%) !important;
+    backdrop-filter:blur(22px) saturate(155%) !important;
+    box-shadow:0 8px 25px rgba(18,61,42,.055) !important;
+}
+.classes-topbar,.students-topbar,.class-topbar,.attendance-header {
+    position:sticky !important;
+    top:0 !important;
+    z-index:1100 !important;
+    -webkit-backdrop-filter:blur(20px) saturate(150%) !important;
+    backdrop-filter:blur(20px) saturate(150%) !important;
+}
+.classes-topbar,.students-topbar,.class-topbar {
+    background:rgba(247,250,247,.68) !important;
+    border-bottom:1px solid rgba(23,100,58,.20) !important;
+    box-shadow:0 8px 22px rgba(18,61,42,.065) !important;
+}
+.classes-topbar::after,.students-topbar::after,.class-topbar::after {
+    content:"";
+    position:absolute;
+    inset:auto 0 0;
+    height:3px;
+    background:linear-gradient(90deg,#17643a,#4d9866,#c8a43a,#17643a);
+    pointer-events:none;
+}
+@media(prefers-reduced-motion:reduce) {
+    .page-content .stats-grid .stat-card { animation:none !important; transition:none !important; }
+}
