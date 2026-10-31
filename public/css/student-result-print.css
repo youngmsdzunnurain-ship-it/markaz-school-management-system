@@ -135,14 +135,14 @@
     content: "" !important;
     display: block !important;
     position: absolute !important;
-    top: calc(50% - 12 * var(--u)) !important;
+    top: 50% !important;
     left: 50% !important;
     width: 110% !important;
     height: auto !important;
     aspect-ratio: 1 / 1 !important;
     transform: translate(-50%, -50%) !important;
     background: url("../assets/images/markaz-logo.jpg") center / contain no-repeat !important;
-    opacity: .10 !important;
+    opacity: .045 !important;
     mix-blend-mode: multiply !important;
     pointer-events: none !important;
     z-index: 3 !important;
