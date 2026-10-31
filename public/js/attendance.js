@@ -326,8 +326,10 @@
             renderRegister();
             if (!state.students.length) {
                 setNotice("This class has no active students to mark.", "error");
+            } else if (summary.unmarked === summary.total) {
+                setNotice("Register loaded. No attendance has been entered for this class and date yet.");
             } else if (summary.unmarked) {
-                setNotice(summary.unmarked + " student" + (summary.unmarked === 1 ? " is" : "s are") + " still unmarked.");
+                setNotice(summary.unmarked + " student" + (summary.unmarked === 1 ? " is" : "s are") + " unmarked. You can save a partially completed register.");
             } else {
                 setNotice("Register loaded. All " + summary.total + " students have an attendance status.", "success");
             }
@@ -386,13 +388,6 @@
 
     async function saveAttendance() {
         if (state.saving || state.loading || !state.students.length) return;
-        const unmarked = state.students.filter((student) => !student.attendance_status);
-        if (unmarked.length) {
-            setNotice("Mark an attendance status for all " + unmarked.length + " remaining student" + (unmarked.length === 1 ? "" : "s") + " before saving.", "error");
-            const first = $("status-" + unmarked[0].id);
-            if (first) first.focus();
-            return;
-        }
         if (!state.dirty) {
             setNotice("There are no unsaved changes.", "success");
             return;
@@ -420,7 +415,17 @@
                 }),
             });
             state.dirty = false;
-            setNotice(data.message + " " + data.saved_count + " student records saved for " + formatDate(state.date) + ".", "success");
+            const savedCount = Number(data.saved_count || 0);
+            const clearedCount = Number(data.cleared_count || 0);
+            const details = [];
+            if (savedCount) details.push(savedCount + " marked");
+            if (clearedCount) details.push(clearedCount + " cleared");
+            setNotice(
+                details.length
+                    ? data.message + " " + details.join(" · ") + " for " + formatDate(state.date) + "."
+                    : "Register saved. All attendance marks are currently clear for " + formatDate(state.date) + ".",
+                "success"
+            );
             updateSummary();
         } catch (error) {
             setNotice(error.message, "error");
