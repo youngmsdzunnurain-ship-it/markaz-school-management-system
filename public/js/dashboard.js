@@ -129,39 +129,40 @@ async function loadAdmin() {
 function openSidebar() {
     if (!sidebar) return;
 
-    sidebar.classList.add("open");
-
-    if (sidebarOverlay) {
-        sidebarOverlay.classList.add("visible");
+    if (window.innerWidth > 850) {
+        sidebar.classList.remove("desktop-closed");
+        document.body.classList.remove("sidebar-desktop-closed");
+    } else {
+        sidebar.classList.add("open");
+        sidebarOverlay?.classList.add("visible");
     }
 
-    if (menuButton) {
-        menuButton.setAttribute("aria-expanded", "true");
-    }
+    menuButton?.setAttribute("aria-expanded", "true");
 }
 
 function closeSidebar() {
     if (!sidebar) return;
 
-    sidebar.classList.remove("open");
-
-    if (sidebarOverlay) {
-        sidebarOverlay.classList.remove("visible");
+    if (window.innerWidth > 850) {
+        sidebar.classList.add("desktop-closed");
+        document.body.classList.add("sidebar-desktop-closed");
+    } else {
+        sidebar.classList.remove("open");
+        sidebarOverlay?.classList.remove("visible");
     }
 
-    if (menuButton) {
-        menuButton.setAttribute("aria-expanded", "false");
-    }
+    menuButton?.setAttribute("aria-expanded", "false");
 }
 
 function toggleSidebar() {
     if (!sidebar) return;
 
-    if (sidebar.classList.contains("open")) {
-        closeSidebar();
-    } else {
-        openSidebar();
-    }
+    const isOpen = window.innerWidth > 850
+        ? !sidebar.classList.contains("desktop-closed")
+        : sidebar.classList.contains("open");
+
+    if (isOpen) closeSidebar();
+    else openSidebar();
 }
 
 function openProfileDropdown() {
@@ -332,7 +333,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     refreshButton.className = "dashboard-refresh-button";
     refreshButton.setAttribute("aria-label", "Refresh dashboard");
     refreshButton.title = "Refresh dashboard";
-    refreshButton.innerHTML = "↻";
+    refreshButton.innerHTML = '<i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>';
 
     refreshButton.addEventListener("click", () => {
         refreshButton.style.transform = "rotate(360deg)";
@@ -561,71 +562,189 @@ function dashboardRenderClassPie(targetId, classes) {
 }
 
 async function loadDashboardAttendance() {
-    const panel=document.getElementById("dashboardAttendancePanel"); if(!panel)return;
-    const role=window.markazCurrentRole||""; if(role!=="admin"){panel.hidden=true;return;} panel.hidden=false;
-    const date=new Date(), localDate=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10);
-    const dateLabel=document.getElementById("dashboardAttendanceDate"); if(dateLabel)dateLabel.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"full"}).format(date);
+    const panel = document.getElementById("dashboardAttendancePanel");
+    if (!panel) return;
+
+    if ((window.markazCurrentRole || "") !== "admin") {
+        panel.hidden = true;
+        return;
+    }
+
+    panel.hidden = false;
+    const date = new Date();
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10);
+    const dateLabel = document.getElementById("dashboardAttendanceDate");
+    const layout = panel.querySelector(".dashboard-attendance-layout");
+    const emptyState = document.getElementById("dashboardAttendanceEmpty");
+
+    if (dateLabel) {
+        dateLabel.textContent = new Intl.DateTimeFormat(undefined, {
+            dateStyle: "full"
+        }).format(date);
+    }
+
+    if (emptyState) emptyState.hidden = true;
+    if (layout) layout.hidden = false;
+
     try {
-        const reportUrl="./api/attendance/reports.php?from="+encodeURIComponent(localDate)+"&to="+encodeURIComponent(localDate);
-        const requestReport=async(url)=>{
-            const response=await fetch(url,{credentials:"same-origin",cache:"no-store",headers:{Accept:"application/json"}});
-            const payload=await response.json();
-            if(!response.ok||!payload.success)throw new Error(payload.message||"Attendance summary unavailable.");
-            return payload;
+        // One school-wide request supplies both class categories. The report endpoint
+        // requires class_id whenever class_type is supplied, so category-only requests fail.
+        const response = await fetch(
+            "./api/attendance/reports.php?from=" + encodeURIComponent(localDate) +
+            "&to=" + encodeURIComponent(localDate),
+            {
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: { Accept: "application/json" }
+            }
+        );
+        const report = await response.json();
+
+        if (!response.ok || !report.success) {
+            throw new Error(report.message || "Attendance summary unavailable.");
+        }
+
+        const summary = report.summary || {};
+        const markedRecords = Number(summary.marked_records || 0);
+        const setText = (id, value) => {
+            const node = document.getElementById(id);
+            if (node) node.textContent = String(value);
         };
-        // Keep the school summary separate, and request each class system from its own server-side scope.
-        const [report,conventionalReport,arabicReport]=await Promise.all([
-            requestReport(reportUrl),
-            requestReport(reportUrl+"&class_type=conventional"),
-            requestReport(reportUrl+"&class_type=arabic")
-        ]);
-        const categoryReports={conventional:conventionalReport,arabic:arabicReport};
-        const s=report.summary||{}, values=[{label:"Present",value:Number(s.present||0),color:"#21945b"},{label:"Absent",value:Number(s.absent||0),color:"#d65359"},{label:"Late",value:Number(s.late||0),color:"#d8a72c"},{label:"Excused",value:Number(s.excused||0),color:"#7d8b9a"}];
-        const total=values.reduce((sum,item)=>sum+item.value,0), donut=document.getElementById("dashboardAttendanceDonut");
-        if(donut){donut.style.background=dashboardDonutGradient(values);donut.setAttribute("aria-label",values.map(item=>item.label+" "+item.value).join(", "));}
-        const setText=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=String(value);};
-        setText("dashboardAttendanceMarked",total);setText("dashboardAttendancePresent",values[0].value);setText("dashboardAttendanceAbsent",values[1].value);setText("dashboardAttendanceLate",values[2].value);setText("dashboardAttendanceExcused",values[3].value);
-        const legend=document.getElementById("dashboardAttendanceLegend");if(legend)legend.innerHTML=values.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+': <strong>'+item.value+'</strong></span>').join("");
-        for(const [type,targetId] of [["conventional","dashboardConventionalAttendance"],["arabic","dashboardArabicAttendance"]]){
-            const scopedRows=categoryReports[type]&&Array.isArray(categoryReports[type].classes)?categoryReports[type].classes:[];
-            const rows=scopedRows.filter(item=>item.class_type===type),target=document.getElementById(targetId);if(!target)continue;
-            const categoryValues=[
-                {label:"Present",value:rows.reduce((sum,item)=>sum+Number(item.present_count||0),0),color:"#21945b"},
-                {label:"Absent",value:rows.reduce((sum,item)=>sum+Number(item.absent_count||0),0),color:"#d65359"},
-                {label:"Late",value:rows.reduce((sum,item)=>sum+Number(item.late_count||0),0),color:"#d8a72c"},
-                {label:"Excused",value:rows.reduce((sum,item)=>sum+Number(item.excused_count||0),0),color:"#7d8b9a"}
+
+        if (markedRecords === 0) {
+            if (layout) layout.hidden = true;
+            if (emptyState) emptyState.hidden = false;
+            setText("dashboardAttendanceMarked", 0);
+            setText("dashboardAttendancePresent", 0);
+            setText("dashboardAttendanceAbsent", 0);
+            setText("dashboardAttendanceLate", 0);
+            setText("dashboardAttendanceExcused", 0);
+            return;
+        }
+
+        const values = [
+            { label: "Present", value: Number(summary.present || 0), color: "#21945b" },
+            { label: "Absent", value: Number(summary.absent || 0), color: "#d65359" },
+            { label: "Late", value: Number(summary.late || 0), color: "#d8a72c" },
+            { label: "Excused", value: Number(summary.excused || 0), color: "#7d8b9a" }
+        ];
+        const total = values.reduce((sum, item) => sum + item.value, 0);
+        const donut = document.getElementById("dashboardAttendanceDonut");
+
+        if (donut) {
+            donut.style.background = dashboardDonutGradient(values);
+            donut.setAttribute(
+                "aria-label",
+                values.map(item => item.label + " " + item.value).join(", ")
+            );
+        }
+
+        setText("dashboardAttendanceMarked", total);
+        setText("dashboardAttendancePresent", values[0].value);
+        setText("dashboardAttendanceAbsent", values[1].value);
+        setText("dashboardAttendanceLate", values[2].value);
+        setText("dashboardAttendanceExcused", values[3].value);
+
+        const legend = document.getElementById("dashboardAttendanceLegend");
+        if (legend) {
+            legend.innerHTML = values.map(item =>
+                '<span><i style="background:' + item.color + '"></i>' +
+                item.label + ': <strong>' + item.value + '</strong></span>'
+            ).join("");
+        }
+
+        const allClasses = Array.isArray(report.classes) ? report.classes : [];
+
+        for (const [type, targetId] of [
+            ["conventional", "dashboardConventionalAttendance"],
+            ["arabic", "dashboardArabicAttendance"]
+        ]) {
+            const target = document.getElementById(targetId);
+            if (!target) continue;
+
+            const rows = allClasses.filter(item =>
+                item.class_type === type && Number(item.marked_records || 0) > 0
+            );
+            const categoryValues = [
+                { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#21945b" },
+                { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#d65359" },
+                { label: "Late", value: rows.reduce((sum, item) => sum + Number(item.late_count || 0), 0), color: "#d8a72c" },
+                { label: "Excused", value: rows.reduce((sum, item) => sum + Number(item.excused_count || 0), 0), color: "#7d8b9a" }
             ];
-            const categoryTotal=categoryValues.reduce((sum,item)=>sum+item.value,0);
-            const categoryPrefix=type==="conventional"?"dashboardConventional":"dashboardArabic";
-            const categoryDonut=document.getElementById(categoryPrefix+"AttendanceDonut");
-            if(categoryDonut){categoryDonut.style.background=dashboardDonutGradient(categoryValues);const number=categoryDonut.querySelector("strong");if(number)number.textContent=String(categoryTotal);categoryDonut.setAttribute("aria-label",type+" attendance: "+categoryValues.map(item=>item.label+" "+item.value).join(", "));}
-            const categoryLegend=document.getElementById(categoryPrefix+"AttendanceLegend");
-            if(categoryLegend)categoryLegend.innerHTML=categoryValues.map(item=>'<span><i style="background:'+item.color+'"></i>'+item.label+' <strong>'+item.value+'</strong></span>').join("");
-            const maxMarked=Math.max(1,...rows.map(item=>Number(item.marked_records)||0));
-            target.innerHTML=rows.length?rows.map(item=>{
-                const params=new URLSearchParams({class_id:String(item.class_id),class_type:type,date:localDate});
-                const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
-                const marked=Number(item.marked_records)||0,present=Number(item.present_count)||0,width=Math.max(0,Math.min(100,marked/maxMarked*100));
-                return '<a class="dashboard-attendance-class-row" href="./attendance.html?'+params.toString()+'"><span>'+name+'</span><strong>'+present+' present</strong><div class="dashboard-attendance-bar"><i style="width:'+width+'%"></i></div><small>'+marked+' marked · '+Number(item.absent_count||0)+' absent · '+Number(item.late_count||0)+' late · '+Number(item.excused_count||0)+' excused</small></a>';
-            }).join(""):'<div class="dashboard-chart-empty dashboard-chart-empty-state"><i class="fa-regular fa-calendar-check"></i><strong>0 classes to display</strong><span>No active classes were returned for this category.</span></div>';
+            const categoryTotal = categoryValues.reduce((sum, item) => sum + item.value, 0);
+            const categoryPrefix = type === "conventional" ? "dashboardConventional" : "dashboardArabic";
+            const categoryDonut = document.getElementById(categoryPrefix + "AttendanceDonut");
+
+            if (categoryDonut) {
+                categoryDonut.style.background = dashboardDonutGradient(categoryValues);
+                const number = categoryDonut.querySelector("strong");
+                if (number) number.textContent = String(categoryTotal);
+                categoryDonut.setAttribute(
+                    "aria-label",
+                    type + " attendance: " +
+                    categoryValues.map(item => item.label + " " + item.value).join(", ")
+                );
+            }
+
+            const categoryLegend = document.getElementById(categoryPrefix + "AttendanceLegend");
+            if (categoryLegend) {
+                categoryLegend.innerHTML = categoryValues.map(item =>
+                    '<span><i style="background:' + item.color + '"></i>' +
+                    item.label + ' <strong>' + item.value + '</strong></span>'
+                ).join("");
+            }
+
+            const maxMarked = Math.max(1, ...rows.map(item => Number(item.marked_records) || 0));
+            target.innerHTML = rows.length ? rows.map(item => {
+                const params = new URLSearchParams({
+                    class_id: String(item.class_id),
+                    class_type: type,
+                    date: localDate
+                });
+                const name = String(item.class_name || "Class").replace(/[&<>"']/g, ch => ({
+                    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+                }[ch]));
+                const marked = Number(item.marked_records) || 0;
+                const present = Number(item.present_count) || 0;
+                const width = Math.max(0, Math.min(100, marked / maxMarked * 100));
+
+                return '<a class="dashboard-attendance-class-row" href="./attendance.html?' +
+                    params.toString() + '"><span>' + name + '</span><strong>' + present +
+                    ' present</strong><div class="dashboard-attendance-bar"><i style="width:' +
+                    width + '%"></i></div><small>' + marked + ' marked · ' +
+                    Number(item.absent_count || 0) + ' absent · ' +
+                    Number(item.late_count || 0) + ' late · ' +
+                    Number(item.excused_count || 0) + ' excused</small></a>';
+            }).join("") :
+                '<div class="dashboard-chart-empty dashboard-chart-empty-state">' +
+                '<i class="fa-regular fa-calendar-check"></i>' +
+                '<strong>No attendance entered for this category</strong>' +
+                '<span>Saved attendance for today will appear here.</span></div>';
         }
-    } catch(error){
-        const message=String(error&&error.message||"Unknown error");
-        if(dateLabel)dateLabel.textContent="Attendance summary unavailable · "+message;
-        const safeMessage=message.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
-        for(const id of ["dashboardConventionalAttendance","dashboardArabicAttendance"]){
-            const node=document.getElementById(id);
-            if(node)node.innerHTML='<div class="dashboard-chart-empty dashboard-chart-error"><i class="fa-solid fa-triangle-exclamation"></i><strong>Could not load attendance</strong><span>'+safeMessage+'</span></div>';
+    } catch (error) {
+        const message = String(error && error.message || "Unknown error")
+            .replace(/[&<>"']/g, ch => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+            }[ch]));
+
+        for (const id of ["dashboardConventionalAttendance", "dashboardArabicAttendance"]) {
+            const node = document.getElementById(id);
+            if (node) {
+                node.innerHTML = '<div class="dashboard-chart-empty dashboard-chart-error">' +
+                    '<i class="fa-solid fa-triangle-exclamation"></i>' +
+                    '<strong>Attendance summary unavailable</strong><span>' + message +
+                    '</span></div>';
+            }
         }
-        for(const id of ["dashboardConventionalAttendanceDonut","dashboardArabicAttendanceDonut"]){
-            const node=document.getElementById(id);
-            if(node){node.style.background="conic-gradient(#c9a94b 0 100%)";const value=node.querySelector("strong");if(value)value.textContent="—";}
-        }
-        console.error("Dashboard attendance report failed:",error);
+        console.error("Dashboard attendance report failed:", error);
     }
 }
 window.setInterval(loadDashboardAttendance, 60000);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) loadDashboardAttendance(); });
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) loadDashboardAttendance();
+});
 
 async function loadDashboardStats() {
     const statCards = document.querySelectorAll(".stat-card > strong");
@@ -832,46 +951,4 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
     });
 });
 
-/* =========================================================
-   DESKTOP SIDEBAR TOGGLE
-   ========================================================= */
-
-(function () {
-    const sidebar = document.getElementById("sidebar");
-    const menuButton = document.getElementById("menuButton");
-    const closeButton = document.getElementById("sidebarCloseButton");
-
-    if (!sidebar) return;
-
-    function closeDashboardSidebar() {
-        if (window.innerWidth >= 851) {
-            sidebar.classList.add("desktop-closed");
-            document.body.classList.add("sidebar-desktop-closed");
-        } else {
-            sidebar.classList.remove("open");
-        }
-    }
-
-    function openDashboardSidebar() {
-        if (window.innerWidth >= 851) {
-            sidebar.classList.remove("desktop-closed");
-            document.body.classList.remove("sidebar-desktop-closed");
-        } else {
-            sidebar.classList.add("open");
-        }
-    }
-
-    closeButton?.addEventListener("click", function () {
-        closeDashboardSidebar();
-    });
-
-    menuButton?.addEventListener("click", function () {
-        if (window.innerWidth >= 851) {
-            if (sidebar.classList.contains("desktop-closed")) {
-                openDashboardSidebar();
-            } else {
-                closeDashboardSidebar();
-            }
-        }
-    });
-})();
+/* Sidebar controls are handled once by the shared responsive toggle above. */
