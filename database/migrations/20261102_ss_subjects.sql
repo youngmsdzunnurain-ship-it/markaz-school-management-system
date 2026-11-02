@@ -38,9 +38,19 @@ WHERE NOT EXISTS (
     WHERE LOWER(TRIM(existing.name)) = LOWER(desired.name)
 );
 
+-- Ensure previously existing curriculum subjects are available for SS.
+UPDATE subjects
+SET is_active = 1,
+    category = 'Senior Secondary'
+WHERE LOWER(TRIM(name)) IN (
+    'quran', 'english', 'mathematics', 'biology', 'chemistry',
+    'physics', 'civic education', 'agric', 'computer',
+    'food and nutrition', 'economics'
+);
+
 -- Replace only the conventional SS class mappings. Existing result rows are
 -- deliberately retained for historical auditability; unassigned subjects
--- simply stop appearing in current SS result entry and student result views.
+-- stop appearing in current SS result entry, completion and student results.
 DELETE cs
 FROM class_subjects cs
 INNER JOIN classes c ON c.id = cs.class_id
