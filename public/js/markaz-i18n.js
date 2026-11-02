@@ -18,7 +18,7 @@ let lang=localStorage.getItem(storeKey)==="ar"?"ar":"en";
 const original=new WeakMap();
 const originalAttributes=new WeakMap();
 const initialTitle=document.title;
-const originalAttributes=new WeakMap();
+
 const ignored=new Set(["SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION"]);
 function translateText(node){
  const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate],tbody,[contenteditable=\"true\"],.student-name,.student-full-name,.admin-name,.profile-name,.database-value,[data-user-content]"))return;
