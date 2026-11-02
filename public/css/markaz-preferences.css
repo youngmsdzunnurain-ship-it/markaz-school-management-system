@@ -188,3 +188,13 @@ html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row st
 html[data-theme=dark] body:has(.app .sidebar) .markaz-language-tools select{background:#102017;color:#e8f1eb;border-color:#365542}
 
 .classes-topbar::before,.classes-topbar::after,.class-topbar::before,.class-topbar::after,.students-topbar::before,.students-topbar::after,.settings-header::before,.settings-header::after,.print-results-header::before,.print-results-header::after,.result-page-header::before,.result-page-header::after,.class-subjects-page>.page-header::before,.class-subjects-page>.page-header::after,.subjects-page>.page-header::before,.subjects-page>.page-header::after{display:none!important;content:none!important}
+
+
+/* Dashboard header remains pinned while the page content scrolls. */
+body:has(.app .sidebar) .topbar{position:sticky!important;top:0!important;z-index:1400!important}
+.classes-topbar::before,.classes-topbar::after,.class-topbar::before,.class-topbar::after,
+.students-topbar::before,.students-topbar::after,.settings-header::before,.settings-header::after,
+.attendance-header::before,.attendance-header::after,.fees-placeholder-top::before,.fees-placeholder-top::after,
+.print-results-header::before,.print-results-header::after,.result-page-header::before,.result-page-header::after{
+ content:none!important;display:none!important
+}
