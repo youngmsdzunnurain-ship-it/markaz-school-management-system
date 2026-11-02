@@ -31,7 +31,7 @@ checkFix(
 );
 checkFix(
     str_contains($subjectListApi, 'seenSubjectKeys') &&
-    str_contains($subjectListApi, 'animal husbandry'),
+    str_contains($subjectListApi, 'animalhusbandry'),
     'Subject library must hide duplicate names and Animal Husbandry.'
 );
 checkFix(
@@ -41,7 +41,7 @@ checkFix(
 );
 checkFix(
     str_contains($shellJs, 'admin-profile-avatar') &&
-    str_contains($shellJs, 'menu-button') &&
+    str_contains($shellJs, 'markaz-shell-menu') &&
     str_contains($shellJs, 'api/auth/me.php'),
     'Shared management shell must use dashboard-style menu and authenticated avatar.'
 );
