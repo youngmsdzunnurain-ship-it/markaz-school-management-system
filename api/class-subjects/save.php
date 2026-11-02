@@ -89,7 +89,6 @@ try {
 
     $normalizedClass = strtoupper((string) preg_replace('/[\\s_-]+/', '', trim((string) $class['name'])));
     if (in_array($normalizedClass, ['SS1', 'SS2', 'SS3', 'SSS1', 'SSS2', 'SSS3'], true)) {
-        $pdo->commit();
         echo json_encode([
             'success' => true,
             'message' => 'The approved 11-subject SS curriculum has been applied.',
