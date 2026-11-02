@@ -18,7 +18,7 @@ SET subject_group = CASE
         ('biology', 'chemistry', 'physics', 'basicscience', 'computer',
          'computerstudies', 'ict', 'agric', 'agriculture', 'agriculturalscience',
          'civiceducation', 'civic', 'economics', 'foodandnutrition',
-         'foodnutrition', 'animalhusbandry', 'socialstudies', 'geography')
+         'foodnutrition', 'animalhusbandry')
         THEN 'Science'
     WHEN LOWER(REPLACE(REPLACE(REPLACE(TRIM(name), ' ', ''), '-', ''), '_', '')) IN
         ('tawheed', 'fiqh', 'hadith', 'hadeeth', 'islamicstudies',
@@ -28,7 +28,7 @@ SET subject_group = CASE
         ('arabic', 'french', 'hausa', 'yoruba', 'igbo')
         THEN 'Languages'
     WHEN LOWER(REPLACE(REPLACE(REPLACE(TRIM(name), ' ', ''), '-', ''), '_', '')) IN
-        ('history', 'government', 'literature', 'literatureinenglish', 'socialscience')
+        ('history', 'government', 'literature', 'literatureinenglish', 'socialscience', 'socialstudies', 'geography')
         THEN 'Humanities'
     WHEN LOWER(REPLACE(REPLACE(REPLACE(TRIM(name), ' ', ''), '-', ''), '_', '')) IN
         ('businessstudies', 'commerce', 'accounting', 'bookkeeping',
