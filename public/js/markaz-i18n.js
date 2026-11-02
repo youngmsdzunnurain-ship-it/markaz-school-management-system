@@ -19,7 +19,8 @@ Object.assign(dictionaries.ar,{"Admin":"المسؤول","0 of 0 required subject
 Object.assign(dictionaries.ar,{"Manage students, classes, subjects, examination results and academic settings from one place.":"إدارة الطلاب والفصول والمواد ونتائج الامتحانات والإعدادات الدراسية من مكان واحد.","Reports count saved attendance marks only. Unmarked school days are not treated as present.":"تحتسب التقارير علامات الحضور المحفوظة فقط. ولا تُحتسب أيام الدراسة غير المحددة كحضور.","Set the date when the next academic term begins. This date will appear on every student result.":"حدد تاريخ بداية الفصل الدراسي القادم. سيظهر هذا التاريخ في نتيجة كل طالب.","Conventional Class":"الفصل النظامي","Student character, conduct and personal development.":"شخصية الطالب وسلوكه وتطوره الشخصي.","5 — Excellent":"٥ — ممتاز","4 — Very Good":"٤ — جيد جداً","3 — Good":"٣ — جيد","2 — Fair":"٢ — مقبول","1 — Poor":"١ — ضعيف","BEHAVIOURAL PERFORMANCE":"الأداء السلوكي","Awaiting assessment":"في انتظار التقييم","Overall Behaviour":"السلوك العام","Based on the 9 assessed areas":"بناءً على المجالات التسعة التي تم تقييمها","BEHAVIOURAL COMMENT":"التعليق السلوكي","Auto-assessed":"تقييم تلقائي","Awaiting behavioural assessment.":"في انتظار التقييم السلوكي.","TEACHER'S REMARK":"ملاحظة المعلم","Awaiting final assessment.":"في انتظار التقييم النهائي.","DIRECTOR'S REMARK":"ملاحظة المدير","Signature & School Stamp":"التوقيع وختم المدرسة","Director / Principal":"المدير / مدير المدرسة"});
 const storeKey="markaz-language";
 let originalTitle="";
-let lang=localStorage.getItem(storeKey)==="ar"?"ar":"en";
+let lang="en";
+try{lang=localStorage.getItem(storeKey)==="ar"?"ar":"en";}catch(_){}
 const original=new WeakMap();
 const originalAttributes=new WeakMap();
 const initialTitle=document.title;
@@ -52,7 +53,7 @@ function apply(root=document){
  });
  document.querySelectorAll("[data-markaz-language-label]").forEach(el=>el.textContent=lang==="ar"?"العربية":"English");
 }
-function setLanguage(next){lang=next==="ar"?"ar":"en";localStorage.setItem(storeKey,lang);apply();document.dispatchEvent(new CustomEvent("markaz:languagechange",{detail:{language:lang}}));}
+function setLanguage(next){lang=next==="ar"?"ar":"en";try{localStorage.setItem(storeKey,lang);}catch(_){}apply();document.dispatchEvent(new CustomEvent("markaz:languagechange",{detail:{language:lang}}));}
 function controls(){
  if(document.querySelector(".markaz-language-tools"))return;
  const wrap=document.createElement("div");wrap.className="markaz-language-tools";wrap.setAttribute("aria-label","Language settings");
