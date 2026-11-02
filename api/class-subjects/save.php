@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -81,6 +82,20 @@ try {
             'message' => 'Class not found.'
         ]);
 
+        exit;
+    }
+
+    ensureSeniorSecondaryCurriculum($pdo, $classId);
+
+    $normalizedClass = strtoupper((string) preg_replace('/[\\s_-]+/', '', trim((string) $class['name'])));
+    if (in_array($normalizedClass, ['SS1', 'SS2', 'SS3', 'SSS1', 'SSS2', 'SSS3'], true)) {
+        $pdo->commit();
+        echo json_encode([
+            'success' => true,
+            'message' => 'The approved 11-subject SS curriculum has been applied.',
+            'class_id' => $classId,
+            'subject_count' => 11
+        ]);
         exit;
     }
 
