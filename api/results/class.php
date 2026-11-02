@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 requireResultStaff();
 
@@ -35,6 +36,9 @@ if (!$classId || $classId < 1) {
 
 try {
     $pdo = db();
+    if ($classType === 'conventional') {
+        ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
+    }
     $isTeacher = currentAdminRole() === 'teacher';
     $accountId = (int) ($_SESSION['admin_id'] ?? 0);
 
