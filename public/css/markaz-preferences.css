@@ -118,3 +118,40 @@ html[dir=rtl] .attendance-header,html[dir=rtl] .classes-topbar,html[dir=rtl] .st
 html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-combo-chart{background:#14251b;border-color:#294735}
 html[data-theme=dark] body:has(.app .sidebar) .combo-class-label{fill:#e8f1eb}
 html[data-theme=dark] body:has(.app .sidebar) .combo-axis-label{fill:#a9b9ae}
+
+
+/* Dashboard top navigation remains pinned independently of the scrollable content. */
+body:has(.app .sidebar) .main-content>.topbar{position:sticky!important;top:0!important;z-index:1600!important}
+html[data-theme=dark] body:has(.app .sidebar){background:#0c1711!important;color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .main-content,
+html[data-theme=dark] body:has(.app .sidebar) .page-content{background:#0c1711!important;color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .topbar,
+html[data-theme=dark] body:has(.app .sidebar) .panel,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card,
+html[data-theme=dark] body:has(.app .sidebar) .welcome-card,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-summary,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-stat,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-exam-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .result-progress-card,
+html[data-theme=dark] body:has(.app .sidebar) .admin-profile-display{background:#14251b!important;color:#e8f1eb!important;border-color:#294735!important}
+html[data-theme=dark] body:has(.app .sidebar) .topbar h1,
+html[data-theme=dark] body:has(.app .sidebar) .topbar p,
+html[data-theme=dark] body:has(.app .sidebar) .panel h2,
+html[data-theme=dark] body:has(.app .sidebar) .panel h3,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card strong,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card span,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details strong,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details span{color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row small,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-stat small{color:#a9beb0!important}
+html[data-theme=dark] body:has(.app .sidebar) input,
+html[data-theme=dark] body:has(.app .sidebar) select,
+html[data-theme=dark] body:has(.app .sidebar) textarea{background:#102017!important;color:#e8f1eb!important;border-color:#355642!important}
+html[data-theme=dark] body:has(.app .sidebar) table{color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) tbody tr{background:#14251b!important}
+html[data-theme=dark] body:has(.app .sidebar) tbody td{color:#e8f1eb!important;border-color:#294735!important}
+html[data-theme=dark] body:has(.app .sidebar) .main-content>footer{background:#102017!important;border-color:#294735!important;color:#a9beb0!important}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-theme-toggle{background:#203b2b!important;color:#f5e7b8!important;border-color:#8e7536!important}
