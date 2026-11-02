@@ -151,7 +151,7 @@ function setReportRemarks(score) {
     }
 }
 
-async async function loadStudentResult() {
+async function loadStudentResult() {
     if (!studentId) {
         throw new Error("Student ID is missing.");
     }
