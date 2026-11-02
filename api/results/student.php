@@ -227,6 +227,9 @@ try {
           AND subject_id IN (
               SELECT cs.subject_id
               FROM {$mappingTable} cs
+              INNER JOIN subjects current_subject_record
+                  ON current_subject_record.id = cs.subject_id
+                 AND current_subject_record.is_active = 1
               WHERE cs.{$mappingClassColumn} = ?
           )"
     );
