@@ -99,3 +99,22 @@ html[dir=rtl] .attendance-table th,html[dir=rtl] .attendance-table td{text-align
 html[dir=rtl] .attendance-header,html[dir=rtl] .classes-topbar,html[dir=rtl] .students-topbar,html[dir=rtl] .settings-header{direction:rtl}
 @media(max-width:480px){.classes-topbar,.class-topbar,.students-topbar,.settings-header,.attendance-header,.print-results-header{top:64px!important;min-height:54px!important;padding:9px 12px!important}.markaz-management-shell{min-height:64px!important}}
 @media print{.markaz-language-tools,.markaz-theme-toggle{display:none!important}.classes-topbar,.class-topbar,.students-topbar,.settings-header,.attendance-header,.print-results-header{position:static!important}}
+
+
+/* Attendance comparison: stacked status bars with a present-rate overlay. */
+.dashboard-attendance-combo-chart{width:100%;min-width:0;margin:14px 0 18px;padding:12px 8px 8px;border:1px solid var(--line,#e1e9e3);border-radius:14px;background:var(--surface,#fff);overflow:hidden}
+.dashboard-attendance-combo-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.dashboard-attendance-combo-chart .combo-grid{stroke:var(--line,#e1e9e3);stroke-dasharray:3 4;stroke-width:1}
+.dashboard-attendance-combo-chart .combo-axis-label{fill:var(--muted,#738078);font-size:10px}
+.dashboard-attendance-combo-chart .combo-class-label{fill:var(--ink,#173125);font-size:10px;font-weight:700}
+.dashboard-attendance-combo-chart .combo-rate-label{fill:var(--green-700,#17643a);font-size:9px;font-weight:800}
+.dashboard-attendance-combo-chart .combo-rate-line{fill:none;stroke:#c79a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dashboard-attendance-combo-chart .combo-rate-point{fill:#fff;stroke:#a98225;stroke-width:2.5}
+.dashboard-combo-legend{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;padding-top:5px;color:var(--muted,#738078);font-size:11px}
+.dashboard-combo-legend span{display:inline-flex;align-items:center;gap:6px}
+.dashboard-combo-legend i{width:9px;height:9px;display:inline-block;border-radius:3px}
+.dashboard-combo-legend .combo-legend-line{width:16px;height:3px;border-radius:2px;background:#c79a3a}
+.dashboard-combo-empty{padding:16px;text-align:center;color:var(--muted,#738078);font-size:12px}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-combo-chart{background:#14251b;border-color:#294735}
+html[data-theme=dark] body:has(.app .sidebar) .combo-class-label{fill:#e8f1eb}
+html[data-theme=dark] body:has(.app .sidebar) .combo-axis-label{fill:#a9b9ae}
