@@ -8,13 +8,13 @@ function suggestSubjectGroup(string $name): string
 
     $groups = [
         'Core' => [
-            'quran', 'english', 'englishlanguage', 'mathematics', 'math', 'maths',
+            'quran', 'quranicstudies', 'english', 'englishlanguage', 'mathematics', 'math', 'maths',
         ],
         'Science' => [
             'biology', 'chemistry', 'physics', 'basicscience', 'computer',
             'computerstudies', 'ict', 'agric', 'agriculture', 'agriculturalscience',
             'civiceducation', 'civic', 'economics', 'foodandnutrition',
-            'foodnutrition', 'animalhusbandry', 'socialstudies', 'geography',
+            'foodnutrition', 'animalhusbandry',
         ],
         'Islamic Studies' => [
             'tawheed', 'fiqh', 'hadith', 'hadeeth', 'islamicstudies',
@@ -25,7 +25,7 @@ function suggestSubjectGroup(string $name): string
         ],
         'Humanities' => [
             'history', 'government', 'literature', 'literatureinenglish',
-            'socialscience',
+            'socialscience', 'socialstudies', 'geography',
         ],
         'Vocational' => [
             'businessstudies', 'commerce', 'accounting', 'bookkeeping',
