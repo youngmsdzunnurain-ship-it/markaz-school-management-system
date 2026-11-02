@@ -12,7 +12,7 @@ WHERE code IS NULL OR TRIM(code) = '';
 UPDATE subjects
 SET subject_group = CASE
     WHEN LOWER(REPLACE(REPLACE(REPLACE(TRIM(name), ' ', ''), '-', ''), '_', '')) IN
-        ('quran', 'english', 'englishlanguage', 'mathematics', 'math', 'maths')
+        ('quran', 'quranicstudies', 'english', 'englishlanguage', 'mathematics', 'math', 'maths')
         THEN 'Core'
     WHEN LOWER(REPLACE(REPLACE(REPLACE(TRIM(name), ' ', ''), '-', ''), '_', '')) IN
         ('biology', 'chemistry', 'physics', 'basicscience', 'computer',
