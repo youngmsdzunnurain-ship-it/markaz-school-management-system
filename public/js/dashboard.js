@@ -561,6 +561,48 @@ function dashboardRenderClassPie(targetId, classes) {
     target.innerHTML='<div class="dashboard-pie-summary"><div class="dashboard-pie-visual" role="img" aria-label="'+totalCompleted+' of '+totalExpected+' complete entries across '+classes.length+' classes" style="background:'+gradient+'"><div><strong>'+(totalExpected?Math.round(totalCompleted/totalExpected*100):0)+'%</strong><span>Complete</span></div></div><div class="dashboard-pie-totals"><strong>'+classes.length+'</strong><span>Active classes</span><small>'+totalCompleted+' / '+totalExpected+' entries</small></div></div><div class="dashboard-class-pie-legend">'+legend+'</div>';
 }
 
+function renderDashboardAttendanceComboChart(target, rows) {
+    if (!target) return;
+    if (!rows.length) {
+        target.innerHTML = '<p class="dashboard-combo-empty">No class attendance data for this category today.</p>';
+        return;
+    }
+    const width=720,height=236,left=38,right=24,top=22,bottom=58;
+    const plotWidth=width-left-right,plotHeight=height-top-bottom,slot=plotWidth/rows.length;
+    const statuses=[
+        {key:"present_count",label:"Present",color:"#218653"},
+        {key:"late_count",label:"Late",color:"#d3a12c"},
+        {key:"excused_count",label:"Excused",color:"#8292a2"},
+        {key:"absent_count",label:"Absent",color:"#cf5555"}
+    ];
+    const totals=rows.map(row=>statuses.reduce((sum,item)=>sum+Math.max(0,Number(row[item.key])||0),0));
+    const maxTotal=Math.max(1,...totals),barWidth=Math.min(48,Math.max(12,slot*.48));
+    const escape=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+    const points=[];let marks="";
+    rows.forEach((row,index)=>{
+        const x=left+slot*index+(slot-barWidth)/2;let y=top+plotHeight;
+        statuses.forEach(status=>{
+            const value=Math.max(0,Number(row[status.key])||0),h=value/maxTotal*plotHeight;y-=h;
+            if(h>0)marks+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barWidth.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+status.color+'"><title>'+escape(status.label)+': '+value+'</title></rect>';
+        });
+        const marked=Math.max(0,Number(row.marked_records)||totals[index]);
+        const rate=marked?Math.max(0,Math.min(100,(Number(row.present_count)||0)/marked*100)):0;
+        const px=x+barWidth/2,py=top+(100-rate)/100*plotHeight;
+        points.push(px.toFixed(1)+","+py.toFixed(1));
+        marks+='<text x="'+px.toFixed(1)+'" y="'+(height-35)+'" text-anchor="middle" class="combo-class-label">'+escape(String(row.class_name||"Class").slice(0,12))+'</text>';
+        marks+='<text x="'+px.toFixed(1)+'" y="'+(height-19)+'" text-anchor="middle" class="combo-rate-label">'+rate.toFixed(0)+'%</text>';
+    });
+    const grid=[0,.25,.5,.75,1].map(step=>{
+        const y=top+plotHeight*step;
+        return '<line x1="'+left+'" y1="'+y+'" x2="'+(width-right)+'" y2="'+y+'" class="combo-grid"/><text x="'+(left-8)+'" y="'+(y+4)+'" text-anchor="end" class="combo-axis-label">'+Math.round(maxTotal*(1-step))+'</text>';
+    }).join("");
+    target.innerHTML='<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Stacked attendance counts by class and present rate line">'+grid+marks+
+        '<polyline points="'+points.join(" ")+'" class="combo-rate-line"/>'+
+        points.map(point=>{const p=point.split(",");return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" class="combo-rate-point"/>';}).join("")+
+        '<text x="'+(width-right)+'" y="13" text-anchor="end" class="combo-axis-label">Present rate (%)</text></svg>'+
+        '<div class="dashboard-combo-legend">'+statuses.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.label+'</span>').join("")+
+        '<span><i class="combo-legend-line"></i>Present rate</span></div>';
+}
 async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
     if (!panel) return;
@@ -687,6 +729,9 @@ async function loadDashboardAttendance() {
                     categoryValues.map(item => item.label + " " + item.value).join(", ")
                 );
             }
+
+            const categoryChart = document.getElementById(categoryPrefix + "AttendanceChart");
+            renderDashboardAttendanceComboChart(categoryChart, rows);
 
             const categoryLegend = document.getElementById(categoryPrefix + "AttendanceLegend");
             if (categoryLegend) {
