@@ -21,7 +21,8 @@ checkFix(
     'Student result loader must be async so its await statements do not break the entire script.'
 );
 checkFix(
-    str_contains($studentHtml, 'id="saveAndLeaveResultButton"'),
+    str_contains($studentHtml, 'id="saveAndLeaveResultButton"') &&
+    strpos($studentHtml, 'id="unsavedChangesModal"') < strpos($studentHtml, 'student-result.js?v=20261102-edit-fix1'),
     'Unsaved changes dialog must offer a working Save and Leave action.'
 );
 checkFix(
@@ -46,7 +47,7 @@ checkFix(
     'Shared management shell must use dashboard-style menu and authenticated avatar.'
 );
 checkFix(
-    str_contains($shellCss, 'position: fixed') &&
+    str_contains($shellCss, 'position:fixed') &&
     str_contains($shellCss, 'markaz-management-shell-active'),
     'Shared management shell must remain sticky and reserve sidebar space.'
 );
