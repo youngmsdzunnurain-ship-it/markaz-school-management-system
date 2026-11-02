@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 requireResultStaff();
 
@@ -80,6 +81,10 @@ try {
         ]);
 
         exit;
+    }
+
+    if ($classType === 'conventional') {
+        ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
     }
 
     $periodStmt = $pdo->query(
@@ -195,13 +200,19 @@ try {
         WHERE st.{$studentClassColumn} = ?
           AND r.class_type = ?
           AND r.class_id = ?
-          AND r.academic_period_id = ?";
+          AND r.academic_period_id = ?
+          AND r.subject_id IN (
+              SELECT mapped_subject.subject_id
+              FROM {$mappingTable} mapped_subject
+              WHERE mapped_subject.{$mappingClassColumn} = ?
+          )";
 
     $resultParams = [
         $classId,
         $classType,
         $classId,
-        $period['id']
+        $period['id'],
+        $classId
     ];
 
     if ($isTeacher) {

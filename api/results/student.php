@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 requireResultStaff();
 
@@ -123,6 +124,10 @@ try {
                 : 'Student is not assigned to a conventional class.'
         ]);
         exit;
+    }
+
+    if ($classType === 'conventional') {
+        ensureSeniorSecondaryCurriculum($pdo, $classId);
     }
 
     if ($requestedClassId !== null
@@ -391,6 +396,9 @@ try {
            AND EXISTS (
                SELECT 1
                FROM {$mappingTable} current_subject
+               INNER JOIN subjects active_subject
+                   ON active_subject.id = current_subject.subject_id
+                  AND active_subject.is_active = 1
                WHERE current_subject.{$mappingClassColumn} = ?
                  AND current_subject.subject_id = r.subject_id
            )

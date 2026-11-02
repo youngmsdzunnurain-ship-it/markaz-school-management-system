@@ -28,10 +28,10 @@ async function init() {
     }
 
     await loadClass();
-    await Promise.all([
-        loadAssignedSubjects(),
-        loadAvailableSubjects()
-    ]);
+    // Load assigned subjects first: this endpoint synchronizes the SS curriculum.
+    // The available list must run afterwards so it cannot race that synchronization.
+    await loadAssignedSubjects();
+    await loadAvailableSubjects();
 
     renderAll();
 }
@@ -108,7 +108,7 @@ async function loadAssignedSubjects() {
 async function loadAvailableSubjects() {
     try {
         const response = await fetch(
-            "../api/class-subjects/available.php",
+            `../api/class-subjects/available.php?class_id=${encodeURIComponent(classId)}`,
             {
                 credentials: "same-origin"
             }

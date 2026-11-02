@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -23,7 +24,10 @@ try {
         exit;
     }
 
-    $stmt = db()->prepare(
+    $pdo = db();
+    ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
+
+    $stmt = $pdo->prepare(
         'SELECT
             cs.id,
             cs.class_id,
