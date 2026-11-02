@@ -67,7 +67,7 @@ function ensureSeniorSecondaryCurriculum(PDO $pdo, int $classId): void
              VALUES (?, 'Senior Secondary', 20.00, 20.00, 60.00, 1)"
         );
         $activateSubject = $pdo->prepare(
-            "UPDATE subjects SET category = 'Senior Secondary', is_active = 1 WHERE id = ?"
+            "UPDATE subjects SET name = ?, category = 'Senior Secondary', is_active = 1 WHERE id = ?"
         );
 
         $subjectIds = [];
@@ -79,7 +79,7 @@ function ensureSeniorSecondaryCurriculum(PDO $pdo, int $classId): void
                 $subjectId = (int) $pdo->lastInsertId();
                 $existingSubjectIdsByKey[$key] = $subjectId;
             } else {
-                $activateSubject->execute([$subjectId]);
+                $activateSubject->execute([$name, $subjectId]);
             }
             $subjectIds[] = (int) $subjectId;
         }
