@@ -29,10 +29,13 @@ $pages = [
     'public/settings.html',
     'public/login.html',
     'public/print-results.html',
+    'public/student-result.html',
+    'public/class.html',
+    'public/class-subjects/index.html',
 ];
 foreach ($pages as $page) {
     $html = $read($page);
-    $relative = $page === 'public/subjects/index.html' ? '../' : './';
+    $relative = in_array($page, ['public/subjects/index.html', 'public/class-subjects/index.html'], true) ? '../' : './';
     $assert(str_contains($html, $relative . 'js/markaz-i18n.js'), "{$page}: language script missing");
     $assert(str_contains($html, $relative . 'css/markaz-preferences.css'), "{$page}: preference stylesheet missing");
 }
@@ -50,9 +53,13 @@ $assert(str_contains($shell, 'position') || str_contains($shell, 'markaz-managem
 $assert(str_contains($preferences, '.markaz-management-shell{position:fixed'), 'Persistent shell header must be fixed');
 $assert(str_contains($preferences, '.attendance-header'), 'Attendance header sticky override missing');
 $assert(str_contains($preferences, 'top:68px!important'), 'Page heading must sit below the fixed navigation');
+$assert(str_contains($preferences, 'background:rgba(255,255,255,.94)!important'), 'Old green page hero headers must be neutralized');
+$assert(str_contains($preferences, 'position:sticky!important;top:0!important'), 'Dashboard topbar must remain sticky');
+$assert(str_contains($preferences, 'content:none!important'), 'Old green header decorations must be removed');
 $assert(str_contains($i18n, 'document.documentElement.dir=lang==="ar"?"rtl":"ltr"'), 'Arabic RTL direction is missing');
 $assert(str_contains($i18n, 'data-no-translate'), 'Database values must be protected from translation');
 $assert(str_contains($dashboardJs, 'renderDashboardAttendanceComboChart'), 'Attendance combo chart renderer missing');
+$assert(str_contains($dashboardJs, 'data-no-translate'), 'Database-derived chart labels must be protected');
 $assert(str_contains($dashboard, 'dashboardConventionalAttendanceChart'), 'Conventional attendance chart container missing');
 $assert(str_contains($dashboard, 'dashboardArabicAttendanceChart'), 'Arabic attendance chart container missing');
 
