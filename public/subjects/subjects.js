@@ -21,6 +21,7 @@ const subjectId = document.getElementById("subjectId");
 const subjectName = document.getElementById("subjectName");
 const subjectCode = document.getElementById("subjectCode");
 const subjectCategory = document.getElementById("subjectCategory");
+const subjectGroup = document.getElementById("subjectGroup");
 const subjectCa1 = document.getElementById("subjectCa1");
 const subjectCa2 = document.getElementById("subjectCa2");
 const subjectExam = document.getElementById("subjectExam");
@@ -138,7 +139,8 @@ function getFilteredSubjects() {
             String(subject.code || "")
                 .toLowerCase()
                 .includes(searchTerm) ||
-            String(subject.category || "")
+            String(subject.category || "") + " " +
+            String(subject.subject_group || "")
                 .toLowerCase()
                 .includes(searchTerm);
 
@@ -196,6 +198,9 @@ function renderSubjects() {
             const category = subject.category
                 ? escapeHtml(subject.category)
                 : "—";
+            const group = subject.subject_group
+                ? escapeHtml(subject.subject_group)
+                : "Other";
 
             return `
                 <tr>
@@ -215,6 +220,12 @@ function renderSubjects() {
                     <td>
                         <span class="category-text">
                             ${category}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="group-text">
+                            ${group}
                         </span>
                     </td>
 
@@ -290,6 +301,7 @@ function formatNumber(value) {
 
 function openAddSubjectModal() {
     subjectForm.reset();
+    subjectGroup.value = "Other";
 
     subjectId.value = "";
     subjectCa1.value = "20";
@@ -311,6 +323,7 @@ function openEditSubjectModal(subject) {
     subjectName.value = subject.name || "";
     subjectCode.value = subject.code || "";
     subjectCategory.value = subject.category || "";
+    subjectGroup.value = subject.subject_group || "Other";
 
     subjectCa1.value = subject.max_ca1 ?? 20;
     subjectCa2.value = subject.max_ca2 ?? 20;
@@ -344,6 +357,7 @@ async function saveSubject(event) {
     const name = subjectName.value.trim();
     const code = subjectCode.value.trim();
     const category = subjectCategory.value.trim();
+    const group = subjectGroup.value.trim();
 
     const maxCa1 = Number(subjectCa1.value);
     const maxCa2 = Number(subjectCa2.value);
@@ -384,6 +398,7 @@ async function saveSubject(event) {
         name,
         code: code || null,
         category: category || null,
+        subject_group: group || "Other",
         max_ca1: maxCa1,
         max_ca2: maxCa2,
         max_exam: maxExam
