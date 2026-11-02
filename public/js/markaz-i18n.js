@@ -17,6 +17,8 @@ let originalTitle="";
 let lang=localStorage.getItem(storeKey)==="ar"?"ar":"en";
 const original=new WeakMap();
 const originalAttributes=new WeakMap();
+const initialTitle=document.title;
+const originalAttributes=new WeakMap();
 const ignored=new Set(["SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION"]);
 function translateText(node){
  const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate],tbody,[contenteditable=\"true\"],.student-name,.student-full-name,.admin-name,.profile-name,.database-value,[data-user-content]"))return;
@@ -51,7 +53,7 @@ function controls(){
  const wrap=document.createElement("div");wrap.className="markaz-language-tools";wrap.setAttribute("aria-label","Language settings");
  const select=document.createElement("select");select.setAttribute("aria-label","Language");select.setAttribute("data-markaz-language","");
  select.innerHTML='<option value="en">English</option><option value="ar">العربية</option>';select.value=lang;select.addEventListener("change",()=>setLanguage(select.value));wrap.append(select);
- const anchor=document.querySelector(".markaz-management-shell,.topbar,.attendance-header,.students-topbar,.classes-topbar,.class-topbar,.settings-header,.fees-placeholder-top,.login-heading");
+ const anchor=document.querySelector(".markaz-management-shell,.topbar,.attendance-header,.students-topbar,.classes-topbar,.class-topbar,.settings-header,.fees-placeholder-top,.print-results-header,.login-heading");
  if(anchor){anchor.append(wrap);}else{wrap.classList.add("markaz-language-tools-floating");document.body.append(wrap);}
 }
 window.markazI18n={get language(){return lang;},t(key){return dictionaries[lang][key]||key;},esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));},setLanguage,apply};
