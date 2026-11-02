@@ -68,16 +68,40 @@ function ensureSeniorSecondaryCurriculum(PDO $pdo, int $classId): void
             $subjectIds[] = (int) $subjectId;
         }
 
-        $deleteMappings = $pdo->prepare('DELETE FROM class_subjects WHERE class_id = ?');
-        $deleteMappings->execute([$classId]);
+        $currentStmt = $pdo->prepare(
+            'SELECT subject_id, sort_order
+             FROM class_subjects
+             WHERE class_id = ?
+             ORDER BY sort_order ASC, subject_id ASC'
+        );
+        $currentStmt->execute([$classId]);
+        $currentMappings = $currentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $isAlreadyCanonical = count($currentMappings) === count($subjectIds);
+        if ($isAlreadyCanonical) {
+            foreach ($subjectIds as $index => $subjectId) {
+                if ((int) $currentMappings[$index]['subject_id'] !== $subjectId
+                    || (int) $currentMappings[$index]['sort_order'] !== $index + 1) {
+                    $isAlreadyCanonical = false;
+                    break;
+                }
+            }
+        }
+
+        if (!$isAlreadyCanonical) {
+            $deleteMappings = $pdo->prepare('DELETE FROM class_subjects WHERE class_id = ?');
+            $deleteMappings->execute([$classId]);
+        }
 
         $insertMapping = $pdo->prepare(
             'INSERT INTO class_subjects (class_id, subject_id, is_required, sort_order)
              VALUES (?, ?, 1, ?)'
         );
 
-        foreach ($subjectIds as $index => $subjectId) {
-            $insertMapping->execute([$classId, $subjectId, $index + 1]);
+        if (!$isAlreadyCanonical) {
+            foreach ($subjectIds as $index => $subjectId) {
+                $insertMapping->execute([$classId, $subjectId, $index + 1]);
+            }
         }
 
         if ($ownsTransaction) {
