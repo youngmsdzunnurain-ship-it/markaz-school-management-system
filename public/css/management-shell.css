@@ -31,3 +31,8 @@ body.markaz-management-shell-active{padding-top:74px!important}
 .markaz-shell-sidebar nav a{display:flex;align-items:center;gap:13px;padding:13px 12px;border-radius:10px;color:rgba(255,255,255,.9);text-decoration:none;font-size:13px;font-weight:650}
 .markaz-shell-sidebar nav a:hover{background:rgba(255,255,255,.1)}
 @media(max-width:480px){body.markaz-management-shell-active{padding-top:68px!important}.markaz-management-shell{min-height:64px;padding:8px 10px;gap:9px}.markaz-shell-brand img{width:34px;height:34px}.markaz-shell-brand span{font-size:12px}.markaz-shell-profile{padding-right:8px}.markaz-shell-profile-copy,.markaz-shell-profile>i{display:none}}
+
+@media print {
+ .markaz-management-shell,.markaz-shell-sidebar,.markaz-shell-overlay {display:none!important}
+ body.markaz-management-shell-active {padding-top:0!important}
+}
