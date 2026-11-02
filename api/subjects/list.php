@@ -29,7 +29,34 @@ try {
             id ASC'
     );
 
-    $subjects = $stmt->fetchAll();
+    $rawSubjects = $stmt->fetchAll();
+    $subjects = [];
+    $seenSubjectKeys = [];
+
+    foreach ($rawSubjects as $subject) {
+        $subjectKey = strtolower((string) preg_replace('/[^a-z0-9]+/i', '', trim((string) $subject['name'])));
+        $aliases = [
+            'math' => 'mathematics',
+            'maths' => 'mathematics',
+            'englishlanguage' => 'english',
+            'quranicstudies' => 'quran',
+            'agriculture' => 'agric',
+            'agriculturalscience' => 'agric',
+            'computerstudies' => 'computer',
+            'ict' => 'computer',
+            'foodnutrition' => 'foodandnutrition',
+        ];
+        $subjectKey = $aliases[$subjectKey] ?? $subjectKey;
+
+        // Hide Animal Husbandry from this subject-entry library while retaining
+        // its database row and any historical score records.
+        if ($subjectKey === 'animalhusbandry' || isset($seenSubjectKeys[$subjectKey])) {
+            continue;
+        }
+
+        $seenSubjectKeys[$subjectKey] = true;
+        $subjects[] = $subject;
+    }
 
     foreach ($subjects as &$subject) {
         $subject['id'] = (int) $subject['id'];
