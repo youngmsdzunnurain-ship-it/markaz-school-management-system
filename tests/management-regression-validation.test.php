@@ -38,7 +38,7 @@ checkFix(
 );
 
 checkFix(
-    str_contains($subjectListApi, 'seenSubjectKeys') &&
+    str_contains($subjectListApi, 'subjectsByKey') &&
     str_contains($subjectListApi, 'animalhusbandry'),
     'Subject library must hide duplicate names and Animal Husbandry.'
 );
