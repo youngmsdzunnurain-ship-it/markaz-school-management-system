@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/subject-categories.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -16,6 +17,7 @@ try {
             name,
             code,
             category,
+            subject_group,
             max_ca1,
             max_ca2,
             max_exam,
@@ -82,6 +84,8 @@ try {
 
     foreach ($subjects as &$subject) {
         $subject['id'] = (int) $subject['id'];
+        if (trim((string) ($subject['code'] ?? '')) === '') $subject['code'] = 'SUB' . str_pad((string) $subject['id'], 4, '0', STR_PAD_LEFT);
+        if (trim((string) ($subject['subject_group'] ?? '')) === '') $subject['subject_group'] = suggestSubjectGroup((string) $subject['name']);
         $subject['max_ca1'] = (float) $subject['max_ca1'];
         $subject['max_ca2'] = (float) $subject['max_ca2'];
         $subject['max_exam'] = (float) $subject['max_exam'];
