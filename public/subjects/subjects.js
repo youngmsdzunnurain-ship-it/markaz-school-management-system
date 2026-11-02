@@ -28,6 +28,7 @@ const subjectExam = document.getElementById("subjectExam");
 const saveSubjectButton = document.getElementById("saveSubjectButton");
 
 let subjectRecords = [];
+let subjectGroupWasManuallyChanged = false;
 
 
 /* -----------------------------
@@ -54,6 +55,23 @@ function hideFormMessage() {
     subjectFormMessage.textContent = "";
     subjectFormMessage.hidden = true;
 }
+
+function suggestSubjectGroupForName(name) {
+    const key = String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const groups = {
+        Core: ["quran", "quranicstudies", "english", "englishlanguage", "mathematics", "math", "maths"],
+        Science: ["biology", "chemistry", "physics", "basicscience", "computer", "computerstudies", "ict", "agric", "agriculture", "agriculturalscience", "civiceducation", "civic", "economics", "foodandnutrition", "foodnutrition", "animalhusbandry"],
+        "Islamic Studies": ["tawheed", "fiqh", "hadith", "hadeeth", "islamicstudies", "islamicreligiousstudies", "sirah", "seerah"],
+        Languages: ["arabic", "french", "hausa", "yoruba", "igbo"],
+        Humanities: ["history", "government", "literature", "literatureinenglish", "socialscience", "socialstudies", "geography"],
+        Vocational: ["businessstudies", "commerce", "accounting", "bookkeeping", "homeeconomics", "technicaldrawing", "creativearts", "finearts"]
+    };
+    for (const [group, names] of Object.entries(groups)) {
+        if (names.includes(key)) return group;
+    }
+    return "Other";
+}
+
 
 
 /* -----------------------------
@@ -302,6 +320,7 @@ function formatNumber(value) {
 function openAddSubjectModal() {
     subjectForm.reset();
     subjectGroup.value = "Other";
+    subjectGroupWasManuallyChanged = false;
 
     subjectId.value = "";
     subjectCa1.value = "20";
@@ -323,7 +342,8 @@ function openEditSubjectModal(subject) {
     subjectName.value = subject.name || "";
     subjectCode.value = subject.code || "";
     subjectCategory.value = subject.category || "";
-    subjectGroup.value = subject.subject_group || "Other";
+    subjectGroup.value = subject.subject_group || suggestSubjectGroupForName(subject.name);
+    subjectGroupWasManuallyChanged = false;
 
     subjectCa1.value = subject.max_ca1 ?? 20;
     subjectCa2.value = subject.max_ca2 ?? 20;
@@ -530,6 +550,16 @@ subjectForm.addEventListener(
     "submit",
     saveSubject
 );
+
+subjectGroup.addEventListener("change", () => {
+    subjectGroupWasManuallyChanged = true;
+});
+
+subjectName.addEventListener("input", () => {
+    if (!subjectGroupWasManuallyChanged) {
+        subjectGroup.value = suggestSubjectGroupForName(subjectName.value);
+    }
+});
 
 subjectSearch.addEventListener(
     "input",
