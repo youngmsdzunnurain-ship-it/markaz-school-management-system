@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 const path=location.pathname;
-if(!/\/(students\.html|classes\.html|class\.html|subjects\/(index\.html)?|attendance\.html|school-fees\.html|settings\.html|student-result\.html|print-results\.html)$/.test(path)) return;
+if(!/\/(students\.html|classes\.html|class\.html|class-subjects\/(index\.html)?|subjects\/(index\.html)?|attendance\.html|school-fees\.html|settings\.html|student-result\.html|print-results\.html)$/.test(path)) return;
 if(document.querySelector(".markaz-management-shell")) return;
 const header=document.createElement("header");
 header.className="markaz-management-shell";
