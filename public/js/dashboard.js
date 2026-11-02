@@ -873,7 +873,13 @@ async function loadDashboardStats() {
                     card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
 
                     const heading = document.createElement("h3");
-                    heading.textContent = `${item.class_name} · ${item.class_type === "arabic" ? "Arabic" : "Conventional"}`;
+                    const className = document.createElement("span");
+                    className.dataset.noTranslate = "";
+                    className.textContent = String(item.class_name || "");
+                    const category = document.createElement("span");
+                    category.dataset.markazLabel = item.class_type === "arabic" ? "Arabic" : "Conventional";
+                    category.textContent = item.class_type === "arabic" ? "Arabic" : "Conventional";
+                    heading.append(className, document.createTextNode(" · "), category);
                     heading.style.marginTop = "0";
 
                     const students = document.createElement("p");
