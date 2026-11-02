@@ -20,12 +20,15 @@ $pages = [
     'public/settings.html',
     'public/login.html',
     'public/print-results.html',
+    'public/student-result.html',
+    'public/class.html',
+    'public/class-subjects/index.html',
 ];
 foreach ($pages as $page) {
     $html = file_get_contents($root . '/' . $page);
     $check($html !== false, "Missing page: {$page}");
     if ($html === false) continue;
-    $prefix = $page === 'public/subjects/index.html' ? '../' : './';
+    $prefix = in_array($page, ['public/subjects/index.html', 'public/class-subjects/index.html'], true) ? '../' : './';
     $check(str_contains($html, $prefix . 'js/markaz-i18n.js'), "{$page}: missing language script");
     $check(str_contains($html, $prefix . 'css/markaz-preferences.css'), "{$page}: missing preferences stylesheet");
 }
@@ -37,12 +40,16 @@ $check(!str_contains(file_get_contents($root . '/public/print-results.html') ?: 
 
 $preferences = file_get_contents($root . '/public/css/markaz-preferences.css') ?: '';
 $check(str_contains($preferences, 'top:68px!important'), 'Management page headings are not sticky below the shared bar');
+$check(str_contains($preferences, 'background:rgba(255,255,255,.94)!important'), 'Legacy green page headers have not been neutralized');
+$check(str_contains($preferences, 'content:none!important'), 'Legacy green header decorations have not been removed');
 $check(str_contains($preferences, 'position:sticky!important;top:0!important'), 'Dashboard topbar is not sticky');
 $check(str_contains($preferences, 'prefers-reduced-motion') || str_contains($preferences, 'prefers-reduced-transparency'), 'Accessibility media preferences are missing');
 $check(str_contains($preferences, '@media print'), 'Print-specific navigation suppression is missing');
 
 $shell = file_get_contents($root . '/public/js/management-shell.js') ?: '';
 $check(str_contains($shell, 'markaz-shell-sidebar'), 'Shared navigation drawer missing');
+$managementCss = file_get_contents($root . '/public/css/management-shell.css') ?: '';
+$check(str_contains($managementCss, 'position:fixed'), 'Shared top navigation is not fixed across management pages');
 $check(str_contains($shell, '<span>Dashboard</span>'), 'Navigation labels are not individually localizable');
 
 $i18n = file_get_contents($root . '/public/js/markaz-i18n.js') ?: '';
