@@ -589,7 +589,7 @@ function renderDashboardAttendanceComboChart(target, rows) {
         const rate=marked?Math.max(0,Math.min(100,(Number(row.present_count)||0)/marked*100)):0;
         const px=x+barWidth/2,py=top+(100-rate)/100*plotHeight;
         points.push(px.toFixed(1)+","+py.toFixed(1));
-        marks+='<text x="'+px.toFixed(1)+'" y="'+(height-35)+'" text-anchor="middle" class="combo-class-label">'+escape(String(row.class_name||"Class").slice(0,12))+'</text>';
+        marks+='<text x="'+px.toFixed(1)+'" y="'+(height-35)+'" text-anchor="middle" class="combo-class-label" data-no-translate>'+escape(String(row.class_name||"Class").slice(0,12))+'</text>';
         marks+='<text x="'+px.toFixed(1)+'" y="'+(height-19)+'" text-anchor="middle" class="combo-rate-label">'+rate.toFixed(0)+'%</text>';
     });
     const grid=[0,.25,.5,.75,1].map(step=>{
