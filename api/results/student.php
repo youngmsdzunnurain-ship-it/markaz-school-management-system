@@ -211,7 +211,7 @@ try {
      * STUDENT RESULTS
      */
     $resultStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             id,
             subject_id,
             ca1,
@@ -228,7 +228,7 @@ try {
               SELECT cs.subject_id
               FROM {$mappingTable} cs
               WHERE cs.{$mappingClassColumn} = ?
-          )'
+          )"
     );
 
     $resultStmt->execute([
