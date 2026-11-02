@@ -139,8 +139,8 @@ function getFilteredSubjects() {
             String(subject.code || "")
                 .toLowerCase()
                 .includes(searchTerm) ||
-            String(subject.category || "") + " " +
-            String(subject.subject_group || "")
+            (String(subject.category || "") + " " +
+                String(subject.subject_group || ""))
                 .toLowerCase()
                 .includes(searchTerm);
 
