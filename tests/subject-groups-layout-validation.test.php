@@ -9,6 +9,7 @@ function subjectLayoutCheck(bool $ok, string $message): void {
 }
 
 $sharedHeading = file_get_contents($root . '/public/css/standard-page-heading.css');
+$dashboardCss = file_get_contents($root . '/public/css/dashboard.css');
 $shellCss = file_get_contents($root . '/public/css/management-shell.css');
 $subjectCss = file_get_contents($root . '/public/subjects/subjects.css');
 $subjectJs = file_get_contents($root . '/public/subjects/subjects.js');
@@ -26,6 +27,12 @@ subjectLayoutCheck(
         && !str_contains($sharedHeading, 'position: sticky;'),
     'Legacy management title bars must not remain sticky beneath the shared avatar header.'
 );
+subjectLayoutCheck(
+    !str_contains($dashboardCss, 'position:sticky !important;\n    top:0 !important;\n    z-index:1100 !important;')
+        && !str_contains($dashboardCss, 'position: sticky;\n    position: -webkit-sticky;\n    top: 0;\n    z-index: 1100;'),
+    'Dashboard stylesheet must not re-pin the old page title bars.'
+);
+
 subjectLayoutCheck(
     str_contains($shellCss, 'rgba(9,43,29,.76)')
         && str_contains($shellCss, 'backdrop-filter:blur')
