@@ -396,6 +396,9 @@ try {
            AND EXISTS (
                SELECT 1
                FROM {$mappingTable} current_subject
+               INNER JOIN subjects active_subject
+                   ON active_subject.id = current_subject.subject_id
+                  AND active_subject.is_active = 1
                WHERE current_subject.{$mappingClassColumn} = ?
                  AND current_subject.subject_id = r.subject_id
            )
