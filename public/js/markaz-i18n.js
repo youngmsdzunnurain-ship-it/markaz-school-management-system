@@ -55,6 +55,7 @@ function apply(root=document){
    if(translated)el.setAttribute(attr,translated);
   });
  });
+ document.querySelectorAll("[data-markaz-label]").forEach(el=>{const key=el.getAttribute("data-markaz-label");const labels={Arabic:"العربي",Conventional:"النظامي"};el.textContent=lang==="ar"?(labels[key]||key):key;});
  document.querySelectorAll("[data-markaz-language-label]").forEach(el=>el.textContent=lang==="ar"?"العربية":"English");
 }
 function setLanguage(next){lang=next==="ar"?"ar":"en";try{localStorage.setItem(storeKey,lang);}catch(_){}apply();document.dispatchEvent(new CustomEvent("markaz:languagechange",{detail:{language:lang}}));}
