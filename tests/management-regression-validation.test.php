@@ -46,7 +46,7 @@ checkFix(
     'Shared management shell must use dashboard-style menu and authenticated avatar.'
 );
 checkFix(
-    str_contains($shellCss, 'position: sticky') &&
+    str_contains($shellCss, 'position: fixed') &&
     str_contains($shellCss, 'markaz-management-shell-active'),
     'Shared management shell must remain sticky and reserve sidebar space.'
 );
