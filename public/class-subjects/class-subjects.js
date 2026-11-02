@@ -108,7 +108,7 @@ async function loadAssignedSubjects() {
 async function loadAvailableSubjects() {
     try {
         const response = await fetch(
-            "../api/class-subjects/available.php",
+            `../api/class-subjects/available.php?class_id=${encodeURIComponent(classId)}`,
             {
                 credentials: "same-origin"
             }
