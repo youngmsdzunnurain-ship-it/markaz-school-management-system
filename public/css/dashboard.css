@@ -5594,29 +5594,7 @@ button:focus-visible {
 @media(max-width:600px) {.dashboard-class-pie-empty {flex-direction:column;text-align:center;}}
 
 
-/* Keep the page-level navigation headers pinned across MARKAZ management views */
-.students-topbar,
-.classes-topbar,
-.class-topbar,
-.attendance-header,
-.settings-header {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 1100;
-    background: rgba(250, 252, 250, .86);
-    -webkit-backdrop-filter: saturate(165%) blur(16px);
-    backdrop-filter: saturate(165%) blur(16px);
-    border-bottom: 1px solid rgba(201, 169, 75, .32);
-    box-shadow: 0 7px 22px rgba(16, 52, 34, .055);
-}
-@media (prefers-reduced-transparency: reduce) {
-    .students-topbar,.classes-topbar,.class-topbar,.attendance-header,.settings-header {
-        background: #fafcfa;
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
-    }
-}
+/* Legacy page-title bars are normal document flow; the shared avatar shell is fixed. */
 
 
 /* Full pie charts: explicitly remove the legacy white centre masks. */
@@ -6398,14 +6376,7 @@ body {
     backdrop-filter:blur(22px) saturate(155%) !important;
     box-shadow:0 8px 25px rgba(18,61,42,.055) !important;
 }
-.classes-topbar,.students-topbar,.class-topbar,.attendance-header,
-.settings-header,.fees-placeholder-top,.print-results-header {
-    position:sticky !important;
-    top:0 !important;
-    z-index:1100 !important;
-    -webkit-backdrop-filter:blur(20px) saturate(150%) !important;
-    backdrop-filter:blur(20px) saturate(150%) !important;
-}
+/* The dashboard .topbar remains sticky; page-specific title bars do not. */
 .classes-topbar,.students-topbar,.class-topbar {
     background:rgba(247,250,247,.68) !important;
     border-bottom:1px solid rgba(23,100,58,.20) !important;
