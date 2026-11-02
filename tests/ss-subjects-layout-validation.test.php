@@ -11,6 +11,7 @@ function ssSubjectsCheck(bool $condition, string $message): void
 
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261102_ss_subjects.sql');
 $page = file_get_contents(__DIR__ . '/../public/subjects/index.html');
+$studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 $css = file_get_contents(__DIR__ . '/../public/subjects/subjects.css');
 
 $expected = [
@@ -37,6 +38,12 @@ ssSubjectsCheck(
     str_contains($migration, "WHEN 'quran' THEN 1")
         && str_contains($migration, "WHEN 'economics' THEN 11"),
     'Quran is first and Economics is eleventh in SS result order'
+);
+ssSubjectsCheck(
+    str_contains($studentApi, 'current_subject.subject_id = r.subject_id')
+        && str_contains($studentApi, 'SELECT cs.subject_id')
+        && str_contains($studentApi, 'WHERE student_id = ?'),
+    'student and class averages include only subjects currently assigned to the class'
 );
 ssSubjectsCheck(
     str_contains($page, 'subjects.css?v=20261102-fullwidth1')
