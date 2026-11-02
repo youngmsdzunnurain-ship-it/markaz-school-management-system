@@ -756,7 +756,7 @@ async function loadDashboardAttendance() {
                 const width = Math.max(0, Math.min(100, marked / maxMarked * 100));
 
                 return '<a class="dashboard-attendance-class-row" href="./attendance.html?' +
-                    params.toString() + '"><span>' + name + '</span><strong>' + present +
+                    params.toString() + '"><span data-no-translate>' + name + '</span><strong>' + present +
                     ' present</strong><div class="dashboard-attendance-bar"><i style="width:' +
                     width + '%"></i></div><small>' + marked + ' marked · ' +
                     Number(item.absent_count || 0) + ' absent · ' +
