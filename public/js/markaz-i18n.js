@@ -13,7 +13,7 @@ let lang=localStorage.getItem(storeKey)==="ar"?"ar":"en";
 const original=new WeakMap();
 const ignored=new Set(["SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION"]);
 function translateText(node){
- const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate]"))return;
+ const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate],table,[contenteditable=\"true\"],.student-name,.student-full-name,.admin-name,.profile-name,.database-value,[data-user-content]"))return;
  if(!original.has(node))original.set(node,node.nodeValue);
  const raw=original.get(node), trimmed=raw.trim();if(!trimmed)return;
  const value=dictionaries[lang][trimmed];if(!value)return;
