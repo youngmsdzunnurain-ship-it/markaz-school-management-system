@@ -56,7 +56,7 @@ subjectLayoutCheck(
 subjectLayoutCheck(
     str_contains($subjectJs, 'subjectGroup')
         && str_contains($subjectJs, 'subject_group')
-        && str_contains($subjectJs, 'subject.group'),
+        && str_contains($subjectJs, 'subject.subject_group'),
     'Subject editor must load, render and save the separate subject group.'
 );
 subjectLayoutCheck(
