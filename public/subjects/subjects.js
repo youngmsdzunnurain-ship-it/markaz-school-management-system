@@ -63,7 +63,7 @@ function hideFormMessage() {
 async function loadSubjects() {
     subjectsTableBody.innerHTML = `
         <tr>
-            <td colspan="6" class="empty-state">
+            <td colspan="7" class="empty-state">
                 Loading subjects...
             </td>
         </tr>
@@ -88,7 +88,7 @@ async function loadSubjects() {
     } catch (error) {
         subjectsTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     ${escapeHtml(error.message)}
                 </td>
             </tr>
@@ -164,7 +164,7 @@ function renderSubjects() {
     if (!filteredSubjects.length) {
         subjectsTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     No subjects found.
                 </td>
             </tr>
