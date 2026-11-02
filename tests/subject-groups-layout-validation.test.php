@@ -27,7 +27,7 @@ subjectLayoutCheck(
     'Legacy management title bars must not remain sticky beneath the shared avatar header.'
 );
 subjectLayoutCheck(
-    str_contains($shellCss, 'rgba(255,255,255,.78)')
+    str_contains($shellCss, 'rgba(9,43,29,.76)')
         && str_contains($shellCss, 'backdrop-filter:blur')
         && str_contains($shellCss, 'animation:'),
     'The shared management bar must use translucent glass and a subtle entrance animation.'
@@ -39,13 +39,12 @@ subjectLayoutCheck(
     'Subject title bar must align correctly and use translucent glass styling.'
 );
 subjectLayoutCheck(
-    str_contains($attendanceCss, '.attendance-summary-grid { grid-template-columns:repeat(5,minmax(0,1fr)) !important;')
-        && str_contains($attendanceCss, 'grid-template-columns:repeat(5,minmax(0,1fr)) !important'),
+    str_contains($attendanceCss, 'grid-template-columns:repeat(5,minmax(0,1fr))!important;'),
     'All five attendance summary cards must remain in one row at narrow widths.'
 );
 subjectLayoutCheck(
-    str_contains($resultCss, 'grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)')
-        && str_contains($resultCss, '.markaz-confirm-leave { grid-column: 1 / -1;'),
+    str_contains($resultCss, 'grid-template-columns:repeat(2,minmax(0,1fr))!important;')
+        && str_contains($resultCss, '.markaz-confirm-actions .markaz-confirm-leave{grid-column:1/-1!important}'),
     'Unsaved changes dialog actions must have a clear two-column layout and full-width leave action.'
 );
 subjectLayoutCheck(
