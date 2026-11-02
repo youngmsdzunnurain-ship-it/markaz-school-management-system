@@ -64,7 +64,7 @@ checkFix(
 );
 
 $managementPages = [
-    'attendance.html', 'class.html', 'classes.html', 'print-results.html',
+    'attendance.html', 'class.html', 'classes.html', 'class-subjects/index.html', 'print-results.html',
     'school-fees.html', 'settings.html', 'student-result.html', 'students.html',
     'subjects/index.html'
 ];
