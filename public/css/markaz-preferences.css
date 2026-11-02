@@ -155,3 +155,34 @@ html[data-theme=dark] body:has(.app .sidebar) tbody tr{background:#14251b!import
 html[data-theme=dark] body:has(.app .sidebar) tbody td{color:#e8f1eb!important;border-color:#294735!important}
 html[data-theme=dark] body:has(.app .sidebar) .main-content>footer{background:#102017!important;border-color:#294735!important;color:#a9beb0!important}
 html[data-theme=dark] body:has(.app .sidebar) .markaz-theme-toggle{background:#203b2b!important;color:#f5e7b8!important;border-color:#8e7536!important}
+
+
+/* Complete the dashboard dark palette without affecting any other route. */
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-panel,
+html[data-theme=dark] body:has(.app .sidebar) .panel,
+html[data-theme=dark] body:has(.app .sidebar) .panel-header,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-exam-charts,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-grid,
+html[data-theme=dark] body:has(.app .sidebar) .quick-actions button,
+html[data-theme=dark] body:has(.app .sidebar) .admin-profile-display,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-class-pie-empty{background:#14251b!important;color:#e8f1eb!important;border-color:#294735!important}
+html[data-theme=dark] body:has(.app .sidebar) .main-content>footer{background:#101e16;color:#a9b9ae;border-color:#294735}
+html[data-theme=dark] body:has(.app .sidebar) .sidebar{background:#09170f}
+html[data-theme=dark] body:has(.app .sidebar) .topbar{background:rgba(13,31,21,.94);border-color:#294735}
+html[data-theme=dark] body:has(.app .sidebar) .topbar h1,
+html[data-theme=dark] body:has(.app .sidebar) .topbar p,
+html[data-theme=dark] body:has(.app .sidebar) .panel-header h2,
+html[data-theme=dark] body:has(.app .sidebar) .panel-header p,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card strong,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card span,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-chart-card h3,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-chart-card p{color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) input,
+html[data-theme=dark] body:has(.app .sidebar) select,
+html[data-theme=dark] body:has(.app .sidebar) textarea{background:#0f1e15!important;color:#e8f1eb!important;border-color:#365542!important}
+html[data-theme=dark] body:has(.app .sidebar) .admin-details>div,
+html[data-theme=dark] body:has(.app .sidebar) .admin-detail-row{border-color:#294735}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row{background:#102017;color:#e8f1eb;border-color:#294735}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row strong{color:#a9d8b8}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-language-tools select{background:#102017;color:#e8f1eb;border-color:#365542}
