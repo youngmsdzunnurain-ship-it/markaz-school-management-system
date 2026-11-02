@@ -55,7 +55,7 @@ $check(str_contains($shell, '<span>Dashboard</span>'), 'Navigation labels are no
 $i18n = file_get_contents($root . '/public/js/markaz-i18n.js') ?: '';
 $check(str_contains($i18n, 'markazI18n'), 'Translation API missing');
 $check(str_contains($i18n, 'originalAttributes'), 'Accessible attribute translation is missing');
-$check(str_contains($i18n, 'td,[contenteditable'), 'Database-backed table bodies are not protected from automatic translation');
+$check(str_contains($i18n, 'tbody,[contenteditable'), 'Database-backed table bodies are not protected from automatic translation');
 
 if ($failures) {
     fwrite(STDERR, "MARKAZ UI contract: FAILED\n- " . implode("\n- ", $failures) . "\n");
