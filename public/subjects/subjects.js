@@ -21,12 +21,14 @@ const subjectId = document.getElementById("subjectId");
 const subjectName = document.getElementById("subjectName");
 const subjectCode = document.getElementById("subjectCode");
 const subjectCategory = document.getElementById("subjectCategory");
+const subjectGroup = document.getElementById("subjectGroup");
 const subjectCa1 = document.getElementById("subjectCa1");
 const subjectCa2 = document.getElementById("subjectCa2");
 const subjectExam = document.getElementById("subjectExam");
 const saveSubjectButton = document.getElementById("saveSubjectButton");
 
 let subjectRecords = [];
+let subjectGroupWasManuallyChanged = false;
 
 
 /* -----------------------------
@@ -54,6 +56,23 @@ function hideFormMessage() {
     subjectFormMessage.hidden = true;
 }
 
+function suggestSubjectGroupForName(name) {
+    const key = String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const groups = {
+        Core: ["quran", "quranicstudies", "english", "englishlanguage", "mathematics", "math", "maths"],
+        Science: ["biology", "chemistry", "physics", "basicscience", "computer", "computerstudies", "ict", "agric", "agriculture", "agriculturalscience", "civiceducation", "civic", "economics", "foodandnutrition", "foodnutrition", "animalhusbandry"],
+        "Islamic Studies": ["tawheed", "fiqh", "hadith", "hadeeth", "islamicstudies", "islamicreligiousstudies", "sirah", "seerah"],
+        Languages: ["arabic", "french", "hausa", "yoruba", "igbo"],
+        Humanities: ["history", "government", "literature", "literatureinenglish", "socialscience", "socialstudies", "geography"],
+        Vocational: ["businessstudies", "commerce", "accounting", "bookkeeping", "homeeconomics", "technicaldrawing", "creativearts", "finearts"]
+    };
+    for (const [group, names] of Object.entries(groups)) {
+        if (names.includes(key)) return group;
+    }
+    return "Other";
+}
+
+
 
 /* -----------------------------
    Load subjects
@@ -62,7 +81,7 @@ function hideFormMessage() {
 async function loadSubjects() {
     subjectsTableBody.innerHTML = `
         <tr>
-            <td colspan="6" class="empty-state">
+            <td colspan="7" class="empty-state">
                 Loading subjects...
             </td>
         </tr>
@@ -87,7 +106,7 @@ async function loadSubjects() {
     } catch (error) {
         subjectsTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     ${escapeHtml(error.message)}
                 </td>
             </tr>
@@ -138,7 +157,8 @@ function getFilteredSubjects() {
             String(subject.code || "")
                 .toLowerCase()
                 .includes(searchTerm) ||
-            String(subject.category || "")
+            (String(subject.category || "") + " " +
+                String(subject.subject_group || ""))
                 .toLowerCase()
                 .includes(searchTerm);
 
@@ -162,7 +182,7 @@ function renderSubjects() {
     if (!filteredSubjects.length) {
         subjectsTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     No subjects found.
                 </td>
             </tr>
@@ -196,6 +216,9 @@ function renderSubjects() {
             const category = subject.category
                 ? escapeHtml(subject.category)
                 : "—";
+            const group = subject.subject_group
+                ? escapeHtml(subject.subject_group)
+                : "Other";
 
             return `
                 <tr>
@@ -215,6 +238,12 @@ function renderSubjects() {
                     <td>
                         <span class="category-text">
                             ${category}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="group-text">
+                            ${group}
                         </span>
                     </td>
 
@@ -290,6 +319,8 @@ function formatNumber(value) {
 
 function openAddSubjectModal() {
     subjectForm.reset();
+    subjectGroup.value = "Other";
+    subjectGroupWasManuallyChanged = false;
 
     subjectId.value = "";
     subjectCa1.value = "20";
@@ -311,6 +342,8 @@ function openEditSubjectModal(subject) {
     subjectName.value = subject.name || "";
     subjectCode.value = subject.code || "";
     subjectCategory.value = subject.category || "";
+    subjectGroup.value = subject.subject_group || suggestSubjectGroupForName(subject.name);
+    subjectGroupWasManuallyChanged = false;
 
     subjectCa1.value = subject.max_ca1 ?? 20;
     subjectCa2.value = subject.max_ca2 ?? 20;
@@ -344,6 +377,7 @@ async function saveSubject(event) {
     const name = subjectName.value.trim();
     const code = subjectCode.value.trim();
     const category = subjectCategory.value.trim();
+    const group = subjectGroup.value.trim();
 
     const maxCa1 = Number(subjectCa1.value);
     const maxCa2 = Number(subjectCa2.value);
@@ -384,6 +418,7 @@ async function saveSubject(event) {
         name,
         code: code || null,
         category: category || null,
+        subject_group: group || "Other",
         max_ca1: maxCa1,
         max_ca2: maxCa2,
         max_exam: maxExam
@@ -515,6 +550,16 @@ subjectForm.addEventListener(
     "submit",
     saveSubject
 );
+
+subjectGroup.addEventListener("change", () => {
+    subjectGroupWasManuallyChanged = true;
+});
+
+subjectName.addEventListener("input", () => {
+    if (!subjectGroupWasManuallyChanged) {
+        subjectGroup.value = suggestSubjectGroupForName(subjectName.value);
+    }
+});
 
 subjectSearch.addEventListener(
     "input",

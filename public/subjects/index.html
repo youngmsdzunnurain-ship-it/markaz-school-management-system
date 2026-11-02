@@ -12,13 +12,13 @@
     >
 
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/dashboard.css?v=20261031-sticky-glass">
+    <link rel="stylesheet" href="../css/dashboard.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="./subjects.css?v=20261102-aligned3">
+    <link rel="stylesheet" href="./subjects.css?v=20261102-groups2">
     <link rel="stylesheet" href="../css/app-watermark.css">
-    <link rel="stylesheet" href="../css/standard-page-heading.css">
+    <link rel="stylesheet" href="../css/standard-page-heading.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="../css/class.css">
-    <link rel="stylesheet" href="/css/management-shell.css?v=20261102-fix1">
+    <link rel="stylesheet" href="/css/management-shell.css?v=20261102-glass2">
 </head>
 
 <body>
@@ -173,7 +173,7 @@
                     <input
                         type="search"
                         id="subjectSearch"
-                        placeholder="Search by subject, code or school level..."
+                        placeholder="Search by subject, code, school level or group..."
                         autocomplete="off"
                     >
 
@@ -229,7 +229,11 @@
                             </th>
 
                             <th>
-                                <span>Category</span>
+                                <span>School Level</span>
+                            </th>
+
+                            <th>
+                                <span>Subject Group</span>
                             </th>
 
                             <th>
@@ -253,7 +257,7 @@
 
                         <tr>
                             <td
-                                colspan="6"
+                                colspan="7"
                                 class="empty-state"
                             >
                                 Loading subjects...
@@ -392,6 +396,19 @@
                     </select>
                 </div>
 
+                <div class="form-field form-field-full">
+                    <label for="subjectGroup">Subject Group</label>
+                    <select id="subjectGroup" name="subject_group" required>
+                        <option value="Core">Core / General</option>
+                        <option value="Science">Science</option>
+                        <option value="Islamic Studies">Islamic Studies</option>
+                        <option value="Languages">Languages</option>
+                        <option value="Humanities">Humanities</option>
+                        <option value="Vocational">Vocational</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
             </div>
 
 
@@ -527,7 +544,7 @@
 </div>
 
 
-<script src="./subjects.js"></script>
+<script src="./subjects.js?v=20261102-groups3"></script>
 <script src="/js/markaz-global.js"></script>
 
     <script src="../js/go-back.js"></script>

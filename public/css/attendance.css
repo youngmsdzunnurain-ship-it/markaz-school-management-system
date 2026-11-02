@@ -265,9 +265,8 @@
 }
 .attendance-shell { padding-top:22px; }
 .attendance-header {
-    position:sticky;
-    top:0;
-    z-index:100;
+    position:relative;
+    z-index:1;
     background:rgba(18,61,42,.88);
     -webkit-backdrop-filter:blur(18px) saturate(140%);
     backdrop-filter:blur(18px) saturate(140%);
@@ -403,4 +402,40 @@
         transition:none !important;
     }
     .attendance-summary-card:hover,.attendance-page .button:hover { transform:none !important; }
+}
+
+/* Five attendance indicators stay on one aligned row at every viewport. */
+.attendance-page .attendance-summary-grid{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:clamp(5px,1.1vw,14px)!important;
+    width:100%!important;
+}
+.attendance-page .attendance-summary-card{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    min-width:0!important;
+    padding:clamp(7px,1.2vw,17px)!important;
+    gap:clamp(5px,.9vw,12px)!important;
+}
+.attendance-page .attendance-summary-card>div{min-width:0!important}
+.attendance-page .attendance-summary-card div>span,
+.attendance-page .attendance-summary-card strong,
+.attendance-page .attendance-summary-card small{overflow-wrap:anywhere}
+@media(max-width:720px){
+    .attendance-page .attendance-summary-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important}
+    .attendance-page .attendance-summary-card{min-height:76px!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;padding:6px 3px!important;text-align:center!important}
+    .attendance-page .attendance-summary-card .summary-icon{width:25px!important;height:25px!important;flex:0 0 25px!important;font-size:11px!important;border-radius:8px!important}
+    .attendance-page .attendance-summary-card div>span{font-size:8px!important;line-height:1.1!important;white-space:nowrap!important}
+    .attendance-page .attendance-summary-card strong{margin:2px 0!important;font-size:17px!important;line-height:1!important}
+    .attendance-page .attendance-summary-card small{display:none!important}
+}
+@media(max-width:380px){
+    .attendance-page .attendance-summary-grid{gap:3px!important}
+    .attendance-page .attendance-summary-card{padding:5px 2px!important;min-height:68px!important}
+    .attendance-page .attendance-summary-card .summary-icon{display:none!important}
+    .attendance-page .attendance-summary-card div>span{font-size:7px!important;letter-spacing:-.15px}
+    .attendance-page .attendance-summary-card strong{font-size:15px!important}
 }

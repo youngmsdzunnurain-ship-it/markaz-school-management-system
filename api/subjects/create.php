@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
+require_once __DIR__ . '/../../app/helpers/subject-categories.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -34,6 +35,7 @@ try {
     $name = trim((string) ($input['name'] ?? ''));
     $code = strtoupper(trim((string) ($input['code'] ?? '')));
     $category = trim((string) ($input['category'] ?? ''));
+    $subjectGroup = trim((string) ($input['subject_group'] ?? ''));
 
     $allowedLevels = [
         'Nursery',
@@ -43,41 +45,13 @@ try {
     ];
 
     if ($code === '') {
-        $words = preg_split('/[^A-Za-z0-9]+/', strtoupper($name), -1, PREG_SPLIT_NO_EMPTY);
-        if (!$words) {
-            throw new RuntimeException('A valid subject name is required to generate its code.');
-        }
-
-        if (count($words) > 1) {
-            $base = '';
-            foreach ($words as $word) {
-                $base .= $word[0];
-            }
-        } else {
-            $base = substr($words[0], 0, 4);
-        }
-
-        $base = substr($base, 0, 12);
-        $candidate = $base;
-        $suffix = 2;
-
-        while (true) {
-            $codeSql = 'SELECT id FROM subjects WHERE code = ?'
-                . ' LIMIT 1';
-            $codeCheck = db()->prepare($codeSql);
-            $codeParams = [$candidate];
-            $codeCheck->execute($codeParams);
-            if (!$codeCheck->fetch()) {
-                break;
-            }
-            $candidate = $base . $suffix;
-            $suffix++;
-            if ($suffix > 99999) {
-                throw new RuntimeException('Could not generate a unique subject code.');
-            }
-        }
-        $code = $candidate;
+        $existingCodes = db()->query("SELECT code FROM subjects WHERE code IS NOT NULL AND TRIM(code) <> ''")->fetchAll(PDO::FETCH_COLUMN);
+        $code = generateUniqueSubjectCode($name, $existingCodes);
     }
+
+    $allowedGroups = ['Core', 'Science', 'Islamic Studies', 'Languages', 'Humanities', 'Vocational', 'Other'];
+    if ($subjectGroup === '') $subjectGroup = suggestSubjectGroup($name);
+    if (!in_array($subjectGroup, $allowedGroups, true)) throw new RuntimeException('Choose a valid subject group.');
 
     if (!in_array($category, $allowedLevels, true)) {
         throw new RuntimeException('Choose a valid school level.');
@@ -141,18 +115,20 @@ try {
                 name,
                 code,
                 category,
+                subject_group,
                 max_ca1,
                 max_ca2,
                 max_exam,
                 is_active
             )
-         VALUES (?, ?, ?, ?, ?, ?, 1)'
+         VALUES (?, ?, ?, ?, ?, ?, ?, 1)'
     );
 
     $stmt->execute([
         $name,
         $code !== '' ? $code : null,
         $category !== '' ? $category : null,
+        $subjectGroup,
         $maxCa1,
         $maxCa2,
         $maxExam

@@ -36,3 +36,32 @@ body.markaz-management-shell-active{padding-top:74px!important}
  .markaz-management-shell,.markaz-shell-sidebar,.markaz-shell-overlay {display:none!important}
  body.markaz-management-shell-active {padding-top:0!important}
 }
+/* Shared dashboard header — translucent emerald glass. */
+.markaz-management-shell{
+    min-height:72px;
+    color:#fff;
+    background:rgba(9,43,29,.76);
+    border-bottom:1px solid rgba(226,198,112,.42);
+    box-shadow:0 8px 30px rgba(4,25,16,.18),inset 0 1px 0 rgba(255,255,255,.10);
+    -webkit-backdrop-filter:blur(18px) saturate(155%);
+    backdrop-filter:blur(18px) saturate(155%);
+    animation:markazShellEnter .38s cubic-bezier(.2,.75,.25,1) both;
+}
+.markaz-shell-brand{color:#fff}
+.markaz-shell-brand small{color:rgba(255,255,255,.68)}
+.markaz-shell-menu{color:#f4df9b;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.22);transition:background .2s ease,transform .2s ease}
+.markaz-shell-menu:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
+.markaz-shell-profile{color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.20);transition:background .2s ease}
+.markaz-shell-profile:hover,.markaz-shell-profile[aria-expanded="true"]{background:rgba(255,255,255,.18)}
+.markaz-shell-profile-copy small{color:rgba(255,255,255,.70)}
+.markaz-shell-profile>span[aria-hidden="true"]{color:#f4df9b}
+.markaz-shell-profile .admin-profile-avatar{background:rgba(255,255,255,.92)}
+.markaz-shell-profile-menu{border-color:rgba(226,198,112,.35);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+@keyframes markazShellEnter{
+    from{opacity:0;transform:translateY(-9px)}
+    to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+    .markaz-management-shell{animation:none}
+    .markaz-shell-menu,.markaz-shell-profile{transition:none}
+}
