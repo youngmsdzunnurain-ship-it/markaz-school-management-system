@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 requireResultStaff();
 
@@ -123,6 +124,10 @@ try {
                 : 'Student is not assigned to a conventional class.'
         ]);
         exit;
+    }
+
+    if ($classType === 'conventional') {
+        ensureSeniorSecondaryCurriculum($pdo, $classId);
     }
 
     if ($requestedClassId !== null
