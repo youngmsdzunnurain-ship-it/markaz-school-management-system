@@ -2105,3 +2105,69 @@
         width: 100% !important;
     }
 }
+
+
+/* =========================================================
+   SUBJECTS PAGE — FINAL FULL-WIDTH LAYOUT GUARD
+   Keep this page independent of dashboard content max-widths.
+   The stylesheet URL is versioned in index.html to avoid stale
+   cached layout rules restoring the previous narrow layout.
+   ========================================================= */
+html,
+body {
+    width: 100%;
+    min-width: 320px;
+    margin: 0;
+}
+
+.subjects-page {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page > .subjects-class-topbar {
+    display: flex;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page > .page-content {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 18px clamp(12px, 2.2vw, 32px) 32px;
+    box-sizing: border-box;
+}
+
+.subjects-page .summary-grid,
+.subjects-page .subjects-panel {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.subjects-page .table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 700px) {
+    .subjects-page > .page-content {
+        padding: 14px 8px 28px;
+    }
+}
