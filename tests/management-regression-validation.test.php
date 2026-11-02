@@ -9,6 +9,7 @@ function checkFix(bool $ok, string $message): void {
 }
 
 $studentJs = file_get_contents($root . '/public/js/student-result.js');
+$classJs = file_get_contents($root . '/public/class.js');
 $studentHtml = file_get_contents($root . '/public/student-result.html');
 $subjectListApi = file_get_contents($root . '/api/subjects/list.php');
 $curriculum = file_get_contents($root . '/app/helpers/ss-curriculum.php');
@@ -30,6 +31,12 @@ checkFix(
     str_contains($studentJs, 'await saveAllStudentChanges()'),
     'Save and Leave must persist changes before navigating.'
 );
+checkFix(
+    str_contains($classJs, 'class_type: "conventional"') &&
+    str_contains($classJs, './api/results/save.php'),
+    'Class result entry must send the class type required by the result-save API.'
+);
+
 checkFix(
     str_contains($subjectListApi, 'seenSubjectKeys') &&
     str_contains($subjectListApi, 'animalhusbandry'),
