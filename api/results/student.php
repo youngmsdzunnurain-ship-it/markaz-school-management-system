@@ -223,14 +223,20 @@ try {
         WHERE student_id = ?
           AND class_type = ?
           AND class_id = ?
-          AND academic_period_id = ?'
+          AND academic_period_id = ?
+          AND subject_id IN (
+              SELECT cs.subject_id
+              FROM {$mappingTable} cs
+              WHERE cs.{$mappingClassColumn} = ?
+          )'
     );
 
     $resultStmt->execute([
         $studentId,
         $classType,
         $classId,
-        $period['id']
+        $period['id'],
+        $classId
     ]);
 
     $resultRows = $resultStmt->fetchAll();
@@ -379,6 +385,12 @@ try {
            AND r.class_type = ?
            AND r.class_id = ?
            AND r.academic_period_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM {$mappingTable} current_subject
+               WHERE current_subject.{$mappingClassColumn} = ?
+                 AND current_subject.subject_id = r.subject_id
+           )
         WHERE st.{$mappingClassColumn} = ?
           AND st.is_active = 1
         GROUP BY st.id"
@@ -388,6 +400,7 @@ try {
         $classType,
         $classId,
         $period['id'],
+        $classId,
         $classId
     ]);
 
