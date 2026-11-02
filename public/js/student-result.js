@@ -151,7 +151,7 @@ function setReportRemarks(score) {
     }
 }
 
-async function loadStudentResult() {
+async async function loadStudentResult() {
     if (!studentId) {
         throw new Error("Student ID is missing.");
     }
@@ -1229,6 +1229,39 @@ $("stayOnResultButton")?.addEventListener("click", () => {
 $("leaveResultButton")?.addEventListener("click", () => {
     hideUnsavedChangesModal();
     leaveStudentResultPage();
+});
+
+$("saveAndLeaveResultButton")?.addEventListener("click", async () => {
+    if (!isEditMode) {
+        hideUnsavedChangesModal();
+        leaveStudentResultPage();
+        return;
+    }
+    const button = $("saveAndLeaveResultButton");
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = "Saving...";
+    try {
+        if (!validateAllScoreInputs()) {
+            throw new Error("Please correct the highlighted scores before saving.");
+        }
+        await saveAllStudentChanges();
+        setEditMode(false);
+        captureOriginalEditState();
+        hideUnsavedChangesModal();
+        leaveStudentResultPage();
+    } catch (error) {
+        let message = $("unsavedChangesSaveError");
+        if (!message) {
+            message = document.createElement("p");
+            message.id = "unsavedChangesSaveError";
+            message.className = "markaz-confirm-save-error";
+            $("unsavedChangesModal")?.querySelector(".markaz-confirm-content")?.appendChild(message);
+        }
+        if (message) message.textContent = error.message || "Unable to save changes. Please try again.";
+        button.disabled = false;
+        button.textContent = originalLabel || "Save & Leave";
+    }
 });
 
 $("unsavedChangesModal")?.addEventListener("click", event => {
