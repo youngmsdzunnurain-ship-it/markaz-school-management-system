@@ -53,6 +53,10 @@ try {
     if ($subjectGroup === '') $subjectGroup = suggestSubjectGroup($name);
     if (!in_array($subjectGroup, $allowedGroups, true)) throw new RuntimeException('Choose a valid subject group.');
 
+    if (!in_array($category, $allowedLevels, true)) {
+        throw new RuntimeException('Choose a valid school level.');
+    }
+
     $maxCa1 = isset($input['max_ca1'])
         ? (float) $input['max_ca1']
         : 20.00;
