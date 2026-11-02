@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
-require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -19,8 +18,6 @@ try {
     }
 
     $pdo = db();
-    ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
-
     $classStmt = $pdo->prepare('SELECT name FROM classes WHERE id = ? LIMIT 1');
     $classStmt->execute([$classId]);
     $className = (string) $classStmt->fetchColumn();
