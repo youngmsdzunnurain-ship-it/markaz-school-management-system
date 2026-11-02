@@ -74,6 +74,12 @@ subjectLayoutCheck(
     'Subject APIs must store and return the separate group without repurposing school level.'
 );
 subjectLayoutCheck(
+    str_contains($createApi, 'Choose a valid school level.')
+        && str_contains($updateApi, 'Choose a valid school level.'),
+    'Existing school-level validation must remain intact alongside the new subject groups.'
+);
+
+subjectLayoutCheck(
     str_contains($groupHelper, 'suggestSubjectGroup')
         && str_contains($groupHelper, "'Core'")
         && str_contains($groupHelper, "'Science'")
