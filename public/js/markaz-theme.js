@@ -2,14 +2,14 @@
 "use strict";
 const key="markaz-dashboard-theme";
 const root=document.documentElement;
-const stored=localStorage.getItem(key);
+let stored=null;try{stored=localStorage.getItem(key);}catch(_){}
 const theme=stored==="dark"?"dark":"light";
 root.dataset.theme=theme;
 root.style.colorScheme=theme;
 function init(){
  if(!document.body.classList.contains("dashboard-page")&&!document.querySelector(".app .sidebar"))return;
  const button=document.createElement("button");button.type="button";button.className="markaz-theme-toggle";button.setAttribute("aria-pressed",String(theme==="dark"));button.addEventListener("click",()=>{
-  const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;root.style.colorScheme=next;localStorage.setItem(key,next);button.setAttribute("aria-pressed",String(next==="dark"));button.textContent=next==="dark"?"☀ Light mode":"☾ Dark mode";
+  const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;root.style.colorScheme=next;try{localStorage.setItem(key,next);}catch(_){}button.setAttribute("aria-pressed",String(next==="dark"));button.textContent=next==="dark"?"☀ Light mode":"☾ Dark mode";
  });
  button.textContent=theme==="dark"?"☀ Light mode":"☾ Dark mode";
  const target=document.querySelector(".topbar .topbar-actions,.topbar .topbar-right,.topbar,.app .topbar");
