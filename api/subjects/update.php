@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -136,20 +137,11 @@ try {
         throw new RuntimeException('Choose a valid school level.');
     }
 
-    $duplicate = db()->prepare(
-        'SELECT id
-         FROM subjects
-         WHERE name = ?
-           AND id <> ?
-         LIMIT 1'
-    );
-
-    $duplicate->execute([$name, $id]);
-
-    if ($duplicate->fetch()) {
-        throw new RuntimeException(
-            'Another subject with this name already exists.'
-        );
+    $duplicateRows = db()->query('SELECT id, name FROM subjects WHERE id <> ' . (int) $id)->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($duplicateRows as $duplicateRow) {
+        if (normalizeSeniorSubjectKey((string) $duplicateRow['name']) === normalizeSeniorSubjectKey($name)) {
+            throw new RuntimeException('Another subject already uses this name or a matching name variant.');
+        }
     }
 
     $duplicateCode = db()->prepare(
