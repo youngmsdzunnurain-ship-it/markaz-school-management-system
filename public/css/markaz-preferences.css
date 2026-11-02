@@ -24,3 +24,43 @@ html[data-theme=dark] body:has(.app .sidebar) strong{color:inherit}
 html[data-theme=dark] body:has(.app .sidebar) .markaz-theme-toggle{background:#203b2b;color:#f5e7b8;border-color:#8e7536}
 @media(max-width:600px){.markaz-language-tools select{max-width:94px}.markaz-theme-toggle{padding:7px 9px}}
 @media(prefers-reduced-motion:reduce){.markaz-language-tools,.markaz-theme-toggle{scroll-behavior:auto}}
+
+
+/* Unified navigation: the management shell is the one persistent page header.
+   Former page-specific emerald hero headers become compact, neutral title rows. */
+.markaz-management-shell{position:fixed!important;inset:0 0 auto!important;min-height:68px!important;z-index:5000!important}
+.markaz-shell-sidebar{inset-block:0;inset-inline-start:0;inset-inline-end:auto}
+html[dir=rtl] .markaz-shell-sidebar{transform:translateX(110%)}
+html[dir=rtl] .markaz-shell-sidebar.open{transform:translateX(0)}
+.markaz-shell-profile-menu{inset-inline-end:clamp(12px,2.5vw,30px);inset-inline-start:auto;right:auto}
+html[dir=rtl] .markaz-shell-profile-menu{inset-inline-start:clamp(12px,2.5vw,30px);inset-inline-end:auto}
+.classes-topbar,.class-topbar,.students-topbar,.settings-header,.attendance-header,.fees-placeholder-top,.print-results-header,.class-subjects-page>.page-header,.subjects-page>.page-header,.result-page-header{
+ position:sticky!important;top:68px!important;z-index:1200!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;
+ min-height:58px!important;margin:0 0 18px!important;padding:10px clamp(14px,2vw,24px)!important;
+ color:var(--ink,#173125)!important;background:rgba(255,255,255,.94)!important;
+ border:0!important;border-bottom:1px solid rgba(22,91,53,.16)!important;border-radius:0!important;
+ box-shadow:0 5px 18px rgba(13,43,28,.06)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(150%)!important;backdrop-filter:blur(16px) saturate(150%)!important;
+}
+.classes-topbar h1,.classes-topbar h2,.class-topbar h1,.class-topbar h2,.students-topbar h1,.students-topbar h2,.settings-header h1,.settings-header h2,.attendance-header h1,.attendance-header h2,.print-results-header h1,.print-results-header h2,.result-page-header h1,.result-page-header h2,.class-subjects-page .page-header h1,.subjects-page .page-header h1{
+ color:#164b31!important;font-size:clamp(18px,2vw,24px)!important
+}
+.classes-topbar p,.class-topbar p,.students-topbar p,.settings-header p,.attendance-header p,.print-results-header p,.result-page-header p{color:#65766b!important}
+.classes-topbar .eyebrow,.class-topbar .eyebrow,.students-topbar .eyebrow,.class-subjects-page .page-eyebrow,.subjects-page .page-eyebrow{color:#94721d!important}
+.classes-topbar .back-link,.class-topbar .back-link,.students-topbar .back-link,.settings-header .back-link,.attendance-header .attendance-back,.print-results-header .back-link,.result-page-header .back-link{
+ color:#175b37!important;background:#f1f7f2!important;border:1px solid #d7e6da!important
+}
+.attendance-header{overflow:visible!important}
+.attendance-brand h1{color:#164b31!important}.attendance-brand p{color:#65766b!important}
+.attendance-header-actions .button-light{color:#175b37!important;background:#f1f7f2!important;border-color:#d7e6da!important}
+html[dir=rtl] body{direction:rtl}
+html[dir=rtl] .markaz-management-shell{direction:rtl}
+html[dir=rtl] .markaz-shell-profile{padding:4px 5px 4px 11px}
+html[dir=rtl] .markaz-shell-profile-copy{text-align:right}
+html[dir=rtl] .markaz-shell-profile-menu a,html[dir=rtl] .markaz-shell-profile-menu button{text-align:right}
+html[dir=rtl] .attendance-table,html[dir=rtl] table{text-align:right}
+html[dir=rtl] .attendance-table th,html[dir=rtl] .attendance-table td{text-align:right}
+html[dir=rtl] .attendance-header,html[dir=rtl] .classes-topbar,html[dir=rtl] .students-topbar,html[dir=rtl] .settings-header{direction:rtl}
+@media(max-width:480px){.classes-topbar,.class-topbar,.students-topbar,.settings-header,.attendance-header,.print-results-header{top:64px!important;min-height:54px!important;padding:9px 12px!important}.markaz-management-shell{min-height:64px!important}}
+@media print{.markaz-language-tools,.markaz-theme-toggle{display:none!important}.classes-topbar,.class-topbar,.students-topbar,.settings-header,.attendance-header,.print-results-header{position:static!important}}
