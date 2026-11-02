@@ -36,9 +36,6 @@ if (!$classId || $classId < 1) {
 
 try {
     $pdo = db();
-    if ($classType === 'conventional') {
-        ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
-    }
     $isTeacher = currentAdminRole() === 'teacher';
     $accountId = (int) ($_SESSION['admin_id'] ?? 0);
 
@@ -84,6 +81,10 @@ try {
         ]);
 
         exit;
+    }
+
+    if ($classType === 'conventional') {
+        ensureSeniorSecondaryCurriculum($pdo, (int) $classId);
     }
 
     $periodStmt = $pdo->query(
