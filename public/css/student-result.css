@@ -10521,3 +10521,27 @@ html body .report-card .memorization-value-row input { display: block !important
  html body .report-card .student-class-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 5px !important; }
  html body .report-card .student-class-row > .detail-item { min-height: 52px !important; padding: 6px !important; }
 }
+
+
+.markaz-confirm-save-leave {
+    min-height: 44px;
+    padding: 0 17px;
+    border: 1px solid #17643a;
+    border-radius: 11px;
+    background: #17643a;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.markaz-confirm-save-leave:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+.markaz-confirm-save-error {
+    margin-top: 10px;
+    color: #b42318;
+    font-size: 13px;
+    line-height: 1.5;
+}
