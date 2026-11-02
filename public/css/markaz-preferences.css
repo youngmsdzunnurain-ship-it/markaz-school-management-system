@@ -198,3 +198,17 @@ body:has(.app .sidebar) .topbar{position:sticky!important;top:0!important;z-inde
 .print-results-header::before,.print-results-header::after,.result-page-header::before,.result-page-header::after{
  content:none!important;display:none!important
 }
+
+
+/* RTL layout mirroring for the dashboard's fixed sidebar and content rail. */
+html[dir=rtl] body:has(.app .sidebar) .sidebar{left:auto!important;right:0!important;transform:translateX(105%)}
+html[dir=rtl] body:has(.app .sidebar) .sidebar.open{transform:translateX(0)}
+html[dir=rtl] body:has(.app .sidebar) .main-content{margin-left:0!important;margin-right:var(--sidebar-width)!important}
+html[dir=rtl] body:has(.app .sidebar) .nav-link.active::before{left:auto;right:-16px}
+html[dir=rtl] body:has(.app .sidebar) .topbar,
+html[dir=rtl] body:has(.app .sidebar) .page-content,
+html[dir=rtl] body:has(.app .sidebar) .panel,
+html[dir=rtl] body:has(.app .sidebar) .dashboard-grid{direction:rtl}
+html[dir=rtl] body:has(.app .sidebar) .admin-details strong{text-align:left}
+html[dir=rtl] body:has(.app .sidebar) .dashboard-attendance-footnote{border-left:0;border-right:3px solid #c19a35;border-radius:10px 0 0 10px}
+@media(max-width:850px){html[dir=rtl] body:has(.app .sidebar) .sidebar{transform:translateX(105%)}html[dir=rtl] body:has(.app .sidebar) .sidebar.open{transform:translateX(0)}html[dir=rtl] body:has(.app .sidebar) .main-content{margin-right:0!important}}
