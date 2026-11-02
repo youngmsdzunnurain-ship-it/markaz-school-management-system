@@ -2,22 +2,29 @@
 declare(strict_types=1);
 
 /**
- * Keep the conventional SS1–SS3 curriculum canonical at the API boundary.
- * Existing result rows are intentionally retained; only class-subject mappings
- * are replaced. Arabic classes and every non-SS conventional class are untouched.
+ * Keep all conventional SS1–SS3 classes on the approved eleven-subject
+ * curriculum whenever an SS class is opened. Historical result rows remain
+ * untouched. Arabic classes and non-SS conventional classes are not modified.
  */
 function ensureSeniorSecondaryCurriculum(PDO $pdo, int $classId): void
 {
-    $classStmt = $pdo->prepare('SELECT name FROM classes WHERE id = ? LIMIT 1');
-    $classStmt->execute([$classId]);
-    $className = $classStmt->fetchColumn();
+    $classStmt = $pdo->query('SELECT id, name FROM classes');
+    $seniorClasses = [];
+    $requestedClassIsSenior = false;
 
-    if (!is_string($className)) {
-        return;
+    foreach ($classStmt->fetchAll(PDO::FETCH_ASSOC) as $class) {
+        $normalized = strtoupper((string) preg_replace('/[\\s_-]+/', '', trim((string) $class['name'])));
+        if (!in_array($normalized, ['SS1', 'SS2', 'SS3', 'SSS1', 'SSS2', 'SSS3'], true)) {
+            continue;
+        }
+
+        $seniorClasses[] = (int) $class['id'];
+        if ((int) $class['id'] === $classId) {
+            $requestedClassIsSenior = true;
+        }
     }
 
-    $normalizedClass = strtoupper((string) preg_replace('/[\\s_-]+/', '', trim($className)));
-    if (!in_array($normalizedClass, ['SS1', 'SS2', 'SS3', 'SSS1', 'SSS2', 'SSS3'], true)) {
+    if (!$requestedClassIsSenior || !$seniorClasses) {
         return;
     }
 
@@ -74,33 +81,34 @@ function ensureSeniorSecondaryCurriculum(PDO $pdo, int $classId): void
              WHERE class_id = ?
              ORDER BY sort_order ASC, subject_id ASC'
         );
-        $currentStmt->execute([$classId]);
-        $currentMappings = $currentStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $isAlreadyCanonical = count($currentMappings) === count($subjectIds);
-        if ($isAlreadyCanonical) {
-            foreach ($subjectIds as $index => $subjectId) {
-                if ((int) $currentMappings[$index]['subject_id'] !== $subjectId
-                    || (int) $currentMappings[$index]['sort_order'] !== $index + 1) {
-                    $isAlreadyCanonical = false;
-                    break;
-                }
-            }
-        }
-
-        if (!$isAlreadyCanonical) {
-            $deleteMappings = $pdo->prepare('DELETE FROM class_subjects WHERE class_id = ?');
-            $deleteMappings->execute([$classId]);
-        }
-
+        $deleteMappings = $pdo->prepare('DELETE FROM class_subjects WHERE class_id = ?');
         $insertMapping = $pdo->prepare(
             'INSERT INTO class_subjects (class_id, subject_id, is_required, sort_order)
              VALUES (?, ?, 1, ?)'
         );
 
-        if (!$isAlreadyCanonical) {
+        foreach ($seniorClasses as $seniorClassId) {
+            $currentStmt->execute([$seniorClassId]);
+            $currentMappings = $currentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $isAlreadyCanonical = count($currentMappings) === count($subjectIds);
+            if ($isAlreadyCanonical) {
+                foreach ($subjectIds as $index => $subjectId) {
+                    if ((int) $currentMappings[$index]['subject_id'] !== $subjectId
+                        || (int) $currentMappings[$index]['sort_order'] !== $index + 1) {
+                        $isAlreadyCanonical = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($isAlreadyCanonical) {
+                continue;
+            }
+
+            $deleteMappings->execute([$seniorClassId]);
             foreach ($subjectIds as $index => $subjectId) {
-                $insertMapping->execute([$classId, $subjectId, $index + 1]);
+                $insertMapping->execute([$seniorClassId, $subjectId, $index + 1]);
             }
         }
 
