@@ -30,33 +30,55 @@ try {
     );
 
     $rawSubjects = $stmt->fetchAll();
-    $subjects = [];
-    $seenSubjectKeys = [];
+    $subjectsByKey = [];
+    $canonicalLabels = [
+        'quran' => 'Quran',
+        'english' => 'English',
+        'mathematics' => 'Mathematics',
+        'biology' => 'Biology',
+        'chemistry' => 'Chemistry',
+        'physics' => 'Physics',
+        'civiceducation' => 'Civic Education',
+        'agric' => 'Agric',
+        'computer' => 'Computer',
+        'foodandnutrition' => 'Food and Nutrition',
+        'economics' => 'Economics',
+    ];
+    $aliases = [
+        'math' => 'mathematics',
+        'maths' => 'mathematics',
+        'englishlanguage' => 'english',
+        'quranicstudies' => 'quran',
+        'agriculture' => 'agric',
+        'agriculturalscience' => 'agric',
+        'computerstudies' => 'computer',
+        'ict' => 'computer',
+        'foodnutrition' => 'foodandnutrition',
+    ];
 
     foreach ($rawSubjects as $subject) {
         $subjectKey = strtolower((string) preg_replace('/[^a-z0-9]+/i', '', trim((string) $subject['name'])));
-        $aliases = [
-            'math' => 'mathematics',
-            'maths' => 'mathematics',
-            'englishlanguage' => 'english',
-            'quranicstudies' => 'quran',
-            'agriculture' => 'agric',
-            'agriculturalscience' => 'agric',
-            'computerstudies' => 'computer',
-            'ict' => 'computer',
-            'foodnutrition' => 'foodandnutrition',
-        ];
         $subjectKey = $aliases[$subjectKey] ?? $subjectKey;
 
-        // Hide Animal Husbandry from this subject-entry library while retaining
-        // its database row and any historical score records.
-        if ($subjectKey === 'animalhusbandry' || isset($seenSubjectKeys[$subjectKey])) {
+        // Animal Husbandry is not offered in the approved subject library.
+        if ($subjectKey === 'animalhusbandry') {
             continue;
         }
 
-        $seenSubjectKeys[$subjectKey] = true;
-        $subjects[] = $subject;
+        if (!isset($subjectsByKey[$subjectKey])) {
+            $subjectsByKey[$subjectKey] = $subject;
+            continue;
+        }
+
+        // Prefer the exact canonical label over a legacy spelling/duplicate.
+        if (isset($canonicalLabels[$subjectKey])
+            && strcasecmp(trim((string) $subject['name']), $canonicalLabels[$subjectKey]) === 0) {
+            $subjectsByKey[$subjectKey] = $subject;
+        }
     }
+
+    $subjects = array_values($subjectsByKey);
+    usort($subjects, static fn(array $a, array $b): int => strnatcasecmp((string) $a['name'], (string) $b['name']));
 
     foreach ($subjects as &$subject) {
         $subject['id'] = (int) $subject['id'];
