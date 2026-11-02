@@ -28,7 +28,7 @@ html[data-theme=dark] body:has(.app .sidebar) .markaz-theme-toggle{background:#2
 
 /* Unified navigation: the management shell is the one persistent page header.
    Former page-specific emerald hero headers become compact, neutral title rows. */
-.markaz-management-shell{position:fixed!important;inset:0 0 auto!important;min-height:68px!important;z-index:5000!important}
+.markaz-management-shell{position:fixed!important;inset:0 0 auto!important;min-height:68px!important;z-index:5000!important}.markaz-shell-overlay{z-index:5001!important}.markaz-shell-sidebar{z-index:5002!important}
 .markaz-shell-sidebar{inset-block:0;inset-inline-start:0;inset-inline-end:auto}
 html[dir=rtl] .markaz-shell-sidebar{transform:translateX(110%)}
 html[dir=rtl] .markaz-shell-sidebar.open{transform:translateX(0)}
@@ -186,3 +186,5 @@ html[data-theme=dark] body:has(.app .sidebar) .admin-detail-row{border-color:#29
 html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row{background:#102017;color:#e8f1eb;border-color:#294735}
 html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row strong{color:#a9d8b8}
 html[data-theme=dark] body:has(.app .sidebar) .markaz-language-tools select{background:#102017;color:#e8f1eb;border-color:#365542}
+
+.classes-topbar::before,.classes-topbar::after,.class-topbar::before,.class-topbar::after,.students-topbar::before,.students-topbar::after,.settings-header::before,.settings-header::after,.print-results-header::before,.print-results-header::after,.result-page-header::before,.result-page-header::after,.class-subjects-page>.page-header::before,.class-subjects-page>.page-header::after,.subjects-page>.page-header::before,.subjects-page>.page-header::after{display:none!important;content:none!important}
