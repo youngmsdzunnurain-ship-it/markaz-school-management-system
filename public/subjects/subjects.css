@@ -2260,3 +2260,55 @@ body {
         align-items: stretch !important;
     }
 }
+
+
+/* Align the Subject Management banner with one shared three-column baseline. */
+.subjects-page > .subjects-class-topbar {
+    display: grid !important;
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    align-items: center !important;
+    justify-content: initial !important;
+    column-gap: clamp(16px, 2.2vw, 30px) !important;
+    row-gap: 12px !important;
+    min-height: 168px !important;
+    padding: 28px clamp(18px, 2.4vw, 34px) !important;
+    box-sizing: border-box !important;
+}
+.subjects-page > .subjects-class-topbar > .class-back-link {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center !important;
+    margin: 0 !important;
+}
+.subjects-page > .subjects-class-topbar > .class-heading-copy {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+.subjects-page > .subjects-class-topbar > .class-header-actions {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center !important;
+    margin: 0 !important;
+}
+.subjects-page .subjects-class-topbar h1,
+.subjects-page .subjects-class-topbar p,
+.subjects-page .subjects-class-topbar .eyebrow {
+    transform: none !important;
+}
+@media(max-width:700px) {
+    .subjects-page > .subjects-class-topbar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 14px !important;
+        min-height: 0 !important;
+    }
+    .subjects-page > .subjects-class-topbar > .class-heading-copy,
+    .subjects-page > .subjects-class-topbar > .class-header-actions {
+        width: 100% !important;
+    }
+}

@@ -24,8 +24,9 @@
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css">
-    <link rel="stylesheet" href="./css/student-result.css" media="screen">
+    <link rel="stylesheet" href="./css/student-result.css?v=20261102-edit-fix1" media="screen">
     <link rel="stylesheet" href="./css/student-result-print.css?v=20261031-watermark-center" media="print">
+    <link rel="stylesheet" href="/css/management-shell.css?v=20261102-fix1">
 </head>
 
 <body>
@@ -646,15 +647,7 @@
     </main>
 
 
-    <script src="./js/student-result.js"></script>
-
-
-<script src="js/website-image-overrides.js"></script>
-    <script src="./js/go-back.js"></script>
-</body>
-</html>
-
-<!-- MARKAZ UNSAVED CHANGES CONFIRMATION -->
+    <!-- MARKAZ UNSAVED CHANGES CONFIRMATION -->
 <div class="markaz-confirm-overlay" id="unsavedChangesModal" hidden>
     <div class="markaz-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="unsavedChangesTitle">
         <div class="markaz-confirm-icon">!</div>
@@ -671,6 +664,9 @@
             <button type="button" class="markaz-confirm-stay" id="stayOnResultButton">
                 Stay &amp; Continue Editing
             </button>
+            <button type="button" class="markaz-confirm-save-leave" id="saveAndLeaveResultButton">
+                Save &amp; Leave
+            </button>
             <button type="button" class="markaz-confirm-leave" id="leaveResultButton">
                 Leave Without Saving
             </button>
@@ -678,4 +674,11 @@
     </div>
 </div>
 
+    <script src="./js/student-result.js?v=20261102-edit-fix1"></script>
 
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
+    <script src="/js/management-shell.js?v=20261102-fix1"></script>
+</body>
+</html>

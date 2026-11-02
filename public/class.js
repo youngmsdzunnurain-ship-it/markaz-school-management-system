@@ -767,6 +767,7 @@
                                     "application/json"
                             },
                             body: JSON.stringify({
+                                class_type: "conventional",
                                 class_id:
                                     Number(
                                         selectedClass.id

@@ -1,0 +1,38 @@
+
+body.markaz-management-shell-active{padding-top:74px!important}
+.markaz-management-shell{position:fixed;inset:0 0 auto;z-index:3000;min-height:68px;display:flex;align-items:center;gap:14px;padding:9px clamp(12px,2.5vw,30px);background:rgba(255,255,255,.97);border-bottom:1px solid #dce7df;box-shadow:0 5px 22px rgba(13,43,28,.09);backdrop-filter:blur(16px)}
+.markaz-shell-menu{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:1px solid #dce7df;border-radius:12px;background:#fff;color:#17643a;font-size:19px;cursor:pointer}
+.markaz-shell-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:#123d2a;font-weight:900;letter-spacing:.04em}
+.markaz-shell-brand img{width:38px;height:38px;object-fit:contain;border-radius:9px}
+.markaz-shell-brand span{display:grid;font-size:14px;line-height:1.15}
+.markaz-shell-brand small{font-size:10px;color:#718078;font-weight:600;letter-spacing:0}
+.markaz-shell-spacer{flex:1}
+.markaz-shell-profile{display:flex;align-items:center;gap:9px;max-width:min(260px,52vw);padding:4px 11px 4px 5px;border:1px solid #e1e8e3;border-radius:999px;background:#fff;color:#173125;cursor:pointer}
+.markaz-shell-profile .admin-profile-avatar{width:40px;height:40px;display:grid;place-items:center;overflow:hidden;flex:none;border:2px solid #d6b65f;border-radius:50%;background:#dff3e7;color:#145c38;font-size:13px;font-weight:900}
+.markaz-shell-profile .admin-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.markaz-shell-profile-copy{display:grid;text-align:left;min-width:0}
+.markaz-shell-profile-copy strong{max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.markaz-shell-profile-copy small{color:#718078;font-size:10px;text-transform:capitalize}
+.markaz-shell-profile>i{font-size:10px;color:#718078}
+.markaz-shell-profile-menu{position:absolute;right:clamp(12px,2.5vw,30px);top:calc(100% + 8px);z-index:3010;width:220px;padding:9px;border:1px solid #dce7df;border-radius:15px;background:#fff;box-shadow:0 15px 38px rgba(13,43,28,.16)}
+.markaz-shell-profile-menu[hidden],.markaz-shell-overlay[hidden]{display:none}
+.markaz-shell-profile-details{display:grid;padding:10px;border-bottom:1px solid #edf1ed}
+.markaz-shell-profile-details small{color:#718078;font-size:11px;overflow-wrap:anywhere}
+.markaz-shell-profile-menu a,.markaz-shell-profile-menu button{display:block;width:100%;padding:11px 10px;border:0;border-radius:8px;background:#fff;color:#173125;text-align:left;text-decoration:none;font:inherit;font-size:13px;cursor:pointer}
+.markaz-shell-profile-menu a:hover,.markaz-shell-profile-menu button:hover{background:#f0f7f2}
+.markaz-shell-overlay{position:fixed;inset:0;z-index:2990;background:rgba(5,23,15,.45)}
+.markaz-shell-sidebar{position:fixed;inset:0 auto 0 0;z-index:2995;width:min(290px,86vw);padding:16px;background:linear-gradient(180deg,#123d2a,#0d2b1c);color:#fff;box-shadow:12px 0 36px rgba(0,0,0,.18);transform:translateX(-110%);transition:transform .24s ease;overflow-y:auto}
+.markaz-shell-sidebar.open{transform:translateX(0)}
+.markaz-shell-sidebar-head{display:flex;align-items:center;gap:10px;padding:9px 2px 20px;border-bottom:1px solid rgba(255,255,255,.13)}
+.markaz-shell-sidebar-head img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:10px}
+.markaz-shell-sidebar-head strong{flex:1;letter-spacing:.08em}
+.markaz-shell-sidebar-head button{width:36px;height:36px;border:0;border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font-size:24px;cursor:pointer}
+.markaz-shell-sidebar nav{display:grid;gap:5px;padding-top:16px}
+.markaz-shell-sidebar nav a{display:flex;align-items:center;gap:13px;padding:13px 12px;border-radius:10px;color:rgba(255,255,255,.9);text-decoration:none;font-size:13px;font-weight:650}
+.markaz-shell-sidebar nav a:hover{background:rgba(255,255,255,.1)}
+@media(max-width:480px){body.markaz-management-shell-active{padding-top:68px!important}.markaz-management-shell{min-height:64px;padding:8px 10px;gap:9px}.markaz-shell-brand img{width:34px;height:34px}.markaz-shell-brand span{font-size:12px}.markaz-shell-profile{padding-right:8px}.markaz-shell-profile-copy,.markaz-shell-profile>i{display:none}}
+
+@media print {
+ .markaz-management-shell,.markaz-shell-sidebar,.markaz-shell-overlay {display:none!important}
+ body.markaz-management-shell-active {padding-top:0!important}
+}
