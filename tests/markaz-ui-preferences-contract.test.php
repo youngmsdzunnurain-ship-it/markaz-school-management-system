@@ -20,7 +20,7 @@ $assert = static function (bool $condition, string $message): void {
 };
 
 $pages = [
-    'public/dashboard.html',
+    'public/attendance.html',
     'public/attendance.html',
     'public/classes.html',
     'public/subjects/index.html',
@@ -55,7 +55,10 @@ $i18nForPrefs = $read('public/js/markaz-i18n.js');
 $assert(!str_contains($adminLogin, 'markaz-i18n.js'), 'Administrator login must not show language controls');
 $assert(!str_contains($studentLogin, 'markaz-i18n.js') && !str_contains($studentLogin, 'markaz-theme.js'), 'Student login must not show language or theme controls');
 $assert(str_contains($examOfficerLogin, 'staff-login-preferences') && str_contains($teacherLogin, 'staff-login-preferences'), 'Staff login preference controls are missing');
-$assert(str_contains($dashboard, 'dashboardProfileMenu') && str_contains($profileMenuJs, 'mountControls'), 'Dashboard avatar preference menu is missing');
+$assert(str_contains($dashboard, 'dashboardProfileMenu') && str_contains($profileMenuJs, 'dashboardProfileTrigger'), 'Single dashboard avatar menu is missing');
+$assert(!str_contains($dashboard, 'markaz-i18n.js') && !str_contains($dashboard, 'data-markaz-language'), 'Dashboard must remain English-only with no language switch');
+$assert(substr_count($dashboard, 'id="dashboardProfileTrigger"') === 1, 'Dashboard must render exactly one administrator avatar trigger');
+$assert(!str_contains($read('public/js/dashboard.js'), 'topAdminInitials') && !str_contains($read('public/js/dashboard.js'), 'admin-profile-wrap'), 'Dashboard script must not inject a duplicate administrator avatar');
 $assert(str_contains($shellForPrefs, 'data-markaz-preferences') && str_contains($shellForPrefs, 'markaz-theme.js'), 'Staff profile menu must mount shared preferences');
 $assert(str_contains($i18nForPrefs, 'mountControls:controls') && !str_contains($i18nForPrefs, 'createElement("select")'), 'Language must be a direct toggle, not a dropdown');
 $assert(str_contains($themeJs, 'data-markaz-theme-toggle') && str_contains($themeJs, 'markaz-dashboard-theme'), 'Fast persistent theme toggle is missing');
@@ -66,6 +69,8 @@ $assert(!str_contains($attendanceApi, 'NOT EXISTS ('), 'Conventional classes mus
 $assert(str_contains($attendanceJs, 'normalizeClassType(item.class_type) === type'), 'Attendance class list must filter using normalized class type');
 $assert(str_contains($dashboard, 'data-role-check-pending="true"'), 'Dashboard role-check gate was removed');
 $assert(str_contains($dashboard, './js/markaz-theme.js'), 'Dashboard-only theme script missing');
+$assert(str_contains($dashboard, 'dashboard-dark-mode.css'), 'Refined dashboard dark palette stylesheet missing');
+$assert(str_contains($read('public/css/dashboard-dark-mode.css'), '.welcome-card::before { content: none'), 'Welcome card divider must be removed in both themes');
 $assert(!str_contains($dashboard, 'app-watermark.css'), 'Legacy dashboard watermark must stay disabled');
 
 $shell = $read('public/js/management-shell.js');
