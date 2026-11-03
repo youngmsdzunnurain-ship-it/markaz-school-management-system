@@ -84,8 +84,7 @@ async function loadAdmin() {
             name,
             email,
             profileImage,
-            initials,
-            topUpdaterReady: typeof window.markazUpdateTopAdmin === "function"
+            initials
         });
 
         applyDashboardRoleAccess(role, data.admin);
@@ -118,7 +117,6 @@ async function loadAdmin() {
         }
 
         if (adminInitials) { if (profileImage) { adminInitials.textContent = ""; adminInitials.style.backgroundImage = "url(\"" + profileImage + "\")"; adminInitials.style.backgroundSize = "cover"; adminInitials.style.backgroundPosition = "center"; adminInitials.style.backgroundRepeat = "no-repeat"; } else { adminInitials.style.backgroundImage = "none"; adminInitials.textContent = initials; } }
-        if (window.markazUpdateTopAdmin) window.markazUpdateTopAdmin(name, email, profileImage);
         if (profileInitials) profileInitials.textContent = initials;
 
     } catch (error) {
@@ -316,165 +314,20 @@ window.addEventListener("resize", () => {
     }
 });
 
-/* =========================================================
-   MARKAZ — BATCH 24
-   TOPBAR CONTROLS
-   ========================================================= */
-
+/* Dashboard topbar: keep the single profile control defined in dashboard.html.
+   The former injected profile/avatar duplicated the administrator account menu. */
 const topbar = document.querySelector(".topbar");
-
-if (topbar && !document.querySelector(".topbar-actions")) {
-
-    const actions = document.createElement("div");
-    actions.className = "topbar-actions";
-
+if (topbar && !topbar.querySelector(".dashboard-refresh-button")) {
     const refreshButton = document.createElement("button");
     refreshButton.type = "button";
     refreshButton.className = "dashboard-refresh-button";
     refreshButton.setAttribute("aria-label", "Refresh dashboard");
     refreshButton.title = "Refresh dashboard";
     refreshButton.innerHTML = '<i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>';
-
-    refreshButton.addEventListener("click", () => {
-        refreshButton.style.transform = "rotate(360deg)";
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 180);
-    });
-
-    const profileWrap = document.createElement("div");
-    profileWrap.className = "admin-profile-wrap";
-
-    const profileButton = document.createElement("button");
-    profileButton.type = "button";
-    profileButton.className = "admin-profile-button";
-    profileButton.setAttribute("aria-expanded", "false");
-
-    profileButton.innerHTML = `
-        <span
-            class="admin-profile-avatar"
-            id="topAdminInitials"
-            style="background:#dff3e7;color:#145c38;-webkit-text-fill-color:#145c38;font-weight:900;"
-        ></span>
-        <span class="admin-profile-text">
-            <strong id="topAdminName">Administrator</strong>
-            <span>Administrator</span>
-        </span>
-        <span class="admin-profile-arrow">▾</span>
-    `;
-
-    const dropdown = document.createElement("div");
-    dropdown.className = "profile-dropdown";
-
-    dropdown.innerHTML = `
-        <div class="profile-dropdown-header">
-            <strong id="topDropdownName">Administrator</strong>
-            <span id="topDropdownEmail">Loading...</span>
-        </div>
-
-        <button type="button" class="profile-dropdown-item">
-            Profile
-        </button>
-
-        <button type="button" class="profile-dropdown-item">
-            Settings
-        </button>
-
-        <div class="profile-dropdown-divider"></div>
-
-        <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
-            Logout
-        </button>
-    `;
-
-    profileWrap.appendChild(profileButton);
-    profileWrap.appendChild(dropdown);
-
-    actions.appendChild(refreshButton);
-    actions.appendChild(profileWrap);
-    topbar.appendChild(actions);
-
-    const topAdminName = document.getElementById("topAdminName");
-    const topDropdownName = document.getElementById("topDropdownName");
-    const topDropdownEmail = document.getElementById("topDropdownEmail");
-    const topAdminInitials = document.getElementById("topAdminInitials");
-
-    function updateTopAdmin(name, email, profileImage) {
-
-        const safeName = name || "Administrator";
-        const safeEmail = email || "";
-
-        if (topAdminName) {
-            topAdminName.textContent = safeName;
-        }
-
-        if (topDropdownName) {
-            topDropdownName.textContent = safeName;
-        }
-
-        if (topDropdownEmail) {
-            topDropdownEmail.textContent = safeEmail;
-        }
-
-        if (topAdminInitials) {
-            topAdminInitials.innerHTML = "";
-
-            if (profileImage) {
-                const image = document.createElement("img");
-                image.src = "/" + profileImage.replace(/^\/+/, "");
-                image.alt = safeName;
-                image.loading = "eager";
-                image.decoding = "async";
-                topAdminInitials.appendChild(image);
-            } else {
-                const initialsSpan = document.createElement("span");
-                initialsSpan.textContent = getInitials(safeName);
-                topAdminInitials.appendChild(initialsSpan);
-            }
-
-            topAdminInitials.classList.add("avatar-ready");
-        }
-    }
-
-    profileButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        const isOpen = dropdown.classList.toggle("open");
-
-        profileButton.setAttribute(
-            "aria-expanded",
-            isOpen ? "true" : "false"
-        );
-    });
-
-    document.addEventListener("click", (event) => {
-
-        if (
-            !profileWrap.contains(event.target)
-        ) {
-            dropdown.classList.remove("open");
-            profileButton.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-        }
-    });
-
-    const dropdownItems =
-        dropdown.querySelectorAll(".profile-dropdown-item");
-
-    dropdownItems[0]?.addEventListener("click", () => {
-        console.log("Profile selected.");
-    });
-
-    dropdownItems[1]?.addEventListener("click", () => {
-        console.log("Settings selected.");
-    });
-
-    dropdownItems[2]?.addEventListener("click", logout);
-
-    window.markazUpdateTopAdmin = updateTopAdmin;
+    refreshButton.addEventListener("click", () => window.location.reload());
+    const profileWrap = topbar.querySelector(".dashboard-profile-wrap");
+    if (profileWrap) profileWrap.before(refreshButton);
+    else topbar.appendChild(refreshButton);
 }
 
 loadAdmin();
