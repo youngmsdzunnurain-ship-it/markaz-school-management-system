@@ -59,7 +59,7 @@ html[data-theme="dark"] body.dashboard-page .stat-card::before,html[data-theme="
 html[data-theme="dark"] body.dashboard-page :is(.stat-card,.result-progress-section,.dashboard-chart-card,.dashboard-attendance-panel,.admin-details) { background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important; }
 html[data-theme="dark"] body.dashboard-page :is(.progress-card,.dashboard-attendance-category,.dashboard-attendance-empty,.dashboard-class-pie-list li) { background:var(--surface-2)!important;color:var(--ink)!important;border-color:var(--line)!important; }
 html[data-theme="dark"] body.dashboard-page :is(.dashboard-class-progress-track,.progress-track,.dashboard-progress-track) { background:var(--track)!important; }
-html[data-theme="dark"] body.dashboard-page .welcome-card { background:radial-gradient(90% 150% at 100% 0%,rgba(217,182,90,.13),transparent 58%),linear-gradient(115deg,#07170f 0%,#123422 62%,#1f7a45 120%)!important; }
+html[data-theme="dark"] body.dashboard-page .welcome-card { background:radial-gradient(90% 150% at 100% 0%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 58%),linear-gradient(115deg,var(--sidebar-start) 0%,var(--brand-tint) 62%,var(--brand-solid) 120%)!important; }
 html[data-theme="dark"] body :is(.markaz-management-shell,.topbar) { background:rgba(7,23,15,.92)!important; color:var(--ink)!important; border-color:var(--line)!important; }
 html[data-theme="dark"] body :is(.markaz-shell-profile-menu,.dashboard-profile-menu,.profile-dropdown,[role="menu"]) { background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important; }
 html[data-theme="dark"] body :is(.markaz-shell-profile-menu a,.markaz-shell-profile-menu button,.dashboard-profile-menu a,.dashboard-profile-menu button) { background:transparent!important;color:var(--ink)!important; }
@@ -72,9 +72,18 @@ html[data-theme="dark"] body .markaz-shell-sidebar nav a { color:var(--ink-2)!im
 .markaz-theme-toggle-floating { position:fixed;top:12px;right:12px;z-index:5000;box-shadow:var(--shadow-md); }
 html[data-theme="dark"] body .markaz-theme-toggle { background:var(--surface-2);color:var(--gold-ink);border-color:var(--line-2); }
 @media print {
- :root,html[data-theme="dark"] { color-scheme:light!important; }
- html[data-theme="dark"] body { background:#fff!important;color:#172b22!important; }
- html[data-theme="dark"] body .student-result-page,html[data-theme="dark"] body .student-result-page * { background-color:initial!important;color:initial!important; }
+ :root,html[data-theme="dark"] {
+  color-scheme:light!important;
+  --canvas:#f3f6f2; --surface:#ffffff; --surface-2:#fbfdfb; --surface-3:#f7faf7;
+  --track:#e7eee9; --line:#e1e8e3; --line-2:#c8d7cc;
+  --ink:#173125; --ink-2:#40594a; --muted:#718078;
+  --brand-ink:#145c38; --brand:#17643a; --brand-solid:#17643a; --brand-tint:#e8f2eb;
+  --gold:#c8a43a; --gold-ink:#876d19; --gold-tint:#fffaf0;
+  --red:#b84040; --amber:#a96f08; --slate:#4f6180;
+  --att-present:#218653; --att-absent:#cf5555; --att-late:#d3a12c; --att-excused:#8292a2;
+  --sidebar-start:#123d2a; --sidebar-end:#0d2b1c; --sidebar-ink:#ffffff;
+ }
+ html[data-theme="dark"] body { background:var(--surface)!important;color:var(--ink)!important; }
  .markaz-theme-toggle { display:none!important; }
 }
 /* Shared dark surfaces for common application primitives. */
