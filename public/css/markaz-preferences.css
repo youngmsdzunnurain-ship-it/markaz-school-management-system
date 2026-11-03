@@ -452,3 +452,8 @@ html[dir="rtl"] :is(.attendance-field,.attendance-table-wrap,.attendance-report-
 html[dir="rtl"] .markaz-shell-profile-menu a,html[dir="rtl"] .markaz-shell-profile-menu button{text-align:right}
 @media(max-width:520px){.markaz-preference-action{min-height:46px}.markaz-profile-preferences{gap:2px}}
 @media(prefers-reduced-motion:reduce){.markaz-preference-action,.markaz-preference-switch,.markaz-preference-switch i{transition:none!important}}
+
+/* Keep shell entry and menu feedback crisp instead of delaying navigation. */
+.markaz-management-shell{animation-duration:.12s!important;animation-timing-function:ease-out!important}
+.profile-dropdown,.dashboard-profile-menu,.markaz-shell-profile-menu,.markaz-shell-sidebar,.markaz-shell-overlay{transition-duration:.12s!important}
+@media(prefers-reduced-motion:reduce){.markaz-management-shell{animation:none!important}}
