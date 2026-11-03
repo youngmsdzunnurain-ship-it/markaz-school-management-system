@@ -38,7 +38,7 @@ check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
 
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
-check(str_contains($classesApi, "'school_student_total' => $schoolStudentTotal"), 'returns the overall active school population separately from class rosters');
+check(str_contains($classesApi, "'school_student_total'") && str_contains($classesApi, '$schoolStudentTotal'), 'returns the overall active school population separately from class rosters');
 check(str_contains($classesApi, "s.class_id = c.id AND s.is_active = 1"), 'keeps conventional attendance classes tied only to conventional student class IDs');
 check(str_contains($classesApi, "COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id"), 'keeps Arabic attendance classes tied only to Arabic student class IDs');
 
