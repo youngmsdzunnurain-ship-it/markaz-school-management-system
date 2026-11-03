@@ -10,6 +10,7 @@ function dashboardAssert(bool $condition, string $message): void
 }
 
 $css = file_get_contents(__DIR__ . '/../public/css/dashboard.css');
+$redesignCss = file_get_contents(__DIR__ . '/../public/css/dashboard-redesign.css');
 $html = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $js = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $stats = file_get_contents(__DIR__ . '/../api/dashboard/stats.php');
@@ -24,20 +25,23 @@ dashboardAssert(
     'Dashboard surfaces must use a consistent green-and-gold visual system'
 );
 dashboardAssert(
-    str_contains($css, 'grid-template-columns: minmax(260px, 35fr) minmax(230px, 30fr) minmax(260px, 35fr)'),
-    'Examination cards must use 35/30/35 columns in Conventional, Whole School, Arabic order'
+    str_contains($html, 'dashboard-exam-charts') &&
+    str_contains($html, 'dashboardCompletionPie') &&
+    !str_contains($html, 'dashboardConventionalPie') &&
+    !str_contains($html, 'dashboardArabicPie') &&
+    substr_count($html, 'class="dashboard-chart-card') === 1,
+    'Only the overall examination completion card must remain on the dashboard'
 );
 dashboardAssert(
-    str_contains($html, 'dashboard-exam-charts') &&
-    strpos($html, 'dashboardConventionalPie') < strpos($html, 'dashboardCompletionPie') &&
-    strpos($html, 'dashboardCompletionPie') < strpos($html, 'dashboardArabicPie'),
-    'Examination cards must be ordered Conventional, Whole School, Arabic'
+    str_contains($redesignCss, 'grid-template-columns: minmax(0, 680px) !important;') &&
+    str_contains($redesignCss, 'justify-content: center;'),
+    'The single overall completion card must be centered without category chart columns'
 );
 dashboardAssert(
     str_contains($html, 'dashboard-attendance-layout') &&
-    strpos($html, 'dashboardArabicAttendanceDonut') < strpos($html, 'dashboardAttendanceDonut') &&
-    strpos($html, 'dashboardAttendanceDonut') < strpos($html, 'dashboardConventionalAttendanceDonut'),
-    'Attendance cards must be ordered Arabic, Whole School, Conventional'
+    strpos($html, 'dashboardConventionalAttendanceDonut') < strpos($html, 'dashboardAttendanceDonut') &&
+    strpos($html, 'dashboardAttendanceDonut') < strpos($html, 'dashboardArabicAttendanceDonut'),
+    'Attendance cards must be ordered Conventional, Whole School, Arabic'
 );
 dashboardAssert(
     preg_match('/result-progress-grid[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/s', $css) === 1,
@@ -58,6 +62,15 @@ dashboardAssert(
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
+    str_contains($stats, 'SELECT COUNT(*) FROM students WHERE is_active = 1') &&
+    str_contains($stats, 'SELECT COUNT(*) FROM classes WHERE is_active = 1') &&
+    str_contains($stats, 'SELECT COUNT(*) FROM arabic_classes WHERE is_active = 1') &&
+    str_contains($stats, 'SELECT COUNT(*) FROM subjects WHERE is_active = 1') &&
+    str_contains($stats, 'r.academic_period_id = ?') &&
+    str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)'),
+    'Dashboard headline totals must be database counts for active students, classes, subjects and current-period recorded results'
+);
+dashboardAssert(
     str_contains($stats, 'st.arabic_class_id') &&
     str_contains($stats, 'st.arabia_class_id') &&
     str_contains($stats, '$schoolProgressByStudent[$studentId][\'expected_subjects\'] +=') &&
@@ -65,19 +78,21 @@ dashboardAssert(
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
-    str_contains($js, 'class_type=conventional') &&
-    str_contains($js, 'class_type=arabic') &&
-    str_contains($js, 'categoryReports[type]') &&
-    str_contains($attendance, "ar.class_type = ?") &&
-    str_contains($attendance, 'FROM arabic_classes arabic_class') &&
-    str_contains($attendance, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
-    str_contains($attendanceClasses, 'NOT EXISTS') &&
-    str_contains($attendanceClasses, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
-    substr_count($attendanceClasses, 'FROM arabic_classes arabic_class') === 2 &&
-    str_contains($attendance, "ar.class_id = c.id") &&
+    str_contains($js, 'item.class_type === type') &&
+    str_contains($attendance, 'ar.class_type = ?') &&
+    str_contains($attendance, 'ar.class_id = c.id') &&
+    !str_contains($attendance, 'NOT EXISTS') &&
+    !str_contains($attendance, 'arabic_class.name') &&
+    str_contains($attendanceClasses, "'conventional' AS class_type") &&
+    str_contains($attendanceClasses, "'arabic' AS class_type") &&
+    !str_contains($attendanceClasses, 'NOT EXISTS') &&
+    !str_contains($attendanceClasses, 'arabic_class.name') &&
+    str_contains($attendanceRegister, 'ar.class_type = ?') &&
+    str_contains($attendanceRegister, 'ar.class_id = ?') &&
+    str_contains($attendanceRegister, 's.class_id') &&
     str_contains($attendanceRegister, 's.arabia_class_id') &&
-    substr_count($attendanceClasses, 's.arabia_class_id') >= 2,
-    'Attendance report queries must isolate each category by class_type and class_id'
+    str_contains($attendanceClasses, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)'),
+    'Attendance class lists, reports and registers must isolate categories by class_type and class_id without name-based exclusions'
 );
 
 echo "Dashboard layout, progress separation and role-access tests passed.\n";
