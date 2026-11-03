@@ -124,12 +124,6 @@
                             results and academic settings from one place.
                         </p>
                     </div>
-
-                    <div class="welcome-decoration" aria-hidden="true">
-                        <span class="decoration-circle circle-one"></span>
-                        <span class="decoration-circle circle-two"></span>
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
                 </div>
 
                 <section class="stats-grid">
@@ -197,21 +191,14 @@
                     </section>
                 </section>
 
-                <section class="dashboard-exam-charts" aria-label="Conventional, whole-school and Arabic examination completion pie charts">
-                    <article class="dashboard-chart-card dashboard-class-pie-card">
-                        <span class="eyebrow">CONVENTIONAL</span><h2>Completion by Conventional Class</h2>
-                        <div id="dashboardConventionalPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
-                    </article>
+                <section class="dashboard-exam-charts dashboard-overall-exam-chart" aria-label="Overall examination completion">
                     <article class="dashboard-chart-card dashboard-school-pie-card">
-                        <span class="eyebrow">WHOLE SCHOOL</span><h2>Overall Examination Completion</h2>
+                        <span class="eyebrow">OVERALL</span>
+                        <h2>Overall Examination Completion</h2>
                         <div id="dashboardCompletionPie" class="dashboard-completion-pie" role="img" aria-label="Whole-school examination completion pie chart">
                             <div><strong id="dashboardCompletionPieValue">0%</strong><span>Complete</span></div>
                         </div>
                         <p class="dashboard-chart-caption" id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
-                    </article>
-                    <article class="dashboard-chart-card dashboard-class-pie-card">
-                        <span class="eyebrow">ARABIC CLASSES</span><h2>Completion by Arabic Class</h2>
-                        <div id="dashboardArabicPie" class="dashboard-class-pie-list"><p>Loading class data…</p></div>
                     </article>
                 </section>
 
@@ -227,11 +214,11 @@
                         <a href="./attendance.html"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> Open attendance management</a>
                     </div>
                     <div class="dashboard-attendance-layout">
-                        <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
-                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
-                            <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
-                            <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                        <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
+                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
+                            <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
+                            <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
+                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
                         <div class="dashboard-attendance-summary">
                             <div class="dashboard-attendance-donut-wrap">
@@ -245,11 +232,11 @@
                                 <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Excused absences</small></a>
                             </div>
                         </div>
-                        <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
-                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
-                            <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
-                            <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                        <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
+                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
+                            <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
+                            <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
+                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
                     </div>
                     <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
