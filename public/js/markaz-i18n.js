@@ -41,7 +41,7 @@ function translateText(node){
 function apply(root=document){
  document.documentElement.lang=lang;
  const pageTitle=originalTitle||(originalTitle=document.title);if(dictionaries[lang][pageTitle])document.title=dictionaries[lang][pageTitle];document.documentElement.dir=lang==="ar"?"rtl":"ltr";
- document.querySelectorAll("[data-markaz-language]").forEach(el=>{el.value=lang;});
+ 
  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
  let node;while((node=walker.nextNode()))translateText(node);
  const elements=root.nodeType===Node.ELEMENT_NODE?[root,...root.querySelectorAll("*")]:Array.from(root.querySelectorAll("*"));
@@ -57,18 +57,24 @@ function apply(root=document){
   });
  });
  document.querySelectorAll("[data-markaz-label]").forEach(el=>{const key=el.getAttribute("data-markaz-label");const labels={Arabic:"العربي",Conventional:"النظامي"};el.textContent=lang==="ar"?(labels[key]||key):key;});
- document.querySelectorAll("[data-markaz-language-label]").forEach(el=>el.textContent=lang==="ar"?"العربية":"English");
+ document.querySelectorAll("[data-markaz-language-label]").forEach(el=>el.textContent=lang==="ar"?"العربية":"English");document.querySelectorAll("[data-markaz-language-state]").forEach(el=>el.textContent=lang==="ar"?"AR":"EN");document.querySelectorAll("[data-markaz-language-toggle]").forEach(el=>{el.setAttribute("aria-pressed",String(lang==="ar"));el.setAttribute("title",lang==="ar"?"Switch to English":"التبديل إلى العربية");});
 }
 function setLanguage(next){lang=next==="ar"?"ar":"en";try{localStorage.setItem(storeKey,lang);}catch(_){}apply();document.dispatchEvent(new CustomEvent("markaz:languagechange",{detail:{language:lang}}));}
 function controls(){
- if(document.querySelector(".markaz-language-tools"))return;
- const wrap=document.createElement("div");wrap.className="markaz-language-tools";wrap.setAttribute("aria-label","Language settings");
- const select=document.createElement("select");select.setAttribute("aria-label","Language");select.setAttribute("data-markaz-language","");
- select.innerHTML='<option value="en">English</option><option value="ar">العربية</option>';select.value=lang;select.addEventListener("change",()=>setLanguage(select.value));wrap.append(select);
- const anchor=document.querySelector(".markaz-management-shell,.topbar,.attendance-header,.students-topbar,.classes-topbar,.class-topbar,.settings-header,.fees-placeholder-top,.print-results-header,.login-heading");
- if(anchor){anchor.append(wrap);}else{wrap.classList.add("markaz-language-tools-floating");document.body.append(wrap);}
+ const host=document.querySelector("[data-markaz-preferences],.markaz-shell-profile-menu");
+ if(!host||host.querySelector("[data-markaz-language-toggle]"))return;
+ const button=document.createElement("button");
+ button.type="button";
+ button.className="markaz-preference-action markaz-language-toggle";
+ button.setAttribute("data-markaz-language-toggle","");
+ button.setAttribute("aria-label","Switch language");
+ button.setAttribute("aria-pressed",String(lang==="ar"));
+ button.innerHTML='<span class="markaz-preference-icon" aria-hidden="true">文</span><span class="markaz-preference-copy"><strong>Language</strong><small data-markaz-language-label></small></span><span class="markaz-preference-state" data-markaz-language-state></span>';
+ button.addEventListener("click",()=>setLanguage(lang==="ar"?"en":"ar"));
+ host.appendChild(button);
 }
+
 window.markazI18n={get language(){return lang;},t(key){return dictionaries[lang][key]||key;},esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));},setLanguage,apply};
-function start(){controls();apply();new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE)translateText(node);else if(node.nodeType===Node.ELEMENT_NODE)apply(node);});})).observe(document.body,{childList:true,subtree:true});}
+function start(){apply();if(!document.body.classList.contains("student-login-page")&&!document.body.classList.contains("admin-login-page"))controls();new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE)translateText(node);else if(node.nodeType===Node.ELEMENT_NODE)apply(node);});})).observe(document.body,{childList:true,subtree:true});}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
