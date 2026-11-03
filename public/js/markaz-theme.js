@@ -4,7 +4,7 @@
  const system=()=>matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
  const stored=()=>{try{const v=localStorage.getItem(KEY);return v==="dark"||v==="light"?v:null}catch(_){return null}};
  let current=stored()||root.dataset.theme||system();
- const meta=document.querySelector('meta[name="theme-color"]');
+ const meta=document.querySelector('meta[name="theme-color"]')||(()=>{const m=document.createElement("meta");m.name="theme-color";document.head.appendChild(m);return m;})();
  const icon=mode=>mode==="dark"?"☀":"☾";
  function apply(mode,save=false){
   current=mode==="dark"?"dark":"light";root.dataset.theme=current;root.style.colorScheme=current;
