@@ -386,3 +386,69 @@ html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page)
 html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) :is(.settings-card,.settings-section,.settings-panel,.account-card,.account-section,.class-card,.class-panel,.subject-card,.subject-panel,.student-card,.student-panel,.result-card,.result-panel,.form-card,.filter-card,.table-container,.table-wrapper,.modal-content,.modal-card,.data-panel,.content-panel) :is(input,select,textarea){background:#0e1b13!important;color:#e8f1eb!important;border-color:#385342!important;color-scheme:dark}
 html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) table :is(th,td){background:#16271d!important;color:#e8f1eb!important;border-color:#304638!important}
 html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) :is(.muted,.help-text,.form-hint,.field-hint,.empty-state p,.empty-message p){color:#a5b6aa!important}
+
+
+/* MARKAZ refined preference controls and semantic theme tokens. */
+:root{
+ --pref-bg:#f4f7f3;--pref-panel:#ffffff;--pref-panel-soft:#f7faf7;
+ --pref-text:#18352a;--pref-muted:#687a6e;--pref-border:#dce7df;
+ --pref-input:#ffffff;--pref-hover:#edf5ee;--pref-shadow:0 14px 38px rgba(12,42,27,.09);
+}
+html[data-theme="dark"]{
+ color-scheme:dark;
+ --pref-bg:#0b1510;--pref-panel:#14231a;--pref-panel-soft:#192b20;
+ --pref-text:#e8f1eb;--pref-muted:#a6b6aa;--pref-border:#30483a;
+ --pref-input:#0f1c14;--pref-hover:#20382a;--pref-shadow:0 16px 42px rgba(0,0,0,.32);
+}
+.markaz-preference-action{
+ width:100%;min-height:48px;display:flex;align-items:center;gap:11px;
+ padding:9px 11px;border:1px solid transparent;border-radius:11px;
+ background:transparent;color:var(--pref-text);text-align:start;
+ font:inherit;cursor:pointer;transition:background-color .12s ease,border-color .12s ease;
+}
+.markaz-preference-action:hover,.markaz-preference-action:focus-visible{
+ background:var(--pref-hover);border-color:var(--pref-border);outline:none;
+}
+.markaz-preference-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:10px;background:var(--pref-hover);color:#c29a31;font-size:17px}
+.markaz-preference-copy{display:grid;gap:2px;min-width:0;flex:1}
+.markaz-preference-copy strong{font-size:12px;font-weight:750;color:inherit}
+.markaz-preference-copy small{font-size:10px;color:var(--pref-muted)}
+.markaz-preference-state{padding:4px 7px;border-radius:7px;background:var(--pref-hover);color:var(--pref-muted);font-size:10px;font-weight:850}
+.markaz-preference-switch{width:36px;height:21px;flex:0 0 36px;padding:3px;border-radius:99px;background:#aab6ad;transition:background-color .12s ease}
+.markaz-preference-switch i{display:block;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .12s ease}
+.markaz-theme-action[aria-pressed="true"] .markaz-preference-switch{background:#b28d2d}
+.markaz-theme-action[aria-pressed="true"] .markaz-preference-switch i{transform:translateX(15px)}
+html[dir="rtl"] .markaz-theme-action[aria-pressed="true"] .markaz-preference-switch i{transform:translateX(-15px)}
+.markaz-profile-preferences,.markaz-shell-profile-menu [data-markaz-preferences],.dashboard-profile-menu [data-markaz-preferences]{display:grid;gap:3px;padding:5px 0;border-block:1px solid var(--pref-border)}
+.markaz-shell-profile-menu,.dashboard-profile-menu{background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important;box-shadow:var(--pref-shadow)!important}
+.markaz-shell-profile-menu a,.markaz-shell-profile-menu button,.dashboard-profile-menu a,.dashboard-profile-menu button{color:var(--pref-text)!important}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)){
+ background:var(--pref-bg)!important;color:var(--pref-text)!important;color-scheme:dark;
+}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(main,.main-content,.page-content,.attendance-shell,.content,.page-wrapper){
+ background-color:var(--pref-bg)!important;color:var(--pref-text)!important;
+}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(.panel,.card,.stat-card,.welcome-card,.attendance-intro,.attendance-filter-panel,.attendance-chart-panel,.attendance-register-panel,.attendance-summary-card,.attendance-table-wrap,.admin-details,.settings-card,.settings-section,.settings-panel,.account-card,.account-section,.class-card,.class-panel,.subject-card,.subject-panel,.student-card,.student-panel,.result-card,.result-panel,.form-card,.filter-card,.table-container,.table-wrapper,.modal-content,.modal-card,.data-panel,.content-panel){
+ background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important;box-shadow:var(--pref-shadow)!important;
+}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(h1,h2,h3,h4,h5,p,label,span,strong,small,th,td,legend,.filter-help,.secure-note,.attendance-chart-date,.register-panel-header){
+ color:var(--pref-text);
+}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(input,select,textarea){
+ background:var(--pref-input)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important;color-scheme:dark;
+}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(input,select,textarea)::placeholder{color:var(--pref-muted)!important}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) table :is(th,td){background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme="dark"] body:not(.student-login-page):not(.admin-login-page):not(:has(.student-login-card)) :is(.topbar,.attendance-header,.classes-topbar,.class-topbar,.students-topbar,.settings-header,.print-results-header,.result-page-header){background:rgba(18,35,25,.97)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme="dark"] body.staff-login-page{background:var(--pref-bg)!important;color:var(--pref-text)!important;color-scheme:dark}
+html[data-theme="dark"] body.staff-login-page .role-login-card{background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important;box-shadow:var(--pref-shadow)!important}
+html[data-theme="dark"] body.staff-login-page .role-login-card :is(h1,h2,h3,p,label,.role-footer){color:var(--pref-text)!important}
+html[data-theme="dark"] body.staff-login-page .role-login-card input{background:var(--pref-input)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme="dark"] body.staff-login-page .role-login-card .preview-notice{background:var(--pref-panel-soft)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme="dark"] body.staff-login-page .staff-login-preferences .markaz-preference-action{background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[dir="rtl"] body{direction:rtl}
+html[dir="rtl"] :is(.attendance-filters,.attendance-header,.attendance-intro,.attendance-summary-grid,.attendance-chart-content,.attendance-register-panel){direction:rtl}
+html[dir="rtl"] :is(.attendance-field,.attendance-table-wrap,.attendance-report-summary){text-align:right}
+html[dir="rtl"] .markaz-shell-profile-menu a,html[dir="rtl"] .markaz-shell-profile-menu button{text-align:right}
+@media(max-width:520px){.markaz-preference-action{min-height:46px}.markaz-profile-preferences{gap:2px}}
+@media(prefers-reduced-motion:reduce){.markaz-preference-action,.markaz-preference-switch,.markaz-preference-switch i{transition:none!important}}
