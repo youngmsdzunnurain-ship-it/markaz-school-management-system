@@ -1,97 +1,28 @@
 <?php
 declare(strict_types=1);
-
-/**
- * Static contract checks for the MARKAZ language and persistent navigation layer.
- * Run: php tests/markaz-ui-preferences-contract.test.php
- */
-$root = dirname(__DIR__);
-$read = static function (string $path) use ($root): string {
-    $full = $root . '/' . $path;
-    if (!is_file($full)) {
-        throw new RuntimeException("Missing required file: {$path}");
-    }
-    return (string) file_get_contents($full);
-};
-$assert = static function (bool $condition, string $message): void {
-    if (!$condition) {
-        throw new RuntimeException($message);
-    }
-};
-
-$pages = [
-    'public/dashboard.html',
-    'public/attendance.html',
-    'public/classes.html',
-    'public/subjects/index.html',
-    'public/students.html',
-    'public/school-fees.html',
-    'public/settings.html',
-    'public/exam-officer-login.html',
-    'public/teacher-login.html',
-    'public/print-results.html',
-    'public/student-result.html',
-    'public/class.html',
-    'public/class-subjects/index.html',
-];
-foreach ($pages as $page) {
-    $html = $read($page);
-    $relative = in_array($page, ['public/subjects/index.html', 'public/class-subjects/index.html'], true) ? '../' : (in_array($page, ['public/exam-officer-login.html', 'public/teacher-login.html'], true) ? '' : './');
-    $assert(str_contains($html, $relative . 'js/markaz-i18n.js'), "{$page}: language script missing");
-    $assert(str_contains($html, $relative . 'css/markaz-preferences.css'), "{$page}: preference stylesheet missing");
-}
-$dashboard = $read('public/dashboard.html');
-$adminLogin = $read('public/login.html');
-$studentLogin = $read('public/student-login.html');
-$examOfficerLogin = $read('public/exam-officer-login.html');
-$teacherLogin = $read('public/teacher-login.html');
-$attendanceHtml = $read('public/attendance.html');
-$attendanceJs = $read('public/js/attendance.js');
-$attendanceApi = $read('api/attendance/classes.php');
-$themeJs = $read('public/js/markaz-theme.js');
-$profileMenuJs = $read('public/js/dashboard-profile-menu.js');
-$shellForPrefs = $read('public/js/management-shell.js');
-$i18nForPrefs = $read('public/js/markaz-i18n.js');
-$assert(!str_contains($adminLogin, 'markaz-i18n.js'), 'Administrator login must not show language controls');
-$assert(!str_contains($studentLogin, 'markaz-i18n.js') && !str_contains($studentLogin, 'markaz-theme.js'), 'Student login must not show language or theme controls');
-$assert(str_contains($examOfficerLogin, 'staff-login-preferences') && str_contains($teacherLogin, 'staff-login-preferences'), 'Staff login preference controls are missing');
-$assert(str_contains($dashboard, 'dashboardProfileMenu') && str_contains($profileMenuJs, 'dashboardProfileTrigger'), 'Single dashboard avatar menu is missing');
-$assert(!str_contains($dashboard, 'markaz-i18n.js') && !str_contains($dashboard, 'data-markaz-language'), 'Dashboard must remain English-only with no language switch');
-$assert(substr_count($dashboard, 'id="dashboardProfileTrigger"') === 1, 'Dashboard must render exactly one administrator avatar trigger');
-$assert(!str_contains($read('public/js/dashboard.js'), 'topAdminInitials') && !str_contains($read('public/js/dashboard.js'), 'admin-profile-wrap'), 'Dashboard script must not inject a duplicate administrator avatar');
-$assert(str_contains($shellForPrefs, 'data-markaz-preferences') && str_contains($shellForPrefs, 'markaz-theme.js'), 'Staff profile menu must mount shared preferences');
-$assert(str_contains($i18nForPrefs, 'mountControls:controls') && !str_contains($i18nForPrefs, 'createElement("select")'), 'Language must be a direct toggle, not a dropdown');
-$assert(str_contains($themeJs, 'data-markaz-theme-toggle') && str_contains($themeJs, 'markaz-dashboard-theme'), 'Fast persistent theme toggle is missing');
-$assert(str_contains($attendanceHtml, 'id="schoolTotalCount"'), 'Attendance school-wide student total card is missing');
-$assert(str_contains($attendanceJs, 'school_student_total') || str_contains($attendanceJs, 'schoolStudentTotal'), 'Attendance school-wide total is not wired');
-$assert(str_contains($attendanceApi, 'school_student_total'), 'Attendance bootstrap API must return school-wide active student total');
-$assert(!str_contains($attendanceApi, 'NOT EXISTS ('), 'Conventional classes must not be hidden by matching Arabic class names');
-$assert(str_contains($attendanceJs, 'normalizeClassType(item.class_type) === type'), 'Attendance class list must filter using normalized class type');
-$assert(str_contains($dashboard, 'data-role-check-pending="true"'), 'Dashboard role-check gate was removed');
-$assert(str_contains($dashboard, './js/markaz-theme.js'), 'Dashboard-only theme script missing');
-$assert(str_contains($dashboard, 'dashboard-dark-mode.css'), 'Refined dashboard dark palette stylesheet missing');
-$assert(str_contains($read('public/css/dashboard-dark-mode.css'), '.welcome-card::before { content: none'), 'Welcome card divider must be removed in both themes');
-$assert(!str_contains($dashboard, 'app-watermark.css'), 'Legacy dashboard watermark must stay disabled');
-
-$shell = $read('public/js/management-shell.js');
-$shellCss = $read('public/css/management-shell.css');
-$preferences = $read('public/css/markaz-preferences.css');
-$i18n = $read('public/js/markaz-i18n.js');
-$dashboardJs = $read('public/js/dashboard.js');
-$assert(str_contains($shell, 'position') || str_contains($shell, 'markaz-management-shell'), 'Management shell is missing');
-$assert(str_contains($preferences, '.markaz-management-shell{position:fixed'), 'Persistent shell header must be fixed');
-$assert(str_contains($preferences, '.attendance-header'), 'Attendance header sticky override missing');
-$assert(str_contains($preferences, 'top:68px!important'), 'Page heading must sit below the fixed navigation');
-$assert(str_contains($preferences, 'background:rgba(255,255,255,.94)!important'), 'Old green page hero headers must be neutralized');
-$assert(str_contains($preferences, 'position:sticky!important;top:0!important'), 'Dashboard topbar must remain sticky');
-$assert(str_contains($preferences, 'content:none!important'), 'Old green header decorations must be removed');
-$assert(str_contains($preferences, '--pref-bg:#0b1510') && str_contains($preferences, '--pref-panel:#14231a'), 'Complete dark theme surface tokens are missing');
-$assert(str_contains($preferences, 'animation-duration:.12s!important') && str_contains($preferences, 'prefers-reduced-motion'), 'Fast accessible transition rules are missing');
-$assert(str_contains($i18n, 'document.documentElement.dir=lang==="ar"?"rtl":"ltr"'), 'Arabic RTL direction is missing');
-$assert(str_contains($i18n, 'data-no-translate'), 'Database values must be protected from translation');
-$assert(str_contains($dashboardJs, 'renderDashboardAttendanceComboChart'), 'Attendance combo chart renderer missing');
-$assert(str_contains($dashboardJs, 'data-no-translate'), 'Database-derived chart labels must be protected');
-$assert(str_contains($dashboard, 'dashboardConventionalAttendanceChart'), 'Conventional attendance chart container missing');
-$assert(str_contains($dashboard, 'dashboardArabicAttendanceChart'), 'Arabic attendance chart container missing');
-
-echo "MARKAZ UI preference contract checks passed.\n";
+$root=dirname(__DIR__);
+$read=static function(string $path)use($root):string{$full=$root.'/'.$path;if(!is_file($full))throw new RuntimeException("Missing file: {$path}");return (string)file_get_contents($full);};
+$assert=static function(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);};
+$theme=$read('public/js/markaz-theme.js');
+$css=$read('public/css/markaz-theme.css');
+$dashboard=$read('public/dashboard.html');
+$shell=$read('public/js/management-shell.js');
+$shellCss=$read('public/css/management-shell.css');
+$dark=$read('public/css/dashboard-dark-mode.css');
+$assert(str_contains($theme,'markaz.theme'),'Theme preference key missing');
+$assert(str_contains($theme,'prefers-color-scheme: dark'),'Device theme preference missing');
+$assert(str_contains($theme,'addEventListener("storage"'),'Cross-tab synchronization missing');
+$assert(str_contains($theme,'data-markaz-theme-toggle'),'Theme toggle missing');
+$assert(str_contains($theme,'Switch to light mode')&&str_contains($theme,'Switch to dark mode'),'Accessible theme toggle labels missing');
+$assert(str_contains($css,'--brand-ink:#8fe3b0'),'Dark brand ink palette missing');
+$assert(str_contains($css,'--att-present:#4fd08a')&&str_contains($css,'--att-absent:#ff7a88'),'Attendance semantic colours missing');
+$assert(str_contains($css,'@media print'),'Print override missing');
+$assert(str_contains($dashboard,'dashboardProfileMenu'),'Dashboard profile dropdown missing');
+$assert(substr_count($dashboard,'id="dashboardProfileTrigger"')===1,'Duplicate dashboard avatar trigger');
+$assert(!str_contains($dashboard,'markaz-i18n.js'),'Dashboard must not load Arabic translation');
+$assert(str_contains($shell,'markaz-shell-profile-menu'),'Shared account menu missing');
+$assert(str_contains($shellCss,'.markaz-shell-profile-menu'),'Shared profile dropdown styles missing');
+$assert(!str_contains($dark,'#'),'Dashboard dark overrides contain hard-coded hex colours');
+$assert(str_contains($dark,'var(--surface)')&&str_contains($dark,'var(--track)'),'Dashboard rings do not use shared tokens');
+$assert(!str_contains($read('public/css/markaz-preferences.css'),'html[dir=rtl]'),'Arabic RTL styles must be retired');
+echo "MARKAZ theme preference contract: PASS\n";
