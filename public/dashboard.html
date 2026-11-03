@@ -113,6 +113,19 @@
                     <h1>Dashboard</h1>
                     <p>MARKAZ Result Management System</p>
                 </div>
+                <div class="dashboard-profile-wrap">
+                    <button type="button" class="dashboard-profile-trigger" id="dashboardProfileTrigger" aria-expanded="false" aria-label="Open profile menu">
+                        <span class="dashboard-profile-avatar" id="dashboardProfileInitials">AD</span>
+                        <span class="dashboard-profile-trigger-copy"><strong id="dashboardProfileName">Account</strong><small>Account settings</small></span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="dashboard-profile-menu" id="dashboardProfileMenu" hidden>
+                        <div class="dashboard-profile-menu-head"><strong id="dashboardProfileMenuName">Account</strong><small id="dashboardProfileEmail"></small></div>
+                        <a href="settings.html"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+                        <div class="markaz-profile-preferences" data-markaz-preferences aria-label="Display preferences"></div>
+                        <button type="button" id="dashboardProfileLogout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</button>
+                    </div>
+                </div>
             </header>
 
             <section class="page-content">
@@ -342,6 +355,7 @@
     </div>
 
     <script src="js/dashboard.js?v=20261030-attendance-reports-fix4"></script>
+    <script src="js/dashboard-profile-menu.js?v=20261103-profile1"></script>
 
     <script src="/js/markaz-global.js"></script>
 
