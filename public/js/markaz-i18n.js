@@ -74,7 +74,7 @@ function controls(){
  host.appendChild(button);
 }
 
-window.markazI18n={get language(){return lang;},t(key){return dictionaries[lang][key]||key;},esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));},setLanguage,apply};
+window.markazI18n={get language(){return lang;},t(key){return dictionaries[lang][key]||key;},esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));},setLanguage,apply,mountControls:controls};
 function start(){apply();if(!document.body.classList.contains("student-login-page")&&!document.body.classList.contains("admin-login-page"))controls();new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE)translateText(node);else if(node.nodeType===Node.ELEMENT_NODE)apply(node);});})).observe(document.body,{childList:true,subtree:true});}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
