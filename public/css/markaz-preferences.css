@@ -345,3 +345,30 @@ html[data-theme=dark] body.staff-login-page .staff-login-preferences button{back
 html,body,body *{scroll-behavior:auto!important}
 button,a,.nav-link,.markaz-shell-sidebar,.markaz-preference-action,.markaz-preference-switch i{transition-duration:.12s!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Dashboard avatar menu aligns preferences with the shared management profile menu. */
+.dashboard-profile-wrap{position:relative;margin-inline-start:auto}
+.dashboard-profile-trigger{display:flex;align-items:center;gap:9px;min-height:48px;padding:4px 11px 4px 5px;border:1px solid var(--line,#dce7df);border-radius:999px;background:var(--surface,#fff);color:var(--ink,#173125);cursor:pointer}
+.dashboard-profile-avatar{width:38px;height:38px;display:grid;place-items:center;overflow:hidden;border:2px solid #d6b65f;border-radius:50%;background:#e1f0e6;color:#145c38;font-size:12px;font-weight:900}
+.dashboard-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.dashboard-profile-trigger-copy{display:grid;text-align:start}
+.dashboard-profile-trigger-copy strong{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.dashboard-profile-trigger-copy small{font-size:10px;color:var(--muted,#718078)}
+.dashboard-profile-trigger>i{font-size:10px;color:var(--muted,#718078)}
+.dashboard-profile-menu{position:absolute;inset-block-start:calc(100% + 9px);inset-inline-end:0;z-index:6000;width:min(280px,calc(100vw - 24px));padding:10px;border:1px solid var(--line,#dce7df);border-radius:16px;background:var(--surface,#fff);color:var(--ink,#173125);box-shadow:0 18px 45px #0d2b1c25}
+.dashboard-profile-menu[hidden]{display:none}
+.dashboard-profile-menu-head{display:grid;gap:3px;padding:10px;border-bottom:1px solid var(--line,#e1e8e3)}
+.dashboard-profile-menu-head strong{font-size:13px}
+.dashboard-profile-menu-head small{font-size:11px;color:var(--muted,#718078);overflow-wrap:anywhere}
+.dashboard-profile-menu>a,.dashboard-profile-menu>button{width:100%;display:flex;align-items:center;gap:10px;padding:11px 10px;border:0;border-radius:9px;background:transparent;color:var(--ink,#173125);text-align:start;text-decoration:none;font:inherit;font-size:12px;cursor:pointer}
+.dashboard-profile-menu>a:hover,.dashboard-profile-menu>button:hover{background:var(--green-soft,#e8f2eb)}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-trigger,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu{background:#14221a!important;color:#e8f1eb!important;border-color:#2b4033!important}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-trigger-copy small,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu-head small{color:#a4b4a9!important}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>a,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>button{color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>a:hover,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>button:hover{background:#20382a!important}
+@media(max-width:520px){.dashboard-profile-trigger-copy{display:none}.dashboard-profile-trigger{padding:4px}}
