@@ -25,6 +25,9 @@ on:
       - "tests/dashboard-layout-attendance-access.test.php"
       - "database/migrations/20261028_daily_attendance.sql"
       - "tests/attendance-validation.test.php"
+      - "tests/markaz-ui-contract.test.php"
+      - "tests/markaz-ui-preferences-contract.test.php"
+      - "public/css/attendance.css"
       - "public/js/markaz-i18n.js"
       - "public/js/markaz-theme.js"
       - "public/js/management-shell.js"
@@ -68,6 +71,8 @@ jobs:
           php -l public/api/attendance/classes.php
           php -l public/api/attendance/register.php
           php -l tests/attendance-validation.test.php
+          php -l tests/markaz-ui-contract.test.php
+          php -l tests/markaz-ui-preferences-contract.test.php
           php -l api/dashboard/_progress.php
           php -l api/dashboard/stats.php
           php -l tests/dashboard-progress-validation.test.php
