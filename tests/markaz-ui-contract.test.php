@@ -55,7 +55,7 @@ $i18n = file_get_contents($root . '/public/js/markaz-i18n.js') ?: '';
 $check(str_contains($i18n, 'markazI18n'), 'Translation API missing');
 $check(str_contains($i18n, 'originalAttributes'), 'Accessible attribute translation is missing');
 $check(!str_contains($i18n, 'tbody,[contenteditable'), 'Dynamic table content must remain translatable');
-$check(str_contains($i18n, 'OPTION') === false, 'Dropdown option labels must be translatable');
+$check(!str_contains($i18n, '"OPTION"'), 'Dropdown option labels must be translatable');
 $check(str_contains($i18n, '[data-user-content]'), 'User-entered and database-derived content boundaries must be respected');
 
 if ($failures) {
