@@ -77,3 +77,13 @@ html[data-theme="dark"] body .markaz-theme-toggle { background:var(--surface-2);
  html[data-theme="dark"] body .student-result-page,html[data-theme="dark"] body .student-result-page * { background-color:initial!important;color:initial!important; }
  .markaz-theme-toggle { display:none!important; }
 }
+/* Shared dark surfaces for common application primitives. */
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.input-box,.role-input,.form-group,.role-field,.search-box,.search-field,.filter-bar,.filter-panel,.toolbar,.table-wrapper,.table-responsive,.pagination,.tab-list,.tab-panel,.form-section,.form-row,.settings-section,.settings-panel,.student-form,.modal-header,.modal-footer,.dropdown-header,.empty-state-card,.loading-state,.error-state,.alert,.toast,.toast-message,.skeleton,.skeleton-card) {
+ background-color:var(--surface-2)!important;color:var(--ink)!important;border-color:var(--line)!important;
+}
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.input-box i,.role-input i,.form-group label,.role-field label,.form-label,.table-caption,.pagination a,.pagination button,.tab-button) { color:var(--ink-2); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(button:disabled,input:disabled,select:disabled,textarea:disabled,.disabled) { opacity:.62; color:var(--muted)!important; background:var(--surface-3)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(input:focus,select:focus,textarea:focus,button:focus-visible) { outline-color:var(--gold); border-color:var(--gold)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.badge,.status-badge,.status-pill) { background:var(--surface-3); border-color:var(--line); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.modal-backdrop,.overlay,.sidebar-overlay) { background:rgba(0,0,0,.55)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.table-empty,.empty-state,.error-state,.loading-state) :is(p,span,small) { color:var(--muted)!important; }
