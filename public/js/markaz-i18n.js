@@ -25,6 +25,45 @@ Object.assign(dictionaries.ar,{"Save Student":"حفظ الطالب","Selected st
 Object.assign(dictionaries.ar,{
 "Appearance":"المظهر","Language":"اللغة","Account settings":"إعدادات الحساب","Switch language":"تغيير اللغة","Switch to light mode":"التبديل إلى الوضع الفاتح","Switch to dark mode":"التبديل إلى الوضع الداكن","Dark":"داكن","Light":"فاتح","Account":"الحساب","Settings":"الإعدادات","Daily Attendance":"الحضور اليومي","Attendance date":"تاريخ الحضور","Class category":"نوع الفصل","Conventional class":"الفصل النظامي","Arabic class":"الفصل العربي","Class":"الفصل","Student name":"اسم الطالب","Load register":"تحميل السجل","School total":"إجمالي المدرسة","All active students":"جميع الطلاب النشطين","Total students":"إجمالي الطلاب","Present":"حاضر","Absent":"غائب","Late":"متأخر","Excused":"بعذر","Attendance breakdown":"تفصيل الحضور","Class attendance overview":"نظرة عامة على حضور الفصل","Load a register to view its breakdown":"حمّل سجل الحضور لعرض التفاصيل","Attendance reports":"تقارير الحضور","Class and school summaries":"ملخصات الفصول والمدرسة","From":"من","To":"إلى","View report":"عرض التقرير","Reports count saved attendance marks only. Unmarked school days are not treated as present.":"تحتسب التقارير سجلات الحضور المحفوظة فقط. ولا تُحتسب أيام الدراسة غير المسجلة كحضور.","Student register":"سجل الطلاب","Select a class and date to begin.":"اختر فصلاً وتاريخاً للبدء.","Mark all present":"تسجيل حضور الجميع","Clear marks":"مسح العلامات","Attendance status":"حالة الحضور","Note (optional)":"ملاحظة (اختياري)","Your register is waiting":"سجل الحضور جاهز","Choose a class and date above, then load the register.":"اختر فصلاً وتاريخاً أعلاه، ثم حمّل سجل الحضور.","No register loaded yet.":"لم يتم تحميل سجل الحضور بعد.","Save attendance":"حفظ الحضور","Print":"طباعة","Download CSV":"تنزيل CSV","Admin Login":"دخول المسؤول","Exam Officer Login":"دخول مسؤول الامتحانات","Teacher Login":"دخول المعلم","Email Address":"البريد الإلكتروني","Username":"اسم المستخدم","Password":"كلمة المرور","Enter your email address":"أدخل بريدك الإلكتروني","Enter your teacher username":"أدخل اسم المستخدم الخاص بك","Enter your password":"أدخل كلمة المرور","Sign in with your registered Exam Officer email and password.":"سجّل الدخول باستخدام البريد الإلكتروني وكلمة المرور المسجلين لمسؤول الامتحانات.","Sign in using the unique username provided by the school.":"سجّل الدخول باستخدام اسم المستخدم المخصص الذي وفرته المدرسة.","For authorised examination staff":"للموظفين المخولين بالامتحانات","For authorised teaching staff":"للمعلمين المخولين","Sign in to access examination services.":"سجّل الدخول للوصول إلى خدمات الامتحانات.","Sign in to access teacher services.":"سجّل الدخول للوصول إلى خدمات المعلمين.","Login":"تسجيل الدخول","Check Results":"عرض النتائج","Learning, memorization and good character":"التعلم والحفظ وحسن الخلق","Management":"الإدارة","MARKAZ":"مركز"
 });
+Object.assign(dictionaries.ar,{
+ "Select a class…":"اختر فصلاً…",
+ "No Arabic classes assigned":"لا توجد فصول عربية مخصصة",
+ "No conventional classes assigned":"لا توجد فصول نظامية مخصصة",
+ "No active classes are available in this category. Create or activate a class in Class Management.":"لا توجد فصول نشطة في هذا القسم. أنشئ فصلاً أو فعّله من إدارة الفصول.",
+ "Only classes assigned to your teacher account are shown.":"تظهر هنا الفصول المخصصة لحساب المعلم فقط.",
+ "No classes of this category are assigned to your teacher account.":"لا توجد فصول من هذا النوع مخصصة لحساب المعلم.",
+ "Create or activate a class in Class Management before taking attendance.":"أنشئ فصلاً أو فعّله في إدارة الفصول قبل تسجيل الحضور.",
+ "Choose a class from the selected category. Class lists are kept separate.":"اختر فصلاً من القسم المحدد. قوائم الفصول منفصلة.",
+ "Class options and student totals are loaded from the database.":"يتم تحميل الفصول وأعداد الطلاب من قاعدة البيانات.",
+ " student":" طالب",
+ " students":" طلاب",
+ "Select a student…":"اختر طالباً…",
+ "No students in this class":"لا يوجد طلاب في هذا الفصل",
+ "Gender not recorded":"لم يتم تسجيل الجنس",
+ "Add a short note…":"أضف ملاحظة قصيرة…",
+ "Choose status":"اختر الحالة",
+ "Please choose a class first.":"يرجى اختيار فصل أولاً.",
+ "Please choose an attendance date.":"يرجى اختيار تاريخ الحضور.",
+ "Attendance cannot be recorded for a future date.":"لا يمكن تسجيل الحضور لتاريخ مستقبلي.",
+ "Loading available classes…":"جارٍ تحميل الفصول المتاحة…",
+ "No active classes are available to this account.":"لا توجد فصول نشطة متاحة لهذا الحساب.",
+ "Your register is waiting":"سجل الحضور بانتظارك",
+ "Choose a class and date above, then load the register.":"اختر فصلاً وتاريخاً أعلاه، ثم حمّل سجل الحضور.",
+ "This class has no active students to mark.":"لا يوجد طلاب نشطون لتسجيل حضورهم في هذا الفصل.",
+ "Register loaded. No attendance has been entered for this class and date yet.":"تم تحميل السجل. لم يتم تسجيل الحضور لهذا الفصل والتاريخ بعد.",
+ "Unsaved changes. Save attendance to keep your updates.":"توجد تغييرات غير محفوظة. احفظ الحضور للاحتفاظ بالتحديثات.",
+ "All ":"الجميع ",
+ " students marked present. Review the register before saving.":" طالباً تم تسجيل حضورهم. راجع السجل قبل الحفظ.",
+ "Marks cleared on screen. Save to apply the changes.":"تم مسح العلامات من الشاشة. احفظ لتطبيق التغييرات.",
+ "Attendance saved successfully.":"تم حفظ الحضور بنجاح.",
+ "View report":"عرض التقرير",
+ "Choose a valid date range.":"اختر نطاقاً زمنياً صحيحاً.",
+ "Select one of your assigned classes before viewing its report.":"اختر أحد الفصول المخصصة لك قبل عرض التقرير.",
+ "Loading attendance report…":"جارٍ تحميل تقرير الحضور…",
+ "No saved attendance records in this period.":"لا توجد سجلات حضور محفوظة خلال هذه الفترة.",
+ "Load a register to view its breakdown":"حمّل سجل الحضور لعرض تفاصيله",
+ "No student records are available for this class.":"لا توجد سجلات طلاب متاحة لهذا الفصل."
+});
 const reverseArabic = Object.create(null);
 Object.entries(dictionaries.ar).forEach(([english, arabic]) => {
  if (typeof arabic === "string" && !(arabic in reverseArabic)) reverseArabic[arabic] = english;
