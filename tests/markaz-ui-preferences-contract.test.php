@@ -36,7 +36,7 @@ $pages = [
 ];
 foreach ($pages as $page) {
     $html = $read($page);
-    $relative = in_array($page, ['public/subjects/index.html', 'public/class-subjects/index.html'], true) ? '../' : './';
+    $relative = in_array($page, ['public/subjects/index.html', 'public/class-subjects/index.html'], true) ? '../' : (in_array($page, ['public/exam-officer-login.html', 'public/teacher-login.html'], true) ? '' : './');
     $assert(str_contains($html, $relative . 'js/markaz-i18n.js'), "{$page}: language script missing");
     $assert(str_contains($html, $relative . 'css/markaz-preferences.css'), "{$page}: preference stylesheet missing");
 }
