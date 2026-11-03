@@ -25,6 +25,14 @@ Object.assign(dictionaries.ar,{"Save Student":"حفظ الطالب","Selected st
 Object.assign(dictionaries.ar,{
 "Appearance":"المظهر","Language":"اللغة","Account settings":"إعدادات الحساب","Switch language":"تغيير اللغة","Switch to light mode":"التبديل إلى الوضع الفاتح","Switch to dark mode":"التبديل إلى الوضع الداكن","Dark":"داكن","Light":"فاتح","Account":"الحساب","Settings":"الإعدادات","Daily Attendance":"الحضور اليومي","Attendance date":"تاريخ الحضور","Class category":"نوع الفصل","Conventional class":"الفصل النظامي","Arabic class":"الفصل العربي","Class":"الفصل","Student name":"اسم الطالب","Load register":"تحميل السجل","School total":"إجمالي المدرسة","All active students":"جميع الطلاب النشطين","Total students":"إجمالي الطلاب","Present":"حاضر","Absent":"غائب","Late":"متأخر","Excused":"بعذر","Attendance breakdown":"تفصيل الحضور","Class attendance overview":"نظرة عامة على حضور الفصل","Load a register to view its breakdown":"حمّل سجل الحضور لعرض التفاصيل","Attendance reports":"تقارير الحضور","Class and school summaries":"ملخصات الفصول والمدرسة","From":"من","To":"إلى","View report":"عرض التقرير","Reports count saved attendance marks only. Unmarked school days are not treated as present.":"تحتسب التقارير سجلات الحضور المحفوظة فقط. ولا تُحتسب أيام الدراسة غير المسجلة كحضور.","Student register":"سجل الطلاب","Select a class and date to begin.":"اختر فصلاً وتاريخاً للبدء.","Mark all present":"تسجيل حضور الجميع","Clear marks":"مسح العلامات","Attendance status":"حالة الحضور","Note (optional)":"ملاحظة (اختياري)","Your register is waiting":"سجل الحضور جاهز","Choose a class and date above, then load the register.":"اختر فصلاً وتاريخاً أعلاه، ثم حمّل سجل الحضور.","No register loaded yet.":"لم يتم تحميل سجل الحضور بعد.","Save attendance":"حفظ الحضور","Print":"طباعة","Download CSV":"تنزيل CSV","Admin Login":"دخول المسؤول","Exam Officer Login":"دخول مسؤول الامتحانات","Teacher Login":"دخول المعلم","Email Address":"البريد الإلكتروني","Username":"اسم المستخدم","Password":"كلمة المرور","Enter your email address":"أدخل بريدك الإلكتروني","Enter your teacher username":"أدخل اسم المستخدم الخاص بك","Enter your password":"أدخل كلمة المرور","Sign in with your registered Exam Officer email and password.":"سجّل الدخول باستخدام البريد الإلكتروني وكلمة المرور المسجلين لمسؤول الامتحانات.","Sign in using the unique username provided by the school.":"سجّل الدخول باستخدام اسم المستخدم المخصص الذي وفرته المدرسة.","For authorised examination staff":"للموظفين المخولين بالامتحانات","For authorised teaching staff":"للمعلمين المخولين","Sign in to access examination services.":"سجّل الدخول للوصول إلى خدمات الامتحانات.","Sign in to access teacher services.":"سجّل الدخول للوصول إلى خدمات المعلمين.","Login":"تسجيل الدخول","Check Results":"عرض النتائج","Learning, memorization and good character":"التعلم والحفظ وحسن الخلق","Management":"الإدارة","MARKAZ":"مركز"
 });
+const reverseArabic = Object.create(null);
+Object.entries(dictionaries.ar).forEach(([english, arabic]) => {
+ if (typeof arabic === "string" && !(arabic in reverseArabic)) reverseArabic[arabic] = english;
+});
+function translateValue(value) {
+ if (lang === "ar") return dictionaries.ar[value] || value;
+ return reverseArabic[value] || dictionaries.en[value] || value;
+}
 const storeKey="markaz-language";
 let originalTitle="";
 let lang="en";
@@ -33,17 +41,17 @@ const original=new WeakMap();
 const originalAttributes=new WeakMap();
 const initialTitle=document.title;
 
-const ignored=new Set(["SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION"]);
+const ignored=new Set(["SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT"]);
 function translateText(node){
- const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate],tbody,[contenteditable=\"true\"],.student-name,.student-full-name,.admin-name,.profile-name,.database-value,[data-user-content]"))return;
+ const parent=node.parentElement;if(!parent||ignored.has(parent.tagName)||parent.closest("[data-no-translate],[contenteditable=\"true\"],.student-name,.student-full-name,.admin-name,.profile-name,.database-value,[data-user-content]"))return;
  if(!original.has(node))original.set(node,node.nodeValue);
  const raw=original.get(node), trimmed=raw.trim();if(!trimmed)return;
- const value=dictionaries[lang][trimmed];if(!value)return;
+ const value=translateValue(trimmed);if(value===trimmed)return;
  node.nodeValue=raw.replace(trimmed,value);
 }
 function apply(root=document){
  document.documentElement.lang=lang;
- const pageTitle=originalTitle||(originalTitle=document.title);if(dictionaries[lang][pageTitle])document.title=dictionaries[lang][pageTitle];document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+ const pageTitle=originalTitle||(originalTitle=document.title);document.title=translateValue(pageTitle);document.documentElement.dir=lang==="ar"?"rtl":"ltr";
  
  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
  let node;while((node=walker.nextNode()))translateText(node);
@@ -55,8 +63,8 @@ function apply(root=document){
   attrs.forEach(attr=>{
    const current=el.getAttribute(attr);if(!current)return;
    if(!(attr in saved))saved[attr]=current;
-   const source=saved[attr],translated=dictionaries[lang][source];
-   if(translated)el.setAttribute(attr,translated);
+   const source=saved[attr],translated=translateValue(source);
+   if(translated!==source)el.setAttribute(attr,translated);
   });
  });
  document.querySelectorAll("[data-markaz-label]").forEach(el=>{const key=el.getAttribute("data-markaz-label");const labels={Arabic:"العربي",Conventional:"النظامي"};el.textContent=lang==="ar"?(labels[key]||key):key;});
@@ -72,7 +80,7 @@ function controls(){
  button.setAttribute("data-markaz-language-toggle","");
  button.setAttribute("aria-label","Switch language");
  button.setAttribute("aria-pressed",String(lang==="ar"));
- button.innerHTML='<span class="markaz-preference-icon" aria-hidden="true">文</span><span class="markaz-preference-copy"><strong>Language</strong><small data-markaz-language-label></small></span><span class="markaz-preference-state" data-markaz-language-state></span>';
+ button.innerHTML='<span class="markaz-preference-icon" aria-hidden="true"><i class="fa-solid fa-language"></i></span><span class="markaz-preference-copy"><strong>Language</strong><small data-markaz-language-label></small></span><span class="markaz-preference-state" data-markaz-language-state></span>';
  button.addEventListener("click",()=>setLanguage(lang==="ar"?"en":"ar"));
  host.appendChild(button);
 }
