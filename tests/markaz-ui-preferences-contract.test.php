@@ -63,7 +63,7 @@ $assert(str_contains($attendanceHtml, 'id="schoolTotalCount"'), 'Attendance scho
 $assert(str_contains($attendanceJs, 'school_student_total') || str_contains($attendanceJs, 'schoolStudentTotal'), 'Attendance school-wide total is not wired');
 $assert(str_contains($attendanceApi, 'school_student_total'), 'Attendance bootstrap API must return school-wide active student total');
 $assert(!str_contains($attendanceApi, 'NOT EXISTS ('), 'Conventional classes must not be hidden by matching Arabic class names');
-$assert(str_contains($attendanceJs, 'String(item.class_type).toLowerCase()'), 'Attendance class list must filter using normalized class type');
+$assert(str_contains($attendanceJs, 'normalizeClassType(item.class_type) === type'), 'Attendance class list must filter using normalized class type');
 $assert(str_contains($dashboard, 'data-role-check-pending="true"'), 'Dashboard role-check gate was removed');
 $assert(str_contains($dashboard, './js/markaz-theme.js'), 'Dashboard-only theme script missing');
 $assert(!str_contains($dashboard, 'app-watermark.css'), 'Legacy dashboard watermark must stay disabled');
@@ -80,6 +80,8 @@ $assert(str_contains($preferences, 'top:68px!important'), 'Page heading must sit
 $assert(str_contains($preferences, 'background:rgba(255,255,255,.94)!important'), 'Old green page hero headers must be neutralized');
 $assert(str_contains($preferences, 'position:sticky!important;top:0!important'), 'Dashboard topbar must remain sticky');
 $assert(str_contains($preferences, 'content:none!important'), 'Old green header decorations must be removed');
+$assert(str_contains($preferences, '--pref-bg:#0b1510') && str_contains($preferences, '--pref-panel:#14231a'), 'Complete dark theme surface tokens are missing');
+$assert(str_contains($preferences, 'animation-duration:.12s!important') && str_contains($preferences, 'prefers-reduced-motion'), 'Fast accessible transition rules are missing');
 $assert(str_contains($i18n, 'document.documentElement.dir=lang==="ar"?"rtl":"ltr"'), 'Arabic RTL direction is missing');
 $assert(str_contains($i18n, 'data-no-translate'), 'Database values must be protected from translation');
 $assert(str_contains($dashboardJs, 'renderDashboardAttendanceComboChart'), 'Attendance combo chart renderer missing');
