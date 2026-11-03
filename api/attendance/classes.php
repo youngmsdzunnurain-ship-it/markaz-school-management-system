@@ -84,8 +84,11 @@ usort($classes, static function (array $a, array $b): int {
         ?: strcasecmp((string) $a['name'], (string) $b['name']));
 });
 
+$schoolStudentTotal = (int) $pdo->query('SELECT COUNT(*) FROM students WHERE is_active = 1')->fetchColumn();
+
 echo json_encode([
     'success' => true,
+    'school_student_total' => $schoolStudentTotal,
     'role' => $role,
     'classes' => $classes,
 ], JSON_UNESCAPED_UNICODE);
