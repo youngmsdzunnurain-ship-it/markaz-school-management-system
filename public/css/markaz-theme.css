@@ -1,92 +1,79 @@
-/* MARKAZ shared colour system. Light tokens preserve the current school palette. */
+/* MARKAZ SYSTEM THEME — single source of truth for application colours. */
 :root {
-  color-scheme: light dark;
-  --canvas: #f3f6f2;
-  --surface: #ffffff;
-  --surface-2: #fbfdfb;
-  --surface-3: #f7faf7;
-  --track: #e7eee9;
-  --line: #e1e8e3;
-  --line-2: #c8d7cc;
-  --ink: #173125;
-  --ink-2: #40594a;
-  --muted: #718078;
-  --brand-ink: #145c38;
-  --brand: #17643a;
-  --brand-solid: #17643a;
-  --brand-tint: #e8f2eb;
-  --gold: #c8a43a;
-  --gold-ink: #876d19;
-  --gold-tint: #fffaf0;
-  --red: #b84040;
-  --amber: #a96f08;
-  --slate: #4f6180;
-  --att-present: #218653;
-  --att-absent: #cf5555;
-  --att-late: #d3a12c;
-  --att-excused: #8292a2;
-  --shadow-sm: 0 4px 16px rgba(20,55,38,.06);
-  --shadow-md: 0 12px 30px rgba(20,55,38,.09);
-  --shadow-lg: 0 18px 42px rgba(20,55,38,.12);
-  --sidebar-start: #123d2a;
-  --sidebar-end: #0d2b1c;
-  --sidebar-ink: #ffffff;
-  /* Existing dashboard token aliases */
-  --green: var(--brand);
-  --green-dark: #0d2b1c;
-  --green-soft: var(--brand-tint);
-  --gold-soft: #f4e8b7;
-  --cream: #f7f4eb;
-  --background: var(--canvas);
-  --white: var(--surface);
-  --text: var(--ink);
-  --border: var(--line);
-  --danger: var(--red);
+ color-scheme: light dark;
+ --canvas:#f3f6f2; --surface:#ffffff; --surface-2:#fbfdfb; --surface-3:#f7faf7;
+ --track:#e7eee9; --line:#e1e8e3; --line-2:#c8d7cc;
+ --ink:#173125; --ink-2:#40594a; --muted:#718078;
+ --brand-ink:#145c38; --brand:#17643a; --brand-solid:#17643a; --brand-tint:#e8f2eb;
+ --gold:#c8a43a; --gold-ink:#876d19; --gold-tint:#fffaf0;
+ --red:#b84040; --amber:#a96f08; --slate:#4f6180;
+ --att-present:#218653; --att-absent:#cf5555; --att-late:#d3a12c; --att-excused:#8292a2;
+ --shadow-sm:0 4px 16px rgba(20,55,38,.06); --shadow-md:0 12px 30px rgba(20,55,38,.09); --shadow-lg:0 18px 42px rgba(20,55,38,.12);
+ --sidebar-start:#123d2a; --sidebar-end:#0d2b1c; --sidebar-ink:#ffffff;
+ --green:var(--brand); --green-dark:var(--sidebar-end); --green-soft:var(--brand-tint); --gold-soft:var(--gold-tint); --cream:#f7f4eb;
+ --background:var(--canvas); --white:var(--surface); --text:var(--ink); --border:var(--line); --danger:var(--red);
 }
 html[data-theme="dark"] {
-  color-scheme: dark;
-  --canvas: #0a120d;
-  --surface: #101a14;
-  --surface-2: #142019;
-  --surface-3: #16271d;
-  --track: #243729;
-  --line: #223329;
-  --line-2: #345541;
-  --ink: #e8f1ec;
-  --ink-2: #b9ccc0;
-  --muted: #93a89b;
-  --brand-ink: #8fe3b0;
-  --brand: #4fd08a;
-  --brand-solid: #1f7a45;
-  --brand-tint: #123422;
-  --gold: #d9b65a;
-  --gold-ink: #e8cd82;
-  --gold-tint: #2f2610;
-  --red: #ff8a80;
-  --amber: #f2c14e;
-  --slate: #a9bddc;
-  --att-present: #4fd08a;
-  --att-absent: #ff7a88;
-  --att-late: #f2c14e;
-  --att-excused: #9db4d6;
-  --shadow-sm: 0 4px 16px rgba(0,0,0,.35);
-  --shadow-md: 0 12px 30px rgba(0,0,0,.35);
-  --shadow-lg: 0 18px 42px rgba(0,0,0,.55);
-  --sidebar-start: #07170f;
-  --sidebar-end: #040e08;
-  --sidebar-ink: #e8f1ec;
-  --green: var(--brand);
-  --green-dark: var(--brand-ink);
-  --green-soft: var(--brand-tint);
-  --gold-soft: var(--gold-tint);
-  --cream: var(--surface-2);
-  --background: var(--canvas);
-  --white: var(--surface);
-  --text: var(--ink);
-  --border: var(--line);
-  --danger: var(--red);
+ color-scheme:dark;
+ --canvas:#0a120d; --surface:#101a14; --surface-2:#142019; --surface-3:#16271d;
+ --track:#243729; --line:#223329; --line-2:#345541;
+ --ink:#e8f1ec; --ink-2:#b9ccc0; --muted:#93a89b;
+ --brand-ink:#8fe3b0; --brand:#4fd08a; --brand-solid:#1f7a45; --brand-tint:#123422;
+ --gold:#d9b65a; --gold-ink:#e8cd82; --gold-tint:#2f2610;
+ --red:#ff8a80; --amber:#f2c14e; --slate:#a9bddc;
+ --att-present:#4fd08a; --att-absent:#ff7a88; --att-late:#f2c14e; --att-excused:#9db4d6;
+ --shadow-sm:0 4px 16px rgba(0,0,0,.35); --shadow-md:0 12px 30px rgba(0,0,0,.35); --shadow-lg:0 18px 42px rgba(0,0,0,.55);
+ --sidebar-start:#07170f; --sidebar-end:#040e08; --sidebar-ink:#e8f1ec;
+ --green:var(--brand); --green-dark:var(--brand-ink); --green-soft:var(--brand-tint); --gold-soft:var(--gold-tint); --cream:var(--surface-2);
+ --background:var(--canvas); --white:var(--surface); --text:var(--ink); --border:var(--line); --danger:var(--red);
 }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) {
+ background-color:var(--canvas)!important; color:var(--ink)!important;
+}
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(main,section,article,aside,footer,.panel,.card,.modal,.modal-content,.dropdown-menu,.toast,.alert,.table-container,.form-card,.settings-card,.student-summary-card,.classes-stat-card,.class-card,.subject-card,.attendance-card,.fees-placeholder-card,.login-card,.role-login-card,.preview-form,.result-selection-card,.management-panel,.content-card) {
+ background-color:var(--surface)!important; color:var(--ink)!important; border-color:var(--line)!important; box-shadow:var(--shadow-sm);
+}
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(input,select,textarea,.search-input,.form-control) {
+ background-color:var(--surface-2)!important; color:var(--ink)!important; border-color:var(--line-2)!important; color-scheme:dark;
+}
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(input,select,textarea)::placeholder { color:var(--muted)!important; opacity:1; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(button,.button,.primary-button,.secondary-button,.outline-button,.back-link,.back-button) {
+ border-color:var(--line-2);
+}
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(p,small,label,figcaption,.muted,.caption,.description,.helper-text,.form-hint,.empty-state,.table-empty,.stat-caption) { color:var(--muted); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(h1,h2,h3,h4,h5,strong,.title,.stat-value,.summary-value) { color:var(--brand-ink); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(th,thead) { background:var(--surface-3)!important; color:var(--gold-ink)!important; border-color:var(--line)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(td,tr,tbody) { background-color:transparent; color:var(--ink); border-color:var(--line)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(tr:nth-child(even),.table-row:nth-child(even),.zebra-row) { background:var(--surface-2)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(tr:hover,tbody tr:hover) { background:var(--surface-3)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.progress-track,.progress-bar-track,.chart-track,.donut-track,.ring-track,.attendance-progress-track) { background:var(--track)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.eyebrow,.section-label,.settings-label,.stat-label,.small-heading) { color:var(--gold-ink)!important; }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.success,.status-present,.present,.badge-success) { color:var(--att-present); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.danger,.status-absent,.absent,.badge-danger) { color:var(--att-absent); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.warning,.status-late,.late,.badge-warning) { color:var(--att-late); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.info,.status-excused,.excused,.badge-info) { color:var(--att-excused); }
+html[data-theme="dark"] body:not(.print-page):not(.student-result-page) :is(.welcome-card,.dashboard-welcome-card) { color:var(--ink)!important; }
+html[data-theme="dark"] body.dashboard-page :is(.dashboard-completion-pie::before,.dashboard-category-attendance-donut::before,.dashboard-attendance-donut::before) { background:var(--surface)!important; }
+html[data-theme="dark"] body.dashboard-page :is(.dashboard-completion-pie,.dashboard-category-attendance-donut,.dashboard-attendance-donut) { box-shadow:0 0 0 5px var(--track),var(--shadow-md)!important; }
+html[data-theme="dark"] body.dashboard-page .stat-card::before,html[data-theme="dark"] body.dashboard-page .stat-card::after { display:none!important; }
+html[data-theme="dark"] body.dashboard-page :is(.stat-card,.result-progress-section,.dashboard-chart-card,.dashboard-attendance-panel,.admin-details) { background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important; }
+html[data-theme="dark"] body.dashboard-page :is(.progress-card,.dashboard-attendance-category,.dashboard-attendance-empty,.dashboard-class-pie-list li) { background:var(--surface-2)!important;color:var(--ink)!important;border-color:var(--line)!important; }
+html[data-theme="dark"] body.dashboard-page :is(.dashboard-class-progress-track,.progress-track,.dashboard-progress-track) { background:var(--track)!important; }
+html[data-theme="dark"] body.dashboard-page .welcome-card { background:radial-gradient(90% 150% at 100% 0%,rgba(217,182,90,.13),transparent 58%),linear-gradient(115deg,#07170f 0%,#123422 62%,#1f7a45 120%)!important; }
+html[data-theme="dark"] body :is(.markaz-management-shell,.topbar) { background:rgba(7,23,15,.92)!important; color:var(--ink)!important; border-color:var(--line)!important; }
+html[data-theme="dark"] body :is(.markaz-shell-profile-menu,.dashboard-profile-menu,.profile-dropdown,[role="menu"]) { background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important; }
+html[data-theme="dark"] body :is(.markaz-shell-profile-menu a,.markaz-shell-profile-menu button,.dashboard-profile-menu a,.dashboard-profile-menu button) { background:transparent!important;color:var(--ink)!important; }
+html[data-theme="dark"] body :is(.markaz-shell-sidebar,.sidebar) { background:linear-gradient(180deg,var(--sidebar-start),var(--sidebar-end))!important;color:var(--sidebar-ink)!important; }
+html[data-theme="dark"] body .markaz-shell-sidebar nav a { color:var(--ink-2)!important; }
+.markaz-theme-toggle { display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:40px;min-height:38px;padding:8px 11px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface-2);color:var(--brand-ink);font:600 13px/1 inherit;cursor:pointer; }
+.markaz-theme-toggle:hover { border-color:var(--gold);background:var(--surface-3); }
+.markaz-theme-toggle:focus-visible { outline:3px solid var(--gold);outline-offset:2px; }
+.markaz-theme-toggle svg { width:17px;height:17px; }
+.markaz-theme-toggle-floating { position:fixed;top:12px;right:12px;z-index:5000;box-shadow:var(--shadow-md); }
+html[data-theme="dark"] body .markaz-theme-toggle { background:var(--surface-2);color:var(--gold-ink);border-color:var(--line-2); }
 @media print {
-  :root { color-scheme: light; }
-  html[data-theme="dark"] { color-scheme: light; }
+ :root,html[data-theme="dark"] { color-scheme:light!important; }
+ html[data-theme="dark"] body { background:#fff!important;color:#172b22!important; }
+ html[data-theme="dark"] body .student-result-page,html[data-theme="dark"] body .student-result-page * { background-color:initial!important;color:initial!important; }
+ .markaz-theme-toggle { display:none!important; }
 }
