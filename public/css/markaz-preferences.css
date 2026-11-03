@@ -212,3 +212,136 @@ html[dir=rtl] body:has(.app .sidebar) .dashboard-grid{direction:rtl}
 html[dir=rtl] body:has(.app .sidebar) .admin-details strong{text-align:left}
 html[dir=rtl] body:has(.app .sidebar) .dashboard-attendance-footnote{border-left:0;border-right:3px solid #c19a35;border-radius:10px 0 0 10px}
 @media(max-width:850px){html[dir=rtl] body:has(.app .sidebar) .sidebar{transform:translateX(105%)}html[dir=rtl] body:has(.app .sidebar) .sidebar.open{transform:translateX(0)}html[dir=rtl] body:has(.app .sidebar) .main-content{margin-right:0!important}}
+
+
+/* Unified preference controls: compact profile-menu rows, with no page-level dropdowns. */
+.markaz-profile-preferences{display:grid;gap:4px;margin:7px 0;padding:7px;border:1px solid var(--pref-border,#e2e9e3);border-radius:12px;background:var(--pref-soft,#f7faf7)}
+.markaz-preference-action{width:100%;min-height:48px;display:flex;align-items:center;gap:10px;padding:7px 9px;border:0;border-radius:9px;background:transparent;color:var(--pref-text,#173125);text-align:start;cursor:pointer;transition:background-color .12s ease,color .12s ease}
+.markaz-preference-action:hover,.markaz-preference-action:focus-visible{background:var(--pref-hover,#eaf2ec);outline:none}
+.markaz-preference-icon{width:32px;height:32px;display:grid;place-items:center;flex:0 0 32px;border-radius:9px;background:var(--pref-icon-bg,#e4efe7);color:var(--pref-accent,#17643a);font-size:17px;font-weight:800}
+.markaz-preference-copy{display:grid;gap:2px;flex:1;min-width:0}
+.markaz-preference-copy strong{font-size:12px;font-weight:750;color:inherit}
+.markaz-preference-copy small{font-size:10px;color:var(--pref-muted,#718078)}
+.markaz-preference-state{min-width:27px;padding:4px 6px;border-radius:7px;background:var(--pref-icon-bg,#e4efe7);color:var(--pref-accent,#17643a);font-size:10px;font-weight:850;text-align:center}
+.markaz-preference-switch{width:34px;height:20px;padding:2px;display:flex;align-items:center;border-radius:99px;background:#aab5ad;transition:background-color .12s ease}
+.markaz-preference-switch i{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform .12s ease}
+.markaz-theme-action[aria-pressed=true] .markaz-preference-switch{background:#238452}
+.markaz-theme-action[aria-pressed=true] .markaz-preference-switch i{transform:translateX(14px)}
+.markaz-language-toggle[aria-pressed=true] .markaz-preference-icon{background:#dcefe4}
+.markaz-language-tools,.markaz-language-tools-floating,.markaz-theme-toggle{display:none!important}
+
+/* Fast, coherent dashboard theme tokens; all selectors are scoped to management dashboard. */
+html[data-theme=dark] body:has(.app .sidebar){
+ --background:#0b1510;--surface:#14221a;--surface-raised:#192b21;--ink:#e8f1eb;--muted:#a4b4a9;--line:#2b4033;
+ --green-soft:#1c3828;--cream:#1c2a20;--white:#14221a;
+ background:var(--background)!important;color:var(--ink)!important;
+}
+html[data-theme=dark] body:has(.app .sidebar) .app,
+html[data-theme=dark] body:has(.app .sidebar) .main-content,
+html[data-theme=dark] body:has(.app .sidebar) .page-content{background:var(--background)!important;color:var(--ink)!important}
+html[data-theme=dark] body:has(.app .sidebar) .welcome-card{background:linear-gradient(125deg,#173b29,#1c3024)!important;border-color:#355642!important;color:var(--ink)!important}
+html[data-theme=dark] body:has(.app .sidebar) .welcome-card *,
+html[data-theme=dark] body:has(.app .sidebar) .panel *,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card *{color:inherit}
+html[data-theme=dark] body:has(.app .sidebar) .stat-card,
+html[data-theme=dark] body:has(.app .sidebar) .panel,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-panel,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-exam-section,
+html[data-theme=dark] body:has(.app .sidebar) .result-progress-section,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-summary,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-stat,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-class-row,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-exam-chart-card,
+html[data-theme=dark] body:has(.app .sidebar) .result-progress-card,
+html[data-theme=dark] body:has(.app .sidebar) .admin-profile-display,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details,
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-class-pie-empty{background:#14221a!important;color:#e8f1eb!important;border-color:#2b4033!important;box-shadow:0 8px 24px #0002!important}
+html[data-theme=dark] body:has(.app .sidebar) .panel-header,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details>div{border-color:#2b4033!important}
+html[data-theme=dark] body:has(.app .sidebar) .sidebar{background:linear-gradient(180deg,#0d2418,#08140d)!important;border-color:#243a2c!important}
+html[data-theme=dark] body:has(.app .sidebar) .topbar{background:rgba(15,29,21,.96)!important;border-color:#2b4033!important;box-shadow:0 5px 20px #0003!important}
+html[data-theme=dark] body:has(.app .sidebar) .topbar h1,
+html[data-theme=dark] body:has(.app .sidebar) .topbar p,
+html[data-theme=dark] body:has(.app .sidebar) .panel h2,
+html[data-theme=dark] body:has(.app .sidebar) .panel h3,
+html[data-theme=dark] body:has(.app .sidebar) .panel p,
+html[data-theme=dark] body:has(.app .sidebar) .stat-label,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card strong,
+html[data-theme=dark] body:has(.app .sidebar) .stat-card small,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details span,
+html[data-theme=dark] body:has(.app .sidebar) .admin-details strong{color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .panel small,
+html[data-theme=dark] body:has(.app .sidebar) .muted,
+html[data-theme=dark] body:has(.app .sidebar) .eyebrow{color:#a4b4a9!important}
+html[data-theme=dark] body:has(.app .sidebar) input,
+html[data-theme=dark] body:has(.app .sidebar) select,
+html[data-theme=dark] body:has(.app .sidebar) textarea{background:#0e1b13!important;color:#e8f1eb!important;border-color:#385342!important;color-scheme:dark}
+html[data-theme=dark] body:has(.app .sidebar) table,
+html[data-theme=dark] body:has(.app .sidebar) tbody tr,
+html[data-theme=dark] body:has(.app .sidebar) tbody td{background:#14221a!important;color:#e8f1eb!important;border-color:#2b4033!important}
+html[data-theme=dark] body:has(.app .sidebar) .quick-actions button,
+html[data-theme=dark] body:has(.app .sidebar) .quick-action{background:#1a2c21!important;color:#e8f1eb!important;border-color:#35513f!important}
+html[data-theme=dark] body:has(.app .sidebar) .main-content>footer{background:#0e1b13!important;color:#a4b4a9!important;border-color:#2b4033!important}
+html[data-theme=dark] body:has(.app .sidebar) .dashboard-attendance-combo-chart{background:#14221a!important;border-color:#2b4033!important}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-profile-preferences{--pref-text:#e8f1eb;--pref-muted:#a4b4a9;--pref-border:#344b3b;--pref-soft:#14221a;--pref-hover:#20382a;--pref-icon-bg:#244531;--pref-accent:#a9d8b8}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-shell-profile-menu{background:#14221a!important;color:#e8f1eb!important;border-color:#344b3b!important}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-shell-profile-menu a,
+html[data-theme=dark] body:has(.app .sidebar) .markaz-shell-profile-menu button{background:transparent!important;color:#e8f1eb!important}
+html[data-theme=dark] body:has(.app .sidebar) .markaz-shell-profile-menu a:hover,
+html[data-theme=dark] body:has(.app .sidebar) .markaz-shell-profile-menu button:hover{background:#20382a!important}
+
+/* Shared staff pages use the same dark palette; student portal is intentionally excluded. */
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)){
+ --pref-page:#0d1812;--pref-panel:#16271d;--pref-text:#e8f1eb;--pref-muted:#a5b6aa;--pref-border:#304638;
+ color:var(--pref-text)!important;background:var(--pref-page)!important;color-scheme:dark;
+}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-shell,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-filter-panel,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-register-panel,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .panel,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .card{background:var(--pref-panel)!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-header{background:#122319!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) h1,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) h2,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) h3,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) p,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) label,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.has-student-portal) .attendance-summary-card,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-summary-card *{color:var(--pref-text)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) input,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) select,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) textarea{background:#0e1b13!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important;color-scheme:dark}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .markaz-management-shell{background:#102017!important;border-color:var(--pref-border)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .markaz-shell-profile,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .markaz-shell-profile-menu{background:#172a1e!important;color:var(--pref-text)!important;border-color:var(--pref-border)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .markaz-shell-profile-menu a,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .markaz-shell-profile-menu button{background:transparent!important;color:var(--pref-text)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-summary-card,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-chart-panel,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-filter-panel,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-table-wrap{background:#16271d!important;border-color:var(--pref-border)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-summary-card small,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .filter-help,
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .secure-note{color:var(--pref-muted)!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-table th{background:#20382a!important;color:#e8f1eb!important}
+html[data-theme=dark] body:not(:has(.student-login-card)):not(.admin-login-page):not(:has(.app .sidebar)) .attendance-table td{background:#16271d!important;color:#e8f1eb!important;border-color:#304638!important}
+
+/* Staff sign-in preferences; no preference widgets are mounted on admin or student login. */
+body.staff-login-page .staff-login-preferences{position:fixed;top:14px;right:14px;z-index:50;display:flex;gap:8px}
+body.staff-login-page .staff-login-preferences button{min-width:44px;min-height:42px;padding:8px 11px;border:1px solid #dce7df;border-radius:12px;background:#fff;color:#173125;font-size:12px;font-weight:800;box-shadow:0 5px 18px #0d2b1c14}
+html[data-theme=dark] body.staff-login-page{background:#0d1812!important;color:#e8f1eb!important;color-scheme:dark}
+html[data-theme=dark] body.staff-login-page .role-login-card{background:#16271d!important;color:#e8f1eb!important;border-color:#304638!important}
+html[data-theme=dark] body.staff-login-page .role-login-card h1,
+html[data-theme=dark] body.staff-login-page .role-login-card h2,
+html[data-theme=dark] body.staff-login-page .role-login-card p,
+html[data-theme=dark] body.staff-login-page .role-login-card label{color:#e8f1eb!important}
+html[data-theme=dark] body.staff-login-page .role-login-card input{background:#0e1b13!important;color:#e8f1eb!important;border-color:#304638!important}
+html[data-theme=dark] body.staff-login-page .role-login-card .preview-notice{background:#20382a!important;border-color:#304638!important}
+html[data-theme=dark] body.staff-login-page .staff-login-preferences button{background:#172a1e!important;color:#e8f1eb!important;border-color:#304638!important}
+
+/* Avoid slow, sweeping page transitions; controls respond immediately. */
+html,body,body *{scroll-behavior:auto!important}
+button,a,.nav-link,.markaz-shell-sidebar,.markaz-preference-action,.markaz-preference-switch i{transition-duration:.12s!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
