@@ -1,3 +1,6 @@
+/* Remove the unwanted decorative divider from the welcome card in both themes. */
+.welcome-card::before { content: none !important; display: none !important; }
+
 /* MARKAZ dashboard dark mode — derived only from the school green, dark green,
    gold and cream identity. Applied by the existing persistent theme preference. */
 html[data-theme="dark"] body:has(.app .sidebar) {
