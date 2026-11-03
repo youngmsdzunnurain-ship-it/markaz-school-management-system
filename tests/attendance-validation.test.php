@@ -34,6 +34,7 @@ check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes th
 
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 $reportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
+$attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 check(str_contains($classesApi, 'sort_order') && str_contains($classesApi, '$a[\'sort_order\'] <=> $b[\'sort_order\']'), 'preserves configured class hierarchy after combining categories');
 check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
@@ -43,7 +44,6 @@ check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi
 check(!str_contains($reportsApi, 'NOT EXISTS') && !str_contains($reportsApi, 'arabic_class.name'), 'school reports include same-named conventional and Arabic classes independently');
 check(str_contains($attendanceJs, 'item.class_type === type'), 'attendance class dropdown filters strictly by selected class category');
 
-$attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 check(str_contains($attendanceJs, 'setInterval') && str_contains($attendanceJs, 'updateDateLabel'), 'refreshes displayed school date while page remains open');
 check(str_contains($attendanceJs, 'attendanceStudent') && str_contains($attendanceJs, 'populateStudentDropdown'), 'provides a real class-populated student dropdown');
 check(str_contains($attendanceJs, 'attendancePieChart'), 'renders the attendance status pie chart');
