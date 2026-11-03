@@ -9,10 +9,7 @@ header.innerHTML='<button class="markaz-shell-menu" type="button" aria-label="Op
 document.body.prepend(header);
 function mountPreferences(){window.markazI18n?.mountControls?.();window.markazTheme?.mountControls?.();}
 mountPreferences();
-const themeScript=document.createElement("script");
-themeScript.src="/js/markaz-theme.js?v=20261103-theme4";
-themeScript.onload=mountPreferences;
-document.head.appendChild(themeScript);
+window.markazTheme?.mountControls?.();
 const overlay=document.createElement("div");overlay.className="markaz-shell-overlay";overlay.hidden=true;
 const sidebar=document.createElement("aside");sidebar.className="markaz-shell-sidebar";
 sidebar.innerHTML='<div class="markaz-shell-sidebar-head"><img src="/assets/images/markaz-logo.jpg" alt=""><strong>MARKAZ</strong><button type="button" aria-label="Close menu">×</button></div><nav><a href="/dashboard.html"><span data-no-translate aria-hidden="true">⌂</span><span>Dashboard</span></a><a href="/students.html"><span data-no-translate aria-hidden="true">♙</span><span>Students</span></a><a href="/classes.html"><span data-no-translate aria-hidden="true">▤</span><span>Classes</span></a><a href="/subjects/"><span data-no-translate aria-hidden="true">▣</span><span>Subjects</span></a><a href="/classes.html"><span data-no-translate aria-hidden="true">▥</span><span>Results</span></a><a href="/attendance.html"><span data-no-translate aria-hidden="true">▦</span><span>Attendance</span></a><a href="/school-fees.html"><span data-no-translate aria-hidden="true">▤</span><span>School Fees</span></a><a href="/print-results.html"><span data-no-translate aria-hidden="true">▧</span><span>Print Results</span></a><a href="/settings.html"><span data-no-translate aria-hidden="true">⚙</span><span>Settings</span></a></nav>';
