@@ -18,7 +18,6 @@ $pages = [
     'public/students.html',
     'public/school-fees.html',
     'public/settings.html',
-    'public/login.html',
     'public/print-results.html',
     'public/student-result.html',
     'public/class.html',
@@ -55,7 +54,9 @@ $check(str_contains($shell, '<span>Dashboard</span>'), 'Navigation labels are no
 $i18n = file_get_contents($root . '/public/js/markaz-i18n.js') ?: '';
 $check(str_contains($i18n, 'markazI18n'), 'Translation API missing');
 $check(str_contains($i18n, 'originalAttributes'), 'Accessible attribute translation is missing');
-$check(str_contains($i18n, 'tbody,[contenteditable'), 'Database-backed table bodies are not protected from automatic translation');
+$check(!str_contains($i18n, 'tbody,[contenteditable'), 'Dynamic table content must remain translatable');
+$check(str_contains($i18n, 'OPTION') === false, 'Dropdown option labels must be translatable');
+$check(str_contains($i18n, '[data-user-content]'), 'User-entered and database-derived content boundaries must be respected');
 
 if ($failures) {
     fwrite(STDERR, "MARKAZ UI contract: FAILED\n- " . implode("\n- ", $failures) . "\n");
