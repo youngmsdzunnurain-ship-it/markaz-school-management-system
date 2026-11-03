@@ -7,7 +7,7 @@ const header=document.createElement("header");
 header.className="markaz-management-shell";
 header.innerHTML='<button class="markaz-shell-menu" type="button" aria-label="Open management menu" aria-expanded="false"><span aria-hidden="true">☰</span></button><a class="markaz-shell-brand" href="/dashboard.html"><img src="/assets/images/markaz-logo.jpg" alt=""><span>MARKAZ<small>Management</small></span></a><span class="markaz-shell-spacer"></span><button class="markaz-shell-profile" type="button" aria-expanded="false"><span class="admin-profile-avatar"><span id="markazShellInitials">AD</span></span><span class="markaz-shell-profile-copy"><strong id="markazShellName">Administrator</strong><small id="markazShellRole">Management</small></span><span aria-hidden="true">▾</span></button><div class="markaz-shell-profile-menu" hidden><div class="markaz-shell-profile-details"><strong id="markazShellMenuName">Administrator</strong><small id="markazShellEmail"></small></div><a href="/settings.html">Settings</a><div class="markaz-profile-preferences" data-markaz-preferences aria-label="Display preferences"></div><button type="button" id="markazShellLogout">Logout</button></div>';
 document.body.prepend(header);
-function mountPreferences(){window.markazI18n?.mountControls?.();window.markazTheme?.mountControls?.();}
+function mountPreferences(){window.markazTheme?.mountControls?.();}
 mountPreferences();
 window.markazTheme?.mountControls?.();
 const overlay=document.createElement("div");overlay.className="markaz-shell-overlay";overlay.hidden=true;
