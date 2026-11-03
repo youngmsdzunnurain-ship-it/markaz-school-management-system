@@ -25,11 +25,17 @@ on:
       - "tests/dashboard-layout-attendance-access.test.php"
       - "database/migrations/20261028_daily_attendance.sql"
       - "tests/attendance-validation.test.php"
+      - "public/js/markaz-i18n.js"
+      - "public/js/markaz-theme.js"
+      - "public/js/management-shell.js"
+      - "public/js/attendance.js"
+      - "public/css/markaz-preferences.css"
       - ".github/workflows/attendance-validation.yml"
   push:
     branches:
       - "main"
       - "feature/daily-attendance-20261028"
+      - "fix/markaz-2026-complete-dashboard-i18n"
 
 permissions:
   contents: read
@@ -91,4 +97,7 @@ jobs:
           node --check public/js/class.js
           node --check public/js/student-result.js
           node --check public/js/attendance.js
+          node --check public/js/markaz-i18n.js
+          node --check public/js/markaz-theme.js
+          node --check public/js/management-shell.js
           node --check public/js/dashboard.js
