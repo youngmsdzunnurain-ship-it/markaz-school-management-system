@@ -439,3 +439,19 @@
     .attendance-page .attendance-summary-card div>span{font-size:7px!important;letter-spacing:-.15px}
     .attendance-page .attendance-summary-card strong{font-size:15px!important}
 }
+
+/* Six live attendance indicators: school-wide total plus the five class metrics. */
+.attendance-page .attendance-summary-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.summary-school-total .summary-icon{color:#72539b;background:#f0eafa}
+@media(max-width:900px){
+ .attendance-page .attendance-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .attendance-page .attendance-summary-card{min-height:94px}
+}
+@media(max-width:520px){
+ .attendance-page .attendance-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+ .attendance-page .attendance-summary-card{min-height:82px!important;flex-direction:column!important;justify-content:center!important;gap:4px!important;padding:8px 5px!important;text-align:center!important}
+ .attendance-page .attendance-summary-card .summary-icon{width:27px!important;height:27px!important;flex:0 0 27px!important;font-size:12px!important}
+ .attendance-page .attendance-summary-card div>span{font-size:9px!important;line-height:1.15!important;white-space:normal!important}
+ .attendance-page .attendance-summary-card strong{font-size:18px!important;line-height:1.1!important}
+ .attendance-page .attendance-summary-card small{display:none!important}
+}
