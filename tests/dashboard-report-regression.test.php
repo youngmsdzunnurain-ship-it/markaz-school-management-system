@@ -41,7 +41,8 @@ dashboardReportCheck(
     'the remaining overall completion chart is centered and keeps its completion visualization'
 );
 dashboardReportCheck(
-    str_contains($dashboardRedesignCss, '.welcome-card::before, .welcome-card::after')
+    str_contains($dashboardRedesignCss, '.page-content .welcome-card::before,')
+        && str_contains($dashboardRedesignCss, '.page-content .welcome-card::after,')
         && str_contains($dashboardRedesignCss, 'background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;'),
     'the dashboard greeting banner has no decorative curves or radial flourishes'
 );
