@@ -384,7 +384,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
 
 function dashboardDonutGradient(values) {
     const total = values.reduce((sum, item) => sum + Math.max(0, Number(item.value) || 0), 0);
-    if (!total) return "conic-gradient(#e7eee9 0 100%)";
+    if (!total) return "conic-gradient(var(--track) 0 100%)";
     let cursor = 0;
     const parts = values.map(item => { const start=cursor; cursor += Math.max(0,Number(item.value)||0)/total*100; return item.color+" "+start.toFixed(2)+"% "+cursor.toFixed(2)+"%"; });
     return "conic-gradient("+parts.join(",")+")";
@@ -396,13 +396,13 @@ function dashboardRenderClassPie(targetId, classes) {
         target.innerHTML='<div class="dashboard-class-pie-empty"><div class="dashboard-class-pie-empty-visual"><strong>0%</strong><span>Complete</span></div><div><strong>0 active classes</strong><p>No class progress data is available yet. The chart will populate when classes and required subjects are configured.</p></div></div>';
         return;
     }
-    const palette=["#17643a","#c9a94b","#4d8fbd","#d47758","#7b6ab2","#45a59a","#a36b91","#8a9b57","#d29a42","#5c7d9d"];
+    const palette=["var(--brand)","var(--gold)","var(--slate)","var(--red)","var(--brand-ink)","var(--att-present)","var(--att-excused)","var(--att-late)","var(--amber)","var(--ink-2)"];
     const totalExpected=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.expected_entries)||0),0);
     const totalCompleted=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.entered_entries)||0),0);
     const totalRemaining=Math.max(0,totalExpected-totalCompleted);
     const segments=[
-        {value:totalCompleted,color:"#17643a"},
-        {value:totalRemaining,color:"#e8eee9"}
+        {value:totalCompleted,color:"var(--brand)"},
+        {value:totalRemaining,color:"var(--track)"}
     ];
     const gradient=dashboardDonutGradient(segments);
     const legend=classes.map((item,index)=>{
@@ -423,10 +423,10 @@ function renderDashboardAttendanceComboChart(target, rows) {
     const width=720,height=236,left=38,right=24,top=22,bottom=58;
     const plotWidth=width-left-right,plotHeight=height-top-bottom,slot=plotWidth/rows.length;
     const statuses=[
-        {key:"present_count",label:"Present",color:"#218653"},
-        {key:"late_count",label:"Late",color:"#d3a12c"},
-        {key:"excused_count",label:"Excused",color:"#8292a2"},
-        {key:"absent_count",label:"Absent",color:"#cf5555"}
+        {key:"present_count",label:"Present",color:"var(--att-present)"},
+        {key:"late_count",label:"Late",color:"var(--att-late)"},
+        {key:"excused_count",label:"Excused",color:"var(--att-excused)"},
+        {key:"absent_count",label:"Absent",color:"var(--att-absent)"}
     ];
     const totals=rows.map(row=>statuses.reduce((sum,item)=>sum+Math.max(0,Number(row[item.key])||0),0));
     const maxTotal=Math.max(1,...totals),barWidth=Math.min(48,Math.max(12,slot*.48));
@@ -520,10 +520,10 @@ async function loadDashboardAttendance() {
         }
 
         const values = [
-            { label: "Present", value: Number(summary.present || 0), color: "#21945b" },
-            { label: "Absent", value: Number(summary.absent || 0), color: "#d65359" },
-            { label: "Late", value: Number(summary.late || 0), color: "#d8a72c" },
-            { label: "Excused", value: Number(summary.excused || 0), color: "#7d8b9a" }
+            { label: "Present", value: Number(summary.present || 0), color: "var(--att-present)" },
+            { label: "Absent", value: Number(summary.absent || 0), color: "var(--att-absent)" },
+            { label: "Late", value: Number(summary.late || 0), color: "var(--att-late)" },
+            { label: "Excused", value: Number(summary.excused || 0), color: "var(--att-excused)" }
         ];
         const total = values.reduce((sum, item) => sum + item.value, 0);
         const donut = document.getElementById("dashboardAttendanceDonut");
@@ -723,7 +723,7 @@ async function loadDashboardStats() {
 
                 assignments.forEach(item => {
                     const card = document.createElement("article");
-                    card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
+                    card.style.cssText = "border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface);color:var(--ink);";
 
                     const heading = document.createElement("h3");
                     const className = document.createElement("span");
@@ -750,9 +750,9 @@ async function loadDashboardStats() {
                         `Entry progress: ${item.completed_entries}/${item.expected_entries} (${item.completion_percentage}%)`;
 
                     const track = document.createElement("div");
-                    track.style.cssText = "height:8px;background:#e8eee9;border-radius:8px;overflow:hidden;";
+                    track.style.cssText = "height:8px;background:var(--track);border-radius:8px;overflow:hidden;";
                     const bar = document.createElement("div");
-                    bar.style.cssText = `height:100%;width:${Math.max(0, Math.min(100, Number(item.completion_percentage) || 0))}%;background:#198754;border-radius:8px;`;
+                    bar.style.cssText = `height:100%;width:${Math.max(0, Math.min(100, Number(item.completion_percentage) || 0))}%;background:var(--brand);border-radius:8px;`;
                     track.appendChild(bar);
 
                     const button = document.createElement("button");
