@@ -5,6 +5,7 @@
     const state = {
         classes: [],
         students: [],
+        schoolStudentTotal: 0,
         role: "",
         classType: "conventional",
         classId: "",
@@ -108,6 +109,7 @@
             else summary.unmarked++;
         });
         $("totalCount").textContent = summary.total;
+        $("schoolTotalCount").textContent = state.schoolStudentTotal.toLocaleString();
         $("presentCount").textContent = summary.present;
         $("absentCount").textContent = summary.absent;
         $("lateCount").textContent = summary.late;
@@ -167,7 +169,7 @@
         const studentId = Number(els.studentSelect.value);
         if (!studentId) return;
         const row = els.body.querySelector('[data-student-row="' + studentId + '"]');
-        if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (row) row.scrollIntoView({ behavior: "auto", block: "center" });
     }
 
     function statusOptions(current) {
@@ -225,7 +227,7 @@
     function populateClasses() {
         const type = els.type.value;
         const current = els.classSelect.value;
-        const filtered = state.classes.filter((item) => item.class_type === type);
+        const filtered = state.classes.filter((item) => String(item.class_type).toLowerCase() === String(type).toLowerCase());
         els.classSelect.innerHTML = "";
         if (!filtered.length) {
             const option = document.createElement("option");
@@ -264,7 +266,8 @@
         setNotice("Loading available classes…");
         try {
             const data = await requestJson("./api/attendance/classes.php");
-            state.classes = data.classes || [];
+            state.classes = Array.isArray(data.classes) ? data.classes.map(item => ({...item, class_type: String(item.class_type || "").toLowerCase()})) : [];
+            state.schoolStudentTotal = Number(data.school_student_total) || 0;
             state.role = data.role || "";
             populateClasses();
             if (!state.classes.length) {
