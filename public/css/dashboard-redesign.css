@@ -2435,3 +2435,35 @@ h1, h2, h3 {
     background: #e1f0e5 !important;
     transition: background-color 140ms ease;
 }
+
+
+/* Targeted dashboard correction: clean greeting and one Overall result listing. */
+.page-content .welcome-card {
+    border-radius: 16px !important;
+    background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;
+    box-shadow: 0 8px 22px rgba(18, 61, 42, .10) !important;
+}
+.page-content .welcome-card::before,
+.page-content .welcome-card::after,
+.page-content .welcome-decoration,
+.page-content .welcome-decoration::before,
+.page-content .welcome-decoration::after,
+.page-content .welcome-decoration .decoration-circle {
+    display: none !important;
+    content: none !important;
+}
+.dashboard-overall-exam-chart {
+    display: grid !important;
+    grid-template-columns: minmax(0, 680px) !important;
+    justify-content: center;
+}
+.dashboard-overall-exam-chart .dashboard-school-pie-card {
+    grid-column: auto !important;
+    width: 100%;
+    min-width: 0;
+}
+@media (max-width: 700px) {
+    .dashboard-overall-exam-chart {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}

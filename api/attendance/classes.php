@@ -24,10 +24,7 @@ if ($role === 'teacher') {
          INNER JOIN classes c ON c.id = ta.class_id
          WHERE ta.account_id = ? AND ta.class_type = 'conventional'
            AND ta.is_active = 1 AND c.is_active = 1
-           AND NOT EXISTS (
-               SELECT 1 FROM arabic_classes arabic_class
-               WHERE LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))
-           )"
+          "
     );
     $stmt->execute([$accountId]);
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -51,10 +48,7 @@ if ($role === 'teacher') {
          FROM classes c
          LEFT JOIN students s ON s.class_id = c.id AND s.is_active = 1
          WHERE c.is_active = 1
-           AND NOT EXISTS (
-               SELECT 1 FROM arabic_classes arabic_class
-               WHERE LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))
-           )
+          
          GROUP BY c.id, c.name, c.sort_order"
     );
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));

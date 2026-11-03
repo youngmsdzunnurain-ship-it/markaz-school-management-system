@@ -68,6 +68,16 @@ $classProgressByType = [
     'arabic' => [],
 ];
 $schoolProgressByStudent = [];
+$activeStudentIds = $pdo->query(
+    "SELECT id FROM students WHERE is_active = 1"
+)->fetchAll(PDO::FETCH_COLUMN);
+foreach ($activeStudentIds as $activeStudentId) {
+    $schoolProgressByStudent[(int) $activeStudentId] = [
+        'expected_subjects' => 0,
+        'completed_subjects' => 0,
+        'started_subjects' => 0,
+    ];
+}
 
 $classDefinitions = [
     [
