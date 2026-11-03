@@ -65,9 +65,8 @@ dashboardAssert(
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
-    str_contains($js, 'class_type=conventional') &&
-    str_contains($js, 'class_type=arabic') &&
-    str_contains($js, 'categoryReports[type]') &&
+    str_contains($js, 'for (const [type, targetId] of [') &&
+    str_contains($js, 'item.class_type === type') &&
     str_contains($attendance, "ar.class_type = ?") &&
     str_contains($attendance, 'FROM arabic_classes arabic_class') &&
     str_contains($attendance, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
