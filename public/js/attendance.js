@@ -270,6 +270,7 @@
             state.schoolStudentTotal = Number(data.school_student_total) || 0;
             state.role = data.role || "";
             populateClasses();
+            updateSummary();
             if (!state.classes.length) {
                 setNotice("No active classes are available to this account.", "error");
             } else {
