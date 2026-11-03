@@ -49,8 +49,8 @@ dashboardAssert(
     'School Fees and Attendance navigation must be restricted to Senior Admin'
 );
 dashboardAssert(
-    str_contains($html, 'data-role-access="admin">Attendance</button>') &&
-    str_contains($html, 'data-role-access="admin">School Fees</button>'),
+    preg_match('/<button[^>]*data-role-access="admin"[^>]*>.*?<span>Attendance<\\/span>.*?<\\/button>/s', $html) === 1 &&
+    preg_match('/<button[^>]*data-role-access="admin"[^>]*>.*?<span>School Fees<\\/span>.*?<\\/button>/s', $html) === 1,
     'Quick links for Attendance and School Fees must be restricted to Senior Admin'
 );
 dashboardAssert(
