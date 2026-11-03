@@ -563,10 +563,10 @@ async function loadDashboardAttendance() {
                 item.class_type === type && Number(item.marked_records || 0) > 0
             );
             const categoryValues = [
-                { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#21945b" },
-                { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#d65359" },
-                { label: "Late", value: rows.reduce((sum, item) => sum + Number(item.late_count || 0), 0), color: "#d8a72c" },
-                { label: "Excused", value: rows.reduce((sum, item) => sum + Number(item.excused_count || 0), 0), color: "#7d8b9a" }
+                { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "var(--att-present)" },
+                { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "var(--att-absent)" },
+                { label: "Late", value: rows.reduce((sum, item) => sum + Number(item.late_count || 0), 0), color: "var(--att-late)" },
+                { label: "Excused", value: rows.reduce((sum, item) => sum + Number(item.excused_count || 0), 0), color: "var(--att-excused)" }
             ];
             const categoryTotal = categoryValues.reduce((sum, item) => sum + item.value, 0);
             const categoryPrefix = type === "conventional" ? "dashboardConventional" : "dashboardArabic";
