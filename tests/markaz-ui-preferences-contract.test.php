@@ -27,7 +27,8 @@ $pages = [
     'public/students.html',
     'public/school-fees.html',
     'public/settings.html',
-    'public/login.html',
+    'public/exam-officer-login.html',
+    'public/teacher-login.html',
     'public/print-results.html',
     'public/student-result.html',
     'public/class.html',
@@ -39,6 +40,27 @@ foreach ($pages as $page) {
     $assert(str_contains($html, $relative . 'js/markaz-i18n.js'), "{$page}: language script missing");
     $assert(str_contains($html, $relative . 'css/markaz-preferences.css'), "{$page}: preference stylesheet missing");
 }
+$adminLogin = $read('public/login.html');
+$studentLogin = $read('public/student-login.html');
+$examOfficerLogin = $read('public/exam-officer-login.html');
+$teacherLogin = $read('public/teacher-login.html');
+$attendanceHtml = $read('public/attendance.html');
+$attendanceJs = $read('public/js/attendance.js');
+$attendanceApi = $read('api/attendance/classes.php');
+$themeJs = $read('public/js/markaz-theme.js');
+$profileMenuJs = $read('public/js/dashboard-profile-menu.js');
+$assert(!str_contains($adminLogin, 'markaz-i18n.js'), 'Administrator login must not show language controls');
+$assert(!str_contains($studentLogin, 'markaz-i18n.js') && !str_contains($studentLogin, 'markaz-theme.js'), 'Student login must not show language or theme controls');
+$assert(str_contains($examOfficerLogin, 'staff-login-preferences') && str_contains($teacherLogin, 'staff-login-preferences'), 'Staff login preference controls are missing');
+$assert(str_contains($dashboard, 'dashboardProfileMenu') && str_contains($profileMenuJs, 'mountControls'), 'Dashboard avatar preference menu is missing');
+$assert(str_contains($shell, 'data-markaz-preferences') && str_contains($shell, 'markaz-theme.js'), 'Staff profile menu must mount shared preferences');
+$assert(str_contains($i18n, 'mountControls:controls') && !str_contains($i18n, 'createElement("select")'), 'Language must be a direct toggle, not a dropdown');
+$assert(str_contains($themeJs, 'data-markaz-theme-toggle') && str_contains($themeJs, 'markaz-dashboard-theme'), 'Fast persistent theme toggle is missing');
+$assert(str_contains($attendanceHtml, 'id="schoolTotalCount"'), 'Attendance school-wide student total card is missing');
+$assert(str_contains($attendanceJs, 'school_student_total') || str_contains($attendanceJs, 'schoolStudentTotal'), 'Attendance school-wide total is not wired');
+$assert(str_contains($attendanceApi, 'school_student_total'), 'Attendance bootstrap API must return school-wide active student total');
+$assert(!str_contains($attendanceApi, 'NOT EXISTS ('), 'Conventional classes must not be hidden by matching Arabic class names');
+$assert(str_contains($attendanceJs, 'String(item.class_type).toLowerCase()'), 'Attendance class list must filter using normalized class type');
 $dashboard = $read('public/dashboard.html');
 $assert(str_contains($dashboard, 'data-role-check-pending="true"'), 'Dashboard role-check gate was removed');
 $assert(str_contains($dashboard, './js/markaz-theme.js'), 'Dashboard-only theme script missing');
