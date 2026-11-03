@@ -220,53 +220,55 @@
         els.export.disabled = !hasRegister;
         els.load.disabled = isBusy;
         els.type.disabled = isBusy;
-        els.classSelect.disabled = isBusy || state.classes.filter((item) => item.class_type === els.type.value).length === 0;
+        els.classSelect.disabled = isBusy || state.classes.filter((item) => normalizeClassType(item.class_type) === normalizeClassType(els.type.value)).length === 0;
         els.date.disabled = isBusy;
     }
 
+    function normalizeClassType(value) {
+        const type = String(value || "").trim().toLowerCase();
+        return type === "arabic" || type === "arabia" || type === "arabiyya" ? "arabic" : "conventional";
+    }
+
     function populateClasses() {
-        const type = els.type.value;
-        const current = els.classSelect.value;
-        const filtered = state.classes.filter((item) => String(item.class_type).toLowerCase() === String(type).toLowerCase());
-        els.classSelect.innerHTML = "";
-        if (!filtered.length) {
-            const option = document.createElement("option");
-            option.value = "";
-            option.textContent = type === "arabic" ? "No Arabic classes assigned" : "No conventional classes assigned";
-            els.classSelect.appendChild(option);
-            els.help.textContent = state.role === "teacher"
-                ? "No classes of this category are assigned to your teacher account."
-                : "Create or activate a class in Class Management before taking attendance.";
-            state.classId = "";
-            return;
-        }
+        const type = normalizeClassType(els.type.value);
+        const current = String(els.classSelect.value || state.classId || "");
+        const filtered = state.classes.filter((item) => normalizeClassType(item.class_type) === type);
+        const options = document.createDocumentFragment();
+
         const placeholder = document.createElement("option");
         placeholder.value = "";
-        placeholder.textContent = "Select a class…";
-        els.classSelect.appendChild(placeholder);
+        placeholder.textContent = filtered.length ? "Select a class…" :
+            (type === "arabic" ? "No Arabic classes assigned" : "No conventional classes assigned");
+        options.appendChild(placeholder);
+
         filtered.forEach((item) => {
             const option = document.createElement("option");
             option.value = String(item.id);
-            option.textContent = item.name + " · " + item.student_count + (item.student_count === 1 ? " student" : " students");
-            els.classSelect.appendChild(option);
+            option.dataset.classType = type;
+            const count = Number(item.student_count) || 0;
+            option.textContent = item.name + " · " + count + (count === 1 ? " student" : " students");
+            options.appendChild(option);
         });
-        if (filtered.some((item) => String(item.id) === current)) {
-            els.classSelect.value = current;
-            state.classId = current;
-        } else {
-            els.classSelect.value = "";
-            state.classId = "";
-        }
-        els.help.textContent = state.role === "teacher"
-            ? "Only classes assigned to your teacher account are shown."
-            : "Class options and student totals are loaded from the database.";
+
+        els.classSelect.replaceChildren(options);
+        const retained = filtered.some((item) => String(item.id) === current);
+        els.classSelect.value = retained ? current : "";
+        state.classId = retained ? current : "";
+        els.classSelect.disabled = filtered.length === 0 || state.loading || state.saving;
+        els.help.textContent = !filtered.length
+            ? (state.role === "teacher"
+                ? "No classes of this category are assigned to your teacher account."
+                : "No active classes are available in this category. Create or activate a class in Class Management.")
+            : (state.role === "teacher"
+                ? "Only classes assigned to your teacher account are shown."
+                : "Choose a class from the selected category. Class lists are kept separate.");
     }
 
     async function loadClasses() {
         setNotice("Loading available classes…");
         try {
             const data = await requestJson("./api/attendance/classes.php");
-            state.classes = Array.isArray(data.classes) ? data.classes.map(item => ({...item, class_type: String(item.class_type || "").toLowerCase()})) : [];
+            state.classes = Array.isArray(data.classes) ? data.classes.filter(item => item && Number(item.id) > 0 && ["conventional","arabic","arabia","arabiyya"].includes(String(item.class_type || "").trim().toLowerCase())).map(item => ({...item, id:Number(item.id), class_type:normalizeClassType(item.class_type), student_count:Number(item.student_count)||0})) : [];
             state.schoolStudentTotal = Number(data.school_student_total) || 0;
             state.role = data.role || "";
             populateClasses();
