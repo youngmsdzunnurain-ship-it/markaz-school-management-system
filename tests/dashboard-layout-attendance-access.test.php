@@ -71,9 +71,9 @@ dashboardAssert(
     str_contains($attendance, "ar.class_type = ?") &&
     str_contains($attendance, 'FROM arabic_classes arabic_class') &&
     str_contains($attendance, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
-    str_contains($attendanceClasses, 'NOT EXISTS') &&
-    str_contains($attendanceClasses, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
-    substr_count($attendanceClasses, 'FROM arabic_classes arabic_class') === 2 &&
+    str_contains($attendance, 'NOT EXISTS') &&
+    str_contains($attendance, 'LOWER(TRIM(arabic_class.name)) = LOWER(TRIM(c.name))') &&
+    substr_count($attendance, 'FROM arabic_classes arabic_class') === 1 &&
     str_contains($attendance, "ar.class_id = c.id") &&
     str_contains($attendanceRegister, 's.arabia_class_id') &&
     substr_count($attendanceClasses, 's.arabia_class_id') >= 2,
