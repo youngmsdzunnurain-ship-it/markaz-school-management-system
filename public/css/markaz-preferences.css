@@ -372,3 +372,9 @@ html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>button{col
 html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>a:hover,
 html[data-theme=dark] body:has(.app .sidebar) .dashboard-profile-menu>button:hover{background:#20382a!important}
 @media(max-width:520px){.dashboard-profile-trigger-copy{display:none}.dashboard-profile-trigger{padding:4px}}
+
+body.staff-login-page .staff-login-preferences .markaz-preference-action{width:auto;min-width:46px;min-height:42px;padding:6px 9px;border:1px solid #dce7df;border-radius:12px;background:#fff;color:#173125;box-shadow:0 5px 18px #0d2b1c14}
+body.staff-login-page .staff-login-preferences .markaz-preference-copy{display:none}
+body.staff-login-page .staff-login-preferences .markaz-preference-icon{width:28px;height:28px;flex-basis:28px}
+body.staff-login-page .staff-login-preferences .markaz-preference-state{background:transparent}
+html[data-theme=dark] body.staff-login-page .staff-login-preferences .markaz-preference-action{background:#172a1e;color:#e8f1eb;border-color:#304638}
