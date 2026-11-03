@@ -8,7 +8,7 @@
  const icon=mode=>mode==="dark"?"☀":"☾";
  function apply(mode,save=false){
   current=mode==="dark"?"dark":"light";root.dataset.theme=current;root.style.colorScheme=current;
-  if(meta)meta.content=current==="dark"?"#0a120d":"#123d2a";
+  if(meta)meta.content=getComputedStyle(root).getPropertyValue("--canvas").trim();
   if(save)try{localStorage.setItem(KEY,current)}catch(_){}
   document.querySelectorAll("[data-markaz-theme-toggle]").forEach(b=>{b.innerHTML=icon(current);b.setAttribute("aria-label",current==="dark"?"Switch to light mode":"Switch to dark mode");b.setAttribute("aria-pressed",String(current==="dark"));});
  }
