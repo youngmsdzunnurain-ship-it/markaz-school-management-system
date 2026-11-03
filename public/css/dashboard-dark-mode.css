@@ -8,18 +8,18 @@ html[data-theme="dark"] body.dashboard-page .page-content { background: var(--ca
 html[data-theme="dark"] body.dashboard-page .sidebar {
   background: linear-gradient(180deg,var(--sidebar-start),var(--sidebar-end));
   border-color: var(--line);
-  box-shadow: 8px 0 30px rgba(0,0,0,.35);
+  box-shadow: var(--shadow-md);
 }
 html[data-theme="dark"] body.dashboard-page .topbar {
   color: var(--ink);
-  background: rgba(16,26,20,.94);
+  background: var(--surface);
   border-color: var(--line);
   box-shadow: var(--shadow-sm);
 }
 html[data-theme="dark"] body.dashboard-page .topbar :is(h1,p) { color: var(--ink); }
 html[data-theme="dark"] body.dashboard-page .welcome-card {
   color: var(--ink);
-  background: radial-gradient(90% 150% at 100% 0%,rgba(217,182,90,.13),transparent 58%),linear-gradient(115deg,#07170f 0%,#123422 62%,#1f7a45 120%);
+  background: radial-gradient(90% 150% at 100% 0%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 58%),linear-gradient(115deg,var(--sidebar-start) 0%,var(--brand-tint) 62%,var(--brand-solid) 120%);
   border-color: var(--line-2);
 }
 html[data-theme="dark"] body.dashboard-page .welcome-card :is(h2,p,.eyebrow) { color: var(--ink); }
