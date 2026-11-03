@@ -20,7 +20,7 @@ $assert = static function (bool $condition, string $message): void {
 };
 
 $pages = [
-    'public/attendance.html',
+    'public/dashboard.html',
     'public/attendance.html',
     'public/classes.html',
     'public/subjects/index.html',
