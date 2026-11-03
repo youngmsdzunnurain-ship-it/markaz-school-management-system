@@ -48,3 +48,6 @@ html[data-theme="dark"] body.dashboard-page :is(.dashboard-class-pie-list,.dashb
 html[data-theme="dark"] body.dashboard-page .stat-card::before,
 html[data-theme="dark"] body.dashboard-page .stat-card::after { content: none; display: none; }
 html[data-theme="dark"] body.dashboard-page :is(.stat-card,.progress-card,.dashboard-chart-caption,.dashboard-attendance-footnote,.dashboard-class-pie-list small,.dashboard-attendance-legend span) { font-size: max(12px,1em); }
+
+html[data-theme="dark"] body.dashboard-page .welcome-card::before { content:none!important; display:none!important; }
+html[data-theme="dark"] body.dashboard-page :is(small,.eyebrow,.dashboard-chart-caption,.dashboard-class-pie-list small,.dashboard-attendance-footnote) { font-size:max(12px,1em)!important; color:var(--muted); }
