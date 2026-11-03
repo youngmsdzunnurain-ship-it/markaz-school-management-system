@@ -97,6 +97,12 @@ jobs:
       - name: Run dashboard layout and access regression tests
         run: php tests/dashboard-layout-attendance-access.test.php
 
+      - name: Run MARKAZ UI contract tests
+        run: php tests/markaz-ui-contract.test.php
+
+      - name: Run MARKAZ preference contract tests
+        run: php tests/markaz-ui-preferences-contract.test.php
+
       - name: Check JavaScript syntax
         run: |
           node --check public/js/class.js
