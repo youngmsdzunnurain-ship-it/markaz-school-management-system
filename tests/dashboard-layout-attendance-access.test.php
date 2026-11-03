@@ -54,7 +54,7 @@ dashboardAssert(
     'Quick links for Attendance and School Fees must be restricted to Senior Admin'
 );
 dashboardAssert(
-    str_contains($js, 'if(role!=="admin"){panel.hidden=true;return;} panel.hidden=false;'),
+    str_contains($js, 'if ((window.markazCurrentRole || "") !== "admin")') && str_contains($js, 'panel.hidden = true;') && str_contains($js, 'panel.hidden = false;'),
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
