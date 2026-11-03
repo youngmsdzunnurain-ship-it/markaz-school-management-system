@@ -40,6 +40,7 @@ foreach ($pages as $page) {
     $assert(str_contains($html, $relative . 'js/markaz-i18n.js'), "{$page}: language script missing");
     $assert(str_contains($html, $relative . 'css/markaz-preferences.css'), "{$page}: preference stylesheet missing");
 }
+$dashboard = $read('public/dashboard.html');
 $adminLogin = $read('public/login.html');
 $studentLogin = $read('public/student-login.html');
 $examOfficerLogin = $read('public/exam-officer-login.html');
@@ -63,7 +64,6 @@ $assert(str_contains($attendanceJs, 'school_student_total') || str_contains($att
 $assert(str_contains($attendanceApi, 'school_student_total'), 'Attendance bootstrap API must return school-wide active student total');
 $assert(!str_contains($attendanceApi, 'NOT EXISTS ('), 'Conventional classes must not be hidden by matching Arabic class names');
 $assert(str_contains($attendanceJs, 'String(item.class_type).toLowerCase()'), 'Attendance class list must filter using normalized class type');
-$dashboard = $read('public/dashboard.html');
 $assert(str_contains($dashboard, 'data-role-check-pending="true"'), 'Dashboard role-check gate was removed');
 $assert(str_contains($dashboard, './js/markaz-theme.js'), 'Dashboard-only theme script missing');
 $assert(!str_contains($dashboard, 'app-watermark.css'), 'Legacy dashboard watermark must stay disabled');
