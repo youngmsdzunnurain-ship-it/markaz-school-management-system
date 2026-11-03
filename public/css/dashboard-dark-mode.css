@@ -1,0 +1,203 @@
+/* MARKAZ dashboard dark mode — derived only from the school green, dark green,
+   gold and cream identity. Applied by the existing persistent theme preference. */
+html[data-theme="dark"] body:has(.app .sidebar) {
+    --canvas: #07150e;
+    --surface: #10251a;
+    --ink: #e6f1e9;
+    --muted: #a9b9ad;
+    --line: #294536;
+    --green-950: #061b11;
+    --green-900: #0b2417;
+    --green-800: #143d29;
+    --green-700: #1b6740;
+    --green-600: #258553;
+    --green-100: #183b29;
+    --green-50: #102b1d;
+    --gold-700: #d8bb68;
+    --gold-600: #d5b65b;
+    --gold-500: #c9a84c;
+    --gold-300: #e0ca83;
+    --gold-100: #332d19;
+    --gold-50: #201f16;
+    --background: var(--canvas);
+    --white: var(--surface);
+    --text: var(--ink);
+    --border: var(--line);
+    color-scheme: dark;
+    color: var(--ink);
+    background: var(--canvas);
+}
+html[data-theme="dark"] body:has(.app .sidebar) .main-content,
+html[data-theme="dark"] body:has(.app .sidebar) .page-content {
+    background: var(--canvas) !important;
+    color: var(--ink) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .topbar {
+    background: rgba(9, 27, 17, .88) !important;
+    border-bottom: 1px solid #294536 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.22) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .topbar::after,
+html[data-theme="dark"] body:has(.app .sidebar) .welcome-card::before {
+    content: none !important;
+    display: none !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) :is(
+    .stat-card, .result-progress-section, .dashboard-chart-card,
+    .dashboard-attendance-panel, .panel, .admin-details,
+    .dashboard-attendance-summary, .dashboard-attendance-stat,
+    .dashboard-profile-menu, .profile-dropdown
+) {
+    color: var(--ink) !important;
+    background: var(--surface) !important;
+    border-color: var(--line) !important;
+    box-shadow: 0 10px 28px rgba(0,0,0,.18) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .welcome-card {
+    background:
+        radial-gradient(90% 150% at 100% 0%, rgba(201,168,76,.13), transparent 58%),
+        linear-gradient(115deg, #0b2a1a 0%, #10452b 62%, #17613a 120%) !important;
+    border-color: rgba(201,168,76,.28) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .welcome-decoration {
+    opacity: .42;
+}
+html[data-theme="dark"] body:has(.app .sidebar) :is(
+    .stat-card, .progress-card, .dashboard-attendance-category,
+    .dashboard-attendance-empty, .dashboard-pie-summary,
+    .dashboard-class-pie-list > p, .dashboard-chart-empty-state,
+    .dashboard-chart-error, .quick-actions button, .admin-profile-display,
+    .admin-details > div, .admin-detail-row, .dashboard-attendance-footnote
+) {
+    color: var(--ink) !important;
+    background: #142d20 !important;
+    border-color: var(--line) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-school-pie-card {
+    background: linear-gradient(180deg, #1b2b1b, #10251a 58%) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) :is(
+    h1, h2, h3, h4, .stat-card strong, .progress-card strong,
+    .completion-badge strong, .dashboard-completion-pie strong,
+    .dashboard-category-attendance-donut strong,
+    .dashboard-attendance-donut strong, .admin-profile-summary strong,
+    .admin-details strong, .dashboard-attendance-stat strong
+) {
+    color: #d9f0e1 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) :is(
+    p, small, .stat-label, .progress-card span, .progress-card small,
+    .dashboard-chart-caption, .dashboard-attendance-heading p,
+    .dashboard-attendance-footnote, .admin-profile-summary span,
+    .admin-details span, .dashboard-attendance-stat small,
+    .dashboard-attendance-legend span,
+    .dashboard-category-attendance-legend span
+) {
+    color: #a9b9ad !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) :is(
+    .panel-header h2, .panel-header h3, .dashboard-chart-card h2,
+    .dashboard-attendance-heading h2, .dashboard-attendance-category h3,
+    .dashboard-attendance-empty strong
+) {
+    color: #d9f0e1 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .completion-badge {
+    background: #292719 !important;
+    border-color: #66572d !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .completion-badge span,
+html[data-theme="dark"] body:has(.app .sidebar) .eyebrow {
+    color: #dfc778 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .progress-complete {
+    background: #123426 !important;
+    border-color: #245b40 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .progress-incomplete {
+    background: #302b18 !important;
+    border-color: #66572d !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .progress-none {
+    background: #1b2930 !important;
+    border-color: #344b55 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .progress-total {
+    background: #2b2919 !important;
+    border-color: #66572d !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-completion-pie,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-category-attendance-donut,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-donut {
+    box-shadow: 0 0 0 5px #3b3420, 0 12px 30px rgba(0,0,0,.24) !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-completion-pie::before,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-category-attendance-donut::before,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-donut::before {
+    background: #10251a !important;
+    box-shadow: inset 0 0 0 1px #294536 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-link {
+    background: #1b6740 !important;
+    color: #f2faf4 !important;
+    border: 1px solid #39845b !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-trigger {
+    background: #10251a !important;
+    border-color: #294536 !important;
+    color: #e6f1e9 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-trigger :is(strong,small,i) {
+    color: inherit !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-menu a,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-menu button {
+    color: #e6f1e9 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-menu a:hover,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-profile-menu button:hover,
+html[data-theme="dark"] body:has(.app .sidebar) .quick-actions button:hover {
+    background: #1b3a29 !important;
+    border-color: #8d7538 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .stat-icon,
+html[data-theme="dark"] body:has(.app .sidebar) .progress-card-icon,
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-category h3 i {
+    background: #1d4931 !important;
+    color: #a8dfbd !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .stat-card-classes .stat-icon,
+html[data-theme="dark"] body:has(.app .sidebar) .progress-incomplete .progress-card-icon {
+    background: #40371e !important;
+    color: #e0c675 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-footnote {
+    border-left-color: #c9a84c !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .admin-profile-photo {
+    background-color: #183b29 !important;
+    color: #d9f0e1 !important;
+}
+html[data-theme="dark"] body:has(.app .sidebar) .dashboard-attendance-empty a {
+    color: #a8dfbd !important;
+}
+@media (max-width: 1024px) {
+    .dashboard-exam-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-school-pie-card { grid-column: 1 / -1; grid-row: 1; }
+}
+@media (max-width: 820px) {
+    .dashboard-exam-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-attendance-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-attendance-summary { grid-column: 1 / -1; grid-row: 1; }
+}
+@media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .result-progress-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-exam-charts,
+    .dashboard-attendance-layout,
+    .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-school-pie-card,
+    .dashboard-attendance-summary { grid-column: auto; grid-row: auto; }
+    .dashboard-attendance-heading { align-items: flex-start; flex-direction: column; }
+    .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
