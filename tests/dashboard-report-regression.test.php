@@ -13,6 +13,7 @@ $attendanceReport = file_get_contents(__DIR__ . '/../api/attendance/reports.php'
 $dashboardScript = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $dashboardHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $dashboardCss = file_get_contents(__DIR__ . '/../public/css/dashboard.css');
+$dashboardRedesignCss = file_get_contents(__DIR__ . '/../public/css/dashboard-redesign.css');
 
 dashboardReportCheck(
     str_contains($attendanceReport, "'table' => 'classes'")
@@ -27,19 +28,22 @@ dashboardReportCheck(
     'attendance error handling replaces permanent loading placeholders'
 );
 dashboardReportCheck(
-    str_contains($dashboardScript, 'dashboardRenderClassPie')
-        && str_contains($dashboardScript, 'dashboard-class-pie-empty'),
-    'class progress charts render a visible zero-data state'
+    str_contains($dashboardHtml, 'dashboardCompletionPie')
+        && !str_contains($dashboardHtml, 'dashboardConventionalPie')
+        && !str_contains($dashboardHtml, 'dashboardArabicPie')
+        && substr_count($dashboardHtml, 'class="dashboard-chart-card') === 1
+        && !str_contains($dashboardScript, 'dashboardRenderClassPie'),
+    'the dashboard displays only overall examination completion, without conventional or Arabic class charts'
 );
 dashboardReportCheck(
-    str_contains($dashboardCss, '.dashboard-exam-charts > article:nth-child(1) { order:2; }')
-        && str_contains($dashboardCss, '.dashboard-exam-charts > article:nth-child(2) { order:1; }')
-        && str_contains($dashboardCss, '.dashboard-exam-charts > article:nth-child(3) { order:3; }'),
-    'exam charts are visually ordered Conventional, Whole School, Arabic'
-);dashboardReportCheck(
-    str_contains($dashboardCss, 'border: 1px solid rgba(201, 169, 75')
-        && str_contains($dashboardCss, 'dashboard-class-pie-empty'),
-    'chart cards use gold accents and styled empty states'
+    str_contains($dashboardRedesignCss, 'grid-template-columns: minmax(0, 680px) !important;')
+        && str_contains($dashboardRedesignCss, '.dashboard-completion-pie'),
+    'the remaining overall completion chart is centered and keeps its completion visualization'
+);
+dashboardReportCheck(
+    str_contains($dashboardRedesignCss, '.welcome-card::before, .welcome-card::after')
+        && str_contains($dashboardRedesignCss, 'background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;'),
+    'the dashboard greeting banner has no decorative curves or radial flourishes'
 );
 
 echo "Dashboard report regression tests passed (5 checks).\n";
