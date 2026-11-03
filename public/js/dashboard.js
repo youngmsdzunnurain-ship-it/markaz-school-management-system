@@ -537,30 +537,6 @@ function dashboardDonutGradient(values) {
     return "conic-gradient("+parts.join(",")+")";
 }
 
-function dashboardRenderClassPie(targetId, classes) {
-    const target=document.getElementById(targetId); if(!target)return;
-    if(!Array.isArray(classes)||!classes.length){
-        target.innerHTML='<div class="dashboard-class-pie-empty"><div class="dashboard-class-pie-empty-visual"><strong>0%</strong><span>Complete</span></div><div><strong>0 active classes</strong><p>No class progress data is available yet. The chart will populate when classes and required subjects are configured.</p></div></div>';
-        return;
-    }
-    const palette=["#17643a","#c9a94b","#4d8fbd","#d47758","#7b6ab2","#45a59a","#a36b91","#8a9b57","#d29a42","#5c7d9d"];
-    const totalExpected=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.expected_entries)||0),0);
-    const totalCompleted=classes.reduce((sum,item)=>sum+Math.max(0,Number(item.entered_entries)||0),0);
-    const totalRemaining=Math.max(0,totalExpected-totalCompleted);
-    const segments=[
-        {value:totalCompleted,color:"#17643a"},
-        {value:totalRemaining,color:"#e8eee9"}
-    ];
-    const gradient=dashboardDonutGradient(segments);
-    const legend=classes.map((item,index)=>{
-        const name=String(item.class_name||"Class").replace(/[&<>"\']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","\'":"&#039;"}[ch]));
-        const percent=Math.max(0,Math.min(100,Number(item.completion_percentage)||0));
-        const expected=Math.max(0,Number(item.expected_entries)||0), completed=Math.max(0,Number(item.entered_entries)||0);
-        return '<div class="dashboard-class-pie-row"><span class="dashboard-chart-dot" style="--dot:'+palette[index%palette.length]+'"></span><div class="dashboard-class-pie-meta"><strong>'+name+'</strong><small>'+completed+' / '+expected+' complete entries</small><div class="dashboard-class-bar" role="progressbar" aria-valuenow="'+percent+'" aria-valuemin="0" aria-valuemax="100" aria-label="'+name+' completion"><i style="width:'+percent+'%;--bar:'+palette[index%palette.length]+'"></i></div></div><b>'+percent.toFixed(1)+'%</b></div>';
-    }).join("");
-    target.innerHTML='<div class="dashboard-pie-summary"><div class="dashboard-pie-visual" role="img" aria-label="'+totalCompleted+' of '+totalExpected+' complete entries across '+classes.length+' classes" style="background:'+gradient+'"><div><strong>'+(totalExpected?Math.round(totalCompleted/totalExpected*100):0)+'%</strong><span>Complete</span></div></div><div class="dashboard-pie-totals"><strong>'+classes.length+'</strong><span>Active classes</span><small>'+totalCompleted+' / '+totalExpected+' entries</small></div></div><div class="dashboard-class-pie-legend">'+legend+'</div>';
-}
-
 async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
     if (!panel) return;
@@ -903,9 +879,6 @@ async function loadDashboardStats() {
                 `${data.stats.completion_percentage ?? 0}%`;
         }
 
-        const classGroups = data.stats.class_progress_by_type || {};
-        dashboardRenderClassPie("dashboardConventionalPie", classGroups.conventional || []);
-        dashboardRenderClassPie("dashboardArabicPie", classGroups.arabic || []);
         const overall = Number(data.stats.completion_percentage ?? 0);
         const donut = document.getElementById("dashboardCompletionPie");
         const donutValue = document.getElementById("dashboardCompletionPieValue");
@@ -916,11 +889,6 @@ async function loadDashboardStats() {
 
     } catch (error) {
         console.error("Unable to load dashboard statistics:", error);
-        const message=String(error&&error.message||"The statistics API could not be reached.");
-        for(const id of ["dashboardConventionalPie","dashboardArabicPie"]){
-            const node=document.getElementById(id);
-            if(node)node.innerHTML='<div class="dashboard-class-pie-empty dashboard-chart-error"><div class="dashboard-class-pie-empty-visual"><strong>—</strong><span>Unavailable</span></div><div><strong>Class progress could not load</strong><p>'+message.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]))+'</p></div></div>';
-        }
     }
 }
 
