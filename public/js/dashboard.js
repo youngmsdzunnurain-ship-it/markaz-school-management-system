@@ -326,21 +326,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     const actions = document.createElement("div");
     actions.className = "topbar-actions";
 
-    const refreshButton = document.createElement("button");
-    refreshButton.type = "button";
-    refreshButton.className = "dashboard-refresh-button";
-    refreshButton.setAttribute("aria-label", "Refresh dashboard");
-    refreshButton.title = "Refresh dashboard";
-    refreshButton.innerHTML = '<i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>';
-
-    refreshButton.addEventListener("click", () => {
-        refreshButton.style.transform = "rotate(360deg)";
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 180);
-    });
-
     const profileWrap = document.createElement("div");
     profileWrap.className = "admin-profile-wrap";
 
@@ -389,7 +374,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     profileWrap.appendChild(profileButton);
     profileWrap.appendChild(dropdown);
 
-    actions.appendChild(refreshButton);
     actions.appendChild(profileWrap);
     topbar.appendChild(actions);
 
