@@ -76,7 +76,7 @@ async function loadAdmin() {
         const greetingNode = document.getElementById("welcomeGreeting");
         if (greetingNode) greetingNode.textContent = greeting;
         const roleLabel = document.getElementById("welcomeRoleLabel");
-        if (roleLabel) roleLabel.textContent = ({admin:"SCHOOL ADMINISTRATION",exam_officer:"EXAMINATION OFFICE",teacher:"TEACHER WORKSPACE",management:"SCHOOL MANAGEMENT",student:"STUDENT PORTAL"})[role] || "MARKAZ SCHOOL PORTAL";
+        if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         window.markazCurrentRole = role;
         loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
@@ -388,6 +388,18 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     profileWrap.appendChild(profileButton);
     profileWrap.appendChild(dropdown);
 
+    const languagePill = document.createElement("span");
+    languagePill.className = "topbar-language-pill";
+    languagePill.innerHTML = '<strong>EN</strong><span>|</span><span>AR</span>';
+    languagePill.setAttribute("aria-label", "English and Arabic language options");
+
+    const themeIndicator = document.createElement("span");
+    themeIndicator.className = "topbar-theme-indicator";
+    themeIndicator.innerHTML = '<i class="fa-regular fa-moon" aria-hidden="true"></i>';
+    themeIndicator.setAttribute("aria-label", "Dark mode");
+
+    actions.appendChild(languagePill);
+    actions.appendChild(themeIndicator);
     actions.appendChild(profileWrap);
     topbar.appendChild(actions);
 
