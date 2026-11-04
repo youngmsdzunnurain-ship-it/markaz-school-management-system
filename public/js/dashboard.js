@@ -864,7 +864,6 @@ async function loadDashboardStats() {
         statCards[0].textContent = data.stats.students;
         statCards[1].textContent = data.stats.classes;
         statCards[2].textContent = data.stats.subjects;
-        statCards[3].textContent = data.stats.results;
 
         const completeStudents = document.getElementById("completeStudents");
         const incompleteStudents = document.getElementById("incompleteStudents");
