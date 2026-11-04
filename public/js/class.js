@@ -323,11 +323,6 @@
             }
             if (donutValue) donutValue.textContent = `${percentage}%`;
 
-            const button = document.getElementById("printClassResultsButton");
-            if (button) {
-                button.dataset.completion = String(percentage);
-                button.title = "Class completion is for monitoring only; individual print eligibility is checked separately.";
-            }
         } catch (error) {
             console.error("Class completion monitor error:", error);
             if (resultsCompletion) resultsCompletion.textContent = "—";
