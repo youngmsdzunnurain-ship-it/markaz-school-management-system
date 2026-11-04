@@ -39,6 +39,17 @@ printCheck(
     'student result must be loaded once to avoid competing duplicate initializations'
 );
 printCheck(
+    str_contains($printPage, 'id="printAllEligibleButton"') &&
+    str_contains($printPage, 'printAllEligibleStudents(id, eligibleIds)') &&
+    str_contains($printPage, 'class_type: "conventional"') &&
+    str_contains($printPage, 'print: "1"'),
+    'Print All must include only server-verified eligible students in the selected class'
+);
+printCheck(
+    str_contains($resultPage, 'document.body.dataset.resultReady = "true"'),
+    'batch printing must wait until each student result and behavioural report have rendered'
+);
+printCheck(
     str_contains($studentApi, "requireRolePermission('print_results')"),
     'print result data must remain protected by server-side print permission'
 );
