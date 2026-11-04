@@ -18,7 +18,7 @@ $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 
 printCheck(
     str_contains($classPage, 'const classLabel = /^ss\\s*1$/i.test(displayedClassName)') &&
-    str_contains($classPage, 'classTitle.textContent = classLabel;') &&
+    str_contains($classPage, 'classTitle.textContent = classLabel;'),
     'the existing SS1 class result page must display SS1 Science without creating another class'
 );
 printCheck(
