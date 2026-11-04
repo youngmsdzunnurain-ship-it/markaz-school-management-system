@@ -71,6 +71,13 @@ dashboardAssert(
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
+    !str_contains($js, 'refreshButton') &&
+    !str_contains($js, 'Refresh dashboard') &&
+    !str_contains($css, 'dashboard-refresh-button') &&
+    !str_contains($redesignCss, 'dashboard-refresh-button'),
+    'dashboard refresh control and its obsolete styles must be fully removed'
+);
+dashboardAssert(
     str_contains($redesignCss, 'backdrop-filter: saturate(165%) blur(18px)')
         && str_contains($redesignCss, 'main-content > footer')
         && str_contains($js, 'link.blur()')
