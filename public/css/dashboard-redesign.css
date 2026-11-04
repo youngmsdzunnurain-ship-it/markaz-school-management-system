@@ -2620,3 +2620,317 @@ h1, h2, h3 {
     background: #e1f0e5 !important;
     transition: background-color 140ms ease;
 }
+
+/* =========================================================
+   SECTION 1 — REFERENCE SHELL
+   Sidebar, top bar, content frame and welcome banner only.
+   ========================================================= */
+:root {
+    --shell-green-dark: #14472f;
+    --shell-green-mid: #1f6b45;
+    --shell-gold: #c9a24a;
+    --shell-page: #f5f7f1;
+    --shell-ink: #1d2b22;
+    --shell-muted: #6b7a70;
+}
+
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
+*, *::before, *::after { box-sizing: border-box; }
+
+.app {
+    display: block;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1100;
+    width: 260px;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #145035 0%, #0e3724 100%);
+    color: #c4dccb;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    transition: transform .25s ease, width .25s ease;
+}
+
+.sidebar-header {
+    height: 72px;
+    min-height: 72px;
+    margin: 0 0 20px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 3px;
+    border: 2px solid var(--shell-gold);
+    border-radius: 50%;
+    background: rgba(255,255,255,.96);
+    box-shadow: none;
+}
+.brand-logo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+.brand-text { min-width: 0; display: grid; line-height: 1.2; }
+.brand-text strong {
+    color: #e6d9a4;
+    font: 600 20px/1 'Playfair Display', Lora, Georgia, serif;
+    letter-spacing: 2px;
+}
+.brand-text span { margin-top: 4px; color: #9fc4ad; font: 400 12px/1.3 Inter, system-ui, sans-serif; }
+
+.sidebar-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: start;
+    gap: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.nav-section-label {
+    margin: 18px 0 14px;
+    padding: 0 12px;
+    color: #7fa990;
+    font: 600 11px/1 Inter, system-ui, sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.sidebar-nav > .nav-section-label:first-child { margin-top: 0; }
+.nav-link {
+    position: relative;
+    min-height: 42px;
+    height: 42px;
+    margin: 0 0 4px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 10px;
+    color: #c4dccb;
+    font: 400 14px/1.2 Inter, system-ui, sans-serif;
+    text-decoration: none;
+}
+.nav-link i {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    display: grid;
+    place-items: center;
+    color: currentColor;
+    background: transparent;
+    font-size: 17px;
+}
+.nav-link.active {
+    background: var(--shell-green-mid);
+    color: #fff;
+    font-weight: 500;
+}
+.nav-link.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    border-radius: 2px;
+    background: var(--shell-gold);
+}
+.nav-link.active i { color: #fff; }
+.sidebar-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding: 12px 0 0;
+}
+.logout-button {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #c4dccb;
+    font: 500 14px/1.2 Inter, system-ui, sans-serif;
+    text-align: left;
+}
+.logout-button i { width: 20px; flex: 0 0 20px; text-align: center; }
+
+.main-content {
+    width: calc(100% - 260px);
+    min-width: 0;
+    min-height: 100vh;
+    margin: 0 0 0 260px;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left .25s ease, width .25s ease;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 78px;
+    min-height: 78px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 0;
+    background: linear-gradient(90deg, #a9cbb4 0%, #e6d9a4 70%, #efe9d2 100%);
+    box-shadow: none;
+}
+.topbar > div:not(.admin-profile-wrap):not(.top-actions) { min-width: 0; }
+.topbar h1 {
+    margin: 0;
+    color: var(--shell-green-dark);
+    font: 600 22px/1.2 'Playfair Display', Lora, Georgia, serif;
+}
+.topbar p { margin: 2px 0 0; color: #4d6455; font: 400 12px/1.3 Inter, system-ui, sans-serif; }
+.topbar .menu-button { display: none; }
+.admin-profile-button {
+    width: 260px;
+    min-height: 46px;
+    padding: 0 14px 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 23px;
+    background: #fff;
+    color: var(--shell-ink);
+}
+.admin-profile-avatar { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%; }
+.admin-profile-text { min-width: 0; display: grid; text-align: left; }
+.admin-profile-text strong { font-size: 12px; }
+.admin-profile-text span { font-size: 10px; color: var(--shell-muted); }
+
+.page-content {
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 22px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.welcome-card {
+    position: relative;
+    min-height: 92px;
+    height: auto;
+    margin: 0;
+    padding: 18px 30px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #14472f 0%, #1d6b45 100%);
+    color: #fff;
+    box-shadow: none;
+}
+.welcome-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    height: auto;
+    border-radius: 0;
+    background: var(--shell-gold);
+}
+.welcome-card::after { display: none; }
+.welcome-card .welcome-content { position: relative; z-index: 1; }
+.welcome-card .eyebrow {
+    color: #e6d9a4;
+    font: 400 12px/1.3 Inter, system-ui, sans-serif;
+    letter-spacing: 1px;
+}
+.welcome-card h2 {
+    margin: 4px 0;
+    color: #fff;
+    font: 600 28px/1.2 'Playfair Display', Lora, Georgia, serif;
+}
+.welcome-card h2 span:first-of-type { color: inherit; }
+.welcome-card p { margin: 0; color: #cfe3d5; font: 400 13px/1.4 Inter, system-ui, sans-serif; }
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .sidebar { width: 72px; padding: 16px 10px; }
+    .sidebar-header { justify-content: center; }
+    .brand-text, .nav-section-label, .nav-link span, .logout-button span { display: none; }
+    .nav-link, .logout-button { justify-content: center; padding: 0; }
+    .main-content { width: calc(100% - 72px); margin-left: 72px; }
+    .sidebar.desktop-closed { transform: translateX(0); opacity: 1; visibility: visible; }
+    body.sidebar-desktop-closed .main-content { width: calc(100% - 72px); margin-left: 72px; }
+}
+@media (max-width: 767px) {
+    .app { display: block; }
+    .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 260px;
+        height: 100dvh;
+        min-height: 100dvh;
+        padding: 16px;
+        transform: translateX(-100%);
+        z-index: 1200;
+        visibility: hidden;
+        overflow-y: auto;
+    }
+    .sidebar.open { transform: translateX(0); visibility: visible; }
+    .sidebar.desktop-closed { transform: translateX(-100%); visibility: hidden; }
+    .sidebar.open .brand-text,
+    .sidebar.open .nav-section-label,
+    .sidebar.open .nav-link span,
+    .sidebar.open .logout-button span { display: initial; }
+    .sidebar.open .nav-link { justify-content: flex-start; padding: 0 12px; }
+    .sidebar.open .logout-button { justify-content: flex-start; padding: 0 12px; }
+    .main-content,
+    body.sidebar-desktop-closed .main-content { width: 100%; margin: 0; }
+    .topbar { height: 78px; min-height: 78px; padding: 0 16px; gap: 10px; }
+    .topbar .menu-button {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 10px;
+        background: rgba(255,255,255,.75);
+        color: var(--shell-green-dark);
+    }
+    .topbar h1 { font-size: 20px; }
+    .topbar p { font-size: 10px; }
+    .admin-profile-button { width: auto; min-height: 40px; padding: 0 5px; background: transparent; }
+    .admin-profile-text, .admin-profile-arrow { display: none; }
+    .admin-profile-avatar { width: 34px; height: 34px; }
+    .page-content { padding: 18px 16px 24px; gap: 20px; }
+    .welcome-card { min-height: 92px; padding: 16px 20px 16px 24px; }
+    .welcome-card h2 { font-size: 22px; }
+    .welcome-card p { font-size: 12px; }
+}
