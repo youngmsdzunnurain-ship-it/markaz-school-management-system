@@ -2934,3 +2934,191 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     .welcome-card h2 { font-size: 22px; }
     .welcome-card p { font-size: 12px; }
 }
+
+/* =========================================================
+   SECTION 2 — KPI CARDS + EXAMINATION ENTRY STATUS
+   ========================================================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+.stat-card {
+    position: relative;
+    min-width: 0;
+    min-height: 100px;
+    height: 100px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 4px 14px rgba(20,71,47,.05);
+}
+.stat-card::before,
+.result-progress-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    width: auto;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--gold);
+}
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: #e8f3ea;
+    color: #2a8f58;
+    font-size: 19px;
+}
+.stat-copy { min-width: 0; display: grid; gap: 3px; }
+.stat-label { color: var(--muted); font-size: 13px; font-weight: 400; line-height: 1.2; }
+.stat-main { min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; }
+.stat-main strong { color: var(--green-800); font: 600 36px/1 'Playfair Display', Lora, Georgia, serif; }
+.stat-main small { color: var(--muted); font-size: 12px; line-height: 1.25; }
+
+.dashboard-exam-section { min-width: 0; }
+.result-progress-section {
+    position: relative;
+    height: auto;
+    min-height: 176px;
+    padding: 18px 26px 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 0;
+    row-gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 4px 14px rgba(20,71,47,.05);
+}
+.result-progress-section .panel-header {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    margin: 0;
+    display: block;
+}
+.result-progress-section .panel-header > div:first-child { min-width: 0; }
+.result-progress-section .eyebrow { color: var(--gold-d, #9a7a2c); font-size: 11px; letter-spacing: 1px; }
+.result-progress-section .panel-header h3 {
+    margin: 4px 0;
+    color: var(--dg, #14472f);
+    font: 600 19px/1.2 'Playfair Display', Lora, Georgia, serif;
+}
+.result-progress-section .progress-description { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+.completion-badge {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    width: 150px;
+    min-width: 150px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid #e6d9a4;
+    border-radius: 16px;
+    background: #fbf1d9;
+    color: #8a6414;
+    white-space: nowrap;
+}
+.completion-badge strong { color: inherit; font: 600 12px/30px Inter, system-ui, sans-serif; }
+.completion-badge span { color: inherit; font: 600 12px/30px Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .5px; }
+.dashboard-exam-overview {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+    align-items: end;
+    column-gap: 0;
+    row-gap: 12px;
+}
+.dashboard-exam-overview-chart {
+    min-width: 0;
+    min-height: 92px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.dashboard-exam-overview-chart .dashboard-completion-pie {
+    width: 92px;
+    height: 92px;
+    min-width: 92px;
+    flex: 0 0 92px;
+    aspect-ratio: 1;
+    margin: 0;
+    border-radius: 50%;
+    background: conic-gradient(#2a8f58 var(--completion, 0%), #e6eadf 0);
+    box-shadow: none;
+}
+.dashboard-completion-pie::before { inset: 11px; background: var(--card); box-shadow: none; }
+.dashboard-completion-pie > div { gap: 0; }
+.dashboard-completion-pie strong { color: var(--dg, #14472f); font: 600 16px/1.1 'Playfair Display', Lora, Georgia, serif; }
+.dashboard-completion-pie span { display: none; }
+.dashboard-exam-overview-copy { min-width: 0; }
+.dashboard-exam-overview-copy h4 { color: var(--dg, #14472f); font: 500 13px/1.3 Inter, system-ui, sans-serif; }
+.dashboard-exam-overview-copy p { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+.result-progress-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    align-self: end;
+}
+.progress-card {
+    min-width: 0;
+    min-height: 90px;
+    height: 90px;
+    padding: 12px 14px;
+    display: block;
+    overflow: visible;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fafcf9;
+}
+.progress-card-icon { display: none; }
+.progress-card > div:last-child { min-width: 0; display: grid; gap: 2px; }
+.progress-card span { display: flex; align-items: center; gap: 6px; font: 600 10.5px/1.2 Inter, system-ui, sans-serif; letter-spacing: .5px; text-transform: uppercase; }
+.progress-card strong { margin-top: 8px; font: 600 24px/1.2 'Playfair Display', Lora, Georgia, serif; }
+.progress-card small { color: var(--muted); font-size: 10.5px; line-height: 1.25; overflow-wrap: anywhere; }
+.progress-complete { background: #e8f3ea; color: #2a8f58; }
+.progress-incomplete { background: #fbf1d9; color: #8a6414; }
+.progress-none { background: #e9ecf3; color: #4a5670; }
+.progress-total { background: #f6efd8; color: #9a7a2c; }
+.progress-complete strong,.progress-incomplete strong,.progress-none strong,.progress-total strong { color: currentColor; }
+.progress-card small { color: var(--muted); }
+@media (max-width: 1279px) {
+    .result-progress-section { grid-template-columns: minmax(0,1fr); row-gap: 14px; }
+    .result-progress-section .panel-header,
+    .completion-badge,
+    .dashboard-exam-overview { grid-column: 1; }
+    .completion-badge { grid-row: 2; justify-self: start; }
+    .dashboard-exam-overview { grid-row: 3; grid-template-columns: minmax(0,1fr); row-gap: 16px; }
+}
+@media (max-width: 639px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-card { min-height: 100px; }
+    .result-progress-section { padding: 18px 16px 18px; }
+    .dashboard-exam-overview-chart { gap: 16px; align-items: center; }
+    .dashboard-exam-overview-copy h4 { font-size: 13px; }
+    .result-progress-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .progress-card { min-height: 90px; height: auto; padding: 11px 10px; }
+    .progress-card small { font-size: 10px; }
+}
