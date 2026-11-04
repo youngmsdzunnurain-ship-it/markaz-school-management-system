@@ -41,10 +41,20 @@ dashboardReportCheck(
     'the remaining overall completion chart is centered and keeps its completion visualization'
 );
 dashboardReportCheck(
-    str_contains($dashboardRedesignCss, '.page-content .welcome-card::before,')
-        && str_contains($dashboardRedesignCss, '.page-content .welcome-card::after,')
-        && str_contains($dashboardRedesignCss, 'background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;'),
-    'the dashboard greeting banner has no decorative curves or radial flourishes'
+    str_contains($dashboardRedesignCss, '.page-content .welcome-card::before {')
+        && str_contains($dashboardRedesignCss, 'display: block !important;')
+        && str_contains($dashboardRedesignCss, 'height: 3px;')
+        && str_contains($dashboardRedesignCss, '.page-content .welcome-decoration,')
+        && !str_contains($dashboardRedesignCss, 'radial-gradient(110% 150% at 100% 0%'),
+    'the greeting keeps its slim gold cap while the large gold-green radial decoration is removed'
+);
+dashboardReportCheck(
+    str_contains($dashboardScript, 'renderAttendanceComboChart')
+        && str_contains($dashboardScript, 'combo-rate-line')
+        && str_contains($attendanceReport, 'student_count_sql')
+        && str_contains($dashboardHtml, 'Fully Scored Entries')
+        && str_contains($dashboardHtml, 'Score Records'),
+    'attendance category charts are combo charts with a roster-based rate, and dashboard score labels are explicit'
 );
 
 echo "Dashboard report regression tests passed (5 checks).\n";
