@@ -6,6 +6,7 @@ on:
       - "api/attendance/**"
       - "api/results/**"
       - "public/print-results.html"
+      - "public/js/print-results.js"
       - "public/js/student-result.js"
       - "public/student-result-print.html"
       - "tests/print-results-validation.test.php"
@@ -111,3 +112,4 @@ jobs:
           node --check public/js/dashboard.js
           node --check public/js/students.js
           node --check public/js/result-print-threshold-settings.js
+          node --check public/js/print-results.js
