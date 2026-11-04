@@ -19,7 +19,6 @@ on:
       - "app/middleware/auth.php"
       - "api/settings/account-freezes.php"
       - "api/settings/login-lockouts.php"
-      - "api/settings/result-print-threshold.php"
       - "public/js/result-print-threshold-settings.js"
       - "api/students/**"
       - "public/js/students.js"
@@ -75,7 +74,6 @@ jobs:
           php -l tests/account-security-regression.test.php
           php -l tests/public-image-fallback.test.php
           php -l public/api/settings/website-images.php
-          php -l api/settings/result-print-threshold.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
