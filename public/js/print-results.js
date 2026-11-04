@@ -294,7 +294,7 @@ async function showStudents(selectedClass) {
     const completion = await getClassCompletion(id, "conventional");
 
     // Ignore a late response if the user has navigated to another class.
-    if ($("selectedClassTitle").textContent !== className(selectedClass)) return;
+    if ($("selectedClassTitle").textContent !== displayClassName(selectedClass)) return;
 
     const eligibleIds = [];
     rows.forEach(({ status, missing, button }, sid) => {
