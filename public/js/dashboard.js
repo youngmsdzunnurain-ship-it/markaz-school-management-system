@@ -527,65 +527,97 @@ function applyDashboardRoleAccess(role, permissions = {}) {
 
 function dashboardDonutGradient(values) {
     const total = values.reduce((sum, item) => sum + Math.max(0, Number(item.value) || 0), 0);
-    if (!total) return "conic-gradient(#e7eee9 0 100%)";
+    const track = "#e6eadf";
+    if (!total) return "conic-gradient(from -90deg, " + track + " 0deg 360deg)";
+    const gap = 2.2;
     let cursor = 0;
-    const parts = values.map(item => { const start=cursor; cursor += Math.max(0,Number(item.value)||0)/total*100; return item.color+" "+start.toFixed(2)+"% "+cursor.toFixed(2)+"%"; });
-    return "conic-gradient("+parts.join(",")+")";
+    const parts = [];
+    values.forEach(item => {
+        const amount = Math.max(0, Number(item.value) || 0);
+        if (!amount) return;
+        const sweep = amount / total * 360;
+        const start = cursor;
+        const finish = cursor + sweep;
+        parts.push(track + " " + start.toFixed(2) + "deg " + Math.min(finish, start + gap / 2).toFixed(2) + "deg");
+        parts.push(item.color + " " + Math.min(finish, start + gap / 2).toFixed(2) + "deg " + Math.max(start + gap / 2, finish - gap / 2).toFixed(2) + "deg");
+        parts.push(track + " " + Math.max(start + gap / 2, finish - gap / 2).toFixed(2) + "deg " + finish.toFixed(2) + "deg");
+        cursor = finish;
+    });
+    return "conic-gradient(from -90deg, " + parts.join(", ") + ")";
 }
 
-function renderAttendanceComboChart(rows, category) {
+function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
+    const conventionalOrder = ["KG", "Pre-Nursery 1", "Pre-Nursery 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1"];
+    const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
+    const order = category === "arabic" ? arabicOrder : conventionalOrder;
+    const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
+    const orderIndex = new Map(order.map((name, index) => [normalize(name), index]));
     const data = rows.map(row => {
         const roster = Math.max(0, Number(row.student_count) || 0);
         const present = Math.max(0, Number(row.present_count) || 0);
         const absent = Math.max(0, Number(row.absent_count) || 0);
         const late = Math.max(0, Number(row.late_count) || 0);
         const excused = Math.max(0, Number(row.excused_count) || 0);
-        return { name: String(row.class_name || "Class"), roster, present, absent, late, excused,
+        return {
+            name: String(row.class_name || "Class"), roster, present, absent, late, excused,
             markedRecords: Math.max(0, Number(row.marked_records) || 0),
-            rate: roster ? Math.min(100, present / roster * 100) : 0 };
-    });
+            rate: roster ? Math.min(100, present / roster * 100) : 0
+        };
+    }).sort((a, b) => (orderIndex.get(normalize(a.name)) ?? 999) - (orderIndex.get(normalize(b.name)) ?? 999));
     if (!data.length) return "";
-    const width = Math.max(540, data.length * 112 + 88);
-    const height = 286, left = 48, right = 46, top = 22, bottom = 68;
-    const plotWidth = width - left - right, plotHeight = height - top - bottom;
-    const maxCount = Math.max(1, ...data.map(d => d.present + d.absent + d.late + d.excused));
-    const countMax = Math.max(4, Math.ceil(maxCount / 4) * 4);
-    const yCount = v => top + plotHeight - (v / countMax) * plotHeight;
-    const yRate = v => top + plotHeight - (v / 100) * plotHeight;
-    const x = i => left + (i + .5) * plotWidth / data.length;
-    const series = [["present", "#258653"], ["absent", "#d65359"], ["late", "#d8a72c"], ["excused", "#8293a5"]];
-    const grid = Array.from({length:5}, (_,i) => {
-        const count = countMax * i / 4, y = yCount(count);
-        return '<line x1="' + left + '" y1="' + y + '" x2="' + (width-right) + '" y2="' + y + '" class="combo-gridline"/>' +
-            '<text x="' + (left-9) + '" y="' + (y+4) + '" text-anchor="end" class="combo-axis-label">' + Math.round(count) + '</text>' +
-            '<text x="' + (width-right+9) + '" y="' + (y+4) + '" class="combo-axis-label">' + (i*25) + '%</text>';
-    }).join("");
-    const bars = data.map((d,i) => {
-        const center=x(i), barWidth=Math.min(42,plotWidth/data.length*.44);
-        let stacked=0;
-        const rects=series.map(([key,color]) => {
-            const value=d[key], y=yCount(stacked+value), h=value/countMax*plotHeight;
-            stacked+=value;
-            return '<rect x="' + (center-barWidth/2) + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="2" fill="' + color + '"><title>' +
-                escape(d.name) + ' — ' + key + ': ' + value + '</title></rect>';
-        }).join("");
-        const label=d.name.length>13 ? d.name.slice(0,12)+"…" : d.name;
-        return rects + '<text x="' + center + '" y="' + (height-40) + '" text-anchor="middle" class="combo-class-label">' + escape(label) + '</text>' +
-            '<text x="' + center + '" y="' + (height-22) + '" text-anchor="middle" class="combo-rate-label">' +
-            (d.markedRecords > 0 ? d.rate.toFixed(0) + '%' : (d.roster > 0 ? 'Not yet recorded' : 'No students')) + '</text>';
-    }).join("");
-    const linePoints=data.map((d,i)=>x(i)+","+yRate(d.rate)).join(" ");
-    const circles=data.map((d,i)=>'<circle cx="' + x(i) + '" cy="' + yRate(d.rate) + '" r="4.5" class="combo-rate-point"><title>' +
-        escape(d.name) + ': ' + d.present + ' present of ' + d.roster + ' active students (' + d.rate.toFixed(1) + '%)</title></circle>').join("");
-    return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + ' ' + height +
-        '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
-        ' attendance chart. Stacked bars show present, absent, late and excused counts; the line shows present as a percentage of active class students.">' +
-        grid + bars + '<polyline points="' + linePoints + '" class="combo-rate-line"/>' + circles + '</svg></div>';
-}
 
+    const availableWidth = target && target.clientWidth ? target.clientWidth - 2 : 720;
+    const width = Math.max(360, availableWidth);
+    const height = 250, left = 54, right = 58, top = 10, bottom = 92;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const countMax = category === "arabic" ? 12 : 20;
+    const countStep = category === "arabic" ? 4 : 5;
+    const yCount = value => top + plotHeight - (Math.min(countMax, value) / countMax) * plotHeight;
+    const yRate = value => top + plotHeight - (value / 100) * plotHeight;
+    const slot = plotWidth / data.length;
+    const x = index => left + (index + .5) * slot;
+    const series = [
+        ["present", "#2a8f58"],
+        ["absent", "#e05a5a"],
+        ["late", "#d9a62e"],
+        ["excused", "#8a94a6"]
+    ];
+    const grid = Array.from({length: countMax / countStep + 1}, (_, index) => {
+        const count = index * countStep, y = yCount(count), rate = index * 25;
+        return '<line x1="' + left + '" y1="' + y + '" x2="' + (width-right) + '" y2="' + y + '" class="combo-gridline"/>' +
+            '<text x="' + (left-10) + '" y="' + (y+4) + '" text-anchor="end" class="combo-axis-label">' + count + '</text>' +
+            '<text x="' + (width-right+10) + '" y="' + (y+4) + '" text-anchor="start" class="combo-rate-axis-label">' + rate + '%</text>';
+    }).join("");
+    const bars = data.map((item, index) => {
+        const center = x(index), barWidth = Math.min(34, slot * .52);
+        let stacked = 0;
+        const rects = series.map(([key, color]) => {
+            const value = item[key], visibleValue = Math.max(0, Math.min(value, countMax - stacked));
+            const y = yCount(stacked + visibleValue), barHeight = visibleValue / countMax * plotHeight;
+            stacked += value;
+            if (!visibleValue) return "";
+            return '<rect x="' + (center-barWidth/2) + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="2" fill="' + color + '"><title>' +
+                escape(item.name) + " — " + key + ": " + value + "</title></rect>";
+        }).join("");
+        const label = item.name + " · " + (item.markedRecords > 0 ? item.rate.toFixed(0) + "%" : "—");
+        const labelY = height - 4;
+        return rects + '<text x="' + center + '" y="' + labelY + '" transform="rotate(-38 ' + center + " " + labelY + ')" text-anchor="end" class="combo-class-label">' +
+            escape(label) + "</text>";
+    }).join("");
+    const points = data.map((item, index) => x(index) + "," + yRate(item.rate)).join(" ");
+    const circles = data.map((item, index) =>
+        '<circle cx="' + x(index) + '" cy="' + yRate(item.rate) + '" r="4.5" class="combo-rate-point"><title>' +
+        escape(item.name) + ": " + item.present + " present of " + item.roster + " active students (" + item.rate.toFixed(1) + "%)</title></circle>"
+    ).join("");
+    return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + " " + height +
+        '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
+        ' attendance chart. Stacked bars show present, absent, late and excused counts; the line shows present rate.">' +
+        grid + '<line x1="' + left + '" y1="' + (top+plotHeight) + '" x2="' + (width-right) + '" y2="' + (top+plotHeight) + '" class="combo-baseline"/>' +
+        bars + '<polyline points="' + points + '" class="combo-rate-line"/>' + circles + "</svg></div>";
+}
 
 async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
@@ -715,7 +747,7 @@ async function loadDashboardAttendance() {
             }
 
             target.innerHTML = rows.length
-                ? renderAttendanceComboChart(rows, type)
+                ? renderAttendanceComboChart(rows, type, target)
                 :
                 '<div class="dashboard-chart-empty dashboard-chart-empty-state">' +
                 '<i class="fa-regular fa-calendar-check"></i>' +
