@@ -9,8 +9,6 @@ const adminInitials = document.getElementById("adminInitials");
 const dashboardAdminPhoto = document.getElementById("dashboardAdminPhoto");
 const dashboardAdminName = document.getElementById("dashboardAdminName");
 const dashboardAdminEmail = document.getElementById("dashboardAdminEmail");
-const sidebarAdminName = document.getElementById("sidebarAdminName");
-const sidebarAdminAvatar = document.getElementById("sidebarAdminAvatar");
 const profileInitials = document.getElementById("profileInitials");
 
 const menuButton = document.getElementById("menuButton");
@@ -100,18 +98,6 @@ async function loadAdmin() {
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
-        if (sidebarAdminName) sidebarAdminName.textContent = name;
-        if (sidebarAdminAvatar) {
-            sidebarAdminAvatar.textContent = initials;
-            if (profileImage) {
-                const avatar = document.createElement("img");
-                avatar.src = "/" + profileImage.replace(/^\/+/, "");
-                avatar.alt = "";
-                avatar.loading = "eager";
-                sidebarAdminAvatar.textContent = "";
-                sidebarAdminAvatar.appendChild(avatar);
-            }
-        }
         if (dashboardAdminPhoto) {
             dashboardAdminPhoto.innerHTML = "";
 
@@ -388,18 +374,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     profileWrap.appendChild(profileButton);
     profileWrap.appendChild(dropdown);
 
-    const languagePill = document.createElement("span");
-    languagePill.className = "topbar-language-pill";
-    languagePill.innerHTML = '<strong>EN</strong><span>|</span><span>AR</span>';
-    languagePill.setAttribute("aria-label", "English and Arabic language options");
-
-    const themeIndicator = document.createElement("span");
-    themeIndicator.className = "topbar-theme-indicator";
-    themeIndicator.innerHTML = '<i class="fa-regular fa-moon" aria-hidden="true"></i>';
-    themeIndicator.setAttribute("aria-label", "Dark mode");
-
-    actions.appendChild(languagePill);
-    actions.appendChild(themeIndicator);
     actions.appendChild(profileWrap);
     topbar.appendChild(actions);
 
