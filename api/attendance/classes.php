@@ -65,19 +65,19 @@ if ($role === 'teacher') {
 }
 
 // Return only the requested education category. Filtering is enforced here,
- // not merely by the browser, so categories cannot leak into each other's list.
- $classTypeFilter = (string) ($_GET['class_type'] ?? '');
- if ($classTypeFilter !== '' && !in_array($classTypeFilter, ['conventional', 'arabic'], true)) {
-     attendanceJsonError(422, 'Choose a valid attendance class category.');
- }
- if ($classTypeFilter !== '') {
-     $classes = array_values(array_filter(
-         $classes,
-         static fn (array $class): bool => $class['class_type'] === $classTypeFilter
-     ));
- }
+// not merely by the browser, so categories cannot leak into each other's list.
+$classTypeFilter = (string) ($_GET['class_type'] ?? '');
+if ($classTypeFilter !== '' && !in_array($classTypeFilter, ['conventional', 'arabic'], true)) {
+    attendanceJsonError(422, 'Choose a valid attendance class category.');
+}
+if ($classTypeFilter !== '') {
+    $classes = array_values(array_filter(
+        $classes,
+        static fn (array $class): bool => $class['class_type'] === $classTypeFilter
+    ));
+}
 
- foreach ($classes as &$class) {
+foreach ($classes as &$class) {
     $class['id'] = (int) $class['id'];
     $class['sort_order'] = (int) $class['sort_order'];
     $class['student_count'] = (int) $class['student_count'];
