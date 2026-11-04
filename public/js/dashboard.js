@@ -9,6 +9,8 @@ const adminInitials = document.getElementById("adminInitials");
 const dashboardAdminPhoto = document.getElementById("dashboardAdminPhoto");
 const dashboardAdminName = document.getElementById("dashboardAdminName");
 const dashboardAdminEmail = document.getElementById("dashboardAdminEmail");
+const sidebarAdminName = document.getElementById("sidebarAdminName");
+const sidebarAdminAvatar = document.getElementById("sidebarAdminAvatar");
 const profileInitials = document.getElementById("profileInitials");
 
 const menuButton = document.getElementById("menuButton");
@@ -98,6 +100,18 @@ async function loadAdmin() {
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
+        if (sidebarAdminName) sidebarAdminName.textContent = name;
+        if (sidebarAdminAvatar) {
+            sidebarAdminAvatar.textContent = initials;
+            if (profileImage) {
+                const avatar = document.createElement("img");
+                avatar.src = "/" + profileImage.replace(/^\\/+/, "");
+                avatar.alt = "";
+                avatar.loading = "eager";
+                sidebarAdminAvatar.textContent = "";
+                sidebarAdminAvatar.appendChild(avatar);
+            }
+        }
         if (dashboardAdminPhoto) {
             dashboardAdminPhoto.innerHTML = "";
 
