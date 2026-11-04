@@ -2504,7 +2504,6 @@ h1, h2, h3 {
 .dashboard-attendance-combo-chart .combo-rate-point { fill: #fff; stroke: #b7791f; stroke-width: 2.5; }
 .dashboard-attendance-rate-key { display: inline-flex; align-items: center; gap: 6px; }
 .dashboard-attendance-rate-key i { width: 18px; height: 0; border-top: 3px solid #b7791f; }
-.main-content { min-height: calc(100vh - var(--topbar-height)); display: flex; flex-direction: column; }
 .main-content > footer, .main-content > .markaz-global-footer { margin-top: auto; width: 100%; flex: 0 0 auto; }
 .nav-link, .nav-link i, .dashboard-attendance-link { transition-duration: .12s; }
 @media (prefers-reduced-transparency: reduce) {
