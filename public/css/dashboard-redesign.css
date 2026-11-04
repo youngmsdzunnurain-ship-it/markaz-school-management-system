@@ -142,6 +142,7 @@ h1, h2, h3 {
 
 .app {
     min-height: 100vh;
+    background: #f5f7f1;
 }
 
 .skip-link {
@@ -576,6 +577,34 @@ h1, h2, h3 {
     align-items: center;
     gap: 12px;
 }
+.topbar-language-pill {
+    width: 64px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 1px solid rgba(20,71,47,.16);
+    border-radius: 999px;
+    background: rgba(251,252,246,.72);
+    color: #14472f;
+    font-size: 10px;
+    font-weight: 700;
+}
+.topbar-language-pill strong { font-weight: 800; }
+.topbar-language-pill > span { opacity: .7; }
+.topbar-theme-indicator {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(20,71,47,.16);
+    border-radius: 50%;
+    background: #14472f;
+    color: #f5f7f1;
+    font-size: 13px;
+}
+
 
 .topbar-icon-button {
     position: relative;
