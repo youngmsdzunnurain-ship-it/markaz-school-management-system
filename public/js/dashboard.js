@@ -326,21 +326,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     const actions = document.createElement("div");
     actions.className = "topbar-actions";
 
-    const refreshButton = document.createElement("button");
-    refreshButton.type = "button";
-    refreshButton.className = "dashboard-refresh-button";
-    refreshButton.setAttribute("aria-label", "Refresh dashboard");
-    refreshButton.title = "Refresh dashboard";
-    refreshButton.innerHTML = '<i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>';
-
-    refreshButton.addEventListener("click", () => {
-        refreshButton.style.transform = "rotate(360deg)";
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 180);
-    });
-
     const profileWrap = document.createElement("div");
     profileWrap.className = "admin-profile-wrap";
 
@@ -389,7 +374,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     profileWrap.appendChild(profileButton);
     profileWrap.appendChild(dropdown);
 
-    actions.appendChild(refreshButton);
     actions.appendChild(profileWrap);
     topbar.appendChild(actions);
 
@@ -880,7 +864,6 @@ async function loadDashboardStats() {
         statCards[0].textContent = data.stats.students;
         statCards[1].textContent = data.stats.classes;
         statCards[2].textContent = data.stats.subjects;
-        statCards[3].textContent = data.stats.results;
 
         const completeStudents = document.getElementById("completeStudents");
         const incompleteStudents = document.getElementById("incompleteStudents");
@@ -898,6 +881,14 @@ async function loadDashboardStats() {
 
         if (noResultStudents) {
             noResultStudents.textContent = data.stats.no_result_students ?? 0;
+        }
+
+        const unassignedStudentsNote = document.getElementById("unassignedStudentsNote");
+        if (unassignedStudentsNote) {
+            const count = Number(data.stats.unassigned_students ?? 0);
+            unassignedStudentsNote.textContent =
+                count + (count === 1 ? " student is" : " students are") +
+                " awaiting required subject assignments";
         }
 
         if (resultEntriesProgress) {

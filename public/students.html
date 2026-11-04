@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#123d2a">
     <title>Students | MARKAZ</title>
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="./css/students.css">
+    <link rel="stylesheet" href="./css/students.css?v=20261104-native-camera">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="/css/management-shell.css?v=20261102-glass2">
+    <link rel="stylesheet" href="/css/management-shell.css?v=20261104-avatar-unified">
 </head>
 
 <body>
@@ -183,6 +183,7 @@
                             id="studentPhoto"
                             name="profile_image"
                             accept="image/jpeg,image/png,image/webp"
+                            capture="environment"
                             hidden
                         >
 
@@ -192,7 +193,7 @@
                             id="captureStudentPhotoButton"
 
                         >
-                            Capture Photo
+                            Camera
                         </button>
                     </div>
                 </div>
@@ -384,6 +385,7 @@
                     id="editStudentPhoto"
                     name="profile_image"
                     accept="image/jpeg,image/png,image/webp"
+                    capture="environment"
                     hidden
                 >
             </label>
@@ -393,7 +395,7 @@
                 class="secondary-button"
                 id="captureEditStudentPhotoButton"
             >
-                Capture Photo
+                Camera
             </button>
 
             <button
@@ -589,174 +591,11 @@
 
 
 
-<!-- MARKAZ-AUTO-STUDENT-CAMERA -->
-<div class="markaz-camera-overlay" id="studentCameraModal" hidden>
-    <div class="markaz-camera-modal" role="dialog" aria-modal="true" aria-labelledby="studentCameraTitle">
-
-        <div class="markaz-camera-header">
-            <div>
-                <span class="eyebrow">MARKAZ PHOTO CAPTURE</span>
-                <h2 id="studentCameraTitle">Capture Student Photo</h2>
-                <p>Position the student from head to chest. Capture starts automatically.</p>
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                id="closeStudentCamera"
-                aria-label="Close"
-            >&times;</button>
-        </div>
-
-        <div class="markaz-camera-body">
-
-            <div class="markaz-camera-stage">
-
-                <video
-                    id="studentCameraVideo"
-                    autoplay
-                    playsinline
-                    muted
-                ></video>
-
-                <div class="markaz-camera-guide">
-                    <div class="markaz-camera-head-guide"></div>
-                    <div class="markaz-camera-chest-guide"></div>
-
-                    <span class="markaz-camera-guide-label">
-                        HEAD → CHEST
-                    </span>
-                </div>
-
-                <div
-                    class="markaz-camera-progress"
-                    id="studentCameraProgress"
-                    aria-hidden="true"
-                >
-                    <svg viewBox="0 0 100 100" role="presentation">
-                        <circle
-                            class="markaz-camera-progress-track"
-                            cx="50"
-                            cy="50"
-                            r="45"
-                        ></circle>
-                        <circle
-                            class="markaz-camera-progress-value"
-                            id="studentCameraProgressValue"
-                            cx="50"
-                            cy="50"
-                            r="45"
-                        ></circle>
-                    </svg>
-                    <span
-                        class="markaz-camera-progress-check"
-                        id="studentCameraProgressCheck"
-                    >✓</span>
-
-                    <span
-                        class="markaz-camera-countdown"
-                        id="studentCameraCountdown"
-                        aria-hidden="true"
-                    ></span>
-                </div>
-<div
-                    class="markaz-camera-status"
-                    id="studentCameraStatus"
-                    aria-live="polite"
-                >
-
-
-                    Starting camera…
-                </div>
-                    <div class="markaz-camera-switch-row">
-                        <button
-                            type="button"
-                            class="secondary-button"
-                            id="switchStudentCamera"
-                        >
-                            Switch Camera
-                        </button>
-                    </div>
-
-            </div>
-
-            <div class="markaz-camera-requirements">
-
-                <strong>Photo requirements</strong>
-
-                <div class="markaz-camera-checks">
-
-                    <span id="cameraCheckFace">
-                        ○ Face visible
-                    </span>
-
-                    <span id="cameraCheckPosition">
-                        ○ Head centered
-                    </span>
-
-                    <span id="cameraCheckEars">
-                        ○ Both ears visible
-                    </span>
-
-                    <span id="cameraCheckClarity">
-                        ○ Image clear
-                    </span>
-
-                </div>
-
-                <small>
-                    Student should wear the complete school uniform,
-                    cap and white jacket.
-                </small>
-
-            </div>
-
-        </div>
-
-        <div class="markaz-camera-actions">
-
-            <button
-                type="button"
-                class="secondary-button"
-                id="cancelStudentCamera"
-            >
-                Back
-            </button>
-
-            <button
-                type="button"
-                class="secondary-button"
-                id="retakeStudentCamera"
-                hidden
-            >
-                Retake Photo
-            </button>
-
-            <button
-                type="button"
-                class="primary-button"
-                id="useStudentCameraPhoto"
-                hidden
-            >
-                Use Photo
-            </button>
-
-        </div>
-
-        <canvas
-            id="studentCameraCanvas"
-            hidden
-        ></canvas>
-
-    </div>
-</div>
-
-<script type="module" src="./js/markaz-camera-ai.js"></script>
-<script src="./js/students.js"></script>
+<script src="./js/students.js?v=20261104-native-camera"></script>
 <script src="/js/markaz-global.js"></script>
 
 <script src="js/website-image-overrides.js"></script>
     <script src="./js/go-back.js"></script>
-    <script src="/js/management-shell.js?v=20261102-fix1"></script>
+    <script src="/js/management-shell.js?v=20261104-avatar-unified"></script>
 </body>
 </html>

@@ -217,9 +217,40 @@ try {
             'SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1'
         );
 
+        $deleteStaleReplacement = $pdo->prepare(
+            'DELETE FROM markaz_app_settings WHERE setting_key = ?'
+        );
+
         foreach ($images as &$image) {
-            $stmt->execute(['website_image_map_' . $image['key']]);
+            $settingKey = 'website_image_map_' . $image['key'];
+            $stmt->execute([$settingKey]);
             $replacement = $stmt->fetchColumn();
+
+            if ($replacement !== false) {
+                $relativePath = ltrim((string) $replacement, '/');
+                $filename = str_starts_with($relativePath, $imageUrlPrefix)
+                    ? substr($relativePath, strlen($imageUrlPrefix))
+                    : '';
+                $candidate = $filename !== '' && basename($filename) === $filename
+                    ? $imageDirectory . '/' . $filename
+                    : '';
+                $resolved = $candidate !== '' ? realpath($candidate) : false;
+                $expectedDirectory = realpath($imageDirectory);
+
+                if (
+                    $resolved === false ||
+                    $expectedDirectory === false ||
+                    dirname($resolved) !== $expectedDirectory ||
+                    !is_file($resolved) ||
+                    !is_readable($resolved)
+                ) {
+                    // A deleted/unreadable managed upload must never blank the
+                    // public page: discard its stale mapping and use the source.
+                    $deleteStaleReplacement->execute([$settingKey]);
+                    $replacement = false;
+                }
+            }
+
             $image['replacement'] = $replacement !== false ? $replacement : null;
         }
         unset($image);
@@ -296,6 +327,7 @@ try {
         respond(['success' => false, 'message' => 'Could not create the managed image folder.'], 500);
     }
 
+    @chmod($imageDirectory, 0755);
     $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
     $destination = $imageDirectory . '/' . $filename;
 
@@ -303,6 +335,7 @@ try {
         respond(['success' => false, 'message' => 'Could not save the uploaded image.'], 500);
     }
 
+    @chmod($destination, 0644);
     $replacementUrl = $imageUrlPrefix . $filename;
 
     $stmt = $pdo->prepare(

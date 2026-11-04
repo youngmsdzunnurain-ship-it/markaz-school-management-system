@@ -90,14 +90,18 @@
             class_type: classType
         };
 
-        classTitle.textContent = selectedClass.name;
+        const displayedClassName = String(selectedClass.name || "").trim();
+        const classLabel = /^ss\s*1$/i.test(displayedClassName)
+            ? "SS1 Science"
+            : (displayedClassName || "Class");
+        classTitle.textContent = classLabel;
         classDescription.textContent = classType === "arabic"
             ? "Arabic class"
             : (selectedClass.level_group || "Academic class");
         classStatus.textContent = Number(selectedClass.is_active) === 1
             ? "Active"
             : "Inactive";
-        document.title = `${selectedClass.name} | MARKAZ`;
+        document.title = `${classLabel} | MARKAZ`;
 
         return true;
     }

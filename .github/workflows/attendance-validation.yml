@@ -6,9 +6,26 @@ on:
       - "api/attendance/**"
       - "api/results/**"
       - "public/print-results.html"
+      - "public/js/print-results.js"
       - "public/js/student-result.js"
       - "public/student-result-print.html"
       - "tests/print-results-validation.test.php"
+      - "tests/print-threshold-profile-image.test.php"
+      - "tests/account-security-regression.test.php"
+      - "tests/public-image-fallback.test.php"
+      - "tests/teacher-enrollment-regression.test.php"
+      - "public/js/account-management.js"
+      - "api/settings/accounts.php"
+      - "public/api/settings/website-images.php"
+      - "public/js/website-image-overrides.js"
+      - "api/auth/login.php"
+      - "app/middleware/auth.php"
+      - "api/settings/account-freezes.php"
+      - "api/settings/login-lockouts.php"
+      - "public/js/result-print-threshold-settings.js"
+      - "api/students/**"
+      - "public/js/students.js"
+      - "public/settings.html"
       - "public/js/class.js"
       - "public/css/dashboard.css"
       - "public/css/dashboard-redesign.css"
@@ -56,6 +73,11 @@ jobs:
           php -l api/results/save.php
           php -l api/results/class-completion.php
           php -l tests/print-results-validation.test.php
+          php -l tests/print-threshold-profile-image.test.php
+          php -l tests/account-security-regression.test.php
+          php -l tests/public-image-fallback.test.php
+          php -l tests/teacher-enrollment-regression.test.php
+          php -l public/api/settings/website-images.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
@@ -76,6 +98,18 @@ jobs:
 
       - name: Run print results validation tests
         run: php tests/print-results-validation.test.php
+
+      - name: Run print threshold and student profile image tests
+        run: php tests/print-threshold-profile-image.test.php
+
+      - name: Run account security regression tests
+        run: php tests/account-security-regression.test.php
+
+      - name: Run public website image fallback tests
+        run: php tests/public-image-fallback.test.php
+
+      - name: Run teacher enrollment regression tests
+        run: php tests/teacher-enrollment-regression.test.php
 
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
@@ -98,3 +132,6 @@ jobs:
           node --check public/js/student-result.js
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
+          node --check public/js/students.js
+          node --check public/js/result-print-threshold-settings.js
+          node --check public/js/print-results.js

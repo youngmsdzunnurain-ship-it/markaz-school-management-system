@@ -11,6 +11,7 @@ function dashboardAssert(bool $condition, string $message): void
 
 $css = file_get_contents(__DIR__ . '/../public/css/dashboard.css');
 $redesignCss = file_get_contents(__DIR__ . '/../public/css/dashboard-redesign.css');
+$shellCss = file_get_contents(__DIR__ . '/../public/css/management-shell.css');
 $html = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $js = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $stats = file_get_contents(__DIR__ . '/../api/dashboard/stats.php');
@@ -18,6 +19,14 @@ $attendance = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 $attendanceRegister = file_get_contents(__DIR__ . '/../api/attendance/register.php');
 $attendanceClasses = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 
+dashboardAssert(
+    substr_count($html, 'class="stat-card ') === 3 &&
+    !str_contains($css, '.stat-card::after') &&
+    !str_contains($css, '.stat-card::before') &&
+    !str_contains($redesignCss, '.stat-card::after') &&
+    !str_contains($redesignCss, '.stat-card::before'),
+    'Dashboard summary cards must be three clean cards with no gold-green decorative pseudo-elements'
+);
 dashboardAssert(
     str_contains($css, '.dashboard-attendance-category') &&
     str_contains($css, 'linear-gradient(135deg') &&
@@ -63,6 +72,18 @@ dashboardAssert(
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
+    str_contains($shellCss, 'background:#dff3e7!important;color:#145c38!important') &&
+    str_contains($shellCss, 'border-color:#d6b65f!important'),
+    'profile avatar colors must remain consistent when navigating between dashboard and management pages'
+);
+dashboardAssert(
+    !str_contains($js, 'refreshButton') &&
+    !str_contains($js, 'Refresh dashboard') &&
+    !str_contains($css, 'dashboard-refresh-button') &&
+    !str_contains($redesignCss, 'dashboard-refresh-button'),
+    'dashboard refresh control and its obsolete styles must be fully removed'
+);
+dashboardAssert(
     str_contains($redesignCss, 'backdrop-filter: saturate(165%) blur(18px)')
         && str_contains($redesignCss, 'main-content > footer')
         && str_contains($js, 'link.blur()')
@@ -74,9 +95,12 @@ dashboardAssert(
     str_contains($stats, 'SELECT COUNT(*) FROM classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM arabic_classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM subjects WHERE is_active = 1') &&
+    str_contains($stats, "'unassigned_students' => \$schoolSummary['unassigned_students']") &&
     str_contains($stats, 'r.academic_period_id = ?') &&
-    str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)'),
-    'Dashboard headline totals must be database counts for active students, classes, subjects and current-period recorded results'
+    str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)') &&
+    !str_contains($html, 'Score Records') &&
+    !str_contains($stats, "'results' =>"),
+    'Dashboard headline totals must show only active students, classes and subjects; score-record count is intentionally removed'
 );
 dashboardAssert(
     str_contains($stats, 'st.arabic_class_id') &&

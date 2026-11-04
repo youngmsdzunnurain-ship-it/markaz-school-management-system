@@ -23,6 +23,7 @@ dashboardCheck($summary['students'] === 4, 'preserves the full active class rost
 dashboardCheck($summary['complete_students'] === 1, 'only students with every required subject fully scored are complete');
 dashboardCheck($summary['incomplete_students'] === 1, 'partially entered students are in progress');
 dashboardCheck($summary['no_result_students'] === 1, 'only eligible students with no scores are marked Not Started');
+dashboardCheck($summary['unassigned_students'] === 1, 'students without required subject assignments are counted separately');
 dashboardCheck($summary['expected_entries'] === 6, 'expected entries use required subject assignments only');
 dashboardCheck($summary['completed_entries'] === 3, 'completed entries require CA1, CA2 and Exam');
 dashboardCheck($summary['started_entries'] === 4, 'partially entered score rows count as started, not complete');

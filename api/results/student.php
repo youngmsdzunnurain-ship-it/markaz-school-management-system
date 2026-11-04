@@ -540,6 +540,9 @@ try {
             'is_active' =>
                 (int) $student['is_active'],
 
+            'profile_image' =>
+                $student['profile_image'],
+
             'class_id' =>
                 (int) $student['class_id'],
 

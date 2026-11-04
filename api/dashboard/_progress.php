@@ -12,6 +12,7 @@ function dashboardSummariseStudentProgress(array $rows): array
         'complete_students' => 0,
         'incomplete_students' => 0,
         'no_result_students' => 0,
+        'unassigned_students' => 0,
         'expected_entries' => 0,
         'completed_entries' => 0,
         'started_entries' => 0,
@@ -21,6 +22,7 @@ function dashboardSummariseStudentProgress(array $rows): array
     foreach ($rows as $row) {
         $expected = max(0, (int) ($row['expected_subjects'] ?? 0));
         if ($expected === 0) {
+            $summary['unassigned_students']++;
             continue;
         }
         $completed = max(0, min($expected, (int) ($row['completed_subjects'] ?? 0)));

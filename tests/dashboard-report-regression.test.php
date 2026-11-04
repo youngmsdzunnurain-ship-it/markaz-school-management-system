@@ -53,7 +53,8 @@ dashboardReportCheck(
         && str_contains($dashboardScript, 'combo-rate-line')
         && str_contains($attendanceReport, 'student_count_sql')
         && str_contains($dashboardHtml, 'Fully Scored Entries')
-        && str_contains($dashboardHtml, 'Score Records'),
+        && !str_contains($dashboardHtml, 'Score Records')
+        && substr_count($dashboardHtml, 'class="stat-card ') === 3,
     'attendance category charts are combo charts with a roster-based rate, and dashboard score labels are explicit'
 );
 

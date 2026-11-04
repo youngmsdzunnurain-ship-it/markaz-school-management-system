@@ -519,7 +519,6 @@ h1, h2, h3 {
     gap: 10px;
 }
 
-.dashboard-refresh-button,
 .topbar-icon-button {
     position: relative;
     width: 46px;
@@ -535,18 +534,9 @@ h1, h2, h3 {
     transition: background var(--transition), color var(--transition), border-color var(--transition);
 }
 
-.dashboard-refresh-button:hover,
 .topbar-icon-button:hover {
     background: var(--green-50);
     border-color: #c9dccd;
-}
-
-.dashboard-refresh-button:active i {
-    transform: rotate(180deg);
-}
-
-.dashboard-refresh-button i {
-    transition: transform .4s ease;
 }
 
 .notification-dot {
@@ -861,7 +851,7 @@ h1, h2, h3 {
 /* 7. STATISTICS ============================================== */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
 }
 
@@ -881,17 +871,6 @@ h1, h2, h3 {
     border-radius: var(--radius-md);
     background: var(--surface);
     box-shadow: var(--shadow-1);
-}
-
-.stat-card::after {
-    content: "";
-    position: absolute;
-    left: 22px;
-    right: 22px;
-    bottom: 0;
-    height: 3px;
-    border-radius: 3px 3px 0 0;
-    background: linear-gradient(90deg, var(--green-600), rgba(26, 122, 70, .15));
 }
 
 .stat-label {
@@ -933,13 +912,9 @@ h1, h2, h3 {
 }
 
 .stat-card-classes .stat-icon  { background: var(--gold-100); color: var(--gold-700); }
-.stat-card-classes::after      { background: linear-gradient(90deg, var(--gold-500), rgba(193, 154, 53, .15)); }
 
 .stat-card-subjects .stat-icon { background: #dff0ea; color: #0e6b52; }
-.stat-card-subjects::after     { background: linear-gradient(90deg, #12806a, rgba(18, 128, 106, .15)); }
 
-.stat-card-results .stat-icon  { background: #f6e8d3; color: #92611a; }
-.stat-card-results::after      { background: linear-gradient(90deg, #c98a2b, rgba(201, 138, 43, .15)); }
 
 
 /* 8. PANELS ================================================== */
@@ -2274,11 +2249,6 @@ h1, h2, h3 {
         padding: 16px 16px 20px;
     }
 
-    .stat-card::after {
-        left: 16px;
-        right: 16px;
-    }
-
     .stat-icon {
         width: 40px;
         height: 40px;
@@ -2486,7 +2456,6 @@ h1, h2, h3 {
     backdrop-filter: saturate(165%) blur(18px);
     border-bottom: 1px solid rgba(20, 96, 58, .10);
 }
-.stat-card::after { display: none !important; content: none !important; }
 .stat-card .stat-icon { border-radius: 12px; box-shadow: none; }
 .dashboard-attendance-combo-scroll {
     width: 100%;

@@ -161,7 +161,7 @@ try {
             if ($value !== null && $value !== '') $completed++;
             else $missing[] = $label;
         }
-        $percentage = $required > 0 ? (int) round(($completed / $required) * 100) : 0;
+        $percentage = $required > 0 ? round(($completed / $required) * 100, 2) : 0.0;
         $completionRows[] = [
             'student_id' => $studentId,
             'first_name' => (string) $student['first_name'],

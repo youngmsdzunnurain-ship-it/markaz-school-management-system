@@ -235,9 +235,12 @@ if (
 
     $uploadDirectory = __DIR__ . '/../../public/uploads/students';
 
-    if (!is_dir($uploadDirectory)) {
-        mkdir($uploadDirectory, 0700, true);
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Unable to prepare the student photo directory.']);
+        exit;
     }
+    @chmod($uploadDirectory, 0755);
 
     $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mime];
     $destination = $uploadDirectory . '/' . $fileName;
@@ -251,6 +254,7 @@ if (
         exit;
     }
 
+    @chmod($destination, 0644);
     $profileImage = 'uploads/students/' . $fileName;
 }
 
