@@ -308,6 +308,37 @@
         </form>
     </section>
 
+
+    <section class="settings-card result-print-threshold-card">
+        <div class="settings-card-heading">
+            <div>
+                <span class="settings-label">RESULT PRINTING</span>
+                <h2>Print Eligibility Threshold</h2>
+                <p>Choose the minimum percentage of required result fields that must be entered before a student's result can be printed. This does not change the student's academic average.</p>
+            </div>
+        </div>
+        <form id="resultPrintThresholdForm">
+            <label>
+                <span>Minimum completion required</span>
+                <select id="resultPrintThreshold" name="threshold" required>
+                    <option value="50">50%</option>
+                    <option value="55">55%</option>
+                    <option value="60">60%</option>
+                    <option value="65">65%</option>
+                    <option value="70">70%</option>
+                    <option value="75">75%</option>
+                    <option value="80">80%</option>
+                    <option value="85">85%</option>
+                    <option value="90">90%</option>
+                    <option value="95">95%</option>
+                    <option value="100">100%</option>
+                </select>
+            </label>
+            <p id="resultPrintThresholdMessage" class="form-message" role="status" aria-live="polite"></p>
+            <button type="submit" id="saveResultPrintThresholdButton">Save Eligibility Threshold</button>
+        </form>
+    </section>
+
     <footer class="markaz-global-footer">
         <span class="footer-brand">MARKAZ</span>
         <span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span>
@@ -319,6 +350,7 @@
     <script src="js/go-back.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/result-print-scale-settings.js"></script>
+    <script src="js/result-print-threshold-settings.js"></script>
     <script src="js/account-management.js"></script>
 
     <script src="/js/markaz-global.js"></script>
