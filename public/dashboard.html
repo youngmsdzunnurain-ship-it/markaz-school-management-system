@@ -29,9 +29,7 @@
 
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="brand-logo">
-                <img src="assets/images/markaz-logo.jpg" alt="MARKAZ school logo">
-            </div>
+                <div class="brand-logo" aria-label="MARKAZ"><span>M</span></div>
 
                 <div class="brand-text">
                     <strong>MARKAZ</strong>
@@ -95,8 +93,8 @@
 
                 <div class="welcome-card">
                     <div class="welcome-content">
-                        <span class="eyebrow" id="welcomeRoleLabel">SCHOOL ADMINISTRATION</span>
-                        <h2><span id="welcomeGreeting">Good morning</span>, <span id="adminName">Admin</span> <span class="welcome-wave">👋</span></h2>
+                        <span class="eyebrow" id="welcomeRoleLabel">School administration</span>
+                        <h2><span id="welcomeGreeting">Good evening</span>, <span id="adminName">Mas’ud Adebiyi</span></h2>
                         <p>
                             Manage students, classes, subjects, examination results and school operations from one place.
                         </p>
@@ -143,7 +141,7 @@
                     <section class="result-progress-section">
                         <div class="panel-header">
                             <div>
-                                <span class="eyebrow">RESULT PROGRESS</span>
+                                <span class="eyebrow">Result progress</span>
                                 <h3>Examination Entry Status</h3>
                                 <p class="progress-description">Current academic period · CA1, CA2 and Examination</p>
                             </div>
@@ -174,7 +172,7 @@
 
                 <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
                     <div class="dashboard-attendance-heading">
-                        <div><span class="eyebrow">SCHOOL-WIDE DAILY OVERVIEW</span><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div>
+                        <div><span class="eyebrow">School-wide daily overview</span><div class="attendance-title-line"><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div></div>
                         <a href="./attendance.html" class="dashboard-attendance-link"><i class="fa-solid fa-calendar-check"></i> Open attendance management</a>
                     </div>
                     <div class="dashboard-attendance-empty" id="dashboardAttendanceEmpty" role="status" hidden>
@@ -185,12 +183,13 @@
                     </div>
                     <div class="dashboard-attendance-layout">
                         <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
-                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
+                            <h3 id="conventionalAttendanceHeading">Conventional</h3>
                             <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
                             
                         </section>
                         <div class="dashboard-attendance-summary">
+                            <div class="dashboard-attendance-summary-header"><strong>Overall Attendance</strong><span>Conventional + Arabic</span></div>
                             <div class="dashboard-attendance-donut-wrap">
                                 <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
                                 <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
@@ -203,7 +202,7 @@
                             </div>
                         </div>
                         <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
-                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
+                            <h3 id="arabicAttendanceHeading">Arabic</h3>
                             <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
                             
@@ -214,11 +213,11 @@
 
                 <section class="dashboard-class-attendance-charts" aria-label="Attendance by class">
                     <section class="dashboard-class-chart-card" aria-labelledby="conventionalClassesChartTitle">
-                        <div class="dashboard-class-chart-heading"><div><span class="eyebrow">CONVENTIONAL CATEGORY</span><h3 id="conventionalClassesChartTitle">Conventional Classes</h3></div><span class="dashboard-chart-category-tag">Conventional only</span></div>
+                        <div class="dashboard-class-chart-heading"><div><h3 id="conventionalClassesChartTitle">Conventional Classes</h3><p>Attendance by class · 14 classes</p></div><span class="dashboard-attendance-rate-key"><i></i>Present rate</span></div><div class="dashboard-chart-legend"><span><i class="legend-present"></i>Present</span><span><i class="legend-absent"></i>Absent</span><span><i class="legend-late"></i>Late</span><span><i class="legend-excused"></i>Excused</span></div>
                         <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
                     </section>
                     <section class="dashboard-class-chart-card" aria-labelledby="arabicClassesChartTitle">
-                        <div class="dashboard-class-chart-heading"><div><span class="eyebrow">ARABIC CATEGORY</span><h3 id="arabicClassesChartTitle">Arabic Classes</h3></div><span class="dashboard-chart-category-tag">Arabic only</span></div>
+                        <div class="dashboard-class-chart-heading"><div><h3 id="arabicClassesChartTitle">Arabic Classes</h3><p>Attendance by class · 8 classes</p></div><span class="dashboard-attendance-rate-key"><i></i>Present rate</span></div><div class="dashboard-chart-legend"><span><i class="legend-present"></i>Present</span><span><i class="legend-absent"></i>Absent</span><span><i class="legend-late"></i>Late</span><span><i class="legend-excused"></i>Excused</span></div>
                         <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
                     </section>
                 </section>
