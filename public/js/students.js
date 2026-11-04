@@ -855,7 +855,7 @@ function openViewStudent(studentId) {
 
     const photoMarkup = student.profile_image
         ? `<div class="view-student-photo">
-                <img src="./${escapeHtml(String(student.profile_image).replace(/^\\/+/, ""))}"
+                <img src="./${escapeHtml(String(student.profile_image).replace(/^\/+/, ""))}"
                      alt="${escapeHtml(fullName)}" loading="lazy">
             </div>`
         : `<div class="view-student-photo view-student-photo-placeholder">
