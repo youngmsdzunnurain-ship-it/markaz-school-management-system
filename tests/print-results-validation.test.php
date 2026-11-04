@@ -16,6 +16,12 @@ $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.p
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 
 printCheck(
+    str_contains($printJs, 'return /^ss\\s*1$/i.test(String(name).trim()) ? "SS1 Science" : name;') &&
+    str_contains($printJs, 'title.textContent = displayClassName(item);') &&
+    str_contains($resultPage, '/^ss\\\\s*1$/i.test(displayedClassName) ? "SS1 Science"'),
+    'SS1 must be displayed as SS1 Science in class selection and individual results without creating a new class record'
+);
+printCheck(
     str_contains($printJs, 'getClassCompletion(id, "conventional")') &&
     str_contains($printJs, 'class_type: "conventional"'),
     'print eligibility request must send the required Conventional class type'
