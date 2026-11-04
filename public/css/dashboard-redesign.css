@@ -858,14 +858,15 @@ h1, h2, h3 {
 .stat-card {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 54px minmax(0, 1fr);
     grid-template-areas:
-        "label icon"
-        "value value"
-        "caption caption";
-    align-items: start;
-    row-gap: 4px;
-    padding: 22px 22px 24px;
+        "icon label"
+        "icon value"
+        "icon caption";
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 20px 22px;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
@@ -895,9 +896,9 @@ h1, h2, h3 {
 
 .stat-card strong {
     grid-area: value;
-    margin-top: 8px;
+    margin-top: 0;
     font-family: var(--font-display);
-    font-size: clamp(36px, 3.6vw, 46px);
+    font-size: clamp(30px, 3vw, 40px);
     font-weight: 600;
     line-height: 1.05;
     letter-spacing: -.02em;
@@ -1001,6 +1002,36 @@ h1, h2, h3 {
     background: var(--surface);
     box-shadow: var(--shadow-1);
 }
+.dashboard-exam-overview {
+    display: grid;
+    grid-template-columns: minmax(245px, .9fr) minmax(0, 2.1fr);
+    gap: 18px;
+    align-items: center;
+}
+.dashboard-exam-overview-chart {
+    display: grid;
+    grid-template-columns: 116px minmax(0, 1fr);
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+.dashboard-exam-overview-chart .dashboard-completion-pie {
+    width: 116px;
+    margin: 0;
+    box-shadow: none;
+}
+.dashboard-exam-overview-copy h4 { color: var(--green-800); font-size: 14px; line-height: 1.35; }
+.dashboard-exam-overview-copy p { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.result-progress-section { padding: 20px 22px; }
+.result-progress-section .panel-header { margin-bottom: 14px; }
+.result-progress-section .panel-header h3 { font-size: 20px; }
+.result-progress-grid { gap: 10px; }
+.progress-card { min-height: 112px; padding: 12px 10px; gap: 9px; border-radius: 12px; }
+.progress-card-icon { width: 32px; height: 32px; border-radius: 9px; font-size: 13px; }
+.progress-card span { font-size: 11px; }
+.progress-card strong { font-size: 22px; }
+.progress-card small { font-size: 10px; line-height: 1.35; }
+
 
 .result-progress-section::before {
     content: "";
@@ -1563,8 +1594,8 @@ h1, h2, h3 {
 
 .dashboard-attendance-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
     align-items: stretch;
 }
 
@@ -1732,9 +1763,11 @@ h1, h2, h3 {
 .dashboard-attendance-summary {
     min-width: 0;
     display: grid;
-    align-content: start;
-    gap: 22px;
-    padding: 24px 22px 22px;
+    grid-template-columns: 142px minmax(0, 1fr);
+    align-content: center;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 18px;
     border: 1px solid #d9e7dc;
     border-radius: 20px;
     background: linear-gradient(180deg, #f1f8f3, var(--surface));
@@ -1744,8 +1777,9 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 22px;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
 }
 
 .dashboard-attendance-donut {
@@ -1819,6 +1853,50 @@ h1, h2, h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
+.dashboard-attendance-summary { gap: 12px; }
+.dashboard-attendance-donut-wrap { grid-column: 1; grid-row: 1; }
+.dashboard-attendance-donut { width: 138px; height: 138px; flex-basis: 138px; }
+.dashboard-attendance-donut::before { inset: 19px; }
+.dashboard-attendance-donut strong { font-size: 32px; }
+.dashboard-attendance-legend { display: grid; gap: 7px; justify-content: start; }
+.dashboard-attendance-stats { grid-column: 2; grid-row: 1; gap: 8px; align-self: stretch; }
+.dashboard-attendance-stat { min-height: 0; padding: 10px; }
+.dashboard-attendance-category { display: flex; flex-direction: column; align-items: center; }
+.dashboard-attendance-category h3 { align-self: stretch; }
+.dashboard-class-attendance-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+.dashboard-class-chart-card {
+    position: relative;
+    min-width: 0;
+    padding: 20px 18px 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--surface);
+    box-shadow: var(--shadow-1);
+}
+.dashboard-class-chart-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    height: 3px;
+    border-radius: 0 0 5px 5px;
+    background: linear-gradient(90deg, var(--gold-600), var(--gold-300), var(--gold-600));
+}
+.dashboard-class-chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.dashboard-class-chart-heading h3 { margin-top: 4px; color: var(--green-800); font-size: 18px; }
+.dashboard-chart-category-tag { flex: none; padding: 6px 9px; border-radius: 999px; background: var(--green-50); color: var(--green-800); font-size: 10px; font-weight: 800; }
+.dashboard-class-chart-card .dashboard-attendance-class-list { max-height: none; overflow: visible; }
+.dashboard-class-chart-card .dashboard-attendance-combo-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
+.dashboard-class-chart-card .dashboard-attendance-combo-chart { display: block; max-width: none; }
+.dashboard-attendance-footnote { margin-top: 10px; }
+
 
 .dashboard-attendance-stat {
     min-height: 104px;
@@ -1880,7 +1958,7 @@ h1, h2, h3 {
 /* 12. MANAGEMENT + ADMINISTRATOR ============================= */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
     gap: 18px;
     align-items: stretch;
 }
@@ -1890,6 +1968,11 @@ h1, h2, h3 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 }
+.dashboard-grid { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); }
+.dashboard-grid .quick-actions button { min-height: 64px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 11px; }
+.dashboard-grid .quick-actions button i { width: 32px; height: 32px; flex: 0 0 32px; }
+.dashboard-grid .quick-actions button span { font-size: 11px; }
+
 
 .quick-actions button {
     min-height: 112px;
@@ -2514,83 +2597,24 @@ h1, h2, h3 {
     }
 }
 
-
-
-/* Dashboard composition aligned with the supplied MARKAZ reference. */
-.nav-section-label { padding:13px 12px 4px; color:#8fb49d; font-size:10px; font-weight:800; letter-spacing:.12em; line-height:1.2; text-transform:uppercase; }
-.nav-section-label:not(:first-child) { margin-top:3px; }
-
-/* Compact rectangular welcome banner and three equal statistic cards. */
-.welcome-card { min-height:104px; padding:20px 26px; border-radius:12px; }
-.welcome-card h2 { margin:5px 0 4px; font-size:clamp(22px,2.5vw,30px); }
-.welcome-card p { font-size:13px; line-height:1.45; }
-.welcome-card::before,
-.welcome-card::after { display:none !important; content:none !important; }
-
-/* Examination status: completion ring and four status summaries in one panel. */
-.dashboard-exam-section { display:block; min-width:0; }
-.result-progress-section { padding:20px 22px; }
-.result-progress-section .panel-header { margin-bottom:14px; }
-.result-progress-section .panel-header h3 { font-size:20px; }
-.dashboard-exam-overview { display:grid; grid-template-columns:minmax(280px,.9fr) minmax(0,2.1fr); gap:18px; align-items:center; }
-.dashboard-exam-overview-chart { display:grid; grid-template-columns:126px minmax(0,1fr); align-items:center; gap:16px; min-width:0; }
-.dashboard-exam-overview-chart .dashboard-completion-pie { width:126px; margin:0; box-shadow:none; }
-.dashboard-exam-overview-copy h4 { color:var(--green-800); font-size:14px; line-height:1.35; }
-.dashboard-exam-overview-copy p { margin-top:6px; color:var(--muted); font-size:12px; line-height:1.5; }
-.result-progress-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-.progress-card { min-height:112px; padding:12px 10px; gap:9px; align-items:flex-start; border-radius:12px; }
-.progress-card-icon { width:30px; height:30px; border-radius:9px; font-size:13px; }
-.progress-card span { font-size:10px; }
-.progress-card strong { font-size:22px; }
-.progress-card small { font-size:10px; line-height:1.35; }
-
-/* Attendance: conventional, overall and Arabic summaries remain in a single row. */
-.dashboard-attendance-layout { grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); gap:14px; }
-.dashboard-attendance-category { display:flex; flex-direction:column; align-items:center; }
-.dashboard-attendance-category h3 { align-self:stretch; }
-.dashboard-attendance-summary { align-content:center; }
-
-/* Two independent class charts directly below the attendance summary row. */
-.dashboard-class-attendance-charts { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:18px; margin-top:18px; }
-.dashboard-class-chart-card { position:relative; min-width:0; padding:20px 18px 16px; overflow:hidden; border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:var(--shadow-1); }
-.dashboard-class-chart-card::before { content:""; position:absolute; top:0; left:18px; right:18px; height:3px; border-radius:0 0 5px 5px; background:linear-gradient(90deg,var(--gold-600),var(--gold-300),var(--gold-600)); }
-.dashboard-class-chart-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-.dashboard-class-chart-heading h3 { margin-top:4px; color:var(--green-800); font-size:18px; }
-.dashboard-chart-category-tag { flex:none; padding:6px 9px; border-radius:999px; background:var(--green-50); color:var(--green-800); font-size:10px; font-weight:800; }
-.dashboard-class-chart-card .dashboard-attendance-class-list { max-height:none; overflow:visible; }
-.dashboard-class-chart-card .dashboard-attendance-combo-scroll { overflow-x:auto; overflow-y:hidden; padding-bottom:6px; }
-.dashboard-class-chart-card .dashboard-attendance-combo-chart { display:block; max-width:none; }
-.dashboard-class-chart-card .dashboard-chart-empty-state { min-height:170px; }
-.dashboard-attendance-footnote { margin-top:10px; }
-
-/* Management shortcuts and administrator details share the final row. */
-.dashboard-grid { grid-template-columns:minmax(0,2fr) minmax(280px,1fr); gap:18px; }
-.dashboard-grid .quick-actions { grid-template-columns:repeat(4,minmax(0,1fr)); }
-.dashboard-grid .quick-actions button { min-height:62px; gap:10px; padding:11px; }
-.dashboard-grid .quick-actions button > i { width:32px; height:32px; flex:0 0 32px; }
-.dashboard-grid .quick-actions button > span { font-size:11px; }
-
-/* Tablet and phone layouts preserve the same section order without clipping. */
-@media (max-width:1100px) {
-    .dashboard-exam-overview { grid-template-columns:minmax(0,1fr); }
-    .dashboard-exam-overview-chart { max-width:440px; }
-    .result-progress-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .dashboard-class-attendance-charts { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .dashboard-grid { grid-template-columns:minmax(0,1fr); }
+@media (max-width: 1100px) {
+    .dashboard-exam-overview { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-exam-overview-chart { max-width: 440px; }
+    .dashboard-class-attendance-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width:760px) {
-    .welcome-card { min-height:0; padding:20px; }
-    .dashboard-attendance-layout { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .dashboard-attendance-summary { grid-column:1 / -1; order:-1; }
-    .dashboard-class-attendance-charts { grid-template-columns:minmax(0,1fr); }
-    .dashboard-class-chart-heading { align-items:flex-start; flex-direction:column; }
-    .dashboard-grid .quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media (max-width: 760px) {
+    .dashboard-attendance-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-attendance-summary { grid-column: 1 / -1; order: -1; }
+    .dashboard-class-attendance-charts { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-class-chart-heading { align-items: flex-start; flex-direction: column; }
 }
-@media (max-width:480px) {
-    .dashboard-attendance-layout { grid-template-columns:minmax(0,1fr); }
-    .dashboard-attendance-summary { grid-column:auto; }
-    .result-progress-grid { grid-template-columns:minmax(0,1fr); }
-    .dashboard-exam-overview-chart { grid-template-columns:104px minmax(0,1fr); gap:12px; }
-    .dashboard-exam-overview-chart .dashboard-completion-pie { width:104px; }
-    .dashboard-grid .quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media (max-width: 480px) {
+    .dashboard-attendance-layout { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-attendance-summary { grid-column: auto; }
+    .dashboard-exam-overview-chart { grid-template-columns: 104px minmax(0, 1fr); gap: 12px; }
+    .dashboard-exam-overview-chart .dashboard-completion-pie { width: 104px; }
+    .dashboard-grid .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-attendance-summary { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-attendance-donut-wrap, .dashboard-attendance-stats { grid-column: 1; }
 }
