@@ -594,7 +594,10 @@ body.print-results-page > header.print-results-header {
 </section>
 <section class="panel hidden" id="studentsPanel">
 
-<h2 id="selectedClassTitle">Students</h2>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+  <h2 id="selectedClassTitle" style="margin:0;">Students</h2>
+  <button type="button" id="printAllEligibleButton" disabled hidden style="background:#15543a;color:#fff;border-color:#15543a;text-align:center;">Print All Eligible</button>
+</div>
 <p id="studentMessage"></p>
 <div id="studentsList"></div>
 </section>
@@ -743,6 +746,96 @@ async function getClassCompletion(classIdValue, classType = "conventional") {
   };
 }
 
+async function printAllEligibleStudents(classIdValue, studentIds) {
+  const popup = window.open("", "_blank");
+  if (!popup) {
+    alert("Please allow pop-ups to print the class results.");
+    return;
+  }
+
+  const button = $("printAllEligibleButton");
+  button.disabled = true;
+  button.textContent = "Preparing results…";
+  const frames = [];
+  const printDocument = popup.document;
+  printDocument.open();
+  printDocument.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="${location.origin}/"><title>Class Results | MARKAZ</title><link rel="stylesheet" href="/css/student-result.css"><link rel="stylesheet" href="/css/student-result-print.css" media="print"><style>@media print{html,body{height:auto!important;overflow:visible!important}.batch-result-page{break-after:page;page-break-after:always}.batch-result-page:last-child{break-after:auto;page-break-after:auto}}.batch-result-page{display:block;min-height:100vh;page-break-after:always}.batch-result-page:last-child{page-break-after:auto}</style></head><body><main id="batchResults"></main></body></html>`);
+  printDocument.close();
+
+  const waitForResult = frame => new Promise((resolve, reject) => {
+    let observer;
+    const timeout = setTimeout(() => {
+      observer?.disconnect();
+      reject(new Error("A student's result did not finish loading."));
+    }, 30000);
+    const check = () => {
+      try {
+        if (frame.contentDocument?.body?.dataset.resultReady === "true") {
+          clearTimeout(timeout);
+          observer?.disconnect();
+          resolve();
+        }
+      } catch (error) {
+        clearTimeout(timeout);
+        observer?.disconnect();
+        reject(error);
+      }
+    };
+    frame.addEventListener("load", check, { once: true });
+    const attach = () => {
+      if (!frame.contentDocument?.body) return;
+      observer = new MutationObserver(check);
+      observer.observe(frame.contentDocument.body, { attributes: true, attributeFilter: ["data-result-ready"] });
+      check();
+    };
+    attach();
+  });
+
+  try {
+    for (const sid of studentIds) {
+      const frame = document.createElement("iframe");
+      frame.hidden = true;
+      frame.setAttribute("aria-hidden", "true");
+      frame.src = "./student-result-print.html?" + new URLSearchParams({
+        student_id: String(sid),
+        class_id: String(classIdValue),
+        class_type: "conventional",
+        print: "1"
+      }).toString();
+      document.body.appendChild(frame);
+      frames.push(frame);
+    }
+
+    await Promise.all(frames.map(waitForResult));
+    const target = printDocument.getElementById("batchResults");
+    for (const frame of frames) {
+      const source = frame.contentDocument.querySelector("main.student-result-page");
+      if (!source) throw new Error("A rendered student result could not be found.");
+      const page = source.cloneNode(true);
+      page.classList.add("batch-result-page");
+      page.querySelectorAll("img").forEach(img => { img.loading = "eager"; });
+      target.appendChild(page);
+    }
+
+    await Promise.all(Array.from(target.images).map(img =>
+      img.complete ? Promise.resolve() : new Promise(resolve => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      })
+    ));
+    popup.focus();
+    popup.print();
+  } catch (error) {
+    popup.close();
+    alert(error.message || "Unable to prepare all eligible results.");
+    console.error("Print all results failed:", error);
+  } finally {
+    frames.forEach(frame => frame.remove());
+    button.disabled = false;
+    button.textContent = "Print All Eligible";
+  }
+}
+
 async function showStudents(selectedClass) {
   $("classesPanel").classList.add("hidden");
   $("studentsPanel").classList.remove("hidden");
@@ -761,6 +854,9 @@ async function showStudents(selectedClass) {
     : "No students were found for this class.";
 
   const rows = new Map();
+  const printAllButton = $("printAllEligibleButton");
+  printAllButton.hidden = true;
+  printAllButton.disabled = true;
 
   matching.forEach(item => {
     const sid = studentId(item);
@@ -806,6 +902,7 @@ async function showStudents(selectedClass) {
     // Ignore a late response if the user has navigated to another class.
     if ($("selectedClassTitle").textContent !== className(selectedClass)) return;
 
+    const eligibleIds = [];
     rows.forEach(({ status, missing, button }, sid) => {
       const item = completion.byStudent.get(sid);
 
@@ -835,10 +932,15 @@ async function showStudents(selectedClass) {
 
       button.disabled = !eligible;
       button.textContent = eligible ? "Print Results" : "Incomplete";
+      if (eligible) eligibleIds.push(sid);
     });
 
+    printAllButton.hidden = eligibleIds.length === 0;
+    printAllButton.disabled = eligibleIds.length === 0;
+    printAllButton.textContent = "Print All Eligible (" + eligibleIds.length + ")";
+    printAllButton.onclick = () => printAllEligibleStudents(id, eligibleIds);
     $("studentMessage").textContent =
-      "Students remain listed individually. Printing is enabled only for students who meet the configured threshold.";
+      "Only students meeting the configured result-entry completion threshold can be printed. Each eligible student will print on a separate page.";
   } catch (error) {
     rows.forEach(({ status, button }) => {
       status.textContent = "Eligibility could not be verified — printing disabled.";
