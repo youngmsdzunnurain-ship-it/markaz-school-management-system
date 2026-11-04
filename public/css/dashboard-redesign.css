@@ -1893,6 +1893,23 @@ h1, h2, h3 {
 .dashboard-class-chart-heading h3 { margin-top: 4px; color: var(--green-800); font-size: 18px; }
 .dashboard-chart-category-tag { flex: none; padding: 6px 9px; border-radius: 999px; background: var(--green-50); color: var(--green-800); font-size: 10px; font-weight: 800; }
 .dashboard-class-chart-card .dashboard-attendance-class-list { max-height: none; overflow: visible; }
+
+.dashboard-attendance-combo-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 0 4px;
+    scrollbar-width: thin;
+}
+.dashboard-attendance-combo-chart { display: block; max-width: none; }
+.dashboard-attendance-combo-chart .combo-gridline { stroke: var(--line); stroke-width: 1; }
+.dashboard-attendance-combo-chart .combo-axis-label { fill: var(--muted); font: 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-class-label { fill: var(--ink); font: 600 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-rate-label { fill: var(--gold-700); font: 700 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-rate-line { fill: none; stroke: #b7791f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.dashboard-attendance-combo-chart .combo-rate-point { fill: #fff; stroke: #b7791f; stroke-width: 2.5; }
+.dashboard-attendance-rate-key { display: inline-flex; align-items: center; gap: 6px; }
+.dashboard-attendance-rate-key i { width: 18px; height: 0; border-top: 3px solid #b7791f; }
 .dashboard-class-chart-card .dashboard-attendance-combo-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
 .dashboard-class-chart-card .dashboard-attendance-combo-chart { display: block; max-width: none; }
 .dashboard-attendance-footnote { margin-top: 10px; }
@@ -2485,136 +2502,4 @@ h1, h2, h3 {
 .results-entry-table tbody tr:hover td {
     background: #e1f0e5 !important;
     transition: background-color 140ms ease;
-}
-
-
-/* Targeted dashboard correction: clean greeting and one Overall result listing. */
-.page-content .welcome-card {
-    border-radius: 16px !important;
-    background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;
-    box-shadow: 0 8px 22px rgba(18, 61, 42, .10) !important;
-}
-.page-content .welcome-card::before {
-    display: block !important;
-    content: "" !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 46%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--gold-300), rgba(226, 196, 113, 0));
-}
-.page-content .welcome-card::after,
-.page-content .welcome-decoration,
-.page-content .welcome-decoration::before,
-.page-content .welcome-decoration::after,
-.page-content .welcome-decoration .decoration-circle {
-    display: none !important;
-    content: none !important;
-}
-.dashboard-overall-exam-chart {
-    display: grid !important;
-    grid-template-columns: minmax(0, 680px) !important;
-    justify-content: center;
-}
-.dashboard-overall-exam-chart .dashboard-school-pie-card {
-    grid-column: auto !important;
-    width: 100%;
-    min-width: 0;
-}
-@media (max-width: 700px) {
-    .dashboard-overall-exam-chart {
-        grid-template-columns: minmax(0, 1fr) !important;
-    }
-}
-
-
-/* Dashboard-specific finishing: understated stat cards, glass header, chart and footer. */
-.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: rgba(246, 249, 244, .62);
-    -webkit-backdrop-filter: saturate(165%) blur(18px);
-    backdrop-filter: saturate(165%) blur(18px);
-    border-bottom: 1px solid rgba(20, 96, 58, .10);
-}
-.stat-card .stat-icon { border-radius: 12px; box-shadow: none; }
-.dashboard-attendance-combo-scroll {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 8px 0 4px;
-    scrollbar-width: thin;
-}
-.dashboard-attendance-combo-chart { display: block; max-width: none; }
-.dashboard-attendance-combo-chart .combo-gridline { stroke: var(--line); stroke-width: 1; }
-.dashboard-attendance-combo-chart .combo-axis-label { fill: var(--muted); font: 10px Manrope, sans-serif; }
-.dashboard-attendance-combo-chart .combo-class-label { fill: var(--ink); font: 600 10px Manrope, sans-serif; }
-.dashboard-attendance-combo-chart .combo-rate-label { fill: var(--gold-700); font: 700 10px Manrope, sans-serif; }
-.dashboard-attendance-combo-chart .combo-rate-line { fill: none; stroke: #b7791f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.dashboard-attendance-combo-chart .combo-rate-point { fill: #fff; stroke: #b7791f; stroke-width: 2.5; }
-.dashboard-attendance-rate-key { display: inline-flex; align-items: center; gap: 6px; }
-.dashboard-attendance-rate-key i { width: 18px; height: 0; border-top: 3px solid #b7791f; }
-.main-content > footer, .main-content > .markaz-global-footer { margin-top: auto; width: 100%; flex: 0 0 auto; }
-.nav-link, .nav-link i, .dashboard-attendance-link { transition-duration: .12s; }
-.main-content { transition: margin-left .18s ease; }
-@media (max-width: 850px) {
-    .sidebar {
-        transition: transform .2s ease, opacity .14s ease, visibility .2s ease;
-    }
-    .sidebar-overlay {
-        transition: opacity .14s ease, visibility .14s ease;
-    }
-}
-@media (prefers-reduced-transparency: reduce) {
-    .topbar { background: #f6f9f4; -webkit-backdrop-filter: none; backdrop-filter: none; }
-}
-
-
-/* MARKAZ dashboard management layout: 40% quick access / 60% administrator */
-@media (min-width: 1181px) {
-    .dashboard-grid {
-        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-        gap: 18px;
-    }
-
-    .quick-access-panel .quick-actions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-    }
-}
-
-@media (min-width: 851px) and (max-width: 1180px) {
-    .quick-access-panel .quick-actions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 850px) {
-    .quick-access-panel .quick-actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 1100px) {
-    .dashboard-exam-overview { grid-template-columns: minmax(0, 1fr); }
-    .dashboard-exam-overview-chart { max-width: 440px; }
-    .dashboard-class-attendance-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 760px) {
-    .dashboard-attendance-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .dashboard-attendance-summary { grid-column: 1 / -1; order: -1; }
-    .dashboard-class-attendance-charts { grid-template-columns: minmax(0, 1fr); }
-    .dashboard-class-chart-heading { align-items: flex-start; flex-direction: column; }
-}
-@media (max-width: 480px) {
-    .dashboard-attendance-layout { grid-template-columns: minmax(0, 1fr); }
-    .dashboard-attendance-summary { grid-column: auto; }
-    .dashboard-exam-overview-chart { grid-template-columns: 104px minmax(0, 1fr); gap: 12px; }
-    .dashboard-exam-overview-chart .dashboard-completion-pie { width: 104px; }
-    .dashboard-grid .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .dashboard-attendance-summary { grid-template-columns: minmax(0, 1fr); }
-    .dashboard-attendance-donut-wrap, .dashboard-attendance-stats { grid-column: 1; }
 }
