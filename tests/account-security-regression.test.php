@@ -15,7 +15,7 @@ $freezes = file_get_contents(__DIR__ . '/../api/settings/account-freezes.php');
 $lockouts = file_get_contents(__DIR__ . '/../api/settings/login-lockouts.php');
 
 securityCheck(
-    str_contains($login, 'failed_attempts >= 3') &&
+    str_contains($login, '$attempts >= 3') &&
     str_contains($login, 'INTERVAL 7 DAY') &&
     str_contains($login, "'locked' => true"),
     'login lockout must enforce three failed attempts and a seven-day lock'
@@ -27,7 +27,7 @@ securityCheck(
 );
 securityCheck(
     str_contains($auth, 'SELECT is_frozen FROM admins') &&
-    str_contains($auth, 'if ($isFrozen)') &&
+    str_contains($auth, 'if ($isFrozen === false || (bool) $isFrozen)') &&
     str_contains($auth, 'exit;'),
     'existing sessions must be rejected after an administrator freezes the account'
 );
