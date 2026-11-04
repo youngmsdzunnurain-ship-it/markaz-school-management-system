@@ -740,7 +740,7 @@ document.addEventListener("visibilitychange", () => {
 async function loadDashboardStats() {
     const statCards = document.querySelectorAll(".stat-card > strong");
 
-    if (statCards.length < 4) return;
+    if (statCards.length < 3) return;
 
     try {
         const response = await fetch("./api/dashboard/stats.php", {
@@ -766,14 +766,12 @@ async function loadDashboardStats() {
                 data.stats.assigned_students ?? 0,
                 data.stats.assigned_classes ?? 0,
                 data.stats.assigned_subjects ?? 0,
-                `${data.stats.completion_percentage ?? 0}%`
             ];
-            const names = ["Assigned Students", "Assigned Classes", "Assigned Subjects", "Entry Completion"];
+            const names = ["Assigned Students", "Assigned Classes", "Assigned Subjects"];
             const notes = [
                 "Students in your assigned classes",
                 "Classes assigned to you",
                 "Subjects assigned to you",
-                `${data.stats.completed_entries ?? 0} of ${data.stats.expected_entries ?? 0} complete entries`
             ];
 
             statCards.forEach((node, index) => node.textContent = values[index]);
@@ -784,22 +782,7 @@ async function loadDashboardStats() {
             if (charts) charts.style.display = "none";
 
             const progress = document.querySelector(".result-progress-section");
-            if (progress) {
-                const complete = document.getElementById("completeStudents");
-                const incomplete = document.getElementById("incompleteStudents");
-                const noResults = document.getElementById("noResultStudents");
-                const entries = document.getElementById("resultEntriesProgress");
-                const percent = document.getElementById("resultCompletionPercentage");
-                if (complete) complete.textContent = data.stats.completed_entries ?? 0;
-                if (incomplete) incomplete.textContent = Math.max(
-                    0,
-                    Number(data.stats.expected_entries ?? 0) - Number(data.stats.completed_entries ?? 0)
-                );
-                if (noResults) noResults.textContent = "—";
-                if (entries) entries.textContent =
-                    `${data.stats.completed_entries ?? 0} / ${data.stats.expected_entries ?? 0}`;
-                if (percent) percent.textContent = `${data.stats.completion_percentage ?? 0}%`;
-            }
+            if (progress) progress.hidden = true;
 
             const section = document.getElementById("teacherAssignmentsSection");
             const list = document.getElementById("teacherAssignmentsList");

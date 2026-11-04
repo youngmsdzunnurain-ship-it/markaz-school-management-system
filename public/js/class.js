@@ -15,7 +15,6 @@
     const addStudentButton = document.getElementById("addStudentButton");
     const panelAddStudentButton = document.getElementById("panelAddStudentButton");
     const enterResultsButton = document.getElementById("enterResultsButton");
-    const printClassResultsButton = document.getElementById("printClassResultsButton");
 
     const resultsPeriodText = document.getElementById("resultsPeriodText");
     const resultsStudentCount = document.getElementById("resultsStudentCount");
@@ -324,11 +323,6 @@
             }
             if (donutValue) donutValue.textContent = `${percentage}%`;
 
-            const button = document.getElementById("printClassResultsButton");
-            if (button) {
-                button.dataset.completion = String(percentage);
-                button.title = "Class completion is for monitoring only; individual print eligibility is checked separately.";
-            }
         } catch (error) {
             console.error("Class completion monitor error:", error);
             if (resultsCompletion) resultsCompletion.textContent = "—";
@@ -842,10 +836,6 @@
         } else {
             document.querySelector(".results-entry-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-    });
-
-    printClassResultsButton?.addEventListener("click", () => {
-        window.print();
     });
 
     window.addEventListener("focus", async () => {

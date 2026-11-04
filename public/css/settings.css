@@ -5007,3 +5007,76 @@ body {
 .settings-page .result-print-scale-card #saveResultPrintScaleButton:disabled { opacity: .7; cursor: wait; transform: none; }
 .settings-page .result-print-scale-card #resultPrintScaleMessage { grid-column: 1 / -1; min-height: 1.4em; margin: 0; line-height: 1.5; }
 @media (max-width: 560px) { .settings-page .result-print-scale-card form { grid-template-columns: minmax(0, 1fr); } .settings-page .result-print-scale-card #saveResultPrintScaleButton { width: 100%; } }
+
+
+/* Single persisted print-eligibility setting */
+.settings-page .result-print-threshold-card {
+    border: 1px solid #d8e5dc;
+    border-radius: 16px;
+    padding: clamp(18px, 2.5vw, 28px);
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(18, 61, 42, .06);
+}
+.settings-page .result-print-threshold-card .settings-card-heading {
+    margin-bottom: 18px;
+}
+.settings-page .result-print-threshold-card h2 {
+    margin: 6px 0;
+    color: #174b32;
+}
+.settings-page .result-print-threshold-card form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 14px;
+}
+.settings-page .result-print-threshold-card form > label {
+    display: grid;
+    gap: 8px;
+    color: #294a36;
+    font-weight: 700;
+}
+.settings-page .result-print-threshold-card #resultPrintThreshold {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+    border: 1px solid #bfd2c4;
+    border-radius: 10px;
+    background: #fff;
+    color: #203b2a;
+    font: inherit;
+}
+.settings-page .result-print-threshold-card #saveResultPrintThresholdButton {
+    min-height: 48px;
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 10px;
+    background: #176342;
+    color: #fff;
+    font: inherit;
+    font-weight: 750;
+    cursor: pointer;
+}
+.settings-page .result-print-threshold-card #saveResultPrintThresholdButton:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+.settings-page .result-print-threshold-card #resultPrintThresholdMessage {
+    grid-column: 1 / -1;
+    min-height: 1.4em;
+    margin: 0;
+}
+.settings-page .result-print-threshold-card :is(#resultPrintThreshold, #saveResultPrintThresholdButton):focus-visible {
+    outline: 3px solid #d8bd70;
+    outline-offset: 3px;
+}
+@media (max-width: 560px) {
+    .settings-page .result-print-threshold-card form {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .settings-page .result-print-threshold-card #saveResultPrintThresholdButton {
+        width: 100%;
+    }
+}
+
+

@@ -27,6 +27,9 @@ on:
       - "public/js/students.js"
       - "public/settings.html"
       - "public/js/class.js"
+      - "public/css/settings.css"
+      - "public/js/settings.js"
+      - "public/class.html"
       - "public/css/dashboard.css"
       - "public/css/dashboard-redesign.css"
       - "tests/results-class-type-validation.test.php"
@@ -39,6 +42,7 @@ on:
       - "public/js/dashboard.js"
       - "api/dashboard/**"
       - "tests/dashboard-progress-validation.test.php"
+      - "tests/dashboard-statistics-settings-regression.test.php"
       - "tests/dashboard-report-regression.test.php"
       - "tests/dashboard-layout-attendance-access.test.php"
       - "tests/dashboard-progress-eligibility.test.php"
@@ -89,6 +93,7 @@ jobs:
           php -l api/dashboard/_progress.php
           php -l api/dashboard/stats.php
           php -l tests/dashboard-progress-validation.test.php
+          php -l tests/dashboard-statistics-settings-regression.test.php
           php -l tests/dashboard-report-regression.test.php
           php -l tests/dashboard-layout-attendance-access.test.php
           php -l tests/dashboard-progress-eligibility.test.php
@@ -117,6 +122,9 @@ jobs:
       - name: Run dashboard progress regression tests
         run: php tests/dashboard-progress-validation.test.php
 
+      - name: Run dashboard statistics and settings regression tests
+        run: php tests/dashboard-statistics-settings-regression.test.php
+
       - name: Run dashboard progress eligibility tests
         run: php tests/dashboard-progress-eligibility.test.php
 
@@ -129,6 +137,8 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check public/js/class.js
+          node --check public/js/settings.js
+          node --check public/js/print-results.js
           node --check public/js/student-result.js
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
