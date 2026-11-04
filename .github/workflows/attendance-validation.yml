@@ -39,6 +39,7 @@ on:
       - "public/js/dashboard.js"
       - "api/dashboard/**"
       - "tests/dashboard-progress-validation.test.php"
+      - "tests/dashboard-statistics-settings-regression.test.php"
       - "tests/dashboard-report-regression.test.php"
       - "tests/dashboard-layout-attendance-access.test.php"
       - "tests/dashboard-progress-eligibility.test.php"
@@ -89,6 +90,7 @@ jobs:
           php -l api/dashboard/_progress.php
           php -l api/dashboard/stats.php
           php -l tests/dashboard-progress-validation.test.php
+          php -l tests/dashboard-statistics-settings-regression.test.php
           php -l tests/dashboard-report-regression.test.php
           php -l tests/dashboard-layout-attendance-access.test.php
           php -l tests/dashboard-progress-eligibility.test.php
@@ -116,6 +118,9 @@ jobs:
 
       - name: Run dashboard progress regression tests
         run: php tests/dashboard-progress-validation.test.php
+
+      - name: Run dashboard statistics and settings regression tests
+        run: php tests/dashboard-statistics-settings-regression.test.php
 
       - name: Run dashboard progress eligibility tests
         run: php tests/dashboard-progress-eligibility.test.php
