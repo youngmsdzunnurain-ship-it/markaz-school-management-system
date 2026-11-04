@@ -883,6 +883,14 @@ async function loadDashboardStats() {
             noResultStudents.textContent = data.stats.no_result_students ?? 0;
         }
 
+        const unassignedStudentsNote = document.getElementById("unassignedStudentsNote");
+        if (unassignedStudentsNote) {
+            const count = Number(data.stats.unassigned_students ?? 0);
+            unassignedStudentsNote.textContent =
+                count + (count === 1 ? " student is" : " students are") +
+                " awaiting required subject assignments";
+        }
+
         if (resultEntriesProgress) {
             resultEntriesProgress.textContent =
                 `${data.stats.completed_results ?? 0} / ${data.stats.expected_results ?? 0}`;
