@@ -530,6 +530,7 @@ function renderAttendanceComboChart(rows, category) {
         const late = Math.max(0, Number(row.late_count) || 0);
         const excused = Math.max(0, Number(row.excused_count) || 0);
         return { name: String(row.class_name || "Class"), roster, present, absent, late, excused,
+            markedRecords: Math.max(0, Number(row.marked_records) || 0),
             rate: roster ? Math.min(100, present / roster * 100) : 0 };
     });
     if (!data.length) return "";
@@ -559,7 +560,8 @@ function renderAttendanceComboChart(rows, category) {
         }).join("");
         const label=d.name.length>13 ? d.name.slice(0,12)+"…" : d.name;
         return rects + '<text x="' + center + '" y="' + (height-40) + '" text-anchor="middle" class="combo-class-label">' + escape(label) + '</text>' +
-            '<text x="' + center + '" y="' + (height-22) + '" text-anchor="middle" class="combo-rate-label">' + d.rate.toFixed(0) + '%</text>';
+            '<text x="' + center + '" y="' + (height-22) + '" text-anchor="middle" class="combo-rate-label">' +
+            (d.markedRecords > 0 ? d.rate.toFixed(0) + '%' : (d.roster > 0 ? 'Not yet recorded' : 'No students')) + '</text>';
     }).join("");
     const linePoints=data.map((d,i)=>x(i)+","+yRate(d.rate)).join(" ");
     const circles=data.map((d,i)=>'<circle cx="' + x(i) + '" cy="' + yRate(d.rate) + '" r="4.5" class="combo-rate-point"><title>' +
@@ -623,16 +625,10 @@ async function loadDashboardAttendance() {
             if (node) node.textContent = String(value);
         };
 
-        if (markedRecords === 0) {
-            if (layout) layout.hidden = true;
-            if (emptyState) emptyState.hidden = false;
-            setText("dashboardAttendanceMarked", 0);
-            setText("dashboardAttendancePresent", 0);
-            setText("dashboardAttendanceAbsent", 0);
-            setText("dashboardAttendanceLate", 0);
-            setText("dashboardAttendanceExcused", 0);
-            return;
-        }
+        // Keep both category panels visible even before the first attendance entry.
+        // The API returns every active class; zero-record classes must remain in the report.
+        if (emptyState) emptyState.hidden = markedRecords > 0;
+        if (layout) layout.hidden = false;
 
         const values = [
             { label: "Present", value: Number(summary.present || 0), color: "#21945b" },
@@ -674,9 +670,7 @@ async function loadDashboardAttendance() {
             const target = document.getElementById(targetId);
             if (!target) continue;
 
-            const rows = allClasses.filter(item =>
-                item.class_type === type && Number(item.marked_records || 0) > 0
-            );
+            const rows = allClasses.filter(item => item.class_type === type);
             const categoryValues = [
                 { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#21945b" },
                 { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#d65359" },
