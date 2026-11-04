@@ -677,10 +677,10 @@ async function loadDashboardAttendance() {
         if (layout) layout.hidden = false;
 
         const values = [
-            { label: "Present", value: Number(summary.present || 0), color: "#21945b" },
-            { label: "Absent", value: Number(summary.absent || 0), color: "#d65359" },
-            { label: "Late", value: Number(summary.late || 0), color: "#d8a72c" },
-            { label: "Excused", value: Number(summary.excused || 0), color: "#7d8b9a" }
+            { label: "Present", value: Number(summary.present || 0), color: "#2a8f58" },
+            { label: "Absent", value: Number(summary.absent || 0), color: "#e05a5a" },
+            { label: "Late", value: Number(summary.late || 0), color: "#d9a62e" },
+            { label: "Excused", value: Number(summary.excused || 0), color: "#8a94a6" }
         ];
         const total = values.reduce((sum, item) => sum + item.value, 0);
         const donut = document.getElementById("dashboardAttendanceDonut");
@@ -718,10 +718,10 @@ async function loadDashboardAttendance() {
 
             const rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
             const categoryValues = [
-                { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#21945b" },
-                { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#d65359" },
-                { label: "Late", value: rows.reduce((sum, item) => sum + Number(item.late_count || 0), 0), color: "#d8a72c" },
-                { label: "Excused", value: rows.reduce((sum, item) => sum + Number(item.excused_count || 0), 0), color: "#7d8b9a" }
+                { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#2a8f58" },
+                { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#e05a5a" },
+                { label: "Late", value: rows.reduce((sum, item) => sum + Number(item.late_count || 0), 0), color: "#d9a62e" },
+                { label: "Excused", value: rows.reduce((sum, item) => sum + Number(item.excused_count || 0), 0), color: "#8a94a6" }
             ];
             const categoryTotal = categoryValues.reduce((sum, item) => sum + item.value, 0);
             const categoryPrefix = type === "conventional" ? "dashboardConventional" : "dashboardArabic";
