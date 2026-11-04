@@ -63,6 +63,13 @@ dashboardAssert(
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
 );
 dashboardAssert(
+    str_contains($redesignCss, 'backdrop-filter: saturate(165%) blur(18px)')
+        && str_contains($redesignCss, 'main-content > footer')
+        && str_contains($js, 'link.blur()')
+        && !str_contains($js, 'item.classList.add("active")'),
+    'dashboard uses a translucent sticky header, bottom-aligned footer and does not preserve a clicked navigation active state'
+);
+dashboardAssert(
     str_contains($stats, 'SELECT COUNT(*) FROM students WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM arabic_classes WHERE is_active = 1') &&
