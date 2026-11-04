@@ -57,4 +57,4 @@ dashboardReportCheck(
     'attendance category charts are combo charts with a roster-based rate, and dashboard score labels are explicit'
 );
 
-echo "Dashboard report regression tests passed (5 checks).\n";
+echo "Dashboard report regression tests passed (6 checks).\n";
