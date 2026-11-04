@@ -12,7 +12,7 @@ function printCheck(bool $condition, string $message): void
 $printPage = file_get_contents(__DIR__ . '/../public/print-results.html');
 $printJs = file_get_contents(__DIR__ . '/../public/js/print-results.js');
 $resultPage = file_get_contents(__DIR__ . '/../public/js/student-result.js');
-$classPage = file_get_contents(__DIR__ . '/../public/class.js');
+$classPage = file_get_contents(__DIR__ . '/../public/js/class.js');
 $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 
