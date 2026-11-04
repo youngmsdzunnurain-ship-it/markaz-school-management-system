@@ -63,6 +63,7 @@ jobs:
           php -l api/results/class-completion.php
           php -l tests/print-results-validation.test.php
           php -l tests/print-threshold-profile-image.test.php
+          php -l api/settings/result-print-threshold.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
@@ -108,3 +109,5 @@ jobs:
           node --check public/js/student-result.js
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
+          node --check public/js/students.js
+          node --check public/js/result-print-threshold-settings.js
