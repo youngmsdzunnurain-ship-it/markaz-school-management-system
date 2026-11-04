@@ -56,11 +56,11 @@ printProfileCheck(
 printProfileCheck(
     str_contains($studentManagementJs, 'src="./${escapeHtml(String(student.profile_image)') &&
     str_contains($studentManagementJs, 'class="view-student-photo"') &&
-    !str_contains($studentManagementJs, 'style="background-image:url("./${student.profile_image}")"'),
+    !str_contains($studentManagementJs, 'style="background-image:url("./${student.profile_image}")"') &&
     str_contains($studentsPage, 'capture="environment"') &&
     !str_contains($studentsPage, 'studentCameraModal') &&
     !str_contains($studentManagementJs, 'MarkazCameraAI'),
-    'student profile details must render a valid image element rather than malformed nested quotes'
+    'student profiles must render valid photos and use the native device camera without the old live camera'
 );
 
 echo "Print threshold and student profile image regression tests passed.\n";
