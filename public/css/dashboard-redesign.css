@@ -2513,3 +2513,29 @@ h1, h2, h3 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+
+/* MARKAZ dashboard: compact 40/60 management split and three-column quick access */
+@media (min-width: 1181px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        align-items: stretch;
+        gap: 18px;
+    }
+    .quick-access-panel,
+    .administrator-panel { min-width: 0; }
+    .quick-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .quick-actions button {
+        min-width: 0;
+        min-height: 96px;
+        padding: 13px;
+        overflow-wrap: anywhere;
+    }
+}
+@media (min-width: 851px) and (max-width: 1180px) {
+    .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+    .quick-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
