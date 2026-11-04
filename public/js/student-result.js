@@ -199,7 +199,7 @@ function renderStudentResult(data) {
 
     const displayedClassName = String(student.class_name || "").trim();
     $("studentClass").textContent =
-        /^ss\\s*1$/i.test(displayedClassName) ? "SS1 Science" : (displayedClassName || "—");
+        /^ss\s*1$/i.test(displayedClassName) ? "SS1 Science" : (displayedClassName || "—");
 
     $("studentArabicClass").textContent =
         student.arabic_class || "—";
