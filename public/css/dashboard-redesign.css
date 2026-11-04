@@ -2514,3 +2514,40 @@ h1, h2, h3 {
     }
 }
 
+
+
+/* Dashboard composition aligned with the supplied MARKAZ reference. */
+.nav-section-label { padding:13px 12px 4px; color:#8fb49d; font-size:10px; font-weight:800; letter-spacing:.12em; line-height:1.2; text-transform:uppercase; }
+.nav-section-label:not(:first-child) { margin-top:3px; }
+.welcome-card { min-height:104px; padding:20px 26px; border-radius:16px; }
+.welcome-card h2 { margin:5px 0 4px; font-size:clamp(22px,2.5vw,30px); }
+.welcome-card p { font-size:13px; line-height:1.45; }
+.dashboard-exam-section { display:grid; grid-template-columns:minmax(0,2.2fr) minmax(220px,.8fr); gap:16px; align-items:stretch; }
+.dashboard-exam-section > .dashboard-exam-charts { display:block; min-width:0; }
+.dashboard-exam-section .dashboard-school-pie-card { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 16px; }
+.dashboard-exam-section .dashboard-school-pie-card h2 { margin:5px 0 10px; font-size:16px; }
+.dashboard-exam-section .dashboard-completion-pie { width:min(150px,100%); margin:6px auto 12px; }
+.dashboard-exam-section .dashboard-chart-caption { font-size:12px; }
+.dashboard-class-attendance-charts { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:18px; margin-top:18px; }
+.dashboard-class-chart-card { position:relative; min-width:0; padding:22px 20px 18px; overflow:hidden; border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:var(--shadow-1); }
+.dashboard-class-chart-card::before { content:""; position:absolute; top:0; left:18px; right:18px; height:3px; border-radius:0 0 5px 5px; background:linear-gradient(90deg,var(--gold-600),var(--gold-300),var(--gold-600)); }
+.dashboard-class-chart-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.dashboard-class-chart-heading h3 { margin-top:4px; color:var(--green-800); font-size:18px; }
+.dashboard-chart-category-tag { flex:none; padding:6px 9px; border-radius:999px; background:var(--green-50); color:var(--green-800); font-size:10px; font-weight:800; }
+.dashboard-class-chart-card .dashboard-attendance-class-list { max-height:none; overflow:visible; }
+.dashboard-class-chart-card .dashboard-attendance-combo-scroll { overflow-x:auto; overflow-y:hidden; padding-bottom:6px; }
+.dashboard-class-chart-card .dashboard-attendance-combo-chart { display:block; max-width:none; }
+.dashboard-class-chart-card .dashboard-chart-empty-state { min-height:170px; }
+.dashboard-attendance-category .dashboard-category-attendance-legend { margin-bottom:0; }
+.dashboard-attendance-category { display:flex; flex-direction:column; align-items:center; }
+.dashboard-attendance-category h3 { align-self:stretch; }
+.dashboard-attendance-summary { align-content:center; }
+@media (max-width:1050px) {
+ .dashboard-exam-section { grid-template-columns:minmax(0,1fr); }
+ .dashboard-exam-section .dashboard-school-pie-card { min-height:240px; }
+}
+@media (max-width:700px) {
+ .welcome-card { min-height:0; padding:22px 20px; }
+ .dashboard-class-attendance-charts { grid-template-columns:minmax(0,1fr); }
+ .dashboard-class-chart-heading { align-items:flex-start; flex-direction:column; }
+}
