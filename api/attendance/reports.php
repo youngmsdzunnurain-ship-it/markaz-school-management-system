@@ -33,16 +33,26 @@ if ($classType !== '' || $hasClassId) {
 }
 
 $classDefinitions = [
-    ['type' => 'conventional', 'table' => 'classes'],
-    ['type' => 'arabic', 'table' => 'arabic_classes'],
+    [
+        'type' => 'conventional',
+        'table' => 'classes',
+        'student_count_sql' => '(SELECT COUNT(*) FROM students s WHERE s.class_id = c.id AND s.is_active = 1)',
+    ],
+    [
+        'type' => 'arabic',
+        'table' => 'arabic_classes',
+        'student_count_sql' => '(SELECT COUNT(*) FROM students s WHERE COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = c.id AND s.is_active = 1)',
+    ],
 ];
 $classes = [];
 
 foreach ($classDefinitions as $definition) {
     $type = $definition['type'];
     $table = $definition['table'];
+    $studentCountSql = $definition['student_count_sql'];
     $sql = "SELECT
                 ? AS class_type,
+                {$studentCountSql} AS student_count,
                 c.id AS class_id,
                 c.name AS class_name,
                 COUNT(ar.id) AS marked_records,
@@ -74,7 +84,7 @@ foreach ($classDefinitions as $definition) {
     $stmt->execute($classParams);
 
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        foreach (['class_id', 'marked_records', 'present_count', 'absent_count', 'late_count', 'excused_count', 'students_recorded', 'days_with_records'] as $key) {
+        foreach (['class_id', 'student_count', 'marked_records', 'present_count', 'absent_count', 'late_count', 'excused_count', 'students_recorded', 'days_with_records'] as $key) {
             $row[$key] = (int) $row[$key];
         }
         $classes[] = $row;

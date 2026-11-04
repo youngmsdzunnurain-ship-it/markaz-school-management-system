@@ -11,6 +11,7 @@ on:
       - "tests/print-results-validation.test.php"
       - "public/js/class.js"
       - "public/css/dashboard.css"
+      - "public/css/dashboard-redesign.css"
       - "tests/results-class-type-validation.test.php"
       - "public/api/attendance/**"
       - "public/attendance.html"
@@ -23,6 +24,7 @@ on:
       - "tests/dashboard-progress-validation.test.php"
       - "tests/dashboard-report-regression.test.php"
       - "tests/dashboard-layout-attendance-access.test.php"
+      - "tests/dashboard-progress-eligibility.test.php"
       - "database/migrations/20261028_daily_attendance.sql"
       - "tests/attendance-validation.test.php"
       - ".github/workflows/attendance-validation.yml"
@@ -67,6 +69,7 @@ jobs:
           php -l tests/dashboard-progress-validation.test.php
           php -l tests/dashboard-report-regression.test.php
           php -l tests/dashboard-layout-attendance-access.test.php
+          php -l tests/dashboard-progress-eligibility.test.php
 
       - name: Run result class-type validation tests
         run: php tests/results-class-type-validation.test.php
@@ -79,6 +82,9 @@ jobs:
 
       - name: Run dashboard progress regression tests
         run: php tests/dashboard-progress-validation.test.php
+
+      - name: Run dashboard progress eligibility tests
+        run: php tests/dashboard-progress-eligibility.test.php
 
       - name: Run dashboard report regression tests
         run: php tests/dashboard-report-regression.test.php

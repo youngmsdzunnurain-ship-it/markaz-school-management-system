@@ -20,6 +20,9 @@ function dashboardSummariseStudentProgress(array $rows): array
 
     foreach ($rows as $row) {
         $expected = max(0, (int) ($row['expected_subjects'] ?? 0));
+        if ($expected === 0) {
+            continue;
+        }
         $completed = max(0, min($expected, (int) ($row['completed_subjects'] ?? 0)));
         $started = max($completed, min($expected, (int) ($row['started_subjects'] ?? 0)));
 

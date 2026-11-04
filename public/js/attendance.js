@@ -263,7 +263,7 @@
     async function loadClasses() {
         setNotice("Loading available classes…");
         try {
-            const data = await requestJson("./api/attendance/classes.php");
+            const data = await requestJson("./api/attendance/classes.php?class_type=" + encodeURIComponent(els.type.value));
             state.classes = data.classes || [];
             state.role = data.role || "";
             populateClasses();
@@ -514,7 +514,9 @@
         populateStudentDropdown();
         state.dirty = false;
         els.classSelect.value = "";
+        state.classes = [];
         populateClasses();
+        loadClasses();
         updateSummary();
         renderRegister();
         els.subtitle.textContent = "Select a class and date to begin.";
@@ -612,6 +614,13 @@
         event.returnValue = "";
     });
 
+    const initialParams = new URLSearchParams(window.location.search);
+    const initialType = initialParams.get("class_type");
+    if (initialType && ["conventional", "arabic"].includes(initialType)) {
+        els.type.value = initialType;
+        state.classType = initialType;
+    }
+
     els.date.max = localDateValue();
     els.date.value = localDateValue();
     $("reportTo").value = localDateValue();
@@ -625,14 +634,8 @@
     refreshActions();
     loadClasses().then(() => {
         const params = new URLSearchParams(window.location.search);
-        const requestedType = params.get("class_type");
         const requestedClass = params.get("class_id");
         const requestedDate = params.get("date");
-        if (requestedType && ["conventional", "arabic"].includes(requestedType)) {
-            els.type.value = requestedType;
-            state.classType = requestedType;
-            populateClasses();
-        }
         if (requestedDate && /^\\d{4}-\\d{2}-\\d{2}$/.test(requestedDate) && requestedDate <= localDateValue()) {
             els.date.value = requestedDate;
             state.date = requestedDate;
