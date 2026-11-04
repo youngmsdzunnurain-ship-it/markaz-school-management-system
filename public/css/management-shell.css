@@ -55,7 +55,7 @@ body.markaz-management-shell-active{padding-top:74px!important}
 .markaz-shell-profile:hover,.markaz-shell-profile[aria-expanded="true"]{background:rgba(255,255,255,.18)}
 .markaz-shell-profile-copy small{color:rgba(255,255,255,.70)}
 .markaz-shell-profile>span[aria-hidden="true"]{color:#f4df9b}
-.markaz-shell-profile .admin-profile-avatar{background:rgba(255,255,255,.92)}
+.markaz-shell-profile .admin-profile-avatar{background:#dff3e7!important;color:#145c38!important;border-color:#d6b65f!important}
 .markaz-shell-profile-menu{border-color:rgba(226,198,112,.35);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 @keyframes markazShellEnter{
     from{opacity:0;transform:translateY(-9px)}
