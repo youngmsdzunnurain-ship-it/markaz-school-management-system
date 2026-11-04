@@ -137,7 +137,7 @@
                     <section class="result-progress-section">
                         <div class="panel-header">
                             <div>
-                                <span class="eyebrow">RESULT PROGRESS</span>
+                                <span class="eyebrow">TOP OF PROGRESS</span>
                                 <h3>Examination Entry Status</h3>
                                 <p class="progress-description">Current academic period · CA1, CA2 and Examination</p>
                             </div>
@@ -146,24 +146,24 @@
                                 <span>Complete</span>
                             </div>
                         </div>
-                        <div class="result-progress-grid">
-                            <article class="progress-card progress-complete"><div class="progress-card-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div><div><span>Complete</span><strong id="completeStudents">0</strong><small>Students with all required subject scores</small></div></article>
-                            <article class="progress-card progress-incomplete"><div class="progress-card-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div><div><span>In Progress</span><strong id="incompleteStudents">0</strong><small>Students with partially entered scores</small></div></article>
-                            <article class="progress-card progress-none"><div class="progress-card-icon"><i class="fa-regular fa-circle" aria-hidden="true"></i></div><div><span>Not Started</span><strong id="noResultStudents">0</strong><small>Students with assigned subjects and no scores</small><small id="unassignedStudentsNote">0 students awaiting required subject assignments</small></div></article>
-                            <article class="progress-card progress-total"><div class="progress-card-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></div><div><span>Fully Scored Entries</span><strong id="resultEntriesProgress">0 / 0</strong><small>CA1, CA2 and Exam entered / required subject entries</small></div></article>
+                        <div class="dashboard-exam-overview">
+                            <div class="dashboard-exam-overview-chart">
+                                <div id="dashboardCompletionPie" class="dashboard-completion-pie" role="img" aria-label="Whole-school examination completion pie chart">
+                                    <div><strong id="dashboardCompletionPieValue">0%</strong><span>Complete</span></div>
+                                </div>
+                                <div class="dashboard-exam-overview-copy">
+                                    <h4>Overall Examination Completion</h4>
+                                    <p id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
+                                </div>
+                            </div>
+                            <div class="result-progress-grid">
+                                <article class="progress-card progress-complete"><div class="progress-card-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div><div><span>Complete</span><strong id="completeStudents">0</strong><small>Students with all required subject scores</small></div></article>
+                                <article class="progress-card progress-incomplete"><div class="progress-card-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div><div><span>In Progress</span><strong id="incompleteStudents">0</strong><small>Students with partially entered scores</small></div></article>
+                                <article class="progress-card progress-none"><div class="progress-card-icon"><i class="fa-regular fa-circle" aria-hidden="true"></i></div><div><span>Not Started</span><strong id="noResultStudents">0</strong><small>Students with assigned subjects and no scores</small><small id="unassignedStudentsNote">0 students awaiting required subject assignments</small></div></article>
+                                <article class="progress-card progress-total"><div class="progress-card-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></div><div><span>Fully Scored Entries</span><strong id="resultEntriesProgress">0 / 0</strong><small>CA1, CA2 and Exam entered / required subject entries</small></div></article>
+                            </div>
                         </div>
                     </section>
-
-                <section class="dashboard-exam-charts dashboard-overall-exam-chart" aria-label="Overall examination completion">
-                    <article class="dashboard-chart-card dashboard-school-pie-card">
-                        <span class="eyebrow">OVERALL</span>
-                        <h2>Overall Examination Completion</h2>
-                        <div id="dashboardCompletionPie" class="dashboard-completion-pie" role="img" aria-label="Whole-school examination completion pie chart">
-                            <div><strong id="dashboardCompletionPieValue">0%</strong><span>Complete</span></div>
-                        </div>
-                        <p class="dashboard-chart-caption" id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
-                    </article>
-                </section>
                 </section>
 
                 <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
@@ -203,18 +203,23 @@
                             
                         </section>
                     </div>
-                    <div class="dashboard-class-attendance-charts" aria-label="Attendance by class">
-                        <section class="dashboard-class-chart-card" aria-labelledby="conventionalClassesChartTitle">
-                            <div class="dashboard-class-chart-heading"><div><span class="eyebrow">CONVENTIONAL CATEGORY</span><h3 id="conventionalClassesChartTitle">Conventional Classes</h3></div><span class="dashboard-chart-category-tag">Conventional only</span></div>
-                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
-                        </section>
-                        <section class="dashboard-class-chart-card" aria-labelledby="arabicClassesChartTitle">
-                            <div class="dashboard-class-chart-heading"><div><span class="eyebrow">ARABIC CATEGORY</span><h3 id="arabicClassesChartTitle">Arabic Classes</h3></div><span class="dashboard-chart-category-tag">Arabic only</span></div>
-                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
-                        </section>
-                    </div>
-                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
+
                 </section>
+
+                <section class="dashboard-class-attendance-charts" aria-label="Attendance by class">
+                    <div class="dashboard-class-attendance-charts" aria-label="Attendance by class">
+                    <section class="dashboard-class-chart-card" aria-labelledby="conventionalClassesChartTitle">
+                    <div class="dashboard-class-chart-heading"><div><span class="eyebrow">CONVENTIONAL CATEGORY</span><h3 id="conventionalClassesChartTitle">Conventional Classes</h3></div><span class="dashboard-chart-category-tag">Conventional only</span></div>
+                    <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
+                    </section>
+                    <section class="dashboard-class-chart-card" aria-labelledby="arabicClassesChartTitle">
+                    <div class="dashboard-class-chart-heading"><div><span class="eyebrow">ARABIC CATEGORY</span><h3 id="arabicClassesChartTitle">Arabic Classes</h3></div><span class="dashboard-chart-category-tag">Arabic only</span></div>
+                    <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
+                    </section>
+                    </div>
+                </section>
+                <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
+
 
                 <section class="dashboard-grid">
 
