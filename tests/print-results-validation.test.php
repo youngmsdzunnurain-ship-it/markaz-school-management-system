@@ -10,6 +10,7 @@ function printCheck(bool $condition, string $message): void
 }
 
 $printPage = file_get_contents(__DIR__ . '/../public/print-results.html');
+$printJs = file_get_contents(__DIR__ . '/../public/js/print-results.js');
 $resultPage = file_get_contents(__DIR__ . '/../public/js/student-result.js');
 $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
@@ -40,9 +41,9 @@ printCheck(
 );
 printCheck(
     str_contains($printPage, 'id="printAllEligibleButton"') &&
-    str_contains($printPage, 'printAllEligibleStudents(id, eligibleIds)') &&
-    str_contains($printPage, 'class_type: "conventional"') &&
-    str_contains($printPage, 'print: "1"'),
+    str_contains($printJs, 'printAllEligibleStudents(id, eligibleIds)') &&
+    str_contains($printJs, 'class_type: "conventional"') &&
+    str_contains($printJs, 'print: "1"'),
     'Print All must include only server-verified eligible students in the selected class'
 );
 printCheck(
