@@ -49,19 +49,6 @@ $periodStmt = $pdo->query(
 $period = $periodStmt->fetch(PDO::FETCH_ASSOC);
 $periodId = $period ? (int) $period['id'] : 0;
 
-$results = 0;
-if ($periodId > 0) {
-    $resultStmt = $pdo->prepare(
-        "SELECT COUNT(*)
-         FROM results r
-         INNER JOIN students st ON st.id = r.student_id AND st.is_active = 1
-         WHERE r.academic_period_id = ?
-           AND (r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)"
-    );
-    $resultStmt->execute([$periodId]);
-    $results = (int) $resultStmt->fetchColumn();
-}
-
 $classProgress = [];
 $classProgressByType = [
     'conventional' => [],
@@ -200,7 +187,6 @@ echo json_encode([
         'conventional_classes' => $conventionalClasses,
         'arabic_classes' => $arabicClasses,
         'subjects' => $subjects,
-        'results' => $results,
         'complete_students' => $schoolSummary['complete_students'],
         'incomplete_students' => $schoolSummary['incomplete_students'],
         'no_result_students' => $schoolSummary['no_result_students'],
