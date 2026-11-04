@@ -782,22 +782,7 @@ async function loadDashboardStats() {
             if (charts) charts.style.display = "none";
 
             const progress = document.querySelector(".result-progress-section");
-            if (progress) {
-                const complete = document.getElementById("completeStudents");
-                const incomplete = document.getElementById("incompleteStudents");
-                const noResults = document.getElementById("noResultStudents");
-                const entries = document.getElementById("resultEntriesProgress");
-                const percent = document.getElementById("resultCompletionPercentage");
-                if (complete) complete.textContent = data.stats.completed_entries ?? 0;
-                if (incomplete) incomplete.textContent = Math.max(
-                    0,
-                    Number(data.stats.expected_entries ?? 0) - Number(data.stats.completed_entries ?? 0)
-                );
-                if (noResults) noResults.textContent = "—";
-                if (entries) entries.textContent =
-                    `${data.stats.completed_entries ?? 0} / ${data.stats.expected_entries ?? 0}`;
-                if (percent) percent.textContent = `${data.stats.completion_percentage ?? 0}%`;
-            }
+            if (progress) progress.hidden = true;
 
             const section = document.getElementById("teacherAssignmentsSection");
             const list = document.getElementById("teacherAssignmentsList");
