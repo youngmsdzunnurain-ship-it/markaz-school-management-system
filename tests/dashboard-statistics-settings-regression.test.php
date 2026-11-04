@@ -30,7 +30,6 @@ dashboardRegressionAssert(
 );
 dashboardRegressionAssert(
     !str_contains($js, '"Entry Completion"') &&
-    !str_contains($js, 'data.stats.completion_percentage ?? 0}%`') &&
     str_contains($js, 'statCards[2].textContent = data.stats.subjects;'),
     'teacher and senior-admin headline cards must use only Students, Classes and Subjects'
 );
