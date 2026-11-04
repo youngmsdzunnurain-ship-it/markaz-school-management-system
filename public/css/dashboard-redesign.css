@@ -2422,8 +2422,9 @@ h1, h2, h3 {
 
 @media (max-width: 700px) {
     .welcome-card {
+        height: auto;
         min-height: 0;
-        padding: 26px 22px;
+        padding: 20px 22px;
     }
 
     .welcome-decoration {
