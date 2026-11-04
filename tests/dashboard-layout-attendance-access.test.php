@@ -95,7 +95,7 @@ dashboardAssert(
     str_contains($stats, 'SELECT COUNT(*) FROM classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM arabic_classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM subjects WHERE is_active = 1') &&
-    str_contains($stats, "'unassigned_students' => $schoolSummary['unassigned_students']") &&
+    str_contains($stats, "'unassigned_students' => \$schoolSummary['unassigned_students']") &&
     str_contains($stats, 'r.academic_period_id = ?') &&
     str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)') &&
     !str_contains($html, 'Score Records') &&
