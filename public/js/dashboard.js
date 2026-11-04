@@ -105,7 +105,7 @@ async function loadAdmin() {
             sidebarAdminAvatar.textContent = initials;
             if (profileImage) {
                 const avatar = document.createElement("img");
-                avatar.src = "/" + profileImage.replace(/^\\/+/, "");
+                avatar.src = "/" + profileImage.replace(/^\/+/, "");
                 avatar.alt = "";
                 avatar.loading = "eager";
                 sidebarAdminAvatar.textContent = "";
