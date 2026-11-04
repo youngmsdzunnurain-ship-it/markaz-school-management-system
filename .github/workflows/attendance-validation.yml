@@ -11,6 +11,11 @@ on:
       - "public/student-result-print.html"
       - "tests/print-results-validation.test.php"
       - "tests/print-threshold-profile-image.test.php"
+      - "tests/account-security-regression.test.php"
+      - "api/auth/login.php"
+      - "app/middleware/auth.php"
+      - "api/settings/account-freezes.php"
+      - "api/settings/login-lockouts.php"
       - "api/settings/result-print-threshold.php"
       - "public/js/result-print-threshold-settings.js"
       - "api/students/**"
@@ -64,6 +69,7 @@ jobs:
           php -l api/results/class-completion.php
           php -l tests/print-results-validation.test.php
           php -l tests/print-threshold-profile-image.test.php
+          php -l tests/account-security-regression.test.php
           php -l api/settings/result-print-threshold.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
@@ -88,6 +94,9 @@ jobs:
 
       - name: Run print threshold and student profile image tests
         run: php tests/print-threshold-profile-image.test.php
+
+      - name: Run account security regression tests
+        run: php tests/account-security-regression.test.php
 
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
