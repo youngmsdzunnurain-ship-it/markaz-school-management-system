@@ -289,7 +289,7 @@ h1, h2, h3 {
 }
 
 .nav-section-label {
-    margin: 18px 0 10px;
+    margin: 18px 0 14px;
     color: #7fa990;
     font-size: 11px;
     font-weight: 700;
@@ -1598,6 +1598,9 @@ h1, h2, h3 {
     font-size: 13px;
     color: var(--muted);
 }
+.attendance-title-line { display: flex; align-items: baseline; gap: 12px; }
+.attendance-title-line p { margin: 0; font-size: 13px; color: #647469; }
+
 
 .dashboard-attendance-link {
     flex: none;
@@ -2041,7 +2044,16 @@ h1, h2, h3 {
 .dashboard-attendance-rate-key i { width: 18px; height: 0; border-top: 2.5px solid #b8862b; }
 .dashboard-class-chart-card .dashboard-attendance-combo-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
 .dashboard-class-chart-card .dashboard-attendance-combo-chart { display: block; max-width: none; }
-.dashboard-attendance-footnote { margin-top: 10px; }
+.dashboard-attendance-footnote { height: 40px;
+    min-height: 40px;
+    margin-top: 0;
+    padding: 8px 16px;
+    border-left: 4px solid #c9a24a;
+    border-radius: 0 10px 10px 0;
+    background: #fbfcf6;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #647469; }
 
 
 .dashboard-attendance-stat {
@@ -2110,6 +2122,15 @@ h1, h2, h3 {
     gap: 20px;
     align-items: stretch;
 }
+.dashboard-grid > .panel {
+    position: relative;
+    padding: 24px;
+    border: 1px solid #dfe5d6;
+    border-radius: 16px;
+    background: #fbfcf6;
+    box-shadow: 0 4px 14px rgba(20,71,47,.05);
+}
+
 
 .quick-actions {
     display: grid;
@@ -2162,12 +2183,12 @@ h1, h2, h3 {
 .admin-profile-display {
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin-bottom: 16px;
-    padding: 18px;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px;
     border: 1px solid #dbe8de;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--green-50), var(--surface));
+    border-radius: 12px;
+    background: #eef5ee;
 }
 
 .admin-profile-photo {
