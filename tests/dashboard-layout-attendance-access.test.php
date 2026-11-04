@@ -19,6 +19,14 @@ $attendanceRegister = file_get_contents(__DIR__ . '/../api/attendance/register.p
 $attendanceClasses = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 
 dashboardAssert(
+    substr_count($html, 'class="stat-card ') === 3 &&
+    !str_contains($css, '.stat-card::after') &&
+    !str_contains($css, '.stat-card::before') &&
+    !str_contains($redesignCss, '.stat-card::after') &&
+    !str_contains($redesignCss, '.stat-card::before'),
+    'Dashboard summary cards must be three clean cards with no gold-green decorative pseudo-elements'
+);
+dashboardAssert(
     str_contains($css, '.dashboard-attendance-category') &&
     str_contains($css, 'linear-gradient(135deg') &&
     str_contains($css, 'rgba(177, 139, 50'),
@@ -75,8 +83,10 @@ dashboardAssert(
     str_contains($stats, 'SELECT COUNT(*) FROM arabic_classes WHERE is_active = 1') &&
     str_contains($stats, 'SELECT COUNT(*) FROM subjects WHERE is_active = 1') &&
     str_contains($stats, 'r.academic_period_id = ?') &&
-    str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)'),
-    'Dashboard headline totals must be database counts for active students, classes, subjects and current-period recorded results'
+    str_contains($stats, '(r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL)') &&
+    !str_contains($html, 'Score Records') &&
+    !str_contains($stats, "'results' =>"),
+    'Dashboard headline totals must show only active students, classes and subjects; score-record count is intentionally removed'
 );
 dashboardAssert(
     str_contains($stats, 'st.arabic_class_id') &&
