@@ -280,16 +280,14 @@ document.addEventListener("click", (event) => {
 
 document.querySelectorAll(".nav-link").forEach((link) => {
     link.addEventListener("click", () => {
-        document
-            .querySelectorAll(".nav-link")
-            .forEach((item) => item.classList.remove("active"));
-
-        link.classList.add("active");
-
-        if (window.innerWidth <= 850) {
-            closeSidebar();
-        }
+        // Let the destination page determine its active navigation item.
+        // Do not persist a temporary active state in this page's history entry.
+        if (window.innerWidth <= 850) closeSidebar();
     });
+});
+
+document.querySelectorAll(".dashboard-attendance-link").forEach((link) => {
+    link.addEventListener("click", () => link.blur());
 });
 
 if (logoutButton) {
@@ -537,6 +535,58 @@ function dashboardDonutGradient(values) {
     return "conic-gradient("+parts.join(",")+")";
 }
 
+function renderAttendanceComboChart(rows, category) {
+    const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[char]));
+    const data = rows.map(row => {
+        const roster = Math.max(0, Number(row.student_count) || 0);
+        const present = Math.max(0, Number(row.present_count) || 0);
+        const absent = Math.max(0, Number(row.absent_count) || 0);
+        const late = Math.max(0, Number(row.late_count) || 0);
+        const excused = Math.max(0, Number(row.excused_count) || 0);
+        return { name: String(row.class_name || "Class"), roster, present, absent, late, excused,
+            rate: roster ? Math.min(100, present / roster * 100) : 0 };
+    });
+    if (!data.length) return "";
+    const width = Math.max(540, data.length * 112 + 88);
+    const height = 286, left = 48, right = 46, top = 22, bottom = 68;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const maxCount = Math.max(1, ...data.map(d => d.present + d.absent + d.late + d.excused));
+    const countMax = Math.max(4, Math.ceil(maxCount / 4) * 4);
+    const yCount = v => top + plotHeight - (v / countMax) * plotHeight;
+    const yRate = v => top + plotHeight - (v / 100) * plotHeight;
+    const x = i => left + (i + .5) * plotWidth / data.length;
+    const series = [["present", "#258653"], ["absent", "#d65359"], ["late", "#d8a72c"], ["excused", "#8293a5"]];
+    const grid = Array.from({length:5}, (_,i) => {
+        const count = countMax * i / 4, y = yCount(count);
+        return '<line x1="' + left + '" y1="' + y + '" x2="' + (width-right) + '" y2="' + y + '" class="combo-gridline"/>' +
+            '<text x="' + (left-9) + '" y="' + (y+4) + '" text-anchor="end" class="combo-axis-label">' + Math.round(count) + '</text>' +
+            '<text x="' + (width-right+9) + '" y="' + (y+4) + '" class="combo-axis-label">' + (i*25) + '%</text>';
+    }).join("");
+    const bars = data.map((d,i) => {
+        const center=x(i), barWidth=Math.min(42,plotWidth/data.length*.44);
+        let stacked=0;
+        const rects=series.map(([key,color]) => {
+            const value=d[key], y=yCount(stacked+value), h=value/countMax*plotHeight;
+            stacked+=value;
+            return '<rect x="' + (center-barWidth/2) + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="2" fill="' + color + '"><title>' +
+                escape(d.name) + ' — ' + key + ': ' + value + '</title></rect>';
+        }).join("");
+        const label=d.name.length>13 ? d.name.slice(0,12)+"…" : d.name;
+        return rects + '<text x="' + center + '" y="' + (height-40) + '" text-anchor="middle" class="combo-class-label">' + escape(label) + '</text>' +
+            '<text x="' + center + '" y="' + (height-22) + '" text-anchor="middle" class="combo-rate-label">' + d.rate.toFixed(0) + '%</text>';
+    }).join("");
+    const linePoints=data.map((d,i)=>x(i)+","+yRate(d.rate)).join(" ");
+    const circles=data.map((d,i)=>'<circle cx="' + x(i) + '" cy="' + yRate(d.rate) + '" r="4.5" class="combo-rate-point"><title>' +
+        escape(d.name) + ': ' + d.present + ' present of ' + d.roster + ' active students (' + d.rate.toFixed(1) + '%)</title></circle>').join("");
+    return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + ' ' + height +
+        '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
+        ' attendance chart. Stacked bars show present, absent, late and excused counts; the line shows present as a percentage of active class students.">' +
+        grid + bars + '<polyline points="' + linePoints + '" class="combo-rate-line"/>' + circles + '</svg></div>';
+}
+
+
 async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
     if (!panel) return;
@@ -669,31 +719,12 @@ async function loadDashboardAttendance() {
                 categoryLegend.innerHTML = categoryValues.map(item =>
                     '<span><i style="background:' + item.color + '"></i>' +
                     item.label + ' <strong>' + item.value + '</strong></span>'
-                ).join("");
+                ).join("") + '<span class="dashboard-attendance-rate-key"><i></i>Present rate</span>';
             }
 
-            const maxMarked = Math.max(1, ...rows.map(item => Number(item.marked_records) || 0));
-            target.innerHTML = rows.length ? rows.map(item => {
-                const params = new URLSearchParams({
-                    class_id: String(item.class_id),
-                    class_type: type,
-                    date: localDate
-                });
-                const name = String(item.class_name || "Class").replace(/[&<>"']/g, ch => ({
-                    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-                }[ch]));
-                const marked = Number(item.marked_records) || 0;
-                const present = Number(item.present_count) || 0;
-                const width = Math.max(0, Math.min(100, marked / maxMarked * 100));
-
-                return '<a class="dashboard-attendance-class-row" href="./attendance.html?' +
-                    params.toString() + '"><span>' + name + '</span><strong>' + present +
-                    ' present</strong><div class="dashboard-attendance-bar"><i style="width:' +
-                    width + '%"></i></div><small>' + marked + ' marked · ' +
-                    Number(item.absent_count || 0) + ' absent · ' +
-                    Number(item.late_count || 0) + ' late · ' +
-                    Number(item.excused_count || 0) + ' excused</small></a>';
-            }).join("") :
+            target.innerHTML = rows.length
+                ? renderAttendanceComboChart(rows, type)
+                :
                 '<div class="dashboard-chart-empty dashboard-chart-empty-state">' +
                 '<i class="fa-regular fa-calendar-check"></i>' +
                 '<strong>No attendance entered for this category</strong>' +
