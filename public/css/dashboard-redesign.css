@@ -519,7 +519,6 @@ h1, h2, h3 {
     gap: 10px;
 }
 
-.dashboard-refresh-button,
 .topbar-icon-button {
     position: relative;
     width: 46px;
@@ -535,18 +534,9 @@ h1, h2, h3 {
     transition: background var(--transition), color var(--transition), border-color var(--transition);
 }
 
-.dashboard-refresh-button:hover,
 .topbar-icon-button:hover {
     background: var(--green-50);
     border-color: #c9dccd;
-}
-
-.dashboard-refresh-button:active i {
-    transform: rotate(180deg);
-}
-
-.dashboard-refresh-button i {
-    transition: transform .4s ease;
 }
 
 .notification-dot {
