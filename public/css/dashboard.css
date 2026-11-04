@@ -3426,67 +3426,7 @@ footer::before {
 }
 
 
-/* MARKAZ — Statistics Cards Polish */
-.stats-grid {
-    gap: 18px !important;
-}
-
-.stat-card {
-    min-height: 124px !important;
-    padding: 23px 22px 21px !important;
-    border: 1px solid #e0e8e3 !important;
-    border-radius: 17px !important;
-    background: linear-gradient(145deg, #ffffff 0%, #fbfdfb 100%) !important;
-    box-shadow: 0 6px 18px rgba(18, 61, 42, 0.055) !important;
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease !important;
-}
-
-.stat-card:hover {
-    transform: translateY(-3px) !important;
-    border-color: rgba(201, 169, 75, 0.42) !important;
-    box-shadow: 0 11px 25px rgba(18, 61, 42, 0.09) !important;
-}
-
-.stat-label {
-    color: #66756d !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.3px !important;
-}
-
-.stat-card > strong {
-    color: #185c3b !important;
-    font-size: 32px !important;
-    line-height: 1.05 !important;
-    font-weight: 850 !important;
-}
-
-.stat-card > small {
-    margin-top: 3px !important;
-    color: #8a9790 !important;
-    font-size: 11px !important;
-    line-height: 1.45 !important;
-}
-
-@media (max-width: 650px) {
-    .stat-card {
-        min-height: 112px !important;
-        padding: 19px !important;
-    }
-
-    .stat-card > strong {
-        font-size: 28px !important;
-    }
-
-    .stat-label {
-        font-size: 11.5px !important;
-    }
-}
-
-
+/* Removed conflicting statistics overrides; dashboard-redesign.css owns the reference card dimensions. */
 /* MARKAZ — Final Stat Card Polish */
 .stat-card {
     position: relative !important;
