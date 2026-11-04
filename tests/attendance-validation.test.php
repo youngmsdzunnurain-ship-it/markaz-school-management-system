@@ -41,8 +41,11 @@ check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'count
 check(str_contains($classesApi, "'conventional' AS class_type") && str_contains($classesApi, "'arabic' AS class_type"), 'returns conventional and Arabic classes with explicit independent type labels');
 check(!str_contains($classesApi, 'NOT EXISTS') && !str_contains($classesApi, 'arabic_class.name'), 'does not hide conventional classes because an Arabic class has the same name');
 check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi, 'ar.class_id = c.id'), 'attendance report rows are scoped by both category and class id');
+check(str_contains($reportsApi, 'student_count_sql') && str_contains($reportsApi, 'AS student_count'), 'attendance reports provide the active class roster denominator for present-rate charts');
 check(!str_contains($reportsApi, 'NOT EXISTS') && !str_contains($reportsApi, 'arabic_class.name'), 'school reports include same-named conventional and Arabic classes independently');
 check(str_contains($attendanceJs, 'item.class_type === type'), 'attendance class dropdown filters strictly by selected class category');
+check(str_contains($attendanceJs, 'classes.php?class_type='), 'attendance page requests only its selected category');
+check(str_contains($classesApi, '$classTypeFilter') && str_contains($classesApi, '$class[\'class_type\'] === $classTypeFilter'), 'attendance class API filters by class_type on the server');
 
 check(str_contains($attendanceJs, 'setInterval') && str_contains($attendanceJs, 'updateDateLabel'), 'refreshes displayed school date while page remains open');
 check(str_contains($attendanceJs, 'attendanceStudent') && str_contains($attendanceJs, 'populateStudentDropdown'), 'provides a real class-populated student dropdown');
