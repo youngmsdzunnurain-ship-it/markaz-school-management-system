@@ -12,6 +12,9 @@ on:
       - "tests/print-results-validation.test.php"
       - "tests/print-threshold-profile-image.test.php"
       - "tests/account-security-regression.test.php"
+      - "tests/public-image-fallback.test.php"
+      - "public/api/settings/website-images.php"
+      - "public/js/website-image-overrides.js"
       - "api/auth/login.php"
       - "app/middleware/auth.php"
       - "api/settings/account-freezes.php"
@@ -70,6 +73,8 @@ jobs:
           php -l tests/print-results-validation.test.php
           php -l tests/print-threshold-profile-image.test.php
           php -l tests/account-security-regression.test.php
+          php -l tests/public-image-fallback.test.php
+          php -l public/api/settings/website-images.php
           php -l api/settings/result-print-threshold.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
@@ -97,6 +102,9 @@ jobs:
 
       - name: Run account security regression tests
         run: php tests/account-security-regression.test.php
+
+      - name: Run public website image fallback tests
+        run: php tests/public-image-fallback.test.php
 
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
