@@ -2367,7 +2367,6 @@ footer::before {
     gap: 10px;
 }
 
-.dashboard-refresh-button,
 .admin-profile-button {
     border: 1px solid #e1e7e1;
     background: #ffffff;
@@ -2377,24 +2376,12 @@ footer::before {
     -webkit-tap-highlight-color: transparent;
 }
 
-.dashboard-refresh-button {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 19px;
-}
-
-.dashboard-refresh-button:hover,
 .admin-profile-button:hover {
     border-color: #c9a94b;
     box-shadow: 0 7px 20px rgba(18,61,42,.08);
     transform: translateY(-1px);
 }
 
-.dashboard-refresh-button:active,
 .admin-profile-button:active {
     transform: scale(.97);
 }
@@ -6033,7 +6020,6 @@ body {
 .menu-button,
 .nav-link,
 .quick-actions button,
-.dashboard-refresh-button,
 .admin-profile-button,
 .profile-dropdown {
     transition-duration: var(--dashboard-fast) !important;
@@ -6212,13 +6198,6 @@ body {
 .dashboard-attendance-bar i {
     background: linear-gradient(90deg, #17643a, #c8a43a) !important;
 }
-.dashboard-refresh-button {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-}
-.dashboard-refresh-button i { font-size: 15px; }
-.dashboard-refresh-button:active,
 .menu-button:active,
 .quick-actions button:active { transform: scale(.98) !important; }
 
@@ -6236,7 +6215,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
     .sidebar, .main-content, .topbar, .menu-button, .nav-link,
-    .quick-actions button, .dashboard-refresh-button, .admin-profile-button,
+    .quick-actions button, .admin-profile-button,
     .profile-dropdown {
         transition-duration: 0.01ms !important;
     }
