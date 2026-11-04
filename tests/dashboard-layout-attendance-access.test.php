@@ -11,6 +11,7 @@ function dashboardAssert(bool $condition, string $message): void
 
 $css = file_get_contents(__DIR__ . '/../public/css/dashboard.css');
 $redesignCss = file_get_contents(__DIR__ . '/../public/css/dashboard-redesign.css');
+$shellCss = file_get_contents(__DIR__ . '/../public/css/management-shell.css');
 $html = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $js = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $stats = file_get_contents(__DIR__ . '/../api/dashboard/stats.php');
@@ -69,6 +70,11 @@ dashboardAssert(
     str_contains($js, 'if ((window.markazCurrentRole || "") !== "admin")') &&
     str_contains($js, 'panel.hidden = true;'),
     'Dashboard attendance overview must not load for Exam Officer or Teacher'
+);
+dashboardAssert(
+    str_contains($shellCss, 'background:#dff3e7!important;color:#145c38!important') &&
+    str_contains($shellCss, 'border-color:#d6b65f!important'),
+    'profile avatar colors must remain consistent when navigating between dashboard and management pages'
 );
 dashboardAssert(
     !str_contains($js, 'refreshButton') &&
