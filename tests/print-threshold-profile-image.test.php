@@ -10,7 +10,7 @@ function printProfileCheck(bool $condition, string $message): void
 }
 
 $settingsPage = file_get_contents(__DIR__ . '/../public/settings.html');
-$thresholdApi = file_get_contents(__DIR__ . '/../api/settings/result-print-threshold.php');
+$thresholdApi = file_get_contents(__DIR__ . '/../api/settings/result-completion.php');
 $thresholdUi = file_get_contents(__DIR__ . '/../public/js/result-print-threshold-settings.js');
 $classCompletion = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
 $studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
@@ -31,7 +31,7 @@ printProfileCheck(
     'threshold setting must persist under the exact key read by print eligibility and be Senior Admin-only'
 );
 printProfileCheck(
-    str_contains($thresholdUi, 'result-print-threshold.php') &&
+    str_contains($thresholdUi, 'result-completion.php') &&
     str_contains($thresholdUi, 'JSON.stringify({ threshold: Number(threshold) })'),
     'threshold UI must send and confirm the selected threshold'
 );
