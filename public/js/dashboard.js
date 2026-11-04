@@ -765,7 +765,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 async function loadDashboardStats() {
-    const statCards = document.querySelectorAll(".stat-card > strong");
+    const statCards = document.querySelectorAll(".stat-card .stat-main > strong");
 
     if (statCards.length < 3) return;
 
