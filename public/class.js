@@ -110,11 +110,8 @@
             return false;
         }
 
-        const displayedClassName = String(selectedClass.name || "").trim();
-        const classLabel = /^ss\s*1$/i.test(displayedClassName)
-            ? "SS1 Science"
-            : (displayedClassName || "Class");
-        classTitle.textContent = classLabel;
+        classTitle.textContent =
+            selectedClass.name || "Class";
 
         classDescription.textContent =
             selectedClass.level_group || "Academic class";
@@ -125,7 +122,7 @@
                 : "Inactive";
 
         document.title =
-            `${classLabel} | MARKAZ`;
+            `${selectedClass.name || "Class"} | MARKAZ`;
 
         return true;
     }
