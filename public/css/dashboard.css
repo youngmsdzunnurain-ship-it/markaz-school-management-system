@@ -5219,7 +5219,7 @@ button:focus-visible {
 
 
 /* Dashboard v2 — deliberate desktop rows, responsive stacking on narrow screens */
-.stats-grid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:14px !important; }
+.stats-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
 .dashboard-exam-section { width:100%; margin:18px 0 20px; }
 .dashboard-exam-section .result-progress-section { width:100%; margin:0; padding:23px; }
 .dashboard-exam-section .result-progress-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
@@ -5280,7 +5280,7 @@ button:focus-visible {
  .dashboard-grid .quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media(max-width:760px) {
- .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+ .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
  .dashboard-exam-charts { grid-template-columns:1fr; }
  .dashboard-school-pie-card { grid-column:auto; }
  .dashboard-exam-section .result-progress-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -5289,7 +5289,7 @@ button:focus-visible {
  .dashboard-grid { grid-template-columns:1fr; }
 }
 @media(max-width:420px) {
- .stats-grid { gap:9px !important; }
+ .stats-grid { gap:9px; }
  .dashboard-exam-section .result-progress-grid { grid-template-columns:1fr; }
  .dashboard-pie-summary { gap:10px; }
 }
