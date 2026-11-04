@@ -180,6 +180,7 @@ async function loadStudentResult() {
 
     setEditMode(false);
     captureOriginalEditState();
+    document.body.dataset.resultReady = "true";
 }
 function renderStudentResult(data) {
     const student = data.student || {};
