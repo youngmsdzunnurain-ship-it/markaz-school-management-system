@@ -670,7 +670,7 @@ async function loadDashboardAttendance() {
             const target = document.getElementById(targetId);
             if (!target) continue;
 
-            const rows = allClasses.filter(item => item.class_type === type);
+            const rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
             const categoryValues = [
                 { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#21945b" },
                 { label: "Absent", value: rows.reduce((sum, item) => sum + Number(item.absent_count || 0), 0), color: "#d65359" },
