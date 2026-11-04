@@ -18,6 +18,7 @@ $studentCreate = file_get_contents(__DIR__ . '/../api/students/create.php');
 $studentUpdate = file_get_contents(__DIR__ . '/../api/students/update.php');
 $studentManagementJs = file_get_contents(__DIR__ . '/../public/js/students.js');
 $studentListApi = file_get_contents(__DIR__ . '/../api/students/list.php');
+$studentsPage = file_get_contents(__DIR__ . '/../public/students.html');
 
 printProfileCheck(
     str_contains($settingsPage, 'resultPrintThresholdForm') &&
@@ -56,6 +57,9 @@ printProfileCheck(
     str_contains($studentManagementJs, 'src="./${escapeHtml(String(student.profile_image)') &&
     str_contains($studentManagementJs, 'class="view-student-photo"') &&
     !str_contains($studentManagementJs, 'style="background-image:url("./${student.profile_image}")"'),
+    str_contains($studentsPage, 'capture="environment"') &&
+    !str_contains($studentsPage, 'studentCameraModal') &&
+    !str_contains($studentManagementJs, 'MarkazCameraAI'),
     'student profile details must render a valid image element rather than malformed nested quotes'
 );
 
