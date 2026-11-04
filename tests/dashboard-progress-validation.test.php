@@ -19,7 +19,7 @@ $rows = [
 ];
 $summary = dashboardSummariseStudentProgress($rows);
 
-dashboardCheck($summary['students'] === 3, 'counts only students who have required subject entries');
+dashboardCheck($summary['students'] === 4, 'preserves the full active class roster count');
 dashboardCheck($summary['complete_students'] === 1, 'only students with every required subject fully scored are complete');
 dashboardCheck($summary['incomplete_students'] === 1, 'partially entered students are in progress');
 dashboardCheck($summary['no_result_students'] === 1, 'only eligible students with no scores are marked Not Started');
