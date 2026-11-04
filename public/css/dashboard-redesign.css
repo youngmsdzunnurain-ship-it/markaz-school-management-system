@@ -762,9 +762,7 @@ h1, h2, h3 {
     overflow: hidden;
     border-radius: var(--radius-lg);
     color: #fff;
-    background:
-        radial-gradient(110% 150% at 100% 0%, rgba(226, 196, 113, .26), transparent 55%),
-        linear-gradient(120deg, #0a3322 0%, #0f4a2d 48%, #1a7a46 125%);
+    background: linear-gradient(120deg, #0a3322 0%, #0f4a2d 48%, #1a7a46 125%);
     box-shadow: var(--shadow-2);
 }
 
@@ -2443,7 +2441,16 @@ h1, h2, h3 {
     background: linear-gradient(120deg, #123d2a 0%, #17643a 100%) !important;
     box-shadow: 0 8px 22px rgba(18, 61, 42, .10) !important;
 }
-.page-content .welcome-card::before,
+.page-content .welcome-card::before {
+    display: block !important;
+    content: "" !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 46%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-300), rgba(226, 196, 113, 0));
+}
 .page-content .welcome-card::after,
 .page-content .welcome-decoration,
 .page-content .welcome-decoration::before,
@@ -2466,4 +2473,40 @@ h1, h2, h3 {
     .dashboard-overall-exam-chart {
         grid-template-columns: minmax(0, 1fr) !important;
     }
+}
+
+
+/* Dashboard-specific finishing: understated stat cards, glass header, chart and footer. */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(246, 249, 244, .62);
+    -webkit-backdrop-filter: saturate(165%) blur(18px);
+    backdrop-filter: saturate(165%) blur(18px);
+    border-bottom: 1px solid rgba(20, 96, 58, .10);
+}
+.stat-card::after { display: none !important; content: none !important; }
+.stat-card .stat-icon { border-radius: 12px; box-shadow: none; }
+.dashboard-attendance-combo-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 0 4px;
+    scrollbar-width: thin;
+}
+.dashboard-attendance-combo-chart { display: block; max-width: none; }
+.dashboard-attendance-combo-chart .combo-gridline { stroke: #e7eee8; stroke-width: 1; }
+.dashboard-attendance-combo-chart .combo-axis-label { fill: #7b8a80; font: 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-class-label { fill: #354b3d; font: 600 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-rate-label { fill: #9a6a19; font: 700 10px Manrope, sans-serif; }
+.dashboard-attendance-combo-chart .combo-rate-line { fill: none; stroke: #b7791f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.dashboard-attendance-combo-chart .combo-rate-point { fill: #fff; stroke: #b7791f; stroke-width: 2.5; }
+.dashboard-attendance-rate-key { display: inline-flex; align-items: center; gap: 6px; }
+.dashboard-attendance-rate-key i { width: 18px; height: 0; border-top: 3px solid #b7791f; }
+.main-content { min-height: calc(100vh - var(--topbar-height)); display: flex; flex-direction: column; }
+.main-content > footer, .main-content > .markaz-global-footer { margin-top: auto; width: 100%; flex: 0 0 auto; }
+.nav-link, .nav-link i, .dashboard-attendance-link { transition-duration: .12s; }
+@media (prefers-reduced-transparency: reduce) {
+    .topbar { background: #f6f9f4; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
