@@ -589,7 +589,8 @@ function renderAttendanceComboChart(rows, category, target) {
                 escape(item.name) + " — " + key + ": " + value + "</title></rect>";
         }).join("");
         const label = item.name + " · " + (item.markedRecords > 0 ? item.rate.toFixed(0) + "%" : "—");
-        const labelY = height - 4;
+        // Reserve space for the rotated text so long class labels stay inside the SVG.
+    const labelY = height - 58;
         return rects + '<text x="' + center + '" y="' + labelY + '" transform="rotate(-38 ' + center + " " + labelY + ')" text-anchor="end" class="combo-class-label">' +
             escape(label) + "</text>";
     }).join("");
