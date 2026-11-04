@@ -18,7 +18,7 @@ $summary = dashboardSummariseStudentProgress([
     ['expected_subjects' => 2, 'completed_subjects' => 2, 'started_subjects' => 2],
 ]);
 
-dashboardEligibilityCheck($summary['students'] === 3, 'counts only students with required subject entries');
+dashboardEligibilityCheck($summary['students'] === 4, 'preserves the full active class roster count');
 dashboardEligibilityCheck($summary['no_result_students'] === 1, 'counts eligible students with no entered scores as Not Started');
 dashboardEligibilityCheck($summary['incomplete_students'] === 1, 'counts partially entered students as In Progress');
 dashboardEligibilityCheck($summary['complete_students'] === 1, 'counts students with every required subject score complete');
