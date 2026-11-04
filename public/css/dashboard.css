@@ -5674,7 +5674,7 @@ body {
 }
 .page-content .stat-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(177, 139, 50, .58);
+    border-color: #cbd8cf;
     box-shadow: 0 12px 25px rgba(18, 61, 42, .10);
 }
 .page-content .stat-card strong {
