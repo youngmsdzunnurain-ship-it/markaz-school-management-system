@@ -36,6 +36,11 @@ printProfileCheck(
     'threshold UI must send and confirm the selected threshold'
 );
 printProfileCheck(
+    str_contains($classCompletion, 'round(($completed / $required) * 100, 2)') &&
+    str_contains($studentResultApi, 'round(($completedCount / $requiredCount) * 100, 2)'),
+    'class eligibility and individual print authorization must use identical percentage precision at threshold boundaries'
+);
+printProfileCheck(
     str_contains($classCompletion, "execute(['result_print_completion_threshold'])") &&
     str_contains($studentResultApi, "execute(['result_print_completion_threshold'])"),
     'class list and individual print authorization must read the same threshold setting'
