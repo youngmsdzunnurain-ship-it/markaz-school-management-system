@@ -15,7 +15,6 @@
     const addStudentButton = document.getElementById("addStudentButton");
     const panelAddStudentButton = document.getElementById("panelAddStudentButton");
     const enterResultsButton = document.getElementById("enterResultsButton");
-    const printClassResultsButton = document.getElementById("printClassResultsButton");
 
     const resultsPeriodText = document.getElementById("resultsPeriodText");
     const resultsStudentCount = document.getElementById("resultsStudentCount");
@@ -842,10 +841,6 @@
         } else {
             document.querySelector(".results-entry-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-    });
-
-    printClassResultsButton?.addEventListener("click", () => {
-        window.print();
     });
 
     window.addEventListener("focus", async () => {
