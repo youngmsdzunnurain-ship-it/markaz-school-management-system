@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/dashboard.css?v=20261104-three-stats-clean">
-    <link rel="stylesheet" href="css/dashboard-redesign.css?v=20261104-management-grid">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261104-dashboard-hierarchy">
+    <link rel="stylesheet" href="css/dashboard-redesign.css?v=20261104-attendance-hierarchy">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -40,47 +40,61 @@
             </div>
 
             <nav class="sidebar-nav" aria-label="Main navigation">
-                <a href="./dashboard.html" class="nav-link active">
-                    <i class="fa-solid fa-house" aria-hidden="true"></i>
-                    <span>Dashboard</span>
-                </a>
+                <section class="nav-section" aria-label="Overview">
+                    <span class="nav-section-label">OVERVIEW</span>
+                    <a href="./dashboard.html" class="nav-link active">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </section>
 
-                <a href="./students.html" class="nav-link">
-                    <i class="fa-solid fa-users" aria-hidden="true"></i>
-                    <span>Students</span>
-                </a>
+                <section class="nav-section" aria-label="Academics">
+                    <span class="nav-section-label">ACADEMICS</span>
+                    <a href="./students.html" class="nav-link">
+                        <i class="fa-solid fa-users" aria-hidden="true"></i>
+                        <span>Students</span>
+                    </a>
+                    <a href="./classes.html" class="nav-link" data-role-access="admin">
+                        <i class="fa-solid fa-chalkboard" aria-hidden="true"></i>
+                        <span>Classes</span>
+                    </a>
+                    <a href="./subjects/" class="nav-link" data-role-access="admin">
+                        <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                        <span>Subjects</span>
+                    </a>
+                </section>
 
-                <a href="./classes.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-chalkboard" aria-hidden="true"></i>
-                    <span>Classes</span>
-                </a>
+                <section class="nav-section" aria-label="Assessment">
+                    <span class="nav-section-label">ASSESSMENT</span>
+                    <a href="./classes.html" class="nav-link">
+                        <i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i>
+                        <span>Enter Results</span>
+                    </a>
+                    <a href="./print-results.html" class="nav-link" data-role-access="print_results">
+                        <i class="fa-solid fa-print" aria-hidden="true"></i>
+                        <span>Print Results</span>
+                    </a>
+                </section>
 
-                <a href="./subjects/" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-book-open" aria-hidden="true"></i>
-                    <span>Subjects</span>
-                </a>
+                <section class="nav-section" aria-label="Attendance and fees">
+                    <span class="nav-section-label">ATTENDANCE &amp; FEES</span>
+                    <a href="./attendance.html" class="nav-link" data-role-access="admin">
+                        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                        <span>Attendance</span>
+                    </a>
+                    <a href="./school-fees.html" class="nav-link" data-role-access="admin">
+                        <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+                        <span>School Fees</span>
+                    </a>
+                </section>
 
-                <a href="./classes.html" class="nav-link">
-                    <i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i>
-                    <span>Results</span>
-                </a>
-
-                <a href="./attendance.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-                    <span>Attendance</span>
-                </a>
-
-                <a href="./school-fees.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
-
-                <a href="./print-results.html" class="nav-link" data-role-access="print_results">
-                    <i class="fa-solid fa-print" aria-hidden="true"></i>
-                    <span>Print Results</span>
-                </a>
-
-                <a href="./settings.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
-                    <span>Settings</span>
-                </a>
+                <section class="nav-section" aria-label="System">
+                    <span class="nav-section-label">SYSTEM</span>
+                    <a href="./settings.html" class="nav-link" data-role-access="admin">
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                        <span>System Settings</span>
+                    </a>
+                </section>
             </nav>
 
             <div class="sidebar-bottom">
@@ -208,10 +222,9 @@
                     </div>
                     <div class="dashboard-attendance-layout">
                         <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
-                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
+                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school" aria-hidden="true"></i> Conventional Attendance</h3>
                             <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
                         <div class="dashboard-attendance-summary">
                             <div class="dashboard-attendance-donut-wrap">
@@ -219,20 +232,36 @@
                                 <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
                             </div>
                             <div class="dashboard-attendance-stats">
-                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">—</strong><small>Students present</small></a>
-                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">—</strong><small>Students absent</small></a>
-                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">—</strong><small>Students late</small></a>
-                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">—</strong><small>Excused absences</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-present"><span>Present</span><strong id="dashboardAttendancePresent">0</strong><small>Students present</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-absent"><span>Absent</span><strong id="dashboardAttendanceAbsent">0</strong><small>Students absent</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-late"><span>Late</span><strong id="dashboardAttendanceLate">0</strong><small>Students late</small></a>
+                                <a href="./attendance.html" class="dashboard-attendance-stat att-stat-excused"><span>Excused</span><strong id="dashboardAttendanceExcused">0</strong><small>Excused absences</small></a>
                             </div>
                         </div>
                         <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
-                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
+                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran" aria-hidden="true"></i> Arabic Attendance</h3>
                             <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
                         </section>
                     </div>
-                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
+
+                    <div class="dashboard-attendance-class-charts" aria-label="Attendance by class">
+                        <article class="dashboard-attendance-chart-card">
+                            <div class="dashboard-attendance-chart-heading">
+                                <div><span class="eyebrow">CONVENTIONAL SCHOOL</span><h3>Conventional Classes</h3></div>
+                                <span class="dashboard-attendance-chart-note">Every active class</span>
+                            </div>
+                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
+                        </article>
+                        <article class="dashboard-attendance-chart-card">
+                            <div class="dashboard-attendance-chart-heading">
+                                <div><span class="eyebrow">ARABIC SCHOOL</span><h3>Arabic Classes</h3></div>
+                                <span class="dashboard-attendance-chart-note">Every active class</span>
+                            </div>
+                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
+                        </article>
+                    </div>
+                    <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Every active conventional and Arabic class remains visible, including classes with no attendance entries. Unmarked students are not counted as present.</p>
                 </section>
 
                 <section class="dashboard-grid">
@@ -317,7 +346,7 @@
 
     </div>
 
-    <script src="js/dashboard.js?v=20261104-three-stats-data-fix"></script>
+    <script src="js/dashboard.js?v=20261104-all-classes-visible"></script>
 
     <script src="/js/markaz-global.js"></script>
 
