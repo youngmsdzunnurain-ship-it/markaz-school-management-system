@@ -197,8 +197,9 @@ function renderStudentResult(data) {
             student.admission_number || "—";
     }
 
+    const displayedClassName = String(student.class_name || "").trim();
     $("studentClass").textContent =
-        student.class_name || "—";
+        /^ss\\s*1$/i.test(displayedClassName) ? "SS1 Science" : (displayedClassName || "—");
 
     $("studentArabicClass").textContent =
         student.arabic_class || "—";
