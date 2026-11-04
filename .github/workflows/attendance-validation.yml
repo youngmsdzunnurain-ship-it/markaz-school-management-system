@@ -11,6 +11,7 @@ on:
       - "tests/print-results-validation.test.php"
       - "public/js/class.js"
       - "public/css/dashboard.css"
+      - "public/css/dashboard-redesign.css"
       - "tests/results-class-type-validation.test.php"
       - "public/api/attendance/**"
       - "public/attendance.html"
