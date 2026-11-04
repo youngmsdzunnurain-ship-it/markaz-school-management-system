@@ -147,7 +147,7 @@ async function printAllEligibleStudents(classIdValue, studentIds) {
   const frames = [];
   const printDocument = popup.document;
   printDocument.open();
-  printDocument.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="${location.origin}/"><title>Class Results | MARKAZ</title><link rel="stylesheet" href="/css/student-result.css"><link rel="stylesheet" href="/css/student-result-print.css" media="print"><style>@media print{html,body{height:auto!important;overflow:visible!important}.batch-result-page{break-after:page;page-break-after:always}.batch-result-page:last-child{break-after:auto;page-break-after:auto}}.batch-result-page{display:block;min-height:100vh;page-break-after:always}.batch-result-page:last-child{page-break-after:auto}</style></head><body><main id="batchResults"></main></body></html>`);
+  printDocument.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="${location.origin}/"><title>Class Results | MARKAZ</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/app-watermark.css"><link rel="stylesheet" href="/css/website-image-polish.css"><link rel="stylesheet" href="/css/standard-page-heading.css"><link rel="stylesheet" href="/css/student-result.css" media="screen"><link rel="stylesheet" href="/css/student-result-print.css?v=20261031-watermark-center" media="print"><style>@media print{html,body{height:auto!important;overflow:visible!important}.batch-result-page{break-after:page;page-break-after:always}.batch-result-page:last-child{break-after:auto;page-break-after:auto}}.batch-result-page{display:block;min-height:100vh;page-break-after:always}.batch-result-page:last-child{page-break-after:auto}</style></head><body><main id="batchResults"></main></body></html>`);
   printDocument.close();
 
   const waitForResult = frame => new Promise((resolve, reject) => {
@@ -211,6 +211,7 @@ async function printAllEligibleStudents(classIdValue, studentIds) {
         img.addEventListener("error", resolve, { once: true });
       })
     ));
+    await printDocument.fonts.ready;
     popup.focus();
     popup.print();
   } catch (error) {
