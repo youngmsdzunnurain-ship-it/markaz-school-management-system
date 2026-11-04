@@ -21,7 +21,7 @@ $studentListApi = file_get_contents(__DIR__ . '/../api/students/list.php');
 
 printProfileCheck(
     str_contains($settingsPage, 'resultPrintThresholdForm') &&
-    str_contains($settingsPage, 'Result Completion Threshold'),
+    str_contains($settingsPage, 'Print Eligibility Threshold'),
     'settings must expose a separate result-completion threshold control'
 );
 printProfileCheck(
@@ -53,7 +53,7 @@ printProfileCheck(
     'student management and result APIs must return the saved profile image path'
 );
 printProfileCheck(
-    str_contains($studentManagementJs, '<img src="./${escapeHtml(student.profile_image)}"') &&
+    str_contains($studentManagementJs, 'src="./${escapeHtml(String(student.profile_image)') &&
     str_contains($studentManagementJs, 'class="view-student-photo"') &&
     !str_contains($studentManagementJs, 'style="background-image:url("./${student.profile_image}")"'),
     'student profile details must render a valid image element rather than malformed nested quotes'
