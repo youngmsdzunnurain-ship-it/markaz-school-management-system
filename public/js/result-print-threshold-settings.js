@@ -7,7 +7,7 @@
     if (!form || !select || !message || !button) return;
 
     async function request(method = "GET", threshold) {
-        const response = await fetch("./api/settings/result-print-threshold.php", {
+        const response = await fetch("./api/settings/result-completion.php", {
             method,
             credentials: "same-origin",
             cache: "no-store",
