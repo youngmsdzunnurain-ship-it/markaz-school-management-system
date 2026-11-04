@@ -854,11 +854,10 @@ function openViewStudent(studentId) {
             : "Day Student";
 
     const photoMarkup = student.profile_image
-        ? `<div
-                class="view-student-photo"
-                style="background-image:url("./${student.profile_image}")"
-                aria-label="${escapeHtml(fullName)}"
-            ></div>`
+        ? `<div class="view-student-photo">
+                <img src="./${escapeHtml(String(student.profile_image).replace(/^\\/+/, ""))}"
+                     alt="${escapeHtml(fullName)}" loading="lazy">
+            </div>`
         : `<div class="view-student-photo view-student-photo-placeholder">
                 <span>${escapeHtml(
                     (student.first_name || "S").charAt(0) +
