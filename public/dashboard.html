@@ -40,50 +40,21 @@
             </div>
 
             <nav class="sidebar-nav" aria-label="Main navigation">
-                <a href="./dashboard.html" class="nav-link active">
-                    <i class="fa-solid fa-house" aria-hidden="true"></i>
-                    <span>Dashboard</span>
-                </a>
-
-                <a href="./students.html" class="nav-link">
-                    <i class="fa-solid fa-users" aria-hidden="true"></i>
-                    <span>Students</span>
-                </a>
-
-                <a href="./classes.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-chalkboard" aria-hidden="true"></i>
-                    <span>Classes</span>
-                </a>
-
-                <a href="./subjects/" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-book-open" aria-hidden="true"></i>
-                    <span>Subjects</span>
-                </a>
-
-                <a href="./classes.html" class="nav-link">
-                    <i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i>
-                    <span>Results</span>
-                </a>
-
-                <a href="./attendance.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-                    <span>Attendance</span>
-                </a>
-
+                <div class="nav-section-label">Overview</div>
+                <a href="./dashboard.html" class="nav-link active" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span></a>
+                <div class="nav-section-label">Academics</div>
+                <a href="./students.html" class="nav-link"><i class="fa-solid fa-users" aria-hidden="true"></i><span>Students</span></a>
+                <a href="./classes.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-chalkboard" aria-hidden="true"></i><span>Classes</span></a>
+                <a href="./subjects/" class="nav-link" data-role-access="admin"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Subjects</span></a>
+                <div class="nav-section-label">Assessment</div>
+                <a href="./classes.html" class="nav-link" data-role-access="exam_officer"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i><span>Enter Results</span></a>
+                <a href="./print-results.html" class="nav-link" data-role-access="print_results"><i class="fa-solid fa-print" aria-hidden="true"></i><span>Print Results</span></a>
+                <div class="nav-section-label">Attendance &amp; Fees</div>
+                <a href="./attendance.html" class="nav-link" data-role-access="attendance"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></a>
                 <a href="./school-fees.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
-
-                <a href="./print-results.html" class="nav-link" data-role-access="print_results">
-                    <i class="fa-solid fa-print" aria-hidden="true"></i>
-                    <span>Print Results</span>
-                </a>
-
-                <a href="./settings.html" class="nav-link" data-role-access="admin">
-                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-bottom">
+                <div class="nav-section-label">System</div>
+                <a href="./settings.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>System Settings</span></a>
+            </nav>            <div class="sidebar-bottom">
                 <div class="sidebar-divider"></div>
                 <button type="button" id="logoutButton" class="logout-button">
                     <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
@@ -182,7 +153,6 @@
                             <article class="progress-card progress-total"><div class="progress-card-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></div><div><span>Fully Scored Entries</span><strong id="resultEntriesProgress">0 / 0</strong><small>CA1, CA2 and Exam entered / required subject entries</small></div></article>
                         </div>
                     </section>
-                </section>
 
                 <section class="dashboard-exam-charts dashboard-overall-exam-chart" aria-label="Overall examination completion">
                     <article class="dashboard-chart-card dashboard-school-pie-card">
@@ -193,6 +163,7 @@
                         </div>
                         <p class="dashboard-chart-caption" id="dashboardSchoolCompletionCaption">0 of 0 required subject entries completed</p>
                     </article>
+                </section>
                 </section>
 
                 <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
@@ -211,7 +182,7 @@
                             <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school"></i> Conventional</h3>
                             <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                            
                         </section>
                         <div class="dashboard-attendance-summary">
                             <div class="dashboard-attendance-donut-wrap">
@@ -229,7 +200,17 @@
                             <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-quran"></i> Arabic</h3>
                             <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
-                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading…</p></div>
+                            
+                        </section>
+                    </div>
+                    <div class="dashboard-class-attendance-charts" aria-label="Attendance by class">
+                        <section class="dashboard-class-chart-card" aria-labelledby="conventionalClassesChartTitle">
+                            <div class="dashboard-class-chart-heading"><div><span class="eyebrow">CONVENTIONAL CATEGORY</span><h3 id="conventionalClassesChartTitle">Conventional Classes</h3></div><span class="dashboard-chart-category-tag">Conventional only</span></div>
+                            <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
+                        </section>
+                        <section class="dashboard-class-chart-card" aria-labelledby="arabicClassesChartTitle">
+                            <div class="dashboard-class-chart-heading"><div><span class="eyebrow">ARABIC CATEGORY</span><h3 id="arabicClassesChartTitle">Arabic Classes</h3></div><span class="dashboard-chart-category-tag">Arabic only</span></div>
+                            <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
                         </section>
                     </div>
                     <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
