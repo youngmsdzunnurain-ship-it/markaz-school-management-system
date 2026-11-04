@@ -39,6 +39,11 @@ function className(item) {
            item.className || "Unnamed class";
 }
 
+function displayClassName(item) {
+    const name = className(item);
+    return /^ss\s*1$/i.test(String(name).trim()) ? "SS1 Science" : name;
+}
+
 function isConventionalClass(name) {
     const normalized = String(name || "")
         .trim()
@@ -92,7 +97,7 @@ function renderClasses() {
         button.className = "class-button";
 
         const title = document.createElement("strong");
-        title.textContent = className(item);
+        title.textContent = displayClassName(item);
         const hint = document.createElement("small");
         hint.textContent = "View students and print results";
 
@@ -229,7 +234,7 @@ async function showStudents(selectedClass) {
   $("classesPanel").classList.add("hidden");
   $("studentsPanel").classList.remove("hidden");
   $("backToClasses").textContent = "← Go Back";
-  $("selectedClassTitle").textContent = className(selectedClass);
+  $("selectedClassTitle").textContent = displayClassName(selectedClass);
 
   const id = classId(selectedClass);
   const matching = students.filter(item =>
