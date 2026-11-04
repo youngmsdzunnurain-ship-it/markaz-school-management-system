@@ -514,9 +514,13 @@ h1, h2, h3 {
     color: #fff;
 }
 
+.menu-button {
+    display: none;
+}
+
 .topbar h1 {
     font-family: var(--font-display);
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
     letter-spacing: -.01em;
     color: #14472f;
@@ -525,7 +529,7 @@ h1, h2, h3 {
 
 .topbar h1 + p {
     margin-top: 2px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
 }
 
@@ -1068,7 +1072,7 @@ h1, h2, h3 {
 }
 
 .result-progress-section .panel-header h3 {
-    font-size: 21px;
+    font-size: 19px;
 }
 
 .progress-description {
@@ -1530,15 +1534,12 @@ h1, h2, h3 {
 /* 11. ATTENDANCE ============================================= */
 .dashboard-attendance-panel {
     position: relative;
+    min-width: 0;
     padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-1);
 }
 
 .dashboard-attendance-heading {
@@ -2390,6 +2391,9 @@ h1, h2, h3 {
         min-height: 68px;
         padding: max(10px, env(safe-area-inset-top)) 16px 10px;
     }
+    .menu-button {
+        display: grid;
+    }
 
     .admin-profile-text,
     .admin-profile-arrow {
@@ -2509,6 +2513,8 @@ h1, h2, h3 {
 
     .footer-school {
         flex-basis: auto;
+    }
+}
 
 /* Avatar fallbacks used by the profile menu and older markup */
 .admin-avatar,
@@ -2536,10 +2542,6 @@ h1, h2, h3 {
 
 .no-progress {
     background: var(--red);
-}
-
-
-    }
 }
 
 
