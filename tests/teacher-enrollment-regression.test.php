@@ -28,7 +28,7 @@ teacherEnrollmentCheck(
     'teacher enrollment must persist assignments and attendance access and enforce unique usernames'
 );
 teacherEnrollmentCheck(
-    str_contains($login, 'username = ?') &&
+    str_contains($login, 'username = :username') &&
     str_contains($login, 'password_verify'),
     'teacher login must authenticate with the assigned username and password'
 );
