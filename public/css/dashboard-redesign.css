@@ -760,11 +760,10 @@ h1, h2, h3 {
 .welcome-card::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 46%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--gold-300), rgba(226, 196, 113, 0));
+    inset: 18px auto 18px 0;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
 }
 
 .welcome-content {
@@ -807,15 +806,7 @@ h1, h2, h3 {
 }
 
 .welcome-decoration {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-    width: min(380px, 42%);
-    display: grid;
-    place-items: center;
-    pointer-events: none;
+    display: none;
 }
 
 .decoration-circle {
@@ -1985,11 +1976,6 @@ h1, h2, h3 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 }
-.dashboard-grid { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); }
-.dashboard-grid .quick-actions button { min-height: 64px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 11px; }
-.dashboard-grid .quick-actions button i { width: 32px; height: 32px; flex: 0 0 32px; }
-.dashboard-grid .quick-actions button span { font-size: 11px; }
-
 
 .quick-actions button {
     min-height: 112px;
@@ -2193,7 +2179,7 @@ h1, h2, h3 {
 
 
 /* 14. RESPONSIVE ============================================= */
-@media (max-width: 1280px) {
+@media (max-width: 1100px) {
     .dashboard-attendance-layout {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
