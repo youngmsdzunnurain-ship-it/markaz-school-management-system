@@ -97,9 +97,7 @@ body {
     font-size: 15px;
     line-height: 1.5;
     color: var(--ink);
-    background:
-        radial-gradient(900px 420px at 100% 0%, rgba(193, 154, 53, .09), transparent 60%),
-        var(--canvas);
+    background: #f5f7f1;
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -1041,9 +1039,9 @@ h1, h2, h3 {
 }
 .dashboard-exam-overview-copy h4 { color: var(--green-800); font-size: 14px; line-height: 1.35; }
 .dashboard-exam-overview-copy p { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.5; }
-.result-progress-section { padding: 20px 22px; }
+.result-progress-section { padding: 16px 24px; }
 .result-progress-section .panel-header { margin-bottom: 14px; }
-.result-progress-section .panel-header h3 { font-size: 20px; }
+.result-progress-section .panel-header h3 { font-size: 19px; }
 .result-progress-grid { gap: 10px; }
 .progress-card { height: 90px;
     min-height: 90px; padding: 10px 12px; gap: 9px; border-radius: 12px; }
@@ -1115,23 +1113,25 @@ h1, h2, h3 {
 
 .progress-card {
     display: flex;
-    align-items: flex-start;
-    gap: 14px;
+    align-items: center;
+    gap: 9px;
+    height: 90px;
+    min-height: 90px;
     min-width: 0;
-    padding: 18px;
+    padding: 10px 12px;
     border: 1px solid var(--line);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: #fafcf9;
 }
 
 .progress-card-icon {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     flex: none;
     display: grid;
     place-items: center;
-    border-radius: 14px;
-    font-size: 17px;
+    border-radius: 9px;
+    font-size: 13px;
     background: var(--slate-50);
     color: var(--slate);
 }
@@ -1143,13 +1143,13 @@ h1, h2, h3 {
 }
 
 .progress-card span {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--muted);
 }
 
 .progress-card strong {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 800;
     line-height: 1.15;
     color: var(--ink);
@@ -1158,7 +1158,7 @@ h1, h2, h3 {
 }
 
 .progress-card small {
-    font-size: 12.5px;
+    font-size: 10px;
     line-height: 1.45;
     color: var(--muted);
 }
@@ -1938,8 +1938,8 @@ h1, h2, h3 {
 }
 .dashboard-attendance-summary { gap: 12px; }
 .dashboard-attendance-donut-wrap { grid-column: 1; grid-row: 1; }
-.dashboard-attendance-donut { width: 138px; height: 138px; flex-basis: 138px; }
-.dashboard-attendance-donut::before { inset: 19px; }
+.dashboard-attendance-donut { width: 148px; height: 148px; flex-basis: 148px; }
+.dashboard-attendance-donut::before { inset: 16px; }
 .dashboard-attendance-donut strong { font-size: 32px; }
 .dashboard-attendance-legend { display: grid; gap: 7px; justify-content: start; }
 .dashboard-attendance-stats { grid-column: 2; grid-row: 1; gap: 8px; align-self: stretch; }
@@ -2021,10 +2021,10 @@ h1, h2, h3 {
 
 
 .dashboard-attendance-stat {
-    min-height: 104px;
+    min-height: 76px;
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 10px;
     border: 1px solid var(--line);
     border-radius: 16px;
     color: var(--ink);
