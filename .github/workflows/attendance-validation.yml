@@ -9,6 +9,12 @@ on:
       - "public/js/student-result.js"
       - "public/student-result-print.html"
       - "tests/print-results-validation.test.php"
+      - "tests/print-threshold-profile-image.test.php"
+      - "api/settings/result-print-threshold.php"
+      - "public/js/result-print-threshold-settings.js"
+      - "api/students/**"
+      - "public/js/students.js"
+      - "public/settings.html"
       - "public/js/class.js"
       - "public/css/dashboard.css"
       - "public/css/dashboard-redesign.css"
@@ -56,6 +62,7 @@ jobs:
           php -l api/results/save.php
           php -l api/results/class-completion.php
           php -l tests/print-results-validation.test.php
+          php -l tests/print-threshold-profile-image.test.php
           php -l tests/results-class-type-validation.test.php
           php -l api/attendance/_common.php
           php -l api/attendance/classes.php
@@ -76,6 +83,9 @@ jobs:
 
       - name: Run print results validation tests
         run: php tests/print-results-validation.test.php
+
+      - name: Run print threshold and student profile image tests
+        run: php tests/print-threshold-profile-image.test.php
 
       - name: Run attendance validation tests
         run: php tests/attendance-validation.test.php
