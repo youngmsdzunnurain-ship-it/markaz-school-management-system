@@ -589,13 +589,26 @@ function renderAttendanceComboChart(rows, category, target) {
         return { name, present, absent, late, excused, marked, rate: marked > 0 ? present / marked * 100 : null };
     });
 
-    const minWidth = category === "arabic" ? 8 * 56 : 14 * 48;
-    const availableWidth = target && target.clientWidth ? target.clientWidth - 2 : minWidth;
-    const width = Math.max(minWidth, availableWidth);
-    const height = 246, left = 54, right = 58, top = 0, bottom = 96;
-    const plotWidth = width - left - right, plotHeight = 150;
-    const countMax = category === "arabic" ? 12 : 20;
-    const countStep = category === "arabic" ? 4 : 5;
+    // Every class keeps its own slot, even with no records. The chart fills its card and only
+    // scrolls sideways when the card is narrower than the minimum (44px / 40px per class).
+    const slotMin = category === "arabic" ? 40 : 44;
+    const top = 14, right = 46, bottom = 96, plotHeight = 150;
+    // Room on the left for the first rotated class names (about 6.2px per character, rotated -38deg).
+    const labelRoom = Math.max(...data.map((item, index) => {
+        const text = item.name + " · " + (item.rate === null ? "—" : "100%");
+        return text.length * 6.2 * Math.cos(38 * Math.PI / 180) - (index + .5) * slotMin;
+    }));
+    const left = Math.max(40, Math.ceil(labelRoom) + 12);
+    const minWidth = data.length * slotMin + left + right;
+    const available = target && target.clientWidth ? Math.floor(target.clientWidth) : minWidth;
+    const width = Math.max(minWidth, available);
+    const height = top + plotHeight + bottom;
+    const plotWidth = width - left - right;
+    // 4 equal intervals so the count axis (left) and the rate axis (right, 0-100%) share the same gridlines.
+    const baseMax = category === "arabic" ? 12 : 20;
+    const tallest = Math.max(0, ...data.map(item => item.marked));
+    const countMax = Math.max(baseMax, Math.ceil(tallest / 4) * 4);
+    const countStep = countMax / 4;
     const yCount = value => top + plotHeight - (Math.min(countMax, value) / countMax) * plotHeight;
     const yRate = value => top + plotHeight - (value / 100) * plotHeight;
     const slot = plotWidth / data.length;
@@ -604,7 +617,7 @@ function renderAttendanceComboChart(rows, category, target) {
         ["present", "#2a8f58"], ["absent", "#e05a5a"],
         ["late", "#d9a62e"], ["excused", "#8a94a6"]
     ];
-    const grid = Array.from({ length: countMax / countStep + 1 }, (_, index) => {
+    const grid = Array.from({ length: 5 }, (_, index) => {
         const count = index * countStep, y = yCount(count), rate = index * 25;
         return '<line x1="' + left + '" y1="' + y + '" x2="' + (width - right) + '" y2="' + y + '" class="combo-gridline"/>' +
             '<text x="' + (left - 10) + '" y="' + (y + 4) + '" text-anchor="end" class="combo-axis-label">' + count + '</text>' +
@@ -623,8 +636,8 @@ function renderAttendanceComboChart(rows, category, target) {
                 escape(item.name) + " — " + key + ": " + value + "</title></rect>";
         }).join("");
         const label = item.name + " · " + (item.rate === null ? "—" : item.rate.toFixed(0) + "%");
-        const labelY = height - 4;
-        return rects + '<text x="' + center + '" y="' + labelY + '" transform="rotate(-38 ' + center + " " + labelY + ')" text-anchor="end" class="combo-class-label">' +
+        const labelY = top + plotHeight + 16;
+        return rects + '<text x="' + (center + 4) + '" y="' + labelY + '" transform="rotate(-38 ' + (center + 4) + " " + labelY + ')" text-anchor="end" class="combo-class-label">' +
             escape(label) + "</text>";
     }).join("");
 
@@ -652,7 +665,7 @@ function renderAttendanceComboChart(rows, category, target) {
     return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + " " + height +
         '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
         ' attendance chart. Stacked bars show present, absent, late and excused marked records; the line shows present rate among marked records.">' +
-        grid + '<line x1="' + left + '" y1="' + plotHeight + '" x2="' + (width - right) + '" y2="' + plotHeight + '" class="combo-baseline"/>' +
+        grid + '<line x1="' + left + '" y1="' + (top + plotHeight) + '" x2="' + (width - right) + '" y2="' + (top + plotHeight) + '" class="combo-baseline"/>' +
         bars + lines + circles + "</svg></div>";
 }
 
@@ -779,6 +792,8 @@ async function loadDashboardAttendance() {
                 ).join("") + '<span class="dashboard-attendance-rate-key"><i></i>Present rate</span>';
             }
 
+            window.markazAttendanceRows = window.markazAttendanceRows || {};
+            window.markazAttendanceRows[type] = rows;
             target.innerHTML = rows.length
                 ? renderAttendanceComboChart(rows, type, target)
                 :
@@ -806,6 +821,24 @@ async function loadDashboardAttendance() {
     }
 }
 window.setInterval(loadDashboardAttendance, 60000);
+
+// Redraw the two class charts when the window width changes, so they always fill their cards.
+let attendanceResizeTimer = null;
+let attendanceLastWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+    if (window.innerWidth === attendanceLastWidth) return;
+    attendanceLastWidth = window.innerWidth;
+    window.clearTimeout(attendanceResizeTimer);
+    attendanceResizeTimer = window.setTimeout(() => {
+        const saved = window.markazAttendanceRows || {};
+        for (const [type, targetId] of [["conventional", "dashboardConventionalAttendance"], ["arabic", "dashboardArabicAttendance"]]) {
+            const target = document.getElementById(targetId);
+            if (target && saved[type] && saved[type].length) {
+                target.innerHTML = renderAttendanceComboChart(saved[type], type, target);
+            }
+        }
+    }, 150);
+});
 document.addEventListener("visibilitychange", () => {
     if (!document.hidden) loadDashboardAttendance();
 });
