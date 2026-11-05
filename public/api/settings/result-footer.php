@@ -171,6 +171,12 @@ try {
         $pdo->beginTransaction();
         $save->execute([$keys['class_teacher_image'], $teacherPath ?? '']);
         $save->execute([$keys['director_image'], $directorPath ?? '']);
+        if (array_key_exists('class_teacher_signature_image', $input)) {
+            $save->execute([$keys['class_teacher_signature'], '']);
+        }
+        if (array_key_exists('director_signature_image', $input)) {
+            $save->execute([$keys['director_signature'], '']);
+        }
         $save->execute([$keys['result_date'], $date]);
         $pdo->commit();
 
