@@ -5167,6 +5167,16 @@ body {
 .signature-canvas-hint { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; color:#9aa59e; font-size:13px; }
 .signature-canvas-hint[hidden] { display:none; }
 .signature-editor-tools { display:flex; gap:8px; margin-top:10px; }
+.signature-live-preview-wrap { display:grid; gap:7px; margin-top:14px; }
+.signature-live-preview-wrap > span { color:var(--muted); font-size:12px; font-weight:700; }
+.signature-live-preview-stage {
+    display:grid; place-items:center; min-height:76px; padding:8px 12px;
+    overflow:hidden; border:1px dashed var(--border); border-radius:10px; background:#fff;
+    background-image:linear-gradient(45deg,#f2f4f2 25%,transparent 25%),linear-gradient(-45deg,#f2f4f2 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f2f4f2 75%),linear-gradient(-45deg,transparent 75%,#f2f4f2 75%);
+    background-size:14px 14px; background-position:0 0,0 7px,7px -7px,-7px 0;
+}
+.signature-live-preview-stage img { display:block; width:100%; max-width:100%; height:58px; object-fit:contain; }
+.signature-live-preview-stage img:not([src]) { visibility:hidden; }
 .signature-size-control { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; margin:18px 0; font-size:13px; font-weight:700; }
 .signature-size-control input { width:100%; accent-color:var(--markaz-green); }
 .signature-size-control output { min-width:42px; color:var(--markaz-green); text-align:right; }

@@ -499,6 +499,7 @@ loadAcademicPeriodSettings();
     const hint = document.getElementById("signatureCanvasHint");
     const sizeInput = document.getElementById("signatureSize");
     const sizeOutput = document.getElementById("signatureSizeValue");
+    const livePreview = document.getElementById("signatureLivePreview");
     const editorMessage = document.getElementById("signatureEditorMessage");
     const signatures = {
         class_teacher: { path: "", legacy: "", preview: document.getElementById("classTeacherSignaturePreview") },
@@ -548,9 +549,19 @@ loadAcademicPeriodSettings();
             headers: { "Content-Type": "application/json", "Accept": "application/json" },
             ...(payload === undefined ? {} : { body: JSON.stringify(payload) })
         });
-        const data = await response.json();
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            const preview = responseText.replace(/\s+/g, " ").trim().slice(0, 180);
+            throw new Error(
+                `Invalid JSON response from signature API (HTTP ${response.status}). ` +
+                (preview ? `Server response: ${preview}` : "The server returned an empty response.")
+            );
+        }
         if (!response.ok || !data.success) {
-            throw new Error(data.message || "Unable to load result footer settings.");
+            throw new Error(data.message || `Signature API request failed (HTTP ${response.status}).`);
         }
         return data;
     }
@@ -575,6 +586,7 @@ loadAcademicPeriodSettings();
         context.clearRect(0, 0, canvas.width, canvas.height);
         history = [];
         hint.hidden = false;
+        if (livePreview) livePreview.removeAttribute("src");
         showEditorMessage("");
     }
 
@@ -620,6 +632,7 @@ loadAcademicPeriodSettings();
     function stopDrawing() {
         drawing = false;
         context?.closePath();
+        updateSignaturePreview();
     }
     canvas?.addEventListener("pointerup", stopDrawing);
     canvas?.addEventListener("pointercancel", stopDrawing);
@@ -630,6 +643,7 @@ loadAcademicPeriodSettings();
         if (!previous) return;
         context.putImageData(previous, 0, 0);
         hint.hidden = !isCanvasEmpty();
+        updateSignaturePreview();
     });
 
     function isCanvasEmpty() {
@@ -644,6 +658,7 @@ loadAcademicPeriodSettings();
     sizeInput?.addEventListener("input", () => {
         sizeOutput.value = sizeInput.value + "%";
         sizeOutput.textContent = sizeInput.value + "%";
+        updateSignaturePreview();
     });
 
     function createTransparentSignature() {
@@ -675,8 +690,13 @@ loadAcademicPeriodSettings();
         output.width = 1200;
         output.height = 300;
         const outputContext = output.getContext("2d");
-        const requestedWidth = output.width * (Number(sizeInput.value) / 100);
-        const scale = Math.min(requestedWidth / cropWidth, 250 / cropHeight);
+        // Fit the complete signature first, then apply the selected percentage.
+        // This keeps every slider value effective even when height is the limiting dimension.
+        const fitScale = Math.min(
+            (output.width * 0.9) / cropWidth,
+            (output.height * 0.8) / cropHeight
+        );
+        const scale = fitScale * (Number(sizeInput.value) / 100);
         const drawWidth = cropWidth * scale;
         const drawHeight = cropHeight * scale;
         outputContext.drawImage(
@@ -689,6 +709,19 @@ loadAcademicPeriodSettings();
         return output.toDataURL("image/png");
     }
 
+    function updateSignaturePreview() {
+        if (!livePreview) return;
+        if (isCanvasEmpty()) {
+            livePreview.removeAttribute("src");
+            return;
+        }
+        try {
+            livePreview.src = createTransparentSignature();
+        } catch (error) {
+            livePreview.removeAttribute("src");
+        }
+    }
+
     function openEditor(role) {
         activeRole = role;
         clearCanvas();
@@ -697,6 +730,7 @@ loadAcademicPeriodSettings();
         sizeInput.value = "85";
         sizeOutput.value = "85%";
         sizeOutput.textContent = "85%";
+        if (livePreview) livePreview.removeAttribute("src");
         showEditorMessage("");
         if (typeof dialog.showModal === "function") dialog.showModal();
         else dialog.setAttribute("open", "");
