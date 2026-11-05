@@ -10694,6 +10694,12 @@ html body .report-card .memorization-value-row input { display: block !important
     display: none !important;
 }
 .student-result-page.management-view .document-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.student-result-page.management-view .document-actions[hidden] {
     display: none !important;
 }
 .student-result-page.management-view .result-action-feedback {

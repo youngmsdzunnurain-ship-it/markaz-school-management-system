@@ -217,6 +217,9 @@ async function loadStudentResult() {
     setEditMode(false);
     captureOriginalEditState();
     document.body.dataset.resultReady = "true";
+    if (params.get("auto_print") === "1" && isPrintMode) {
+        await authorizeAndPrint("export_results");
+    }
 }
 function renderStudentResult(data) {
     const student = data.student || {};
@@ -1414,6 +1417,43 @@ async function authorizeAndPrint(permission) {
 
 // Print and PDF actions belong exclusively to student-result-print.html.
 
+const printStudentResultButton = $("printStudentResultButton");
+const downloadStudentPdfButton = $("downloadStudentPdfButton");
+const resultDocumentActions = $("resultDocumentActions");
+
+function buildDedicatedPrintUrl(autoPrint = false) {
+    const query = new URLSearchParams({
+        student_id: studentId || "",
+        class_type: classType || "conventional"
+    });
+    if (classId) query.set("class_id", classId);
+    query.set("print", "1");
+    if (autoPrint) query.set("auto_print", "1");
+    return `./student-result-print.html?${query.toString()}`;
+}
+
+printStudentResultButton?.addEventListener("click", () => {
+    if (!studentData) return;
+    if (isPrintMode) {
+        authorizeAndPrint("print_results");
+        return;
+    }
+    if (isEditMode) return;
+    window.open(buildDedicatedPrintUrl(false), "_blank");
+});
+
+downloadStudentPdfButton?.addEventListener("click", () => {
+    if (!studentData) return;
+    if (isPrintMode) {
+        authorizeAndPrint("export_results");
+        return;
+    }
+    if (isEditMode) return;
+    // Open synchronously from the click so mobile/desktop popup blockers do not
+    // discard the dedicated PDF/print window after an awaited permission check.
+    window.open(buildDedicatedPrintUrl(true), "_blank");
+});
+
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
 const cancelScoresButton = $("cancelScoresButton");
@@ -1578,6 +1618,10 @@ function setEditMode(editing) {
 
     if (cancelScoresButton) {
         cancelScoresButton.hidden = !editing;
+    }
+
+    if (resultDocumentActions) {
+        resultDocumentActions.hidden = editing || !studentData;
     }
 
     if (studentData) {
