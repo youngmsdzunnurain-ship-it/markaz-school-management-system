@@ -25,6 +25,7 @@ signatureCheck(str_contains($settingsPage, 'signatureLivePreview') && str_contai
 signatureCheck(str_contains($settingsJs, 'const scale = fitScale * (Number(sizeInput.value) / 100)'), 'Signature size percentage must scale the fitted signature without being neutralized by the height cap');
 signatureCheck(str_contains($settingsJs, 'response.text()') && str_contains($settingsJs, 'Invalid JSON response'), 'Signature API errors must expose non-JSON server responses instead of masking them');
 signatureCheck(strpos($resultApi, 'try {') < strpos($resultApi, 'requireSeniorAdmin();'), 'Signature API authentication/database exceptions must be handled by its JSON error boundary');
+signatureCheck(str_contains($settingsJs, 'if (isCanvasEmpty()) {') && str_contains($settingsJs, 'livePreview.removeAttribute("src");'), 'Undoing the final stroke must clear the stale signature preview');
 
 signatureCheck(str_contains($resultApi, 'requireLogin();') && str_contains($resultApi, 'requireSeniorAdmin();'), 'Result footer reads must require login while writes remain Senior Admin only');
 signatureCheck(str_contains($resultApi, 'image/png') && str_contains($resultApi, 'uploads/signatures/'), 'API must validate and store PNG signature files outside the database');
