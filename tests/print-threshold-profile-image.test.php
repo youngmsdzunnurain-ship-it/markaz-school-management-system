@@ -32,7 +32,7 @@ printProfileCheck(
     'print eligibility threshold must be reachable as its own Settings navigation category'
 );
 printProfileCheck(
-    preg_match('/<select id="resultPrintThreshold"[^>]*>(.*?)<\\/select>/s', $settingsPage, $thresholdSelect) === 1 &&
+    preg_match('/<select id="resultPrintThreshold"[^>]*>(.*?)<\/select>/s', $settingsPage, $thresholdSelect) === 1 &&
     preg_match_all('/<option value="([0-9]+)">/', $thresholdSelect[1], $thresholdOptionMatches) === 4 &&
     $thresholdOptionMatches[1] === ['50', '80', '95', '100'],
     'print threshold must offer only the four approved values: 50, 80, 95 and 100 percent'
