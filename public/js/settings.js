@@ -483,103 +483,314 @@ academicPeriodForm?.addEventListener("submit", async event => {
 
 loadAcademicPeriodSettings();
 
-/* RESULT FOOTER & SIGNATURE SETTINGS */
-const resultFooterForm = document.getElementById("resultFooterForm");
-const classTeacherSignature = document.getElementById("classTeacherSignature");
-const directorSignature = document.getElementById("directorSignature");
-const resultSignatureDate = document.getElementById("resultSignatureDate");
-const resultFooterMessage = document.getElementById("resultFooterMessage");
-const saveResultFooterButton = document.getElementById("saveResultFooterButton");
+/* SHARED HANDWRITTEN RESULT SIGNATURES */
+(() => {
+    "use strict";
 
-function showResultFooterMessage(text, type = "") {
-    if (!resultFooterMessage) return;
-    resultFooterMessage.textContent = text;
-    resultFooterMessage.className = "form-message " + type;
-}
+    const form = document.getElementById("resultFooterForm");
+    if (!form) return;
 
-async function loadResultFooterSettings() {
-    try {
-        const response = await fetch("./api/settings/result-footer.php", {
-            credentials: "same-origin",
-            cache: "no-store"
-        });
+    const dateInput = document.getElementById("resultSignatureDate");
+    const message = document.getElementById("resultFooterMessage");
+    const saveDateButton = document.getElementById("saveResultFooterButton");
+    const dialog = document.getElementById("signatureEditorDialog");
+    const canvas = document.getElementById("signatureCanvas");
+    const context = canvas?.getContext("2d", { willReadFrequently: true });
+    const hint = document.getElementById("signatureCanvasHint");
+    const sizeInput = document.getElementById("signatureSize");
+    const sizeOutput = document.getElementById("signatureSizeValue");
+    const editorMessage = document.getElementById("signatureEditorMessage");
+    const signatures = {
+        class_teacher: { path: "", legacy: "", preview: document.getElementById("classTeacherSignaturePreview") },
+        director: { path: "", legacy: "", preview: document.getElementById("directorSignaturePreview") }
+    };
 
-        const data = await response.json();
+    let activeRole = null;
+    let drawing = false;
+    let history = [];
 
-        if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to load result footer settings."
-            );
-        }
-
-        const settings = data.settings || {};
-
-        if (classTeacherSignature) {
-            classTeacherSignature.value =
-                settings.class_teacher_signature || "";
-        }
-
-        if (directorSignature) {
-            directorSignature.value =
-                settings.director_signature || "";
-        }
-
-        if (resultSignatureDate) {
-            resultSignatureDate.value =
-                settings.result_signature_date || "";
-        }
-    } catch (error) {
-        showResultFooterMessage(error.message, "error");
+    function showMessage(text, type = "") {
+        message.textContent = text;
+        message.className = "form-message " + type;
     }
-}
 
-resultFooterForm?.addEventListener("submit", async event => {
-    event.preventDefault();
+    function showEditorMessage(text) {
+        editorMessage.textContent = text;
+    }
 
-    if (!saveResultFooterButton) return;
+    function renderSignature(role) {
+        const item = signatures[role];
+        if (!item.preview) return;
+        item.preview.replaceChildren();
 
-    saveResultFooterButton.disabled = true;
-    saveResultFooterButton.textContent = "Saving...";
-    showResultFooterMessage("", "");
+        if (item.path) {
+            const image = document.createElement("img");
+            image.src = "./" + item.path.replace(/^\/+/, "") + "?v=" + Date.now();
+            image.alt = role === "class_teacher" ? "Saved Class Teacher signature" : "Saved Director signature";
+            item.preview.appendChild(image);
+        } else if (item.legacy) {
+            const legacy = document.createElement("span");
+            legacy.className = "signature-legacy-text";
+            legacy.textContent = item.legacy;
+            item.preview.appendChild(legacy);
+        } else {
+            const empty = document.createElement("span");
+            empty.textContent = "No signature saved";
+            item.preview.appendChild(empty);
+        }
+    }
 
-    try {
+    async function requestSettings(method = "GET", payload) {
         const response = await fetch("./api/settings/result-footer.php", {
-            method: "POST",
+            method,
             credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                class_teacher_signature:
-                    classTeacherSignature?.value.trim() || "",
-                director_signature:
-                    directorSignature?.value.trim() || "",
-                result_signature_date:
-                    resultSignatureDate?.value || ""
-            })
+            cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            ...(payload === undefined ? {} : { body: JSON.stringify(payload) })
         });
-
         const data = await response.json();
-
         if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to save result footer settings."
-            );
+            throw new Error(data.message || "Unable to load result footer settings.");
+        }
+        return data;
+    }
+
+    async function loadSettings() {
+        try {
+            const data = await requestSettings();
+            const settings = data.settings || {};
+            signatures.class_teacher.path = settings.class_teacher_signature_image || "";
+            signatures.class_teacher.legacy = settings.class_teacher_signature || "";
+            signatures.director.path = settings.director_signature_image || "";
+            signatures.director.legacy = settings.director_signature || "";
+            if (dateInput) dateInput.value = settings.result_signature_date || "";
+            renderSignature("class_teacher");
+            renderSignature("director");
+        } catch (error) {
+            showMessage(error.message, "error");
+        }
+    }
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        history = [];
+        hint.hidden = false;
+        showEditorMessage("");
+    }
+
+    function snapshot() {
+        history.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (history.length > 30) history.shift();
+    }
+
+    function pointFromEvent(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (event.clientX - rect.left) * canvas.width / rect.width,
+            y: (event.clientY - rect.top) * canvas.height / rect.height
+        };
+    }
+
+    canvas?.addEventListener("pointerdown", event => {
+        if (!context) return;
+        event.preventDefault();
+        snapshot();
+        drawing = true;
+        hint.hidden = true;
+        canvas.setPointerCapture(event.pointerId);
+        const point = pointFromEvent(event);
+        context.beginPath();
+        context.moveTo(point.x, point.y);
+        context.lineWidth = 5;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.strokeStyle = "#111111";
+        context.lineTo(point.x + 0.1, point.y + 0.1);
+        context.stroke();
+    });
+
+    canvas?.addEventListener("pointermove", event => {
+        if (!drawing || !context) return;
+        event.preventDefault();
+        const point = pointFromEvent(event);
+        context.lineTo(point.x, point.y);
+        context.stroke();
+    });
+
+    function stopDrawing() {
+        drawing = false;
+        context?.closePath();
+    }
+    canvas?.addEventListener("pointerup", stopDrawing);
+    canvas?.addEventListener("pointercancel", stopDrawing);
+    canvas?.addEventListener("lostpointercapture", stopDrawing);
+
+    document.getElementById("undoSignatureStroke")?.addEventListener("click", () => {
+        const previous = history.pop();
+        if (!previous) return;
+        context.putImageData(previous, 0, 0);
+        hint.hidden = !isCanvasEmpty();
+    });
+
+    function isCanvasEmpty() {
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        for (let i = 3; i < pixels.length; i += 4) {
+            if (pixels[i] !== 0) return false;
+        }
+        return true;
+    }
+
+    document.getElementById("clearSignatureCanvas")?.addEventListener("click", clearCanvas);
+    sizeInput?.addEventListener("input", () => {
+        sizeOutput.value = sizeInput.value + "%";
+        sizeOutput.textContent = sizeInput.value + "%";
+    });
+
+    function createTransparentSignature() {
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        let minX = canvas.width, minY = canvas.height, maxX = -1, maxY = -1;
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                if (pixels.data[(y * canvas.width + x) * 4 + 3] > 12) {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        }
+        if (maxX < minX || maxY < minY) {
+            throw new Error("Please draw the signature before saving.");
         }
 
-        showResultFooterMessage(
-            "Result footer settings saved successfully.",
-            "success"
+        const padding = 18;
+        minX = Math.max(0, minX - padding);
+        minY = Math.max(0, minY - padding);
+        maxX = Math.min(canvas.width - 1, maxX + padding);
+        maxY = Math.min(canvas.height - 1, maxY + padding);
+        const cropWidth = maxX - minX + 1;
+        const cropHeight = maxY - minY + 1;
+
+        const output = document.createElement("canvas");
+        output.width = 1200;
+        output.height = 300;
+        const outputContext = output.getContext("2d");
+        const requestedWidth = output.width * (Number(sizeInput.value) / 100);
+        const scale = Math.min(requestedWidth / cropWidth, 250 / cropHeight);
+        const drawWidth = cropWidth * scale;
+        const drawHeight = cropHeight * scale;
+        outputContext.drawImage(
+            canvas,
+            minX, minY, cropWidth, cropHeight,
+            (output.width - drawWidth) / 2,
+            (output.height - drawHeight) / 2,
+            drawWidth, drawHeight
         );
-    } catch (error) {
-        showResultFooterMessage(error.message, "error");
-    } finally {
-        saveResultFooterButton.disabled = false;
-        saveResultFooterButton.textContent = "Save Result Footer";
+        return output.toDataURL("image/png");
     }
-});
 
-loadResultFooterSettings();
+    function openEditor(role) {
+        activeRole = role;
+        clearCanvas();
+        document.getElementById("signatureEditorTitle").textContent =
+            role === "class_teacher" ? "Class Teacher Signature" : "Director / Principal Signature";
+        sizeInput.value = "85";
+        sizeOutput.value = "85%";
+        sizeOutput.textContent = "85%";
+        showEditorMessage("");
+        if (typeof dialog.showModal === "function") dialog.showModal();
+        else dialog.setAttribute("open", "");
+    }
+
+    document.querySelectorAll("[data-signature-role]").forEach(button => {
+        button.addEventListener("click", () => openEditor(button.dataset.signatureRole));
+    });
+
+    function closeEditor() {
+        if (typeof dialog.close === "function") dialog.close();
+        else dialog.removeAttribute("open");
+        activeRole = null;
+    }
+
+    document.getElementById("closeSignatureEditor")?.addEventListener("click", closeEditor);
+    document.getElementById("cancelSignatureEditor")?.addEventListener("click", closeEditor);
+
+    document.getElementById("saveDrawnSignature")?.addEventListener("click", async () => {
+        if (!activeRole) return;
+        const button = document.getElementById("saveDrawnSignature");
+        button.disabled = true;
+        showEditorMessage("Preparing transparent signature…");
+        try {
+            const dataUrl = createTransparentSignature();
+            const payload = {
+                class_teacher_signature_image: activeRole === "class_teacher" ? dataUrl : undefined,
+                director_signature_image: activeRole === "director" ? dataUrl : undefined,
+                result_signature_date: dateInput?.value || ""
+            };
+            const data = await requestSettings("POST", payload);
+            const settings = data.settings || {};
+            if (activeRole === "class_teacher") {
+                signatures.class_teacher.path = settings.class_teacher_signature_image || "";
+                signatures.class_teacher.legacy = "";
+            } else {
+                signatures.director.path = settings.director_signature_image || "";
+                signatures.director.legacy = "";
+            }
+            renderSignature(activeRole);
+            showMessage("Signature saved and applied to all student results.", "success");
+            closeEditor();
+        } catch (error) {
+            showEditorMessage(error.message || "Unable to save signature.");
+        } finally {
+            button.disabled = false;
+        }
+    });
+
+    document.querySelectorAll("[data-signature-clear]").forEach(button => {
+        button.addEventListener("click", async () => {
+            const role = button.dataset.signatureClear;
+            if (!window.confirm("Remove this shared signature from all student results?")) return;
+            button.disabled = true;
+            try {
+                const payload = {
+                    class_teacher_signature_image: role === "class_teacher" ? "" : undefined,
+                    director_signature_image: role === "director" ? "" : undefined,
+                    result_signature_date: dateInput?.value || ""
+                };
+                const data = await requestSettings("POST", payload);
+                const settings = data.settings || {};
+                signatures[role].path = settings[role === "class_teacher" ? "class_teacher_signature_image" : "director_signature_image"] || "";
+                signatures[role].legacy = "";
+                renderSignature(role);
+                showMessage("Signature removed from all student results.", "success");
+            } catch (error) {
+                showMessage(error.message, "error");
+            } finally {
+                button.disabled = false;
+            }
+        });
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        saveDateButton.disabled = true;
+        saveDateButton.textContent = "Saving…";
+        showMessage("", "");
+        try {
+            await requestSettings("POST", {
+                result_signature_date: dateInput?.value || ""
+            });
+            showMessage("Shared result date saved successfully.", "success");
+        } catch (error) {
+            showMessage(error.message, "error");
+        } finally {
+            saveDateButton.disabled = false;
+            saveDateButton.textContent = "Save Result Date";
+        }
+    });
+
+    loadSettings();
+})();
 
 
 /* MARKAZ Support WhatsApp setting — independent of existing settings handlers */
