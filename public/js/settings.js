@@ -643,6 +643,7 @@ loadAcademicPeriodSettings();
         if (!previous) return;
         context.putImageData(previous, 0, 0);
         hint.hidden = !isCanvasEmpty();
+        updateSignaturePreview();
     });
 
     function isCanvasEmpty() {
@@ -689,8 +690,13 @@ loadAcademicPeriodSettings();
         output.width = 1200;
         output.height = 300;
         const outputContext = output.getContext("2d");
-        const requestedWidth = output.width * (Number(sizeInput.value) / 100);
-        const scale = Math.min(requestedWidth / cropWidth, 250 / cropHeight);
+        // Fit the complete signature first, then apply the selected percentage.
+        // This keeps every slider value effective even when height is the limiting dimension.
+        const fitScale = Math.min(
+            (output.width * 0.9) / cropWidth,
+            (output.height * 0.8) / cropHeight
+        );
+        const scale = fitScale * (Number(sizeInput.value) / 100);
         const drawWidth = cropWidth * scale;
         const drawHeight = cropHeight * scale;
         outputContext.drawImage(
