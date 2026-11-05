@@ -42,7 +42,8 @@ printProfileCheck(
     !str_contains($thresholdNavigation, 'result-print-scale') &&
     !str_contains(file_get_contents(__DIR__ . '/../public/css/settings.css'), 'result-print-scale-card') &&
     !file_exists(__DIR__ . '/../public/js/result-print-scale-settings.js') &&
-    !file_exists(__DIR__ . '/../api/settings/result-print-scale.php'),
+    !file_exists(__DIR__ . '/../api/settings/result-print-scale.php') &&
+    !file_exists(__DIR__ . '/../public/api/settings/result-print-scale.php'),
     'the obsolete print-scale setting must be removed from Settings, navigation, styling, frontend and backend'
 );
 $scaleCleanupMigration = file_get_contents(__DIR__ . '/../database/migrations/20261105_remove_result_print_scale.sql');
