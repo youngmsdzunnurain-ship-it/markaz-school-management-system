@@ -1110,7 +1110,9 @@ document.addEventListener("focusin", event => {
         !validateScoreInput(lastFocusedScoreInput)
     ) {
         const invalidInput = lastFocusedScoreInput;
+        event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         invalidInput.focus({ preventScroll: true });
         invalidInput.select();
         return;
@@ -1121,6 +1123,23 @@ document.addEventListener("focusin", event => {
     // Select the existing score so typing replaces it instead of appending to it.
     requestAnimationFrame(() => {
         if (document.activeElement === input) input.select();
+    });
+}, true);
+
+// Mobile keyboards can move focus with Next/Go without dispatching Enter.
+// Restore focus if the browser attempts to leave an invalid score field.
+document.addEventListener("focusout", event => {
+    if (!isEditMode) return;
+    const input = event.target.closest(".result-score-input");
+    if (!input || validateScoreInput(input)) return;
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    requestAnimationFrame(() => {
+        if (isEditMode && input.isConnected && !validateScoreInput(input)) {
+            input.focus({ preventScroll: true });
+            input.select();
+        }
     });
 }, true);
 
