@@ -110,11 +110,11 @@ function getAcademicDescriptor(score) {
     const result = getGrade(score);
 
     const descriptors = {
-        A: "Phenomenal",
-        B: "Awesome",
-        C: "Brilliant",
+        A: "Awesome",
+        B: "Phenomenal",
+        C: "Impressive",
         D: "Promising",
-        E: "You Can Do Better"
+        E: "Poor"
     };
 
     return descriptors[result] || "Awaiting results";
@@ -124,11 +124,11 @@ function getTeacherOverallRemark(score) {
     const result = getGrade(score);
 
     const remarks = {
-        A: "Phenomenal performance. The student has shown exceptional understanding, effort and consistency. Keep up the outstanding work.",
-        B: "Awesome performance. The student is doing very well and is encouraged to maintain this strong effort.",
-        C: "Brilliant progress. With continued effort and consistency, the student can achieve even more.",
-        D: "Promising performance. The student is encouraged to put in more effort and remain consistent for further improvement.",
-        E: "You can do better. With regular practice, guidance and consistent effort, the student can make meaningful progress."
+        A: "Awesome performance. The student has demonstrated outstanding understanding, effort and consistency.",
+        B: "Phenomenal performance. The student has shown exceptional understanding and effort.",
+        C: "Impressive performance. The student has shown good understanding and encouraging progress.",
+        D: "Promising performance. The student should keep practising and work towards stronger results.",
+        E: "Poor performance. The student needs additional support, regular practice and focused effort."
     };
 
     return remarks[result] || "Awaiting final assessment.";
@@ -586,45 +586,12 @@ function getGradeBadgeStyle(grade) {
 }
 
 function getGradeRemark(score) {
-    if (!Number.isFinite(score)) {
-        return {
-            grade: "—",
-            remark: "—"
-        };
-    }
-
-    if (score >= 80) {
-        return {
-            grade: "A",
-            remark: "Excellent"
-        };
-    }
-
-    if (score >= 70) {
-        return {
-            grade: "B",
-            remark: "Very Good"
-        };
-    }
-
-    if (score >= 50) {
-        return {
-            grade: "C",
-            remark: "Brilliant"
-        };
-    }
-
-    if (score >= 30) {
-        return {
-            grade: "D",
-            remark: "Promising"
-        };
-    }
-
-    return {
-        grade: "E",
-        remark: "You Can Do Better"
-    };
+    if (!Number.isFinite(score)) return { grade: "—", remark: "—" };
+    if (score >= 80) return { grade: "A", remark: "Awesome" };
+    if (score >= 70) return { grade: "B", remark: "Phenomenal" };
+    if (score >= 50) return { grade: "C", remark: "Impressive" };
+    if (score >= 30) return { grade: "D", remark: "Promising" };
+    return { grade: "E", remark: "Poor" };
 }
 
 function getEditedSubjectValues(subjectId) {
@@ -1070,14 +1037,11 @@ function validateScoreInput(input) {
             value > max
         );
 
-    input.classList.toggle(
-        "score-invalid",
-        invalid
-    );
-
-    input.classList.toggle(
-        "score-valid",
-        !invalid && value !== null
+    input.classList.toggle("score-invalid", invalid);
+    input.classList.toggle("score-valid", !invalid && value !== null);
+    input.setAttribute("aria-invalid", invalid ? "true" : "false");
+    input.setCustomValidity(
+        invalid ? `Enter a score from 0 to ${max}.` : ""
     );
 
     return !invalid;
@@ -1149,7 +1113,11 @@ document.addEventListener("input", event => {
 
     const rawValue = input.value.trim();
 
-    validateScoreInput(input);
+    // Keep an over-limit score in this field until the user corrects it.
+    if (!validateScoreInput(input)) {
+        input.focus({ preventScroll: true });
+        return;
+    }
 
     const row = input.closest("tr");
     updateEditedResultRow(row);
