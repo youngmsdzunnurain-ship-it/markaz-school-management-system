@@ -1393,24 +1393,7 @@ async function authorizeAndPrint(permission) {
     }
 }
 
-$("printStudentResultButton")?.addEventListener(
-    "click",
-    () => {
-        if (isPrintMode) {
-            // The print-mode result API already verifies print permission on the server.
-            // Set the suggested PDF filename before opening the print dialog.
-            setStudentResultDocumentTitle();
-            // Keep the print call synchronous to preserve browser user activation.
-            window.print();
-            return;
-        }
-        authorizeAndPrint("print_results");
-    }
-);
-$("downloadStudentPdfButton")?.addEventListener(
-    "click",
-    () => authorizeAndPrint("export_results")
-);
+// Print and PDF actions belong exclusively to student-result-print.html.
 
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
