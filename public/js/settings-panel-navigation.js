@@ -67,6 +67,13 @@
         elements: [page.querySelector(".result-print-scale-card")].filter(Boolean)
       },
       {
+        id: "result-print-threshold",
+        label: "Print Eligibility Threshold",
+        icon: "fa-clipboard-check",
+        description: "Set the minimum result-entry completion required before a student's result can be printed.",
+        elements: [page.querySelector(".result-print-threshold-card")].filter(Boolean)
+      },
+      {
         id: "memorization",
         label: "Qur’an Memorization",
         icon: "fa-book-open",

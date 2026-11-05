@@ -5009,22 +5009,50 @@ body {
 @media (max-width: 560px) { .settings-page .result-print-scale-card form { grid-template-columns: minmax(0, 1fr); } .settings-page .result-print-scale-card #saveResultPrintScaleButton { width: 100%; } }
 
 
-/* Single persisted print-eligibility setting */
+/* Print eligibility threshold — dedicated Settings category */
 .settings-page .result-print-threshold-card {
-    border: 1px solid #d8e5dc;
-    border-radius: 16px;
-    padding: clamp(18px, 2.5vw, 28px);
-    background: #fff;
-    box-shadow: 0 8px 24px rgba(18, 61, 42, .06);
+    position: relative;
+    overflow: hidden;
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid #d6e6da;
+    border-top: 4px solid var(--markaz-gold);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #ffffff 0%, #f4faf6 100%);
+    box-shadow: 0 12px 30px rgba(18, 61, 42, .075);
+}
+.settings-page .result-print-threshold-card::after {
+    content: "";
+    position: absolute;
+    top: -54px;
+    right: -42px;
+    width: 150px;
+    height: 150px;
+    border: 1px solid rgba(176, 139, 53, .16);
+    border-radius: 50%;
+    pointer-events: none;
 }
 .settings-page .result-print-threshold-card .settings-card-heading {
-    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 22px;
+}
+.settings-page .result-print-threshold-card .settings-label {
+    color: #9b7621;
+    font-weight: 850;
+    letter-spacing: .11em;
 }
 .settings-page .result-print-threshold-card h2 {
-    margin: 6px 0;
+    margin: 7px 0;
     color: #174b32;
+    font-size: clamp(19px, 2.5vw, 22px);
+}
+.settings-page .result-print-threshold-card .settings-card-heading p {
+    max-width: 680px;
+    line-height: 1.7;
 }
 .settings-page .result-print-threshold-card form {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
@@ -5034,43 +5062,60 @@ body {
     display: grid;
     gap: 8px;
     color: #294a36;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
 }
 .settings-page .result-print-threshold-card #resultPrintThreshold {
     width: 100%;
-    min-height: 48px;
-    padding: 11px 14px;
-    border: 1px solid #bfd2c4;
-    border-radius: 10px;
+    min-height: 50px;
+    padding: 12px 15px;
+    border: 1px solid #bfd5c5;
+    border-radius: 11px;
     background: #fff;
     color: #203b2a;
     font: inherit;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(18, 61, 42, .035);
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+.settings-page .result-print-threshold-card #resultPrintThreshold:focus-visible {
+    border-color: #98751f;
+    outline: 3px solid rgba(216, 189, 112, .3);
+    outline-offset: 2px;
 }
 .settings-page .result-print-threshold-card #saveResultPrintThresholdButton {
-    min-height: 48px;
-    padding: 11px 20px;
-    border: 0;
-    border-radius: 10px;
-    background: #176342;
+    min-height: 50px;
+    padding: 12px 22px;
+    border: 1px solid #176342;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #1d7548, #124b32);
     color: #fff;
     font: inherit;
-    font-weight: 750;
+    font-weight: 800;
+    box-shadow: 0 5px 13px rgba(23, 99, 66, .18);
     cursor: pointer;
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.settings-page .result-print-threshold-card #saveResultPrintThresholdButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #176342, #0b3925);
+    box-shadow: 0 7px 17px rgba(23, 99, 66, .22);
+    transform: translateY(-1px);
 }
 .settings-page .result-print-threshold-card #saveResultPrintThresholdButton:disabled {
     opacity: .65;
     cursor: wait;
+    transform: none;
 }
 .settings-page .result-print-threshold-card #resultPrintThresholdMessage {
     grid-column: 1 / -1;
-    min-height: 1.4em;
+    min-height: 1.5em;
     margin: 0;
-}
-.settings-page .result-print-threshold-card :is(#resultPrintThreshold, #saveResultPrintThresholdButton):focus-visible {
-    outline: 3px solid #d8bd70;
-    outline-offset: 3px;
+    line-height: 1.5;
 }
 @media (max-width: 560px) {
+    .settings-page .result-print-threshold-card {
+        padding: 20px 16px;
+    }
     .settings-page .result-print-threshold-card form {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -5078,5 +5123,3 @@ body {
         width: 100%;
     }
 }
-
-
