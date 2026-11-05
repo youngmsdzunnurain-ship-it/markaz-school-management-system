@@ -165,44 +165,20 @@
     display: contents !important;
   }
   #studentReportCard .school-logo {
-    position: relative !important;
-    isolation: isolate !important;
-    box-sizing: border-box !important;
     width: calc(25 * var(--u)) !important;
     height: calc(25 * var(--u)) !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: calc(.8 * var(--u)) solid transparent !important;
-    border-radius: 50% !important;
-    background:
-      linear-gradient(#fff, #fff) padding-box,
-      linear-gradient(135deg, #087f5b 0%, #32966f 35%, #c99a24 68%, #e0b94f 100%) border-box !important;
-    box-shadow:
-      0 calc(1.8 * var(--u)) calc(4.5 * var(--u)) rgba(8,127,91,.14),
-      0 calc(1 * var(--u)) calc(3 * var(--u)) rgba(201,154,36,.10) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
     overflow: visible !important;
   }
-  #studentReportCard .school-logo::before {
-    content: "" !important;
-    position: absolute !important;
-    inset: calc(-2 * var(--u)) !important;
-    z-index: 1 !important;
-    box-sizing: border-box !important;
-    border: calc(.55 * var(--u)) solid transparent !important;
-    border-radius: 50% !important;
-    background:
-      linear-gradient(#fff, #fff) padding-box,
-      linear-gradient(135deg, rgba(8,127,91,.75), rgba(201,154,36,.72)) border-box !important;
-    pointer-events: none !important;
-  }
   #studentReportCard .school-logo img {
-    position: relative !important;
-    z-index: 2 !important;
     display: block !important;
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
-    object-position: center !important;
   }
   #studentReportCard .school-heading {
     text-align: center !important;
