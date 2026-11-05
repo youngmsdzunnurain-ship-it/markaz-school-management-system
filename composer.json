@@ -1,0 +1,13 @@
+{
+  "name": "markaz/result-management-system",
+  "description": "MARKAZ Result Management System",
+  "type": "project",
+  "require": {
+    "php": "^8.1",
+    "phpmailer/phpmailer": "^7.0"
+  },
+  "config": {
+    "allow-plugins": {},
+    "sort-packages": true
+  }
+}

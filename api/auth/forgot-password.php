@@ -74,29 +74,16 @@ try {
     }
 
     $resetUrl = $baseUrl . '/reset-password.html#token=' . rawurlencode($token);
-    $from = (string) ($_ENV['MAIL_FROM'] ?? 'no-reply@' . (parse_url($baseUrl, PHP_URL_HOST) ?: 'localhost'));
-    if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-        throw new RuntimeException('MAIL_FROM must be a valid email address.');
-    }
-    $subject = 'MARKAZ administrator password reset';
-    $safeName = htmlspecialchars((string) $admin['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $safeUrl = htmlspecialchars($resetUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $body = "<!doctype html><html><body style=\"font-family:Arial,sans-serif;color:#183326;line-height:1.6\">"
-        . "<h2>MARKAZ password reset</h2><p>Hello {$safeName},</p>"
-        . "<p>A password reset was requested for your administrator account.</p>"
-        . "<p><a href=\"{$safeUrl}\" style=\"display:inline-block;padding:12px 20px;background:#176b45;color:#fff;text-decoration:none;border-radius:8px\">Reset Password</a></p>"
-        . "<p>This link expires in 30 minutes and can only be used once. If you did not request this, you can ignore this email.</p></body></html>";
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-        'From: MARKAZ <' . $from . '>',
-        'Reply-To: ' . $from,
-        'X-Mailer: PHP/' . PHP_VERSION
-    ];
-
-    if (!mail((string) $admin['email'], $subject, $body, implode("\r\n", $headers))) {
+    require_once __DIR__ . '/../../app/services/password-reset-mailer.php';
+    try {
+        sendMarkazPasswordResetEmail(
+            (string) $admin['email'],
+            (string) $admin['name'],
+            $resetUrl
+        );
+    } catch (Throwable $mailError) {
         $pdo->prepare("DELETE FROM admin_password_resets WHERE token_hash = ?")->execute([$tokenHash]);
-        throw new RuntimeException('The server mail service could not send the password reset email.');
+        throw $mailError;
     }
 
     forgotResponse();
