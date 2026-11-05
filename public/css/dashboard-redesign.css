@@ -3555,3 +3555,207 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     .dashboard-chart-legend { gap: 10px 14px; }
     .dashboard-attendance-footnote { padding: 10px 14px; }
 }
+
+
+/* SECTION 5 — QUICK ACCESS, ADMINISTRATOR AND FOOTER */
+.dashboard-bottom-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 860fr) minmax(0, 404fr);
+    gap: 20px;
+    align-items: stretch;
+}
+.dashboard-bottom-layout > .panel {
+    min-width: 0;
+    min-height: 190px;
+    height: auto;
+    padding: 24px;
+    overflow: visible;
+    border: 1px solid #dfe5d6;
+    border-radius: 16px;
+    background: #fbfcf6;
+    box-shadow: 0 4px 14px rgba(20,71,47,.05);
+}
+.dashboard-bottom-layout > .panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    height: 3px;
+    border-radius: 2px;
+    background: #c9a24a;
+    pointer-events: none;
+}
+.dashboard-bottom-layout .panel-header {
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+.dashboard-bottom-layout .panel-header .eyebrow {
+    color: #9a7a2c;
+    font: 600 11px/1.2 Inter, system-ui, sans-serif;
+    letter-spacing: 1px;
+}
+.dashboard-bottom-layout .panel-header h3 {
+    margin: 4px 0 0;
+    color: #14472f;
+    font: 600 19px/1.2 'Playfair Display', Lora, Georgia, serif;
+}
+.dashboard-bottom-layout .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+.dashboard-bottom-layout .quick-actions button {
+    min-width: 0;
+    height: 48px;
+    min-height: 48px;
+    padding: 0 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid #dfe5d6;
+    border-radius: 12px;
+    background: #f5f7f1;
+    color: #14472f;
+    font: 500 13px/1.25 Inter, system-ui, sans-serif;
+    text-align: left;
+    white-space: normal;
+    box-shadow: none;
+}
+.dashboard-bottom-layout .quick-actions button i {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex: 0 0 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: #e8f3ea;
+    color: #14472f;
+    font-size: 14px;
+}
+.dashboard-bottom-layout .quick-actions button span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.dashboard-bottom-layout .quick-actions button:hover {
+    border-color: #c9a24a;
+    background: #fbfcf6;
+}
+.dashboard-bottom-layout .admin-profile-display {
+    min-width: 0;
+    margin: 0 0 12px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 0;
+    background: transparent;
+}
+.dashboard-bottom-layout .admin-profile-photo {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border: 2px solid #c9a24a;
+    border-radius: 50%;
+    background-color: #14472f;
+    box-shadow: none;
+}
+.dashboard-bottom-layout .admin-profile-summary {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+}
+.dashboard-bottom-layout .admin-profile-summary strong {
+    overflow: hidden;
+    color: #14472f;
+    font: 600 16px/1.25 'Playfair Display', Lora, Georgia, serif;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dashboard-bottom-layout .admin-profile-summary span {
+    min-width: 0;
+    overflow: hidden;
+    color: #6b7a70;
+    font: 400 12px/1.35 Inter, system-ui, sans-serif;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dashboard-bottom-layout .admin-details {
+    border: 1px solid #dfe5d6;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.dashboard-bottom-layout .admin-details > div {
+    min-width: 0;
+    min-height: 34px;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-top: 1px solid #edf1ec;
+}
+.dashboard-bottom-layout .admin-details > div:first-child { border-top: 0; }
+.dashboard-bottom-layout .admin-details span {
+    flex: 0 0 auto;
+    color: #6b7a70;
+    font: 500 11px/1.25 Inter, system-ui, sans-serif;
+}
+.dashboard-bottom-layout .admin-details strong {
+    min-width: 0;
+    max-width: 72%;
+    overflow: hidden;
+    color: #1d2b22;
+    font: 500 11px/1.25 Inter, system-ui, sans-serif;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dashboard-bottom-layout .admin-details .status-active {
+    width: 76px;
+    height: 22px;
+    max-width: 76px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background: #e8f3ea;
+    color: #1d6b43;
+    font: 600 12px/22px Inter, system-ui, sans-serif;
+}
+.dashboard-footer {
+    min-width: 0;
+    min-height: 40px;
+    padding: 16px 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid #dfe5d6;
+    background: transparent;
+    color: #6b7a70;
+    font: 400 12px/1.4 Inter, system-ui, sans-serif;
+}
+.dashboard-footer .footer-brand {
+    color: #14472f;
+    font: 600 14px/1.2 'Playfair Display', Lora, Georgia, serif;
+    letter-spacing: 2px;
+}
+.dashboard-footer .footer-school { flex: 1 1 280px; text-align: center; }
+.dashboard-footer .footer-copyright { color: #6b7a70; }
+
+@media (max-width: 1279px) {
+    .dashboard-bottom-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}
+@media (max-width: 767px) {
+    .dashboard-bottom-layout .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-bottom-layout > .panel { padding: 20px 16px; }
+    .dashboard-footer { padding: 16px 16px 0; }
+}
