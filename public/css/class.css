@@ -1453,3 +1453,13 @@
 .completion-bar-row strong{font-size:.8rem;color:#123d2a;text-align:right}
 @media(max-width:700px){.results-completion-charts{grid-template-columns:1fr}.completion-chart-card{padding:17px}.completion-students-card{min-width:0}.completion-bar-row{grid-template-columns:minmax(75px,1fr) minmax(55px,1.5fr) 38px;gap:7px}}
 @media print{.results-toolbar,.results-heading-actions,.results-message,.sidebar,.topbar{display:none!important}.results-completion-charts{break-inside:avoid}}
+
+
+/* Result-entry score limit feedback: values above each field's max turn red. */
+.result-score-input.score-invalid,
+.result-score-input:invalid {
+    border-color: #dc2626 !important;
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .10) !important;
+}
