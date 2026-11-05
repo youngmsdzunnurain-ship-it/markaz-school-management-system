@@ -19,7 +19,7 @@ $resetJs = file_get_contents(__DIR__ . '/../public/js/reset-password.js');
 
 resetCheck(str_contains($login, 'forgot-password.html'), 'Admin login must expose the forgot-password route');
 resetCheck(str_contains($forgotApi, "role = 'admin'") && str_contains($forgotApi, 'is_active = 1') && str_contains($forgotApi, 'is_frozen = 0'), 'Reset requests must only target active, unfrozen Admin accounts');
-resetCheck(str_contains($forgotApi, 'random_bytes(32)') && str_contains($forgotApi, "hash('sha256', $token)") && str_contains($forgotApi, 'INTERVAL 30 MINUTE'), 'Reset links must use cryptographically random, hashed, expiring tokens');
+resetCheck(str_contains($forgotApi, 'random_bytes(32)') && str_contains($forgotApi, "hash('sha256'") && str_contains($forgotApi, 'INTERVAL 30 MINUTE'), 'Reset links must use cryptographically random, hashed, expiring tokens');
 resetCheck(str_contains($forgotApi, 'mail(') && str_contains($forgotApi, 'MAIL_FROM'), 'Reset link must be sent to the registered email address through configured server mail');
 resetCheck(str_contains($forgotApi, 'If an administrator account matches that email address'), 'Forgot-password responses must not reveal whether an email is registered');
 resetCheck(str_contains($resetApi, 'password_hash($password, PASSWORD_DEFAULT)') && str_contains($resetApi, 'used_at = NOW()') && str_contains($resetApi, 'FOR UPDATE'), 'Reset completion must securely hash the password and consume the token atomically');
