@@ -511,25 +511,63 @@ function applyDashboardRoleAccess(role, permissions = {}) {
    ========================================================= */
 
 
-function dashboardDonutGradient(values) {
+function renderAttendanceDonut(element, values, size, radius, strokeWidth) {
+    if (!element) return;
+
+    const namespace = "http://www.w3.org/2000/svg";
+    const center = size / 2;
+    const circumference = 2 * Math.PI * radius;
     const total = values.reduce((sum, item) => sum + Math.max(0, Number(item.value) || 0), 0);
-    const track = "#e6eadf";
-    if (!total) return "conic-gradient(from -90deg, " + track + " 0deg 360deg)";
-    const gap = 2.2;
-    let cursor = 0;
-    const parts = [];
-    values.forEach(item => {
-        const amount = Math.max(0, Number(item.value) || 0);
-        if (!amount) return;
-        const sweep = amount / total * 360;
-        const start = cursor;
-        const finish = cursor + sweep;
-        parts.push(track + " " + start.toFixed(2) + "deg " + Math.min(finish, start + gap / 2).toFixed(2) + "deg");
-        parts.push(item.color + " " + Math.min(finish, start + gap / 2).toFixed(2) + "deg " + Math.max(start + gap / 2, finish - gap / 2).toFixed(2) + "deg");
-        parts.push(track + " " + Math.max(start + gap / 2, finish - gap / 2).toFixed(2) + "deg " + finish.toFixed(2) + "deg");
-        cursor = finish;
-    });
-    return "conic-gradient(from -90deg, " + parts.join(", ") + ")";
+    let previousLength = 0;
+
+    let svg = element.querySelector("svg.attendance-donut-svg");
+    if (!svg) {
+        svg = document.createElementNS(namespace, "svg");
+        svg.classList.add("attendance-donut-svg");
+        svg.setAttribute("viewBox", "0 0 " + size + " " + size);
+        svg.setAttribute("aria-hidden", "true");
+        element.insertBefore(svg, element.firstChild);
+    }
+    svg.replaceChildren();
+
+    const track = document.createElementNS(namespace, "circle");
+    track.setAttribute("cx", center);
+    track.setAttribute("cy", center);
+    track.setAttribute("r", radius);
+    track.setAttribute("fill", "none");
+    track.setAttribute("stroke", "#e6eadf");
+    track.setAttribute("stroke-width", strokeWidth);
+    svg.appendChild(track);
+
+    if (total > 0) {
+        const segments = document.createElementNS(namespace, "g");
+        segments.setAttribute("transform", "rotate(-90 " + center + " " + center + ")");
+        values.forEach(item => {
+            const amount = Math.max(0, Number(item.value) || 0);
+            if (!amount) return;
+
+            const length = circumference * amount / total;
+            const visibleLength = Math.max(0, length - 2.5);
+            const circle = document.createElementNS(namespace, "circle");
+            circle.setAttribute("cx", center);
+            circle.setAttribute("cy", center);
+            circle.setAttribute("r", radius);
+            circle.setAttribute("fill", "none");
+            circle.setAttribute("stroke", item.color);
+            circle.setAttribute("stroke-width", strokeWidth);
+            circle.setAttribute("stroke-linecap", "butt");
+            circle.setAttribute("stroke-dasharray", visibleLength + " " + (circumference - length + 2.5));
+            circle.setAttribute("stroke-dashoffset", String(-previousLength));
+            segments.appendChild(circle);
+            previousLength += length;
+        });
+        svg.appendChild(segments);
+    }
+
+    element.setAttribute(
+        "aria-label",
+        values.map(item => item.label + " " + item.value).join(", ")
+    );
 }
 
 function renderAttendanceComboChart(rows, category, target) {
@@ -673,11 +711,7 @@ async function loadDashboardAttendance() {
         const donut = document.getElementById("dashboardAttendanceDonut");
 
         if (donut) {
-            donut.style.background = dashboardDonutGradient(values);
-            donut.setAttribute(
-                "aria-label",
-                values.map(item => item.label + " " + item.value).join(", ")
-            );
+            renderAttendanceDonut(donut, values, 148, 66, 16);
         }
 
         setText("dashboardAttendanceMarked", total);
@@ -715,7 +749,7 @@ async function loadDashboardAttendance() {
             const categoryDonut = document.getElementById(categoryPrefix + "AttendanceDonut");
 
             if (categoryDonut) {
-                categoryDonut.style.background = dashboardDonutGradient(categoryValues);
+                renderAttendanceDonut(categoryDonut, categoryValues, 126, 56, 14);
                 const number = categoryDonut.querySelector("strong");
                 if (number) number.textContent = String(categoryTotal);
                 categoryDonut.setAttribute(
