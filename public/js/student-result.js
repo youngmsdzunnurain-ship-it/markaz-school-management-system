@@ -1433,25 +1433,25 @@ function buildDedicatedPrintUrl(autoPrint = false) {
 }
 
 printStudentResultButton?.addEventListener("click", () => {
-    if (isEditMode || !studentData) return;
-    window.open(buildDedicatedPrintUrl(false), "_blank", "noopener");
+    if (!studentData) return;
+    if (isPrintMode) {
+        authorizeAndPrint("print_results");
+        return;
+    }
+    if (isEditMode) return;
+    window.open(buildDedicatedPrintUrl(false), "_blank");
 });
 
-downloadStudentPdfButton?.addEventListener("click", async () => {
-    if (isEditMode || !studentData) return;
-    try {
-        const response = await fetch("./api/results/authorize-action.php?action=export_results", {
-            credentials: "same-origin",
-            cache: "no-store"
-        });
-        const data = await response.json();
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "You are not permitted to export results.");
-        }
-        window.open(buildDedicatedPrintUrl(true), "_blank", "noopener");
-    } catch (error) {
-        setResultActionStatus(error.message || "Unable to verify export permission.", "error");
+downloadStudentPdfButton?.addEventListener("click", () => {
+    if (!studentData) return;
+    if (isPrintMode) {
+        authorizeAndPrint("export_results");
+        return;
     }
+    if (isEditMode) return;
+    // Open synchronously from the click so mobile/desktop popup blockers do not
+    // discard the dedicated PDF/print window after an awaited permission check.
+    window.open(buildDedicatedPrintUrl(true), "_blank");
 });
 
 const editScoresButton = $("editScoresButton");
