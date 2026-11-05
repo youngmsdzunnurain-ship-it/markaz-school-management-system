@@ -200,10 +200,10 @@
   #studentReportCard .school-arabic-name::after {
     content: "" !important;
     display: block !important;
-    width: calc(90 * var(--u)) !important;
-    height: calc(3 * var(--u)) !important;
+    width: calc(34 * var(--u)) !important;
+    height: calc(.9 * var(--u)) !important;
     background: linear-gradient(90deg, #166534 0%, #c99a2e 50%, #166534 100%) !important;
-    margin: calc(7 * var(--u)) auto 0 !important;
+    margin: calc(2 * var(--u)) auto 0 !important;
     border-radius: 999px !important;
   }
   #studentReportCard .school-arabic-address {
@@ -211,7 +211,7 @@
     font-size: calc(10 * var(--p)) !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
-    color: var(--ink) !important;
+    color: var(--gold) !important;
     margin-top: calc(1 * var(--u)) !important;
   }
   #studentReportCard .school-kicker {
