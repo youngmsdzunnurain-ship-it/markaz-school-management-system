@@ -1031,3 +1031,29 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
 });
 
 /* Sidebar controls are handled once by the shared responsive toggle above. */
+
+// Keep exactly ONE logout control in the sidebar (the icon button inside the profile card).
+// Any other logout button/link that another script adds to the sidebar is removed.
+(function keepSingleSidebarLogout() {
+    const sidebar = document.getElementById("sidebar");
+    const keep = document.getElementById("logoutButton");
+    if (!sidebar || !keep) return;
+    const looksLikeLogout = element => {
+        const text = element.children.length ? "" : (element.textContent || "");
+        const label = [element.id, element.className && element.className.toString(), element.getAttribute("href"), text]
+            .join(" ").toLowerCase();
+        return /log[\s_-]?out|sign[\s_-]?out/.test(label);
+    };
+    const clean = () => {
+        sidebar.querySelectorAll("button, a, div, span").forEach(element => {
+            if (element === keep || keep.contains(element) || element.contains(keep)) return;
+            if (looksLikeLogout(element)) element.remove();
+        });
+    };
+    clean();
+    let timer = null;
+    new MutationObserver(() => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(clean, 50);
+    }).observe(sidebar, { childList: true, subtree: true });
+})();

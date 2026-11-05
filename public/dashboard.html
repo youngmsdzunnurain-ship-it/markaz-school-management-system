@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261105-clean-v1">
+    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261105-clean-v3">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -56,11 +56,11 @@
                 <div class="sidebar-user">
                     <span class="sidebar-user-avatar" id="adminInitials"></span>
                     <span class="sidebar-user-text"><strong id="profileName">Administrator</strong><small>Administrator</small></span>
+                    <button type="button" id="logoutButton" class="logout-button" aria-label="Logout" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
-                <button type="button" id="logoutButton" class="logout-button">
-                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
-                    <span>Logout</span>
-                </button>
             </div>
         </aside>
 
@@ -178,13 +178,13 @@
                     </div>
                     <div class="dashboard-attendance-layout">
                         <section class="dashboard-attendance-category dashboard-attendance-conventional" aria-labelledby="conventionalAttendanceHeading">
-                            <h3 id="conventionalAttendanceHeading">Conventional</h3>
+                            <h3 id="conventionalAttendanceHeading"><i class="fa-solid fa-school" aria-hidden="true"></i>Conventional Attendance</h3>
                             <div id="dashboardConventionalAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Conventional attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardConventionalAttendanceLegend" class="dashboard-category-attendance-legend"></div>
                             
                         </section>
                         <div class="dashboard-attendance-summary">
-                            <div class="dashboard-attendance-summary-header"><strong>Overall Attendance</strong><span>Conventional + Arabic</span></div>
+                            <div class="dashboard-attendance-summary-header"><strong><i class="fa-solid fa-users" aria-hidden="true"></i>Overall Attendance</strong><span>Conventional + Arabic</span></div>
                             <div class="dashboard-attendance-donut-wrap">
                                 <div id="dashboardAttendanceDonut" class="dashboard-attendance-donut" role="img" aria-label="Today’s attendance breakdown"><div><strong id="dashboardAttendanceMarked">0</strong><span>Marked</span></div></div>
                                 <div class="dashboard-attendance-legend" id="dashboardAttendanceLegend"><span>Loading attendance summary…</span></div>
@@ -197,7 +197,7 @@
                             </div>
                         </div>
                         <section class="dashboard-attendance-category dashboard-attendance-arabic" aria-labelledby="arabicAttendanceHeading">
-                            <h3 id="arabicAttendanceHeading">Arabic</h3>
+                            <h3 id="arabicAttendanceHeading"><i class="fa-solid fa-book-open" aria-hidden="true"></i>Arabic Attendance</h3>
                             <div id="dashboardArabicAttendanceDonut" class="dashboard-category-attendance-donut" role="img" aria-label="Arabic attendance status breakdown"><div><strong>0</strong><span>Marked</span></div></div>
                             <div id="dashboardArabicAttendanceLegend" class="dashboard-category-attendance-legend"></div>
                             

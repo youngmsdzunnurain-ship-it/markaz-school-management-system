@@ -50,11 +50,10 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .nav-link.active i{color:#e6d9a4}
 .nav-link.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--gold)}
 .sidebar-bottom{flex:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
-.logout-button{width:100%;height:42px;display:flex;align-items:center;justify-content:center;gap:12px;border-radius:10px;cursor:pointer;
-  border:1px solid rgba(230,217,164,.35);background:rgba(255,255,255,.04);color:#e6d9a4;font:600 14px var(--sans)}
-.logout-button:hover{background:rgba(255,255,255,.1)}
-.logout-button:disabled{opacity:.6;cursor:wait}
+/* anything else injected into the sidebar bottom (old duplicate logout buttons) stays hidden */
+.sidebar-bottom>*:not(.sidebar-user){display:none!important}
 .sidebar-overlay{display:none}
+
 
 /* ---------- TOP BAR ---------- */
 .topbar{position:sticky;top:0;z-index:40;height:78px;padding:0 28px;display:flex;align-items:center;gap:12px;flex:none;
@@ -306,8 +305,57 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ---------- SIDEBAR USER CARD ---------- */
-.sidebar-user{height:68px;margin-bottom:12px;padding:0 12px;border-radius:12px;background:#1a5a3b;display:flex;align-items:center;gap:12px}
+.sidebar-user{height:68px;padding:0 12px;border-radius:12px;background:#1a5a3b;display:flex;align-items:center;gap:12px}
 .sidebar-user-avatar{width:36px;height:36px;flex:none;border-radius:50%;background:#e6d9a4;color:var(--dg);display:grid;place-items:center;font:700 12px var(--sans);overflow:hidden}
 .sidebar-user-text{min-width:0;display:flex;flex-direction:column;gap:2px}
 .sidebar-user-text strong{font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sidebar-user-text small{font-size:11px;color:#9fc4ad}
+
+.sidebar-user .logout-button{margin-left:auto;width:36px;height:36px;flex:none;padding:0;border:0;border-radius:10px;cursor:pointer;
+  display:grid;place-items:center;background:rgba(255,255,255,.1);color:#e6d9a4;font-size:15px}
+.sidebar-user .logout-button:hover{background:rgba(255,255,255,.2)}
+.sidebar-user .logout-button:disabled{opacity:.6;cursor:wait}
+.sidebar-user .logout-button span{display:none}
+.sidebar-user-text{flex:1}
+
+/* ---------- OVERRIDES THAT MUST BEAT app-watermark.css (!important) ---------- */
+body .sidebar.open{z-index:1200!important}                 /* drawer above the dark overlay */
+/* app-watermark.css forces every child of .main-content to position:relative;z-index:1, which made the top bar
+   non-sticky and let the page content cover the profile menu. This selector is more specific, so it wins. */
+.app > .main-content > header.topbar{position:sticky;top:0;z-index:1050}
+.admin-profile-wrap{z-index:1060}
+.profile-dropdown{z-index:1070}
+.main-content{overflow:visible}
+
+/* ---------- LAYOUT REFINEMENTS ---------- */
+/* attendance: Conventional | Overall | Arabic in ONE row from 820px of content width */
+@container att (min-width:820px){
+  .dashboard-attendance-layout{grid-template-columns:minmax(0,380fr) minmax(0,484fr) minmax(0,380fr)}
+  .dashboard-attendance-summary{grid-column:auto;order:0}
+}
+/* between 820px and 1099px the centre card is narrow, so its donut sits above its 4 tiles */
+@container att (min-width:820px) and (max-width:1099px){
+  .dashboard-attendance-summary{grid-template-columns:minmax(0,1fr);grid-template-rows:60px auto auto}
+  .dashboard-attendance-donut-wrap{grid-column:1;grid-row:2;padding:20px 20px 0;justify-content:center}
+  .dashboard-attendance-stats{grid-column:1;grid-row:3;padding:20px}
+}
+/* bottom row: Quick access 40% | Administrator 60% */
+@container page (min-width:820px){
+  .dashboard-bottom-layout{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+}
+.quick-access-panel{container:qa/inline-size}
+.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+@container qa (min-width:560px){
+  .quick-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+.administrator-panel{container:adm/inline-size}
+@container adm (min-width:480px){
+  .admin-profile-photo{width:64px;height:64px;font-size:20px}
+  .admin-profile-summary strong{font-size:18px}
+  .admin-profile-summary span{font-size:13px}
+  .admin-profile-display{margin-top:24px;margin-bottom:4px}
+}
+
+/* attendance card titles with icons, as in the approved design image */
+.dashboard-attendance-category h3,.dashboard-attendance-summary-header strong{display:flex;align-items:center;gap:10px}
+.dashboard-attendance-category h3 i,.dashboard-attendance-summary-header strong i{color:var(--g);font-size:15px;width:18px;text-align:center}
