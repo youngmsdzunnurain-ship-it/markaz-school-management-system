@@ -5270,19 +5270,14 @@ button.primary:hover,
 
 .report-card .school-kicker {
     margin-top: 6px !important;
-    color: #2a8f58;
+    color: #8a6a16;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
 }
 
-.report-card .school-address {
-    color: #2a8f58;
-    font-size: 11px;
-    line-height: 1.5;
-}
-
+.report-card .school-address,
 .report-card .school-contact {
     color: #64736c;
     font-size: 11px;
@@ -5770,7 +5765,7 @@ button.primary:hover,
     padding: 20px 24px;
     background:
         linear-gradient(135deg, #ffffff 0%, #f7fbf8 68%, #fffaf0 100%);
-    border-bottom: 3px solid #2a8f58;
+    border-bottom: 3px solid #b28a25;
     box-sizing: border-box;
     overflow: hidden;
 }

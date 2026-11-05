@@ -110,8 +110,8 @@ function getAcademicDescriptor(score) {
     const result = getGrade(score);
 
     const descriptors = {
-        A: "Excellent",
-        B: "Very Good",
+        A: "Phenomenal",
+        B: "Awesome",
         C: "Brilliant",
         D: "Promising",
         E: "You Can Do Better"
@@ -124,8 +124,8 @@ function getTeacherOverallRemark(score) {
     const result = getGrade(score);
 
     const remarks = {
-        A: "Excellent performance. The student has shown strong understanding, effort and consistency. Keep up the good work.",
-        B: "Very good performance. The student is doing well and is encouraged to maintain this strong effort.",
+        A: "Phenomenal performance. The student has shown exceptional understanding, effort and consistency. Keep up the outstanding work.",
+        B: "Awesome performance. The student is doing very well and is encouraged to maintain this strong effort.",
         C: "Brilliant progress. With continued effort and consistency, the student can achieve even more.",
         D: "Promising performance. The student is encouraged to put in more effort and remain consistent for further improvement.",
         E: "You can do better. With regular practice, guidance and consistent effort, the student can make meaningful progress."
@@ -1118,6 +1118,12 @@ document.addEventListener("keydown", event => {
     if (!input || event.key !== "Enter") return;
 
     event.preventDefault();
+
+    // Do not advance from an over-limit score (CA > 20 or Exam > 60).
+    if (!validateScoreInput(input)) {
+        input.focus();
+        return;
+    }
 
     const inputs = Array.from(
         document.querySelectorAll(".result-score-input")
