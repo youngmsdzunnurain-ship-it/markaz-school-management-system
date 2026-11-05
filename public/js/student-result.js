@@ -2042,41 +2042,41 @@ window.addEventListener("beforeunload", event => {
 });
 
 
-/* RESULT FOOTER SETTINGS */
+/* SHARED RESULT SIGNATURES */
 async function loadResultFooterSettings() {
     try {
         const response = await fetch("./api/settings/result-footer.php", {
             credentials: "same-origin",
             cache: "no-store"
         });
-
         const data = await response.json();
-
         if (!response.ok || !data.success) {
             throw new Error(data.message || "Unable to load result footer settings.");
         }
 
         const settings = data.settings || {};
+        const entries = [
+            ["classTeacherSignatureDisplay", settings.class_teacher_signature_image, settings.class_teacher_signature, "Class Teacher signature"],
+            ["directorSignatureDisplay", settings.director_signature_image, settings.director_signature, "Director / Principal signature"]
+        ];
 
-        const classTeacher = $("classTeacherSignatureDisplay");
-        const director = $("directorSignatureDisplay");
+        entries.forEach(([id, imagePath, legacyText, alt]) => {
+            const target = $(id);
+            if (!target) return;
+            target.replaceChildren();
+            if (imagePath) {
+                const image = document.createElement("img");
+                image.className = "result-signature-image";
+                image.src = "./" + String(imagePath).replace(/^\/+/, "") + "?v=" + Date.now();
+                image.alt = alt;
+                target.appendChild(image);
+            } else {
+                target.textContent = legacyText || "—";
+            }
+        });
+
         const date = $("resultSignatureDateDisplay");
-
-        if (classTeacher) {
-            classTeacher.textContent =
-                settings.class_teacher_signature || "—";
-        }
-
-        if (director) {
-            director.textContent =
-                settings.director_signature || "—";
-        }
-
-        if (date) {
-            date.textContent =
-                settings.result_signature_date || "—";
-        }
-
+        if (date) date.textContent = settings.result_signature_date || "—";
     } catch (error) {
         console.error("Result footer settings:", error);
     }
