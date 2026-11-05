@@ -33,9 +33,23 @@ printProfileCheck(
 );
 printProfileCheck(
     preg_match('/<select id="resultPrintThreshold"[^>]*>(.*?)<\/select>/s', $settingsPage, $thresholdSelect) === 1 &&
-    preg_match_all('/<option value="([0-9]+)">/', $thresholdSelect[1], $thresholdOptionMatches) === 4 &&
-    $thresholdOptionMatches[1] === ['50', '80', '95', '100'],
-    'print threshold must offer only the four approved values: 50, 80, 95 and 100 percent'
+    preg_match_all('/<option value="([0-9]+)">/', $thresholdSelect[1], $thresholdOptionMatches) === 11 &&
+    $thresholdOptionMatches[1] === ['50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100'],
+    'print threshold must offer every 5-percent choice from 50 through 100 percent'
+);
+printProfileCheck(
+    !str_contains($settingsPage, 'resultPrintScale') &&
+    !str_contains($thresholdNavigation, 'result-print-scale') &&
+    !str_contains(file_get_contents(__DIR__ . '/../public/css/settings.css'), 'result-print-scale-card') &&
+    !file_exists(__DIR__ . '/../public/js/result-print-scale-settings.js') &&
+    !file_exists(__DIR__ . '/../api/settings/result-print-scale.php') &&
+    !file_exists(__DIR__ . '/../public/api/settings/result-print-scale.php'),
+    'the obsolete print-scale setting must be removed from Settings, navigation, styling, frontend and backend'
+);
+$scaleCleanupMigration = file_get_contents(__DIR__ . '/../database/migrations/20261105_remove_result_print_scale.sql');
+printProfileCheck(
+    str_contains($scaleCleanupMigration, "DELETE FROM settings WHERE setting_key = 'result_print_scale'"),
+    'the obsolete persisted print-scale setting must be removed without touching other settings'
 );
 printProfileCheck(
     str_contains($thresholdApi, 'result_print_completion_threshold') &&
