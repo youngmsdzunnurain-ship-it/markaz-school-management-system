@@ -217,6 +217,9 @@ async function loadStudentResult() {
     setEditMode(false);
     captureOriginalEditState();
     document.body.dataset.resultReady = "true";
+    if (params.get("auto_print") === "1" && isPrintMode) {
+        await authorizeAndPrint("export_results");
+    }
 }
 function renderStudentResult(data) {
     const student = data.student || {};
@@ -1414,6 +1417,43 @@ async function authorizeAndPrint(permission) {
 
 // Print and PDF actions belong exclusively to student-result-print.html.
 
+const printStudentResultButton = $("printStudentResultButton");
+const downloadStudentPdfButton = $("downloadStudentPdfButton");
+const resultDocumentActions = $("resultDocumentActions");
+
+function buildDedicatedPrintUrl(autoPrint = false) {
+    const query = new URLSearchParams({
+        student_id: studentId || "",
+        class_type: classType || "conventional"
+    });
+    if (classId) query.set("class_id", classId);
+    query.set("print", "1");
+    if (autoPrint) query.set("auto_print", "1");
+    return `./student-result-print.html?${query.toString()}`;
+}
+
+printStudentResultButton?.addEventListener("click", () => {
+    if (isEditMode || !studentData) return;
+    window.open(buildDedicatedPrintUrl(false), "_blank", "noopener");
+});
+
+downloadStudentPdfButton?.addEventListener("click", async () => {
+    if (isEditMode || !studentData) return;
+    try {
+        const response = await fetch("./api/results/authorize-action.php?action=export_results", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "You are not permitted to export results.");
+        }
+        window.open(buildDedicatedPrintUrl(true), "_blank", "noopener");
+    } catch (error) {
+        setResultActionStatus(error.message || "Unable to verify export permission.", "error");
+    }
+});
+
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
 const cancelScoresButton = $("cancelScoresButton");
@@ -1578,6 +1618,10 @@ function setEditMode(editing) {
 
     if (cancelScoresButton) {
         cancelScoresButton.hidden = !editing;
+    }
+
+    if (resultDocumentActions) {
+        resultDocumentActions.hidden = editing || !studentData;
     }
 
     if (studentData) {
