@@ -10619,3 +10619,73 @@ html body .report-card .memorization-value-row input { display: block !important
     .markaz-confirm-actions{grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
     .markaz-confirm-actions .markaz-confirm-leave{grid-column:auto!important}
 }
+
+
+/* Result toolbar stability: reserve fixed button slots and keep feedback outside the action row. */
+.student-result-page.management-view .student-edit-actions {
+    flex: 0 0 258px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+}
+.student-result-page.management-view .student-edit-actions button {
+    flex: 0 0 80px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+}
+.student-result-page.management-view .document-actions {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+}
+.student-result-page.management-view .document-actions button {
+    flex: 0 0 84px !important;
+    width: 84px !important;
+    min-width: 84px !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+}
+.student-result-page.management-view #downloadStudentPdfButton {
+    flex-basis: 112px !important;
+    width: 112px !important;
+    min-width: 112px !important;
+}
+.student-result-page.management-view .student-edit-actions button[hidden] {
+    display: inline-flex !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+.student-result-page.management-view .result-action-feedback {
+    min-height: 22px;
+    margin: 4px 0 8px;
+    display: flex;
+    align-items: center;
+}
+.student-result-page.management-view .result-action-status {
+    min-height: 18px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.student-result-page.management-view .result-action-status:empty {
+    visibility: hidden;
+}
+.student-result-page.management-view .result-action-status[data-state="success"] {
+    color: #237447;
+    font-weight: 700;
+}
+.student-result-page.management-view .result-action-status[data-state="error"] {
+    color: #b42318;
+    font-weight: 700;
+}
+@media (max-width: 650px) {
+    .student-result-page.management-view .student-edit-actions {
+        flex: 0 0 256px !important;
+    }
+}

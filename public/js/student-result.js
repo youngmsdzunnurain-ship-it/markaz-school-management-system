@@ -9,6 +9,9 @@ const $ = (id) => document.getElementById(id);
 let studentData = null;
 let isEditMode = false;
 let originalEditState = null;
+let currentUserRole = "";
+let currentUserRolePromise = null;
+let lastFocusedScoreInput = null;
 
 function escapeHtml(value) {
     return String(value ?? "")
@@ -48,6 +51,39 @@ function buildStudentResultDocumentTitle(data) {
 function setStudentResultDocumentTitle() {
     if (studentData) {
         document.title = buildStudentResultDocumentTitle(studentData);
+    }
+}
+
+async function getCurrentUserRole() {
+    if (currentUserRole) return currentUserRole;
+
+    if (!currentUserRolePromise) {
+        currentUserRolePromise = (async () => {
+            const response = await fetch("./api/auth/me.php", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success || !data.admin?.role) {
+                throw new Error(data.message || "Unable to verify your account permissions.");
+            }
+
+            const role = String(data.admin.role).toLowerCase();
+            if (!["admin", "exam_officer", "teacher"].includes(role)) {
+                throw new Error("Your account cannot edit student results.");
+            }
+
+            currentUserRole = role;
+            return role;
+        })();
+    }
+
+    try {
+        return await currentUserRolePromise;
+    } catch (error) {
+        currentUserRolePromise = null;
+        throw error;
     }
 }
 
@@ -1065,29 +1101,57 @@ document.addEventListener("focusin", event => {
     if (!isEditMode) return;
 
     const input = event.target.closest(".result-score-input");
-
     if (!input) return;
+
+    // Do not let focus enter another score box while the previous score is red.
+    if (
+        lastFocusedScoreInput &&
+        lastFocusedScoreInput !== input &&
+        !validateScoreInput(lastFocusedScoreInput)
+    ) {
+        const invalidInput = lastFocusedScoreInput;
+        event.stopPropagation();
+        invalidInput.focus({ preventScroll: true });
+        invalidInput.select();
+        return;
+    }
+
+    lastFocusedScoreInput = input;
 
     // Select the existing score so typing replaces it instead of appending to it.
     requestAnimationFrame(() => {
-        input.select();
+        if (document.activeElement === input) input.select();
     });
-});
+}, true);
 
 document.addEventListener("keydown", event => {
     if (!isEditMode) return;
 
     const input = event.target.closest(".result-score-input");
+    if (!input) return;
 
-    if (!input || event.key !== "Enter") return;
+    const isTab = event.key === "Tab" || event.keyCode === 9;
+    const isNextAction =
+        event.key === "Enter" ||
+        event.key === "Next" ||
+        event.key === "Go" ||
+        event.keyCode === 13;
 
-    event.preventDefault();
-
-    // Do not advance from an over-limit score (CA > 20 or Exam > 60).
+    // Red/invalid scores cannot advance with Tab, Enter or a mobile Next key.
     if (!validateScoreInput(input)) {
-        input.focus();
+        if (isTab || isNextAction) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            input.focus({ preventScroll: true });
+            input.select();
+        }
         return;
     }
+
+    if (!isNextAction) return;
+
+    event.preventDefault();
 
     const inputs = Array.from(
         document.querySelectorAll(".result-score-input")
@@ -1102,7 +1166,7 @@ document.addEventListener("keydown", event => {
     } else {
         input.blur();
     }
-});
+}, true);
 
 document.addEventListener("input", event => {
     if (!isEditMode) return;
@@ -1219,7 +1283,7 @@ $("saveAndLeaveResultButton")?.addEventListener("click", async () => {
     button.textContent = "Saving...";
     try {
         if (!validateAllScoreInputs()) {
-            throw new Error("Please correct the highlighted scores before saving.");
+            throw new Error("Please correct the red scores before saving.");
         }
         await saveAllStudentChanges();
         setEditMode(false);
@@ -1462,56 +1526,46 @@ function restoreOriginalEditState() {
     calculateBehaviourPerformance();
 }
 
+function setResultActionStatus(message, state = "") {
+    const status = $("resultActionStatus");
+    if (!status) return;
+
+    status.textContent = message || "";
+    status.dataset.state = state;
+}
+
 function showSavedMessage() {
-    const actions = saveScoresButton?.parentElement;
-
-    if (!actions) return;
-
-    const existing = actions.querySelector(
-        ".global-saved-message"
-    );
-
-    if (existing) {
-        existing.remove();
-    }
-
-    const message = document.createElement("span");
-    message.className = "global-saved-message";
-    message.textContent = "✓ Saved";
-
-    actions.appendChild(message);
-
-    setTimeout(() => {
-        message.remove();
-    }, 1000);
+    setResultActionStatus("✓ Changes saved successfully.", "success");
 }
 
 function setEditMode(editing) {
     if (isPrintMode) editing = false;
     isEditMode = editing;
-    setBehaviourEditing(editing);
+
+    const canEditBehaviour =
+        ["admin", "teacher"].includes(currentUserRole);
+    const canEditMemorization =
+        currentUserRole === "admin";
+
+    setBehaviourEditing(editing && canEditBehaviour);
 
     if (memorizationInput) {
-        memorizationInput.hidden = !editing;
+        memorizationInput.hidden = !(editing && canEditMemorization);
+        memorizationInput.disabled = !(editing && canEditMemorization);
     }
 
     if (memorizationDisplay) {
-        memorizationDisplay.hidden = editing;
+        memorizationDisplay.hidden = editing && canEditMemorization;
     }
+
+    if (!editing) lastFocusedScoreInput = null;
+    if (editing) setResultActionStatus("", "");
 
     if (editScoresButton) {
         editScoresButton.textContent = "Edit";
         editScoresButton.disabled = editing;
-
-        editScoresButton.classList.toggle(
-            "primary-action",
-            false
-        );
-
-        editScoresButton.classList.toggle(
-            "secondary-action",
-            true
-        );
+        editScoresButton.classList.toggle("primary-action", false);
+        editScoresButton.classList.toggle("secondary-action", true);
     }
 
     if (saveScoresButton) {
@@ -1588,6 +1642,11 @@ async function saveAllStudentChanges() {
         throw new Error(
             "Student result information is incomplete."
         );
+    }
+
+    const role = await getCurrentUserRole();
+    if (!validateAllScoreInputs()) {
+        throw new Error("Please correct the red scores before saving.");
     }
 
     const scoreInputs =
@@ -1702,101 +1761,109 @@ async function saveAllStudentChanges() {
         }
     }
 
-    const portion =
-        memorizationInput
-            ? memorizationInput.value.trim()
-            : "";
-
-    const memorizationResponse =
-        await fetch(
-            "./api/results/student-profile-save.php",
-            {
-                method: "POST",
-                credentials: "same-origin",
-                body: (() => {
-                    const formData =
-                        new FormData();
-
-                    formData.append(
-                        "student_id",
-                        studentId
-                    );
-
-                    formData.append(
-                        "memorization_portion",
-                        portion
-                    );
-
-                    return formData;
-                })()
-            }
-        );
-
-    const memorizationData =
-        await memorizationResponse.json();
-
-    if (
-        !memorizationResponse.ok ||
-        !memorizationData.success
-    ) {
-        throw new Error(
-            memorizationData.message ||
-            "Unable to save memorization portion."
-        );
+    if (role === "admin") {
+        const portion =
+            memorizationInput
+                ? memorizationInput.value.trim()
+                : "";
+    
+        const memorizationResponse =
+            await fetch(
+                "./api/results/student-profile-save.php",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    body: (() => {
+                        const formData =
+                            new FormData();
+    
+                        formData.append(
+                            "student_id",
+                            studentId
+                        );
+    
+                        formData.append(
+                            "memorization_portion",
+                            portion
+                        );
+    
+                        return formData;
+                    })()
+                }
+            );
+    
+        const memorizationData =
+            await memorizationResponse.json();
+    
+        if (
+            !memorizationResponse.ok ||
+            !memorizationData.success
+        ) {
+            throw new Error(
+                memorizationData.message ||
+                "Unable to save memorization portion."
+            );
+        }
+    
+    
     }
 
-    const behaviourPayload = {
-        class_id: Number(classId),
-        class_type: classType,
-        student_id: Number(studentId)
-    };
-
-    behaviourFieldIds.forEach(id => {
-        const field = $(id);
-
-        const apiName =
-            id.replace(
-                "behaviour",
-                ""
-            ).replace(
-                /^[A-Z]/,
-                letter => letter.toLowerCase()
+    if (role === "admin" || role === "teacher") {
+        const behaviourPayload = {
+            class_id: Number(classId),
+            class_type: classType,
+            student_id: Number(studentId)
+        };
+    
+        behaviourFieldIds.forEach(id => {
+            const field = $(id);
+    
+            const apiName =
+                id.replace(
+                    "behaviour",
+                    ""
+                ).replace(
+                    /^[A-Z]/,
+                    letter => letter.toLowerCase()
+                );
+    
+            behaviourPayload[apiName] =
+                field && field.value !== ""
+                    ? Number(field.value)
+                    : null;
+        });
+    
+        const behaviourResponse =
+            await fetch(
+                "./api/results/behavioural.php",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify(
+                            behaviourPayload
+                        )
+                }
             );
-
-        behaviourPayload[apiName] =
-            field && field.value !== ""
-                ? Number(field.value)
-                : null;
-    });
-
-    const behaviourResponse =
-        await fetch(
-            "./api/results/behavioural.php",
-            {
-                method: "POST",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-                body:
-                    JSON.stringify(
-                        behaviourPayload
-                    )
-            }
-        );
-
-    const behaviourData =
-        await behaviourResponse.json();
-
-    if (
-        !behaviourResponse.ok ||
-        !behaviourData.success
-    ) {
-        throw new Error(
-            behaviourData.message ||
-            "Unable to save behavioural report."
-        );
+    
+        const behaviourData =
+            await behaviourResponse.json();
+    
+        if (
+            !behaviourResponse.ok ||
+            !behaviourData.success
+        ) {
+            throw new Error(
+                behaviourData.message ||
+                "Unable to save behavioural report."
+            );
+        }
+    
+    
     }
 
     await loadStudentResult();
@@ -1804,11 +1871,19 @@ async function saveAllStudentChanges() {
 
 editScoresButton?.addEventListener(
     "click",
-    () => {
+    async () => {
         if (isEditMode) return;
 
-        captureOriginalEditState();
-        setEditMode(true);
+        try {
+            await getCurrentUserRole();
+            captureOriginalEditState();
+            setEditMode(true);
+        } catch (error) {
+            setResultActionStatus(
+                error.message || "Unable to enable result editing.",
+                "error"
+            );
+        }
     }
 );
 
@@ -1817,35 +1892,33 @@ saveScoresButton?.addEventListener(
     async () => {
         if (!isEditMode) return;
 
+        if (!validateAllScoreInputs()) {
+            const firstInvalid = document.querySelector(
+                ".result-score-input.score-invalid"
+            );
+            setResultActionStatus(
+                "Correct the red score before saving.",
+                "error"
+            );
+            firstInvalid?.focus({ preventScroll: true });
+            firstInvalid?.select();
+            return;
+        }
+
         saveScoresButton.disabled = true;
         saveScoresButton.textContent = "Saving...";
 
         try {
             await saveAllStudentChanges();
-
             setEditMode(false);
             captureOriginalEditState();
             showSavedMessage();
         } catch (error) {
             saveScoresButton.disabled = false;
             saveScoresButton.textContent = "Save";
-
-            const existing = document.querySelector(
-                ".global-save-error"
-            );
-
-            if (existing) {
-                existing.remove();
-            }
-
-            const errorMessage = document.createElement("span");
-            errorMessage.className = "global-save-error";
-            errorMessage.textContent =
-                error.message ||
-                "Unable to save changes.";
-
-            saveScoresButton.parentElement?.appendChild(
-                errorMessage
+            setResultActionStatus(
+                error.message || "Unable to save changes.",
+                "error"
             );
         }
     }
