@@ -4,7 +4,7 @@
     if (!form) return;
     const button = document.getElementById("resetPasswordButton");
     const message = document.getElementById("resetPasswordMessage");
-    const token = new URLSearchParams(window.location.search).get("token") || "";
+    const token = new URLSearchParams(window.location.hash.slice(1)).get("token") || "";
     form.addEventListener("submit", async event => {
         event.preventDefault();
         if (!token) {
