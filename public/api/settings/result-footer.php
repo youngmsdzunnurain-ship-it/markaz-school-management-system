@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+// Keep PHP warnings/notices out of the JSON response body; details are logged server-side.
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
 require_once __DIR__ . '/../../../app/config/app.php';
 require_once __DIR__ . '/../../../app/middleware/auth.php';
 
@@ -23,6 +27,13 @@ function resultFooterJsonError(int $status, string $message): never
     echo json_encode(['success' => false, 'message' => $message]);
     exit;
 }
+
+set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
 
 function resultFooterStoreSignature(?string $dataUrl, string $role): ?string
 {
