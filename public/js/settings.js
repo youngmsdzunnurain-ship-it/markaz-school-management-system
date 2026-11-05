@@ -710,7 +710,11 @@ loadAcademicPeriodSettings();
     }
 
     function updateSignaturePreview() {
-        if (!livePreview || isCanvasEmpty()) return;
+        if (!livePreview) return;
+        if (isCanvasEmpty()) {
+            livePreview.removeAttribute("src");
+            return;
+        }
         try {
             livePreview.src = createTransparentSignature();
         } catch (error) {
