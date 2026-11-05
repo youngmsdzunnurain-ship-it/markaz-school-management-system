@@ -335,3 +335,22 @@
     padding-bottom: 8px;
   }
 }
+
+/* Admin password recovery links and password hint */
+.login-page .forgot-password-link {
+  display: block;
+  width: fit-content;
+  margin: 10px 0 0 auto;
+  color: #176b45;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.login-page .forgot-password-link:hover { color: #104c32; text-decoration: underline; }
+.login-page .password-hint {
+  margin: 8px 0 12px;
+  color: #68766f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.login-page .login-button:disabled { opacity: .65; cursor: wait; }
