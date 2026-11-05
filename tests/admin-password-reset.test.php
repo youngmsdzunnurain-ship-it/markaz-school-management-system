@@ -22,7 +22,7 @@ $composer = json_decode(file_get_contents(__DIR__ . '/../composer.json'), true);
 resetCheck(str_contains($login, 'forgot-password.html'), 'Admin login must expose the forgot-password route');
 resetCheck(str_contains($forgotApi, "role = 'admin'") && str_contains($forgotApi, 'is_active = 1') && str_contains($forgotApi, 'is_frozen = 0'), 'Reset requests must only target active, unfrozen Admin accounts');
 resetCheck(str_contains($forgotApi, 'random_bytes(32)') && str_contains($forgotApi, "hash('sha256'") && str_contains($forgotApi, 'INTERVAL 30 MINUTE'), 'Reset links must use cryptographically random, hashed, expiring tokens');
-resetCheck(str_contains($forgotApi, 'sendMarkazPasswordResetEmail') && str_contains($forgotApi, "(string) $admin['email']"), 'Reset link must be sent to the current registered Admin email');
+resetCheck(str_contains($forgotApi, 'sendMarkazPasswordResetEmail') && str_contains($forgotApi, "(string) \\$admin['email']"), 'Reset link must be sent to the current registered Admin email');
 resetCheck(str_contains($mailer, 'smtp.gmail.com') === false && str_contains($mailer, "SMTP_HOST") && str_contains($mailer, 'PHPMailer') && str_contains($mailer, 'SMTPAuth = true'), 'Password reset mailer must use configurable authenticated SMTP');
 resetCheck(isset($composer['require']['phpmailer/phpmailer']), 'PHPMailer must be declared as a Composer dependency');
 resetCheck(str_contains($mailer, "SMTP_PASSWORD") && str_contains($mailer, "SMTP_USERNAME"), 'SMTP credentials must be loaded from server environment variables');
