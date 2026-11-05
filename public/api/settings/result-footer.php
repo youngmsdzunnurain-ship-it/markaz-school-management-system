@@ -9,17 +9,6 @@ header('Cache-Control: no-store');
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-if ($method === 'GET') {
-    // Result viewers need read access; only the Senior Admin can change these values.
-    requireLogin();
-} elseif ($method === 'POST') {
-    requireSeniorAdmin();
-} else {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
-    exit;
-}
-
 $keys = [
     'class_teacher_signature' => 'result_footer_class_teacher_signature',
     'director_signature' => 'result_footer_director_signature',
@@ -90,6 +79,15 @@ function resultFooterDeleteStoredSignature(?string $relativePath): void
 }
 
 try {
+    if ($method === 'GET') {
+        // Result viewers need read access; only the Senior Admin can change these values.
+        requireLogin();
+    } elseif ($method === 'POST') {
+        requireSeniorAdmin();
+    } else {
+        resultFooterJsonError(405, 'Method not allowed.');
+    }
+
     $pdo = db();
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS markaz_app_settings (
