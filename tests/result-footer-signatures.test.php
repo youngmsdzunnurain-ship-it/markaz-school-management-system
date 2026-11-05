@@ -24,9 +24,7 @@ signatureCheck(str_contains($settingsJs, 'signatureSize') && str_contains($setti
 signatureCheck(str_contains($settingsPage, 'signatureLivePreview') && str_contains($settingsJs, 'updateSignaturePreview'), 'Signature size changes must update a visible preview before saving');
 signatureCheck(str_contains($settingsJs, 'response.text()') && str_contains($settingsJs, 'Invalid JSON response'), 'Signature API errors must expose non-JSON server responses instead of masking them');
 signatureCheck(strpos($resultApi, 'try {') < strpos($resultApi, 'requireSeniorAdmin();'), 'Signature API authentication/database exceptions must be handled by its JSON error boundary');
-signatureCheck(str_contains($settingsPage, 'signatureLivePreview') && str_contains($settingsJs, 'updateSignaturePreview'), 'Signature size changes must update a visible preview before saving');
-signatureCheck(str_contains($settingsJs, 'response.text()') && str_contains($settingsJs, 'Invalid JSON response'), 'Signature API errors must expose non-JSON server responses instead of masking them');
-signatureCheck(strpos($resultApi, 'try {') < strpos($resultApi, 'requireSeniorAdmin();'), 'Signature API authentication/database exceptions must be handled by its JSON error boundary');
+
 signatureCheck(str_contains($resultApi, 'requireLogin();') && str_contains($resultApi, 'requireSeniorAdmin();'), 'Result footer reads must require login while writes remain Senior Admin only');
 signatureCheck(str_contains($resultApi, 'image/png') && str_contains($resultApi, 'uploads/signatures/'), 'API must validate and store PNG signature files outside the database');
 signatureCheck(str_contains($resultJs, 'result-signature-image') && str_contains($resultJs, 'class_teacher_signature_image'), 'Student results must render the shared signature images');
