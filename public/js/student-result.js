@@ -1648,6 +1648,12 @@ async function saveAllStudentChanges() {
 
     const subjects =
         studentData.subjects || [];
+    const originalResults =
+        originalEditState?.results || studentData.results || {};
+    const normalizeScore = value =>
+        value === null || value === undefined || value === ""
+            ? null
+            : Number(value);
 
     for (const subject of subjects) {
         const values =
@@ -1670,6 +1676,15 @@ async function saveAllStudentChanges() {
             values.exam === undefined
                 ? null
                 : Number(values.exam);
+
+        const previous = originalResults[String(subject.id)] || {};
+        const subjectChanged =
+            normalizeScore(ca1) !== normalizeScore(previous.ca1) ||
+            normalizeScore(ca2) !== normalizeScore(previous.ca2) ||
+            normalizeScore(exam) !== normalizeScore(previous.exam);
+
+        // Only submit subjects actually edited; teacher access is subject-specific.
+        if (!subjectChanged) continue;
 
         const maxCa1 =
             Number(subject.max_ca1 ?? 20);
@@ -1744,12 +1759,14 @@ async function saveAllStudentChanges() {
         }
     }
 
-    if (role === "admin") {
-        const portion =
-            memorizationInput
-                ? memorizationInput.value.trim()
-                : "";
-    
+    const portion =
+        memorizationInput
+            ? memorizationInput.value.trim()
+            : "";
+    const originalPortion =
+        originalEditState?.memorization ?? portion;
+
+    if (role === "admin" && portion !== originalPortion) {
         const memorizationResponse =
             await fetch(
                 "./api/results/student-profile-save.php",
@@ -1791,7 +1808,14 @@ async function saveAllStudentChanges() {
     
     }
 
-    if (role === "admin" || role === "teacher") {
+    const behaviourChanged = behaviourFieldIds.some(id => {
+        const field = $(id);
+        const currentValue = field ? field.value : "";
+        const originalValue = originalEditState?.behaviour?.[id] ?? "";
+        return currentValue !== originalValue;
+    });
+
+    if ((role === "admin" || role === "teacher") && behaviourChanged) {
         const behaviourPayload = {
             class_id: Number(classId),
             class_type: classType,
