@@ -578,25 +578,22 @@ function renderAttendanceComboChart(rows, category, target) {
     const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
-    const orderIndex = new Map(order.map((name, index) => [normalize(name), index]));
-    const data = rows.map(row => {
-        const roster = Math.max(0, Number(row.student_count) || 0);
+    const byName = new Map(rows.map(row => [normalize(row.class_name), row]));
+    const data = order.map(name => {
+        const row = byName.get(normalize(name)) || {};
         const present = Math.max(0, Number(row.present_count) || 0);
         const absent = Math.max(0, Number(row.absent_count) || 0);
         const late = Math.max(0, Number(row.late_count) || 0);
         const excused = Math.max(0, Number(row.excused_count) || 0);
-        return {
-            name: String(row.class_name || "Class"), roster, present, absent, late, excused,
-            markedRecords: Math.max(0, Number(row.marked_records) || 0),
-            rate: roster ? Math.min(100, present / roster * 100) : 0
-        };
-    }).sort((a, b) => (orderIndex.get(normalize(a.name)) ?? 999) - (orderIndex.get(normalize(b.name)) ?? 999));
-    if (!data.length) return "";
+        const marked = present + absent + late + excused;
+        return { name, present, absent, late, excused, marked, rate: marked > 0 ? present / marked * 100 : null };
+    });
 
-    const availableWidth = target && target.clientWidth ? target.clientWidth - 2 : 720;
-    const width = Math.max(360, availableWidth);
-    const height = 250, left = 54, right = 58, top = 10, bottom = 92;
-    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const minWidth = category === "arabic" ? 8 * 56 : 14 * 48;
+    const availableWidth = target && target.clientWidth ? target.clientWidth - 2 : minWidth;
+    const width = Math.max(minWidth, availableWidth);
+    const height = 246, left = 54, right = 58, top = 0, bottom = 96;
+    const plotWidth = width - left - right, plotHeight = 150;
     const countMax = category === "arabic" ? 12 : 20;
     const countStep = category === "arabic" ? 4 : 5;
     const yCount = value => top + plotHeight - (Math.min(countMax, value) / countMax) * plotHeight;
@@ -604,17 +601,16 @@ function renderAttendanceComboChart(rows, category, target) {
     const slot = plotWidth / data.length;
     const x = index => left + (index + .5) * slot;
     const series = [
-        ["present", "#2a8f58"],
-        ["absent", "#e05a5a"],
-        ["late", "#d9a62e"],
-        ["excused", "#8a94a6"]
+        ["present", "#2a8f58"], ["absent", "#e05a5a"],
+        ["late", "#d9a62e"], ["excused", "#8a94a6"]
     ];
-    const grid = Array.from({length: countMax / countStep + 1}, (_, index) => {
+    const grid = Array.from({ length: countMax / countStep + 1 }, (_, index) => {
         const count = index * countStep, y = yCount(count), rate = index * 25;
-        return '<line x1="' + left + '" y1="' + y + '" x2="' + (width-right) + '" y2="' + y + '" class="combo-gridline"/>' +
-            '<text x="' + (left-10) + '" y="' + (y+4) + '" text-anchor="end" class="combo-axis-label">' + count + '</text>' +
-            '<text x="' + (width-right+10) + '" y="' + (y+4) + '" text-anchor="start" class="combo-rate-axis-label">' + rate + '%</text>';
+        return '<line x1="' + left + '" y1="' + y + '" x2="' + (width - right) + '" y2="' + y + '" class="combo-gridline"/>' +
+            '<text x="' + (left - 10) + '" y="' + (y + 4) + '" text-anchor="end" class="combo-axis-label">' + count + '</text>' +
+            '<text x="' + (width - right + 10) + '" y="' + (y + 4) + '" text-anchor="start" class="combo-rate-axis-label">' + rate + '%</text>';
     }).join("");
+
     const bars = data.map((item, index) => {
         const center = x(index), barWidth = Math.min(34, slot * .52);
         let stacked = 0;
@@ -623,25 +619,41 @@ function renderAttendanceComboChart(rows, category, target) {
             const y = yCount(stacked + visibleValue), barHeight = visibleValue / countMax * plotHeight;
             stacked += value;
             if (!visibleValue) return "";
-            return '<rect x="' + (center-barWidth/2) + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="2" fill="' + color + '"><title>' +
+            return '<rect x="' + (center - barWidth / 2) + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="2" fill="' + color + '"><title>' +
                 escape(item.name) + " — " + key + ": " + value + "</title></rect>";
         }).join("");
-        const label = item.name + " · " + (item.markedRecords > 0 ? item.rate.toFixed(0) + "%" : "—");
-        // Reserve space for the rotated text so long class labels stay inside the SVG.
-    const labelY = height - 58;
+        const label = item.name + " · " + (item.rate === null ? "—" : item.rate.toFixed(0) + "%");
+        const labelY = height - 4;
         return rects + '<text x="' + center + '" y="' + labelY + '" transform="rotate(-38 ' + center + " " + labelY + ')" text-anchor="end" class="combo-class-label">' +
             escape(label) + "</text>";
     }).join("");
-    const points = data.map((item, index) => x(index) + "," + yRate(item.rate)).join(" ");
-    const circles = data.map((item, index) =>
-        '<circle cx="' + x(index) + '" cy="' + yRate(item.rate) + '" r="4.5" class="combo-rate-point"><title>' +
-        escape(item.name) + ": " + item.present + " present of " + item.roster + " active students (" + item.rate.toFixed(1) + "%)</title></circle>"
-    ).join("");
+
+    // Split the rate line at unmarked classes; null values never become zero-percent points.
+    const ratePaths = [];
+    let currentPath = [];
+    data.forEach((item, index) => {
+        if (item.rate === null) {
+            if (currentPath.length) ratePaths.push(currentPath);
+            currentPath = [];
+            return;
+        }
+        currentPath.push([x(index), yRate(item.rate)]);
+    });
+    if (currentPath.length) ratePaths.push(currentPath);
+    const lines = ratePaths.map(path => path.length > 1
+        ? '<polyline points="' + path.map(point => point.join(",")).join(" ") + '" class="combo-rate-line"/>'
+        : "").join("");
+    const circles = data.map((item, index) => {
+        if (item.rate === null) return "";
+        return '<circle cx="' + x(index) + '" cy="' + yRate(item.rate) + '" r="4.5" class="combo-rate-point"><title>' +
+            escape(item.name) + ": " + item.present + " present of " + item.marked + " marked records (" + item.rate.toFixed(1) + "%)</title></circle>";
+    }).join("");
+
     return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + " " + height +
         '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
-        ' attendance chart. Stacked bars show present, absent, late and excused counts; the line shows present rate.">' +
-        grid + '<line x1="' + left + '" y1="' + (top+plotHeight) + '" x2="' + (width-right) + '" y2="' + (top+plotHeight) + '" class="combo-baseline"/>' +
-        bars + '<polyline points="' + points + '" class="combo-rate-line"/>' + circles + "</svg></div>";
+        ' attendance chart. Stacked bars show present, absent, late and excused marked records; the line shows present rate among marked records.">' +
+        grid + '<line x1="' + left + '" y1="' + plotHeight + '" x2="' + (width - right) + '" y2="' + plotHeight + '" class="combo-baseline"/>' +
+        bars + lines + circles + "</svg></div>";
 }
 
 async function loadDashboardAttendance() {
