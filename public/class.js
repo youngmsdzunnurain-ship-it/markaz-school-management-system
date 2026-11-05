@@ -534,6 +534,21 @@
                 "[data-student-result-row]"
             )
             .forEach(row => {
+                row.querySelectorAll(".result-score-input").forEach(input => {
+                    const hasValue = input.value.trim() !== "";
+                    const maximum = Number(input.max);
+                    const score = Number(input.value);
+                    const isOverLimit = hasValue &&
+                        Number.isFinite(score) &&
+                        Number.isFinite(maximum) &&
+                        score > maximum;
+
+                    input.classList.toggle("score-invalid", isOverLimit);
+                    input.setAttribute("aria-invalid", isOverLimit ? "true" : "false");
+                    input.setCustomValidity(
+                        isOverLimit ? `Score cannot exceed ${maximum}.` : ""
+                    );
+                });
 
                 const ca1 =
                     Number(

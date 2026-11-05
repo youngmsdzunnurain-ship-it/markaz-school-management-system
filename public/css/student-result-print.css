@@ -217,7 +217,7 @@
     font-size: calc(8.8 * var(--p)) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    color: var(--gd) !important;
+    color: #2a8f58 !important;
     margin-top: calc(1.2 * var(--u)) !important;
     line-height: 1.25 !important;
     letter-spacing: 0 !important;
@@ -226,7 +226,7 @@
     font-size: calc(7 * var(--p)) !important;
     font-weight: 400 !important;
     text-transform: uppercase !important;
-    color: var(--mut) !important;
+    color: #2a8f58 !important;
     margin-top: calc(.5 * var(--u)) !important;
     line-height: 1.25 !important;
   }
