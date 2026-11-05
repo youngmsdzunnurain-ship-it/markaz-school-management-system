@@ -56,12 +56,27 @@
                     <button type="button" class="secondary-action" id="cancelScoresButton" hidden>Cancel</button>
                 </div>
 
-                <div class="document-actions">
+                <div class="document-actions" aria-label="Result document actions">
+                    <button
+                        type="button"
+                        class="secondary-action"
+                        id="printStudentResultButton">
+                        Print
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary-action"
+                        id="downloadStudentPdfButton">
+                        Download PDF
+                    </button>
                 </div>
             </div>
 
         </header>
 
+        <div class="result-action-feedback">
+            <p id="resultActionStatus" class="result-action-status" role="status" aria-live="polite"></p>
+        </div>
 
         <!-- REPORT CARD -->
         <section
