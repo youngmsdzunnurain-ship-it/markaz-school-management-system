@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+// Keep PHP warnings/notices out of the JSON response body; details are logged server-side.
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
 require_once __DIR__ . '/../../../app/config/app.php';
 require_once __DIR__ . '/../../../app/middleware/auth.php';
 
@@ -8,17 +12,6 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-
-if ($method === 'GET') {
-    // Result viewers need read access; only the Senior Admin can change these values.
-    requireLogin();
-} elseif ($method === 'POST') {
-    requireSeniorAdmin();
-} else {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
-    exit;
-}
 
 $keys = [
     'class_teacher_signature' => 'result_footer_class_teacher_signature',
@@ -34,6 +27,13 @@ function resultFooterJsonError(int $status, string $message): never
     echo json_encode(['success' => false, 'message' => $message]);
     exit;
 }
+
+set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
 
 function resultFooterStoreSignature(?string $dataUrl, string $role): ?string
 {
@@ -90,6 +90,15 @@ function resultFooterDeleteStoredSignature(?string $relativePath): void
 }
 
 try {
+    if ($method === 'GET') {
+        // Result viewers need read access; only the Senior Admin can change these values.
+        requireLogin();
+    } elseif ($method === 'POST') {
+        requireSeniorAdmin();
+    } else {
+        resultFooterJsonError(405, 'Method not allowed.');
+    }
+
     $pdo = db();
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS markaz_app_settings (
