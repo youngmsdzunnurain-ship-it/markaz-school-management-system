@@ -60,13 +60,6 @@
         elements: [page.querySelector(".result-footer-settings-card")].filter(Boolean)
       },
       {
-        id: "result-print-scale",
-        label: "Result Print Scale",
-        icon: "fa-print",
-        description: "Choose the scale used when printing student results.",
-        elements: [page.querySelector(".result-print-scale-card")].filter(Boolean)
-      },
-      {
         id: "result-print-threshold",
         label: "Print Eligibility Threshold",
         icon: "fa-clipboard-check",
