@@ -4,7 +4,6 @@
  * Flat design: no shadows, no gradients, no blur. No CSS zoom, no vh heights.
  * Every size = design value x --u (mm) or --p (pt). --k is the page scale: .77 on A4,
  * .74 on Letter (page height below 283mm), smaller again for 13+ subjects.
- * The saved admin print-scale setting is intentionally ignored.
  * Signatures and footer are pinned to the bottom of the paper (position: fixed);
  * the card keeps room for them with padding-bottom.
  */
