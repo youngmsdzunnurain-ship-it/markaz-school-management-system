@@ -73,7 +73,7 @@ try {
         $baseUrl = ($https ? 'https://' : 'http://') . $host;
     }
 
-    $resetUrl = $baseUrl . '/reset-password.html?token=' . rawurlencode($token);
+    $resetUrl = $baseUrl . '/reset-password.html#token=' . rawurlencode($token);
     $from = (string) ($_ENV['MAIL_FROM'] ?? 'no-reply@' . (parse_url($baseUrl, PHP_URL_HOST) ?: 'localhost'));
     if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
         throw new RuntimeException('MAIL_FROM must be a valid email address.');
