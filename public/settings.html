@@ -195,50 +195,86 @@
             <div>
                 <span class="settings-label">RESULT FOOTER</span>
                 <h2>Signatures &amp; Report Date</h2>
-                <p>Set the signatures and date that appear at the bottom of every student result.</p>
+                <p>Set one shared handwritten signature for each role and one date for every student result.</p>
             </div>
         </div>
 
         <form id="resultFooterForm">
-            <div class="form-grid">
-                <label>
-                    <span>Class Teacher's Signature</span>
-                    <input
-                        type="text"
-                        id="classTeacherSignature"
-                        name="class_teacher_signature"
-                        placeholder="Enter teacher's name or signature"
-                        autocomplete="off"
-                    >
-                </label>
+            <div class="signature-settings-grid">
+                <div class="signature-setting">
+                    <div>
+                        <strong>Class Teacher's Signature</strong>
+                        <p>Used on every student's result, regardless of class.</p>
+                    </div>
+                    <div class="signature-setting-preview" id="classTeacherSignaturePreview">
+                        <span>No signature saved</span>
+                    </div>
+                    <div class="signature-setting-actions">
+                        <button type="button" class="signature-editor-open" data-signature-role="class_teacher">Draw / Change Signature</button>
+                        <button type="button" class="signature-remove" data-signature-clear="class_teacher">Remove</button>
+                    </div>
+                </div>
 
-                <label>
-                    <span>Director / Principal's Signature</span>
-                    <input
-                        type="text"
-                        id="directorSignature"
-                        name="director_signature"
-                        placeholder="Enter director/principal's name or signature"
-                        autocomplete="off"
-                    >
-                </label>
+                <div class="signature-setting">
+                    <div>
+                        <strong>Director / Principal's Signature</strong>
+                        <p>Used on every student's result.</p>
+                    </div>
+                    <div class="signature-setting-preview" id="directorSignaturePreview">
+                        <span>No signature saved</span>
+                    </div>
+                    <div class="signature-setting-actions">
+                        <button type="button" class="signature-editor-open" data-signature-role="director">Draw / Change Signature</button>
+                        <button type="button" class="signature-remove" data-signature-clear="director">Remove</button>
+                    </div>
+                </div>
+            </div>
 
-                <label>
-                    <span>Result Date</span>
-                    <input
-                        type="date"
-                        id="resultSignatureDate"
-                        name="result_signature_date"
-                    >
+            <div class="result-footer-date-field">
+                <label for="resultSignatureDate">
+                    <span>Shared Result Date</span>
+                    <input type="date" id="resultSignatureDate" name="result_signature_date">
                 </label>
             </div>
 
-            <div id="resultFooterMessage" class="form-message"></div>
-
-            <button type="submit" id="saveResultFooterButton">
-                Save Result Footer
-            </button>
+            <div id="resultFooterMessage" class="form-message" role="status" aria-live="polite"></div>
+            <button type="submit" id="saveResultFooterButton">Save Result Date</button>
         </form>
+
+        <dialog class="signature-editor-dialog" id="signatureEditorDialog" aria-labelledby="signatureEditorTitle">
+            <div class="signature-editor">
+                <div class="signature-editor-heading">
+                    <div>
+                        <span class="settings-label">HANDWRITTEN SIGNATURE</span>
+                        <h3 id="signatureEditorTitle">Draw Signature</h3>
+                        <p>Use your finger, stylus or mouse. Only the ink is saved; the background stays transparent.</p>
+                    </div>
+                    <button type="button" class="signature-editor-close" id="closeSignatureEditor" aria-label="Close signature editor">&times;</button>
+                </div>
+
+                <div class="signature-canvas-wrap">
+                    <canvas id="signatureCanvas" width="1200" height="300" aria-label="Draw your signature here"></canvas>
+                    <span class="signature-canvas-hint" id="signatureCanvasHint">Draw your signature here</span>
+                </div>
+
+                <div class="signature-editor-tools">
+                    <button type="button" id="undoSignatureStroke">Undo</button>
+                    <button type="button" id="clearSignatureCanvas">Clear</button>
+                </div>
+
+                <label class="signature-size-control" for="signatureSize">
+                    <span>Signature size</span>
+                    <input type="range" id="signatureSize" min="45" max="100" value="85" step="5">
+                    <output id="signatureSizeValue" for="signatureSize">85%</output>
+                </label>
+
+                <div class="signature-editor-actions">
+                    <button type="button" class="signature-editor-cancel" id="cancelSignatureEditor">Cancel</button>
+                    <button type="button" class="signature-editor-save" id="saveDrawnSignature">Use This Signature</button>
+                </div>
+                <p class="signature-editor-message" id="signatureEditorMessage" role="status" aria-live="polite"></p>
+            </div>
+        </dialog>
     </section>
 
     <section class="settings-card memorization-settings-card">
