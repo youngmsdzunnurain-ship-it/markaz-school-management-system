@@ -26,5 +26,7 @@ resetCheck(str_contains($resetApi, 'password_hash($password, PASSWORD_DEFAULT)')
 resetCheck(str_contains($resetApi, "role = 'admin'") && str_contains($resetApi, "DELETE FROM login_lockouts"), 'Reset completion must be limited to Admin accounts and clear their login lockout');
 resetCheck(str_contains($forgotPage, 'forgotPasswordForm') && str_contains($forgotJs, 'forgot-password.php'), 'Forgot-password page must submit to its API');
 resetCheck(str_contains($resetPage, 'resetPasswordForm') && str_contains($resetJs, 'reset-password.php'), 'Reset-password page must submit the token and new password');
+resetCheck(is_file(__DIR__ . '/../public/api/auth/forgot-password.php') && str_contains(file_get_contents(__DIR__ . '/../public/api/auth/forgot-password.php'), "require_once __DIR__ . '/../../../api/auth/forgot-password.php'"), 'Public forgot-password API route must forward to the secure API endpoint');
+resetCheck(is_file(__DIR__ . '/../public/api/auth/reset-password.php') && str_contains(file_get_contents(__DIR__ . '/../public/api/auth/reset-password.php'), "require_once __DIR__ . '/../../../api/auth/reset-password.php'"), 'Public reset-password API route must forward to the secure API endpoint');
 
 echo "Admin password reset regression tests passed.\n";
