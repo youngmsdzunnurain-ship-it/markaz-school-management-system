@@ -423,6 +423,20 @@
     background: #fff !important;
     overflow: hidden !important;
   }
+  /* The script inserts the image inside #studentPhotoInitials. Make that
+     wrapper fill the photo frame so the image's 100% dimensions resolve
+     against the actual passport-photo area, not an auto-sized span. */
+  #studentReportCard .student-photo > span#studentPhotoInitials {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+  }
   #studentReportCard .student-photo span {
     font-size: calc(21 * var(--p)) !important;
     font-weight: 700 !important;
@@ -433,7 +447,10 @@
     display: block !important;
     width: 100% !important;
     height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
     object-fit: cover !important;
+    object-position: center top !important;
     border-radius: 0 !important;
   }
   #studentReportCard .student-details {
