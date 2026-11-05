@@ -12,6 +12,7 @@ function printProfileCheck(bool $condition, string $message): void
 $settingsPage = file_get_contents(__DIR__ . '/../public/settings.html');
 $thresholdApi = file_get_contents(__DIR__ . '/../api/settings/result-completion.php');
 $thresholdUi = file_get_contents(__DIR__ . '/../public/js/result-print-threshold-settings.js');
+$thresholdNavigation = file_get_contents(__DIR__ . '/../public/js/settings-panel-navigation.js');
 $classCompletion = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
 $studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 $studentCreate = file_get_contents(__DIR__ . '/../api/students/create.php');
@@ -24,6 +25,17 @@ printProfileCheck(
     str_contains($settingsPage, 'resultPrintThresholdForm') &&
     str_contains($settingsPage, 'Print Eligibility Threshold'),
     'settings must expose a separate result-completion threshold control'
+);
+printProfileCheck(
+    str_contains($thresholdNavigation, 'id: "result-print-threshold"') &&
+    str_contains($thresholdNavigation, 'page.querySelector(".result-print-threshold-card")'),
+    'print eligibility threshold must be reachable as its own Settings navigation category'
+);
+printProfileCheck(
+    preg_match('/<select id="resultPrintThreshold"[^>]*>(.*?)<\\/select>/s', $settingsPage, $thresholdSelect) === 1 &&
+    preg_match_all('/<option value="([0-9]+)">/', $thresholdSelect[1], $thresholdOptionMatches) === 4 &&
+    $thresholdOptionMatches[1] === ['50', '80', '95', '100'],
+    'print threshold must offer only the four approved values: 50, 80, 95 and 100 percent'
 );
 printProfileCheck(
     str_contains($thresholdApi, 'result_print_completion_threshold') &&
