@@ -554,7 +554,7 @@ loadAcademicPeriodSettings();
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            const preview = responseText.replace(/\\s+/g, " ").trim().slice(0, 180);
+            const preview = responseText.replace(/\s+/g, " ").trim().slice(0, 180);
             throw new Error(
                 `Invalid JSON response from signature API (HTTP ${response.status}). ` +
                 (preview ? `Server response: ${preview}` : "The server returned an empty response.")
