@@ -75,11 +75,16 @@ try {
 
     $resetUrl = $baseUrl . '/reset-password.html#token=' . rawurlencode($token);
     require_once __DIR__ . '/../../app/services/password-reset-mailer.php';
-    sendMarkazPasswordResetEmail(
-        (string) $admin['email'],
-        (string) $admin['name'],
-        $resetUrl
-    );
+    try {
+        sendMarkazPasswordResetEmail(
+            (string) $admin['email'],
+            (string) $admin['name'],
+            $resetUrl
+        );
+    } catch (Throwable $mailError) {
+        $pdo->prepare("DELETE FROM admin_password_resets WHERE token_hash = ?")->execute([$tokenHash]);
+        throw $mailError;
+    }
 
     forgotResponse();
 } catch (Throwable $error) {
