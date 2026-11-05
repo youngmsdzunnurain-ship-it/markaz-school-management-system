@@ -33,6 +33,7 @@ if (!hash_equals($password, $confirmation)) {
     exit;
 }
 
+$pdo = null;
 try {
     $pdo = db();
     $pdo->beginTransaction();
@@ -57,7 +58,7 @@ try {
 
     echo json_encode(['success' => true, 'message' => 'Your administrator password has been reset. You can now sign in.']);
 } catch (Throwable $error) {
-    if ($pdo->inTransaction()) $pdo->rollBack();
+    if ($pdo instanceof PDO && $pdo->inTransaction()) $pdo->rollBack();
     error_log('Admin password reset completion failed: ' . $error->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Unable to reset the password. Please request a new reset link.']);
