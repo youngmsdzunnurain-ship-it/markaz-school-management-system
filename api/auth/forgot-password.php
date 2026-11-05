@@ -56,7 +56,9 @@ try {
     $rate->execute([(int) $admin['id']]);
     if ((int) $rate->fetchColumn() >= 5) {
         forgotResponse();
-    }$token = bin2hex(random_bytes(32));
+    }
+
+    $token = bin2hex(random_bytes(32));
     $tokenHash = hash('sha256', $token);
     $insert = $pdo->prepare("INSERT INTO admin_password_resets (admin_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))");
     $insert->execute([(int) $admin['id'], $tokenHash]);
