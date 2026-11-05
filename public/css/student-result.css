@@ -10621,44 +10621,47 @@ html body .report-card .memorization-value-row input { display: block !important
 }
 
 
-/* Result toolbar stability: reserve fixed button slots and keep feedback outside the action row. */
+/* Result toolbar — keep actions at the far right without reserving empty button slots. */
+.student-result-page.management-view .result-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.student-result-page.management-view .header-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end !important;
+    margin-left: auto;
+    min-width: 0;
+}
 .student-result-page.management-view .student-edit-actions {
-    flex: 0 0 258px !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
+    display: flex;
+    flex: 0 0 auto !important;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: auto;
+    padding: 0;
+    border: 0;
 }
 .student-result-page.management-view .student-edit-actions button {
-    flex: 0 0 80px !important;
-    width: 80px !important;
-    min-width: 80px !important;
-    box-sizing: border-box !important;
-    justify-content: center !important;
-    white-space: nowrap !important;
-}
-.student-result-page.management-view .document-actions {
+    display: inline-flex;
     flex: 0 0 auto !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-}
-.student-result-page.management-view .document-actions button {
-    flex: 0 0 84px !important;
-    width: 84px !important;
-    min-width: 84px !important;
-    box-sizing: border-box !important;
-    justify-content: center !important;
-    white-space: nowrap !important;
-}
-.student-result-page.management-view #downloadStudentPdfButton {
-    flex-basis: 112px !important;
-    width: 112px !important;
-    min-width: 112px !important;
+    width: auto !important;
+    min-width: 78px !important;
+    max-width: none;
+    box-sizing: border-box;
+    justify-content: center;
+    white-space: nowrap;
 }
 .student-result-page.management-view .student-edit-actions button[hidden] {
-    display: inline-flex !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    display: none !important;
+}
+.student-result-page.management-view .document-actions {
+    display: none !important;
 }
 .student-result-page.management-view .result-action-feedback {
     min-height: 22px;
@@ -10684,8 +10687,20 @@ html body .report-card .memorization-value-row input { display: block !important
     color: #b42318;
     font-weight: 700;
 }
+@media (max-width: 900px) {
+    .student-result-page.management-view .header-actions {
+        justify-content: flex-end !important;
+    }
+}
 @media (max-width: 650px) {
+    .student-result-page.management-view .header-actions {
+        width: 100%;
+        justify-content: flex-end !important;
+        overflow-x: visible;
+    }
     .student-result-page.management-view .student-edit-actions {
-        flex: 0 0 256px !important;
+        flex: 0 0 auto !important;
+        width: auto;
+        margin-left: auto;
     }
 }
