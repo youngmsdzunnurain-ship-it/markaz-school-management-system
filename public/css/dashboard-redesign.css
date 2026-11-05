@@ -3406,3 +3406,152 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     .dashboard-attendance-stat { min-height: 76px; padding: 9px; }
     .dashboard-attendance-category { height: 270px; min-height: 270px; }
 }
+
+
+/* SECTION 4 — TWO CLASS ATTENDANCE COMBO CHARTS + NOTE STRIP */
+.dashboard-class-attendance-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 770fr) minmax(0, 494fr);
+    gap: 20px;
+    min-width: 0;
+    margin-top: 0;
+}
+.dashboard-class-chart-card {
+    min-width: 0;
+    height: 350px;
+    min-height: 350px;
+    padding: 24px;
+    overflow: hidden;
+}
+.dashboard-class-chart-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+}
+.dashboard-class-chart-heading h3 {
+    margin: 0;
+    color: #14472f;
+    font: 600 17px/1.2 'Playfair Display', Lora, Georgia, serif;
+}
+.dashboard-class-chart-heading p {
+    margin: 4px 0 0;
+    color: #6b7a70;
+    font: 400 12px/1.3 Inter, system-ui, sans-serif;
+}
+.dashboard-attendance-rate-key {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    color: #1d2b22;
+    font: 400 12px/1.3 Inter, system-ui, sans-serif;
+}
+.dashboard-attendance-rate-key i {
+    width: 18px;
+    height: 0;
+    border-top: 2.5px solid #b8862b;
+}
+.dashboard-chart-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin: 12px 0 8px;
+    color: #6b7a70;
+    font: 400 12px/1.2 Inter, system-ui, sans-serif;
+}
+.dashboard-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.dashboard-chart-legend span i {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 2px;
+}
+.dashboard-chart-legend .legend-present { background: #2a8f58; }
+.dashboard-chart-legend .legend-absent { background: #e05a5a; }
+.dashboard-chart-legend .legend-late { background: #d9a62e; }
+.dashboard-chart-legend .legend-excused { background: #8a94a6; }
+.dashboard-class-chart-card .dashboard-attendance-class-list {
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    overflow: visible;
+}
+.dashboard-attendance-combo-scroll {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 4px;
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+}
+.dashboard-attendance-combo-chart {
+    display: block;
+    max-width: none;
+    height: 246px;
+}
+.dashboard-attendance-combo-chart .combo-gridline { stroke: #dfe5d6; stroke-width: 1; }
+.dashboard-attendance-combo-chart .combo-axis-label {
+    fill: #6b7a70;
+    font: 11px Inter, system-ui, sans-serif;
+}
+.dashboard-attendance-combo-chart .combo-rate-axis-label {
+    fill: #9a7a2c;
+    font: 11px Inter, system-ui, sans-serif;
+}
+.dashboard-attendance-combo-chart .combo-baseline { stroke: #b7c3b2; stroke-width: 1.2; }
+.dashboard-attendance-combo-chart .combo-class-label {
+    fill: #35483b;
+    font: 400 11px Inter, system-ui, sans-serif;
+}
+.dashboard-attendance-combo-chart .combo-rate-line {
+    fill: none;
+    stroke: #b8862b;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.dashboard-attendance-combo-chart .combo-rate-point {
+    fill: #fbfcf6;
+    stroke: #b8862b;
+    stroke-width: 2.2;
+}
+.dashboard-attendance-footnote {
+    min-height: 40px;
+    height: auto;
+    margin: 20px 0 0;
+    padding: 10px 20px;
+    border: 1px solid #dfe5d6;
+    border-left: 4px solid #c9a24a;
+    border-radius: 10px;
+    background: #fbfcf6;
+    color: #6b7a70;
+    font: 400 12px/1.5 Inter, system-ui, sans-serif;
+}
+@media (max-width: 1279px) {
+    .dashboard-class-attendance-charts {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+}
+@media (max-width: 639px) {
+    .dashboard-class-chart-card {
+        width: 100%;
+        min-width: 0;
+        padding: 20px 16px;
+    }
+    .dashboard-class-chart-heading { gap: 8px; }
+    .dashboard-class-chart-heading h3 { font-size: 16px; }
+    .dashboard-attendance-rate-key { font-size: 11px; }
+    .dashboard-chart-legend { gap: 10px 14px; }
+    .dashboard-attendance-footnote { padding: 10px 14px; }
+}
