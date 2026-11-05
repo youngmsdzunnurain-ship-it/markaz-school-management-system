@@ -1110,7 +1110,9 @@ document.addEventListener("focusin", event => {
         !validateScoreInput(lastFocusedScoreInput)
     ) {
         const invalidInput = lastFocusedScoreInput;
+        event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         invalidInput.focus({ preventScroll: true });
         invalidInput.select();
         return;
@@ -1121,6 +1123,23 @@ document.addEventListener("focusin", event => {
     // Select the existing score so typing replaces it instead of appending to it.
     requestAnimationFrame(() => {
         if (document.activeElement === input) input.select();
+    });
+}, true);
+
+// Mobile keyboards can move focus with Next/Go without dispatching Enter.
+// Restore focus if the browser attempts to leave an invalid score field.
+document.addEventListener("focusout", event => {
+    if (!isEditMode) return;
+    const input = event.target.closest(".result-score-input");
+    if (!input || validateScoreInput(input)) return;
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    requestAnimationFrame(() => {
+        if (isEditMode && input.isConnected && !validateScoreInput(input)) {
+            input.focus({ preventScroll: true });
+            input.select();
+        }
     });
 }, true);
 
@@ -1648,6 +1667,12 @@ async function saveAllStudentChanges() {
 
     const subjects =
         studentData.subjects || [];
+    const originalResults =
+        originalEditState?.results || studentData.results || {};
+    const normalizeScore = value =>
+        value === null || value === undefined || value === ""
+            ? null
+            : Number(value);
 
     for (const subject of subjects) {
         const values =
@@ -1670,6 +1695,15 @@ async function saveAllStudentChanges() {
             values.exam === undefined
                 ? null
                 : Number(values.exam);
+
+        const previous = originalResults[String(subject.id)] || {};
+        const subjectChanged =
+            normalizeScore(ca1) !== normalizeScore(previous.ca1) ||
+            normalizeScore(ca2) !== normalizeScore(previous.ca2) ||
+            normalizeScore(exam) !== normalizeScore(previous.exam);
+
+        // Only submit subjects actually edited; teacher access is subject-specific.
+        if (!subjectChanged) continue;
 
         const maxCa1 =
             Number(subject.max_ca1 ?? 20);
@@ -1744,12 +1778,14 @@ async function saveAllStudentChanges() {
         }
     }
 
-    if (role === "admin") {
-        const portion =
-            memorizationInput
-                ? memorizationInput.value.trim()
-                : "";
-    
+    const portion =
+        memorizationInput
+            ? memorizationInput.value.trim()
+            : "";
+    const originalPortion =
+        originalEditState?.memorization ?? portion;
+
+    if (role === "admin" && portion !== originalPortion) {
         const memorizationResponse =
             await fetch(
                 "./api/results/student-profile-save.php",
@@ -1791,7 +1827,14 @@ async function saveAllStudentChanges() {
     
     }
 
-    if (role === "admin" || role === "teacher") {
+    const behaviourChanged = behaviourFieldIds.some(id => {
+        const field = $(id);
+        const currentValue = field ? field.value : "";
+        const originalValue = originalEditState?.behaviour?.[id] ?? "";
+        return currentValue !== originalValue;
+    });
+
+    if ((role === "admin" || role === "teacher") && behaviourChanged) {
         const behaviourPayload = {
             class_id: Number(classId),
             class_type: classType,
