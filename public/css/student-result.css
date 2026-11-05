@@ -4075,12 +4075,16 @@ button{font:inherit;cursor:pointer}
     }
 }
 
-/* RESULT SCORE VALIDATION */
-.result-score-input.score-invalid{
-    border-color:#dc2626 !important;
-    background:#fef2f2 !important;
-    color:#b91c1c !important;
-    box-shadow:0 0 0 3px rgba(220,38,38,.10) !important;
+/* RESULT SCORE VALIDATION — red text, not a red-filled input. */
+.result-score-input.score-invalid,
+.report-card .result-score-input.score-invalid,
+.student-results-table .result-score-input.score-invalid {
+    color: #dc2626 !important;
+    -webkit-text-fill-color: #dc2626 !important;
+    background: transparent !important;
+    border-color: #dc2626 !important;
+    box-shadow: none !important;
+    font-weight: 800 !important;
 }
 
 .result-score-input.score-valid{
