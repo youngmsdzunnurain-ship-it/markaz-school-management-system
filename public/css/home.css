@@ -3170,7 +3170,7 @@ p {
 
 /* MARKAZ footer: compact bottom spacing and centred copyright */
 .footer .footer-main {
-    padding-bottom: 22px;
+    padding-bottom: 18px;
 }
 
 .footer .footer-bottom-inner {
@@ -3178,8 +3178,8 @@ p {
     align-items: center;
     flex-direction: column;
     gap: 4px;
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     text-align: center;
 }
 
