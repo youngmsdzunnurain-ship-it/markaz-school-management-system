@@ -25,7 +25,9 @@ foreach ($pages as $page) {
     publicNetworkCheck(
         str_contains($html, 'css/public-resilience.css') &&
         str_contains($html, 'js/public-resilience.js') &&
-        str_contains($html, 'markaz-page-loading'),
+        str_contains($html, 'markaz-page-loading') &&
+        str_contains($html, 'markaz-page-ready') &&
+        str_contains($html, '<noscript>'),
         "{$page} must provide the early skeleton and shared public network support"
     );
 }
@@ -41,7 +43,8 @@ publicNetworkCheck(
     'service worker must cache only approved same-origin public GET requests and exclude APIs/authenticated requests'
 );
 publicNetworkCheck(
-    str_contains($worker, 'staleWhileRevalidate') &&
+    str_contains($worker, 'const cached = await cache.match(request)') &&
+    str_contains($worker, 'event.waitUntil(network)') &&
     str_contains($worker, 'offline.html') &&
     str_contains($worker, 'caches.keys()'),
     'public pages must load from cache quickly, fall back offline, and clean old cache versions'
