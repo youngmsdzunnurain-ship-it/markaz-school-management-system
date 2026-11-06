@@ -175,6 +175,15 @@ publicVisualCheck(
 );
 
 publicVisualCheck(
+    str_contains($aboutHtml, 'class="public-section-heading academic-milestones-heading"') &&
+    str_contains($aboutCardsCss, '.public-about-page .academic-milestones-heading') &&
+    str_contains($aboutCardsCss, 'justify-content: center') &&
+    str_contains($aboutCardsCss, 'align-items: center') &&
+    str_contains($aboutCardsCss, 'text-align: center'),
+    'About academic milestone eyebrow, heading and supporting paragraph must be centered together'
+);
+
+publicVisualCheck(
     str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
     str_contains($aboutCardsCss, 'width: 100%') &&
     str_contains($aboutCardsCss, 'white-space: nowrap') &&
