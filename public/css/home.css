@@ -1914,9 +1914,9 @@ p {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border: 1px solid #d1e2d6;
+    border: 1px solid #dce9df;
     border-radius: 12px;
-    color: var(--green-800);
+    color: #93691c;
     background: #edf5ef;
     font-size: .9rem;
     font-weight: 800;
