@@ -608,7 +608,7 @@
 
     function openStudent(studentId) {
         window.location.href =
-            `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`;
+            `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}&display_version=20261106-targeted-student-display-fix`;
     }
 
     classStudentsContainer.addEventListener("click", event => {
@@ -638,7 +638,8 @@
                 return;
             }
 
-            await loadStudents();
+            // The class-results endpoint already returns its scoped student roster.
+            // Do not let a separate roster request failure prevent subject options loading.
             await loadResults();
         } catch (error) {
             console.error("Class workspace error:", error);

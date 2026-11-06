@@ -1653,7 +1653,6 @@ h1, h2, h3 {
 }
 .dashboard-attendance-category::before,
 .dashboard-attendance-summary::before,
-.stat-card::before,
 .quick-access-panel::before,
 .administrator-panel::before {
     content: "";
@@ -2865,6 +2864,20 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     background: var(--shell-gold);
 }
 .welcome-card::after { display: none; }
+.page-content .welcome-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 18px auto;
+    width: auto;
+    height: 3px;
+    display: block !important;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(90deg, var(--gold-600), var(--gold-300), var(--gold-600));
+}
+.page-content .welcome-decoration,
+.page-content .welcome-card::after {
+    display: none !important;
+}
 .welcome-card .welcome-content { position: relative; z-index: 1; }
 .welcome-card .eyebrow {
     color: #e6d9a4;
@@ -2958,7 +2971,6 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     background: var(--card);
     box-shadow: 0 4px 14px rgba(20,71,47,.05);
 }
-.stat-card::before,
 .result-progress-section::before {
     content: "";
     position: absolute;
@@ -3560,7 +3572,7 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
 /* SECTION 5 — QUICK ACCESS, ADMINISTRATOR AND FOOTER */
 .dashboard-bottom-layout {
     display: grid;
-    grid-template-columns: minmax(0, 860fr) minmax(0, 404fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: 20px;
     align-items: stretch;
 }
@@ -3604,7 +3616,7 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
 }
 .dashboard-bottom-layout .quick-actions {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
 }
 .dashboard-bottom-layout .quick-actions button {

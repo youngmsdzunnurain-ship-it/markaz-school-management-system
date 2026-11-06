@@ -37,12 +37,20 @@ resultTypeCheck(
         && str_contains($classJs, 'class_type: classType'),
     'class workspace sends its selected type to completion and result-save endpoints'
 );
+$examOverviewStart = strpos($dashboardHtml, '<section class="dashboard-exam-section"');
+$attendanceSectionStart = strpos($dashboardHtml, '<section class="dashboard-attendance-panel"', $examOverviewStart === false ? 0 : $examOverviewStart);
+$examOverviewHtml = ($examOverviewStart !== false && $attendanceSectionStart !== false)
+    ? substr($dashboardHtml, $examOverviewStart, $attendanceSectionStart - $examOverviewStart)
+    : '';
 resultTypeCheck(
-    str_contains($dashboardHtml, 'dashboardCompletionPie')
-        && !str_contains($dashboardHtml, 'dashboardConventionalPie')
-        && !str_contains($dashboardHtml, 'dashboardArabicPie')
-        && substr_count($dashboardHtml, 'class="dashboard-chart-card') === 1
-        && str_contains($dashboardRedesignCss, 'grid-template-columns: minmax(0, 680px) !important;'),
-    'dashboard examination overview keeps only the overall completion listing'
+    $examOverviewHtml !== ''
+        && substr_count($examOverviewHtml, 'id="dashboardCompletionPie"') === 1
+        && str_contains($examOverviewHtml, 'Overall Examination Completion')
+        && str_contains($examOverviewHtml, 'class="result-progress-grid"')
+        && !str_contains($examOverviewHtml, 'dashboardConventionalPie')
+        && !str_contains($examOverviewHtml, 'dashboardArabicPie')
+        && str_contains($dashboardRedesignCss, '.dashboard-exam-overview')
+        && str_contains($dashboardRedesignCss, 'grid-template-columns: minmax(0, 560px) minmax(0, 1fr);'),
+    'dashboard examination overview keeps one whole-school completion chart with the overall progress summary'
 );
 echo "Result class-type validation tests passed (5 checks).\n";

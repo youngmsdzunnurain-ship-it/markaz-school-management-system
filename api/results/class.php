@@ -101,6 +101,7 @@ try {
          INNER JOIN terms t
             ON t.id = ap.term_id
          WHERE s.is_current = 1
+           AND ap.is_current = 1
          ORDER BY ap.id DESC
          LIMIT 1'
     );
@@ -168,18 +169,22 @@ try {
 
     $studentStmt = $pdo->prepare(
         "SELECT
-            id,
-            admission_number,
-            first_name,
-            middle_name,
-            last_name,
-            gender,
-            date_of_birth,
-            is_active
-         FROM students
-         WHERE {$studentClassColumn} = ?
-           AND is_active = 1
-         ORDER BY first_name, middle_name, last_name, admission_number"
+            st.id,
+            st.admission_number,
+            st.first_name,
+            st.middle_name,
+            st.last_name,
+            st.gender,
+            st.date_of_birth,
+            st.is_active,
+            st.arabic_class_id,
+            ac.name AS arabic_class_name
+         FROM students st
+         LEFT JOIN arabic_classes ac
+            ON ac.id = st.arabic_class_id
+         WHERE st.{$studentClassColumn} = ?
+           AND st.is_active = 1
+         ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
     );
 
     $studentStmt->execute([$classId]);
@@ -297,7 +302,11 @@ try {
                     'last_name' => $student['last_name'],
                     'gender' => $student['gender'],
                     'date_of_birth' => $student['date_of_birth'],
-                    'is_active' => (bool) $student['is_active']
+                    'is_active' => (bool) $student['is_active'],
+                    'arabic_class_id' => $student['arabic_class_id'] !== null
+                        ? (int) $student['arabic_class_id']
+                        : null,
+                    'arabic_class_name' => $student['arabic_class_name']
                 ];
             },
             $students

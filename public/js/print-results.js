@@ -112,7 +112,8 @@ function printStudent(sid, cid) {
         student_id: String(sid),
         class_id: String(cid),
         class_type: "conventional",
-        print: "1"
+        print: "1",
+        display_version: "20261106-targeted-student-display-fix"
     });
     window.location.href = "./student-result-print.html?" + params.toString();
 }
@@ -200,6 +201,14 @@ async function printAllEligibleStudents(classIdValue, studentIds) {
     }
 
     await Promise.all(frames.map(waitForResult));
+
+    const blockedFrame = frames.find(frame =>
+      frame.contentDocument?.body?.classList.contains("result-print-blocked")
+    );
+    if (blockedFrame) {
+      throw new Error("At least one selected result is not eligible to print. Only students meeting the configured completion threshold can be printed.");
+    }
+
     const target = printDocument.getElementById("batchResults");
     for (const frame of frames) {
       const source = frame.contentDocument.querySelector("main.student-result-page");

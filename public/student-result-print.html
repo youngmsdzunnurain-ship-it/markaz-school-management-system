@@ -24,23 +24,21 @@
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css">
-    <link rel="stylesheet" href="./css/student-result.css?v=20261105-handwritten-signatures" media="screen">
-    <link rel="stylesheet" href="./css/student-result-print.css?v=20261105-handwritten-signatures" media="print">
-
-<style id="print-results-hide-edit-controls">
-.student-edit-actions,
-#editScoresButton,
-#saveScoresButton,
-#cancelScoresButton {
-    display: none !important;
-}
-</style>
+    <link rel="stylesheet" href="./css/student-result.css?v=20261106-print-preview" media="screen">
+    <link rel="stylesheet" href="./css/student-result-print.css?v=20261106-print-preview" media="print">
 
 </head>
 
 <body>
     <div class="result-page-curve" aria-hidden="true"></div>
 <main class="student-result-page management-view">
+        <div
+            class="result-print-blocked-notice"
+            id="resultPrintBlockedNotice"
+            role="status"
+            aria-live="polite"
+            hidden></div>
+
 
         <!-- PAGE HEADER -->
         <header class="result-page-header">
@@ -662,7 +660,7 @@
     </main>
 
 
-    <script src="./js/student-result.js?v=20261105-handwritten-signatures"></script>
+    <script src="./js/student-result.js?v=20261106-targeted-print-fix"></script>
 
 
 <script src="js/website-image-overrides.js"></script>

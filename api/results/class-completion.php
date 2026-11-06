@@ -51,7 +51,8 @@ try {
     $periodStmt = $pdo->query(
         'SELECT ap.id FROM academic_periods ap
          INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
-         WHERE s.is_current = 1 ORDER BY ap.id DESC LIMIT 1'
+         WHERE s.is_current = 1 AND ap.is_current = 1
+         ORDER BY ap.id DESC LIMIT 1'
     );
     $periodId = $periodStmt->fetchColumn();
     if ($periodId === false) {
@@ -78,16 +79,9 @@ try {
         FROM {$mappingTable} cs
         INNER JOIN subjects s ON s.id = cs.subject_id
         WHERE cs.{$mappingClassColumn} = ? AND s.is_active = 1";
+    // Completion and print eligibility must use every required subject
+    // assigned to the class, matching api/results/student.php.
     $subjectParams = [$classId];
-    if (currentAdminRole() === 'teacher') {
-        $subjectSql .= " AND EXISTS (
-            SELECT 1 FROM teacher_assignments ta
-            WHERE ta.account_id = ? AND ta.class_type = ?
-              AND ta.class_id = ? AND ta.is_active = 1
-              AND (ta.subject_id = s.id OR ta.subject_id IS NULL)
-        )";
-        array_push($subjectParams, (int) ($_SESSION['admin_id'] ?? 0), $classType, $classId);
-    }
     $subjectSql .= ' ORDER BY cs.sort_order, s.name';
     $subjectStmt = $pdo->prepare($subjectSql);
     $subjectStmt->execute($subjectParams);
