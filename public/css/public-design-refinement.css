@@ -2,7 +2,8 @@
    Shared by the eight public information pages only.
    Loaded after page-specific styles so these are deliberate final tokens. */
 
-:root {
+body.public-page,
+body.public-home-page {
     --markaz-text-primary: #24352c;
     --markaz-text-muted: #536258;
     --markaz-accent-text: #87631a;
@@ -10,10 +11,6 @@
     --markaz-surface-soft: #f5f8f5;
     --markaz-border: #e1e9e2;
     --markaz-heading-line: 1.2;
-}
-
-body.public-page,
-body.public-home-page {
     color: var(--markaz-text-primary);
     font-family: "Segoe UI", Arial, sans-serif;
     font-size: 16px;
