@@ -238,6 +238,23 @@ publicVisualCheck(
     !str_contains($academicsCss, '.academics-page .quran-card .pathway-icon'),
     'Academic pathway icons must use one shared gold-on-pale-green tile treatment without a Quran-only override'
 );
+$academicSupportingIcons = [
+    '.academics-page .highlight-mark',
+    '.academics-page .quran-feature-icon',
+];
+foreach ($academicSupportingIcons as $selector) {
+    publicVisualCheck(
+        str_contains($academicsCss, $selector),
+        "Academic supporting icon styling must remain in its owning stylesheet: {$selector}"
+    );
+}
+publicVisualCheck(
+    str_contains($academicsCss, 'color: #93691c') &&
+    str_contains($academicsCss, 'background: #edf5ef') &&
+    str_contains($academicsCss, 'border: 1px solid #dce9df'),
+    'Academic supporting marks must use the same gold-on-pale-green icon treatment'
+);
+
 $stageIconRules = [];
 preg_match_all('/\\.academics-page \\.stage-number\\s*\\{([^}]*)\\}/s', $academicsCss, $stageIconRules);
 publicVisualCheck(
