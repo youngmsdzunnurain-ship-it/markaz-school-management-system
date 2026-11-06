@@ -28,7 +28,7 @@ websiteImageFitCheck(
 foreach (['.markaz-photo-card img', '.markaz-facility-card img', '.markaz-facility-intro > img', '.markaz-facility-note img'] as $selector) {
     $pattern = '/' . preg_quote($selector, '/') . '[^{]*\{[^}]*object-fit:\s*contain\s*;/s';
     websiteImageFitCheck(
-        preg_match($pattern, $publicCss) === 1,
+        preg_match($pattern, $fitCss) === 1,
         "{$selector} must preserve the full uploaded image inside its fixed display frame"
     );
 }
