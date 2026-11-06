@@ -33,3 +33,4 @@ jobs:
           php tests/public-footer-spacing.test.php
           php tests/public-interaction-motion.test.php
           php tests/public-visual-hierarchy.test.php
+          php tests/public-network-resilience.test.php
