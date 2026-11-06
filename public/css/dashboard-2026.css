@@ -26,7 +26,7 @@ a{color:inherit;text-decoration:none}
 /* ---------- SHELL ---------- */
 .app{display:grid;grid-template-columns:260px minmax(0,1fr)}
 body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
-.main-content{min-width:0;display:flex;flex-direction:column}
+.main-content{min-width:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 
 /* ---------- SIDEBAR ---------- */
 .sidebar{position:sticky;top:0;height:calc(100vh / var(--page-zoom,1));height:calc(100dvh / var(--page-zoom,1));padding:16px;display:flex;flex-direction:column;
@@ -39,15 +39,15 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .brand-text strong{font:600 20px/1 var(--serif);letter-spacing:2px;color:#e6d9a4}
 .brand-text span{font-size:12px;line-height:1.2;color:#9fc4ad}
 .sidebar-nav{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#2a6b4a transparent}
-.nav-section-label{font:600 11px/1 var(--sans);letter-spacing:1.5px;text-transform:uppercase;color:#7fa990;padding:0 12px;margin:20px 0 12px}
+.nav-section-label{font:600 11px/1 var(--sans);letter-spacing:1.5px;text-transform:uppercase;color:#fff;padding:0 12px;margin:20px 0 12px}
 .nav-section-label:first-child{margin-top:0}
 .nav-link{position:relative;display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;margin:0 0 4px;border-radius:10px;
-  font-size:14px;font-weight:500;color:#c4dccb;transition:background .15s,color .15s}
-.nav-link i{width:20px;flex:none;text-align:center;font-size:15px;color:#a9cdb6}
+  font-size:14px;font-weight:500;color:#fff;transition:background .15s,color .15s}
+.nav-link i{width:20px;flex:none;text-align:center;font-size:15px;color:#fff}
 .nav-link span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav-link:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav-link.active{background:var(--mg);color:#fff;font-weight:600}
-.nav-link.active i{color:#e6d9a4}
+.nav-link.active i{color:#fff}
 .nav-link.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--gold)}
 .sidebar-bottom{flex:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
 /* anything else injected into the sidebar bottom (old duplicate logout buttons) stays hidden */
@@ -84,9 +84,9 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .profile-dropdown-divider{height:1px;background:var(--line);margin:8px 0}
 
 /* ---------- PAGE FRAME ---------- */
-.page-content{container:page/inline-size;width:100%;max-width:none;margin:0;padding:22px 28px 28px;display:flex;flex-direction:column;gap:20px;flex:1}
+.page-content{container:page/inline-size;width:100%;max-width:none;margin:0;padding:22px 28px 28px;display:flex;flex-direction:column;gap:20px;flex:1 0 auto}
 .page-content>*{min-width:0}
-.dashboard-footer{width:100%;max-width:none;margin:0;padding:16px 28px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mut)}
+.dashboard-footer{width:100%;max-width:none;margin-top:auto;padding:16px 28px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mut);background:#fff}
 .dashboard-footer .footer-brand{font:600 14px var(--serif);letter-spacing:2px;color:var(--dg)}
 .dashboard-footer{border-top:1px solid var(--line)}
 
@@ -339,9 +339,9 @@ body .sidebar.open{z-index:1200!important}                 /* drawer above the d
   .dashboard-attendance-donut-wrap{grid-column:1;grid-row:2;padding:20px 20px 0;justify-content:center}
   .dashboard-attendance-stats{grid-column:1;grid-row:3;padding:20px}
 }
-/* bottom row: Quick access 40% | Administrator 60% */
+/* bottom row: Quick navigation 45% | Administrator details 55% */
 @container page (min-width:820px){
-  .dashboard-bottom-layout{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+  .dashboard-bottom-layout{grid-template-columns:minmax(0,45fr) minmax(0,55fr)}
 }
 .quick-access-panel{container:qa/inline-size}
 .quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
