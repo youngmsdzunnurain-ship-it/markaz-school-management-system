@@ -28,10 +28,10 @@ dashboardAssert(
     'Dashboard summary cards must be three clean cards with no gold-green decorative pseudo-elements'
 );
 dashboardAssert(
-    str_contains($css, '.dashboard-attendance-category') &&
-    str_contains($css, 'linear-gradient(135deg') &&
-    str_contains($css, 'rgba(177, 139, 50'),
-    'Dashboard surfaces must use a consistent green-and-gold visual system'
+    (str_contains($css, '.dashboard-attendance-category') || str_contains($redesignCss, '.dashboard-attendance-category')) &&
+    (str_contains($css, 'linear-gradient(135deg') || str_contains($redesignCss, 'linear-gradient(135deg')) &&
+    (str_contains($redesignCss, 'var(--gold-') || str_contains($redesignCss, '#bd953a')),
+    'Dashboard surfaces must use the current shared green-and-gold design tokens'
 );
 $examOverviewStart = strpos($html, '<section class="dashboard-exam-section"');
 $attendanceSectionStart = strpos($html, '<section class="dashboard-attendance-panel"', $examOverviewStart === false ? 0 : $examOverviewStart);
