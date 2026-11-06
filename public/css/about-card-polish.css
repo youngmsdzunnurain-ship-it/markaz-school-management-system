@@ -176,3 +176,35 @@
         text-wrap: balance;
     }
 }
+
+/* Keep the About academic milestone eyebrow, title and introduction on one centered axis. */
+.public-about-page .academic-milestones-heading {
+    display: flex;
+    width: min(100%, 48rem);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.public-about-page .academic-milestones-heading > .public-eyebrow,
+.public-about-page .academic-milestones-heading > h2,
+.public-about-page .academic-milestones-heading > p {
+    margin-inline: auto;
+    text-align: center;
+}
+
+.public-about-page .academic-milestones-heading > h2 {
+    width: 100%;
+    max-width: min(100%, 24ch);
+    text-wrap: balance;
+}
+
+.public-about-page .academic-milestones-heading > p {
+    width: 100%;
+    max-width: 66ch;
+    text-wrap: pretty;
+    line-height: 1.8;
+}
+
