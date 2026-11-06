@@ -1201,3 +1201,22 @@ body.public-page .footer-bottom {
     object-fit: cover;
     object-position: center;
 }
+
+/* Centre only the FAQ introduction and Facilities section heading copy.
+   Keep the existing FAQ desktop content layout and accordion styling unchanged. */
+body.public-page.public-faq-page .public-section-heading,
+body.public-page .markaz-facility-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+body.public-page.public-faq-page .public-section-heading > p,
+body.public-page .markaz-facility-heading > p {
+  width: min(100%, 68ch);
+  margin-inline: auto;
+  text-align: center;
+}
+
