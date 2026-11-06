@@ -2865,6 +2865,20 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     background: var(--shell-gold);
 }
 .welcome-card::after { display: none; }
+.page-content .welcome-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 18px auto;
+    width: auto;
+    height: 3px;
+    display: block !important;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(90deg, var(--gold-600), var(--gold-300), var(--gold-600));
+}
+.page-content .welcome-decoration,
+.page-content .welcome-card::after {
+    display: none !important;
+}
 .welcome-card .welcome-content { position: relative; z-index: 1; }
 .welcome-card .eyebrow {
     color: #e6d9a4;
