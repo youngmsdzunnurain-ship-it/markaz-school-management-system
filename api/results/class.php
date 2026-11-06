@@ -101,6 +101,7 @@ try {
          INNER JOIN terms t
             ON t.id = ap.term_id
          WHERE s.is_current = 1
+           AND ap.is_current = 1
          ORDER BY ap.id DESC
          LIMIT 1'
     );
