@@ -126,6 +126,8 @@ publicVisualCheck(
 
 $homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
 publicVisualCheck(
+    str_contains($homeProgrammeCss, '.public-home-page .highlight-item .highlight-number') &&
+    str_contains($homeProgrammeCss, '.public-home-page .programme-icon') &&
     str_contains($homeProgrammeCss, 'color: #d9aa4b') &&
     str_contains($homeProgrammeCss, 'background: #343a36') &&
     str_contains($homeProgrammeCss, 'border: 1px solid #4a514c'),
@@ -146,8 +148,6 @@ foreach ([
     'transform: scaleX(0)',
     'transform-origin: left',
     '.markaz-faq-icon',
-    '.highlight-number',
-    '.programme-icon',
     '.highlight-mark',
     '.quran-feature-icon',
         '.admission-card-mark',
