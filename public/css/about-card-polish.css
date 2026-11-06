@@ -158,10 +158,14 @@
 
 @media (min-width: 761px) {
     .public-about-page .public-section-heading h2 {
-        width: max-content;
+        display: block;
+        width: 100%;
         max-width: 100%;
+        margin-inline: auto;
         white-space: nowrap;
-        font-size: clamp(1.25rem, 2.7vw, 1.9rem);
+        text-align: center;
+        font-size: clamp(1.2rem, 2.35vw, 1.65rem);
+        line-height: 1.25;
     }
 }
 
