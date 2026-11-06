@@ -342,17 +342,12 @@ body.public-page.academics-page .quran-card .pathway-icon {
 
 
 /* Consistent gold glyphs on dark-grey icon tiles across public pages. */
-:where(
-    body.public-page .admission-card-mark,
-    body.public-page .pathway-icon,
-    body.public-page .stage-number,
-    body.public-page .markaz-faq-icon,
-    body.public-page .highlight-mark,
-    body.public-page .quran-feature-icon,
-    body.public-home-page .highlight-number,
-    body.public-home-page .highlight-icon,
-    body.public-home-page .programme-icon
-) {
+body.public-page .admission-card-mark,
+body.public-page .pathway-icon,
+body.public-page .stage-number,
+body.public-page .markaz-faq-icon,
+body.public-page .highlight-mark,
+body.public-page .quran-feature-icon {
     color: #d9aa4b;
     background: #343a36;
     border: 1px solid #4a514c;
