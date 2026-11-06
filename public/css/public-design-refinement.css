@@ -113,6 +113,17 @@ body.public-page :is(.public-value-card, .admission-priority-card, .admission-gu
     line-height: 1.75;
 }
 
+/* Preserve light text on intentionally dark hero and call-to-action surfaces. */
+body.public-page main .academics-hero p,
+body.public-page main .academics-cta p,
+body.public-page main .public-cta p {
+    color: rgba(255, 255, 255, .88);
+}
+
+body.public-home-page main .hero .hero-description {
+    color: #e1ece5;
+}
+
 /* The enquiry action remains the strongest element in Admissions. */
 body.public-page .admission-button-gold,
 body.public-page .academics-hero-button,
