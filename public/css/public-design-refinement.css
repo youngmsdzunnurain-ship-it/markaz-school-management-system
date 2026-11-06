@@ -1,0 +1,264 @@
+/* MARKAZ public website — visual hierarchy and accessible colour refinement
+   Shared by the eight public information pages only.
+   Loaded after page-specific styles so these are deliberate final tokens. */
+
+body.public-page,
+body.public-home-page {
+    --markaz-text-primary: #24352c;
+    --markaz-text-muted: #536258;
+    --markaz-accent-text: #87631a;
+    --markaz-accent-soft: #f7edda;
+    --markaz-surface-soft: #f5f8f5;
+    --markaz-border: #e1e9e2;
+    --markaz-heading-line: 1.2;
+    color: var(--markaz-text-primary);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+}
+
+body.public-page :is(h1, h2, h3, h4),
+body.public-home-page :is(h1, h2, h3, h4) {
+    text-wrap: balance;
+}
+
+body.public-page p,
+body.public-home-page p {
+    text-wrap: pretty;
+}
+
+body.public-page main :is(p, li),
+body.public-home-page main :is(p, li) {
+    color: var(--markaz-text-muted);
+}
+
+/* Gold is an accent, not a low-contrast body-text colour. */
+body.public-page .public-eyebrow,
+body.public-page .admission-guidance-link span,
+body.public-home-page .section-label,
+body.public-home-page .eyebrow {
+    color: var(--markaz-accent-text);
+}
+
+body.public-page .public-page-hero .public-eyebrow,
+body.public-page.academics-page .academics-eyebrow,
+body.public-page .admission-hero .public-eyebrow,
+body.public-home-page .hero .hero-kicker,
+body.public-home-page .hero .eyebrow {
+    color: #f0d88e;
+}
+
+/* Shared information-page hierarchy. */
+body.public-page .public-page-hero {
+    padding-block: clamp(42px, 5.5vw, 68px);
+}
+
+body.public-page .public-page-hero h1 {
+    max-width: 18ch;
+    font-size: clamp(2.15rem, 4.8vw, 3.45rem);
+    line-height: 1.12;
+    letter-spacing: -.035em;
+}
+
+body.public-page .public-page-hero p:last-child {
+    max-width: 64ch;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
+    line-height: 1.75;
+}
+
+body.public-page .public-section-heading {
+    max-width: 48rem;
+    margin-bottom: clamp(26px, 3.5vw, 38px);
+}
+
+body.public-page .public-section-heading h2,
+body.public-page .public-copy h2 {
+    max-width: 24ch;
+    margin-inline: auto;
+    font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+    line-height: 1.22;
+    letter-spacing: -.025em;
+}
+
+body.public-page .public-copy h2 {
+    margin-inline: 0;
+}
+
+body.public-page main .public-section-heading p,
+body.public-page main .public-copy p {
+    max-width: 68ch;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+body.public-page .public-value-card,
+body.public-page .admission-priority-card,
+body.public-page .admission-contact-card,
+body.public-page .admission-guidance-card,
+body.public-page .pathway-card,
+body.public-page .stage-card {
+    border-color: var(--markaz-border);
+}
+
+body.public-page :is(.public-value-card, .admission-priority-card, .admission-guidance-card, .pathway-card, .stage-card) h3 {
+    line-height: 1.35;
+}
+
+body.public-page :is(.public-value-card, .admission-priority-card, .admission-guidance-card, .pathway-card, .stage-card) p {
+    color: var(--markaz-text-muted);
+    line-height: 1.75;
+}
+
+/* Preserve light text on intentionally dark hero and call-to-action surfaces. */
+body.public-page main .academics-hero p,
+body.public-page main .academics-cta p,
+body.public-page main .public-cta p {
+    color: rgba(255, 255, 255, .88);
+}
+
+body.public-home-page main .hero .hero-description {
+    color: #e1ece5;
+}
+
+/* The enquiry action remains the strongest element in Admissions. */
+body.public-page .admission-button-gold,
+body.public-page .academics-hero-button,
+body.public-page .academics-cta-primary {
+    color: #183c29;
+}
+
+/* Bilingual headings remain legible without changing Arabic content or order. */
+body.public-page.academics-page .heading-arabic {
+    font-family: Tahoma, "Traditional Arabic", Arial, sans-serif;
+    line-height: 1.75;
+    letter-spacing: 0;
+}
+
+/* Homepage hierarchy: school identity first, highlights second, sections third. */
+body.public-home-page .hero .hero-content h1 {
+    max-width: 17ch;
+    font-size: clamp(2.25rem, 5.2vw, 4.65rem);
+    line-height: 1.1;
+    letter-spacing: -.035em;
+}
+
+body.public-home-page .hero .hero-description {
+    max-width: 62ch;
+    font-size: clamp(1rem, 1.35vw, 1.12rem);
+    line-height: 1.8;
+}
+
+body.public-home-page .section-label {
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+body.public-home-page .intro-heading h2,
+body.public-home-page .section-heading h2 {
+    max-width: 22ch;
+    font-size: clamp(1.8rem, 3.7vw, 2.75rem);
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+body.public-home-page main .intro-content > p,
+body.public-home-page main .section-heading > p {
+    max-width: 68ch;
+    line-height: 1.8;
+}
+
+body.public-home-page .highlight-item strong {
+    font-size: .96rem;
+    line-height: 1.35;
+}
+
+body.public-home-page .highlight-item span {
+    font-size: .84rem;
+    line-height: 1.55;
+}
+
+body.public-home-page .programme-card h3 {
+    font-size: 1.2rem;
+    line-height: 1.35;
+}
+
+body.public-home-page .programme-card p {
+    color: var(--markaz-text-muted);
+    line-height: 1.8;
+}
+
+/* Consistent readable widths and safe shrinking on compact screens. */
+body.public-page :is(.container, .public-copy, .public-section-heading, .markaz-faq-content),
+body.public-home-page :is(.container, .hero-content, .intro-content, .section-heading) {
+    min-width: 0;
+}
+
+body.public-page :is(.public-page-hero, .public-section, .public-copy),
+body.public-home-page :is(.hero, .section-spacing) {
+    overflow-wrap: anywhere;
+}
+
+body.public-page :is(a, button),
+body.public-home-page :is(a, button) {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body.public-page :is(a, button, summary):focus-visible,
+body.public-home-page :is(a, button):focus-visible {
+    outline: 3px solid #a47b20;
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    body.public-page,
+    body.public-home-page {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    body.public-page .public-page-hero {
+        padding-block: 38px;
+    }
+
+    body.public-page .public-page-hero h1 {
+        max-width: 19ch;
+        font-size: clamp(2rem, 8.5vw, 2.75rem);
+        line-height: 1.14;
+    }
+
+    body.public-page .public-page-hero p:last-child {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    body.public-page .public-section-heading {
+        margin-bottom: 25px;
+    }
+
+    body.public-page .public-section-heading h2,
+    body.public-page .public-copy h2 {
+        font-size: clamp(1.55rem, 7vw, 2rem);
+    }
+
+    body.public-home-page .hero .hero-content h1 {
+        font-size: clamp(2rem, 9vw, 3rem);
+        line-height: 1.13;
+    }
+
+    body.public-home-page .hero .hero-description {
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    body.public-home-page .intro-heading h2,
+    body.public-home-page .section-heading h2 {
+        font-size: clamp(1.7rem, 7.5vw, 2.25rem);
+        line-height: 1.2;
+    }
+
+    body.public-home-page .highlight-item span {
+        font-size: .82rem;
+    }
+}
