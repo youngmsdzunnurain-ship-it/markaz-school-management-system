@@ -10,21 +10,6 @@
 @page { margin: 5mm; }
 
 @media print {
-  /* Never print an incomplete read-only preview. */
-  body.result-print-blocked #studentReportCard {
-    display: none !important;
-  }
-  body.result-print-blocked .result-print-blocked-notice {
-    display: block !important;
-    margin: 20mm 10mm !important;
-    padding: 8mm !important;
-    border: 1px solid #b7791f !important;
-    border-left: 3mm solid #b7791f !important;
-    background: #fff8e8 !important;
-    color: #704b12 !important;
-    font-size: 12pt !important;
-    line-height: 1.5 !important;
-  }
   :root {
     --g: #1f5a3a;
     --gd: #154029;

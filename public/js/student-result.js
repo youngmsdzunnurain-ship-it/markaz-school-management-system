@@ -187,17 +187,13 @@ function setReportRemarks(score) {
     }
 }
 
-async function fetchStudentResultPayload(enforcePrintEligibility) {
-    const query = new URLSearchParams({
-        student_id: studentId,
-        class_type: classType
-    });
-
-    if (classId) query.set("class_id", classId);
-    if (enforcePrintEligibility && isPrintMode) query.set("print", "1");
+async function loadStudentResult() {
+    if (!studentId) {
+        throw new Error("Student ID is missing.");
+    }
 
     const response = await fetch(
-        `./api/results/student.php?${query.toString()}`,
+        `./api/results/student.php?student_id=${encodeURIComponent(studentId)}&class_type=${encodeURIComponent(classType)}${classId ? `&class_id=${encodeURIComponent(classId)}` : ""}${location.pathname.endsWith("student-result-print.html") ? "&print=1" : ""}`,
         {
             credentials: "same-origin",
             cache: "no-store"
@@ -207,78 +203,21 @@ async function fetchStudentResultPayload(enforcePrintEligibility) {
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-        const error = new Error(data.message || "Unable to load student result.");
-        error.code = data.code || "";
-        error.completion = data.completion || null;
-        error.status = response.status;
-        throw error;
-    }
-
-    return data;
-}
-
-let resultPrintBlocked = null;
-
-function showResultPrintBlockedNotice(completion) {
-    const notice = $("resultPrintBlockedNotice");
-    if (!notice) return;
-
-    const percentage = Number(completion?.percentage);
-    const threshold = Number(completion?.threshold);
-    const hasPercentage = Number.isFinite(percentage);
-    const hasThreshold = Number.isFinite(threshold);
-    const missingFields = Array.isArray(completion?.missing_fields)
-        ? completion.missing_fields
-        : [];
-
-    let message = "This result is available for review, but printing is disabled until the required result entries are complete.";
-    if (hasPercentage && hasThreshold) {
-        message = `This result is ${percentage}% complete. Printing requires at least ${threshold}% completion.`;
-    }
-    if (missingFields.length) {
-        message += " Missing: " + missingFields.join(", ") + ".";
-    }
-
-    notice.textContent = message;
-    notice.hidden = false;
-    document.body.classList.add("result-print-blocked");
-
-    $("printStudentResultButton")?.setAttribute("disabled", "disabled");
-    $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
-}
-
-async function loadStudentResult() {
-    if (!studentId) {
-        throw new Error("Student ID is missing.");
-    }
-
-    let data;
-    try {
-        data = await fetchStudentResultPayload(isPrintMode);
-    } catch (error) {
-        if (!isPrintMode || error.code !== "RESULT_INCOMPLETE") {
-            throw error;
-        }
-
-        // Keep the server-side print threshold enforced. Fetch a read-only
-        // preview only so staff can see the student profile and assigned subjects.
-        resultPrintBlocked = error.completion || {};
-        data = await fetchStudentResultPayload(false);
+        throw new Error(
+            data.message || "Unable to load student result."
+        );
     }
 
     studentData = data;
-    renderStudentResult(data);
 
-    if (resultPrintBlocked) {
-        showResultPrintBlockedNotice(resultPrintBlocked);
-    }
+    renderStudentResult(data);
 
     await loadBehaviouralReport();
 
     setEditMode(false);
     captureOriginalEditState();
     document.body.dataset.resultReady = "true";
-    if (params.get("auto_print") === "1" && isPrintMode && !resultPrintBlocked) {
+    if (params.get("auto_print") === "1" && isPrintMode) {
         await authorizeAndPrint("export_results");
     }
 }
