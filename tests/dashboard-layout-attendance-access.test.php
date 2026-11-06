@@ -28,23 +28,30 @@ dashboardAssert(
     'Dashboard summary cards must be three clean cards with no gold-green decorative pseudo-elements'
 );
 dashboardAssert(
-    str_contains($css, '.dashboard-attendance-category') &&
-    str_contains($css, 'linear-gradient(135deg') &&
-    str_contains($css, 'rgba(177, 139, 50'),
-    'Dashboard surfaces must use a consistent green-and-gold visual system'
+    (str_contains($css, '.dashboard-attendance-category') || str_contains($redesignCss, '.dashboard-attendance-category')) &&
+    (str_contains($css, 'linear-gradient(135deg') || str_contains($redesignCss, 'linear-gradient(135deg')) &&
+    (str_contains($redesignCss, 'var(--gold-') || str_contains($redesignCss, '#bd953a')),
+    'Dashboard surfaces must use the current shared green-and-gold design tokens'
+);
+$examOverviewStart = strpos($html, '<section class="dashboard-exam-section"');
+$attendanceSectionStart = strpos($html, '<section class="dashboard-attendance-panel"', $examOverviewStart === false ? 0 : $examOverviewStart);
+$examOverviewHtml = ($examOverviewStart !== false && $attendanceSectionStart !== false)
+    ? substr($html, $examOverviewStart, $attendanceSectionStart - $examOverviewStart)
+    : '';
+dashboardAssert(
+    $examOverviewHtml !== '' &&
+    substr_count($examOverviewHtml, 'id="dashboardCompletionPie"') === 1 &&
+    str_contains($examOverviewHtml, 'Overall Examination Completion') &&
+    !str_contains($examOverviewHtml, 'dashboardConventionalPie') &&
+    !str_contains($examOverviewHtml, 'dashboardArabicPie') &&
+    !str_contains($examOverviewHtml, 'dashboard-chart-card'),
+    'Only the overall examination completion overview must remain on the dashboard'
 );
 dashboardAssert(
-    str_contains($html, 'dashboard-exam-charts') &&
-    str_contains($html, 'dashboardCompletionPie') &&
-    !str_contains($html, 'dashboardConventionalPie') &&
-    !str_contains($html, 'dashboardArabicPie') &&
-    substr_count($html, 'class="dashboard-chart-card') === 1,
-    'Only the overall examination completion card must remain on the dashboard'
-);
-dashboardAssert(
-    str_contains($redesignCss, 'grid-template-columns: minmax(0, 680px) !important;') &&
-    str_contains($redesignCss, 'justify-content: center;'),
-    'The single overall completion card must be centered without category chart columns'
+    str_contains($redesignCss, '.dashboard-exam-overview') &&
+    str_contains($redesignCss, 'grid-template-columns: minmax(0, 560px) minmax(0, 1fr);') &&
+    str_contains($redesignCss, '.dashboard-completion-pie'),
+    'The overall completion chart must use the current responsive examination overview layout'
 );
 dashboardAssert(
     str_contains($html, 'dashboard-attendance-layout') &&
@@ -58,7 +65,9 @@ dashboardAssert(
 );
 dashboardAssert(
     str_contains($html, 'href="./school-fees.html" class="nav-link" data-role-access="admin"') &&
-    str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="admin"'),
+    str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="attendance"') &&
+    str_contains($js, 'requiredRole === "attendance"') &&
+    str_contains($js, 'allowed = role === "admin"'),
     'School Fees and Attendance navigation must be restricted to Senior Admin'
 );
 dashboardAssert(
@@ -84,7 +93,7 @@ dashboardAssert(
     'dashboard refresh control and its obsolete styles must be fully removed'
 );
 dashboardAssert(
-    str_contains($redesignCss, 'backdrop-filter: saturate(165%) blur(18px)')
+    str_contains($redesignCss, 'backdrop-filter: saturate(170%) blur(20px)')
         && str_contains($redesignCss, 'main-content > footer')
         && str_contains($js, 'link.blur()')
         && !str_contains($js, 'item.classList.add("active")'),
@@ -110,7 +119,7 @@ dashboardAssert(
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
-    str_contains($js, 'item.class_type === type') &&
+    str_contains($js, 'String(item.class_type || "").trim().toLowerCase() === type') &&
     str_contains($attendance, 'ar.class_type = ?') &&
     str_contains($attendance, 'ar.class_id = c.id') &&
     !str_contains($attendance, 'NOT EXISTS') &&

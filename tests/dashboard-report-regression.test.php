@@ -27,18 +27,26 @@ dashboardReportCheck(
         && str_contains($dashboardScript, 'dashboard-chart-empty-state') && str_contains($dashboardScript, 'dashboard-chart-error'),
     'attendance error handling replaces permanent loading placeholders'
 );
+$examOverviewStart = strpos($dashboardHtml, '<section class="dashboard-exam-section"');
+$attendanceSectionStart = strpos($dashboardHtml, '<section class="dashboard-attendance-panel"', $examOverviewStart === false ? 0 : $examOverviewStart);
+$examOverviewHtml = ($examOverviewStart !== false && $attendanceSectionStart !== false)
+    ? substr($dashboardHtml, $examOverviewStart, $attendanceSectionStart - $examOverviewStart)
+    : '';
 dashboardReportCheck(
-    str_contains($dashboardHtml, 'dashboardCompletionPie')
-        && !str_contains($dashboardHtml, 'dashboardConventionalPie')
-        && !str_contains($dashboardHtml, 'dashboardArabicPie')
-        && substr_count($dashboardHtml, 'class="dashboard-chart-card') === 1
+    $examOverviewHtml !== ''
+        && substr_count($examOverviewHtml, 'id="dashboardCompletionPie"') === 1
+        && str_contains($examOverviewHtml, 'Overall Examination Completion')
+        && !str_contains($examOverviewHtml, 'dashboardConventionalPie')
+        && !str_contains($examOverviewHtml, 'dashboardArabicPie')
+        && !str_contains($examOverviewHtml, 'dashboard-chart-card')
         && !str_contains($dashboardScript, 'dashboardRenderClassPie'),
     'the dashboard displays only overall examination completion, without conventional or Arabic class charts'
 );
 dashboardReportCheck(
-    str_contains($dashboardRedesignCss, 'grid-template-columns: minmax(0, 680px) !important;')
+    str_contains($dashboardRedesignCss, '.dashboard-exam-overview')
+        && str_contains($dashboardRedesignCss, 'grid-template-columns: minmax(0, 560px) minmax(0, 1fr);')
         && str_contains($dashboardRedesignCss, '.dashboard-completion-pie'),
-    'the remaining overall completion chart is centered and keeps its completion visualization'
+    'the remaining overall completion chart follows the current responsive overview layout and keeps its completion visualization'
 );
 dashboardReportCheck(
     str_contains($dashboardRedesignCss, '.page-content .welcome-card::before {')
