@@ -64,4 +64,20 @@ dashboardShellAssert(
     'Dashboard footer must match the shared centered MARKAZ footer with its green-gold accent and stacked text'
 );
 
+dashboardShellAssert(
+    str_contains($html, 'id="dashboardAdminDetailName"') &&
+    str_contains($html, 'id="dashboardAdminDetailEmail"') &&
+    str_contains($js, 'dashboardAdminDetailName.textContent = name') &&
+    str_contains($js, 'dashboardAdminDetailEmail.textContent = email'),
+    'Administrator detail cards must show the authenticated name and email without replacing the profile summary'
+);
+
+dashboardShellAssert(
+    preg_match('/\.admin-profile-photo\{[^}]*border-radius:50%/s', $css) === 1 &&
+    str_contains($css, '.admin-profile-card') &&
+    str_contains($css, '.admin-detail-grid') &&
+    str_contains($css, '.admin-status-row'),
+    'Administrator profile must use a circular avatar, a distinct profile card, two detail cards and a separate status row'
+);
+
 echo "Dashboard sidebar text-only colour and shell layout regression tests passed.\n";
