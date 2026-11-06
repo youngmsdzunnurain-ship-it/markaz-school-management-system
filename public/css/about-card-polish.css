@@ -197,8 +197,12 @@
 
 .public-about-page .academic-milestones-heading > h2 {
     width: 100%;
-    max-width: min(100%, 24ch);
-    text-wrap: balance;
+    max-width: 100%;
+    margin-inline: auto;
+    font-size: clamp(.78rem, 4vw, 1.65rem);
+    line-height: 1.25;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .public-about-page .academic-milestones-heading > p {
