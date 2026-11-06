@@ -79,4 +79,20 @@ publicVisualCheck(
     'gallery title must have a controlled responsive line length'
 );
 
+
+$homeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
+publicVisualCheck(
+    str_contains($homeCss, 'filter: saturate(.9) brightness(.9) contrast(1.03)') &&
+    str_contains($homeCss, '.hero .building-frame::after'),
+    'homepage hero image must be brighter with a subtle dark overlay'
+);
+
+$publicCss = file_get_contents(__DIR__ . '/../public/css/public-pages.css');
+publicVisualCheck(
+    str_contains($publicCss, '.public-intro-grid .public-photo img') &&
+    str_contains($publicCss, 'object-fit: cover') &&
+    str_contains($publicCss, 'padding: 0'),
+    'about school photograph must fill its frame without inner padding'
+);
+
 echo "Public visual hierarchy regression tests passed.\n";
