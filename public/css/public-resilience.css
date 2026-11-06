@@ -1,0 +1,210 @@
+/* MARKAZ public website: slow-network and offline feedback.
+   This stylesheet is loaded only by the public-facing website pages. */
+
+#markaz-page-loading {
+    position: fixed;
+    z-index: 99990;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    gap: 22px;
+    padding: 22px max(20px, calc((100vw - 1120px) / 2));
+    background: #fff;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .22s ease, visibility .22s ease;
+}
+
+html.markaz-page-ready #markaz-page-loading {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.markaz-skeleton {
+    position: relative;
+    overflow: hidden;
+    border-radius: 9px;
+    background: #edf2ee;
+}
+
+.markaz-skeleton::after,
+.markaz-image-loading::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.78) 48%, transparent 76%);
+    content: "";
+    transform: translateX(-100%);
+    animation: markaz-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.markaz-skeleton-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 62px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8eee9;
+}
+
+.markaz-skeleton-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #e5eee7;
+}
+
+.markaz-skeleton-brand {
+    width: min(180px, 35vw);
+    height: 15px;
+}
+
+.markaz-skeleton-nav {
+    width: min(320px, 42vw);
+    height: 12px;
+    margin-left: auto;
+}
+
+.markaz-skeleton-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+    min-height: clamp(190px, 34vw, 330px);
+    padding: clamp(22px, 5vw, 54px);
+    border-radius: 18px;
+    background: #f5f8f5;
+}
+
+.markaz-skeleton-copy {
+    display: grid;
+    gap: 13px;
+}
+
+.markaz-skeleton-line {
+    width: 100%;
+    height: 13px;
+}
+
+.markaz-skeleton-line.short { width: 58%; }
+.markaz-skeleton-line.title { width: 82%; height: 27px; border-radius: 7px; }
+.markaz-skeleton-image {
+    min-height: 170px;
+    height: 100%;
+    border-radius: 14px;
+    background: #e5eee7;
+}
+
+.markaz-skeleton-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.markaz-skeleton-card {
+    display: grid;
+    gap: 12px;
+    min-height: 115px;
+    padding: 20px;
+    border: 1px solid #e8eee9;
+    border-radius: 15px;
+    background: #fff;
+}
+
+.markaz-skeleton-card .markaz-skeleton-line:first-child {
+    width: 46%;
+    height: 17px;
+}
+
+.markaz-image-loading {
+    position: relative;
+    overflow: hidden;
+    background-color: #edf2ee !important;
+    background-image: linear-gradient(100deg, #edf2ee 20%, #f8faf8 48%, #edf2ee 76%) !important;
+    background-size: 220% 100% !important;
+    animation: markaz-image-placeholder 1.5s linear infinite;
+}
+
+.markaz-image-loaded {
+    animation: none !important;
+    background: transparent !important;
+}
+
+.markaz-image-loaded::after,
+.markaz-image-error::after {
+    display: none !important;
+}
+
+.markaz-image-error {
+    background: #f1f5f1 !important;
+}
+
+.markaz-network-status {
+    position: fixed;
+    z-index: 99999;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(390px, calc(100vw - 32px));
+    padding: 12px 15px;
+    border: 1px solid #dce9df;
+    border-radius: 13px;
+    color: #174b32;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(8, 47, 32, .16);
+    font: 600 13px/1.45 "Segoe UI", Arial, sans-serif;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.markaz-network-status.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.markaz-network-status[data-state="offline"] {
+    border-color: #e7c6bd;
+    color: #8a3828;
+}
+
+.markaz-network-status[data-state="slow"] {
+    border-color: #e7d7a9;
+    color: #765717;
+}
+
+.markaz-network-status__dot {
+    flex: 0 0 9px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+@keyframes markaz-skeleton-shimmer {
+    to { transform: translateX(100%); }
+}
+
+@keyframes markaz-image-placeholder {
+    to { background-position: -220% 0; }
+}
+
+@media (max-width: 680px) {
+    #markaz-page-loading { gap: 16px; padding: 16px; }
+    .markaz-skeleton-nav { display: none; }
+    .markaz-skeleton-hero { grid-template-columns: 1fr; min-height: 0; padding: 20px; }
+    .markaz-skeleton-image { min-height: 120px; }
+    .markaz-skeleton-cards { grid-template-columns: 1fr; gap: 10px; }
+    .markaz-skeleton-card { min-height: 72px; padding: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #markaz-page-loading,
+    .markaz-network-status { transition: none; }
+    .markaz-skeleton::after,
+    .markaz-image-loading::after,
+    .markaz-image-loading { animation: none !important; }
+}
