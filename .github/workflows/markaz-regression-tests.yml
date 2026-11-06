@@ -29,3 +29,5 @@ jobs:
           php tests/result-print-current-period.test.php
           php tests/result-print-flow-isolation.test.php
           php tests/student-result-display-regression.test.php
+          php tests/shared-public-footer.test.php
+          php tests/public-footer-spacing.test.php
