@@ -332,12 +332,3 @@
     }
 }
 
-
-/* Keep the Qur'anic pathway icon on the same gold-on-pale-green treatment. */
-body.public-page.academics-page .quran-card .pathway-icon {
-    color: #93691c;
-    background: #edf5ef;
-    border: 1px solid #dce9df;
-}
-
-

@@ -172,19 +172,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 54px;
-    height: 54px;
+    width: 58px;
+    height: 58px;
     margin-bottom: 24px;
-    border-radius: 12px;
-    color: #fff;
-    background: var(--academics-green);
+    box-sizing: border-box;
+    border: 1px solid #dce9df;
+    border-radius: 17px;
+    color: #93691c;
+    background: #edf5ef;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
     font-size: 1.05rem;
     font-weight: 800;
-}
-
-.academics-page .quran-card .pathway-icon {
-    color: var(--academics-deep-green);
-    background: #f4e9c9;
 }
 
 .academics-page .pathway-label {
@@ -229,9 +227,11 @@
     justify-content: center;
     width: 27px;
     height: 27px;
-    border-radius: 50%;
-    color: var(--academics-green);
-    background: #eaf3ec;
+    box-sizing: border-box;
+    border: 1px solid #dce9df;
+    border-radius: 9px;
+    color: #93691c;
+    background: #edf5ef;
     font-size: .85rem;
     font-weight: 800;
 }
@@ -262,9 +262,11 @@
     justify-content: center;
     width: 29px;
     height: 29px;
-    border-radius: 50%;
-    color: #8c6b1e;
-    background: #fbf2d9;
+    box-sizing: border-box;
+    border: 1px solid #dce9df;
+    border-radius: 9px;
+    color: #93691c;
+    background: #edf5ef;
     font-size: 1rem;
 }
 
@@ -340,12 +342,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 43px;
-    height: 43px;
+    width: 58px;
+    height: 58px;
     margin-bottom: 20px;
-    border-radius: 50%;
-    color: var(--academics-deep-green);
-    background: #f4e9c9;
+    box-sizing: border-box;
+    border: 1px solid #dce9df;
+    border-radius: 17px;
+    color: #93691c;
+    background: #edf5ef;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
     font-size: .9rem;
     font-weight: 800;
 }
@@ -618,14 +623,6 @@
     border-top: 3px solid var(--academics-gold);
 }
 
-.academics-page .stage-number {
-    width: 46px;
-    height: 46px;
-    margin-bottom: 18px;
-    color: #fff;
-    background: var(--academics-green);
-}
-
 .academics-page .stage-card h3 {
     line-height: 1.45;
 }
@@ -680,8 +677,6 @@
     .academics-page .stage-number {
         position: relative;
         z-index: 2;
-        border: 4px solid #fff;
-        box-sizing: content-box;
     }
 }
 

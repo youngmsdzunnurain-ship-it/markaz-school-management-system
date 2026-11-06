@@ -151,8 +151,6 @@ foreach ([
     'transform: scaleX(0)',
     'transform-origin: left',
     '.markaz-faq-icon',
-    '.highlight-mark',
-    '.quran-feature-icon',
         '.admission-card-mark',
     '.pathway-icon',
     '.stage-number',
@@ -184,6 +182,90 @@ publicVisualCheck(
     str_contains($aboutCardsCss, 'text-align: center') &&
     str_contains($aboutCardsCss, '@media (max-width: 760px)'),
     'About academic milestone heading must stay on one line on wide screens and wrap safely on mobile'
+);
+
+
+
+$homeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
+$homeHighlightStyle = preg_match('/\\.highlight-number\\s*\\{([^}]*)\\}/s', $homeCss, $homeHighlightMatch) === 1
+    ? $homeHighlightMatch[1]
+    : '';
+publicVisualCheck(
+    str_contains($homeHighlightStyle, 'color: #93691c') &&
+    str_contains($homeHighlightStyle, 'background: #edf5ef') &&
+    str_contains($homeHighlightStyle, 'border: 1px solid #dce9df'),
+    'homepage 01–04 highlight number tiles must match the Learning with Purpose gold-on-pale-green icon treatment'
+);
+
+$admissionsCss = file_get_contents(__DIR__ . '/../public/css/admissions.css');
+$admissionIconStyle = preg_match('/\\.admission-card-mark\\s*\\{([^}]*)\\}/s', $admissionsCss, $admissionIconMatch) === 1
+    ? $admissionIconMatch[1]
+    : '';
+publicVisualCheck(
+    str_contains($admissionIconStyle, 'width: 58px') &&
+    str_contains($admissionIconStyle, 'height: 58px') &&
+    str_contains($admissionIconStyle, 'color: #93691c') &&
+    str_contains($admissionIconStyle, 'background: #edf5ef') &&
+    str_contains($admissionIconStyle, 'border: 1px solid #dce9df') &&
+    str_contains($admissionIconStyle, 'border-radius: 17px'),
+    'Admission priority and guidance icons must use the homepage Learning with Purpose tile dimensions and colours'
+);
+publicVisualCheck(
+    str_contains($admissionsCss, '.admission-programmes .public-section-heading') &&
+    str_contains($admissionsCss, '.admission-guidance .public-section-heading') &&
+    str_contains($admissionsCss, 'align-items: center') &&
+    str_contains($admissionsCss, 'text-align: center') &&
+    str_contains($admissionsCss, 'margin-inline: auto'),
+    'Admission section headings and supporting copy must share one centred alignment axis'
+);
+publicVisualCheck(
+    str_contains($admissionsCss, '.admission-how .public-copy') &&
+    str_contains($admissionsCss, 'text-align: left'),
+    'Admission enquiry instructions must retain a consistent left-aligned reading column'
+);
+
+$academicsCss = file_get_contents(__DIR__ . '/../public/css/academics.css');
+$pathwayIconStyle = preg_match('/\\.academics-page \\.pathway-icon\\s*\\{([^}]*)\\}/s', $academicsCss, $pathwayIconMatch) === 1
+    ? $pathwayIconMatch[1]
+    : '';
+publicVisualCheck(
+    str_contains($pathwayIconStyle, 'width: 58px') &&
+    str_contains($pathwayIconStyle, 'height: 58px') &&
+    str_contains($pathwayIconStyle, 'color: #93691c') &&
+    str_contains($pathwayIconStyle, 'background: #edf5ef') &&
+    str_contains($pathwayIconStyle, 'border: 1px solid #dce9df') &&
+    str_contains($pathwayIconStyle, 'border-radius: 17px') &&
+    !str_contains($academicsCss, '.academics-page .quran-card .pathway-icon'),
+    'Academic pathway icons must use one shared gold-on-pale-green tile treatment without a Quran-only override'
+);
+$academicSupportingIcons = [
+    '.academics-page .highlight-mark',
+    '.academics-page .quran-feature-icon',
+];
+foreach ($academicSupportingIcons as $selector) {
+    publicVisualCheck(
+        str_contains($academicsCss, $selector),
+        "Academic supporting icon styling must remain in its owning stylesheet: {$selector}"
+    );
+}
+publicVisualCheck(
+    str_contains($academicsCss, 'color: #93691c') &&
+    str_contains($academicsCss, 'background: #edf5ef') &&
+    str_contains($academicsCss, 'border: 1px solid #dce9df'),
+    'Academic supporting marks must use the same gold-on-pale-green icon treatment'
+);
+
+$stageIconRules = [];
+preg_match_all('/\\.academics-page \\.stage-number\\s*\\{([^}]*)\\}/s', $academicsCss, $stageIconRules);
+publicVisualCheck(
+    count($stageIconRules[1]) >= 1 &&
+    str_contains($academicsCss, 'width: 58px') &&
+    str_contains($academicsCss, 'height: 58px') &&
+    str_contains($academicsCss, 'color: #93691c') &&
+    str_contains($academicsCss, 'background: #edf5ef') &&
+    str_contains($academicsCss, 'border-radius: 17px') &&
+    !preg_match('/\\.academics-page \\.stage-number\\s*\\{[^}]*width:\\s*(?:43|46)px/s', $academicsCss),
+    'Academic memorisation stage numbers must share the icon tile treatment with no later conflicting declaration'
 );
 
 echo "Public visual hierarchy regression tests passed.\n";
