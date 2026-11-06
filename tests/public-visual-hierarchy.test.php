@@ -41,7 +41,7 @@ foreach ([
     '--markaz-accent-text',
     'text-wrap: balance',
     'text-wrap: pretty',
-    'max-inline-size',
+    'max-width',
     'prefers-reduced-motion: reduce',
     'min-width: 0',
     'overflow-wrap: anywhere',
@@ -63,4 +63,4 @@ publicVisualCheck(
     'refinement must not introduce unscoped global element rules'
 );
 
-echo "Public visual hierarchy regression tests passed.\\n";
+echo "Public visual hierarchy regression tests passed.\n";
