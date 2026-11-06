@@ -28,3 +28,4 @@ jobs:
           php tests/result-footer-signatures.test.php
           php tests/result-print-current-period.test.php
           php tests/result-print-flow-isolation.test.php
+          php tests/student-result-display-regression.test.php
