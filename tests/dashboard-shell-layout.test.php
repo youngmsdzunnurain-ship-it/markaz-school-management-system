@@ -51,7 +51,7 @@ dashboardShellAssert(
 dashboardShellAssert(
     preg_match('/\.admin-profile-display\\{[^}]*display:grid/s', $css) === 1 &&
     preg_match('/\.admin-profile-photo\\{[^}]*border-radius:50%/s', $css) === 1 &&
-    preg_match('/\.admin-profile-summary\\{[^}]*min-width:0/s', $css) === 1 &&
+    preg_match('/\.admin-profile-summary\\{[^}]*display:contents/s', $css) === 1 &&
     preg_match('/\.admin-details>div\\{[^}]*display:grid/s', $css) === 1 &&
     str_contains($html, 'id="dashboardAdminPhoto"') &&
     str_contains($html, 'id="dashboardAdminName"') &&
