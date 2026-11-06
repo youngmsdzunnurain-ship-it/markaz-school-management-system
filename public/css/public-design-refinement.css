@@ -31,8 +31,8 @@ body.public-home-page p {
     text-wrap: pretty;
 }
 
-body.public-page :is(p, li),
-body.public-home-page :is(p, li) {
+body.public-page main :is(p, li),
+body.public-home-page main :is(p, li) {
     color: var(--markaz-text-muted);
 }
 
@@ -45,6 +45,7 @@ body.public-home-page .eyebrow {
 }
 
 body.public-page .public-page-hero .public-eyebrow,
+body.public-page.academics-page .academics-eyebrow,
 body.public-page .admission-hero .public-eyebrow,
 body.public-home-page .hero .hero-kicker,
 body.public-home-page .hero .eyebrow {
@@ -87,8 +88,8 @@ body.public-page .public-copy h2 {
     margin-inline: 0;
 }
 
-body.public-page .public-section-heading p,
-body.public-page .public-copy p {
+body.public-page main .public-section-heading p,
+body.public-page main .public-copy p {
     max-width: 68ch;
     font-size: 1rem;
     line-height: 1.8;
@@ -154,8 +155,8 @@ body.public-home-page .section-heading h2 {
     text-wrap: balance;
 }
 
-body.public-home-page .intro-content > p,
-body.public-home-page .section-heading > p {
+body.public-home-page main .intro-content > p,
+body.public-home-page main .section-heading > p {
     max-width: 68ch;
     line-height: 1.8;
 }
