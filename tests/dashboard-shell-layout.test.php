@@ -29,9 +29,14 @@ dashboardShellAssert(
 
 dashboardShellAssert(
     preg_match('/\.nav-link\{[^}]*color:#fff/s', $css) === 1 &&
-    preg_match('/\.nav-link i\{[^}]*color:#fff/s', $css) === 1 &&
     preg_match('/\.nav-section-label\{[^}]*color:#fff/s', $css) === 1,
-    'Dashboard sidebar navigation labels, links and icons must use pure white'
+    'Dashboard sidebar navigation text must use pure white'
+);
+
+dashboardShellAssert(
+    preg_match('/\.nav-link i\{[^}]*color:#a9cdb6/s', $css) === 1 &&
+    preg_match('/\.nav-link\.active i\{[^}]*color:#e6d9a4/s', $css) === 1,
+    'Dashboard sidebar icons must retain their original normal and active colours'
 );
 
 dashboardShellAssert(
@@ -50,4 +55,4 @@ dashboardShellAssert(
     'Dashboard footer must use the shared clean white/green page-footer treatment'
 );
 
-echo "Dashboard sidebar, administrator profile and footer layout regression tests passed.\n";
+echo "Dashboard sidebar text-only colour and shell layout regression tests passed.\n";
