@@ -31,3 +31,4 @@ jobs:
           php tests/student-result-display-regression.test.php
           php tests/shared-public-footer.test.php
           php tests/public-footer-spacing.test.php
+          php tests/public-interaction-motion.test.php
