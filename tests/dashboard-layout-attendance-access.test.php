@@ -65,7 +65,9 @@ dashboardAssert(
 );
 dashboardAssert(
     str_contains($html, 'href="./school-fees.html" class="nav-link" data-role-access="admin"') &&
-    str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="admin"'),
+    str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="attendance"') &&
+    str_contains($js, 'requiredRole === "attendance"') &&
+    str_contains($js, 'allowed = role === "admin"'),
     'School Fees and Attendance navigation must be restricted to Senior Admin'
 );
 dashboardAssert(
