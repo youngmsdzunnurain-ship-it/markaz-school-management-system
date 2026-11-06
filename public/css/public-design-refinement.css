@@ -262,10 +262,3 @@ body.public-home-page :is(a, button):focus-visible {
         font-size: .82rem;
     }
 }
-
-@media (prefers-reduced-motion: reduce) {
-    body.public-page *,
-    body.public-home-page * {
-        scroll-behavior: auto !important;
-    }
-}
