@@ -188,11 +188,15 @@ $academicTitleRule = preg_match('/\\.public-about-page \\.academic-milestones-he
     : '';
 publicVisualCheck(
     str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
+    str_contains($aboutCardsCss, '.public-about-page .academic-milestones-heading {') &&
+    str_contains($aboutCardsCss, 'display: grid') &&
+    str_contains($aboutCardsCss, 'grid-template-columns: minmax(0, 1fr)') &&
+    str_contains($aboutCardsCss, 'justify-items: center') &&
     str_contains($academicTitleRule, 'max-width: 100%') &&
     str_contains($academicTitleRule, 'white-space: nowrap') &&
-    str_contains($academicTitleRule, 'font-size: clamp(.78rem, 4vw, 1.65rem)') &&
+    str_contains($academicTitleRule, 'font-size: clamp(.72rem, 3.8vw, 1.65rem)') &&
     str_contains($academicTitleRule, 'text-align: center'),
-    'About academic milestone title must remain centered on one line at desktop and mobile widths'
+    'About academic milestone title must stay centered in a full-width column and on one line at all viewport widths'
 );
 
 
