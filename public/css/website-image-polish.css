@@ -27,11 +27,7 @@ img[alt*="logo" i] {
 .director-photo img,
 .intro-visual img,
 .facility-card img,
-.facility-image img,
-.markaz-photo-card img,
-.markaz-facility-card img,
-.markaz-facility-intro > img,
-.markaz-facility-note img {
+.facility-image img {
     display: block;
     width: 100%;
     height: 100%;
