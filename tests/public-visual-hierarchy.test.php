@@ -194,7 +194,7 @@ publicVisualCheck(
     str_contains($aboutCardsCss, 'justify-items: center') &&
     str_contains($academicTitleRule, 'max-width: 100%') &&
     str_contains($academicTitleRule, 'white-space: nowrap') &&
-    str_contains($academicTitleRule, 'font-size: clamp(.72rem, 3.8vw, 1.65rem)') &&
+    str_contains($academicTitleRule, 'font-size: clamp(.72rem, 3.8vw, 1.65rem)'),
     'About academic milestone title must stay centered in a full-width column and on one line at all viewport widths'
 );
 
