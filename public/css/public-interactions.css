@@ -341,24 +341,3 @@ body.public-page.academics-page .quran-card .pathway-icon {
 }
 
 
-/* Consistent gold glyphs on dark-grey icon tiles across public pages. */
-body.public-page .admission-card-mark,
-body.public-page .pathway-icon,
-body.public-page .stage-number,
-body.public-page .markaz-faq-icon,
-body.public-page .highlight-mark,
-body.public-page .quran-feature-icon {
-    color: #d9aa4b;
-    background: #343a36;
-    border: 1px solid #4a514c;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
-}
-
-
-/* The Quran feature icon has a more specific legacy rule; override it deliberately. */
-body.public-page.academics-page .quran-card .pathway-icon {
-    color: #d9aa4b;
-    background: #343a36;
-    border-color: #4a514c;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
-}
