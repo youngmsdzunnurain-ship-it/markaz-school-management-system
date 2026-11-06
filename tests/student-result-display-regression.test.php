@@ -40,6 +40,17 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
+    str_contains($classHtml, 'class.js?v=20261106-targeted-student-display-fix')
+        && str_contains($classJs, 'display_version=20261106-targeted-student-display-fix'),
+    'class workspace and student result navigation bypass stale cached markup/scripts'
+);
+
+studentDisplayCheck(
+    str_contains($printJs, 'display_version: "20261106-targeted-student-display-fix"'),
+    'print-result navigation bypasses stale cached printable page markup'
+);
+
+studentDisplayCheck(
     !str_contains($studentPage, 'id="printStudentResultButton"')
         && !str_contains($studentPage, 'id="downloadStudentPdfButton"')
         && str_contains($studentPage, 'id="editScoresButton"'),
