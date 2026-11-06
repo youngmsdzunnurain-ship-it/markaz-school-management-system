@@ -96,4 +96,21 @@ publicVisualCheck(
     'about school photograph must fill its frame without inner padding'
 );
 
+$aboutHtml = file_get_contents(__DIR__ . '/../public/about.html');
+$aboutCardsCss = file_get_contents(__DIR__ . '/../public/css/about-card-polish.css');
+publicVisualCheck(
+    str_contains($aboutHtml, 'css/about-card-polish.css') &&
+    str_contains($aboutCardsCss, '.public-values .public-value-card::before') &&
+    str_contains($aboutCardsCss, 'linear-gradient') &&
+    str_contains($aboutCardsCss, 'prefers-reduced-motion'),
+    'About page information cards must use the refined gold accent treatment with reduced-motion support'
+);
+
+$homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
+publicVisualCheck(
+    str_contains($homeProgrammeCss, 'color: #93691c') &&
+    str_contains($homeProgrammeCss, 'linear-gradient(145deg, #fff8e9, #f3e5c6)'),
+    'homepage programme icons must use the gold accent palette'
+);
+
 echo "Public visual hierarchy regression tests passed.\n";

@@ -996,10 +996,12 @@ p {
     height: 58px;
     margin-bottom: 24px;
     place-items: center;
-    border: 1px solid #dce9df;
+    border: 1px solid rgba(195, 145, 50, .32);
     border-radius: 17px;
-    color: var(--green-800);
-    background: #edf5ef;
+    color: #93691c;
+    background: linear-gradient(145deg, #fff8e9, #f3e5c6);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9),
+                0 4px 12px rgba(153, 112, 37, .10);
     font-size: 1.55rem;
 }
 
