@@ -262,3 +262,28 @@ body.public-home-page :is(a, button):focus-visible {
         font-size: .82rem;
     }
 }
+
+
+/* Keep the homepage "Learning with Purpose" heading on one visual centre line. */
+body.public-home-page .programmes-section .section-heading {
+    display: flex;
+    width: min(100%, 48rem);
+    flex-direction: column;
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+}
+
+body.public-home-page .programmes-section .section-heading h2 {
+    width: 100%;
+    max-width: none;
+    margin-inline: auto;
+    text-align: center;
+    text-wrap: balance;
+}
+
+body.public-home-page .programmes-section .section-heading > p {
+    width: 100%;
+    margin-inline: auto;
+    text-align: center;
+}
