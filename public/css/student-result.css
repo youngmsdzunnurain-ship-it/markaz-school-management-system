@@ -10760,3 +10760,20 @@ html body .report-card .memorization-value-row input { display: block !important
     margin: 0 auto;
     object-fit: contain;
 }
+
+
+/* Read-only notice shown when a result is below the print-completion threshold. */
+.result-print-blocked-notice {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid #e4bd73;
+    border-left: 4px solid #b7791f;
+    border-radius: 10px;
+    background: #fff8e8;
+    color: #704b12;
+    font-size: .9rem;
+    line-height: 1.55;
+}
+.result-print-blocked-notice[hidden] {
+    display: none !important;
+}

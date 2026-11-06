@@ -51,7 +51,9 @@ try {
     $periodStmt = $pdo->query(
         'SELECT ap.id FROM academic_periods ap
          INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
-         WHERE s.is_current = 1 ORDER BY ap.id DESC LIMIT 1'
+         WHERE s.is_current = 1
+           AND ap.is_current = 1
+         LIMIT 1'
     );
     $periodId = $periodStmt->fetchColumn();
     if ($periodId === false) {
