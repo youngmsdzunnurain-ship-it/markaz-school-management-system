@@ -188,6 +188,7 @@ publicVisualCheck(
 
 
 
+$homeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
 $homeHighlightStyle = preg_match('/\\.highlight-number\\s*\\{([^}]*)\\}/s', $homeCss, $homeHighlightMatch) === 1
     ? $homeHighlightMatch[1]
     : '';
