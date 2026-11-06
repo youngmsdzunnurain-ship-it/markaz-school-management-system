@@ -567,7 +567,18 @@ p {
     min-height: 680px;
     object-fit: cover;
     object-position: center 45%;
-    filter: saturate(.82) brightness(.78);
+    filter: saturate(.9) brightness(.9) contrast(1.03);
+}
+
+/* A restrained overlay adds depth without making the building look dark. */
+.hero .building-frame::after {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: rgba(5, 35, 23, .08);
+    box-shadow: inset 0 0 70px rgba(0, 0, 0, .12);
+    content: "";
+    pointer-events: none;
 }
 
 .hero .building-caption {
