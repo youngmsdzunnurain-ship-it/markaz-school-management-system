@@ -353,3 +353,12 @@ body.public-page .quran-feature-icon {
     border: 1px solid #4a514c;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
 }
+
+
+/* The Quran feature icon has a more specific legacy rule; override it deliberately. */
+body.public-page.academics-page .quran-card .pathway-icon {
+    color: #d9aa4b;
+    background: #343a36;
+    border-color: #4a514c;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
