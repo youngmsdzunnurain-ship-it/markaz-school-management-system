@@ -1509,7 +1509,9 @@ const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
 const cancelScoresButton = $("cancelScoresButton");
 if (isPrintMode) {
-    document.querySelector(".student-edit-actions")?.remove();
+    document.querySelectorAll(
+        ".student-edit-actions, #editScoresButton, #saveScoresButton, #cancelScoresButton"
+    ).forEach(control => control.remove());
 }
 
 const memorizationInput = $("studentMemorizationInput");
@@ -2076,13 +2078,25 @@ loadStudentResult().catch(error => {
         $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
     }
 
-    $("studentResultsBody").innerHTML = `
-        <tr>
-            <td colspan="8">
-                ${escapeHtml(error.message)}
-            </td>
-        </tr>
-    `;
+    if ($("studentName")?.textContent === "Loading...") {
+        $("studentName").textContent = "Unable to load student result";
+    }
+    if ($("studentResultsBody")) {
+        $("studentResultsBody").innerHTML = `
+            <tr>
+                <td colspan="8">
+                    ${escapeHtml(error.message || "Unable to load student result.")}
+                </td>
+            </tr>
+        `;
+    }
+    if (isPrintMode) {
+        const notice = $("resultPrintBlockedNotice");
+        if (notice) {
+            notice.textContent = error.message || "Unable to load this result.";
+            notice.hidden = false;
+        }
+    }
 });
 
 /* UNSAVED CHANGES PROTECTION */
