@@ -94,4 +94,4 @@ publicSeoCheck(
     'school structured data must contain the verified MARKAZ identity and contact details'
 );
 
-echo "Public SEO regression tests passed.\\n";
+echo "Public SEO regression tests passed.\n";
