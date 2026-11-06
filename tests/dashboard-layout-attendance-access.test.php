@@ -119,7 +119,7 @@ dashboardAssert(
     'Arabic progress must account for both current and legacy Arabic student class columns'
 );
 dashboardAssert(
-    str_contains($js, 'item.class_type === type') &&
+    str_contains($js, 'String(item.class_type || "").trim().toLowerCase() === type') &&
     str_contains($attendance, 'ar.class_type = ?') &&
     str_contains($attendance, 'ar.class_id = c.id') &&
     !str_contains($attendance, 'NOT EXISTS') &&
