@@ -151,8 +151,6 @@ foreach ([
     'transform: scaleX(0)',
     'transform-origin: left',
     '.markaz-faq-icon',
-    '.highlight-mark',
-    '.quran-feature-icon',
         '.admission-card-mark',
     '.pathway-icon',
     '.stage-number',
