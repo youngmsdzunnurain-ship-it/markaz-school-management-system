@@ -37,7 +37,7 @@ function isApprovedPublicPage(url) {
     if (url.origin !== self.location.origin) return false;
     const relativePath = getScopeRelativePath(url);
     if (relativePath === null) return false;
-    return PUBLIC_PAGES.has("./" + (relativePath || "home.html"));
+    return relativePath !== "" && PUBLIC_PAGES.has("./" + relativePath);
 }
 
 function isApprovedPublicAsset(url) {
