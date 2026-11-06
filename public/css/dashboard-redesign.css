@@ -1653,7 +1653,6 @@ h1, h2, h3 {
 }
 .dashboard-attendance-category::before,
 .dashboard-attendance-summary::before,
-.stat-card::before,
 .quick-access-panel::before,
 .administrator-panel::before {
     content: "";
