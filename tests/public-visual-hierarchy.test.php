@@ -314,25 +314,19 @@ publicVisualCheck(
     'Academic eyebrow labels must match Admission gold styling and Tahfiz heading must stay on one line on desktop'
 );
 
-$faqHeadingCss = preg_match('/body\\.public-page\\.public-faq-page \\.public-section-heading\\s*\\{([^}]*)\\}/s', $publicCss, $faqHeadingMatch) === 1
-    ? $faqHeadingMatch[1]
+$sharedHeadingCss = preg_match('/body\\.public-page\\.public-faq-page \\.public-section-heading,\\s*body\\.public-page \\.markaz-facility-heading\\s*\\{([^}]*)\\}/s', $publicCss, $sharedHeadingMatch) === 1
+    ? $sharedHeadingMatch[1]
     : '';
+$sharedHeadingsCentered = str_contains($sharedHeadingCss, 'display: flex') &&
+    str_contains($sharedHeadingCss, 'flex-direction: column') &&
+    str_contains($sharedHeadingCss, 'align-items: center') &&
+    str_contains($sharedHeadingCss, 'text-align: center');
 publicVisualCheck(
-    str_contains($faqHeadingCss, 'display: flex') &&
-    str_contains($faqHeadingCss, 'flex-direction: column') &&
-    str_contains($faqHeadingCss, 'align-items: center') &&
-    str_contains($faqHeadingCss, 'text-align: center'),
+    $sharedHeadingsCentered,
     'FAQ helpful-information heading, title and supporting text must form one centered column'
 );
-
-$facilityHeadingCss = preg_match('/\\.markaz-facility-heading\\s*\\{([^}]*)\\}/s', $publicCss, $facilityHeadingMatch) === 1
-    ? $facilityHeadingMatch[1]
-    : '';
 publicVisualCheck(
-    str_contains($facilityHeadingCss, 'display: flex') &&
-    str_contains($facilityHeadingCss, 'flex-direction: column') &&
-    str_contains($facilityHeadingCss, 'align-items: center') &&
-    str_contains($facilityHeadingCss, 'text-align: center'),
+    $sharedHeadingsCentered,
     'Facilities Learning in Practice heading and supporting text must form one centered column'
 );
 
