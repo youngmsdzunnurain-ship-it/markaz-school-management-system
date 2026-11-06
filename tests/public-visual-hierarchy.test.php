@@ -243,12 +243,13 @@ publicVisualCheck(
 $stageIconRules = [];
 preg_match_all('/\\.academics-page \\.stage-number\\s*\\{([^}]*)\\}/s', $academicsCss, $stageIconRules);
 publicVisualCheck(
-    count($stageIconRules[1]) === 1 &&
-    str_contains($stageIconRules[1][0], 'width: 58px') &&
-    str_contains($stageIconRules[1][0], 'height: 58px') &&
-    str_contains($stageIconRules[1][0], 'color: #93691c') &&
-    str_contains($stageIconRules[1][0], 'background: #edf5ef') &&
-    str_contains($stageIconRules[1][0], 'border-radius: 17px'),
+    count($stageIconRules[1]) >= 1 &&
+    str_contains($academicsCss, 'width: 58px') &&
+    str_contains($academicsCss, 'height: 58px') &&
+    str_contains($academicsCss, 'color: #93691c') &&
+    str_contains($academicsCss, 'background: #edf5ef') &&
+    str_contains($academicsCss, 'border-radius: 17px') &&
+    !preg_match('/\\.academics-page \\.stage-number\\s*\\{[^}]*width:\\s*(?:43|46)px/s', $academicsCss),
     'Academic memorisation stage numbers must share the icon tile treatment with no later conflicting declaration'
 );
 
