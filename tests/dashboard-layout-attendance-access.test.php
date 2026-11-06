@@ -33,18 +33,25 @@ dashboardAssert(
     str_contains($css, 'rgba(177, 139, 50'),
     'Dashboard surfaces must use a consistent green-and-gold visual system'
 );
+$examOverviewStart = strpos($html, '<section class="dashboard-exam-section"');
+$attendanceSectionStart = strpos($html, '<section class="dashboard-attendance-panel"', $examOverviewStart === false ? 0 : $examOverviewStart);
+$examOverviewHtml = ($examOverviewStart !== false && $attendanceSectionStart !== false)
+    ? substr($html, $examOverviewStart, $attendanceSectionStart - $examOverviewStart)
+    : '';
 dashboardAssert(
-    str_contains($html, 'dashboard-exam-charts') &&
-    str_contains($html, 'dashboardCompletionPie') &&
-    !str_contains($html, 'dashboardConventionalPie') &&
-    !str_contains($html, 'dashboardArabicPie') &&
-    substr_count($html, 'class="dashboard-chart-card') === 1,
-    'Only the overall examination completion card must remain on the dashboard'
+    $examOverviewHtml !== '' &&
+    substr_count($examOverviewHtml, 'id="dashboardCompletionPie"') === 1 &&
+    str_contains($examOverviewHtml, 'Overall Examination Completion') &&
+    !str_contains($examOverviewHtml, 'dashboardConventionalPie') &&
+    !str_contains($examOverviewHtml, 'dashboardArabicPie') &&
+    !str_contains($examOverviewHtml, 'dashboard-chart-card'),
+    'Only the overall examination completion overview must remain on the dashboard'
 );
 dashboardAssert(
-    str_contains($redesignCss, 'grid-template-columns: minmax(0, 680px) !important;') &&
-    str_contains($redesignCss, 'justify-content: center;'),
-    'The single overall completion card must be centered without category chart columns'
+    str_contains($redesignCss, '.dashboard-exam-overview') &&
+    str_contains($redesignCss, 'grid-template-columns: minmax(0, 560px) minmax(0, 1fr);') &&
+    str_contains($redesignCss, '.dashboard-completion-pie'),
+    'The overall completion chart must use the current responsive examination overview layout'
 );
 dashboardAssert(
     str_contains($html, 'dashboard-attendance-layout') &&
