@@ -112,10 +112,11 @@ publicVisualCheck(
     'About cards must reveal the homepage-style gold top line on hover, focus, and tap'
 );
 publicVisualCheck(
-    str_contains($aboutCardsCss, 'color: #d9aa4b') &&
-    str_contains($aboutCardsCss, 'background: #343a36') &&
-    str_contains($aboutCardsCss, 'border: 1px solid #4a514c'),
-    'About card numbers must be gold on dark-grey tiles with a matching border'
+    str_contains($aboutCardsCss, 'color: #93691c') &&
+    str_contains($aboutCardsCss, 'background: #edf5ef') &&
+    str_contains($aboutCardsCss, 'border: 1px solid #dce9df') &&
+    !str_contains($aboutCardsCss, 'background: #343a36'),
+    'About card numbers must match the Learning with Purpose gold-on-pale-green icon treatment'
 );
 publicVisualCheck(
     str_contains($aboutCardsCss, '.public-about-page .public-section-heading') &&
@@ -128,10 +129,12 @@ $homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
 publicVisualCheck(
     str_contains($homeProgrammeCss, '.public-home-page .highlight-item .highlight-number') &&
     str_contains($homeProgrammeCss, '.public-home-page .programme-icon') &&
-    str_contains($homeProgrammeCss, 'color: #d9aa4b') &&
-    str_contains($homeProgrammeCss, 'background: #343a36') &&
-    str_contains($homeProgrammeCss, 'border: 1px solid #4a514c'),
-    'homepage programme icon glyphs must be gold inside dark-grey icon frames'
+    str_contains($homeProgrammeCss, '.programme-icon') &&
+    str_contains($homeProgrammeCss, 'color: #93691c') &&
+    str_contains($homeProgrammeCss, 'background: #edf5ef') &&
+    str_contains($homeProgrammeCss, 'border: 1px solid #dce9df') &&
+    !str_contains($homeProgrammeCss, '/* MARKAZ icon treatment: gold glyphs/numbers on charcoal tiles. */'),
+    'homepage Learning with Purpose icons must retain their original gold-on-pale-green treatment without a later override'
 );
 
 $sharedInteractions = file_get_contents(__DIR__ . '/../public/css/public-interactions.css');
@@ -158,6 +161,13 @@ foreach ([
         str_contains($sharedInteractions, $required),
         "shared public interactions must provide consistent gold card/icon treatment: {$required}"
     );
+publicVisualCheck(
+    str_contains($sharedInteractions, 'color: #93691c') &&
+    str_contains($sharedInteractions, 'background: #edf5ef') &&
+    str_contains($sharedInteractions, 'border: 1px solid #dce9df') &&
+    !str_contains($sharedInteractions, 'background: #343a36'),
+    'public-page icons must use the exact Learning with Purpose gold-on-pale-green tile treatment'
+);
 }
 
 $homeInteractions = file_get_contents(__DIR__ . '/../public/css/public-design-refinement.css');
