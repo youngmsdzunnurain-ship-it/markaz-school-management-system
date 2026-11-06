@@ -231,7 +231,8 @@ function showResultPrintBlockedNotice(completion) {
         ? completion.missing_fields
         : [];
 
-    let message = "This result is available for review, but printing is disabled until the required result entries are complete.";
+    let message = completion?.message
+        || "This result is available for review, but printing is disabled until the required result entries are complete.";
     if (hasPercentage && hasThreshold) {
         message = `This result is ${percentage}% complete. Printing requires at least ${threshold}% completion.`;
     }
@@ -252,13 +253,15 @@ async function loadStudentResult() {
         throw new Error("Student ID is missing.");
     }
 
-    // Always render the student profile and assigned subjects from the normal
-    // read-only result payload before checking whether this page may print.
-    let data = await fetchStudentResultPayload(false);
+    // Render the read-only report immediately. Eligibility and permission checks
+    // must never hold student details or assigned subjects in the Loading state.
+    const data = await fetchStudentResultPayload(false);
+    studentData = data;
+    renderStudentResult(data);
 
     if (isPrintMode) {
         try {
-            data = await fetchStudentResultPayload(true);
+            await fetchStudentResultPayload(true);
         } catch (error) {
             // An incomplete result or missing print permission blocks printing,
             // not loading the student's read-only report preview.
@@ -267,9 +270,6 @@ async function loadStudentResult() {
             };
         }
     }
-
-    studentData = data;
-    renderStudentResult(data);
 
     if (resultPrintBlocked) {
         showResultPrintBlockedNotice(resultPrintBlocked);
