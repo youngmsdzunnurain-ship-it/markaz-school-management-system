@@ -2971,7 +2971,6 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
     background: var(--card);
     box-shadow: 0 4px 14px rgba(20,71,47,.05);
 }
-.stat-card::before,
 .result-progress-section::before {
     content: "";
     position: absolute;
