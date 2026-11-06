@@ -74,6 +74,24 @@
         });
     }
 
+    function retryFailedImages() {
+        document.querySelectorAll("img.markaz-image-error:not([srcset])").forEach(img => {
+            const source = img.getAttribute("src");
+            if (!source) return;
+            img.classList.remove("markaz-image-error", "markaz-image-loaded");
+            img.classList.add("markaz-image-loading");
+            img.addEventListener("load", () => {
+                img.classList.remove("markaz-image-loading", "markaz-image-error");
+                img.classList.add("markaz-image-loaded");
+            }, { once: true });
+            img.addEventListener("error", () => {
+                img.classList.remove("markaz-image-loading", "markaz-image-loaded");
+                img.classList.add("markaz-image-error");
+            }, { once: true });
+            img.src = source;
+        });
+    }
+
     function updateConnectionStatus() {
         if (!navigator.onLine) {
             showStatus("offline", "You're offline. Some content may be unavailable; we'll reconnect automatically.");
@@ -101,6 +119,7 @@
     });
 
     window.addEventListener("online", () => {
+        retryFailedImages();
         showStatus("online", "Connection restored. You are back online.", 4000);
         window.setTimeout(updateConnectionStatus, 4100);
     });
