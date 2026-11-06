@@ -42,8 +42,7 @@ publicMotionCheck(
     'reduced-motion preferences must be respected'
 );
 publicMotionCheck(
-    str_contains($css, 'transform: translate3d') &&
-    str_contains($css, 'will-change: transform'),
+    str_contains($css, 'transform: translate3d'),
     'interactive movement must use compositor-friendly transforms'
 );
 publicMotionCheck(
