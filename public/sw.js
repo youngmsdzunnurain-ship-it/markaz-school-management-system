@@ -27,20 +27,26 @@ const CORE_ASSETS = [
     "./assets/images/markaz-logo.jpg"
 ];
 
+function getScopeRelativePath(url) {
+    const scopePath = new URL(self.registration.scope).pathname;
+    if (!url.pathname.startsWith(scopePath)) return null;
+    return url.pathname.slice(scopePath.length);
+}
+
 function isApprovedPublicPage(url) {
     if (url.origin !== self.location.origin) return false;
-    const path = url.pathname.split("/").filter(Boolean).pop() || "home.html";
-    return PUBLIC_PAGES.has("./" + path);
+    const relativePath = getScopeRelativePath(url);
+    if (relativePath === null) return false;
+    return PUBLIC_PAGES.has("./" + (relativePath || "home.html"));
 }
 
 function isApprovedPublicAsset(url) {
-    if (url.origin !== self.location.origin) return false;
-    if (url.pathname.includes("/api/")) return false;
-    if (/\/(?:dashboard|login|student|teacher|management|exam-officer|settings|attendance|print-results)/i.test(url.pathname)) return false;
+    if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return false;
+    const relativePath = getScopeRelativePath(url);
+    if (!relativePath) return false;
 
-    return /\/css\/[^/]+\.css$/i.test(url.pathname) ||
-        /\/js\/(?:home|markaz-global|website-image-overrides|social-link-overrides|public-resilience)\.js$/i.test(url.pathname) ||
-        /\/assets\/images\/(?:[a-z0-9._-]+\/)*[a-z0-9._-]+\.(?:avif|webp|png|jpe?g|gif|svg)$/i.test(url.pathname);
+    if (CORE_ASSETS.includes("./" + relativePath)) return true;
+    return /^assets\/images\/(?:[a-z0-9._-]+\/)*[a-z0-9._-]+\.(?:avif|webp|png|jpe?g|gif|svg)$/i.test(relativePath);
 }
 
 async function notifyPublicClients(state, message) {
