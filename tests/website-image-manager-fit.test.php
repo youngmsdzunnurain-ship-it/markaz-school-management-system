@@ -11,7 +11,7 @@ function websiteImageFitCheck(bool $condition, string $message): void
 
 $manager = file_get_contents(__DIR__ . '/../public/js/website-image-manager.js');
 $managerCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
-$publicCss = file_get_contents(__DIR__ . '/../public/css/public-pages.css');
+$fitCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
 
 websiteImageFitCheck(
     str_contains($manager, 'api/settings/website-images.php') &&
