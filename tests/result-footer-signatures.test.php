@@ -29,6 +29,12 @@ signatureCheck(str_contains($settingsJs, 'if (isCanvasEmpty()) {') && str_contai
 
 signatureCheck(str_contains($resultApi, 'requireLogin();') && str_contains($resultApi, 'requireSeniorAdmin();'), 'Result footer reads must require login while writes remain Senior Admin only');
 signatureCheck(str_contains($resultApi, 'image/png') && str_contains($resultApi, 'uploads/signatures/'), 'API must validate and store PNG signature files outside the database');
+signatureCheck(
+    str_contains($resultApi, 'file_put_contents($destination, $binary)') &&
+    str_contains($resultApi, '$bytesWritten !== strlen($binary)') &&
+    !str_contains($resultApi, 'file_put_contents($destination, $binary, LOCK_EX)'),
+    'signature writes must not require unsupported exclusive locks on Android shared storage'
+);
 signatureCheck(str_contains($resultJs, 'result-signature-image') && str_contains($resultJs, 'class_teacher_signature_image'), 'Student results must render the shared signature images');
 signatureCheck(str_contains($resultCss, '.signature-space .result-signature-image'), 'Screen result styling must display transparent signature images');
 signatureCheck(str_contains($printCss, '.signature-space .result-signature-image'), 'Print result styling must display transparent signature images');

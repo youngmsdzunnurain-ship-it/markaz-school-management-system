@@ -29,6 +29,7 @@ function getCurrentAcademicPeriod(PDO $pdo): ?array
          INNER JOIN terms t
             ON t.id = ap.term_id
          WHERE s.is_current = 1
+           AND ap.is_current = 1
          ORDER BY ap.id DESC
          LIMIT 1'
     );
@@ -169,6 +170,7 @@ $stmt = $pdo->prepare(
     'UPDATE academic_periods
      SET term_id = ?,
          resumption_date = ?,
+         is_current = 1,
          updated_at = NOW()
      WHERE id = ?'
 );
