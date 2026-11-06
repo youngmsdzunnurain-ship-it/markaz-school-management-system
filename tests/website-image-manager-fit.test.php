@@ -11,8 +11,8 @@ function websiteImageFitCheck(bool $condition, string $message): void
 
 $manager = file_get_contents(__DIR__ . '/../public/js/website-image-manager.js');
 $managerCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
-$fitCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
-$publicCss = file_get_contents(__DIR__ . '/../public/css/public-pages.css');
+$publicImageCss = file_get_contents(__DIR__ . '/../public/css/public-pages.css');
+$polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
 
 websiteImageFitCheck(
     str_contains($manager, 'api/settings/website-images.php') &&
@@ -22,15 +22,22 @@ websiteImageFitCheck(
 );
 
 websiteImageFitCheck(
-    preg_match('/\.website-image-preview img\s*\{[^}]*object-fit:\s*contain\s*;/s', $managerCss) === 1,
+    preg_match('/\\.website-image-preview img\\s*\\{[^}]*object-fit:\\s*contain\\s*;/s', $managerCss) === 1,
     'manager previews must show the complete uploaded image without cropping'
 );
 
-foreach (['.markaz-photo-card img', '.markaz-facility-card img', '.markaz-facility-intro > img', '.markaz-facility-note img'] as $selector) {
-    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\{[^}]*object-fit:\s*contain\s*;/s';
+foreach ([
+    ['.markaz-photo-card img', $polishCss],
+    ['.markaz-facility-card img', $polishCss],
+    ['.markaz-facility-intro > img', $polishCss],
+    ['.markaz-facility-note img', $polishCss],
+    ['.public-intro-grid .public-photo > img', $publicImageCss],
+    ['.director-grid .public-photo > img', $publicImageCss]
+] as [$selector, $stylesheet]) {
+    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*contain\\s*;/s';
     websiteImageFitCheck(
-        preg_match($pattern, $fitCss) === 1,
-        "{$selector} must preserve the full uploaded image inside its fixed display frame"
+        preg_match($pattern, $stylesheet) === 1,
+        "{$selector} must preserve the full uploaded image inside its display frame"
     );
 }
 
