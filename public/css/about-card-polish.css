@@ -1,97 +1,139 @@
-/* MARKAZ About page — warm green and gold information cards.
-   Scoped to the About page card groups; no changes to other public pages. */
-
-body.public-page .public-values .public-value-card {
+/* About page cards: preserve the original MARKAZ green card styling.
+   Gold is reserved for the icon/number itself; the border and tile stay green. */
+.public-about-page .public-values .public-value-card {
     position: relative;
     isolation: isolate;
     min-width: 0;
     overflow: hidden;
-    padding: 27px 24px 25px;
-    border: 1px solid rgba(190, 151, 72, .28);
-    border-radius: 18px;
-    background:
-        radial-gradient(circle at 100% 0%, rgba(225, 190, 112, .13), transparent 42%),
-        linear-gradient(145deg, #fff 0%, #fffdf8 100%);
-    box-shadow: 0 3px 8px rgba(18, 75, 50, .035),
-                0 12px 28px rgba(18, 75, 50, .075);
+    padding: 26px 24px 25px;
+    border: 1px solid #dce9df;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(8, 47, 32, .07);
     transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
 }
 
-body.public-page .public-values .public-value-card::before {
+/* Match the homepage: a green line sweeps in from the left on hover. */
+.public-about-page .public-values .public-value-card::before {
     position: absolute;
-    z-index: -1;
+    z-index: 1;
     top: 0;
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #a87924 0%, #e4c477 52%, #bd913e 100%);
+    background: #1c6845;
     content: "";
-    transform: scaleX(.3);
+    transform: scaleX(0);
     transform-origin: left;
-    transition: transform .3s ease;
-}
-
-body.public-page .public-values .public-value-card::after {
-    position: absolute;
-    z-index: -1;
-    right: -34px;
-    bottom: -48px;
-    width: 118px;
-    height: 118px;
-    border: 1px solid rgba(196, 157, 77, .13);
-    border-radius: 50%;
-    content: "";
+    transition: transform .25s ease;
     pointer-events: none;
 }
 
-body.public-page .public-values .public-value-card h3 {
+.public-about-page .public-values .public-value-card h3 {
     color: #174b32;
     letter-spacing: -.01em;
 }
 
-body.public-page .public-values .public-value-card p {
+.public-about-page .public-values .public-value-card p {
     color: #58675d;
 }
 
-body.public-page .public-values .public-value-number {
-    border: 1px solid rgba(183, 139, 49, .24);
-    border-radius: 13px;
-    color: #805b18;
-    background: linear-gradient(145deg, #fbf2df, #f2e2bd);
+/* Gold numeral, with a green border and pale-green tile. */
+.public-about-page .public-values .public-value-number {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    place-items: center;
+    border: 1px solid #dce9df;
+    border-radius: 12px;
+    color: #93691c;
+    background: #edf5ef;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85);
-    transition: transform .24s ease, background .24s ease, color .24s ease;
+    font-weight: 800;
+    transition: transform .2s ease, color .2s ease, background .2s ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-    body.public-page .public-values .public-value-card:hover {
+    .public-about-page .public-values .public-value-card:hover {
         transform: translateY(-5px);
-        border-color: rgba(183, 139, 49, .52);
-        box-shadow: 0 7px 15px rgba(18, 75, 50, .055),
-                    0 18px 34px rgba(18, 75, 50, .12);
+        border-color: #a9cbb3;
+        box-shadow: 0 14px 26px rgba(8, 47, 32, .12);
     }
 
-    body.public-page .public-values .public-value-card:hover::before {
+    .public-about-page .public-values .public-value-card:hover::before {
         transform: scaleX(1);
     }
 
-    body.public-page .public-values .public-value-card:hover .public-value-number {
-        color: #704b0e;
-        background: linear-gradient(145deg, #f8e8c4, #e9d19b);
+    .public-about-page .public-values .public-value-card:hover .public-value-number {
+        color: #805b18;
+        background: #e4efe6;
         transform: translateY(-2px);
     }
 }
 
+/* Center all three About section headings on one consistent axis. */
+.public-about-page .public-section-heading {
+    display: flex;
+    width: min(100%, 48rem);
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto 34px;
+    text-align: center;
+}
+
+.public-about-page .public-section-heading > .public-eyebrow {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 12px;
+    text-align: center;
+}
+
+.public-about-page .public-section-heading h2 {
+    width: 100%;
+    max-width: min(100%, 24ch);
+    margin: 0 auto 12px;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.public-about-page .public-section-heading > p:last-child {
+    width: 100%;
+    max-width: 66ch;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: pretty;
+    line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+    .public-about-page .public-section-heading {
+        padding-inline: 2px;
+    }
+
+    .public-about-page .public-section-heading h2 {
+        max-width: 20ch;
+        font-size: clamp(1.55rem, 7vw, 2rem);
+        line-height: 1.22;
+    }
+}
+
 @media (max-width: 700px) {
-    body.public-page .public-values .public-value-card {
+    .public-about-page .public-values .public-value-card {
         padding: 23px 20px 22px;
         border-radius: 16px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    body.public-page .public-values .public-value-card,
-    body.public-page .public-values .public-value-card::before,
-    body.public-page .public-values .public-value-number {
+    .public-about-page .public-values .public-value-card,
+    .public-about-page .public-values .public-value-card::before,
+    .public-about-page .public-values .public-value-number {
         transition: none;
+    }
+
+    .public-about-page .public-values .public-value-card:hover {
+        transform: none;
     }
 }

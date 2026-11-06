@@ -99,18 +99,36 @@ publicVisualCheck(
 $aboutHtml = file_get_contents(__DIR__ . '/../public/about.html');
 $aboutCardsCss = file_get_contents(__DIR__ . '/../public/css/about-card-polish.css');
 publicVisualCheck(
-    str_contains($aboutHtml, 'css/about-card-polish.css') &&
-    str_contains($aboutCardsCss, '.public-values .public-value-card::before') &&
-    str_contains($aboutCardsCss, 'linear-gradient') &&
-    str_contains($aboutCardsCss, 'prefers-reduced-motion'),
-    'About page information cards must use the refined gold accent treatment with reduced-motion support'
+    str_contains($aboutHtml, 'class="public-page public-about-page"') &&
+    str_contains($aboutHtml, 'css/about-card-polish.css'),
+    'About page must have a dedicated styling scope for its card and heading polish'
+);
+publicVisualCheck(
+    str_contains($aboutCardsCss, 'background: #1c6845') &&
+    str_contains($aboutCardsCss, 'transform: scaleX(0)') &&
+    str_contains($aboutCardsCss, 'transform-origin: left') &&
+    str_contains($aboutCardsCss, '.public-value-card:hover::before'),
+    'About cards must reveal a green top line from left to right only on hover'
+);
+publicVisualCheck(
+    str_contains($aboutCardsCss, 'color: #93691c') &&
+    str_contains($aboutCardsCss, 'border: 1px solid #dce9df') &&
+    str_contains($aboutCardsCss, 'background: #edf5ef'),
+    'About card numbers must be gold while their border and background stay green'
+);
+publicVisualCheck(
+    str_contains($aboutCardsCss, '.public-about-page .public-section-heading') &&
+    str_contains($aboutCardsCss, 'align-items: center') &&
+    str_contains($aboutCardsCss, 'text-align: center'),
+    'all About section headings must use gallery-style centered alignment'
 );
 
 $homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
 publicVisualCheck(
     str_contains($homeProgrammeCss, 'color: #93691c') &&
-    str_contains($homeProgrammeCss, 'linear-gradient(145deg, #fff8e9, #f3e5c6)'),
-    'homepage programme icons must use the gold accent palette'
+    str_contains($homeProgrammeCss, 'border: 1px solid #dce9df') &&
+    str_contains($homeProgrammeCss, 'background: #edf5ef'),
+    'homepage programme icon glyphs must be gold inside the original green icon frame'
 );
 
 echo "Public visual hierarchy regression tests passed.\n";
