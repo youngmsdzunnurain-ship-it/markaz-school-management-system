@@ -24,8 +24,8 @@
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css">
-    <link rel="stylesheet" href="./css/student-result.css?v=20261105-handwritten-signatures" media="screen">
-    <link rel="stylesheet" href="./css/student-result-print.css?v=20261105-handwritten-signatures" media="print">
+    <link rel="stylesheet" href="./css/student-result.css?v=20261106-print-preview" media="screen">
+    <link rel="stylesheet" href="./css/student-result-print.css?v=20261106-print-preview" media="print">
 
 <style id="print-results-hide-edit-controls">
 .student-edit-actions,
@@ -41,6 +41,13 @@
 <body>
     <div class="result-page-curve" aria-hidden="true"></div>
 <main class="student-result-page management-view">
+        <div
+            class="result-print-blocked-notice"
+            id="resultPrintBlockedNotice"
+            role="status"
+            aria-live="polite"
+            hidden></div>
+
 
         <!-- PAGE HEADER -->
         <header class="result-page-header">
