@@ -1,0 +1,28 @@
+name: MARKAZ Regression Tests
+
+on:
+  push:
+    branches:
+      - fix/academic-period-current-term-signature-baseline-20261106
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  php-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Run PHP regression tests
+        run: |
+          set -e
+          for test_file in tests/*.test.php; do
+            echo "Running $test_file"
+            php "$test_file"
+          done
