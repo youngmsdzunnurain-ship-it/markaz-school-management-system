@@ -131,20 +131,20 @@ self.addEventListener("fetch", event => {
 
     if (!isApprovedPublicAsset(url)) return;
 
-    event.respondWith((async () => {
-        const cache = await caches.open(ASSET_CACHE);
-        const cached = await cache.match(request);
-        const network = fetch(request).then(response => {
-            if (response.ok && response.type === "basic") {
-                cache.put(request, response.clone());
-            }
-            return response;
-        }).catch(() => null);
-
-        if (cached) {
-            event.waitUntil(network);
-            return cached;
+    const assetCachePromise = caches.open(ASSET_CACHE);
+    const network = assetCachePromise.then(cache => fetch(request).then(response => {
+        if (response.ok && response.type === "basic") {
+            cache.put(request, response.clone());
         }
+        return response;
+    })).catch(() => null);
+
+    /* Serve a cached asset immediately, while refreshing it in the background. */
+    event.waitUntil(network);
+    event.respondWith((async () => {
+        const cache = await assetCachePromise;
+        const cached = await cache.match(request);
+        if (cached) return cached;
 
         const response = await network;
         if (response) return response;
