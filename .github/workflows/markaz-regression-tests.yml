@@ -26,3 +26,4 @@ jobs:
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
           php tests/result-print-current-period.test.php
+          php tests/result-print-flow-isolation.test.php
