@@ -39,7 +39,9 @@ publicNetworkCheck(
     str_contains($worker, 'request.method !== "GET"') &&
     str_contains($worker, 'request.headers.has("authorization")') &&
     str_contains($worker, 'url.origin !== self.location.origin') &&
-    str_contains($worker, 'url.pathname.includes("/api/")'),
+    str_contains($worker, 'url.pathname.includes("/api/")') &&
+    str_contains($worker, 'getScopeRelativePath(url)') &&
+    str_contains($worker, 'CORE_ASSETS.includes("./" + relativePath)'),
     'service worker must cache only approved same-origin public GET requests and exclude APIs/authenticated requests'
 );
 publicNetworkCheck(
@@ -64,7 +66,9 @@ publicNetworkCheck(
     str_contains($script, 'addEventListener("online"') &&
     str_contains($script, 'navigator.serviceWorker.register') &&
     str_contains($script, 'effectiveType') &&
-    str_contains($script, 'markaz-image-loading'),
+    str_contains($script, 'markaz-image-loading') &&
+    str_contains($script, 'retryFailedImages') &&
+    str_contains($script, 'MARKAZ_NETWORK_STATUS'),
     'public network script must detect connection changes, register offline support, and manage image skeletons'
 );
 
