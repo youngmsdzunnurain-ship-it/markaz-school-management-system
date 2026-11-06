@@ -3560,7 +3560,7 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
 /* SECTION 5 — QUICK ACCESS, ADMINISTRATOR AND FOOTER */
 .dashboard-bottom-layout {
     display: grid;
-    grid-template-columns: minmax(0, 860fr) minmax(0, 404fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: 20px;
     align-items: stretch;
 }
@@ -3604,7 +3604,7 @@ body { margin: 0; background: var(--shell-page); color: var(--shell-ink); }
 }
 .dashboard-bottom-layout .quick-actions {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
 }
 .dashboard-bottom-layout .quick-actions button {
