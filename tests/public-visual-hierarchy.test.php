@@ -104,11 +104,12 @@ publicVisualCheck(
     'About page must have a dedicated styling scope for its card and heading polish'
 );
 publicVisualCheck(
-    str_contains($aboutCardsCss, 'background: #1c6845') &&
+    str_contains($aboutCardsCss, 'background: var(--gold-500)') &&
     str_contains($aboutCardsCss, 'transform: scaleX(0)') &&
     str_contains($aboutCardsCss, 'transform-origin: left') &&
-    str_contains($aboutCardsCss, '.public-value-card:hover::before'),
-    'About cards must reveal a green top line from left to right only on hover'
+    str_contains($aboutCardsCss, '.public-value-card:hover::before') &&
+    str_contains($aboutCardsCss, '.public-value-card:active::before'),
+    'About cards must reveal the homepage-style gold top line on hover, focus, and tap'
 );
 publicVisualCheck(
     str_contains($aboutCardsCss, 'color: #93691c') &&
