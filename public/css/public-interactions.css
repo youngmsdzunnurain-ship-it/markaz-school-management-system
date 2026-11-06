@@ -1,0 +1,147 @@
+/* MARKAZ public website — shared, accessible interaction motion (2026) */
+:root {
+    --markaz-motion-duration: 280ms;
+    --markaz-motion-ease: cubic-bezier(.2, .75, .25, 1);
+}
+
+/* Keep motion scoped to known public-page components. */
+:where(
+    .highlight-item,
+    .programme-card,
+    .public-value-card,
+    .markaz-photo-card,
+    .markaz-facility-card,
+    .website-feature-card,
+    .facility-card,
+    .gallery-item,
+    .testimonial-card,
+    .stat-card
+) {
+    transition:
+        transform var(--markaz-motion-duration) var(--markaz-motion-ease),
+        box-shadow var(--markaz-motion-duration) var(--markaz-motion-ease),
+        border-color var(--markaz-motion-duration) var(--markaz-motion-ease);
+    transform: translate3d(0, 0, 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    :where(
+        .highlight-item,
+        .programme-card,
+        .public-value-card,
+        .markaz-photo-card,
+        .markaz-facility-card,
+        .website-feature-card,
+        .facility-card,
+        .gallery-item,
+        .testimonial-card,
+        .stat-card
+    ):hover {
+        transform: translate3d(0, -5px, 0) scale(1.012);
+        box-shadow: 0 16px 34px rgba(8, 47, 32, .13);
+    }
+
+    :where(
+        .intro-visual,
+        .public-photo,
+        .markaz-photo-card,
+        .markaz-facility-card,
+        .markaz-facility-intro,
+        .markaz-facility-note,
+        .facility-card,
+        .gallery-item
+    ) img {
+        transition: transform 420ms var(--markaz-motion-ease);
+        transform: translate3d(0, 0, 0);
+    }
+
+    :where(
+        .intro-visual,
+        .public-photo,
+        .markaz-photo-card,
+        .markaz-facility-card,
+        .markaz-facility-intro,
+        .markaz-facility-note,
+        .facility-card,
+        .gallery-item
+    ):hover img {
+        transform: scale(1.035);
+    }
+}
+
+/* Buttons and actionable links respond without changing their dimensions. */
+:where(
+    .button,
+    .public-cta-links a,
+    .markaz-faq-contact,
+    .footer a,
+    .hero-actions a
+) {
+    transition:
+        transform 200ms var(--markaz-motion-ease),
+        box-shadow 200ms var(--markaz-motion-ease),
+        background-color 200ms ease,
+        color 200ms ease,
+        border-color 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    :where(
+        .button,
+        .public-cta-links a,
+        .markaz-faq-contact,
+        .hero-actions a
+    ):hover {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+/* Touch devices get feedback only while a control is being pressed. */
+@media (hover: none), (pointer: coarse) {
+    :where(
+        .highlight-item,
+        .programme-card,
+        .public-value-card,
+        .markaz-photo-card,
+        .markaz-facility-card,
+        .website-feature-card,
+        .facility-card,
+        .gallery-item,
+        .testimonial-card,
+        .stat-card,
+        .button,
+        .public-cta-links a,
+        .markaz-faq-contact
+    ):active {
+        transform: scale(.99);
+    }
+}
+
+/* Preserve visible keyboard focus and avoid motion for users who request it. */
+@media (prefers-reduced-motion: reduce) {
+    :where(
+        .highlight-item,
+        .programme-card,
+        .public-value-card,
+        .markaz-photo-card,
+        .markaz-facility-card,
+        .website-feature-card,
+        .facility-card,
+        .gallery-item,
+        .testimonial-card,
+        .stat-card,
+        .intro-visual img,
+        .public-photo img,
+        .markaz-facility-intro img,
+        .markaz-facility-note img,
+        .button,
+        .public-cta-links a,
+        .markaz-faq-contact,
+        .footer a,
+        .hero-actions a
+    ) {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}
