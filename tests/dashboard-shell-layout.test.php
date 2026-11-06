@@ -50,9 +50,18 @@ dashboardShellAssert(
 
 dashboardShellAssert(
     str_contains($css, '.dashboard-footer') &&
-    str_contains($css, 'border-top:1px solid var(--line)') &&
-    str_contains($css, 'background:#fff'),
-    'Dashboard footer must use the shared clean white/green page-footer treatment'
+    str_contains($css, 'border-top:1px solid #e1e8e3') &&
+    str_contains($css, 'background:rgba(255,255,255,.88)'),
+    'Dashboard footer must use the shared translucent white background and subtle divider'
+);
+
+dashboardShellAssert(
+    preg_match('/\.dashboard-footer\\{[^}]*text-align:center/s', $css) === 1 &&
+    preg_match('/\.dashboard-footer::before\\{[^}]*background:linear-gradient/s', $css) === 1 &&
+    preg_match('/\.dashboard-footer \.footer-brand\\{[^}]*display:block/s', $css) === 1 &&
+    preg_match('/\.dashboard-footer \.footer-school\\{[^}]*display:block/s', $css) === 1 &&
+    preg_match('/\.dashboard-footer \.footer-copyright\\{[^}]*display:block/s', $css) === 1,
+    'Dashboard footer must match the shared centered MARKAZ footer with its green-gold accent and stacked text'
 );
 
 echo "Dashboard sidebar text-only colour and shell layout regression tests passed.\n";
