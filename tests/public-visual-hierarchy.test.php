@@ -79,4 +79,4 @@ publicVisualCheck(
     'gallery title must have a controlled responsive line length'
 );
 
-echo "Public visual hierarchy regression tests passed.\\n";
+echo "Public visual hierarchy regression tests passed.\n";
