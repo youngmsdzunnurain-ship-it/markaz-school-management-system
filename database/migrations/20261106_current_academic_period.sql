@@ -7,15 +7,18 @@ ALTER TABLE academic_periods
 UPDATE academic_periods
 SET is_current = 0;
 
--- Preserve the most recently created period in the currently selected session
--- as the initial current term. Future changes are explicit in the settings API.
+-- Recover the period most recently saved in the currently selected session.
+-- The previous settings API updated updated_at on the selected term but did not
+-- mark it current, so this preserves the administrator's latest successful choice.
 UPDATE academic_periods ap
 INNER JOIN (
-    SELECT MAX(ap2.id) AS id
+    SELECT ap2.id
     FROM academic_periods ap2
     INNER JOIN academic_sessions s
         ON s.id = ap2.academic_session_id
     WHERE s.is_current = 1
+    ORDER BY ap2.updated_at DESC, ap2.id DESC
+    LIMIT 1
 ) active_period
     ON active_period.id = ap.id
 SET ap.is_current = 1;

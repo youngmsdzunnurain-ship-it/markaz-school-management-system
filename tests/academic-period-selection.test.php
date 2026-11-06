@@ -36,6 +36,7 @@ academicPeriodCheck(
 $migration = is_file($migrationPath) ? file_get_contents($migrationPath) : '';
 academicPeriodCheck(
     str_contains($migration, 'ADD COLUMN is_current') &&
+    str_contains($migration, 'ORDER BY ap2.updated_at DESC, ap2.id DESC') &&
     str_contains($migration, 'SET ap.is_current = 1'),
     'the migration must add the marker and initialize the active period for existing data'
 );
