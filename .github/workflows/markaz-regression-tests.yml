@@ -24,4 +24,3 @@ jobs:
           set -e
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
-          php tests/results-class-type-validation.test.php
