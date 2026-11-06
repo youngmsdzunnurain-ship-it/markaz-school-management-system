@@ -38,6 +38,14 @@ img[alt*="logo" i] {
     object-fit: contain;
 }
 
+/* Keep each MARKAZ content image inside its own pre-sized frame. */
+.markaz-photo-card img,
+.markaz-facility-card img,
+.markaz-facility-intro > img,
+.markaz-facility-note img {
+    object-fit: contain;
+}
+
 /* Keep the building framed well while filling the hero image area. */
 .hero .building-frame,
 .hero-visual .building-frame {
