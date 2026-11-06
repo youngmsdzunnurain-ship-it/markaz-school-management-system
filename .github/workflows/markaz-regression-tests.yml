@@ -33,6 +33,8 @@ jobs:
           php tests/public-footer-spacing.test.php
           php tests/public-interaction-motion.test.php
           php tests/public-visual-hierarchy.test.php
+          php -l tests/public-seo.test.php
+          php tests/public-seo.test.php
           php tests/public-network-resilience.test.php
           node --check public/js/public-resilience.js
           node --check public/sw.js
