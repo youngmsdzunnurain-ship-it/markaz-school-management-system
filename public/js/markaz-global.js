@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const page = location.pathname.split("/").pop() || "home.html";
-    const publicPages = ["home.html", "about.html", "academics.html", "admissions.html"];
+    const publicPages = ["home.html", "about.html", "academics.html", "admissions.html", "facilities.html", "gallery.html", "faq.html", "contact.html"];
 
     if (publicPages.includes(page)) {
         try {
