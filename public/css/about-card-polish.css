@@ -150,40 +150,13 @@
 }
 
 
-/* The Academic Milestones title is a single line on wider screens,
-   with a natural, readable wrap on narrow phones. */
-.public-about-page .public-section-heading h2 {
-    max-width: 100%;
-}
-
-@media (min-width: 761px) {
-    .public-about-page .public-section-heading h2 {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        margin-inline: auto;
-        white-space: nowrap;
-        text-align: center;
-        font-size: clamp(1.2rem, 2.35vw, 1.65rem);
-        line-height: 1.25;
-    }
-}
-
-@media (max-width: 760px) {
-    .public-about-page .public-section-heading h2 {
-        width: 100%;
-        white-space: normal;
-        text-wrap: balance;
-    }
-}
-
-/* Keep the About academic milestone eyebrow, title and introduction on one centered axis. */
+/* Academic Milestones: keep this title on one line and centered in its full-width column. */
 .public-about-page .academic-milestones-heading {
-    display: flex;
-    width: min(100%, 48rem);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    width: 100%;
+    max-width: 48rem;
     margin-inline: auto;
     text-align: center;
 }
@@ -191,24 +164,21 @@
 .public-about-page .academic-milestones-heading > .public-eyebrow,
 .public-about-page .academic-milestones-heading > h2,
 .public-about-page .academic-milestones-heading > p {
+    justify-self: center;
+    width: 100%;
     margin-inline: auto;
     text-align: center;
 }
 
 .public-about-page .academic-milestones-heading > h2 {
-    width: 100%;
     max-width: 100%;
-    margin-inline: auto;
-    font-size: clamp(.78rem, 4vw, 1.65rem);
+    font-size: clamp(.72rem, 3.8vw, 1.65rem);
     line-height: 1.25;
     white-space: nowrap;
-    text-align: center;
 }
 
 .public-about-page .academic-milestones-heading > p {
-    width: 100%;
     max-width: 66ch;
     text-wrap: pretty;
     line-height: 1.8;
 }
-
