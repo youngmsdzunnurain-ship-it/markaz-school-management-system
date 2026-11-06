@@ -40,7 +40,7 @@ function isApprovedPublicAsset(url) {
 
     return /\/css\/[^/]+\.css$/i.test(url.pathname) ||
         /\/js\/(?:home|markaz-global|website-image-overrides|social-link-overrides|public-resilience)\.js$/i.test(url.pathname) ||
-        /\/assets\/images\/[a-z0-9._-]+\.(?:avif|webp|png|jpe?g|gif|svg)$/i.test(url.pathname);
+        /\/assets\/images\/(?:[a-z0-9._-]+\/)*[a-z0-9._-]+\.(?:avif|webp|png|jpe?g|gif|svg)$/i.test(url.pathname);
 }
 
 async function cacheResponse(cacheName, request, response) {
@@ -50,12 +50,16 @@ async function cacheResponse(cacheName, request, response) {
     }
 }
 
-async function fetchWithTimeout(request, timeoutMs = 4200) {
-    const networkRequest = fetch(request);
+async function fetchWithTimeout(request, timeoutMs = 12000) {
+    let timeoutId;
     const timeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Public request timed out")), timeoutMs);
+        timeoutId = setTimeout(() => reject(new Error("Public request timed out")), timeoutMs);
     });
-    return Promise.race([networkRequest, timeout]);
+    try {
+        return await Promise.race([fetch(request), timeout]);
+    } finally {
+        clearTimeout(timeoutId);
+    }
 }
 
 self.addEventListener("install", event => {
@@ -92,7 +96,7 @@ self.addEventListener("fetch", event => {
             const cache = await caches.open(PAGE_CACHE);
             try {
                 const response = await fetchWithTimeout(request);
-                event.waitUntil(cacheResponse(PAGE_CACHE, request, response));
+                await cacheResponse(PAGE_CACHE, request, response);
                 return response;
             } catch (error) {
                 const cached = await cache.match(request);
@@ -104,6 +108,23 @@ self.addEventListener("fetch", event => {
                     headers: { "Content-Type": "text/plain; charset=utf-8" }
                 });
             }
+        })());
+        return;
+    }
+
+    /* The shared footer loader fetches home.html as a normal same-origin request. */
+    if (isApprovedPublicPage(url)) {
+        const refresh = fetch(request).then(response => {
+            if (response.ok && response.type === "basic") {
+                return cacheResponse(PAGE_CACHE, request, response);
+            }
+            return null;
+        }).catch(() => null);
+        event.waitUntil(refresh);
+        event.respondWith((async () => {
+            const cache = await caches.open(PAGE_CACHE);
+            return (await cache.match(request)) || (await refresh) ||
+                new Response("", { status: 503, statusText: "Public page unavailable offline" });
         })());
         return;
     }
