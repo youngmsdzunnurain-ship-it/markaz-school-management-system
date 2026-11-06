@@ -1153,3 +1153,22 @@ body.public-page .footer-bottom {
         gap: 24px;
     }
 }
+
+
+/* About page school photograph: always fill the frame, including uploaded replacements. */
+.public-intro-grid .public-photo {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+}
+
+.public-intro-grid .public-photo > img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+}
