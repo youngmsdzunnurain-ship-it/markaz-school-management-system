@@ -27,7 +27,7 @@ sharedPublicFooterCheck(isset($matches[1]), 'global footer script must define th
 
 foreach ($publicPages as $page) {
     sharedPublicFooterCheck(
-        str_contains($matches[1], "'{$page}'"),
+        str_contains($matches[1], "\"{$page}\""),
         "{$page} must use the shared public footer"
     );
 
