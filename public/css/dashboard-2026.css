@@ -266,16 +266,20 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .quick-actions button:hover{border-color:var(--gold);background:#fff}
 .quick-actions button i{width:32px;height:32px;flex:none;border-radius:9px;background:#e8f3ea;color:var(--g);display:grid;place-items:center;font-size:13px}
 .quick-actions button span{min-width:0;line-height:1.2;white-space:normal}
-.admin-profile-display{margin-top:20px;display:flex;align-items:center;gap:16px}
-.admin-profile-photo{width:52px;height:52px;flex:none;border-radius:50%;background:var(--dg);border:2px solid var(--gold);overflow:hidden;display:grid;place-items:center;color:#e6d9a4;font:600 16px var(--serif)}
-.admin-profile-photo img{width:100%;height:100%;object-fit:cover}
-.admin-profile-summary{min-width:0;display:flex;flex-direction:column;gap:4px}
-.admin-profile-summary strong{font:600 16px/1.2 var(--serif);color:var(--dg)}
-.admin-profile-summary span{font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.admin-details{margin-top:20px}
-.admin-details>div{height:36px;padding:0 16px;border-radius:10px;background:var(--page);border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.admin-profile-display{margin-top:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) 64px;align-items:stretch;gap:12px;min-width:0}
+.admin-profile-photo{grid-column:3;grid-row:1;align-self:center;justify-self:end;width:64px;height:64px;flex:none;border-radius:50%;background:var(--dg);border:2px solid var(--gold);padding:3px;overflow:hidden;display:grid;place-items:center;color:#e6d9a4;font:600 16px var(--serif);box-shadow:0 0 0 4px rgba(200,164,58,.12)}
+.admin-profile-photo img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.admin-profile-summary{display:contents}
+.admin-profile-summary strong,.admin-profile-summary span{min-width:0;min-height:76px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--page);display:flex;flex-direction:column;justify-content:center;gap:6px;overflow-wrap:anywhere}
+.admin-profile-summary strong{grid-column:1;font:600 15px/1.3 var(--serif);color:var(--dg)}
+.admin-profile-summary span{grid-column:2;font-size:12px;line-height:1.4;color:var(--mut);white-space:normal;word-break:break-word}
+.admin-profile-summary strong::before,.admin-profile-summary span::before{display:block;font:700 10px/1.2 var(--sans);letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
+.admin-profile-summary strong::before{content:"Name"}
+.admin-profile-summary span::before{content:"Email"}
+.admin-details{margin-top:14px}
+.admin-details>div{min-height:40px;padding:7px 13px;border-radius:10px;background:var(--page);border:1px solid var(--line);display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px}
 .admin-details span{font:600 11px var(--sans);letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
-.status-active{height:22px;padding:0 14px;border-radius:11px;background:#e8f3ea;color:#1d6b43;font:600 12px/22px var(--sans)}
+.status-active{height:24px;padding:0 14px;border-radius:12px;background:#e8f3ea;color:#1d6b43;font:600 12px/24px var(--sans)}
 
 /* ---------- TEACHER VIEW (kept) ---------- */
 #teacherAssignmentsSection{margin:0!important}
@@ -352,10 +356,16 @@ body .sidebar.open{z-index:1200!important}                 /* drawer above the d
 }
 .administrator-panel{container:adm/inline-size}
 @container adm (min-width:480px){
-  .admin-profile-photo{width:64px;height:64px;font-size:20px}
-  .admin-profile-summary strong{font-size:18px}
+  .admin-profile-display{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 72px;gap:14px;margin-top:24px;margin-bottom:4px}
+  .admin-profile-photo{width:72px;height:72px;font-size:20px}
+  .admin-profile-summary strong{font-size:17px}
   .admin-profile-summary span{font-size:13px}
-  .admin-profile-display{margin-top:24px;margin-bottom:4px}
+}
+@container adm (max-width:380px){
+  .admin-profile-display{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 48px;gap:7px}
+  .admin-profile-photo{width:48px;height:48px;padding:2px}
+  .admin-profile-summary strong,.admin-profile-summary span{padding:9px 8px;font-size:11px}
+  .admin-profile-summary strong{font-size:12px}
 }
 
 /* attendance card titles with icons, as in the approved design image */
