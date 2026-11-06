@@ -70,7 +70,10 @@ function resultFooterStoreSignature(?string $dataUrl, string $role): ?string
     $filename = $role . '-' . bin2hex(random_bytes(16)) . '.png';
     $destination = $directory . '/' . $filename;
 
-    if (file_put_contents($destination, $binary, LOCK_EX) === false) {
+    // Android shared storage does not support PHP's exclusive file-lock flag.
+    $bytesWritten = file_put_contents($destination, $binary);
+    if ($bytesWritten !== strlen($binary)) {
+        @unlink($destination);
         throw new RuntimeException('Unable to save signature image.');
     }
 

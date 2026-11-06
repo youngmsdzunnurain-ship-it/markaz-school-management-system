@@ -1,0 +1,26 @@
+name: MARKAZ Targeted Regression Tests
+
+on:
+  push:
+    branches:
+      - fix/academic-period-current-term-signature-baseline-20261106
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  php-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Run academic-period and signature regression tests
+        run: |
+          set -e
+          php tests/academic-period-selection.test.php
+          php tests/result-footer-signatures.test.php

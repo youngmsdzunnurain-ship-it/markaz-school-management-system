@@ -665,8 +665,13 @@ button{font:inherit;cursor:pointer}
 }
 
 .signature-space{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    box-sizing:border-box;
     height:58px;
     margin-bottom:10px;
+    padding-bottom:4px;
     border-bottom:1px solid #94a3b8;
 }
 

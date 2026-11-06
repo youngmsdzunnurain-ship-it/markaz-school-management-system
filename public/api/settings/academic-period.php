@@ -29,6 +29,7 @@ function getCurrentAcademicPeriod(PDO $pdo): ?array
          INNER JOIN terms t
             ON t.id = ap.term_id
          WHERE s.is_current = 1
+           AND ap.is_current = 1
          ORDER BY ap.id DESC
          LIMIT 1'
     );
@@ -171,6 +172,9 @@ try {
     );
     $currentSessionStmt->execute([$academicSessionId]);
 
+    // Exactly one academic period is current across the school.
+    $pdo->exec('UPDATE academic_periods SET is_current = 0');
+
     $periodStmt = $pdo->prepare(
         'SELECT id
          FROM academic_periods
@@ -189,6 +193,7 @@ try {
         $savePeriodStmt = $pdo->prepare(
             'UPDATE academic_periods
              SET resumption_date = ?,
+                 is_current = 1,
                  updated_at = NOW()
              WHERE id = ?'
         );
@@ -200,8 +205,8 @@ try {
     } else {
         $savePeriodStmt = $pdo->prepare(
             'INSERT INTO academic_periods
-             (academic_session_id, term_id, resumption_date)
-             VALUES (?, ?, ?)'
+             (academic_session_id, term_id, resumption_date, is_current)
+             VALUES (?, ?, ?, 1)'
         );
 
         $savePeriodStmt->execute([

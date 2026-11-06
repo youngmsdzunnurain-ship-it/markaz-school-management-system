@@ -49,6 +49,7 @@ CREATE TABLE academic_periods (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     academic_session_id BIGINT UNSIGNED NOT NULL,
     term_id BIGINT UNSIGNED NOT NULL,
+    is_current TINYINT(1) NOT NULL DEFAULT 0,
     examination_date DATE NULL,
     vacation_date DATE NULL,
     resumption_date DATE NULL,
@@ -58,6 +59,7 @@ CREATE TABLE academic_periods (
         ON UPDATE CURRENT_TIMESTAMP,
 
     UNIQUE KEY uq_academic_period (academic_session_id, term_id),
+    KEY idx_academic_period_current (is_current, academic_session_id),
 
     CONSTRAINT fk_period_session
         FOREIGN KEY (academic_session_id)
