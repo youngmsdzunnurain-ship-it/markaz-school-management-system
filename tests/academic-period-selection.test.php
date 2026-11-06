@@ -10,6 +10,7 @@ function academicPeriodCheck(bool $condition, string $message): void
 }
 
 $schema = file_get_contents(__DIR__ . '/../database/schema.sql');
+$screenPage = file_get_contents(__DIR__ . '/../public/student-result.html');
 $migrationPath = __DIR__ . '/../database/migrations/20261106_current_academic_period.sql';
 $academicApi = file_get_contents(__DIR__ . '/../public/api/settings/academic-period.php');
 $legacyAcademicApi = file_get_contents(__DIR__ . '/../api/settings/academic-period.php');
@@ -17,6 +18,11 @@ $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 $screenCss = file_get_contents(__DIR__ . '/../public/css/student-result.css');
 $printCss = file_get_contents(__DIR__ . '/../public/css/student-result-print.css');
 $signatureApi = file_get_contents(__DIR__ . '/../public/api/settings/result-footer.php');
+
+academicPeriodCheck(
+    str_contains($screenPage, 'student-result.css?v=20261106-signature-baseline'),
+    'the Student Management result page must load the updated signature baseline stylesheet'
+);
 
 academicPeriodCheck(
     str_contains($schema, 'is_current TINYINT(1) NOT NULL DEFAULT 0'),
