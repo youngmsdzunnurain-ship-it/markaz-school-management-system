@@ -134,6 +134,9 @@ publicVisualCheck(
 
 $sharedInteractions = file_get_contents(__DIR__ . '/../public/css/public-interactions.css');
 foreach ([
+    '.public-value-card',
+    '.markaz-photo-card',
+    '.markaz-facility-card',
     '.admission-priority-card',
     '.admission-guidance-card',
     '.admission-contact-card',
@@ -161,7 +164,7 @@ publicVisualCheck(
 );
 
 publicVisualCheck(
-    str_contains($aboutCardsCss, 'Preparing Learners for Their Next Step') === false &&
+    str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
     str_contains($aboutCardsCss, 'white-space: nowrap') &&
     str_contains($aboutCardsCss, '@media (max-width: 760px)'),
     'About academic milestone heading must stay on one line on wide screens and wrap safely on mobile'
