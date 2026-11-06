@@ -49,6 +49,17 @@ dashboardShellAssert(
 );
 
 dashboardShellAssert(
+    preg_match('/\.admin-profile-display\\{[^}]*display:flex/s', $css) === 1 &&
+    preg_match('/\.admin-profile-photo\\{[^}]*border-radius:50%/s', $css) === 1 &&
+    preg_match('/\.admin-profile-summary\\{[^}]*min-width:0/s', $css) === 1 &&
+    preg_match('/\.admin-details>div\\{[^}]*display:grid/s', $css) === 1 &&
+    str_contains($html, 'id="dashboardAdminPhoto"') &&
+    str_contains($html, 'id="dashboardAdminName"') &&
+    str_contains($html, 'id="dashboardAdminEmail"'),
+    'Administrator profile must use a responsive three-column name, email and circular-photo layout without changing account bindings'
+);
+
+dashboardShellAssert(
     str_contains($css, '.dashboard-footer') &&
     str_contains($css, 'border-top:1px solid #e1e8e3') &&
     str_contains($css, 'background:rgba(255,255,255,.88)'),
