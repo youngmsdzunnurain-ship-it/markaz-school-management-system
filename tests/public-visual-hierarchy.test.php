@@ -91,6 +91,7 @@ $publicCss = file_get_contents(__DIR__ . '/../public/css/public-pages.css');
 publicVisualCheck(
     str_contains($publicCss, '.public-intro-grid .public-photo > img') &&
     str_contains($publicCss, 'object-fit: cover') &&
+    str_contains($publicCss, 'position: absolute') &&
     str_contains($publicCss, 'padding: 0'),
     'about school photograph must fill its frame without inner padding'
 );
