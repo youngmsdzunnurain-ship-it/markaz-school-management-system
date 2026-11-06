@@ -314,7 +314,7 @@ publicVisualCheck(
     'Academic eyebrow labels must match Admission gold styling and Tahfiz heading must stay on one line on desktop'
 );
 
-$faqHeadingCss = preg_match('/\\.public-faq-page \\.public-section-heading\\s*\\{([^}]*)\\}/s', $publicCss, $faqHeadingMatch) === 1
+$faqHeadingCss = preg_match('/body\\.public-page\\.public-faq-page \\.public-section-heading\\s*\\{([^}]*)\\}/s', $publicCss, $faqHeadingMatch) === 1
     ? $faqHeadingMatch[1]
     : '';
 publicVisualCheck(
