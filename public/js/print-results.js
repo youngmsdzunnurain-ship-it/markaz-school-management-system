@@ -112,7 +112,8 @@ function printStudent(sid, cid) {
         student_id: String(sid),
         class_id: String(cid),
         class_type: "conventional",
-        print: "1"
+        print: "1",
+        display_version: "20261106-targeted-student-display-fix"
     });
     window.location.href = "./student-result-print.html?" + params.toString();
 }
