@@ -252,18 +252,20 @@ async function loadStudentResult() {
         throw new Error("Student ID is missing.");
     }
 
-    let data;
-    try {
-        data = await fetchStudentResultPayload(isPrintMode);
-    } catch (error) {
-        if (!isPrintMode || error.code !== "RESULT_INCOMPLETE") {
-            throw error;
-        }
+    // Always render the student profile and assigned subjects from the normal
+    // read-only result payload before checking whether this page may print.
+    let data = await fetchStudentResultPayload(false);
 
-        // Keep the server-side print threshold enforced. Fetch a read-only
-        // preview only so staff can see the student profile and assigned subjects.
-        resultPrintBlocked = error.completion || {};
-        data = await fetchStudentResultPayload(false);
+    if (isPrintMode) {
+        try {
+            data = await fetchStudentResultPayload(true);
+        } catch (error) {
+            // An incomplete result or missing print permission blocks printing,
+            // not loading the student's read-only report preview.
+            resultPrintBlocked = error.completion || {
+                message: error.message || "Printing permission could not be verified."
+            };
+        }
     }
 
     studentData = data;
@@ -1494,25 +1496,13 @@ function buildDedicatedPrintUrl(autoPrint = false) {
 }
 
 printStudentResultButton?.addEventListener("click", () => {
-    if (!studentData) return;
-    if (isPrintMode) {
-        authorizeAndPrint("print_results");
-        return;
-    }
-    if (isEditMode) return;
-    window.open(buildDedicatedPrintUrl(false), "_blank");
+    if (!isPrintMode || !studentData || resultPrintBlocked) return;
+    authorizeAndPrint("print_results");
 });
 
 downloadStudentPdfButton?.addEventListener("click", () => {
-    if (!studentData) return;
-    if (isPrintMode) {
-        authorizeAndPrint("export_results");
-        return;
-    }
-    if (isEditMode) return;
-    // Open synchronously from the click so mobile/desktop popup blockers do not
-    // discard the dedicated PDF/print window after an awaited permission check.
-    window.open(buildDedicatedPrintUrl(true), "_blank");
+    if (!isPrintMode || !studentData || resultPrintBlocked) return;
+    authorizeAndPrint("export_results");
 });
 
 const editScoresButton = $("editScoresButton");
@@ -1682,7 +1672,8 @@ function setEditMode(editing) {
     }
 
     if (resultDocumentActions) {
-        resultDocumentActions.hidden = editing || !studentData;
+        // Print/PDF controls exist only on the dedicated printable page.
+        resultDocumentActions.hidden = !isPrintMode || editing || !studentData;
     }
 
     if (studentData) {
