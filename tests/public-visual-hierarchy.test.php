@@ -183,13 +183,16 @@ publicVisualCheck(
     'About academic milestone eyebrow, heading and supporting paragraph must be centered together'
 );
 
+$academicTitleRule = preg_match('/\\.public-about-page \\.academic-milestones-heading > h2\\s*\\{([^}]*)\\}/s', $aboutCardsCss, $academicTitleMatch) === 1
+    ? $academicTitleMatch[1]
+    : '';
 publicVisualCheck(
     str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
-    str_contains($aboutCardsCss, 'width: 100%') &&
-    str_contains($aboutCardsCss, 'white-space: nowrap') &&
-    str_contains($aboutCardsCss, 'text-align: center') &&
-    str_contains($aboutCardsCss, '@media (max-width: 760px)'),
-    'About academic milestone heading must stay on one line on wide screens and wrap safely on mobile'
+    str_contains($academicTitleRule, 'max-width: 100%') &&
+    str_contains($academicTitleRule, 'white-space: nowrap') &&
+    str_contains($academicTitleRule, 'font-size: clamp(.78rem, 4vw, 1.65rem)') &&
+    str_contains($academicTitleRule, 'text-align: center'),
+    'About academic milestone title must remain centered on one line at desktop and mobile widths'
 );
 
 
