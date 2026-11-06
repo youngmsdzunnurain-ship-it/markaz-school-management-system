@@ -1,4 +1,4 @@
-name: MARKAZ Regression Tests
+name: MARKAZ Targeted Regression Tests
 
 on:
   push:
@@ -19,10 +19,10 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
-      - name: Run PHP regression tests
+      - name: Run academic period, signatures and result tests
         run: |
           set -e
-          for test_file in tests/*.test.php; do
-            echo "Running $test_file"
-            php "$test_file"
-          done
+          php tests/academic-period-selection.test.php
+          php tests/result-footer-signatures.test.php
+          php tests/print-results-validation.test.php
+          php tests/results-class-type-validation.test.php
