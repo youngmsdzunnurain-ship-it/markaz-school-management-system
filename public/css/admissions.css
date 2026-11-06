@@ -81,8 +81,29 @@
     padding-block: 42px;
 }
 
-.admission-programmes .public-section-heading {
-    margin-bottom: 22px;
+.admission-programmes .public-section-heading,
+.admission-guidance .public-section-heading {
+    display: flex;
+    width: min(100%, 48rem);
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto 22px;
+    text-align: center;
+}
+
+.admission-programmes .public-section-heading h2,
+.admission-guidance .public-section-heading h2 {
+    width: 100%;
+    margin-inline: auto;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.admission-programmes .public-section-heading > p,
+.admission-guidance .public-section-heading > p {
+    width: 100%;
+    margin-inline: auto;
+    text-align: center;
 }
 
 .admission-priorities {
@@ -106,14 +127,18 @@
 
 .admission-card-mark {
     display: inline-grid;
-    width: 44px;
-    height: 44px;
-    margin-bottom: 10px;
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    margin-bottom: 14px;
     place-items: center;
-    border-radius: 12px;
-    color: var(--admission-green);
-    background: #edf4ed;
-    font-size: 1.5rem;
+    box-sizing: border-box;
+    border: 1px solid #dce9df;
+    border-radius: 17px;
+    color: #93691c;
+    background: #edf5ef;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+    font-size: 1.55rem;
 }
 
 .admission-priority-card h3,
@@ -141,8 +166,21 @@
     gap: 26px;
 }
 
+.admission-how .public-copy {
+    min-width: 0;
+    text-align: left;
+}
+
 .admission-how .public-copy h2 {
-    margin-top: 0;
+    max-width: 24ch;
+    margin: 0 0 12px;
+    text-align: left;
+}
+
+.admission-how .public-copy p {
+    max-width: 68ch;
+    margin-inline: 0;
+    text-align: left;
 }
 
 .admission-contact-card {
@@ -259,6 +297,7 @@ body.admissions-page {
 
 .admission-guidance-card {
     display: flex;
+    min-width: 0;
     flex-direction: column;
     align-items: flex-start;
     padding: 22px;
