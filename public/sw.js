@@ -43,6 +43,15 @@ function isApprovedPublicAsset(url) {
         /\/assets\/images\/(?:[a-z0-9._-]+\/)*[a-z0-9._-]+\.(?:avif|webp|png|jpe?g|gif|svg)$/i.test(url.pathname);
 }
 
+async function notifyPublicClients(state, message) {
+    const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    clients.forEach(client => client.postMessage({
+        type: "MARKAZ_NETWORK_STATUS",
+        state,
+        message
+    }));
+}
+
 async function cacheResponse(cacheName, request, response) {
     if (response && response.ok && response.type === "basic") {
         const cache = await caches.open(cacheName);
@@ -137,7 +146,10 @@ self.addEventListener("fetch", event => {
             cache.put(request, response.clone());
         }
         return response;
-    })).catch(() => null);
+    })).catch(async () => {
+        await notifyPublicClients("offline", "A network request failed. Showing saved content where available.");
+        return null;
+    });
 
     /* Serve a cached asset immediately, while refreshing it in the background. */
     event.waitUntil(network);
