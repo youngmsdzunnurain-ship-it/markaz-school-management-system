@@ -93,7 +93,7 @@ dashboardAssert(
     'dashboard refresh control and its obsolete styles must be fully removed'
 );
 dashboardAssert(
-    str_contains($redesignCss, 'backdrop-filter: saturate(165%) blur(18px)')
+    str_contains($redesignCss, 'backdrop-filter: saturate(170%) blur(20px)')
         && str_contains($redesignCss, 'main-content > footer')
         && str_contains($js, 'link.blur()')
         && !str_contains($js, 'item.classList.add("active")'),
