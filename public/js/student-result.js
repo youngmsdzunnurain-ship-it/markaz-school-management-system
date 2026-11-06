@@ -231,7 +231,8 @@ function showResultPrintBlockedNotice(completion) {
         ? completion.missing_fields
         : [];
 
-    let message = "This result is available for review, but printing is disabled until the required result entries are complete.";
+    let message = completion?.message
+        || "This result is available for review, but printing is disabled until the required result entries are complete.";
     if (hasPercentage && hasThreshold) {
         message = `This result is ${percentage}% complete. Printing requires at least ${threshold}% completion.`;
     }
@@ -252,22 +253,23 @@ async function loadStudentResult() {
         throw new Error("Student ID is missing.");
     }
 
-    let data;
-    try {
-        data = await fetchStudentResultPayload(isPrintMode);
-    } catch (error) {
-        if (!isPrintMode || error.code !== "RESULT_INCOMPLETE") {
-            throw error;
-        }
-
-        // Keep the server-side print threshold enforced. Fetch a read-only
-        // preview only so staff can see the student profile and assigned subjects.
-        resultPrintBlocked = error.completion || {};
-        data = await fetchStudentResultPayload(false);
-    }
-
+    // Render the read-only report immediately. Eligibility and permission checks
+    // must never hold student details or assigned subjects in the Loading state.
+    const data = await fetchStudentResultPayload(false);
     studentData = data;
     renderStudentResult(data);
+
+    if (isPrintMode) {
+        try {
+            await fetchStudentResultPayload(true);
+        } catch (error) {
+            // An incomplete result or missing print permission blocks printing,
+            // not loading the student's read-only report preview.
+            resultPrintBlocked = error.completion || {
+                message: error.message || "Printing permission could not be verified."
+            };
+        }
+    }
 
     if (resultPrintBlocked) {
         showResultPrintBlockedNotice(resultPrintBlocked);
@@ -1494,32 +1496,22 @@ function buildDedicatedPrintUrl(autoPrint = false) {
 }
 
 printStudentResultButton?.addEventListener("click", () => {
-    if (!studentData) return;
-    if (isPrintMode) {
-        authorizeAndPrint("print_results");
-        return;
-    }
-    if (isEditMode) return;
-    window.open(buildDedicatedPrintUrl(false), "_blank");
+    if (!isPrintMode || !studentData || resultPrintBlocked) return;
+    authorizeAndPrint("print_results");
 });
 
 downloadStudentPdfButton?.addEventListener("click", () => {
-    if (!studentData) return;
-    if (isPrintMode) {
-        authorizeAndPrint("export_results");
-        return;
-    }
-    if (isEditMode) return;
-    // Open synchronously from the click so mobile/desktop popup blockers do not
-    // discard the dedicated PDF/print window after an awaited permission check.
-    window.open(buildDedicatedPrintUrl(true), "_blank");
+    if (!isPrintMode || !studentData || resultPrintBlocked) return;
+    authorizeAndPrint("export_results");
 });
 
 const editScoresButton = $("editScoresButton");
 const saveScoresButton = $("saveScoresButton");
 const cancelScoresButton = $("cancelScoresButton");
 if (isPrintMode) {
-    document.querySelector(".student-edit-actions")?.remove();
+    document.querySelectorAll(
+        ".student-edit-actions, #editScoresButton, #saveScoresButton, #cancelScoresButton"
+    ).forEach(control => control.remove());
 }
 
 const memorizationInput = $("studentMemorizationInput");
@@ -1682,7 +1674,8 @@ function setEditMode(editing) {
     }
 
     if (resultDocumentActions) {
-        resultDocumentActions.hidden = editing || !studentData;
+        // Print/PDF controls exist only on the dedicated printable page.
+        resultDocumentActions.hidden = !isPrintMode || editing || !studentData;
     }
 
     if (studentData) {
@@ -2085,13 +2078,25 @@ loadStudentResult().catch(error => {
         $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
     }
 
-    $("studentResultsBody").innerHTML = `
-        <tr>
-            <td colspan="8">
-                ${escapeHtml(error.message)}
-            </td>
-        </tr>
-    `;
+    if ($("studentName")?.textContent === "Loading...") {
+        $("studentName").textContent = "Unable to load student result";
+    }
+    if ($("studentResultsBody")) {
+        $("studentResultsBody").innerHTML = `
+            <tr>
+                <td colspan="8">
+                    ${escapeHtml(error.message || "Unable to load student result.")}
+                </td>
+            </tr>
+        `;
+    }
+    if (isPrintMode) {
+        const notice = $("resultPrintBlockedNotice");
+        if (notice) {
+            notice.textContent = error.message || "Unable to load this result.";
+            notice.hidden = false;
+        }
+    }
 });
 
 /* UNSAVED CHANGES PROTECTION */

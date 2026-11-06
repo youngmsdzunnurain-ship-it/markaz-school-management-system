@@ -200,6 +200,14 @@ async function printAllEligibleStudents(classIdValue, studentIds) {
     }
 
     await Promise.all(frames.map(waitForResult));
+
+    const blockedFrame = frames.find(frame =>
+      frame.contentDocument?.body?.classList.contains("result-print-blocked")
+    );
+    if (blockedFrame) {
+      throw new Error("At least one selected result is not eligible to print. Only students meeting the configured completion threshold can be printed.");
+    }
+
     const target = printDocument.getElementById("batchResults");
     for (const frame of frames) {
       const source = frame.contentDocument.querySelector("main.student-result-page");

@@ -638,7 +638,8 @@
                 return;
             }
 
-            await loadStudents();
+            // The class-results endpoint already returns its scoped student roster.
+            // Do not let a separate roster request failure prevent subject options loading.
             await loadResults();
         } catch (error) {
             console.error("Class workspace error:", error);

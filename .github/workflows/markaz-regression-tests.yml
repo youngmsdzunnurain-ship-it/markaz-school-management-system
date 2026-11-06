@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - fix/academic-period-current-term-signature-baseline-20261106
+      - fix/targeted-result-print-flow-20261106
   pull_request:
     branches:
       - main
@@ -26,3 +27,4 @@ jobs:
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
           php tests/result-print-current-period.test.php
+          php tests/result-print-flow-isolation.test.php
