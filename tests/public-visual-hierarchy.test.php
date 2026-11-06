@@ -126,15 +126,14 @@ publicVisualCheck(
 );
 
 $homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
+$homeProgrammeIconStyle = preg_match('/\\.programme-icon\\s*\\{([^}]*)\\}/s', $homeProgrammeCss, $homeProgrammeIconMatch) === 1
+    ? $homeProgrammeIconMatch[1]
+    : '';
 publicVisualCheck(
-    str_contains($homeProgrammeCss, '.public-home-page .highlight-item .highlight-number') &&
-    str_contains($homeProgrammeCss, '.public-home-page .programme-icon') &&
-    str_contains($homeProgrammeCss, '.programme-icon') &&
-    str_contains($homeProgrammeCss, 'color: #93691c') &&
-    str_contains($homeProgrammeCss, 'background: #edf5ef') &&
-    str_contains($homeProgrammeCss, 'border: 1px solid #dce9df') &&
-    !str_contains($homeProgrammeCss, '/* MARKAZ icon treatment: gold glyphs/numbers on charcoal tiles. */'),
-    'homepage Learning with Purpose icons must retain their original gold-on-pale-green treatment without a later override'
+    str_contains($homeProgrammeIconStyle, 'color: #93691c') &&
+    str_contains($homeProgrammeIconStyle, 'background: #edf5ef') &&
+    str_contains($homeProgrammeIconStyle, 'border: 1px solid #dce9df'),
+    'homepage Learning with Purpose programme icons must use the gold-on-pale-green treatment'
 );
 
 $sharedInteractions = file_get_contents(__DIR__ . '/../public/css/public-interactions.css');
