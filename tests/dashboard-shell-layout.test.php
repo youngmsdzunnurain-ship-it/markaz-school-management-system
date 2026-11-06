@@ -1,0 +1,53 @@
+<?php
+declare(strict_types=1);
+
+function dashboardShellAssert(bool $condition, string $message): void
+{
+    if (!$condition) {
+        fwrite(STDERR, "FAIL: {$message}\n");
+        exit(1);
+    }
+}
+
+$html = file_get_contents(__DIR__ . '/../public/dashboard.html');
+$css = file_get_contents(__DIR__ . '/../public/css/dashboard-2026.css');
+$js = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
+
+dashboardShellAssert(
+    str_contains($html, 'id="dashboardAdminPhoto"') &&
+    str_contains($html, 'id="dashboardAdminName"') &&
+    str_contains($html, 'id="dashboardAdminEmail"') &&
+    str_contains($js, 'dashboardAdminName.textContent = name') &&
+    str_contains($js, 'dashboardAdminEmail.textContent = email'),
+    'Dashboard administrator photo, name and email must remain present and populated from the authenticated account'
+);
+
+dashboardShellAssert(
+    preg_match('/\.dashboard-bottom-layout\{grid-template-columns:minmax\(0,\s*45fr\)\s+minmax\(0,\s*55fr\)\}/', $css) === 1,
+    'Dashboard quick navigation and administrator panel must use the requested 45% / 55% split'
+);
+
+dashboardShellAssert(
+    preg_match('/\.nav-link\{[^}]*color:#fff/s', $css) === 1 &&
+    preg_match('/\.nav-link i\{[^}]*color:#fff/s', $css) === 1 &&
+    preg_match('/\.nav-section-label\{[^}]*color:#fff/s', $css) === 1,
+    'Dashboard sidebar navigation labels, links and icons must use pure white'
+);
+
+dashboardShellAssert(
+    str_contains($css, '.main-content{min-width:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}') &&
+    str_contains($css, '.page-content{') &&
+    str_contains($css, 'flex:1 0 auto') &&
+    str_contains($css, '.dashboard-footer{') &&
+    str_contains($css, 'margin-top:auto'),
+    'Dashboard footer must remain at the bottom of the viewport on short pages and after content on long pages'
+);
+
+dashboardShellAssert(
+    str_contains($css, '.dashboard-footer') &&
+    str_contains($css, 'border-top:1px solid var(--line)') &&
+    str_contains($css, 'background:var(--card)'),
+    'Dashboard footer must use the shared clean white/green page-footer treatment'
+);
+
+echo "Dashboard sidebar, administrator profile and footer layout regression tests passed.\n";
