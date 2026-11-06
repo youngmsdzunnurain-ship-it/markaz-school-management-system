@@ -49,14 +49,17 @@ dashboardShellAssert(
 );
 
 dashboardShellAssert(
-    preg_match('/\.admin-profile-display\\{[^}]*display:grid/s', $css) === 1 &&
-    preg_match('/\.admin-profile-photo\\{[^}]*border-radius:50%/s', $css) === 1 &&
-    preg_match('/\.admin-profile-summary\\{[^}]*display:contents/s', $css) === 1 &&
-    preg_match('/\.admin-details>div\\{[^}]*display:grid/s', $css) === 1 &&
+    preg_match('/\\.admin-profile-display\\{[^}]*grid-template-columns:minmax\\(0,\\s*64px\\)\\s+minmax\\(0,\\s*1fr\\)/s', $css) === 1 &&
+    preg_match('/\\.admin-profile-photo\\{[^}]*grid-column:1;[^}]*grid-row:1\\s*\\/\\s*span\\s*2;[^}]*border-radius:50%/s', $css) === 1 &&
+    preg_match('/\\.admin-profile-summary\\{[^}]*display:contents/s', $css) === 1 &&
+    preg_match('/\\.admin-profile-summary strong\\{[^}]*grid-column:2;[^}]*grid-row:1/s', $css) === 1 &&
+    preg_match('/\\.admin-profile-summary span\\{[^}]*grid-column:2;[^}]*grid-row:2/s', $css) === 1 &&
+    preg_match('/@container adm \\(max-width:380px\\)\\{[^}]*grid-template-columns:minmax\\(0,\\s*48px\\)\\s+minmax\\(0,\\s*1fr\\)/s', $css) === 1 &&
     str_contains($html, 'id="dashboardAdminPhoto"') &&
     str_contains($html, 'id="dashboardAdminName"') &&
-    str_contains($html, 'id="dashboardAdminEmail"'),
-    'Administrator profile must use a responsive three-column name, email and circular-photo layout without changing account bindings'
+    str_contains($html, 'id="dashboardAdminEmail"') &&
+    strpos($html, 'class="admin-details"') > strpos($html, 'class="admin-profile-display"'),
+    'Administrator profile must place its circular photo left of vertically stacked name and email, with active status underneath and existing account bindings intact'
 );
 
 dashboardShellAssert(
