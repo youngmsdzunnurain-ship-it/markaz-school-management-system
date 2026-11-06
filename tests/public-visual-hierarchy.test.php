@@ -268,4 +268,51 @@ publicVisualCheck(
     'Academic memorisation stage numbers must share the icon tile treatment with no later conflicting declaration'
 );
 
+$homeHighlightOverride = preg_match('/\\.highlight-item \\.highlight-number\\s*\\{([^}]*)\\}/s', $homeCss, $homeHighlightOverrideMatch) === 1
+    ? $homeHighlightOverrideMatch[1]
+    : '';
+publicVisualCheck(
+    str_contains($homeHighlightOverride, 'background: #edf5ef') &&
+    str_contains($homeHighlightOverride, 'border: 1px solid #dce9df') &&
+    str_contains($homeHighlightOverride, 'color: #93691c') &&
+    !str_contains($homeHighlightOverride, 'linear-gradient'),
+    'final homepage 01–04 number rule must retain the gold-on-pale-green treatment'
+);
+
+$faqHtml = file_get_contents(__DIR__ . '/../public/faq.html');
+publicVisualCheck(
+    str_contains($faqHtml, 'class="public-page public-faq-page"') &&
+    str_contains($publicCss, '.public-faq-page .markaz-faq-aside') &&
+    str_contains($publicCss, 'grid-template-columns: minmax(0, 1fr)') &&
+    str_contains($publicCss, '.public-faq-page .markaz-faq-content'),
+    'FAQ help panel and question groups must share a centered single-column layout'
+);
+
+$galleryAlignmentCss = file_get_contents(__DIR__ . '/../public/css/gallery-alignment.css');
+publicVisualCheck(
+    str_contains($galleryAlignmentCss, 'white-space: nowrap') &&
+    str_contains($galleryAlignmentCss, '@media (min-width: 641px)'),
+    'Gallery Moments of Learning and Growth heading must remain on one line on larger screens'
+);
+
+publicVisualCheck(
+    str_contains($admissionsCss, 'body.public-page .admission-programmes .public-eyebrow') &&
+    str_contains($admissionsCss, 'body.public-page .admission-guidance .public-eyebrow') &&
+    str_contains($admissionsCss, 'font-size: .8rem') &&
+    str_contains($admissionsCss, 'color: #93691c') &&
+    str_contains($admissionsCss, 'white-space: nowrap') &&
+    str_contains($admissionsCss, '@media (max-width: 700px)'),
+    'Admission labels must match and the Before You Enquire heading must stay on one line on desktop'
+);
+
+publicVisualCheck(
+    str_contains($academicsCss, 'font-size: .8rem') &&
+    str_contains($academicsCss, 'font-weight: 800') &&
+    str_contains($academicsCss, 'color: #93691c') &&
+    str_contains($academicsCss, '.academics-page .memorisation-heading h2') &&
+    str_contains($academicsCss, 'white-space: nowrap') &&
+    str_contains($academicsCss, '.academics-page .memorisation-heading h2 .heading-arabic'),
+    'Academic eyebrow labels must match Admission gold styling and Tahfiz heading must stay on one line on desktop'
+);
+
 echo "Public visual hierarchy regression tests passed.\n";

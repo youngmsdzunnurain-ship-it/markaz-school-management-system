@@ -549,9 +549,38 @@ body.public-page .footer-bottom {
 }
 .markaz-faq-layout {
   display: grid;
-  grid-template-columns: minmax(230px, .7fr) minmax(0, 1.6fr);
-  gap: clamp(28px, 5vw, 64px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
   align-items: start;
+}
+.public-faq-page .public-section-heading {
+  width: min(100%, 760px);
+  margin-inline: auto;
+  text-align: center;
+}
+.public-faq-page .markaz-faq-aside {
+  width: min(100%, 760px);
+  margin-inline: auto;
+  text-align: center;
+}
+.public-faq-page .markaz-faq-icon {
+  margin-inline: auto;
+}
+.public-faq-page .markaz-faq-contact {
+  width: min(100%, 320px);
+  margin-inline: auto;
+}
+.public-faq-page .markaz-faq-email {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+}
+.public-faq-page .markaz-faq-content {
+  width: min(100%, 900px);
+  margin-inline: auto;
+}
+.public-faq-page .markaz-faq-group > h3 {
+  text-align: center;
 }
 .markaz-faq-aside {
   padding: 30px 26px;

@@ -32,6 +32,25 @@
     letter-spacing: .12em;
 }
 
+/* Matching gold labels and a single-line desktop guidance heading. */
+body.public-page .admission-programmes .public-eyebrow,
+body.public-page .admission-guidance .public-eyebrow {
+    color: #93691c;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+body.public-page .admission-guidance .public-section-heading h2 {
+    max-width: none;
+    white-space: nowrap;
+    font-size: clamp(1.35rem, 2.6vw, 2.05rem);
+}
+@media (max-width: 700px) {
+    body.public-page .admission-guidance .public-section-heading h2 {
+        white-space: normal;
+    }
+}
+
 .admission-hero h1 {
     max-width: 780px;
     margin: 0 0 16px;
