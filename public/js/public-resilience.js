@@ -114,6 +114,15 @@
         }
     }
 
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.addEventListener("message", event => {
+            const data = event.data || {};
+            if (data.type === "MARKAZ_NETWORK_STATUS" && data.state === "offline") {
+                showStatus("offline", data.message || "A network request failed. Saved content is being used.");
+            }
+        });
+    }
+
     window.addEventListener("offline", () => {
         showStatus("offline", "You're offline. Previously loaded content remains on this page.");
     });
