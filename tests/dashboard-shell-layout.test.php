@@ -35,7 +35,7 @@ dashboardShellAssert(
 );
 
 dashboardShellAssert(
-    str_contains($css, '.main-content{min-width:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}') &&
+    str_contains($css, '.main-content{min-width:0;min-height:calc(100vh / var(--page-zoom,1));min-height:calc(100dvh / var(--page-zoom,1));display:flex;flex-direction:column}') &&
     str_contains($css, '.page-content{') &&
     str_contains($css, 'flex:1 0 auto') &&
     str_contains($css, '.dashboard-footer{') &&
