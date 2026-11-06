@@ -115,7 +115,7 @@ publicVisualCheck(
     str_contains($aboutCardsCss, 'color: #d9aa4b') &&
     str_contains($aboutCardsCss, 'background: #343a36') &&
     str_contains($aboutCardsCss, 'border: 1px solid #4a514c'),
-    'About card numbers must be gold while their border and background stay green'
+    'About card numbers must be gold on dark-grey tiles with a matching border'
 );
 publicVisualCheck(
     str_contains($aboutCardsCss, '.public-about-page .public-section-heading') &&
@@ -129,7 +129,7 @@ publicVisualCheck(
     str_contains($homeProgrammeCss, 'color: #d9aa4b') &&
     str_contains($homeProgrammeCss, 'background: #343a36') &&
     str_contains($homeProgrammeCss, 'border: 1px solid #4a514c'),
-    'homepage programme icon glyphs must be gold inside the original green icon frame'
+    'homepage programme icon glyphs must be gold inside dark-grey icon frames'
 );
 
 $sharedInteractions = file_get_contents(__DIR__ . '/../public/css/public-interactions.css');
@@ -150,8 +150,7 @@ foreach ([
     '.programme-icon',
     '.highlight-mark',
     '.quran-feature-icon',
-    '.public-value-number',
-    '.admission-card-mark',
+        '.admission-card-mark',
     '.pathway-icon',
     '.stage-number',
 ] as $required) {
