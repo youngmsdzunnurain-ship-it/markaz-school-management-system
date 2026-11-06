@@ -145,3 +145,197 @@
         transform: none !important;
     }
 }
+
+
+/* Unified MARKAZ gold interaction language for the remaining public pages.
+   Keep the original green surfaces and borders; the gold accent is the animated top rule. */
+:where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+    body.public-page .admission-contact-card,
+    body.public-page .admission-guidance-card,
+    body.public-page .pathway-card,
+    body.public-page .stage-card,
+    body.public-page .markaz-faq-content .public-faq-item
+) {
+    position: relative;
+    isolation: isolate;
+    transition:
+        transform var(--markaz-motion-duration) var(--markaz-motion-ease),
+        box-shadow var(--markaz-motion-duration) var(--markaz-motion-ease),
+        border-color var(--markaz-motion-duration) var(--markaz-motion-ease);
+}
+
+:where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+    body.public-page .admission-contact-card,
+    body.public-page .admission-guidance-card,
+    body.public-page .pathway-card,
+    body.public-page .stage-card,
+    body.public-page .markaz-faq-content .public-faq-item
+)::before {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    background: #d9aa4b;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--markaz-motion-ease);
+    pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-contact-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card,
+        body.public-page .markaz-faq-content .public-faq-item
+    ):hover {
+        transform: translate3d(0, -5px, 0);
+        border-color: #a9cbb3;
+        box-shadow: 0 14px 28px rgba(8, 47, 32, .12);
+    }
+
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-contact-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card,
+        body.public-page .markaz-faq-content .public-faq-item
+    ):hover::before {
+        transform: scaleX(1);
+    }
+}
+
+:where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+    body.public-page .admission-contact-card,
+    body.public-page .admission-guidance-card,
+    body.public-page .pathway-card,
+    body.public-page .stage-card,
+    body.public-page .markaz-faq-content .public-faq-item
+):focus-within::before,
+:where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+    body.public-page .admission-contact-card,
+    body.public-page .admission-guidance-card,
+    body.public-page .pathway-card,
+    body.public-page .stage-card,
+    body.public-page .markaz-faq-content .public-faq-item
+):active::before {
+    transform: scaleX(1);
+}
+
+/* Gold glyphs/numbers inside the existing pale-green icon frames. */
+:where(
+    body.public-page .admission-card-mark,
+    body.public-page .pathway-icon,
+    body.public-page .stage-number,
+    body.public-page .markaz-faq-icon
+) {
+    color: #93691c;
+    background: #edf5ef;
+    border: 1px solid #dce9df;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85);
+    transition:
+        color 200ms ease,
+        background-color 200ms ease,
+        transform 200ms var(--markaz-motion-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card
+    ):hover :where(.admission-card-mark, .pathway-icon, .stage-number) {
+        color: #805b18;
+        background: #e4efe6;
+        transform: translateY(-2px);
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-contact-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card,
+        body.public-page .markaz-faq-content .public-faq-item
+    ):active::before {
+        transform: scaleX(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-contact-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card,
+        body.public-page .markaz-faq-content .public-faq-item
+    ),
+    :where(
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
+        body.public-page .admission-contact-card,
+        body.public-page .admission-guidance-card,
+        body.public-page .pathway-card,
+        body.public-page .stage-card,
+        body.public-page .markaz-faq-content .public-faq-item
+    )::before,
+    :where(
+        body.public-page .admission-card-mark,
+        body.public-page .pathway-icon,
+        body.public-page .stage-number,
+        body.public-page .markaz-faq-icon
+    ) {
+        transition: none !important;
+    }
+}
+
+
+/* Keep the Qur'anic pathway icon on the same gold-on-pale-green treatment. */
+body.public-page.academics-page .quran-card .pathway-icon {
+    color: #93691c;
+    background: #edf5ef;
+    border: 1px solid #dce9df;
+}

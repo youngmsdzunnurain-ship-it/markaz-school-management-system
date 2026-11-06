@@ -132,4 +132,42 @@ publicVisualCheck(
     'homepage programme icon glyphs must be gold inside the original green icon frame'
 );
 
+$sharedInteractions = file_get_contents(__DIR__ . '/../public/css/public-interactions.css');
+foreach ([
+    '.public-value-card',
+    '.markaz-photo-card',
+    '.markaz-facility-card',
+    '.admission-priority-card',
+    '.admission-guidance-card',
+    '.admission-contact-card',
+    '.pathway-card',
+    '.stage-card',
+    '.markaz-faq-content .public-faq-item',
+    'transform: scaleX(0)',
+    'transform-origin: left',
+    '.markaz-faq-icon',
+    '.admission-card-mark',
+    '.pathway-icon',
+    '.stage-number',
+] as $required) {
+    publicVisualCheck(
+        str_contains($sharedInteractions, $required),
+        "shared public interactions must provide consistent gold card/icon treatment: {$required}"
+    );
+}
+
+$homeInteractions = file_get_contents(__DIR__ . '/../public/css/public-design-refinement.css');
+publicVisualCheck(
+    str_contains($homeInteractions, '.programmes-section .section-heading') &&
+    str_contains($homeInteractions, 'align-items: center'),
+    'homepage Learning with Purpose heading must use a centered, stable alignment'
+);
+
+publicVisualCheck(
+    str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
+    str_contains($aboutCardsCss, 'white-space: nowrap') &&
+    str_contains($aboutCardsCss, '@media (max-width: 760px)'),
+    'About academic milestone heading must stay on one line on wide screens and wrap safely on mobile'
+);
+
 echo "Public visual hierarchy regression tests passed.\n";

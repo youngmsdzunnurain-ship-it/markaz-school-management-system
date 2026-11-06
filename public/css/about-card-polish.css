@@ -148,3 +148,27 @@
         transform: none;
     }
 }
+
+
+/* The Academic Milestones title is a single line on wider screens,
+   with a natural, readable wrap on narrow phones. */
+.public-about-page .public-section-heading h2 {
+    max-width: 100%;
+}
+
+@media (min-width: 761px) {
+    .public-about-page .public-section-heading h2 {
+        width: max-content;
+        max-width: 100%;
+        white-space: nowrap;
+        font-size: clamp(1.25rem, 2.7vw, 1.9rem);
+    }
+}
+
+@media (max-width: 760px) {
+    .public-about-page .public-section-heading h2 {
+        width: 100%;
+        white-space: normal;
+        text-wrap: balance;
+    }
+}
