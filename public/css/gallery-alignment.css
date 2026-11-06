@@ -1,0 +1,45 @@
+/* Gallery-only heading alignment correction.
+   Keep the eyebrow, title and supporting copy on one shared centre axis. */
+.markaz-explore-page .public-section-heading {
+    display: flex;
+    width: min(100%, 48rem);
+    flex-direction: column;
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.markaz-explore-page .public-section-heading > .public-eyebrow {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 12px;
+    text-align: center;
+}
+
+.markaz-explore-page .public-section-heading h2 {
+    width: 100%;
+    max-width: min(100%, 24ch);
+    margin: 0 auto 12px;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.markaz-explore-page .public-section-heading > p:last-child {
+    width: 100%;
+    max-width: 66ch;
+    margin: 0 auto;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .markaz-explore-page .public-section-heading {
+        padding-inline: 2px;
+    }
+
+    .markaz-explore-page .public-section-heading h2 {
+        max-width: 20ch;
+        font-size: clamp(1.55rem, 7vw, 2rem);
+        line-height: 1.22;
+    }
+}
