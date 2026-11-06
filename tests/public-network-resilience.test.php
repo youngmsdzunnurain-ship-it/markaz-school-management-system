@@ -41,6 +41,7 @@ publicNetworkCheck(
     str_contains($worker, 'url.origin !== self.location.origin') &&
     str_contains($worker, 'url.pathname.includes("/api/")') &&
     str_contains($worker, 'getScopeRelativePath(url)') &&
+    str_contains($worker, 'relativePath !== ""') &&
     str_contains($worker, 'CORE_ASSETS.includes("./" + relativePath)'),
     'service worker must cache only approved same-origin public GET requests and exclude APIs/authenticated requests'
 );
