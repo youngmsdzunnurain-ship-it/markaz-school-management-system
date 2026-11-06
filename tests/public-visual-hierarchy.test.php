@@ -66,4 +66,17 @@ publicVisualCheck(
     'refinement must not introduce unscoped global element rules'
 );
 
-echo "Public visual hierarchy regression tests passed.\n";
+$galleryCss = file_get_contents(__DIR__ . '/../public/css/gallery-alignment.css');
+publicVisualCheck(
+    str_contains($galleryCss, '.markaz-explore-page .public-section-heading') &&
+    str_contains($galleryCss, 'align-items: center') &&
+    str_contains($galleryCss, 'text-align: center'),
+    'gallery section eyebrow and title must share a stable centered alignment'
+);
+publicVisualCheck(
+    str_contains($galleryCss, '.markaz-explore-page .public-section-heading h2') &&
+    str_contains($galleryCss, 'max-width: min(100%, 24ch)'),
+    'gallery title must have a controlled responsive line length'
+);
+
+echo "Public visual hierarchy regression tests passed.\\n";
