@@ -26,6 +26,10 @@ foreach ($pages as $page) {
         str_contains($html, 'css/public-design-refinement.css'),
         "{$page} must load the shared public design refinement stylesheet"
     );
+    publicVisualCheck(
+        str_contains($html, 'css/public-interactions.css'),
+        "{$page} must retain its existing accessible interaction and reduced-motion stylesheet"
+    );
 }
 
 $home = file_get_contents(__DIR__ . '/../public/home.html');
@@ -42,7 +46,6 @@ foreach ([
     'text-wrap: balance',
     'text-wrap: pretty',
     'max-width',
-    'prefers-reduced-motion: reduce',
     'min-width: 0',
     'overflow-wrap: anywhere',
     '@media (max-width: 640px)',
