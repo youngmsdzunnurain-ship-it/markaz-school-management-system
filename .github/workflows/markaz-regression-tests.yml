@@ -3,6 +3,7 @@ name: MARKAZ Targeted Regression Tests
 on:
   push:
     branches:
+      - main
       - fix/academic-period-current-term-signature-baseline-20261106
   pull_request:
     branches:
