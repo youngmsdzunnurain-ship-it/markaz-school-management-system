@@ -43,11 +43,11 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .nav-section-label:first-child{margin-top:0}
 .nav-link{position:relative;display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;margin:0 0 4px;border-radius:10px;
   font-size:14px;font-weight:500;color:#fff;transition:background .15s,color .15s}
-.nav-link i{width:20px;flex:none;text-align:center;font-size:15px;color:#fff}
+.nav-link i{width:20px;flex:none;text-align:center;font-size:15px;color:#a9cdb6}
 .nav-link span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav-link:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav-link.active{background:var(--mg);color:#fff;font-weight:600}
-.nav-link.active i{color:#fff}
+.nav-link.active i{color:#e6d9a4}
 .nav-link.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--gold)}
 .sidebar-bottom{flex:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
 /* anything else injected into the sidebar bottom (old duplicate logout buttons) stays hidden */
