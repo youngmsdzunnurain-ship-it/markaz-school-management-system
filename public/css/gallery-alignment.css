@@ -24,6 +24,13 @@
     text-align: center;
     text-wrap: balance;
 }
+@media (min-width: 641px) {
+    body.public-page .markaz-explore-page .public-section-heading h2 {
+        max-width: none;
+        white-space: nowrap;
+        font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+    }
+}
 
 .markaz-explore-page .public-section-heading > p:last-child {
     width: 100%;
