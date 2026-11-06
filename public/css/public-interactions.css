@@ -150,6 +150,9 @@
 /* Unified MARKAZ gold interaction language for the remaining public pages.
    Keep the original green surfaces and borders; the gold accent is the animated top rule. */
 :where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
     body.public-page .admission-priority-card,
     body.public-page .admission-contact-card,
     body.public-page .admission-guidance-card,
@@ -167,6 +170,9 @@
 }
 
 :where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
     body.public-page .admission-priority-card,
     body.public-page .admission-contact-card,
     body.public-page .admission-guidance-card,
@@ -190,7 +196,10 @@
 
 @media (hover: hover) and (pointer: fine) {
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-contact-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
@@ -203,7 +212,10 @@
     }
 
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-contact-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
@@ -215,6 +227,9 @@
 }
 
 :where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
     body.public-page .admission-priority-card,
     body.public-page .admission-contact-card,
     body.public-page .admission-guidance-card,
@@ -223,6 +238,9 @@
     body.public-page .markaz-faq-content .public-faq-item
 ):focus-within::before,
 :where(
+    body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
     body.public-page .admission-priority-card,
     body.public-page .admission-contact-card,
     body.public-page .admission-guidance-card,
@@ -252,7 +270,10 @@
 
 @media (hover: hover) and (pointer: fine) {
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
         body.public-page .stage-card
@@ -265,7 +286,10 @@
 
 @media (hover: none), (pointer: coarse) {
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-contact-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
@@ -278,7 +302,10 @@
 
 @media (prefers-reduced-motion: reduce) {
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-contact-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
@@ -286,7 +313,10 @@
         body.public-page .markaz-faq-content .public-faq-item
     ),
     :where(
-        body.public-page .admission-priority-card,
+        body.public-page .public-value-card,
+    body.public-page .markaz-photo-card,
+    body.public-page .markaz-facility-card,
+    body.public-page .admission-priority-card,
         body.public-page .admission-contact-card,
         body.public-page .admission-guidance-card,
         body.public-page .pathway-card,
@@ -301,4 +331,12 @@
     ) {
         transition: none !important;
     }
+}
+
+
+/* Keep the Qur'anic pathway icon on the same gold-on-pale-green treatment. */
+body.public-page.academics-page .quran-card .pathway-icon {
+    color: #93691c;
+    background: #edf5ef;
+    border: 1px solid #dce9df;
 }
