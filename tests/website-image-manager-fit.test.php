@@ -42,7 +42,7 @@ foreach ([
 }
 
 websiteImageFitCheck(
-    str_contains($manager, 'image.size > 8 * 1024 * 1024') &&
+    str_contains($manager, 'file.size > 8 * 1024 * 1024') &&
     str_contains($manager, 'credentials: "same-origin"'),
     'uploads must retain size validation and authenticated same-origin requests'
 );
