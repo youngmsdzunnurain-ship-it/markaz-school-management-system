@@ -112,9 +112,9 @@ publicVisualCheck(
     'About cards must reveal the homepage-style gold top line on hover, focus, and tap'
 );
 publicVisualCheck(
-    str_contains($aboutCardsCss, 'color: #93691c') &&
-    str_contains($aboutCardsCss, 'border: 1px solid #dce9df') &&
-    str_contains($aboutCardsCss, 'background: #edf5ef'),
+    str_contains($aboutCardsCss, 'color: #d9aa4b') &&
+    str_contains($aboutCardsCss, 'background: #343a36') &&
+    str_contains($aboutCardsCss, 'border: 1px solid #4a514c'),
     'About card numbers must be gold while their border and background stay green'
 );
 publicVisualCheck(
@@ -126,9 +126,9 @@ publicVisualCheck(
 
 $homeProgrammeCss = file_get_contents(__DIR__ . '/../public/css/home.css');
 publicVisualCheck(
-    str_contains($homeProgrammeCss, 'color: #93691c') &&
-    str_contains($homeProgrammeCss, 'border: 1px solid #dce9df') &&
-    str_contains($homeProgrammeCss, 'background: #edf5ef'),
+    str_contains($homeProgrammeCss, 'color: #d9aa4b') &&
+    str_contains($homeProgrammeCss, 'background: #343a36') &&
+    str_contains($homeProgrammeCss, 'border: 1px solid #4a514c'),
     'homepage programme icon glyphs must be gold inside the original green icon frame'
 );
 
@@ -146,6 +146,11 @@ foreach ([
     'transform: scaleX(0)',
     'transform-origin: left',
     '.markaz-faq-icon',
+    '.highlight-number',
+    '.programme-icon',
+    '.highlight-mark',
+    '.quran-feature-icon',
+    '.public-value-number',
     '.admission-card-mark',
     '.pathway-icon',
     '.stage-number',
@@ -165,7 +170,9 @@ publicVisualCheck(
 
 publicVisualCheck(
     str_contains($aboutHtml, '<h2>Preparing Learners for Their Next Step</h2>') &&
+    str_contains($aboutCardsCss, 'width: 100%') &&
     str_contains($aboutCardsCss, 'white-space: nowrap') &&
+    str_contains($aboutCardsCss, 'text-align: center') &&
     str_contains($aboutCardsCss, '@media (max-width: 760px)'),
     'About academic milestone heading must stay on one line on wide screens and wrap safely on mobile'
 );
