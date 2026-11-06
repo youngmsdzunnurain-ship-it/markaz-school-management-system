@@ -50,9 +50,9 @@ dashboardShellAssert(
 
 dashboardShellAssert(
     str_contains($css, '.dashboard-footer') &&
-    str_contains($css, 'border-top:1px solid var(--line)') &&
-    str_contains($css, 'background:#fff'),
-    'Dashboard footer must use the shared clean white/green page-footer treatment'
+    str_contains($css, 'border-top:1px solid #e1e8e3') &&
+    str_contains($css, 'background:rgba(255,255,255,.88)'),
+    'Dashboard footer must use the shared translucent white background and subtle divider'
 );
 
 dashboardShellAssert(
