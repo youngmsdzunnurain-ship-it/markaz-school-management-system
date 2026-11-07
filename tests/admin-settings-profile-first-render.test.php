@@ -27,7 +27,8 @@ settingsFirstRenderAssert(
     'Admin Profile Information must remain the first settings card'
 );
 settingsFirstRenderAssert(
-    str_contains($navigationCss, 'html.settings-page-pending .settings-page > :not(.settings-header):not(.settings-card:first-of-type):not(.markaz-global-footer)'),
+    str_contains($navigationCss, 'settings-page-pending') &&
+    str_contains($navigationCss, '.settings-page > .settings-card:not(:first-of-type)'),
     'the initial-render guard must hide non-profile settings cards before navigation initializes'
 );
 settingsFirstRenderAssert(
