@@ -60,7 +60,6 @@ try {
         "SELECT id, name
          FROM classes
          WHERE id = ?
-           AND is_active = 1
            AND COALESCE(level_group, '') <> 'Quranic'
          LIMIT 1"
     );
