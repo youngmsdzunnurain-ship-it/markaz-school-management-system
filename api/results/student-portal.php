@@ -192,6 +192,8 @@ try {
     echo json_encode([
         'success' => true,
         'student' => [
+            'id' => (int) $student['id'],
+            'class_id' => (int) $class['id'],
             'name' => trim(
                 $student['first_name'] . ' ' .
                 ($student['middle_name'] ?? '') . ' ' .
