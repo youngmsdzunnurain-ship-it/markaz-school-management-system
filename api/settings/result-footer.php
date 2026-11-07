@@ -3,8 +3,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
-requireSeniorAdmin();
+$studentPortalScope = $_SERVER['REQUEST_METHOD'] === 'GET'
+    ? studentPortalResultScope()
+    : null;
+if ($studentPortalScope === null) {
+    requireSeniorAdmin();
+}
 
 header('Content-Type: application/json; charset=utf-8');
 
