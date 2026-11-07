@@ -5191,3 +5191,170 @@ body {
     .signature-editor-actions { flex-direction:column-reverse; }
     .signature-editor-actions button { width:100%; }
 }
+
+
+/* Settings refinement: social profiles, emergency support and lockout management */
+.settings-page .social-settings-card,
+.settings-page .markaz-support-settings,
+.settings-page .markaz-locked-accounts-card {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid #d9e7de;
+    border-top: 4px solid var(--markaz-gold);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #fff 0%, #f5faf6 100%);
+    box-shadow: 0 12px 30px rgba(18, 61, 42, .07);
+}
+.settings-page .social-settings-card h2,
+.settings-page .markaz-support-settings h2,
+.settings-page .markaz-locked-accounts-card h2 {
+    margin: 0 0 9px;
+    color: var(--markaz-green-dark);
+    font-size: clamp(19px, 2.4vw, 22px);
+    line-height: 1.3;
+}
+.settings-page .social-settings-card > p,
+.settings-page .markaz-support-settings > p {
+    max-width: 720px;
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+.settings-page .social-settings-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin: 18px 0;
+}
+.settings-page .social-settings-fields label,
+.settings-page .markaz-support-settings form > label {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    color: #294a36;
+    font-size: 12px;
+    font-weight: 800;
+}
+.settings-page .social-settings-fields input,
+.settings-page .markaz-support-settings input {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+    border: 1px solid #cbdccf;
+    border-radius: 11px;
+    background: #fff;
+    color: #203b2a;
+    font: inherit;
+    font-size: 13px;
+    box-shadow: 0 3px 10px rgba(18, 61, 42, .035);
+}
+.settings-page .social-settings-fields input:focus,
+.settings-page .markaz-support-settings input:focus {
+    border-color: var(--markaz-gold);
+    outline: 3px solid rgba(176, 139, 53, .16);
+    outline-offset: 1px;
+}
+.settings-page #markazSocialSave,
+.settings-page .markaz-support-settings button,
+.settings-page #markazRefreshLockouts {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border: 1px solid #176342;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #1d7548, #124b32);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 5px 13px rgba(23, 99, 66, .18);
+    cursor: pointer;
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.settings-page #markazSocialSave:hover:not(:disabled),
+.settings-page .markaz-support-settings button:hover:not(:disabled),
+.settings-page #markazRefreshLockouts:hover:not(:disabled) {
+    background: linear-gradient(135deg, #176342, #0b3925);
+    box-shadow: 0 7px 17px rgba(23, 99, 66, .22);
+    transform: translateY(-1px);
+}
+.settings-page #markazSocialSave:disabled,
+.settings-page .markaz-support-settings button:disabled,
+.settings-page #markazRefreshLockouts:disabled {
+    opacity: .62;
+    cursor: wait;
+    transform: none;
+}
+.settings-page .markaz-support-settings form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 14px;
+    max-width: 760px;
+}
+.settings-page .markaz-support-settings form > p {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+.settings-page .markaz-locked-accounts-card > div[style*="overflow"] {
+    margin: 16px 0;
+    overflow-x: auto;
+    border: 1px solid #dce8df;
+    border-radius: 13px;
+    background: #fff;
+}
+.settings-page .markaz-locked-accounts-card table {
+    min-width: 680px;
+    width: 100%;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    color: #294536;
+    font-size: 12px;
+    text-align: left;
+}
+.settings-page .markaz-locked-accounts-card th {
+    padding: 13px 12px;
+    background: #edf5ef;
+    color: #174b32;
+    font-size: 11px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+.settings-page .markaz-locked-accounts-card td {
+    padding: 12px !important;
+    border-bottom: 1px solid #e7eee9;
+    vertical-align: middle;
+}
+.settings-page .markaz-locked-accounts-card tbody tr:last-child td { border-bottom: 0; }
+.settings-page .markaz-locked-accounts-card tbody tr:hover { background: #f8fbf8; }
+.settings-page .markaz-locked-accounts-card td button {
+    min-height: 34px;
+    padding: 0 13px;
+    border: 1px solid #b84d43;
+    border-radius: 8px;
+    background: #fff4f2;
+    color: #9e352d;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.settings-page .markaz-locked-accounts-card td button:hover:not(:disabled) {
+    background: #a83b32;
+    color: #fff;
+}
+.settings-page .memorization-setting-row:focus-within {
+    border-color: #b9cfbf;
+    box-shadow: 0 0 0 3px rgba(18, 61, 42, .06);
+}
+@media (max-width: 620px) {
+    .settings-page .social-settings-fields { grid-template-columns: minmax(0, 1fr); }
+    .settings-page .markaz-support-settings form { grid-template-columns: minmax(0, 1fr); }
+    .settings-page #markazSocialSave,
+    .settings-page .markaz-support-settings button,
+    .settings-page #markazRefreshLockouts { width: 100%; }
+}
