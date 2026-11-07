@@ -30,6 +30,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const year = footer.querySelector("#currentYear");
             if (year) year.textContent = new Date().getFullYear();
+
+            // Load the same saved social-link values used by the Settings form.
+            const socialResponse = await fetch("api/settings/social-links.php", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+            if (!socialResponse.ok) throw new Error("Saved social links could not be loaded.");
+            const socialData = await socialResponse.json();
+            if (socialData.success && socialData.links) {
+                const platforms = ["facebook", "instagram", "x", "youtube", "tiktok"];
+                footer.querySelectorAll(".footer-socials a[aria-label]").forEach(link => {
+                    const label = (link.getAttribute("aria-label") || "").toLowerCase();
+                    const platform = platforms.find(item => label.startsWith(item));
+                    if (!platform) return;
+                    const url = String(socialData.links[platform] || "").trim();
+                    if (!url) {
+                        link.hidden = true;
+                        return;
+                    }
+                    link.href = url;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.hidden = false;
+                    link.removeAttribute("aria-label");
+                    link.setAttribute("aria-label", platform === "x" ? "X" : platform[0].toUpperCase() + platform.slice(1));
+                });
+            }
         } catch (error) {
             console.error("Could not load the shared public footer:", error);
         }
