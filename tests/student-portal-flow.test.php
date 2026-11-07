@@ -25,7 +25,7 @@ portalAssert(is_string($legacyRoleScript), 'existing staff login script exists')
 portalAssert(str_contains($html, 'data-role="student-lookup"'), 'student lookup is isolated from staff login handlers');
 portalAssert(str_contains($html, 'css/student-results-portal.css'), 'portal-specific styles load after shared login styles');
 portalAssert(str_contains($html, 'js/student-results-portal.js'), 'dedicated portal workflow is loaded');
-portalAssert(!str_contains($legacyRoleScript, 'data-role=\"student-lookup\"'), 'staff login script does not bind the student lookup form');
+portalAssert(!str_contains($legacyRoleScript, 'data-role="student-lookup"'), 'staff login script does not bind the student lookup form');
 portalAssert(!str_contains($html, 'id="studentResultsPanel" class="student-results-panel"'), 'old inline result panel is not retained');
 portalAssert(str_contains($script, "api/results/student-portal.php"), 'the existing public endpoint remains the data source');
 portalAssert(str_contains($script, 'View My Result'), 'successful lookup presents a separate welcome action');
