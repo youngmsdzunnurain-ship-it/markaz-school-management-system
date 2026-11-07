@@ -26,7 +26,7 @@ if (!is_array($input) || ($input['confirm'] ?? false) !== true) {
 }
 
 $password = (string) ($input['password'] ?? '');
-$confirmation = strtoupper(preg_replace('/\\s+/', ' ', trim((string) ($input['confirmation'] ?? ''))));
+$confirmation = strtoupper(preg_replace('/\s+/', ' ', trim((string) ($input['confirmation'] ?? ''))));
 
 if ($password === '' || $confirmation !== 'CLEAR ACADEMIC ENTRY DATA') {
     academicResetResponse(422, [
