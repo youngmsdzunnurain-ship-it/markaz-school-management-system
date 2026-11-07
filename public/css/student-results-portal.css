@@ -246,6 +246,11 @@
     padding: 0 !important;
     background: #fff !important;
   }
+  body:has(#studentPortalExperience:not([hidden])) .role-login-page::before,
+  body:has(#studentPortalExperience:not([hidden])) .role-decor {
+    display: none !important;
+    content: none !important;
+  }
   body:has(#studentPortalExperience:not([hidden])) .role-login-page {
     display: block !important;
     min-height: 0 !important;
