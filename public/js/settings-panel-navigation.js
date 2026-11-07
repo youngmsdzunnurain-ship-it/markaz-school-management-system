@@ -159,4 +159,5 @@
   });
 
   activate("profile");
+  document.documentElement.classList.remove("settings-page-pending");
 })();
