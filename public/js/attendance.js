@@ -8,6 +8,8 @@
         role: "",
         classType: "conventional",
         classId: "",
+        periodId: "",
+        periods: [],
         date: "",
         dirty: false,
         loading: false,
@@ -17,6 +19,7 @@
     const els = {
         date: $("attendanceDate"),
         type: $("attendanceClassType"),
+        period: $("attendancePeriod"),
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
         body: $("attendanceTableBody"),
@@ -260,6 +263,22 @@
             : "Class options and student totals are loaded from the database.";
     }
 
+    async function loadAcademicPeriods() {
+        try {
+            const data = await requestJson("./api/attendance/periods.php");
+            state.periods = data.periods || [];
+            els.period.innerHTML = state.periods.length
+                ? state.periods.map((period) => '<option value="' + period.academic_period_id + '">' + escapeHtml(period.label) + (period.is_current ? ' · Current' : '') + (period.is_finalized ? ' · Finalised' : '') + '</option>').join("")
+                : '<option value="">No academic periods configured</option>';
+            const selected = state.periods.find((period) => period.is_current) || state.periods[0];
+            state.periodId = selected ? String(selected.academic_period_id) : "";
+            if (state.periodId) els.period.value = state.periodId;
+        } catch (error) {
+            els.period.innerHTML = '<option value="">Unable to load academic periods</option>';
+            setNotice(error.message, "error");
+        }
+    }
+
     async function loadClasses() {
         setNotice("Loading available classes…");
         try {
@@ -285,9 +304,15 @@
         const classId = els.classSelect.value;
         const date = els.date.value;
         const classType = els.type.value;
+        state.periodId = els.period.value;
         if (!classId) {
             setNotice("Please choose a class first.", "error");
             els.classSelect.focus();
+            return;
+        }
+        if (!state.periodId) {
+            setNotice("Choose the academic session and term first.", "error");
+            els.period.focus();
             return;
         }
         if (!date) {
@@ -411,6 +436,7 @@
                     date: state.date,
                     class_type: state.classType,
                     class_id: Number(state.classId),
+                    academic_period_id: Number(state.periodId),
                     records,
                 }),
             });
@@ -595,7 +621,63 @@
         }
     }
 
+    els.period.addEventListener("change", () => {
+        state.periodId = els.period.value;
+        if (state.dirty && !window.confirm("Discard unsaved attendance changes and change academic term?")) {
+            els.period.value = state.periodId;
+            return;
+        }
+        if (state.students.length) {
+            state.students = [];
+            state.dirty = false;
+            updateSummary();
+            renderRegister();
+            setNotice("Academic term changed. Load the register again.");
+        }
+    });
+
+    async function loadAttendanceHistory() {
+        const output = $("attendanceHistoryOutput");
+        const classId = els.classSelect.value;
+        const classType = els.type.value;
+        const periodId = els.period.value;
+        if (!classId || !periodId) {
+            output.textContent = "Choose a class and academic session/term first.";
+            return;
+        }
+        const params = new URLSearchParams({
+            class_id: classId, class_type: classType, academic_period_id: periodId,
+            view: $("historyView").value, date: $("historyDate").value || localDateValue()
+        });
+        output.textContent = "Loading the attendance register…";
+        try {
+            const data = await requestJson("./api/attendance/history.php?" + params.toString());
+            const symbol = {present:"P", absent:"A", late:"L", excused:"E"};
+            const heading = '<div class="attendance-report-summary"><strong>' + escapeHtml(data.class.name) + '</strong> · ' +
+                escapeHtml(data.period.session_name) + ' · ' + escapeHtml(data.period.term_name) + '<br>' +
+                escapeHtml(data.from) + ' to ' + escapeHtml(data.to) + ' · ' + data.summary.students + ' students · ' +
+                data.summary.present + ' present · ' + data.summary.absent + ' absent · ' + data.summary.late +
+                ' late · ' + data.summary.excused + ' excused · ' + (data.summary.attendance_rate === null ? '—' : data.summary.attendance_rate + '% attendance') + '</div>';
+            const headers = data.dates.map(day => '<th scope="col"><span>' + escapeHtml(day.weekday) + '</span><br>' + escapeHtml(day.display_date) + '</th>').join("");
+            const rows = data.students.map((student,index) => {
+                const marks = data.dates.map(day => {
+                    const status = student.attendance[day.date];
+                    const mark = status ? symbol[status] : '—';
+                    return '<td class="history-mark mark-' + (status || 'empty') + '" title="' + escapeHtml(day.weekday + ', ' + day.display_date + ': ' + (status || 'No record')) + '">' + mark + '</td>';
+                }).join("");
+                return '<tr><td>' + (index+1) + '</td><td><strong>' + escapeHtml([student.first_name,student.middle_name,student.last_name].filter(Boolean).join(" ")) + '</strong><small>' + escapeHtml(student.admission_number || '') + '</small></td>' +
+                    marks + '<td>' + student.attended_count + '</td><td>' + student.present_count + '</td><td>' + student.absent_count + '</td><td>' + student.late_count + '</td><td>' + student.excused_count + '</td><td>' + (student.attendance_rate === null ? '—' : student.attendance_rate + '%') + '</td></tr>';
+            }).join("");
+            output.innerHTML = heading + '<div class="attendance-table-wrap attendance-history-wrap"><table class="attendance-table attendance-history-table"><thead><tr><th>#</th><th>Student name</th>' + headers + '<th>Attended</th><th>Present</th><th>Absent</th><th>Late</th><th>Excused</th><th>Rate</th></tr></thead><tbody>' +
+                (rows || '<tr><td colspan="' + (data.dates.length+8) + '">No active students in this class.</td></tr>') + '</tbody></table></div>' +
+                '<p class="filter-help">' + escapeHtml(data.legacy_unassigned_note) + '</p>';
+        } catch (error) {
+            output.textContent = error.message;
+        }
+    }
+
     els.load.addEventListener("click", loadRegister);
+    $("loadAttendanceHistory").addEventListener("click", loadAttendanceHistory);
     $("loadAttendanceReport").addEventListener("click", loadAttendanceReport);
     
     els.studentSelect.addEventListener("change", focusSelectedStudent);
@@ -613,6 +695,10 @@
         event.preventDefault();
         event.returnValue = "";
     });
+
+    const today = localDateValue();
+    $("historyDate").value = today;
+    loadAcademicPeriods();
 
     const initialParams = new URLSearchParams(window.location.search);
     const initialType = initialParams.get("class_type");
