@@ -171,6 +171,13 @@ $markedBy = (int) ($_SESSION['admin_id'] ?? 0);
 
 try {
     $pdo->beginTransaction();
+    $periodLock = $pdo->prepare('SELECT is_finalized FROM academic_periods WHERE id = ? FOR UPDATE');
+    $periodLock->execute([(int) $periodId]);
+    $lockedPeriod = $periodLock->fetch(PDO::FETCH_ASSOC);
+    if (!$lockedPeriod || (int) $lockedPeriod['is_finalized'] === 1) {
+        $pdo->rollBack();
+        attendanceJsonError(409, 'This academic period has been finalised. Attendance can no longer be changed.');
+    }
     $saveStmt = $pdo->prepare(
         'INSERT INTO attendance_records
             (attendance_date, academic_period_id, class_type, class_id, student_id, status, remarks, marked_by)
