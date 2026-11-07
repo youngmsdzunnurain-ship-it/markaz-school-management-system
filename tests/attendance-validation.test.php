@@ -39,7 +39,7 @@ check(str_contains($classesApi, 'sort_order') && str_contains($classesApi, '$a[\
 check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
 check(str_contains($classesApi, "'conventional' AS class_type") && str_contains($classesApi, "'arabic' AS class_type"), 'returns conventional and Arabic classes with explicit independent type labels');
-check(!str_contains($classesApi, 'NOT EXISTS') && !str_contains($classesApi, 'arabic_class.name'), 'does not hide conventional classes because an Arabic class has the same name');
+check(substr_count($classesApi, 'NOT EXISTS (') === 2 && substr_count($classesApi, 'LOWER(TRIM(ac.name)) = LOWER(TRIM(c.name))') === 2, 'excludes Arabic class names from both teacher and staff conventional attendance dropdown queries');
 check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi, 'ar.class_id = c.id'), 'attendance report rows are scoped by both category and class id');
 check(str_contains($reportsApi, 'student_count_sql') && str_contains($reportsApi, 'AS student_count'), 'attendance reports provide the active class roster denominator for present-rate charts');
 check(!str_contains($reportsApi, 'NOT EXISTS') && !str_contains($reportsApi, 'arabic_class.name'), 'school reports include same-named conventional and Arabic classes independently');
