@@ -145,4 +145,23 @@ academicArchiveCheck(
     'the Settings UI must call the protected academic-entry reset endpoint'
 );
 
+
+academicArchiveCheck(
+    str_contains($settingsPage, 'id="clearAcademicEntryDataDialogMessage"') &&
+    str_contains($settingsJs, 'clearAcademicEntryDataDialogMessage') &&
+    str_contains($settingsJs, 'showDialogMessage(error.message'),
+    'reset validation and server errors must be visible inside the open modal'
+);
+academicArchiveCheck(
+    str_contains($settingsJs, 'replace(/\\\\s+/g, " ").toUpperCase()') &&
+    str_contains($resetApi, 'preg_replace') &&
+    str_contains($resetApi, 'strtoupper'),
+    'the confirmation phrase must tolerate mobile keyboard casing and repeated whitespace on client and server'
+);
+academicArchiveCheck(
+    str_contains($settingsPage, '<div class="academic-reset-settings-card">') &&
+    !str_contains($settingsPage, '<section class="settings-card academic-reset-settings-card">'),
+    'the reset controls must be grouped inside the existing Academic Records & Term Archive card'
+);
+
 echo "Academic result archive and term progression regression tests passed.\\n";
