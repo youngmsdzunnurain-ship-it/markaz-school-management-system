@@ -17,6 +17,10 @@ if ($method === 'GET') {
     $date = attendanceValidateDate(
         (string) ($_GET['date'] ?? date('Y-m-d'))
     );
+    $periodId = filter_var($_GET['academic_period_id'] ?? null, FILTER_VALIDATE_INT);
+    if ($periodId === false) {
+        attendanceJsonError(422, 'Choose a valid academic period.');
+    }
 
     if ($classId === false || $classId === null || $classId < 1) {
         attendanceJsonError(422, 'Choose a class to load its register.');
@@ -37,11 +41,12 @@ if ($method === 'GET') {
           AND ar.attendance_date = ?
           AND ar.class_type = ?
           AND ar.class_id = ?
+          AND (? IS NULL OR ar.academic_period_id = ?)
          WHERE {$studentClassExpression} = ?
            AND s.is_active = 1
          ORDER BY s.last_name, s.first_name, s.middle_name, s.admission_number"
     );
-    $stmt->execute([$date, $classType, (int) $classId, (int) $classId]);
+    $stmt->execute([$date, $classType, (int) $classId, $periodId ?: null, $periodId ?: null, (int) $classId]);
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $summary = ['total' => count($students), 'present' => 0, 'absent' => 0, 'late' => 0, 'excused' => 0, 'unmarked' => 0];
