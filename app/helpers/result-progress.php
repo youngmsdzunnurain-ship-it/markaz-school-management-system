@@ -2,12 +2,10 @@
 declare(strict_types=1);
 
 /**
- * Summarize saved assessment entries across the school's conventional and
- * Arabic class contexts. A student is counted once, even when enrolled in both.
- *
- * Completion status follows the same rules as class-completion.php:
- * every required subject must have CA1, CA2 and Exam, and all nine
- * behavioural assessment fields must be present. A numeric zero is present.
+ * Summarize saved assessment entries using the same class-context completion
+ * rule as api/results/class-completion.php. A student is counted once overall:
+ * reaching 100% in any assigned conventional or Arabic class context marks
+ * that student complete, even if another context is still in progress.
  */
 function summarizeResultProgress(array $rows, array $behaviourRows = []): array
 {
@@ -27,14 +25,21 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
             continue;
         }
 
-        $key = (string) $studentId;
-        if (!isset($students[$key])) {
-            $students[$key] = [
+        $studentKey = (string) $studentId;
+        if (!isset($students[$studentKey])) {
+            $students[$studentKey] = [
+                'contexts' => [],
+                'behaviour_started' => false,
+                'behaviour_complete' => false,
+            ];
+        }
+
+        $contextKey = $type . ':' . $classId;
+        if (!isset($students[$studentKey]['contexts'][$contextKey])) {
+            $students[$studentKey]['contexts'][$contextKey] = [
                 'required' => 0,
                 'started' => 0,
                 'completed' => 0,
-                'behaviour_started' => false,
-                'behaviour_complete' => false,
             ];
         }
 
@@ -42,7 +47,7 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
             continue;
         }
 
-        $students[$key]['required']++;
+        $students[$studentKey]['contexts'][$contextKey]['required']++;
         $expectedEntries++;
 
         $hasAny = false;
@@ -55,10 +60,10 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
         }
 
         if ($hasAny) {
-            $students[$key]['started']++;
+            $students[$studentKey]['contexts'][$contextKey]['started']++;
         }
         if ($hasAll) {
-            $students[$key]['completed']++;
+            $students[$studentKey]['contexts'][$contextKey]['completed']++;
             $completedEntries++;
         }
     }
@@ -69,8 +74,8 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
             continue;
         }
 
-        $key = (string) $studentId;
-        if (!isset($students[$key])) {
+        $studentKey = (string) $studentId;
+        if (!isset($students[$studentKey])) {
             // Behaviour alone must not create a student outside the active
             // conventional/Arabic class population supplied by the main query.
             continue;
@@ -84,8 +89,8 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
             $hasAny = $hasAny || $present;
             $hasAll = $hasAll && $present;
         }
-        $students[$key]['behaviour_started'] = $hasAny;
-        $students[$key]['behaviour_complete'] = $hasAll;
+        $students[$studentKey]['behaviour_started'] = $hasAny;
+        $students[$studentKey]['behaviour_complete'] = $hasAll;
     }
 
     $complete = 0;
@@ -94,15 +99,33 @@ function summarizeResultProgress(array $rows, array $behaviourRows = []): array
     $unassigned = 0;
 
     foreach ($students as $student) {
-        if ($student['required'] === 0) {
-            $unassigned++;
-            continue;
+        $hasAssignedSubjects = false;
+        $hasCompletedContext = false;
+        $hasAnyProgress = $student['behaviour_started'];
+
+        foreach ($student['contexts'] as $context) {
+            if ($context['required'] === 0) {
+                continue;
+            }
+
+            $hasAssignedSubjects = true;
+            $contextComplete = $context['completed'] === $context['required']
+                && $student['behaviour_complete'];
+            if ($contextComplete) {
+                $hasCompletedContext = true;
+            }
+            if ($context['started'] > 0) {
+                $hasAnyProgress = true;
+            }
         }
 
-        $subjectsComplete = $student['completed'] === $student['required'];
-        if ($subjectsComplete && $student['behaviour_complete']) {
+        if (!$hasAssignedSubjects) {
+            $unassigned++;
+        } elseif ($hasCompletedContext) {
+            // Match the class completion monitor: a 100% class context
+            // completes the student, and cross-context duplicates count once.
             $complete++;
-        } elseif ($student['started'] > 0 || $student['behaviour_started']) {
+        } elseif ($hasAnyProgress) {
             $inProgress++;
         } else {
             $notStarted++;

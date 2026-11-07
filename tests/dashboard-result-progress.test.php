@@ -34,6 +34,11 @@ $rows = [
     ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 3, 'subject_id' => 11, 'ca1' => null, 'ca2' => null, 'exam' => null],
     // Student 4 has no required subject assignments.
     ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 4, 'subject_id' => null, 'ca1' => null, 'ca2' => null, 'exam' => null],
+    // Student 6 is fully complete in the conventional class, but has an
+    // unfinished Arabic context. The dashboard must match the 100% class
+    // percentage and count this student once, not combine both contexts.
+    ['class_type' => 'conventional', 'class_id' => 3, 'student_id' => 6, 'subject_id' => 31, 'ca1' => 10, 'ca2' => 10, 'exam' => 50],
+    ['class_type' => 'arabic', 'class_id' => 8, 'student_id' => 6, 'subject_id' => 32, 'ca1' => null, 'ca2' => null, 'exam' => null],
 ];
 
 $behaviourRows = [
@@ -41,16 +46,17 @@ $behaviourRows = [
     ['student_id' => 5] + $completeBehaviour,
     ['student_id' => 2, 'attendance' => 4] + array_fill_keys(array_slice($behaviourFields, 1), null),
     ['student_id' => 3] + $emptyBehaviour,
+    ['student_id' => 6] + $completeBehaviour,
 ];
 
 $stats = summarizeResultProgress($rows, $behaviourRows);
 
-expectSame(1, $stats['complete_students'], 'student with all required scores and behaviour fields is complete');
-expectSame(2, $stats['incomplete_students'], 'students with incomplete subject scores or behaviour are in progress');
+expectSame(2, $stats['complete_students'], 'a student with a 100% class context is complete and counted once even if another context is unfinished');
+expectSame(2, $stats['incomplete_students'], 'students with no fully completed context and partial entries are in progress');
 expectSame(1, $stats['no_result_students'], 'student with no scores or behaviour is not started');
 expectSame(1, $stats['unassigned_students'], 'student without required subjects is reported separately');
-expectSame(4, $stats['completed_results'], 'subject-entry completion count includes both class categories');
-expectSame(8, $stats['expected_results'], 'expected subject entries include both class categories');
+expectSame(5, $stats['completed_results'], 'subject-entry completion count includes both class categories');
+expectSame(10, $stats['expected_results'], 'expected subject entries include both class categories');
 expectSame(50.0, $stats['completion_percentage'], 'overall subject-entry percentage remains based on subject score entries');
 
 echo "Dashboard result-progress regression checks passed." . PHP_EOL;
