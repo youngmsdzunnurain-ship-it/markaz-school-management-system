@@ -1,0 +1,96 @@
+name: MARKAZ Public Image Optimization Audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install WebP encoder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webp
+
+      - name: Audit, deduplicate, and optimize images
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p optimized-images
+          report="image-optimization-report.csv"
+          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\n' > "$report"
+
+          declare -A seen_hash=()
+          declare -A seen_output=()
+          count=0
+          converted=0
+          duplicates=0
+          failed=0
+
+          while IFS= read -r -d '' source; do
+            count=$((count + 1))
+            relative="${source#public/assets/images/}"
+            hash="$(sha256sum "$source" | awk '{print $1}')"
+            source_bytes="$(wc -c < "$source" | tr -d ' ')"
+
+            if [[ -n "${seen_hash[$hash]:-}" ]]; then
+              output="${seen_output[$hash]}"
+              output_bytes=0
+              [[ -f "$output" ]] && output_bytes="$(wc -c < "$output" | tr -d ' ')"
+              printf '"%s",%s,%s,"%s",%s,DUPLICATE\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
+              duplicates=$((duplicates + 1))
+              continue
+            fi
+
+            output="optimized-images/${relative%.*}.webp"
+            mkdir -p "$(dirname "$output")"
+
+            if [[ "${source,,}" == *.png ]]; then
+              # Lossless WebP preserves transparency for logos and PNG artwork.
+              if cwebp -quiet -lossless -exact -m 6 -mt "$source" -o "$output"; then
+                status="OPTIMIZED_LOSSLESS"
+              else
+                status="FAILED_SOURCE_UNREADABLE"
+              fi
+            else
+              if cwebp -quiet -q 88 -m 6 -mt "$source" -o "$output"; then
+                status="OPTIMIZED_Q88"
+              else
+                status="FAILED_SOURCE_UNREADABLE"
+              fi
+            fi
+
+            if [[ "$status" == FAILED* ]]; then
+              rm -f "$output"
+              printf '"%s",%s,%s,,0,%s\n' "$relative" "$hash" "$source_bytes" "$status" >> "$report"
+              failed=$((failed + 1))
+              continue
+            fi
+
+            seen_hash["$hash"]=1
+            seen_output["$hash"]="$output"
+            output_bytes="$(wc -c < "$output" | tr -d ' ')"
+            printf '"%s",%s,%s,"%s",%s,%s\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
+            converted=$((converted + 1))
+          done < <(find public/assets/images -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 | sort -z)
+
+          printf '\nScanned: %s\nUnique conversions: %s\nDuplicates: %s\nFailed conversions: %s\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
+          echo "Original files were not modified."
+
+      - name: Upload optimized images and audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: markaz-optimized-images-and-report
+          path: |
+            optimized-images/
+            image-optimization-report.csv
+            image-optimization-summary.txt
+          retention-days: 14
+          if-no-files-found: warn
