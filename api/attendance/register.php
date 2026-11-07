@@ -17,6 +17,10 @@ if ($method === 'GET') {
     $date = attendanceValidateDate(
         (string) ($_GET['date'] ?? date('Y-m-d'))
     );
+    $periodId = filter_var($_GET['academic_period_id'] ?? null, FILTER_VALIDATE_INT);
+    if ($periodId === false) {
+        attendanceJsonError(422, 'Choose a valid academic period.');
+    }
 
     if ($classId === false || $classId === null || $classId < 1) {
         attendanceJsonError(422, 'Choose a class to load its register.');
@@ -37,11 +41,12 @@ if ($method === 'GET') {
           AND ar.attendance_date = ?
           AND ar.class_type = ?
           AND ar.class_id = ?
+          AND (? IS NULL OR ar.academic_period_id = ? OR ar.academic_period_id IS NULL)
          WHERE {$studentClassExpression} = ?
            AND s.is_active = 1
          ORDER BY s.last_name, s.first_name, s.middle_name, s.admission_number"
     );
-    $stmt->execute([$date, $classType, (int) $classId, (int) $classId]);
+    $stmt->execute([$date, $classType, (int) $classId, $periodId ?: null, $periodId ?: null, (int) $classId]);
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $summary = ['total' => count($students), 'present' => 0, 'absent' => 0, 'late' => 0, 'excused' => 0, 'unmarked' => 0];
@@ -92,6 +97,19 @@ if ($classId === false || $classId === null || $classId < 1) {
 }
 
 $class = attendanceRequireClassAccess($pdo, $classType, (int) $classId);
+$periodId = filter_var($input['academic_period_id'] ?? null, FILTER_VALIDATE_INT);
+if ($periodId === false || $periodId === null || $periodId < 1) {
+    attendanceJsonError(422, 'Choose the academic session and term before saving attendance.');
+}
+$periodStmt = $pdo->prepare('SELECT id, is_finalized FROM academic_periods WHERE id = ? LIMIT 1');
+$periodStmt->execute([(int) $periodId]);
+$period = $periodStmt->fetch(PDO::FETCH_ASSOC);
+if (!$period) {
+    attendanceJsonError(422, 'The selected academic period is not available.');
+}
+if ((int) $period['is_finalized'] === 1) {
+    attendanceJsonError(409, 'This academic period has been finalised. Attendance can no longer be changed.');
+}
 $studentClassExpression = $classType === 'arabic'
     ? 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)'
     : 's.class_id';
@@ -153,11 +171,19 @@ $markedBy = (int) ($_SESSION['admin_id'] ?? 0);
 
 try {
     $pdo->beginTransaction();
+    $periodLock = $pdo->prepare('SELECT is_finalized FROM academic_periods WHERE id = ? FOR UPDATE');
+    $periodLock->execute([(int) $periodId]);
+    $lockedPeriod = $periodLock->fetch(PDO::FETCH_ASSOC);
+    if (!$lockedPeriod || (int) $lockedPeriod['is_finalized'] === 1) {
+        $pdo->rollBack();
+        attendanceJsonError(409, 'This academic period has been finalised. Attendance can no longer be changed.');
+    }
     $saveStmt = $pdo->prepare(
         'INSERT INTO attendance_records
-            (attendance_date, class_type, class_id, student_id, status, remarks, marked_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+            (attendance_date, academic_period_id, class_type, class_id, student_id, status, remarks, marked_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+            academic_period_id = VALUES(academic_period_id),
             status = VALUES(status),
             remarks = VALUES(remarks),
             marked_by = VALUES(marked_by),
@@ -179,6 +205,7 @@ try {
 
         $saveStmt->execute([
             $date,
+            (int) $periodId,
             $classType,
             (int) $classId,
             $studentId,

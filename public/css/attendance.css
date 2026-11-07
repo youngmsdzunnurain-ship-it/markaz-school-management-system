@@ -439,3 +439,21 @@
     .attendance-page .attendance-summary-card div>span{font-size:7px!important;letter-spacing:-.15px}
     .attendance-page .attendance-summary-card strong{font-size:15px!important}
 }
+
+/* Historical attendance register */
+.attendance-history-wrap { max-height: min(72vh, 760px); overflow: auto; }
+.attendance-history-table { min-width: 1120px; }
+.attendance-history-table thead th { position: sticky; top: 0; z-index: 2; text-align: center; }
+.attendance-history-table thead th:nth-child(2),
+.attendance-history-table tbody td:nth-child(2) { position: sticky; left: 0; z-index: 1; min-width: 190px; text-align: left; background: #fff; }
+.attendance-history-table thead th:nth-child(2) { z-index: 3; background: #f7faf7; }
+.attendance-history-table tbody td { text-align: center; white-space: nowrap; }
+.attendance-history-table tbody td:nth-child(2) strong,
+.attendance-history-table tbody td:nth-child(2) small { display:block; }
+.attendance-history-table tbody td:nth-child(2) small { margin-top:3px; color:#829087; font-size:10px; }
+.attendance-history-table .history-mark { min-width:42px; font-weight:850; }
+.attendance-history-table .mark-present { color:#17643a; background:#eff9f1; }
+.attendance-history-table .mark-absent { color:#b33d43; background:#fff1f1; }
+.attendance-history-table .mark-late { color:#8a690d; background:#fff8e5; }
+.attendance-history-table .mark-excused { color:#526678; background:#f1f5f8; }
+.attendance-history-table .mark-empty { color:#a1aaa4; }
