@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="css/settings.css?v=20261105-handwritten-signatures">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="css/settings-panel-navigation.css?v=20261107-academic-archive">
+    <link rel="stylesheet" href="css/settings-panel-navigation.css?v=20261107-academic-entry-reset">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -245,6 +245,44 @@
         </div>
     </section>
 
+    <section class="settings-card academic-reset-settings-card">
+        <div class="settings-card-heading">
+            <div>
+                <span class="settings-label">PRE-LAUNCH CLEANUP</span>
+                <h2>Clear Academic Entry Data</h2>
+                <p>Remove all entered CA scores, examination scores, result entries and behavioural assessments across every term, while keeping student records and school configuration.</p>
+            </div>
+        </div>
+        <div class="academic-reset-notice">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            <div>
+                <strong>Permanent academic data removal</strong>
+                <p>This clears result and behaviour entry records for all students and all academic periods. It does not delete students, staff accounts, classes, subjects, sessions, terms, attendance, signatures or school settings.</p>
+            </div>
+        </div>
+        <button type="button" id="clearAcademicEntryDataButton" class="academic-reset-open-button">
+            <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+            Clear Academic Entry Data
+        </button>
+        <p id="clearAcademicEntryDataMessage" class="form-message" role="status" aria-live="polite"></p>
+
+        <dialog class="academic-finalize-dialog academic-reset-dialog" id="clearAcademicEntryDataDialog" aria-labelledby="clearAcademicEntryDataTitle">
+            <form id="clearAcademicEntryDataForm">
+                <span class="settings-label">DANGEROUS ACTION · SENIOR ADMIN ONLY</span>
+                <h3 id="clearAcademicEntryDataTitle">Clear all academic entry data?</h3>
+                <p>This permanently removes every saved subject score entry and behavioural assessment from every term. Student details and school setup will remain.</p>
+                <label for="clearAcademicEntryDataPassword">Administrator password</label>
+                <input type="password" id="clearAcademicEntryDataPassword" autocomplete="current-password" required>
+                <label for="clearAcademicEntryDataConfirmation">Type <strong>CLEAR ACADEMIC ENTRY DATA</strong> to confirm</label>
+                <input type="text" id="clearAcademicEntryDataConfirmation" autocomplete="off" spellcheck="false" required>
+                <div class="academic-finalize-dialog-actions">
+                    <button type="button" id="cancelClearAcademicEntryData">Cancel</button>
+                    <button type="submit" class="academic-reset-confirm-button">Permanently Clear Data</button>
+                </div>
+            </form>
+        </dialog>
+    </section>
+
     <section class="settings-card result-footer-settings-card">
         <div class="settings-card-heading">
             <div>
@@ -415,7 +453,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261107-academic-archive"></script>
+    <script src="js/settings.js?v=20261107-academic-entry-reset"></script>
     <script src="js/result-print-threshold-settings.js?v=20261104-threshold"></script>
     <script src="js/account-management.js"></script>
 
