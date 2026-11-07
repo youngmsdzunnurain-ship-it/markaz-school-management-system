@@ -100,8 +100,25 @@ try {
 
         $progressStmt = $pdo->prepare($progressSql);
         $progressStmt->execute([$periodId, $periodId]);
+        $progressRows = $progressStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Behavioural reports are period-scoped and shared by the student's
+        // result card, regardless of whether the student has conventional,
+        // Arabic, or both class contexts.
+        $behaviourStmt = $pdo->prepare(
+            'SELECT br.student_id, br.attendance, br.neatness, br.contentment,
+                    br.obedience, br.responsiveness, br.calmness, br.tolerance,
+                    br.attentiveness, br.truthfulness
+             FROM behavioural_reports br
+             INNER JOIN students st ON st.id = br.student_id AND st.is_active = 1
+             WHERE br.academic_period_id = ?'
+        );
+        $behaviourStmt->execute([$periodId]);
+        $behaviourRows = $behaviourStmt->fetchAll(PDO::FETCH_ASSOC);
+
         $progress = array_merge($progress, summarizeResultProgress(
-            $progressStmt->fetchAll(PDO::FETCH_ASSOC)
+            $progressRows,
+            $behaviourRows
         ));
 
         $resultStmt = $pdo->prepare(
