@@ -69,6 +69,39 @@ if (!is_array($input) || ($input['confirm'] ?? false) !== true) {
     ]);
 }
 
+$password = (string) ($input['password'] ?? '');
+if ($password === '') {
+    finalizePeriodResponse(422, [
+        'success' => false,
+        'message' => 'Enter your administrator password to finalize this term.'
+    ]);
+}
+
+try {
+    $pdo = db();
+    $adminStmt = $pdo->prepare(
+        'SELECT password_hash FROM admins
+         WHERE id = ? AND role = "admin" AND is_active = 1 AND is_frozen = 0
+         LIMIT 1'
+    );
+    $adminStmt->execute([(int) $_SESSION['admin_id']]);
+    $passwordHash = $adminStmt->fetchColumn();
+
+    if (!is_string($passwordHash) || !password_verify($password, $passwordHash)) {
+        finalizePeriodResponse(403, [
+            'success' => false,
+            'message' => 'The administrator password is incorrect. The term has not been finalized.'
+        ]);
+    }
+} catch (Throwable $error) {
+    error_log('Academic finalization password verification failed: ' . $error->getMessage());
+    finalizePeriodResponse(500, [
+        'success' => false,
+        'message' => 'Unable to verify administrator password. The term has not been finalized.'
+    ]);
+}
+
+
 try {
     $pdo = db();
     $pdo->beginTransaction();
