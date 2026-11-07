@@ -10,7 +10,7 @@ require_once __DIR__ . '/../middleware/session.php';
  */
 function studentPortalResultScope(bool $requireQueryMatch = true): ?array
 {
-    startSecureSession();
+    startStudentPortalSession();
     $scope = $_SESSION['student_portal_result_access'] ?? null;
 
     if (!is_array($scope)) {
