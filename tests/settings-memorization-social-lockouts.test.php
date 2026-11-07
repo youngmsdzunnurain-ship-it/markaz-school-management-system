@@ -29,6 +29,7 @@ $settingsCss = $read('public/css/settings.css');
 $assert(!str_contains($memorizationApi, "if (\$portion === '')"), 'memorization API must accept an empty portion to clear a saved default');
 $assert(!str_contains($settingsJs, 'Please enter a portion of memorization.'), 'memorization UI must allow saving a cleared field');
 $assert(str_contains($settingsJs, 'memorization_portion'), 'memorization settings must continue submitting the selected class portion');
+$assert(str_contains($memorizationApi, 'memorization_portion = VALUES(memorization_portion)'), 'saving a cleared portion must update the existing class default to an empty value');
 
 $assert(str_contains($lockoutBridge, "api/settings/login-lockouts.php"), 'public locked-accounts API bridge must forward to the protected backend endpoint');
 $assert(str_contains($lockoutApi, 'requireSeniorAdmin();'), 'locked-accounts backend must remain senior-admin protected');
