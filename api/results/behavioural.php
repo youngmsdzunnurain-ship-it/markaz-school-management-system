@@ -214,7 +214,7 @@ try {
     }
 
     $periodStmt = $pdo->query(
-        'SELECT ap.id
+        'SELECT ap.id, ap.is_finalized
          FROM academic_periods ap
          INNER JOIN academic_sessions s
              ON s.id = ap.academic_session_id
