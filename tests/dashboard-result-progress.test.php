@@ -21,6 +21,7 @@ $rows = [
     ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 2, 'subject_id' => 11, 'ca1' => null, 'ca2' => null, 'exam' => null],
     // Conventional student 3: required subjects exist but no scores have been saved.
     ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 3, 'subject_id' => 10, 'ca1' => null, 'ca2' => null, 'exam' => null],
+    ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 3, 'subject_id' => 11, 'ca1' => null, 'ca2' => null, 'exam' => null],
     // Student 4 has no required subject assignments.
     ['class_type' => 'conventional', 'class_id' => 1, 'student_id' => 4, 'subject_id' => null, 'ca1' => null, 'ca2' => null, 'exam' => null],
     // Same student can have a separate Arabic result context; it must not be merged with conventional.
