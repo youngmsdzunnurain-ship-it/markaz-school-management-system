@@ -606,6 +606,11 @@
 /* Academics hero: keep text comfortably away from screen edges */
 
 
+.academics-page .academics-hero-content {
+    box-sizing: border-box;
+    padding-inline: clamp(18px, 4vw, 48px);
+}
+
 /* English and Arabic programme headings */
 .academics-page .heading-arabic {
     display: block;
@@ -974,7 +979,4 @@
 }
 
 /* Keep hero text comfortably inset */
-.academics-page .academics-hero-content {
-    box-sizing: border-box;
-    padding-inline: clamp(18px, 4vw, 48px);
-}
+
