@@ -121,7 +121,7 @@
     .load-register-button { width:100%; }
     .attendance-summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
-@media (max-width:720px) {
+@media (max-width: 720px) {
     .attendance-shell { padding:12px 10px 22px; }
     .attendance-header { align-items:flex-start; gap:14px; padding:17px; border-radius:17px; }
     .attendance-back { flex-basis:100%; }
@@ -353,7 +353,7 @@
     .attendance-overview-layout .attendance-summary-card { min-height:94px; }
     .attendance-overview-layout .summary-icon { width:32px; height:32px; flex-basis:32px; }
 }
-@media (max-width:720px) {
+@media (max-width: 720px) {
     .attendance-overview-layout { grid-template-columns:minmax(0,1fr); gap:10px; margin:12px 0 16px; }
     .attendance-overview-layout .attendance-chart-panel { padding:16px 14px; border-radius:15px; }
     .attendance-overview-layout .attendance-chart-content { flex-direction:row; align-items:center; gap:14px; }
