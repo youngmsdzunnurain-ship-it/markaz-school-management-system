@@ -26,12 +26,12 @@ if (!is_array($input) || ($input['confirm'] ?? false) !== true) {
 }
 
 $password = (string) ($input['password'] ?? '');
-$confirmation = trim((string) ($input['confirmation'] ?? ''));
+$confirmation = strtoupper(preg_replace('/\\s+/', ' ', trim((string) ($input['confirmation'] ?? ''))));
 
 if ($password === '' || $confirmation !== 'CLEAR ACADEMIC ENTRY DATA') {
     academicResetResponse(422, [
         'success' => false,
-        'message' => 'Enter your administrator password and the exact confirmation phrase.'
+        'message' => 'Enter your administrator password and type CLEAR ACADEMIC ENTRY DATA to confirm.'
     ]);
 }
 

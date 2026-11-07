@@ -428,6 +428,10 @@
   opacity: .65;
 }
 .academic-reset-settings-card {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #ead9d1;
+  border-radius: 14px;
   border-color: #ead9d1;
   background: linear-gradient(145deg, #fff 0%, #fffdfc 100%);
 }
@@ -491,4 +495,32 @@
   .academic-reset-open-button {
     width: 100%;
   }
+}
+
+
+/* Keep destructive-reset validation visible inside its active modal. */
+#clearAcademicEntryDataDialogMessage {
+  min-height: 1.4em;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #ead9d1;
+  border-radius: 9px;
+  background: #fff8f5;
+  color: #873b2e;
+  font-size: 12px;
+  line-height: 1.55;
+}
+#clearAcademicEntryDataDialogMessage:empty,
+#clearAcademicEntryDataDialogMessage[hidden] {
+  display: none;
+}
+#clearAcademicEntryDataDialogMessage.info {
+  border-color: #dce8df;
+  background: #f4faf6;
+  color: #24563a;
+}
+#clearAcademicEntryDataDialogMessage.success {
+  border-color: #c8dfcf;
+  background: #f1faf3;
+  color: #245c37;
 }
