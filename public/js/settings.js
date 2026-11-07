@@ -1437,7 +1437,7 @@ async function loadAcademicArchive() {
 loadAcademicArchive();
 
 
-/* PROTECTED ACADEMIC ENTRY RESET — explicit password and typed confirmation. */
+/* PROTECTED ACADEMIC ENTRY RESET — password + accessible typed confirmation. */
 (() => {
     const button = document.getElementById("clearAcademicEntryDataButton");
     const dialog = document.getElementById("clearAcademicEntryDataDialog");
@@ -1446,44 +1446,69 @@ loadAcademicArchive();
     const confirmation = document.getElementById("clearAcademicEntryDataConfirmation");
     const cancel = document.getElementById("cancelClearAcademicEntryData");
     const message = document.getElementById("clearAcademicEntryDataMessage");
+    const dialogMessage = document.getElementById("clearAcademicEntryDataDialogMessage");
+    const submit = form?.querySelector('[type="submit"]');
 
-    if (!button || !dialog || !form || !password || !confirmation) return;
+    if (!button || !dialog || !form || !password || !confirmation || !dialogMessage) return;
+
+    const normalizePhrase = value => String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toUpperCase();
+
+    const showDialogMessage = (text, type = "error") => {
+        dialogMessage.textContent = text;
+        dialogMessage.className = "form-message " + type;
+        dialogMessage.hidden = !text;
+    };
 
     const closeDialog = () => {
         if (typeof dialog.close === "function") dialog.close();
         else dialog.removeAttribute("open");
         password.value = "";
         confirmation.value = "";
+        showDialogMessage("");
+        if (submit) submit.disabled = false;
     };
 
     button.addEventListener("click", () => {
         password.value = "";
         confirmation.value = "";
+        showDialogMessage("");
+        if (message) {
+            message.textContent = "";
+            message.className = "form-message";
+        }
         if (typeof dialog.showModal === "function") dialog.showModal();
         else dialog.setAttribute("open", "");
         password.focus();
     });
 
     cancel?.addEventListener("click", closeDialog);
+    confirmation.addEventListener("input", () => showDialogMessage(""));
+    password.addEventListener("input", () => showDialogMessage(""));
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
-        if (confirmation.value.trim() !== "CLEAR ACADEMIC ENTRY DATA") {
-            confirmation.setCustomValidity("Type the exact confirmation phrase.");
-            confirmation.reportValidity();
+        const enteredPassword = password.value;
+        const enteredPhrase = normalizePhrase(confirmation.value);
+
+        if (!enteredPassword) {
+            showDialogMessage("Enter your Senior Admin password to continue.");
+            password.focus();
             return;
         }
-        confirmation.setCustomValidity("");
+        if (enteredPhrase !== "CLEAR ACADEMIC ENTRY DATA") {
+            showDialogMessage('The confirmation phrase must read: CLEAR ACADEMIC ENTRY DATA. Letter case and extra spaces do not matter.');
+            confirmation.focus();
+            return;
+        }
 
-        const submit = form.querySelector('[type="submit"]');
         if (!window.confirm("FINAL WARNING: All CA, examination and behavioural entries across every term will be permanently deleted. Student records and school settings will remain. Continue?")) return;
 
         button.disabled = true;
         if (submit) submit.disabled = true;
-        if (message) {
-            message.textContent = "Verifying password and clearing academic entry data…";
-            message.className = "form-message";
-        }
+        showDialogMessage("Verifying your password and clearing academic entry data…", "info");
 
         try {
             const response = await fetch("./api/settings/clear-academic-entry-data.php", {
@@ -1493,15 +1518,20 @@ loadAcademicArchive();
                 headers: { "Content-Type": "application/json", "Accept": "application/json" },
                 body: JSON.stringify({
                     confirm: true,
-                    password: password.value,
-                    confirmation: confirmation.value.trim()
+                    password: enteredPassword,
+                    confirmation: enteredPhrase
                 })
             });
             const raw = await response.text();
             let data;
-            try { data = JSON.parse(raw); }
-            catch { throw new Error(`Academic reset API returned a non-JSON response (HTTP ${response.status}).`); }
-            if (!response.ok || !data.success) throw new Error(data.message || "Academic entry reset failed.");
+            try {
+                data = JSON.parse(raw);
+            } catch {
+                throw new Error(`Academic reset API returned a non-JSON response (HTTP ${response.status}).`);
+            }
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || `Academic entry reset failed (HTTP ${response.status}). No data was cleared unless success is confirmed.`);
+            }
 
             closeDialog();
             if (message) {
@@ -1511,14 +1541,10 @@ loadAcademicArchive();
             }
             await loadAcademicArchive();
         } catch (error) {
-            if (message) {
-                message.textContent = error.message || "Unable to clear academic entry data.";
-                message.className = "form-message error";
-            }
+            showDialogMessage(error.message || "Unable to clear academic entry data. No success was reported.");
         } finally {
             button.disabled = false;
             if (submit) submit.disabled = false;
-            password.value = "";
         }
     });
-})();
+})();;
