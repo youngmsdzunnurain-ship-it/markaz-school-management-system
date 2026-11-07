@@ -115,6 +115,15 @@ try {
         && (int) $current['academic_session_id'] === $sessionId
         && (int) $current['term_id'] === $termId;
 
+    if ($samePeriod && $current && (int) $current['is_finalized'] === 1) {
+        $pdo->rollBack();
+        academicPeriodResponse(409, [
+            'success' => false,
+            'code' => 'PERIOD_ALREADY_FINALIZED',
+            'message' => 'This academic period is finalized and read-only. Select the next term to continue.'
+        ]);
+    }
+
     if ($current && !$samePeriod && (int) $current['is_finalized'] !== 1) {
         $pdo->rollBack();
         academicPeriodResponse(409, [
