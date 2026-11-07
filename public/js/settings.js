@@ -1547,4 +1547,4 @@ loadAcademicArchive();
             if (submit) submit.disabled = false;
         }
     });
-})();;
+})();
