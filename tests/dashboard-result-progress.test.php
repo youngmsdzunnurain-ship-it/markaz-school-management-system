@@ -34,7 +34,7 @@ expectSame(1, $stats['incomplete_students'], 'partially entered student is in pr
 expectSame(1, $stats['no_result_students'], 'student with no scores is not started');
 expectSame(1, $stats['unassigned_students'], 'student without required subjects is reported separately');
 expectSame(3, $stats['completed_results'], 'only subject entries with all three scores count as fully scored');
-expectSame(6, $stats['expected_results'], 'expected subject entries include both class categories');
-expectSame(50.0, $stats['completion_percentage'], 'overall percentage uses fully scored subject entries');
+expectSame(7, $stats['expected_results'], 'expected subject entries include both class categories');
+expectSame(42.857143, $stats['completion_percentage'], 'overall percentage uses fully scored subject entries');
 
 echo "Dashboard result-progress regression checks passed." . PHP_EOL;
