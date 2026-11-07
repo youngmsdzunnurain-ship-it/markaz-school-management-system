@@ -15,9 +15,50 @@ function finalizePeriodResponse(int $status, array $payload): never
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    try {
+        $pdo = db();
+        $stmt = $pdo->query(
+            'SELECT ap.id, ap.academic_session_id, ap.term_id,
+                    s.name AS session_name, t.name AS term_name,
+                    ap.is_current, ap.is_finalized, ap.finalized_at,
+                    ap.results_released, ap.resumption_date,
+                    COUNT(DISTINCT r.id) AS saved_result_rows,
+                    COUNT(DISTINCT br.id) AS behavioural_reports
+             FROM academic_periods ap
+             INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+             INNER JOIN terms t ON t.id = ap.term_id
+             LEFT JOIN results r ON r.academic_period_id = ap.id
+             LEFT JOIN behavioural_reports br ON br.academic_period_id = ap.id
+             GROUP BY ap.id, ap.academic_session_id, ap.term_id,
+                      s.name, t.name, ap.is_current, ap.is_finalized,
+                      ap.finalized_at, ap.results_released, ap.resumption_date
+             ORDER BY s.name DESC, t.sort_order ASC'
+        );
+        $periods = array_map(static function (array $row): array {
+            return [
+                'id' => (int) $row['id'],
+                'session_name' => $row['session_name'],
+                'term_name' => $row['term_name'],
+                'is_current' => (int) $row['is_current'] === 1,
+                'is_finalized' => (int) $row['is_finalized'] === 1,
+                'finalized_at' => $row['finalized_at'],
+                'results_released' => (int) $row['results_released'] === 1,
+                'resumption_date' => $row['resumption_date'],
+                'saved_result_rows' => (int) $row['saved_result_rows'],
+                'behavioural_reports' => (int) $row['behavioural_reports']
+            ];
+        }, $stmt->fetchAll(PDO::FETCH_ASSOC));
+        finalizePeriodResponse(200, ['success' => true, 'periods' => $periods]);
+    } catch (Throwable $error) {
+        error_log('Academic archive list failed: ' . $error->getMessage());
+        finalizePeriodResponse(500, ['success' => false, 'message' => 'Unable to load academic archives.']);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Allow: POST');
-    finalizePeriodResponse(405, ['success' => false, 'message' => 'POST request required.']);
+    header('Allow: GET, POST');
+    finalizePeriodResponse(405, ['success' => false, 'message' => 'GET or POST request required.']);
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
