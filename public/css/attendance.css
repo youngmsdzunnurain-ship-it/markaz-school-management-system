@@ -301,7 +301,7 @@
 .attendance-header-actions .button { min-width:132px; min-height:44px; border-radius:12px; }
 .attendance-header-actions #printRegisterButton { color:#f8edc7; border-color:rgba(232,211,142,.48); background:rgba(200,164,58,.16); }
 .attendance-header-actions #exportRegisterButton { color:#fff; border-color:rgba(255,255,255,.32); background:rgba(255,255,255,.1); }
-.attendance-table thead th { position:sticky; top:0; z-index:1; background:#f3f7f3; }
+.attendance-table thead th { position: sticky; top:0; z-index:1; background:#f3f7f3; }
 .attendance-table tbody tr:nth-child(odd) { background:#fbfdfb; }
 .attendance-table tbody tr:nth-child(even) { background:#f5f8f5; }
 .attendance-table tbody tr:hover { background:#eaf4ed; }
@@ -325,10 +325,10 @@
 .attendance-page-footer { margin-top:22px; padding-top:18px; border-top:1px solid var(--att-border); }
 .attendance-history-wrap { max-height:min(72vh,760px); overflow:auto; }
 .attendance-history-table { min-width:1120px; }
-.attendance-history-table thead th { position:sticky; top:0; z-index:2; text-align:center; }
+.attendance-history-table thead th { position: sticky; top:0; z-index:2; text-align:center; }
 .attendance-history-table thead th:nth-child(2),
 .attendance-history-table tbody td:nth-child(2) {
-    position:sticky;
+    position: sticky;
     left:0;
     z-index:1;
     min-width:190px;
