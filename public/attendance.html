@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="./css/settings.css">
-    <link rel="stylesheet" href="./css/attendance.css?v=20261107-term-history1">
+    <link rel="stylesheet" href="./css/attendance.css?v=20261108-overview1">
     <link rel="stylesheet" href="./css/standard-page-heading.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="./css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -91,6 +91,25 @@
             <p class="filter-help" id="classHelpText">Classes and student totals are loaded from MARKAZ records.</p>
         </section>
 
+        <section class="attendance-overview-layout" aria-label="Attendance overview">
+        <section class="attendance-chart-panel" aria-labelledby="attendanceChartTitle">
+            <div class="section-heading">
+                <div>
+                    <span class="attendance-eyebrow">ATTENDANCE BREAKDOWN</span>
+                    <h2 id="attendanceChartTitle">Class attendance overview</h2>
+                </div>
+                <span class="attendance-chart-date" id="attendanceChartDate">Load a register to view its breakdown</span>
+            </div>
+            <div class="attendance-chart-content">
+                <div id="attendancePieChart" class="attendance-pie-chart" role="img" aria-label="Attendance breakdown will appear after loading a register">
+                    <span>—</span>
+                </div>
+                <div id="attendanceChartLegend" class="attendance-chart-legend">
+                    <span class="chart-empty">No attendance data loaded yet.</span>
+                </div>
+            </div>
+        </section>
+
         <section class="attendance-summary-grid" aria-label="Attendance summary" aria-live="polite">
             <article class="attendance-summary-card summary-total">
                 <span class="summary-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
@@ -113,23 +132,6 @@
                 <div><span>Excused</span><strong id="excusedCount">—</strong><small>Approved absence</small></div>
             </article>
         </section>
-
-        <section class="attendance-chart-panel" aria-labelledby="attendanceChartTitle">
-            <div class="section-heading">
-                <div>
-                    <span class="attendance-eyebrow">ATTENDANCE BREAKDOWN</span>
-                    <h2 id="attendanceChartTitle">Class attendance overview</h2>
-                </div>
-                <span class="attendance-chart-date" id="attendanceChartDate">Load a register to view its breakdown</span>
-            </div>
-            <div class="attendance-chart-content">
-                <div id="attendancePieChart" class="attendance-pie-chart" role="img" aria-label="Attendance breakdown will appear after loading a register">
-                    <span>—</span>
-                </div>
-                <div id="attendanceChartLegend" class="attendance-chart-legend">
-                    <span class="chart-empty">No attendance data loaded yet.</span>
-                </div>
-            </div>
         </section>
 
         <section class="attendance-filter-panel" aria-labelledby="attendanceHistoryTitle">
@@ -227,7 +229,7 @@
         </footer>
     </main>
     <script src="./js/go-back.js"></script>
-    <script src="./js/attendance.js?v=20261107-term-history1"></script>
+    <script src="./js/attendance.js?v=20261108-overview1"></script>
     <script src="/js/markaz-global.js"></script>
     <script src="/js/management-shell.js?v=20261104-avatar-unified"></script>
 </body>
