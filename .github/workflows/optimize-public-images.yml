@@ -9,23 +9,23 @@ permissions:
 jobs:
   optimize:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install WebP encoder
+      - name: Install image tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y webp
+          sudo apt-get install -y webp imagemagick
 
-      - name: Audit, deduplicate, and optimize images
+      - name: Audit, deduplicate, and safely optimize images
         shell: bash
         run: |
           set -uo pipefail
           mkdir -p optimized-images
           report="image-optimization-report.csv"
-          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\n' > "$report"
+          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\\n' > "$report"
 
           declare -A seen_hash=()
           declare -A seen_output=()
@@ -44,32 +44,54 @@ jobs:
               output="${seen_output[$hash]}"
               output_bytes=0
               [[ -f "$output" ]] && output_bytes="$(wc -c < "$output" | tr -d ' ')"
-              printf '"%s",%s,%s,"%s",%s,DUPLICATE\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
+              printf '"%s",%s,%s,"%s",%s,DUPLICATE\\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
               duplicates=$((duplicates + 1))
               continue
             fi
 
             output="optimized-images/${relative%.*}.webp"
             mkdir -p "$(dirname "$output")"
+            is_png=false
+            [[ "${source,,}" == *.png ]] && is_png=true
+            source_dimensions="$(identify -format '%w %h' "$source[0]" 2>/dev/null || true)"
+            status=""
 
-            if [[ "${source,,}" == *.png ]]; then
-              # Lossless WebP preserves transparency for logos and PNG artwork.
-              if cwebp -quiet -lossless -exact -m 6 -mt "$source" -o "$output"; then
-                status="OPTIMIZED_LOSSLESS"
-              else
-                status="FAILED_SOURCE_UNREADABLE"
-              fi
+            # First try the native WebP encoder. If it rejects malformed but
+            # browser-displayable source data, normalize through ImageMagick.
+            if [[ "$is_png" == true ]]; then
+              cwebp -quiet -lossless -exact -m 6 -mt "$source" -o "$output" >/dev/null 2>&1 || true
             else
-              if cwebp -quiet -q 88 -m 6 -mt "$source" -o "$output"; then
-                status="OPTIMIZED_Q88"
-              else
-                status="FAILED_SOURCE_UNREADABLE"
-              fi
+              cwebp -quiet -q 88 -m 6 -mt "$source" -o "$output" >/dev/null 2>&1 || true
             fi
 
-            if [[ "$status" == FAILED* ]]; then
+            if [[ -s "$output" && -n "$source_dimensions" ]] &&
+               webpinfo "$output" >/dev/null 2>&1 &&
+               [[ "$(identify -format '%w %h' "$output" 2>/dev/null || true)" == "$source_dimensions" ]]; then
+              if [[ "$is_png" == true ]]; then status="OPTIMIZED_LOSSLESS"; else status="OPTIMIZED_Q88"; fi
+            else
               rm -f "$output"
-              printf '"%s",%s,%s,,0,%s\n' "$relative" "$hash" "$source_bytes" "$status" >> "$report"
+              normalized="$(mktemp --suffix=.png)"
+              if magick "${source}[0]" -strip "$normalized" >/dev/null 2>&1; then
+                normalized_dimensions="$(identify -format '%w %h' "$normalized" 2>/dev/null || true)"
+                if [[ -n "$normalized_dimensions" ]]; then
+                  if [[ "$is_png" == true ]]; then
+                    cwebp -quiet -lossless -exact -m 6 -mt "$normalized" -o "$output" >/dev/null 2>&1 || true
+                  else
+                    cwebp -quiet -q 88 -m 6 -mt "$normalized" -o "$output" >/dev/null 2>&1 || true
+                  fi
+                  if [[ -s "$output" ]] &&
+                     webpinfo "$output" >/dev/null 2>&1 &&
+                     [[ "$(identify -format '%w %h' "$output" 2>/dev/null || true)" == "$normalized_dimensions" ]]; then
+                    if [[ "$is_png" == true ]]; then status="OPTIMIZED_FALLBACK_LOSSLESS"; else status="OPTIMIZED_FALLBACK_Q88"; fi
+                  fi
+                fi
+              fi
+              rm -f "$normalized"
+            fi
+
+            if [[ -z "$status" ]]; then
+              rm -f "$output"
+              printf '"%s",%s,%s,,0,FAILED_DECODE_OR_VALIDATION\\n' "$relative" "$hash" "$source_bytes" >> "$report"
               failed=$((failed + 1))
               continue
             fi
@@ -77,11 +99,11 @@ jobs:
             seen_hash["$hash"]=1
             seen_output["$hash"]="$output"
             output_bytes="$(wc -c < "$output" | tr -d ' ')"
-            printf '"%s",%s,%s,"%s",%s,%s\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
+            printf '"%s",%s,%s,"%s",%s,%s\\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
             converted=$((converted + 1))
           done < <(find public/assets/images -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 | sort -z)
 
-          printf '\nScanned: %s\nUnique conversions: %s\nDuplicates: %s\nFailed conversions: %s\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
+          printf '\\nScanned: %s\\nUnique conversions: %s\\nDuplicates: %s\\nFailed conversions: %s\\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
           echo "Original files were not modified."
 
       - name: Upload optimized images and audit report
