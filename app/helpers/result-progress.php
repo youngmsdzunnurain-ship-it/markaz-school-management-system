@@ -2,15 +2,22 @@
 declare(strict_types=1);
 
 /**
- * Summarize saved assessment entries for the active student/class contexts.
- * Each row represents one required subject entry. A score of zero is present;
- * NULL/empty means that component has not yet been entered.
+ * Summarize saved assessment entries across the school's conventional and
+ * Arabic class contexts. A student is counted once, even when enrolled in both.
+ *
+ * Completion status follows the same rules as class-completion.php:
+ * every required subject must have CA1, CA2 and Exam, and all nine
+ * behavioural assessment fields must be present. A numeric zero is present.
  */
-function summarizeResultProgress(array $rows): array
+function summarizeResultProgress(array $rows, array $behaviourRows = []): array
 {
     $students = [];
     $expectedEntries = 0;
     $completedEntries = 0;
+    $behaviourFields = [
+        'attendance', 'neatness', 'contentment', 'obedience', 'responsiveness',
+        'calmness', 'tolerance', 'attentiveness', 'truthfulness',
+    ];
 
     foreach ($rows as $row) {
         $type = (string) ($row['class_type'] ?? 'conventional');
@@ -20,11 +27,15 @@ function summarizeResultProgress(array $rows): array
             continue;
         }
 
-        // A student enrolled in both systems is still one person for the student cards.
-        // Keep each required subject entry in the denominator, but aggregate status by student ID.
         $key = (string) $studentId;
         if (!isset($students[$key])) {
-            $students[$key] = ['required' => 0, 'started' => 0, 'completed' => 0];
+            $students[$key] = [
+                'required' => 0,
+                'started' => 0,
+                'completed' => 0,
+                'behaviour_started' => false,
+                'behaviour_complete' => false,
+            ];
         }
 
         if (empty($row['subject_id'])) {
@@ -52,6 +63,31 @@ function summarizeResultProgress(array $rows): array
         }
     }
 
+    foreach ($behaviourRows as $row) {
+        $studentId = (int) ($row['student_id'] ?? 0);
+        if ($studentId < 1) {
+            continue;
+        }
+
+        $key = (string) $studentId;
+        if (!isset($students[$key])) {
+            // Behaviour alone must not create a student outside the active
+            // conventional/Arabic class population supplied by the main query.
+            continue;
+        }
+
+        $hasAny = false;
+        $hasAll = true;
+        foreach ($behaviourFields as $field) {
+            $value = $row[$field] ?? null;
+            $present = $value !== null && $value !== '';
+            $hasAny = $hasAny || $present;
+            $hasAll = $hasAll && $present;
+        }
+        $students[$key]['behaviour_started'] = $hasAny;
+        $students[$key]['behaviour_complete'] = $hasAll;
+    }
+
     $complete = 0;
     $inProgress = 0;
     $notStarted = 0;
@@ -60,9 +96,13 @@ function summarizeResultProgress(array $rows): array
     foreach ($students as $student) {
         if ($student['required'] === 0) {
             $unassigned++;
-        } elseif ($student['completed'] === $student['required']) {
+            continue;
+        }
+
+        $subjectsComplete = $student['completed'] === $student['required'];
+        if ($subjectsComplete && $student['behaviour_complete']) {
             $complete++;
-        } elseif ($student['started'] > 0) {
+        } elseif ($student['started'] > 0 || $student['behaviour_started']) {
             $inProgress++;
         } else {
             $notStarted++;
