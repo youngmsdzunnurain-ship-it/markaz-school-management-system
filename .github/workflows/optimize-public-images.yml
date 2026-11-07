@@ -25,7 +25,7 @@ jobs:
           set -uo pipefail
           mkdir -p optimized-images
           report="image-optimization-report.csv"
-          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\\n' > "$report"
+          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\n' > "$report"
 
           declare -A seen_hash=()
           declare -A seen_output=()
@@ -44,7 +44,7 @@ jobs:
               output="${seen_output[$hash]}"
               output_bytes=0
               [[ -f "$output" ]] && output_bytes="$(wc -c < "$output" | tr -d ' ')"
-              printf '"%s",%s,%s,"%s",%s,DUPLICATE\\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
+              printf '"%s",%s,%s,"%s",%s,DUPLICATE\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
               duplicates=$((duplicates + 1))
               continue
             fi
@@ -91,7 +91,7 @@ jobs:
 
             if [[ -z "$status" ]]; then
               rm -f "$output"
-              printf '"%s",%s,%s,,0,FAILED_DECODE_OR_VALIDATION\\n' "$relative" "$hash" "$source_bytes" >> "$report"
+              printf '"%s",%s,%s,,0,FAILED_DECODE_OR_VALIDATION\n' "$relative" "$hash" "$source_bytes" >> "$report"
               failed=$((failed + 1))
               continue
             fi
@@ -99,11 +99,11 @@ jobs:
             seen_hash["$hash"]=1
             seen_output["$hash"]="$output"
             output_bytes="$(wc -c < "$output" | tr -d ' ')"
-            printf '"%s",%s,%s,"%s",%s,%s\\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
+            printf '"%s",%s,%s,"%s",%s,%s\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
             converted=$((converted + 1))
           done < <(find public/assets/images -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 | sort -z)
 
-          printf '\\nScanned: %s\\nUnique conversions: %s\\nDuplicates: %s\\nFailed conversions: %s\\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
+          printf '\nScanned: %s\nUnique conversions: %s\nDuplicates: %s\nFailed conversions: %s\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
           echo "Original files were not modified."
 
       - name: Upload optimized images and audit report
