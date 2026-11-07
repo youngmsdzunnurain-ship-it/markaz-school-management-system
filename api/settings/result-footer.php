@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
 $studentPortalScope = $_SERVER['REQUEST_METHOD'] === 'GET'
-    ? studentPortalResultScope()
+    ? studentPortalResultScope(false)
     : null;
 if ($studentPortalScope === null) {
     requireSeniorAdmin();
