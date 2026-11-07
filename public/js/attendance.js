@@ -280,21 +280,27 @@
     }
 
     async function loadClasses() {
+        const requestedType = els.type.value;
         setNotice("Loading available classes…");
         try {
-            const data = await requestJson("./api/attendance/classes.php?class_type=" + encodeURIComponent(els.type.value));
-            state.classes = data.classes || [];
+            const data = await requestJson("./api/attendance/classes.php?class_type=" + encodeURIComponent(requestedType));
+            // A slow response from the previous category must never repopulate
+            // the dropdown after the user has switched categories.
+            if (els.type.value !== requestedType) return;
+            state.classes = (data.classes || []).filter((item) => item.class_type === requestedType);
             state.role = data.role || "";
             populateClasses();
             if (!state.classes.length) {
-                setNotice("No active classes are available to this account.", "error");
+                setNotice("No active " + (requestedType === "arabic" ? "Arabic" : "conventional") + " classes are available to this account.", "error");
             } else {
                 setNotice("Choose a class and date to load the register.");
             }
             refreshActions();
         } catch (error) {
+            if (els.type.value !== requestedType) return;
+            state.classes = [];
+            populateClasses();
             setNotice(error.message, "error");
-            els.classSelect.innerHTML = '<option value="">Unable to load classes</option>';
             refreshActions();
         }
     }
