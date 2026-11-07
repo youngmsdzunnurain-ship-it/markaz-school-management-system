@@ -428,6 +428,10 @@
   opacity: .65;
 }
 .academic-reset-settings-card {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #ead9d1;
+  border-radius: 14px;
   border-color: #ead9d1;
   background: linear-gradient(145deg, #fff 0%, #fffdfc 100%);
 }
