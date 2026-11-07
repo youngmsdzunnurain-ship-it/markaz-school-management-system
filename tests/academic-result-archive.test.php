@@ -56,6 +56,18 @@ academicArchiveCheck(
     'behavioural report editing must be blocked after a period is finalized'
 );
 academicArchiveCheck(
+    preg_match('/beginTransaction\\(\\).*?FOR UPDATE/s', $resultSave) === 1 &&
+    str_contains($resultSave, 'commit()') &&
+    str_contains($resultSave, 'rollBack()'),
+    'score writes must lock and recheck the current period in the same transaction as the write'
+);
+academicArchiveCheck(
+    preg_match('/beginTransaction\\(\\).*?FOR UPDATE/s', $behaviourApi) === 1 &&
+    str_contains($behaviourApi, 'commit()') &&
+    str_contains($behaviourApi, 'rollBack()'),
+    'behavioural writes must lock and recheck the current period in the same transaction as the write'
+);
+academicArchiveCheck(
     str_contains($portalApi, 'WHERE ap.academic_session_id = ?') &&
     str_contains($portalApi, 'AND ap.term_id = ?') &&
     str_contains($portalApi, 'results_released'),
