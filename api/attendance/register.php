@@ -92,6 +92,19 @@ if ($classId === false || $classId === null || $classId < 1) {
 }
 
 $class = attendanceRequireClassAccess($pdo, $classType, (int) $classId);
+$periodId = filter_var($input['academic_period_id'] ?? null, FILTER_VALIDATE_INT);
+if ($periodId === false || $periodId === null || $periodId < 1) {
+    attendanceJsonError(422, 'Choose the academic session and term before saving attendance.');
+}
+$periodStmt = $pdo->prepare('SELECT id, is_finalized FROM academic_periods WHERE id = ? LIMIT 1');
+$periodStmt->execute([(int) $periodId]);
+$period = $periodStmt->fetch(PDO::FETCH_ASSOC);
+if (!$period) {
+    attendanceJsonError(422, 'The selected academic period is not available.');
+}
+if ((int) $period['is_finalized'] === 1) {
+    attendanceJsonError(409, 'This academic period has been finalised. Attendance can no longer be changed.');
+}
 $studentClassExpression = $classType === 'arabic'
     ? 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)'
     : 's.class_id';
@@ -155,8 +168,8 @@ try {
     $pdo->beginTransaction();
     $saveStmt = $pdo->prepare(
         'INSERT INTO attendance_records
-            (attendance_date, class_type, class_id, student_id, status, remarks, marked_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+            (attendance_date, academic_period_id, class_type, class_id, student_id, status, remarks, marked_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
             status = VALUES(status),
             remarks = VALUES(remarks),
@@ -179,6 +192,7 @@ try {
 
         $saveStmt->execute([
             $date,
+            (int) $periodId,
             $classType,
             (int) $classId,
             $studentId,
