@@ -9,7 +9,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="css/login-roles.css">
   <link rel="stylesheet" href="css/login-shared.css">
+  <link rel="stylesheet" href="css/student-results-portal.css">
   <script src="js/login-roles.js" defer></script>
+  <script src="js/student-results-portal.js" defer></script>
 
     <link rel="stylesheet" href="css/website-image-polish.css">
 </head>
@@ -28,7 +30,7 @@
       <h2>Student Results</h2>
       <p>Enter your details to look up your examination results.</p>
     </div>
-    <form class="preview-form" data-role="student">
+    <form class="preview-form" data-role="student-lookup">
       <div class="role-field">
         <label for="admissionNumber">Admission Number / Student ID</label>
         <div class="role-input"><i class="fa-solid fa-id-card"></i><input id="admissionNumber" name="admissionNumber" placeholder="Enter your admission number" autocomplete="off" required></div>
@@ -91,7 +93,7 @@
       <button class="role-submit" type="submit">Check Results <i class="fa-solid fa-arrow-right"></i></button>
     </form>
 
-    <section id="studentResultsPanel" class="student-results-panel" aria-live="polite" hidden></section>
+    <section id="studentPortalExperience" class="student-portal-experience" aria-live="polite" hidden></section>
     <div class="role-footer"><i class="fa-solid fa-book-open"></i> Learning, memorization and good character</div>
   </section>
 </main>
