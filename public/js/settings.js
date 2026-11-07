@@ -1323,7 +1323,7 @@ async function loadAcademicArchive() {
             const title = document.createElement("strong");
             title.textContent = `${item.session_name} — ${item.term_name}`;
             const meta = document.createElement("span");
-            meta.textContent = `${item.saved_result_rows} saved subject result(s) · ${item.behavioural_reports} behavioural report(s)`;
+            meta.textContent = `${item.saved_result_rows} subject(s) with scores · ${item.behavioural_reports} behavioural report(s) with ratings`;
             details.append(title, meta);
 
             const statuses = document.createElement("div");
