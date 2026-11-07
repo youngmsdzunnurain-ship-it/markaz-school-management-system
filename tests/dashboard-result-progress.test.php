@@ -30,7 +30,7 @@ $rows = [
 
 $stats = summarizeResultProgress($rows);
 
-expectSame(2, $stats['complete_students'], 'fully scored conventional and Arabic class contexts are counted separately');
+expectSame(1, $stats['complete_students'], 'a student enrolled in both class systems is counted once');
 expectSame(1, $stats['incomplete_students'], 'partially entered student is in progress');
 expectSame(1, $stats['no_result_students'], 'student with no scores is not started');
 expectSame(1, $stats['unassigned_students'], 'student without required subjects is reported separately');
