@@ -50,8 +50,8 @@ portalAssert(str_contains($portalApi, 'startSecureSession'), 'successful public 
 portalAssert(str_contains($portalApi, 'student_portal_result_access'), 'lookup scope is tied to the verified student and period');
 portalAssert(str_contains($portalApi, 'results_released'), 'public lookup still checks school result-release status');
 portalAssert(str_contains($portalApi, "AND r.class_type = 'conventional'"), 'public lookup preserves conventional result isolation');
-portalAssert(str_contains($resultApi, 'student_portal_result_access'), 'official result API accepts only a matching scoped student session');
-portalAssert(str_contains($behaviourApi, 'student_portal_result_access'), 'official behavioural report supports the same scoped read-only session');
+portalAssert(str_contains($resultApi, 'studentPortalResultScope()'), 'official result API accepts only a matching scoped student session');
+portalAssert(str_contains($behaviourApi, 'studentPortalResultScope()'), 'official behavioural report supports the same scoped read-only session');
 portalAssert(str_contains($resultApi, 'requireResultStaff()'), 'staff result API continues to enforce staff access when no student scope exists');
 portalAssert(str_contains($behaviourApi, 'requireResultStaff()'), 'behaviour API continues to enforce staff access when no student scope exists');
 
