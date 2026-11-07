@@ -9,7 +9,7 @@ function academicArchiveCheck(bool $condition, string $message): void
     }
 }
 
-$periodApi = file_get_contents(__DIR__ . '/../api/settings/academic-period.php');
+$periodApi = file_get_contents(__DIR__ . '/../public/api/settings/academic-period.php');
 $finalizeApi = file_get_contents(__DIR__ . '/../api/settings/finalize-academic-period.php');
 $resultSave = file_get_contents(__DIR__ . '/../api/results/save.php');
 $behaviourApi = file_get_contents(__DIR__ . '/../api/results/behavioural.php');
@@ -52,7 +52,7 @@ academicArchiveCheck(
 );
 academicArchiveCheck(
     str_contains($behaviourApi, 'is_finalized') &&
-    str_contains($behaviourApi, 'Results for this academic period are finalized'),
+    str_contains($behaviourApi, 'Behavioural assessments for this academic period are finalized'),
     'behavioural report editing must be blocked after a period is finalized'
 );
 academicArchiveCheck(
