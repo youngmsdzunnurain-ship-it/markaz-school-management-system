@@ -105,6 +105,7 @@ try {
          INNER JOIN academic_sessions s
             ON s.id = ap.academic_session_id
          WHERE s.is_current = 1
+           AND ap.is_current = 1
          ORDER BY ap.id DESC
          LIMIT 1'
     );
