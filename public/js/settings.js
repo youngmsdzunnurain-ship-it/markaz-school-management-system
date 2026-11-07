@@ -469,6 +469,7 @@ academicPeriodForm?.addEventListener("submit", async event => {
             "Academic calendar saved successfully.",
             "success"
         );
+        await loadAcademicArchive();
 
         setTimeout(() => {
             showAcademicPeriodMessage("", "");
@@ -1244,3 +1245,138 @@ loadAcademicPeriodSettings();
 
     loadPeriods();
 })();
+
+
+/* ACADEMIC RESULT ARCHIVE — ADMIN SETTINGS */
+async function loadAcademicArchive() {
+    const currentTitle = document.getElementById("academicArchiveCurrentTitle");
+    const currentDescription = document.getElementById("academicArchiveCurrentDescription");
+    const currentPanel = document.getElementById("academicArchiveCurrent");
+    const history = document.getElementById("academicArchiveHistory");
+    const finalizeButton = document.getElementById("finalizeAcademicPeriodButton");
+    const message = document.getElementById("academicArchiveMessage");
+    if (!currentTitle || !history || !finalizeButton) return;
+
+    finalizeButton.disabled = true;
+    currentTitle.textContent = "Loading current academic period…";
+    currentDescription.textContent = "Checking term status.";
+    history.replaceChildren();
+
+    try {
+        const [currentResponse, archiveResponse] = await Promise.all([
+            fetch("./api/settings/academic-period.php", {
+                credentials: "same-origin", cache: "no-store"
+            }),
+            fetch("./api/settings/finalize-academic-period.php", {
+                credentials: "same-origin", cache: "no-store"
+            })
+        ]);
+        const currentData = await currentResponse.json();
+        const archiveData = await archiveResponse.json();
+
+        if (!currentResponse.ok || !currentData.success) {
+            throw new Error(currentData.message || "Unable to load the current academic period.");
+        }
+        if (!archiveResponse.ok || !archiveData.success) {
+            throw new Error(archiveData.message || "Unable to load academic history. Apply the academic archive database migration first.");
+        }
+
+        const period = currentData.academic_period || {};
+        const finalized = Number(period.is_finalized) === 1;
+        currentTitle.textContent = [period.session_name, period.term_name].filter(Boolean).join(" — ") || "Current term";
+        currentDescription.textContent = finalized
+            ? `Finalized ${period.finalized_at ? "on " + period.finalized_at : ""}. This term is locked against further edits.`
+            : "This term is active and still accepts authorized result and behavioural entries.";
+        currentPanel?.classList.toggle("is-finalized", finalized);
+        currentPanel?.classList.toggle("is-open", !finalized);
+        finalizeButton.disabled = finalized;
+        finalizeButton.innerHTML = finalized
+            ? '<i class="fa-solid fa-lock" aria-hidden="true"></i> Term Finalized'
+            : '<i class="fa-solid fa-lock" aria-hidden="true"></i> Finalize &amp; Lock Term';
+
+        const periods = Array.isArray(archiveData.periods) ? archiveData.periods : [];
+        if (!periods.length) {
+            const empty = document.createElement("p");
+            empty.className = "settings-loading";
+            empty.textContent = "No academic periods have been created yet.";
+            history.appendChild(empty);
+            return;
+        }
+
+        periods.forEach(item => {
+            const row = document.createElement("article");
+            row.className = "academic-archive-row";
+
+            const details = document.createElement("div");
+            details.className = "academic-archive-row-details";
+            const title = document.createElement("strong");
+            title.textContent = `${item.session_name} — ${item.term_name}`;
+            const meta = document.createElement("span");
+            meta.textContent = `${item.saved_result_rows} saved subject result(s) · ${item.behavioural_reports} behavioural report(s)`;
+            details.append(title, meta);
+
+            const statuses = document.createElement("div");
+            statuses.className = "academic-archive-row-statuses";
+            const state = document.createElement("span");
+            state.className = "academic-archive-pill " + (item.is_finalized ? "is-finalized" : item.is_current ? "is-current" : "is-open");
+            state.textContent = item.is_finalized ? "Finalized · Archived" : item.is_current ? "Current · In progress" : "Not finalized";
+            const release = document.createElement("span");
+            release.className = "academic-archive-release " + (item.results_released ? "is-released" : "is-hidden");
+            release.textContent = item.results_released ? "Results released" : "Results hidden";
+            statuses.append(state, release);
+            row.append(details, statuses);
+            history.appendChild(row);
+        });
+    } catch (error) {
+        currentTitle.textContent = "Academic archive unavailable";
+        currentDescription.textContent = error.message || "Unable to load academic history.";
+        currentPanel?.classList.remove("is-finalized", "is-open");
+        const retry = document.createElement("p");
+        retry.className = "form-message error";
+        retry.textContent = error.message || "Unable to load academic history.";
+        history.appendChild(retry);
+        finalizeButton.disabled = true;
+    }
+}
+
+document.getElementById("finalizeAcademicPeriodButton")?.addEventListener("click", async event => {
+    const button = event.currentTarget;
+    const confirmed = window.confirm(
+        "Finalize and lock this academic term? First verify that every student's scores and behavioural assessments are complete. This action cannot be undone from Settings."
+    );
+    if (!confirmed) return;
+
+    button.disabled = true;
+    const message = document.getElementById("academicArchiveMessage");
+    if (message) {
+        message.textContent = "Finalizing academic term…";
+        message.className = "form-message";
+    }
+
+    try {
+        const response = await fetch("./api/settings/finalize-academic-period.php", {
+            method: "POST",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ confirm: true })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to finalize this academic term.");
+        }
+        if (message) {
+            message.textContent = data.message || "Academic term finalized.";
+            message.className = "form-message success";
+        }
+        await loadAcademicArchive();
+    } catch (error) {
+        if (message) {
+            message.textContent = error.message || "Unable to finalize this academic term.";
+            message.className = "form-message error";
+        }
+        button.disabled = false;
+    }
+});
+
+loadAcademicArchive();

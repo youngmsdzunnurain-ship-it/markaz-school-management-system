@@ -54,12 +54,16 @@ CREATE TABLE academic_periods (
     vacation_date DATE NULL,
     resumption_date DATE NULL,
     results_released TINYINT(1) NOT NULL DEFAULT 0,
+    is_finalized TINYINT(1) NOT NULL DEFAULT 0,
+    finalized_at DATETIME NULL,
+    finalized_by BIGINT UNSIGNED NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
 
     UNIQUE KEY uq_academic_period (academic_session_id, term_id),
     KEY idx_academic_period_current (is_current, academic_session_id),
+    KEY idx_academic_period_finalized (is_finalized, academic_session_id),
 
     CONSTRAINT fk_period_session
         FOREIGN KEY (academic_session_id)
@@ -69,7 +73,11 @@ CREATE TABLE academic_periods (
     CONSTRAINT fk_period_term
         FOREIGN KEY (term_id)
         REFERENCES terms(id)
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_academic_period_finalized_by
+        FOREIGN KEY (finalized_by)
+        REFERENCES admins(id)
+        ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- =========================================================

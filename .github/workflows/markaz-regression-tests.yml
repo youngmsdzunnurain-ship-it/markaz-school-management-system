@@ -24,6 +24,15 @@ jobs:
       - name: Run academic-period, signature, and print-result regression tests
         run: |
           set -e
+          php -l api/settings/finalize-academic-period.php
+          php -l public/api/settings/academic-period.php
+          php -l api/results/save.php
+          php -l api/results/behavioural.php
+          php -l api/results/student-portal.php
+          php -l tests/academic-result-archive.test.php
+          node --check public/js/settings.js
+          node --check public/js/settings-panel-navigation.js
+          php tests/academic-result-archive.test.php
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
           php tests/result-print-current-period.test.php

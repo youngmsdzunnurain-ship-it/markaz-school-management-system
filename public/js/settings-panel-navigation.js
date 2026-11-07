@@ -46,6 +46,13 @@
         elements: [page.querySelector("#markazResultRelease")].filter(Boolean)
       },
       {
+        id: "academic-archive",
+        label: "Academic Records & Term Archive",
+        icon: "fa-box-archive",
+        description: "Finalize completed terms, protect historical results, and review released academic records.",
+        elements: [page.querySelector(".academic-archive-settings-card")].filter(Boolean)
+      },
+      {
         id: "academic",
         label: "Academic Settings",
         icon: "fa-calendar-alt",
