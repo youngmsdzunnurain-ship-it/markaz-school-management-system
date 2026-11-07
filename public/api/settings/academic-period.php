@@ -5,64 +5,48 @@ require_once __DIR__ . '/../../../app/config/app.php';
 require_once __DIR__ . '/../../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
-
+header('Cache-Control: no-store, private');
 requireSeniorAdmin();
 
 $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+function academicPeriodResponse(int $status, array $payload): never
+{
+    http_response_code($status);
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 function getCurrentAcademicPeriod(PDO $pdo): ?array
 {
     $stmt = $pdo->query(
-        'SELECT
-            ap.id,
-            ap.academic_session_id,
-            ap.term_id,
-            s.name AS session_name,
-            t.name AS term_name,
-            ap.examination_date,
-            ap.vacation_date,
-            ap.resumption_date
+        'SELECT ap.id, ap.academic_session_id, ap.term_id,
+                s.name AS session_name, t.name AS term_name,
+                ap.examination_date, ap.vacation_date, ap.resumption_date,
+                ap.results_released, ap.is_finalized, ap.finalized_at
          FROM academic_periods ap
-         INNER JOIN academic_sessions s
-            ON s.id = ap.academic_session_id
-         INNER JOIN terms t
-            ON t.id = ap.term_id
-         WHERE s.is_current = 1
-           AND ap.is_current = 1
-         ORDER BY ap.id DESC
-         LIMIT 1'
+         INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+         INNER JOIN terms t ON t.id = ap.term_id
+         WHERE s.is_current = 1 AND ap.is_current = 1
+         ORDER BY ap.id DESC LIMIT 1'
     );
-
-    $period = $stmt->fetch();
-
-    return $period ?: null;
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 }
 
 function getAcademicSessions(PDO $pdo): array
 {
-    $stmt = $pdo->query(
-        'SELECT id, name, is_current
-         FROM academic_sessions
-         ORDER BY id ASC'
-    );
-
-    return $stmt->fetchAll();
+    return $pdo->query(
+        'SELECT id, name, is_current FROM academic_sessions ORDER BY id ASC'
+    )->fetchAll(PDO::FETCH_ASSOC);
 }
 
 if ($method === 'GET') {
     $period = getCurrentAcademicPeriod($pdo);
-
     if (!$period) {
-        http_response_code(404);
-        echo json_encode([
-            'success' => false,
-            'message' => 'No current academic period is configured.'
-        ]);
-        exit;
+        academicPeriodResponse(404, ['success' => false, 'message' => 'No current academic period is configured.']);
     }
-
-    echo json_encode([
+    academicPeriodResponse(200, [
         'success' => true,
         'sessions' => getAcademicSessions($pdo),
         'academic_period' => [
@@ -71,170 +55,136 @@ if ($method === 'GET') {
             'term_id' => (int) $period['term_id'],
             'session_name' => $period['session_name'],
             'term_name' => $period['term_name'],
-            'resumption_date' => $period['resumption_date']
+            'resumption_date' => $period['resumption_date'],
+            'is_finalized' => (int) $period['is_finalized'],
+            'finalized_at' => $period['finalized_at'],
+            'results_released' => (int) $period['results_released']
         ]
     ]);
-    exit;
 }
 
 if ($method !== 'POST') {
-    http_response_code(405);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Method not allowed.'
-    ]);
-    exit;
+    header('Allow: GET, POST');
+    academicPeriodResponse(405, ['success' => false, 'message' => 'Method not allowed.']);
 }
 
-$academicSessionId = (int) ($_POST['academic_session_id'] ?? 0);
-$termId = (int) ($_POST['term_id'] ?? 0);
-
-if ($academicSessionId <= 0) {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Academic Session is required.'
-    ]);
-    exit;
-}
-
-if ($termId <= 0) {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Current Term is required.'
-    ]);
-    exit;
-}
-
-$sessionStmt = $pdo->prepare(
-    'SELECT id FROM academic_sessions WHERE id = ? LIMIT 1'
-);
-$sessionStmt->execute([$academicSessionId]);
-
-if (!$sessionStmt->fetchColumn()) {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Selected Academic Session does not exist.'
-    ]);
-    exit;
-}
-
-$termStmt = $pdo->prepare(
-    'SELECT id FROM terms WHERE id = ? LIMIT 1'
-);
-$termStmt->execute([$termId]);
-
-if (!$termStmt->fetchColumn()) {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Selected Current Term does not exist.'
-    ]);
-    exit;
-}
-
+$sessionId = filter_var($_POST['academic_session_id'] ?? null, FILTER_VALIDATE_INT);
+$termId = filter_var($_POST['term_id'] ?? null, FILTER_VALIDATE_INT);
 $resumptionDate = trim((string) ($_POST['resumption_date'] ?? ''));
 
-if ($resumptionDate === '') {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Next Term Begins date is required.'
-    ]);
-    exit;
+if (!$sessionId || $sessionId < 1 || !$termId || !in_array($termId, [1, 2, 3], true)) {
+    academicPeriodResponse(422, ['success' => false, 'message' => 'Select a valid academic session and term.']);
 }
-
 $date = DateTime::createFromFormat('Y-m-d', $resumptionDate);
-
 if (!$date || $date->format('Y-m-d') !== $resumptionDate) {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Please enter a valid date.'
-    ]);
-    exit;
+    academicPeriodResponse(422, ['success' => false, 'message' => 'Please enter a valid Next Term Begins date.']);
 }
 
 try {
     $pdo->beginTransaction();
 
-    $pdo->exec(
-        'UPDATE academic_sessions
-         SET is_current = 0'
+    // Serialize progression requests against the session rows before changing the active period.
+    $pdo->query('SELECT id FROM academic_sessions ORDER BY id FOR UPDATE')->fetchAll();
+
+    $sessionCheck = $pdo->prepare('SELECT id FROM academic_sessions WHERE id = ? LIMIT 1');
+    $sessionCheck->execute([$sessionId]);
+    if (!$sessionCheck->fetchColumn()) {
+        $pdo->rollBack();
+        academicPeriodResponse(422, ['success' => false, 'message' => 'Selected academic session does not exist.']);
+    }
+
+    $termCheck = $pdo->prepare('SELECT id FROM terms WHERE id = ? LIMIT 1');
+    $termCheck->execute([$termId]);
+    if (!$termCheck->fetchColumn()) {
+        $pdo->rollBack();
+        academicPeriodResponse(422, ['success' => false, 'message' => 'Selected term does not exist.']);
+    }
+
+    $currentStmt = $pdo->query(
+        'SELECT ap.id, ap.academic_session_id, ap.term_id, ap.is_finalized,
+                s.name AS session_name, t.name AS term_name
+         FROM academic_periods ap
+         INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+         INNER JOIN terms t ON t.id = ap.term_id
+         WHERE s.is_current = 1 AND ap.is_current = 1
+         ORDER BY ap.id DESC LIMIT 1 FOR UPDATE'
     );
+    $current = $currentStmt->fetch(PDO::FETCH_ASSOC);
 
-    $currentSessionStmt = $pdo->prepare(
-        'UPDATE academic_sessions
-         SET is_current = 1
-         WHERE id = ?'
-    );
-    $currentSessionStmt->execute([$academicSessionId]);
+    $samePeriod = $current
+        && (int) $current['academic_session_id'] === $sessionId
+        && (int) $current['term_id'] === $termId;
 
-    // Exactly one academic period is current across the school.
-    $pdo->exec('UPDATE academic_periods SET is_current = 0');
-
-    $periodStmt = $pdo->prepare(
-        'SELECT id
-         FROM academic_periods
-         WHERE academic_session_id = ?
-           AND term_id = ?
-         LIMIT 1'
-    );
-    $periodStmt->execute([
-        $academicSessionId,
-        $termId
-    ]);
-
-    $periodId = $periodStmt->fetchColumn();
-
-    if ($periodId) {
-        $savePeriodStmt = $pdo->prepare(
-            'UPDATE academic_periods
-             SET resumption_date = ?,
-                 is_current = 1,
-                 updated_at = NOW()
-             WHERE id = ?'
-        );
-
-        $savePeriodStmt->execute([
-            $resumptionDate,
-            (int) $periodId
+    if ($current && !$samePeriod && (int) $current['is_finalized'] !== 1) {
+        $pdo->rollBack();
+        academicPeriodResponse(409, [
+            'success' => false,
+            'code' => 'PERIOD_NOT_FINALIZED',
+            'message' => 'Finalize and lock the current term before switching to another term or academic session.',
+            'current_period' => [
+                'session_name' => $current['session_name'],
+                'term_name' => $current['term_name']
+            ]
         ]);
+    }
+
+    $targetStmt = $pdo->prepare(
+        'SELECT id, is_finalized FROM academic_periods
+         WHERE academic_session_id = ? AND term_id = ? LIMIT 1 FOR UPDATE'
+    );
+    $targetStmt->execute([$sessionId, $termId]);
+    $target = $targetStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($target && (int) $target['is_finalized'] === 1 && !$samePeriod) {
+        $pdo->rollBack();
+        academicPeriodResponse(409, [
+            'success' => false,
+            'code' => 'PERIOD_ALREADY_FINALIZED',
+            'message' => 'This term has already been finalized and archived. It cannot be reactivated for new entries.'
+        ]);
+    }
+
+    if ($target) {
+        $periodId = (int) $target['id'];
+        $update = $pdo->prepare(
+            'UPDATE academic_periods SET resumption_date = ?, updated_at = NOW() WHERE id = ? AND is_finalized = 0'
+        );
+        $update->execute([$resumptionDate, $periodId]);
     } else {
-        $savePeriodStmt = $pdo->prepare(
-            'INSERT INTO academic_periods
-             (academic_session_id, term_id, resumption_date, is_current)
-             VALUES (?, ?, ?, 1)'
+        $insert = $pdo->prepare(
+            'INSERT INTO academic_periods (academic_session_id, term_id, resumption_date, is_current)
+             VALUES (?, ?, ?, 0)'
         );
+        $insert->execute([$sessionId, $termId, $resumptionDate]);
+        $periodId = (int) $pdo->lastInsertId();
+    }
 
-        $savePeriodStmt->execute([
-            $academicSessionId,
-            $termId,
-            $resumptionDate
-        ]);
+    $pdo->exec('UPDATE academic_periods SET is_current = 0 WHERE is_current = 1');
+    $pdo->exec('UPDATE academic_sessions SET is_current = 0 WHERE is_current = 1');
 
-        $periodId = $pdo->lastInsertId();
+    $activateSession = $pdo->prepare('UPDATE academic_sessions SET is_current = 1 WHERE id = ?');
+    $activateSession->execute([$sessionId]);
+    $activatePeriod = $pdo->prepare('UPDATE academic_periods SET is_current = 1 WHERE id = ? AND is_finalized = 0');
+    $activatePeriod->execute([$periodId]);
+
+    if ($activatePeriod->rowCount() !== 1) {
+        throw new RuntimeException('The selected academic period could not be activated.');
     }
 
     $pdo->commit();
-
-} catch (Throwable $error) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'No current academic period is configured.'
+    academicPeriodResponse(200, [
+        'success' => true,
+        'message' => $samePeriod ? 'Academic calendar updated successfully.' : 'New academic period activated. Previous finalized results remain archived.',
+        'academic_period' => [
+            'id' => $periodId,
+            'academic_session_id' => $sessionId,
+            'term_id' => $termId,
+            'resumption_date' => $resumptionDate,
+            'is_finalized' => false
+        ]
     ]);
-    exit;
+} catch (Throwable $error) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('Academic period progression failed: ' . $error->getMessage());
+    academicPeriodResponse(500, ['success' => false, 'message' => 'Unable to save the academic calendar. No changes were committed.']);
 }
-
-echo json_encode([
-    'success' => true,
-    'message' => 'Next Term Begins date saved successfully.',
-    'resumption_date' => $resumptionDate
-]);
