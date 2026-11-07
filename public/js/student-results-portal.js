@@ -44,7 +44,7 @@
       resultData.academic_period.session_name + ' is ready. We are pleased to share your academic progress with you.');
     const note = element('p', 'portal-welcome-note', 'May your learning continue to bring you knowledge, confidence and success.');
     card.append(mark, eyebrow, heading, intro, note,
-      actionButton('View My Result  →', 'portal-primary-action', showReport),
+      actionButton('View My Result  →', 'portal-primary-action', openOfficialReport),
       actionButton('Use another student record', 'portal-text-action', resetPortal));
     experience.appendChild(card);
     experience.hidden = false;
@@ -53,86 +53,16 @@
     experience.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const showReport = () => {
-    if (!resultData) return;
-    experience.replaceChildren();
-    const sheet = element('section', 'portal-report-sheet');
-    const header = element('header', 'portal-report-header');
-    const logo = document.createElement('img');
-    logo.src = 'assets/images/markaz-logo.jpg';
-    logo.alt = 'MARKAZ school logo';
-    logo.className = 'portal-report-logo';
-    const brand = element('div', 'portal-report-brand');
-    brand.append(element('p', 'portal-report-kicker', 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN'),
-      element('h2', '', 'MARKAZ'),
-      element('p', 'portal-report-address', 'COMPENSATION LAYOUT, OLD KUTUNKU, GWAGWALADA, ABUJA'));
-    header.append(logo, brand);
-    sheet.append(header);
-
-    const title = element('div', 'portal-report-title');
-    title.append(element('span', 'portal-eyebrow', 'OFFICIAL ACADEMIC RECORD'),
-      element('h1', '', 'STUDENT RESULT'),
-      element('p', '', resultData.academic_period.term_name + ' · ' + resultData.academic_period.session_name));
-    sheet.append(title);
-
-    const info = element('div', 'portal-report-student-info');
-    [
-      ['Student Name', resultData.student.name],
-      ['Admission Number', resultData.student.admission_number],
-      ['Class', resultData.student.class_name],
-      ['Academic Term', resultData.academic_period.term_name],
-      ['Academic Session', resultData.academic_period.session_name]
-    ].forEach(([label, value]) => {
-      const item = element('div', 'portal-report-info-item');
-      item.append(element('span', '', label), element('strong', '', value));
-      info.appendChild(item);
+  const openOfficialReport = () => {
+    if (!resultData?.student?.id || !resultData?.student?.class_id) return;
+    const query = new URLSearchParams({
+      student_id: String(resultData.student.id),
+      class_id: String(resultData.student.class_id),
+      class_type: 'conventional',
+      student_portal: '1',
+      print: '1'
     });
-    sheet.appendChild(info);
-
-    const tableWrap = element('div', 'portal-report-table-wrap');
-    const table = element('table', 'portal-report-table');
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    ['Subject', 'CA 1', 'CA 2', 'Exam', 'Total', 'Remark'].forEach(label => headerRow.appendChild(element('th', '', label)));
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-    const tbody = document.createElement('tbody');
-    resultData.subjects.forEach(subject => {
-      const row = document.createElement('tr');
-      [subject.name, subject.ca1, subject.ca2, subject.exam, subject.total,
-        subject.result_remark || subject.teacher_remark || '—'].forEach(value => {
-        row.appendChild(element('td', '', value === null || value === '' ? '—' : value));
-      });
-      tbody.appendChild(row);
-    });
-    table.appendChild(tbody);
-    tableWrap.appendChild(table);
-    sheet.appendChild(tableWrap);
-
-    const summary = element('div', 'portal-report-summary');
-    [
-      ['Total Score', resultData.performance.total_score],
-      ['Subjects Scored', resultData.performance.subjects_scored],
-      ['Average', resultData.performance.average ?? '—']
-    ].forEach(([label, value]) => {
-      const item = element('div', 'portal-report-summary-item');
-      item.append(element('span', '', label), element('strong', '', value));
-      summary.appendChild(item);
-    });
-    sheet.appendChild(summary);
-
-    if (resultData.academic_period.examination_date) {
-      sheet.appendChild(element('p', 'portal-report-date', 'Examination Date: ' + resultData.academic_period.examination_date));
-    }
-    sheet.appendChild(element('p', 'portal-report-blessing', 'Mashallah. Barakallahu fi. May Allah increase you in beneficial knowledge.'));
-    sheet.appendChild(element('p', 'portal-report-footer', '© MARKAZ · Centre for Learning and Memorization of the Glorious Qur’an'));
-
-    const actions = element('div', 'portal-report-actions no-print');
-    actions.append(actionButton('Print / Save as PDF', 'portal-primary-action', () => window.print()),
-      actionButton('Back to welcome', 'portal-secondary-action', showWelcome));
-    experience.append(sheet, actions);
-    experience.hidden = false;
-    experience.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.location.assign('student-result-print.html?' + query.toString());
   };
 
   const resetPortal = () => {
