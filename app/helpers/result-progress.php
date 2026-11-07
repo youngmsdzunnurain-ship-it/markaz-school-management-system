@@ -20,7 +20,9 @@ function summarizeResultProgress(array $rows): array
             continue;
         }
 
-        $key = $type . ':' . $classId . ':' . $studentId;
+        // A student enrolled in both systems is still one person for the student cards.
+        // Keep each required subject entry in the denominator, but aggregate status by student ID.
+        $key = (string) $studentId;
         if (!isset($students[$key])) {
             $students[$key] = ['required' => 0, 'started' => 0, 'completed' => 0];
         }
