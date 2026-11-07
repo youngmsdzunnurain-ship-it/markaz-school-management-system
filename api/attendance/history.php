@@ -68,7 +68,7 @@ $studentClassExpression = $classType === 'arabic'
 $studentsStmt = $pdo->prepare(
     "SELECT s.id, s.admission_number, s.first_name, s.middle_name, s.last_name
      FROM students s
-     WHERE {$studentClassExpression} = ? AND s.is_active = 1
+     WHERE {$studentClassExpression} = ?
      ORDER BY s.last_name, s.first_name, s.middle_name, s.admission_number"
 );
 $studentsStmt->execute([(int) $classId]);
