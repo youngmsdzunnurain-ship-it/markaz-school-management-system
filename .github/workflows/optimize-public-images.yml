@@ -9,23 +9,23 @@ permissions:
 jobs:
   optimize:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install WebP encoder
+      - name: Install image decoders and WebP tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y webp
+          sudo apt-get install -y webp ffmpeg imagemagick
 
-      - name: Audit, deduplicate, and optimize images
+      - name: Audit, recover, and optimize images
         shell: bash
         run: |
           set -uo pipefail
           mkdir -p optimized-images
           report="image-optimization-report.csv"
-          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status\n' > "$report"
+          printf 'source,sha256,source_bytes,optimized_file,optimized_bytes,status,decoder\n' > "$report"
 
           declare -A seen_hash=()
           declare -A seen_output=()
@@ -33,6 +33,8 @@ jobs:
           converted=0
           duplicates=0
           failed=0
+          workdir="$(mktemp -d)"
+          trap 'rm -rf "$workdir"' EXIT
 
           while IFS= read -r -d '' source; do
             count=$((count + 1))
@@ -42,34 +44,64 @@ jobs:
 
             if [[ -n "${seen_hash[$hash]:-}" ]]; then
               output="${seen_output[$hash]}"
-              output_bytes=0
-              [[ -f "$output" ]] && output_bytes="$(wc -c < "$output" | tr -d ' ')"
-              printf '"%s",%s,%s,"%s",%s,DUPLICATE\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
+              output_bytes="$(wc -c < "$output" | tr -d ' ')"
+              printf '"%s",%s,%s,"%s",%s,DUPLICATE,original-hash\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" >> "$report"
               duplicates=$((duplicates + 1))
               continue
             fi
 
             output="optimized-images/${relative%.*}.webp"
             mkdir -p "$(dirname "$output")"
+            is_png=0
+            [[ "${source,,}" == *.png ]] && is_png=1
+            decoder="native"
 
-            if [[ "${source,,}" == *.png ]]; then
-              # Lossless WebP preserves transparency for logos and PNG artwork.
-              if cwebp -quiet -lossless -exact -m 6 -mt "$source" -o "$output"; then
-                status="OPTIMIZED_LOSSLESS"
+            encode() {
+              if (( is_png )); then
+                cwebp -quiet -lossless -exact -m 6 -mt "$1" -o "$output"
               else
-                status="FAILED_SOURCE_UNREADABLE"
+                cwebp -quiet -q 88 -m 6 -mt "$1" -o "$output"
+              fi
+            }
+
+            # First try the original bytes directly.
+            if ! encode "$source"; then
+              rm -f "$output"
+              decoded="$workdir/recovered-${count}.png"
+              decoder="ffmpeg"
+              # FFmpeg can recover some malformed JPEG/PNG streams that cwebp rejects.
+              if ! ffmpeg -y -v error -err_detect ignore_err -i "$source" -frames:v 1 "$decoded" </dev/null; then
+                rm -f "$decoded"
+                decoder="imagemagick"
+                if ! magick "$source[0]" -strip "PNG32:$decoded" 2>"$workdir/imagemagick-${count}.log"; then
+                  rm -f "$decoded"
+                  decoder="none"
+                fi
+              fi
+
+              if [[ -s "$decoded" ]]; then
+                if encode "$decoded"; then
+                  status="OPTIMIZED_RECOVERED"
+                else
+                  rm -f "$output"
+                  status="FAILED_DECODED_BUT_NOT_ENCODED"
+                fi
+              else
+                rm -f "$output"
+                status="FAILED_UNREADABLE_BY_ALL_DECODERS"
               fi
             else
-              if cwebp -quiet -q 88 -m 6 -mt "$source" -o "$output"; then
-                status="OPTIMIZED_Q88"
-              else
-                status="FAILED_SOURCE_UNREADABLE"
-              fi
+              if (( is_png )); then status="OPTIMIZED_LOSSLESS"; else status="OPTIMIZED_Q88"; fi
+            fi
+
+            # Reject incomplete or invalid WebP output before including it in the artifact.
+            if [[ "$status" == OPTIMIZED* ]] && ! dwebp -quiet "$output" -o /dev/null; then
+              rm -f "$output"
+              status="FAILED_WEBP_VALIDATION"
             fi
 
             if [[ "$status" == FAILED* ]]; then
-              rm -f "$output"
-              printf '"%s",%s,%s,,0,%s\n' "$relative" "$hash" "$source_bytes" "$status" >> "$report"
+              printf '"%s",%s,%s,,0,%s,%s\n' "$relative" "$hash" "$source_bytes" "$status" "$decoder" >> "$report"
               failed=$((failed + 1))
               continue
             fi
@@ -77,12 +109,15 @@ jobs:
             seen_hash["$hash"]=1
             seen_output["$hash"]="$output"
             output_bytes="$(wc -c < "$output" | tr -d ' ')"
-            printf '"%s",%s,%s,"%s",%s,%s\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" >> "$report"
+            printf '"%s",%s,%s,"%s",%s,%s,%s\n' "$relative" "$hash" "$source_bytes" "${output#optimized-images/}" "$output_bytes" "$status" "$decoder" >> "$report"
             converted=$((converted + 1))
           done < <(find public/assets/images -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 | sort -z)
 
-          printf '\nScanned: %s\nUnique conversions: %s\nDuplicates: %s\nFailed conversions: %s\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
+          printf '\nScanned: %s\nValidated WebP outputs: %s\nDuplicates: %s\nUnrecoverable/failed: %s\n' "$count" "$converted" "$duplicates" "$failed" | tee image-optimization-summary.txt
           echo "Original files were not modified."
+
+          # The audit itself succeeds even when a source cannot be recovered;
+          # the CSV clearly records each such file instead of hiding it.
 
       - name: Upload optimized images and audit report
         uses: actions/upload-artifact@v4
