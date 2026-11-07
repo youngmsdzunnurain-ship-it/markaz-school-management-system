@@ -118,9 +118,8 @@ academicArchiveCheck(
     'academic entry reset must be restricted to a senior admin, verify password, and require the exact destructive confirmation phrase'
 );
 academicArchiveCheck(
-    str_contains($resetApi, 'DELETE FROM results') &&
-    str_contains($resetApi, 'DELETE FROM behavioural_reports') &&
-    str_contains($resetApi, 'DELETE FROM student_assessments') &&
+    str_contains($resetApi, '"DELETE FROM {$table}"') &&
+    str_contains($resetApi, "'results', 'behavioural_reports', 'student_assessments'") &&
     str_contains($resetApi, 'beginTransaction') &&
     str_contains($resetApi, 'commit()') &&
     str_contains($resetApi, 'rollBack()'),
