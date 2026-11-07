@@ -50,7 +50,7 @@
         const date = new Date(dateString + "T12:00:00");
         return Number.isNaN(date.getTime())
             ? dateString
-            : new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" }).format(date);
+            : new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(date);
     }
 
     function escapeHtml(value) {
@@ -335,7 +335,7 @@
         els.body.innerHTML = '<tr><td colspan="5" class="register-empty"><span class="empty-icon"><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i></span><strong>Loading register…</strong><span>Fetching the current class roster.</span></td></tr>';
 
         try {
-            const query = new URLSearchParams({ class_id: classId, class_type: classType, date });
+            const query = new URLSearchParams({ class_id: classId, class_type: classType, date, academic_period_id: state.periodId });
             const data = await requestJson("./api/attendance/register.php?" + query.toString());
             state.students = (data.students || []).map((student) => ({
                 ...student,
@@ -622,11 +622,12 @@
     }
 
     els.period.addEventListener("change", () => {
-        state.periodId = els.period.value;
+        const previousPeriodId = state.periodId;
         if (state.dirty && !window.confirm("Discard unsaved attendance changes and change academic term?")) {
-            els.period.value = state.periodId;
+            els.period.value = previousPeriodId;
             return;
         }
+        state.periodId = els.period.value;
         if (state.students.length) {
             state.students = [];
             state.dirty = false;
