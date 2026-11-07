@@ -840,7 +840,16 @@ window.addEventListener("resize", () => {
     }, 150);
 });
 document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) loadDashboardAttendance();
+    if (!document.hidden) {
+        loadDashboardAttendance();
+        loadDashboardStats();
+    }
+});
+
+// A dashboard restored from the browser back-forward cache does not rerun
+// its initial script. Refresh live statistics when that page is shown again.
+window.addEventListener("pageshow", () => {
+    loadDashboardStats();
 });
 
 async function loadDashboardStats() {
