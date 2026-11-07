@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     $periodStmt = $pdo->query(
-        'SELECT ap.id
+        'SELECT ap.id, ap.is_finalized
          FROM academic_periods ap
          INNER JOIN academic_sessions s
              ON s.id = ap.academic_session_id
@@ -230,6 +230,16 @@ try {
         echo json_encode([
             'success' => false,
             'message' => 'No current academic period is configured.'
+        ]);
+        exit;
+    }
+
+    if ((int) ($period['is_finalized'] ?? 0) === 1) {
+        http_response_code(423);
+        echo json_encode([
+            'success' => false,
+            'code' => 'ACADEMIC_PERIOD_FINALIZED',
+            'message' => 'Behavioural assessments for this academic period are finalized and read-only.'
         ]);
         exit;
     }
