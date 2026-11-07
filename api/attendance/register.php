@@ -41,7 +41,7 @@ if ($method === 'GET') {
           AND ar.attendance_date = ?
           AND ar.class_type = ?
           AND ar.class_id = ?
-          AND (? IS NULL OR ar.academic_period_id = ?)
+          AND (? IS NULL OR ar.academic_period_id = ? OR ar.academic_period_id IS NULL)
          WHERE {$studentClassExpression} = ?
            AND s.is_active = 1
          ORDER BY s.last_name, s.first_name, s.middle_name, s.admission_number"
@@ -176,6 +176,7 @@ try {
             (attendance_date, academic_period_id, class_type, class_id, student_id, status, remarks, marked_by)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+            academic_period_id = VALUES(academic_period_id),
             status = VALUES(status),
             remarks = VALUES(remarks),
             marked_by = VALUES(marked_by),
