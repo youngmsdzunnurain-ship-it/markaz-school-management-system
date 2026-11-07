@@ -48,8 +48,9 @@ academicPeriodCheck(
     'academic settings must load and persist the explicitly selected current term'
 );
 academicPeriodCheck(
-    str_contains($legacyAcademicApi, 'AND ap.is_current = 1') &&
-    str_contains($legacyAcademicApi, 'is_current = 1'),
+    str_contains($legacyAcademicApi, "public/api/settings/academic-period.php") &&
+    str_contains($academicApi, 'AND ap.is_current = 1') &&
+    str_contains($academicApi, 'is_current = 1'),
     'the legacy academic-period endpoint must use the same current-term record'
 );
 academicPeriodCheck(
