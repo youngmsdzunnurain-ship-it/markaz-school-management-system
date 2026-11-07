@@ -1323,7 +1323,7 @@ async function loadAcademicArchive() {
             const title = document.createElement("strong");
             title.textContent = `${item.session_name} — ${item.term_name}`;
             const meta = document.createElement("span");
-            meta.textContent = `${item.saved_result_rows} saved subject result(s) · ${item.behavioural_reports} behavioural report(s)`;
+            meta.textContent = `${item.saved_result_rows} subject(s) with scores · ${item.behavioural_reports} behavioural report(s) with ratings`;
             details.append(title, meta);
 
             const statuses = document.createElement("div");
@@ -1435,3 +1435,90 @@ async function loadAcademicArchive() {
 })();
 
 loadAcademicArchive();
+
+
+/* PROTECTED ACADEMIC ENTRY RESET — explicit password and typed confirmation. */
+(() => {
+    const button = document.getElementById("clearAcademicEntryDataButton");
+    const dialog = document.getElementById("clearAcademicEntryDataDialog");
+    const form = document.getElementById("clearAcademicEntryDataForm");
+    const password = document.getElementById("clearAcademicEntryDataPassword");
+    const confirmation = document.getElementById("clearAcademicEntryDataConfirmation");
+    const cancel = document.getElementById("cancelClearAcademicEntryData");
+    const message = document.getElementById("clearAcademicEntryDataMessage");
+
+    if (!button || !dialog || !form || !password || !confirmation) return;
+
+    const closeDialog = () => {
+        if (typeof dialog.close === "function") dialog.close();
+        else dialog.removeAttribute("open");
+        password.value = "";
+        confirmation.value = "";
+    };
+
+    button.addEventListener("click", () => {
+        password.value = "";
+        confirmation.value = "";
+        if (typeof dialog.showModal === "function") dialog.showModal();
+        else dialog.setAttribute("open", "");
+        password.focus();
+    });
+
+    cancel?.addEventListener("click", closeDialog);
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (confirmation.value.trim() !== "CLEAR ACADEMIC ENTRY DATA") {
+            confirmation.setCustomValidity("Type the exact confirmation phrase.");
+            confirmation.reportValidity();
+            return;
+        }
+        confirmation.setCustomValidity("");
+
+        const submit = form.querySelector('[type="submit"]');
+        if (!window.confirm("FINAL WARNING: All CA, examination and behavioural entries across every term will be permanently deleted. Student records and school settings will remain. Continue?")) return;
+
+        button.disabled = true;
+        if (submit) submit.disabled = true;
+        if (message) {
+            message.textContent = "Verifying password and clearing academic entry data…";
+            message.className = "form-message";
+        }
+
+        try {
+            const response = await fetch("./api/settings/clear-academic-entry-data.php", {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({
+                    confirm: true,
+                    password: password.value,
+                    confirmation: confirmation.value.trim()
+                })
+            });
+            const raw = await response.text();
+            let data;
+            try { data = JSON.parse(raw); }
+            catch { throw new Error(`Academic reset API returned a non-JSON response (HTTP ${response.status}).`); }
+            if (!response.ok || !data.success) throw new Error(data.message || "Academic entry reset failed.");
+
+            closeDialog();
+            if (message) {
+                const counts = data.deleted || {};
+                message.textContent = `Academic entries cleared: ${counts.subject_result_entries || 0} subject result rows, ${counts.behavioural_reports || 0} behavioural reports and ${counts.legacy_student_assessments || 0} legacy assessments. Student details and school setup were preserved.`;
+                message.className = "form-message success";
+            }
+            await loadAcademicArchive();
+        } catch (error) {
+            if (message) {
+                message.textContent = error.message || "Unable to clear academic entry data.";
+                message.className = "form-message error";
+            }
+        } finally {
+            button.disabled = false;
+            if (submit) submit.disabled = false;
+            password.value = "";
+        }
+    });
+})();
