@@ -38,6 +38,8 @@ jobs:
           php -l tests/academic-result-archive.test.php
           node --check public/js/settings.js
           node --check public/js/settings-panel-navigation.js
+          php -l tests/admin-settings-profile-first-render.test.php
+          php tests/admin-settings-profile-first-render.test.php
           php tests/academic-result-archive.test.php
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
