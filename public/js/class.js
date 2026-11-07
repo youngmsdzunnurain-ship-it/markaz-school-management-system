@@ -758,7 +758,9 @@
                 classResults.push(savedResult);
             }
 
-            calculateCompletion();
+            // Wait for the server-backed completion summary to refresh before
+            // reporting the save as fully reflected in the class workspace.
+            await calculateCompletion();
 
             if (resultsMessage) {
                 resultsMessage.textContent =
