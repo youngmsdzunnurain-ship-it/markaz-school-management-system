@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     s.name AS session_name, t.name AS term_name,
                     ap.is_current, ap.is_finalized, ap.finalized_at,
                     ap.results_released, ap.resumption_date,
-                    COUNT(DISTINCT r.id) AS saved_result_rows,
-                    COUNT(DISTINCT br.id) AS behavioural_reports
+                    COUNT(DISTINCT CASE WHEN r.ca1 IS NOT NULL OR r.ca2 IS NOT NULL OR r.exam IS NOT NULL THEN r.id END) AS saved_result_rows,
+                    COUNT(DISTINCT CASE WHEN br.attendance IS NOT NULL OR br.neatness IS NOT NULL OR br.contentment IS NOT NULL OR br.obedience IS NOT NULL OR br.responsiveness IS NOT NULL OR br.tolerance IS NOT NULL OR br.attentiveness IS NOT NULL OR br.truthfulness IS NOT NULL OR br.calmness IS NOT NULL THEN br.id END) AS behavioural_reports
              FROM academic_periods ap
              INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
              INNER JOIN terms t ON t.id = ap.term_id
