@@ -524,3 +524,9 @@
   background: #f1faf3;
   color: #245c37;
 }
+
+/* Keep non-profile settings sections out of the first paint.
+   The navigation script releases this guard after selecting General & Profile. */
+html.settings-page-pending .settings-page > :not(.settings-header):not(.settings-card:first-of-type):not(.markaz-global-footer) {
+    display: none;
+}
