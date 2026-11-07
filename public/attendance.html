@@ -68,6 +68,10 @@
                         <option value="arabic">Arabic class</option>
                     </select>
                 </label>
+                <label class="attendance-field" for="attendancePeriod">
+                    <span>Academic session and term</span>
+                    <select id="attendancePeriod" required><option value="">Loading academic periods…</option></select>
+                </label>
                 <label class="attendance-field attendance-class-field" for="attendanceClass">
                     <span>Class</span>
                     <select id="attendanceClass" required>
@@ -126,6 +130,22 @@
                     <span class="chart-empty">No attendance data loaded yet.</span>
                 </div>
             </div>
+        </section>
+
+        <section class="attendance-filter-panel" aria-labelledby="attendanceHistoryTitle">
+            <div class="section-heading">
+                <div><span class="attendance-eyebrow">CLASS ATTENDANCE REGISTER</span><h2 id="attendanceHistoryTitle">View attendance history</h2></div>
+                <span class="secure-note">Read-only historical register</span>
+            </div>
+            <div class="attendance-filters">
+                <label class="attendance-field" for="historyView"><span>Register period</span>
+                    <select id="historyView"><option value="week">Weekly register</option><option value="month">Monthly register</option><option value="term" selected>Full academic term</option></select>
+                </label>
+                <label class="attendance-field" for="historyDate"><span>Choose a date</span><input type="date" id="historyDate"></label>
+                <button type="button" class="button button-primary" id="loadAttendanceHistory">View register</button>
+            </div>
+            <p class="filter-help">Choose the class, category and academic term above first. P = Present · A = Absent · L = Late · E = Excused · — = No saved mark. Present and late count as days attended.</p>
+            <div id="attendanceHistoryOutput" role="status" aria-live="polite">Choose a class and academic term, then view its attendance history.</div>
         </section>
 
         <section class="attendance-filter-panel" aria-labelledby="attendanceReportsTitle">
