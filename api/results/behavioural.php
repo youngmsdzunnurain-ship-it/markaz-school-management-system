@@ -264,6 +264,25 @@ try {
         exit;
     }
 
+    // Lock the period row so this write cannot race with term finalization.
+    $pdo->beginTransaction();
+    $lockedPeriodStmt = $pdo->prepare(
+        'SELECT is_finalized FROM academic_periods WHERE id = ? FOR UPDATE'
+    );
+    $lockedPeriodStmt->execute([(int) $period['id']]);
+    $lockedPeriod = $lockedPeriodStmt->fetch();
+
+    if (!$lockedPeriod || (int) $lockedPeriod['is_finalized'] === 1) {
+        $pdo->rollBack();
+        http_response_code(423);
+        echo json_encode([
+            'success' => false,
+            'code' => 'ACADEMIC_PERIOD_FINALIZED',
+            'message' => 'Behavioural assessments for this academic period are finalized and read-only.'
+        ]);
+        exit;
+    }
+
     $stmt = $pdo->prepare(
         'INSERT INTO behavioural_reports (
             student_id,
@@ -305,11 +324,16 @@ try {
         $values['calmness']
     ]);
 
+    $pdo->commit();
+
     echo json_encode([
         'success' => true,
         'message' => 'Behavioural report saved successfully.'
     ]);
 } catch (Throwable $error) {
+    if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     http_response_code(500);
 
     echo json_encode([
