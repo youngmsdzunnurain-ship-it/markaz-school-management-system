@@ -81,13 +81,13 @@ try {
     $studentStmt->execute([$admissionNumber]);
     $student = $studentStmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$student || (int) $student['is_active'] !== 1) {
-        studentPortalError(404, 'Admission number not found or student account is inactive. Check your details or contact the school.');
+    if (!$student) {
+        studentPortalError(404, 'Admission number not found. Check your details or contact the school.');
     }
 
-    if ((int) $student['class_id'] !== (int) $class['id']) {
-        studentPortalError(422, 'The admission number and selected class do not match school records.');
-    }
+    // A student may have moved to another class or graduated since this period.
+    // Historical access is authorized against the student's saved result rows
+    // for the selected class and period, not their current class assignment.
 
     $periodStmt = $pdo->prepare(
         "SELECT ap.id, s.name AS session_name, t.name AS term_name,
@@ -115,15 +115,13 @@ try {
         "SELECT sub.id AS subject_id, sub.name AS subject_name,
                 sub.code, sub.max_ca1, sub.max_ca2, sub.max_exam,
                 r.ca1, r.ca2, r.exam, r.teacher_remark, r.result_remark
-         FROM class_subjects cs
-         INNER JOIN subjects sub
-             ON sub.id = cs.subject_id AND sub.is_active = 1
-         LEFT JOIN results r
-             ON r.subject_id = sub.id
-            AND r.student_id = ?
-            AND r.academic_period_id = ?
-         WHERE cs.class_id = ?
-         ORDER BY cs.sort_order, sub.name"
+         FROM results r
+         INNER JOIN subjects sub ON sub.id = r.subject_id
+         WHERE r.student_id = ?
+           AND r.academic_period_id = ?
+           AND r.class_type = 'conventional'
+           AND r.class_id = ?
+         ORDER BY sub.name"
     );
     $resultsStmt->execute([
         (int) $student['id'],
