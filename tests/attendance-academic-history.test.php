@@ -26,4 +26,4 @@ attendanceHistoryCheck(str_contains($page, 'attendancePeriod') && str_contains($
 attendanceHistoryCheck(str_contains($script, 'academic_period_id: Number(state.periodId)') && str_contains($script, 'loadAttendanceHistory') && str_contains($script, 'attended_count'), 'browser must submit selected term and render student totals');
 attendanceHistoryCheck(str_contains($style, 'attendance-history-table') && str_contains($style, 'position: sticky'), 'historical register must keep student identity visible while scrolling');
 
-echo "Attendance academic-period and historical register regression checks passed.\\n";
+echo "Attendance academic-period and historical register regression checks passed.\n";
