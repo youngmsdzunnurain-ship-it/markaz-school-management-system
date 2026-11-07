@@ -61,16 +61,6 @@ if (!$arabicClassId) {
     exit;
 }
 
-if ($portion === '') {
-    http_response_code(422);
-
-    echo json_encode([
-        'success' => false,
-        'message' => 'Portion of memorization is required.'
-    ]);
-    exit;
-}
-
 $classStmt = $pdo->prepare(
     'SELECT id
      FROM arabic_classes
