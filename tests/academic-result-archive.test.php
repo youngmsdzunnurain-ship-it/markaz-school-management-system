@@ -10,6 +10,7 @@ function academicArchiveCheck(bool $condition, string $message): void
 }
 
 $periodApi = file_get_contents(__DIR__ . '/../public/api/settings/academic-period.php');
+$archiveRoute = file_get_contents(__DIR__ . '/../public/api/settings/finalize-academic-period.php');
 $finalizeApi = file_get_contents(__DIR__ . '/../api/settings/finalize-academic-period.php');
 $resultSave = file_get_contents(__DIR__ . '/../api/results/save.php');
 $behaviourApi = file_get_contents(__DIR__ . '/../api/results/behavioural.php');
@@ -38,6 +39,23 @@ academicArchiveCheck(
     str_contains($periodApi, 'beginTransaction') &&
     str_contains($periodApi, 'FOR UPDATE'),
     'term progression must be transactional and serialize concurrent switches'
+);
+academicArchiveCheck(
+    str_contains($archiveRoute, "require_once") &&
+    str_contains($archiveRoute, "api/settings/finalize-academic-period.php"),
+    'the public Settings URL must resolve to the protected finalization API instead of returning an HTML 404 page'
+);
+academicArchiveCheck(
+    str_contains($finalizeApi, 'password_verify') &&
+    str_contains($finalizeApi, 'password_hash') &&
+    str_contains($finalizeApi, "['password']"),
+    'finalizing a term must require and verify the active senior administrator password on the server'
+);
+academicArchiveCheck(
+    str_contains($settingsPage, 'academicFinalizePasswordDialog') &&
+    str_contains($settingsPage, 'type="password"') &&
+    str_contains($settingsJs, 'academicFinalizePassword'),
+    'the finalization action must require an explicit password entry in the Settings UI'
 );
 academicArchiveCheck(
     str_contains($finalizeApi, 'is_finalized = 1') &&
