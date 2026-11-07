@@ -296,15 +296,6 @@ document.addEventListener("click", async (event) => {
 
     const portion = input.value.trim();
 
-    if (!portion) {
-        showMemorizationMessage(
-            "Please enter a portion of memorization.",
-            "error"
-        );
-        input.focus();
-        return;
-    }
-
     button.disabled = true;
     button.textContent = "Saving...";
 
@@ -1044,7 +1035,13 @@ loadAcademicPeriodSettings();
         headers: { "Content-Type": "application/json" },
         ...(body ? { body: JSON.stringify(body) } : {})
       });
-      const data = await response.json();
+      const raw = await response.text();
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        throw new Error("The locked-accounts endpoint returned a non-JSON response. Check the API route and server error log.");
+      }
       if (!response.ok || !data.success) throw new Error(data.message || "Request failed.");
       return data;
     }

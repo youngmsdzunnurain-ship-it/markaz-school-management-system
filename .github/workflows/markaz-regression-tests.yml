@@ -36,7 +36,12 @@ jobs:
           php -l api/results/behavioural.php
           php -l api/results/student-portal.php
           php -l tests/academic-result-archive.test.php
+          php -l api/settings/memorization.php
+          php -l public/api/settings/login-lockouts.php
+          php -l tests/settings-memorization-social-lockouts.test.php
           node --check public/js/settings.js
+          node --check public/js/markaz-global.js
+          php tests/settings-memorization-social-lockouts.test.php
           node --check public/js/settings-panel-navigation.js
           php -l tests/admin-settings-profile-first-render.test.php
           php tests/admin-settings-profile-first-render.test.php
