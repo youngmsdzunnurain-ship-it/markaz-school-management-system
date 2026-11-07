@@ -220,6 +220,20 @@
         <p class="academic-archive-warning" id="academicArchiveWarning" role="note">Only finalize after all results and behavioural assessments have been checked. This action cannot be undone from Settings.</p>
         <div class="form-message" id="academicArchiveMessage" role="status" aria-live="polite"></div>
 
+        <dialog class="academic-finalize-dialog" id="academicFinalizePasswordDialog" aria-labelledby="academicFinalizeDialogTitle">
+            <form id="academicFinalizePasswordForm">
+                <span class="settings-label">SENSITIVE ACTION</span>
+                <h3 id="academicFinalizeDialogTitle">Confirm term finalization</h3>
+                <p>This action locks the current academic term. Enter your administrator password to continue.</p>
+                <label for="academicFinalizePassword">Administrator password</label>
+                <input type="password" id="academicFinalizePassword" name="password" autocomplete="current-password" required>
+                <div class="academic-finalize-dialog-actions">
+                    <button type="button" id="cancelAcademicFinalize">Cancel</button>
+                    <button type="submit">Verify &amp; Finalize Term</button>
+                </div>
+            </form>
+        </dialog>
+
         <div class="academic-archive-history-heading">
             <div>
                 <h3>Academic History</h3>
