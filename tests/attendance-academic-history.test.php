@@ -30,5 +30,9 @@ attendanceHistoryCheck(str_contains($classesApi, "\$classTypeFilter") && str_con
 attendanceHistoryCheck(str_contains($page, 'attendancePeriod') && str_contains($page, 'historyView') && str_contains($page, 'attendanceHistoryOutput'), 'page must expose term selection and historical register controls');
 attendanceHistoryCheck(str_contains($script, 'academic_period_id: Number(state.periodId)') && str_contains($script, 'loadAttendanceHistory') && str_contains($script, 'attended_count'), 'browser must submit selected term and render student totals');
 attendanceHistoryCheck(str_contains($style, 'attendance-history-table') && str_contains($style, 'position: sticky'), 'historical register must keep student identity visible while scrolling');
+attendanceHistoryCheck(str_contains($page, 'attendance-overview-layout') && substr_count($page, 'attendance-summary-grid') === 1 && strpos($page, 'attendance-summary-grid') > strpos($page, 'attendance-chart-panel'), 'attendance chart and five summary cards must share one overview panel near the top');
+attendanceHistoryCheck(str_contains($style, 'attendance-overview-layout') && str_contains($style, '@media (max-width: 720px)') && !str_contains($style, '!important'), 'attendance overview must use responsive consolidated CSS without override patches');
+attendanceHistoryCheck(str_contains($classesApi, "NOT EXISTS (SELECT 1 FROM arabic_classes") && str_contains($classesApi, "LOWER(TRIM(ac.name)) = LOWER(TRIM(c.name))"), 'conventional class queries must exclude Arabic class names duplicated in the conventional class table');
+attendanceHistoryCheck(str_contains($page, 'attendance.css?v=20261108-overview1') && str_contains($page, 'attendance.js?v=20261108-overview1'), 'attendance assets must use fresh versions so mobile browsers do not reuse stale layout or class-list code');
 
 echo "Attendance academic-period and historical register regression checks passed.\n";
