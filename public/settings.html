@@ -190,6 +190,47 @@
         </form>
     </section>
 
+    <section class="settings-card academic-archive-settings-card">
+        <div class="settings-card-heading">
+            <div>
+                <span class="settings-label">ACADEMIC RECORDS</span>
+                <h2>Academic Records &amp; Term Archive</h2>
+                <p>Finalize a completed term to preserve its results as a read-only academic record before moving to the next term.</p>
+            </div>
+        </div>
+
+        <div class="academic-archive-current" id="academicArchiveCurrent" aria-live="polite">
+            <span class="academic-archive-status-dot" aria-hidden="true"></span>
+            <div>
+                <strong id="academicArchiveCurrentTitle">Loading current academic period…</strong>
+                <p id="academicArchiveCurrentDescription">Checking term status.</p>
+            </div>
+        </div>
+
+        <div class="academic-archive-actions">
+            <div>
+                <strong>Finalize and lock current term</strong>
+                <p>After finalization, result scores and behavioural assessments cannot be edited. Students can still view the term after its results are released.</p>
+            </div>
+            <button type="button" id="finalizeAcademicPeriodButton" class="academic-archive-finalize" disabled>
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                Finalize &amp; Lock Term
+            </button>
+        </div>
+        <p class="academic-archive-warning" id="academicArchiveWarning" role="note">Only finalize after all results and behavioural assessments have been checked. This action cannot be undone from Settings.</p>
+        <div class="form-message" id="academicArchiveMessage" role="status" aria-live="polite"></div>
+
+        <div class="academic-archive-history-heading">
+            <div>
+                <h3>Academic History</h3>
+                <p>Previous and current terms remain listed here. Released terms stay available through the Student Results portal.</p>
+            </div>
+        </div>
+        <div class="academic-archive-history" id="academicArchiveHistory">
+            <p class="settings-loading">Loading academic history…</p>
+        </div>
+    </section>
+
     <section class="settings-card result-footer-settings-card">
         <div class="settings-card-heading">
             <div>
