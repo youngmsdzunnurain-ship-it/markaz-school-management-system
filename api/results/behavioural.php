@@ -3,10 +3,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-requireResultStaff();
+$studentPortalScope = $_SERVER['REQUEST_METHOD'] === 'GET'
+    ? studentPortalResultScope()
+    : null;
+if ($studentPortalScope === null) {
+    requireResultStaff();
+}
 
 function requireFullClassBehaviourAccess(PDO $pdo, int $studentId, string $classType, int $classId): void
 {
@@ -56,7 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     $pdo = db();
 
-    if (currentAdminRole() === 'teacher') {
+    if ($studentPortalScope !== null && (int) $studentId !== (int) $studentPortalScope['student_id']) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Student result access has expired or is invalid.']);
+        exit;
+    }
+
+    if ($studentPortalScope === null && currentAdminRole() === 'teacher') {
         $classId = filter_input(INPUT_GET, 'class_id', FILTER_VALIDATE_INT);
         requireFullClassBehaviourAccess(
             $pdo, (int) $studentId,
@@ -65,16 +77,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         );
     }
 
-    $periodStmt = $pdo->query(
-        'SELECT ap.id, ap.is_finalized
-         FROM academic_periods ap
-         INNER JOIN academic_sessions s
-             ON s.id = ap.academic_session_id
-         WHERE s.is_current = 1
-           AND ap.is_current = 1
-         ORDER BY ap.id DESC
-         LIMIT 1'
-    );
+    if ($studentPortalScope !== null) {
+        $periodStmt = $pdo->prepare(
+            'SELECT id, is_finalized FROM academic_periods WHERE id = ? LIMIT 1'
+        );
+        $periodStmt->execute([(int) $studentPortalScope['academic_period_id']]);
+    } else {
+        $periodStmt = $pdo->query(
+            'SELECT ap.id, ap.is_finalized
+             FROM academic_periods ap
+             INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+             WHERE s.is_current = 1 AND ap.is_current = 1
+             ORDER BY ap.id DESC LIMIT 1'
+        );
+    }
 
     $period = $periodStmt->fetch();
 
