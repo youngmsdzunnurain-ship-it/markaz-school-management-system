@@ -107,4 +107,43 @@ academicArchiveCheck(
     'archive controls must appear as a clean category in the existing settings navigation'
 );
 
+
+$resetApi = file_get_contents(__DIR__ . '/../api/settings/clear-academic-entry-data.php');
+$resetRoute = file_get_contents(__DIR__ . '/../public/api/settings/clear-academic-entry-data.php');
+academicArchiveCheck(
+    str_contains($resetApi, 'requireSeniorAdmin()') &&
+    str_contains($resetApi, 'password_verify') &&
+    str_contains($resetApi, "['confirmation']") &&
+    str_contains($resetApi, 'CLEAR ACADEMIC ENTRY DATA'),
+    'academic entry reset must be restricted to a senior admin, verify password, and require the exact destructive confirmation phrase'
+);
+academicArchiveCheck(
+    str_contains($resetApi, 'DELETE FROM results') &&
+    str_contains($resetApi, 'DELETE FROM behavioural_reports') &&
+    str_contains($resetApi, 'DELETE FROM student_assessments') &&
+    str_contains($resetApi, 'beginTransaction') &&
+    str_contains($resetApi, 'commit()') &&
+    str_contains($resetApi, 'rollBack()'),
+    'reset must transactionally clear score and behaviour entries across every period'
+);
+academicArchiveCheck(
+    !preg_match('/DELETE\\s+FROM\\s+(students|admins|classes|subjects|academic_sessions|terms)\\b/i', $resetApi),
+    'reset must preserve student details, accounts, classes, subjects, sessions, and terms'
+);
+academicArchiveCheck(
+    str_contains($resetRoute, 'api/settings/clear-academic-entry-data.php'),
+    'the public reset route must point to the protected reset API'
+);
+academicArchiveCheck(
+    str_contains($settingsPage, 'clearAcademicEntryDataButton') &&
+    str_contains($settingsPage, 'clearAcademicEntryDataDialog') &&
+    str_contains($settingsPage, 'CLEAR ACADEMIC ENTRY DATA'),
+    'Settings must expose a separately confirmed academic-entry reset action'
+);
+academicArchiveCheck(
+    str_contains($settingsJs, 'clear-academic-entry-data.php') &&
+    str_contains($settingsJs, 'clearAcademicEntryDataButton'),
+    'the Settings UI must call the protected academic-entry reset endpoint'
+);
+
 echo "Academic result archive and term progression regression tests passed.\\n";
