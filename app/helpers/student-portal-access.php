@@ -8,7 +8,7 @@ require_once __DIR__ . '/../middleware/session.php';
  * The grant is created only after lookup verifies the student, conventional
  * class, selected academic period, and school result-release status.
  */
-function studentPortalResultScope(): ?array
+function studentPortalResultScope(bool $requireQueryMatch = true): ?array
 {
     startSecureSession();
     $scope = $_SESSION['student_portal_result_access'] ?? null;
@@ -20,6 +20,10 @@ function studentPortalResultScope(): ?array
     if ((int) ($scope['expires_at'] ?? 0) < time()) {
         unset($_SESSION['student_portal_result_access']);
         return null;
+    }
+
+    if (!$requireQueryMatch) {
+        return $scope;
     }
 
     $studentId = filter_input(INPUT_GET, 'student_id', FILTER_VALIDATE_INT);
