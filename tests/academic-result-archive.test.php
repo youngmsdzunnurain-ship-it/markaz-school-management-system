@@ -153,7 +153,7 @@ academicArchiveCheck(
     'reset validation and server errors must be visible inside the open modal'
 );
 academicArchiveCheck(
-    str_contains($settingsJs, 'replace(/\\s+/g, " ").toUpperCase()') &&
+    str_contains($settingsJs, 'replace(/\s+/g, " ").toUpperCase()') &&
     str_contains($resetApi, 'preg_replace') &&
     str_contains($resetApi, 'strtoupper'),
     'the confirmation phrase must tolerate mobile keyboard casing and repeated whitespace on client and server'
