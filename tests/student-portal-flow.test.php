@@ -34,6 +34,6 @@ portalAssert(str_contains($script, 'textContent'), 'student-supplied and API tex
 portalAssert(str_contains($css, '@media print'), 'the result has a dedicated print layout');
 portalAssert(str_contains($css, '.role-login-page::before'), 'decorative portal watermark is excluded from print');
 portalAssert(str_contains($api, "results_released"), 'public lookup still checks school result-release status');
-portalAssert(str_contains($api, "'class_type' => 'conventional'"), 'existing conventional result isolation remains intact');
+portalAssert(str_contains($api, "AND r.class_type = 'conventional'"), 'existing conventional result isolation remains intact');
 
 echo "Student portal welcome-and-print flow regression checks passed." . PHP_EOL;
