@@ -44,7 +44,7 @@ if (
 
 try {
     require_once __DIR__ . '/../../app/middleware/session.php';
-    startSecureSession();
+    startStudentPortalSession();
     session_regenerate_id(true);
 
     $pdo = db();
