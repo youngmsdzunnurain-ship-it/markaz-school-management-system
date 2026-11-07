@@ -604,8 +604,6 @@
 
 
 /* Academics hero: keep text comfortably away from screen edges */
-
-
 .academics-page .academics-hero-content {
     box-sizing: border-box;
     padding-inline: clamp(18px, 4vw, 48px);
@@ -979,4 +977,7 @@
 }
 
 /* Keep hero text comfortably inset */
-
+.academics-page .academics-hero-content {
+    box-sizing: border-box;
+    padding-inline: clamp(18px, 4vw, 48px);
+}
