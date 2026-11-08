@@ -78,3 +78,29 @@ jobs:
           php tests/public-network-resilience.test.php
           node --check public/js/public-resilience.js
           node --check public/sw.js
+
+  teacher-document-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Verify teacher portal permission boundaries
+        run: |
+          set -e
+          php -l api/settings/accounts.php
+          php -l app/middleware/auth.php
+          php -l api/auth/me.php
+          php -l api/classes/list.php
+          php -l api/students/list.php
+          php -l api/results/student.php
+          php -l tests/teacher-document-permissions.test.php
+          node --check public/js/account-management.js
+          node --check public/js/dashboard.js
+          node --check public/js/class.js
+          node --check public/js/student-result.js
+          php tests/teacher-document-permissions.test.php
