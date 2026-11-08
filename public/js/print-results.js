@@ -3,6 +3,7 @@
 const $ = id => document.getElementById(id);
 let classes = [];
 let students = [];
+let currentRole = "admin";
 
 function listFrom(payload, key) {
     if (Array.isArray(payload)) return payload;
@@ -32,6 +33,10 @@ async function getList(url, key) {
 
 function classId(item) {
     return String(item.id ?? item.class_id ?? "");
+}
+
+function classType(item) {
+    return item.class_type === "arabic" ? "arabic" : "conventional";
 }
 
 function className(item) {
@@ -78,17 +83,17 @@ function renderClasses() {
     const container = $("classesList");
     container.replaceChildren();
 
-    const conventionalClasses = classes.filter(item =>
-        isConventionalClass(className(item))
-    );
+    const availableClasses = currentRole === "teacher"
+        ? classes
+        : classes.filter(item => isConventionalClass(className(item)));
 
-    if (!conventionalClasses.length) {
+    if (!availableClasses.length) {
         $("classMessage").textContent = "No classes were found.";
         return;
     }
 
     $("classMessage").textContent = "Choose the class to print.";
-    conventionalClasses.forEach(item => {
+    availableClasses.forEach(item => {
         const id = classId(item);
         if (!id) return;
 
@@ -97,7 +102,8 @@ function renderClasses() {
         button.className = "class-button";
 
         const title = document.createElement("strong");
-        title.textContent = displayClassName(item);
+        title.textContent = displayClassName(item) +
+            (classType(item) === "arabic" ? " · Arabic" : " · Conventional");
         const hint = document.createElement("small");
         hint.textContent = "View students and print results";
 
@@ -107,11 +113,11 @@ function renderClasses() {
     });
 }
 
-function printStudent(sid, cid) {
+function printStudent(sid, cid, type = "conventional") {
     const params = new URLSearchParams({
         student_id: String(sid),
         class_id: String(cid),
-        class_type: "conventional",
+        class_type: type,
         print: "1",
         display_version: "20261106-targeted-student-display-fix"
     });
@@ -140,7 +146,7 @@ async function getClassCompletion(classIdValue, classType = "conventional") {
   };
 }
 
-async function printAllEligibleStudents(classIdValue, studentIds) {
+async function printAllEligibleStudents(classIdValue, studentIds, type = "conventional") {
   const popup = window.open("", "_blank");
   if (!popup) {
     alert("Please allow pop-ups to print the class results.");
@@ -193,7 +199,7 @@ async function printAllEligibleStudents(classIdValue, studentIds) {
       frame.src = "./student-result-print.html?" + new URLSearchParams({
         student_id: String(sid),
         class_id: String(classIdValue),
-        class_type: "conventional",
+        class_type: type,
         print: "1"
       }).toString();
       document.body.appendChild(frame);
@@ -246,8 +252,10 @@ async function showStudents(selectedClass) {
   $("selectedClassTitle").textContent = displayClassName(selectedClass);
 
   const id = classId(selectedClass);
+  const selectedType = classType(selectedClass);
   const matching = students.filter(item =>
-    String(item.class_id ?? item.main_class_id ?? "") === id
+    String(item.class_id ?? item.main_class_id ?? "") === id &&
+    classType(item) === selectedType
   );
   const container = $("studentsList");
   container.replaceChildren();
@@ -288,7 +296,7 @@ async function showStudents(selectedClass) {
     button.textContent = "Checking…";
     button.disabled = true;
     button.addEventListener("click", () => {
-      if (!button.disabled) printStudent(sid, id);
+      if (!button.disabled) printStudent(sid, id, selectedType);
     });
 
     details.append(name, status, missing);
@@ -300,7 +308,7 @@ async function showStudents(selectedClass) {
   if (!matching.length) return;
 
   try {
-    const completion = await getClassCompletion(id, "conventional");
+    const completion = await getClassCompletion(id, selectedType);
 
     // Ignore a late response if the user has navigated to another class.
     if ($("selectedClassTitle").textContent !== displayClassName(selectedClass)) return;
@@ -341,7 +349,7 @@ async function showStudents(selectedClass) {
     printAllButton.hidden = eligibleIds.length === 0;
     printAllButton.disabled = eligibleIds.length === 0;
     printAllButton.textContent = "Print All Eligible (" + eligibleIds.length + ")";
-    printAllButton.onclick = () => printAllEligibleStudents(id, eligibleIds);
+    printAllButton.onclick = () => printAllEligibleStudents(id, eligibleIds, selectedType);
     $("studentMessage").textContent =
       "Only students meeting the configured result-entry completion threshold can be printed. Each eligible student will print on a separate page.";
   } catch (error) {
@@ -367,6 +375,16 @@ $("backToClasses").addEventListener("click", () => {
 
 async function initialize() {
     try {
+        const identityResponse = await fetch("./api/auth/me.php", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+        const identity = await identityResponse.json();
+        if (!identityResponse.ok || !identity.success || !identity.admin) {
+            throw new Error(identity.message || "Please sign in again.");
+        }
+        currentRole = identity.admin.role || "";
+
         const results = await Promise.all([
             getList("./api/classes/list.php", "classes"),
             getList("./api/students/list.php", "students")
@@ -384,7 +402,11 @@ const directParams = new URLSearchParams(window.location.search);
 if (directParams.get("student_id") && directParams.get("class_id")) {
     $("classesPanel").classList.add("hidden");
     $("studentsPanel").classList.add("hidden");
-    printStudent(directParams.get("student_id"), directParams.get("class_id"));
+    printStudent(
+        directParams.get("student_id"),
+        directParams.get("class_id"),
+        directParams.get("class_type") === "arabic" ? "arabic" : "conventional"
+    );
 } else {
     initialize();
 }
