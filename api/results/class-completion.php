@@ -106,7 +106,7 @@ try {
     if ($isTeacher && !$teacherFullClass) {
         $teacherSubjectIds = array_values(array_unique($teacherSubjectIds));
         if (!$teacherSubjectIds) {
-            $subjects = [];
+            $subjectSql .= ' AND 1 = 0';
         } else {
             $subjectSql .= ' AND s.id IN (' . implode(',', array_fill(0, count($teacherSubjectIds), '?')) . ')';
             $subjectParams = array_merge($subjectParams, $teacherSubjectIds);
