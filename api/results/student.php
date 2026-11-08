@@ -5,11 +5,16 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
+require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
-requireResultStaff();
+$studentPortalScope = studentPortalResultScope();
+if ($studentPortalScope === null) {
+    requireResultStaff();
+}
 
-// Printing requires the independently assigned permission for every role.
-if (($_GET['print'] ?? '') === '1') {
+// Staff printing still requires its independently assigned permission.
+// A verified student portal session is read-only and cannot enter staff actions.
+if (($_GET['print'] ?? '') === '1' && $studentPortalScope === null) {
     requireRolePermission('print_results');
 }
 header('Content-Type: application/json; charset=utf-8');
@@ -111,9 +116,28 @@ try {
     /*
      * CURRENT ACADEMIC PERIOD
      */
-    $classId = $classType === 'arabic'
-        ? (int) ($student['arabic_class_id'] ?? 0)
-        : (int) ($student['class_id'] ?? 0);
+    $classId = $studentPortalScope !== null
+        ? (int) $studentPortalScope['class_id']
+        : ($classType === 'arabic'
+            ? (int) ($student['arabic_class_id'] ?? 0)
+            : (int) ($student['class_id'] ?? 0));
+
+    if ($studentPortalScope !== null) {
+        $portalClassStmt = $pdo->prepare(
+            "SELECT id, name FROM classes
+             WHERE id = ? AND COALESCE(level_group, '') <> 'Quranic'
+             LIMIT 1"
+        );
+        $portalClassStmt->execute([$classId]);
+        $portalClass = $portalClassStmt->fetch();
+        if (!$portalClass) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'The selected student class is not valid.']);
+            exit;
+        }
+        $student['class_id'] = $classId;
+        $student['class_name'] = $portalClass['name'];
+    }
 
     if ($classId < 1) {
         http_response_code(422);
@@ -141,30 +165,27 @@ try {
         exit;
     }
 
-    $periodStmt = $pdo->query(
-        'SELECT
-            ap.id,
-            s.name AS session_name,
-            t.name AS term_name,
-            ap.examination_date,
-            ap.vacation_date,
-            ap.resumption_date
-
-        FROM academic_periods ap
-
-        INNER JOIN academic_sessions s
-            ON s.id = ap.academic_session_id
-
-        INNER JOIN terms t
-            ON t.id = ap.term_id
-
-        WHERE s.is_current = 1
-          AND ap.is_current = 1
-
-        ORDER BY ap.id DESC
-
-        LIMIT 1'
-    );
+    if ($studentPortalScope !== null) {
+        $periodStmt = $pdo->prepare(
+            'SELECT ap.id, s.name AS session_name, t.name AS term_name,
+                    ap.examination_date, ap.vacation_date, ap.resumption_date
+             FROM academic_periods ap
+             INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+             INNER JOIN terms t ON t.id = ap.term_id
+             WHERE ap.id = ? LIMIT 1'
+        );
+        $periodStmt->execute([(int) $studentPortalScope['academic_period_id']]);
+    } else {
+        $periodStmt = $pdo->query(
+            'SELECT ap.id, s.name AS session_name, t.name AS term_name,
+                    ap.examination_date, ap.vacation_date, ap.resumption_date
+             FROM academic_periods ap
+             INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
+             INNER JOIN terms t ON t.id = ap.term_id
+             WHERE s.is_current = 1 AND ap.is_current = 1
+             ORDER BY ap.id DESC LIMIT 1'
+        );
+    }
 
     $period = $periodStmt->fetch();
 

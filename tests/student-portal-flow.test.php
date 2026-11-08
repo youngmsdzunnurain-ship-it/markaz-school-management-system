@@ -13,27 +13,53 @@ $root = dirname(__DIR__);
 $html = file_get_contents($root . '/public/student-login.html');
 $script = file_get_contents($root . '/public/js/student-results-portal.js');
 $css = file_get_contents($root . '/public/css/student-results-portal.css');
-$api = file_get_contents($root . '/api/results/student-portal.php');
+$portalApi = file_get_contents($root . '/api/results/student-portal.php');
+$resultApi = file_get_contents($root . '/api/results/student.php');
+$behaviourApi = file_get_contents($root . '/api/results/behavioural.php');
+$printPage = file_get_contents($root . '/public/student-result-print.html');
+$resultScript = file_get_contents($root . '/public/js/student-result.js');
 $legacyRoleScript = file_get_contents($root . '/public/js/login-roles.js');
+$sessionMiddleware = file_get_contents($root . '/app/middleware/session.php');
+$portalAccessHelper = file_get_contents($root . '/app/helpers/student-portal-access.php');
 
-portalAssert(is_string($html), 'student portal page exists');
-portalAssert(is_string($script), 'dedicated student portal script exists');
-portalAssert(is_string($css), 'dedicated student portal stylesheet exists');
-portalAssert(is_string($api), 'existing public results endpoint exists');
-portalAssert(is_string($legacyRoleScript), 'existing staff login script exists');
+foreach ([
+    'student portal page' => $html,
+    'dedicated student portal script' => $script,
+    'dedicated student portal stylesheet' => $css,
+    'public lookup endpoint' => $portalApi,
+    'official result API' => $resultApi,
+    'behavioural report API' => $behaviourApi,
+    'official printable result page' => $printPage,
+    'official result page script' => $resultScript,
+    'staff login script' => $legacyRoleScript,
+    'session middleware' => $sessionMiddleware,
+    'student portal access helper' => $portalAccessHelper,
+] as $label => $content) {
+    portalAssert(is_string($content), "{$label} exists");
+}
 
-portalAssert(str_contains($html, 'data-role="student-lookup"'), 'student lookup is isolated from staff login handlers');
-portalAssert(str_contains($html, 'css/student-results-portal.css'), 'portal-specific styles load after shared login styles');
-portalAssert(str_contains($html, 'js/student-results-portal.js'), 'dedicated portal workflow is loaded');
-portalAssert(!str_contains($legacyRoleScript, 'data-role="student-lookup"'), 'staff login script does not bind the student lookup form');
-portalAssert(!str_contains($html, 'id="studentResultsPanel" class="student-results-panel"'), 'old inline result panel is not retained');
-portalAssert(str_contains($script, "api/results/student-portal.php"), 'the existing public endpoint remains the data source');
-portalAssert(str_contains($script, 'View My Result'), 'successful lookup presents a separate welcome action');
-portalAssert(str_contains($script, 'window.print()'), 'student can print or save the result through the browser print dialog');
-portalAssert(str_contains($script, 'textContent'), 'student-supplied and API text is rendered as text, not injected HTML');
-portalAssert(str_contains($css, '@media print'), 'the result has a dedicated print layout');
-portalAssert(str_contains($css, '.role-login-page::before'), 'decorative portal watermark is excluded from print');
-portalAssert(str_contains($api, "results_released"), 'public lookup still checks school result-release status');
-portalAssert(str_contains($api, "AND r.class_type = 'conventional'"), 'existing conventional result isolation remains intact');
+portalAssert(str_contains($html, 'data-role="student-lookup"'), 'student lookup remains isolated from staff login handlers');
+portalAssert(str_contains($html, 'css/student-results-portal.css'), 'portal-specific styles remain isolated');
+portalAssert(str_contains($html, 'js/student-results-portal.js'), 'dedicated portal workflow remains loaded');
+portalAssert(!str_contains($legacyRoleScript, 'data-role="student-lookup"'), 'staff login script does not bind student lookup');
+portalAssert(str_contains($script, 'View My Result'), 'successful lookup presents the welcome action');
+portalAssert(str_contains($script, 'student-result-print.html'), 'View My Result opens the existing official printable page');
+portalAssert(str_contains($script, "student_portal: '1'"), 'official report is opened in scoped student-portal mode');
+portalAssert(!str_contains($script, 'portal-report-sheet'), 'student portal does not render a second report card');
+portalAssert(!str_contains($css, '.portal-report-sheet'), 'portal stylesheet does not duplicate official report styling');
+portalAssert(str_contains($printPage, 'id="studentReportCard"'), 'official report-card template remains the destination');
+portalAssert(str_contains($resultScript, 'student_portal'), 'official report script recognises student-portal mode');
+portalAssert(str_contains($resultScript, 'window.print()'), 'student can use the official report print dialog');
+portalAssert(str_contains($portalApi, 'startStudentPortalSession'), 'successful public lookup creates a scoped session');
+portalAssert(str_contains($portalApi, 'student_portal_result_access'), 'lookup scope is tied to the verified student and period');
+portalAssert(str_contains($sessionMiddleware, 'MARKAZ_STUDENT_SESSION'), 'public student access uses a session cookie separate from staff authentication');
+portalAssert(str_contains($portalAccessHelper, "empty($_COOKIE['MARKAZ_STUDENT_SESSION'])"), 'ordinary staff requests do not start a public student session');
+portalAssert(str_contains($portalAccessHelper, 'session_write_close()'), 'invalid student scopes release the session before staff authentication continues');
+portalAssert(str_contains($portalApi, 'results_released'), 'public lookup still checks school result-release status');
+portalAssert(str_contains($portalApi, "AND r.class_type = 'conventional'"), 'public lookup preserves conventional result isolation');
+portalAssert(str_contains($resultApi, 'studentPortalResultScope()'), 'official result API accepts only a matching scoped student session');
+portalAssert(str_contains($behaviourApi, 'studentPortalResultScope()'), 'official behavioural report supports the same scoped read-only session');
+portalAssert(str_contains($resultApi, 'requireResultStaff()'), 'staff result API continues to enforce staff access when no student scope exists');
+portalAssert(str_contains($behaviourApi, 'requireResultStaff()'), 'behaviour API continues to enforce staff access when no student scope exists');
 
-echo "Student portal welcome-and-print flow regression checks passed." . PHP_EOL;
+echo "Student portal official-report integration checks passed." . PHP_EOL;

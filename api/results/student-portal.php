@@ -43,6 +43,10 @@ if (
 }
 
 try {
+    require_once __DIR__ . '/../../app/middleware/session.php';
+    startStudentPortalSession();
+    session_regenerate_id(true);
+
     $pdo = db();
 
     $accessStmt = $pdo->prepare(
@@ -140,6 +144,14 @@ try {
         studentPortalError(404, 'No results have been published for this student in the selected term and session.');
     }
 
+    $_SESSION['student_portal_result_access'] = [
+        'student_id' => (int) $student['id'],
+        'class_id' => (int) $class['id'],
+        'class_type' => 'conventional',
+        'academic_period_id' => (int) $period['id'],
+        'expires_at' => time() + 1200,
+    ];
+
     $subjects = [];
     $totalScore = 0.0;
     $scoredSubjects = 0;
@@ -176,6 +188,8 @@ try {
     echo json_encode([
         'success' => true,
         'student' => [
+            'id' => (int) $student['id'],
+            'class_id' => (int) $class['id'],
             'name' => trim(
                 $student['first_name'] . ' ' .
                 ($student['middle_name'] ?? '') . ' ' .

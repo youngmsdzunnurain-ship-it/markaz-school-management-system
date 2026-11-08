@@ -1460,14 +1460,19 @@ async function printStudentResult() {
 
 async function authorizeAndPrint(permission) {
     try {
-        const response = await fetch(
-            `./api/results/authorize-action.php?action=${encodeURIComponent(permission)}`,
-            { credentials: "same-origin" }
-        );
-        const data = await response.json();
+        // A public student can print/export only the read-only report bound to
+        // the verified, short-lived student portal session. Staff still use
+        // the existing role permission endpoint.
+        if (params.get("student_portal") !== "1") {
+            const response = await fetch(
+                `./api/results/authorize-action.php?action=${encodeURIComponent(permission)}`,
+                { credentials: "same-origin" }
+            );
+            const data = await response.json();
 
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "You are not permitted to perform this action.");
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "You are not permitted to perform this action.");
+            }
         }
 
         setStudentResultDocumentTitle();
