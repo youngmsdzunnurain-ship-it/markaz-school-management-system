@@ -121,6 +121,14 @@ function requireAdmin(): void
 }
 
 /**
+ * Operational settings access for Admin and Exam Officer accounts.
+ */
+function requireAdminOrExamOfficer(): void
+{
+    requireAdmin();
+}
+
+/**
  * Super Admin only.
  * Kept under the existing function name for compatibility.
  */

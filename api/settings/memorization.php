@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-requireSeniorAdmin();
+requireAdminOrExamOfficer();
 
 $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'];

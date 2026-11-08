@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-requireSeniorAdmin();
+requireAdminOrExamOfficer();
 
 function releaseResponse(int $status, array $data): never
 {
@@ -46,6 +46,16 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     if (!is_array($input)) {
         releaseResponse(400, ['success' => false, 'message' => 'Invalid request.']);
+    }
+
+    if (currentAdminRole() === 'exam_officer') {
+        $password = (string) ($input['password'] ?? '');
+        $accountStmt = $pdo->prepare('SELECT password_hash FROM admins WHERE id = ? AND role = "exam_officer" AND is_active = 1 AND is_frozen = 0 LIMIT 1');
+        $accountStmt->execute([(int) $_SESSION['admin_id']]);
+        $passwordHash = $accountStmt->fetchColumn();
+        if ($password === '' || !is_string($passwordHash) || !password_verify($password, $passwordHash)) {
+            releaseResponse(403, ['success' => false, 'message' => 'Your Exam Officer password is incorrect. Result release was not changed.']);
+        }
     }
 
     $periodId = filter_var($input['period_id'] ?? null, FILTER_VALIDATE_INT);

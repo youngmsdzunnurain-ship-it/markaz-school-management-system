@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261106-footer-v1">
+    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261108-exam-officer-v1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -54,23 +54,27 @@
             <nav class="sidebar-nav" aria-label="Main navigation">
                 <div class="nav-section-label">Overview</div>
                 <a href="./dashboard.html" class="nav-link active" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span></a>
-                <div class="nav-section-label">Academics</div>
+                <div class="nav-section-label" data-role-access="admin">Academics</div>
+                <div class="nav-section-label" data-role-access="exam_officer">Academics</div>
                 <a href="./students.html" class="nav-link"><i class="fa-solid fa-users" aria-hidden="true"></i><span>Students</span></a>
                 <a href="./classes.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-chalkboard" aria-hidden="true"></i><span>Classes</span></a>
                 <a href="./subjects/" class="nav-link" data-role-access="admin"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Subjects</span></a>
-                <div class="nav-section-label">Assessment</div>
+                <div class="nav-section-label" data-role-access="admin">Assessment</div>
+                <div class="nav-section-label" data-role-access="exam_officer">Assessment</div>
                 <a href="./classes.html" class="nav-link" data-role-access="exam_officer"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i><span>Enter Results</span></a>
                 <a href="./print-results.html" class="nav-link" data-role-access="print_results"><i class="fa-solid fa-print" aria-hidden="true"></i><span>Print Results</span></a>
-                <div class="nav-section-label">Attendance &amp; Fees</div>
+                <div class="nav-section-label" data-role-access="admin">Attendance &amp; Fees</div>
                 <a href="./attendance.html" class="nav-link" data-role-access="attendance"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></a>
                 <a href="./school-fees.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
-                <div class="nav-section-label">System</div>
+                <div class="nav-section-label" data-role-access="admin">System</div>
                 <a href="./settings.html" class="nav-link" data-role-access="admin"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>System Settings</span></a>
+                <div class="nav-section-label" data-role-access="exam_officer_settings">System</div>
+                <a href="./exam-officer-settings.html" class="nav-link" data-role-access="exam_officer_settings"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Settings</span></a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
                     <span class="sidebar-user-avatar" id="adminInitials"></span>
-                    <span class="sidebar-user-text"><strong id="profileName">Administrator</strong><small>Administrator</small></span>
+                    <span class="sidebar-user-text"><strong id="profileName">Administrator</strong><small id="sidebarProfileRole">Administrator</small></span>
                     <button type="button" id="logoutButton" class="logout-button" aria-label="Logout" title="Logout">
                         <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
                         <span>Logout</span>
@@ -221,7 +225,7 @@
 
                 </section>
 
-                <section class="dashboard-class-attendance-charts" aria-label="Attendance by class">
+                <section class="dashboard-class-attendance-charts" data-role-access="admin" aria-label="Attendance by class">
                     <section class="dashboard-class-chart-card" aria-labelledby="conventionalClassesChartTitle">
                         <div class="dashboard-class-chart-heading"><div><h3 id="conventionalClassesChartTitle">Conventional Classes</h3><p>Attendance by class · 14 classes</p></div><span class="dashboard-attendance-rate-key"><i></i>Present rate</span></div><div class="dashboard-chart-legend"><span><i class="legend-present"></i>Present</span><span><i class="legend-absent"></i>Absent</span><span><i class="legend-late"></i>Late</span><span><i class="legend-excused"></i>Excused</span></div>
                         <div id="dashboardConventionalAttendance" class="dashboard-attendance-class-list"><p>Loading conventional classes…</p></div>
@@ -231,7 +235,7 @@
                         <div id="dashboardArabicAttendance" class="dashboard-attendance-class-list"><p>Loading Arabic classes…</p></div>
                     </section>
                 </section>
-                <p class="dashboard-attendance-footnote">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
+                <p class="dashboard-attendance-footnote" data-role-access="admin">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
 
                 <section class="dashboard-grid dashboard-bottom-layout">
 
@@ -244,7 +248,7 @@
                         </div>
 
                         <div class="quick-actions">
-                            <button type="button" data-role-access="admin"><i class="fa-solid fa-user-plus" aria-hidden="true"></i><span>Add Student</span></button>
+                            <button type="button" data-role-access="admin_or_exam_officer"><i class="fa-solid fa-user-plus" aria-hidden="true"></i><span>Add Student</span></button>
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i><span>Manage Classes</span></button>
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Manage Subjects</span></button>
                             <button type="button" data-role-access="exam_officer"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i><span>Enter Results</span></button>
@@ -252,6 +256,7 @@
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></button>
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></button>
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>System Settings</span></button>
+                            <button type="button" data-role-access="exam_officer_settings"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>Settings</span></button>
                         </div>
                     </article>
 
@@ -261,7 +266,7 @@
                         <div class="panel-header">
                             <div>
                                 <span class="eyebrow">System</span>
-                                <h3>Administrator</h3>
+                                <h3 id="dashboardProfileRoleTitle">Administrator</h3>
                             </div>
                         </div>
 
@@ -305,7 +310,7 @@
 
     </div>
 
-    <script src="js/dashboard.js?v=20261107-result-progress-live-v1"></script>
+    <script src="js/dashboard.js?v=20261108-exam-officer-portal-v1"></script>
 
     <script src="/js/markaz-global.js"></script>
 

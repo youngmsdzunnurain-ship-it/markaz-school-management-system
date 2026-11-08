@@ -9,7 +9,7 @@ $studentPortalScope = $_SERVER['REQUEST_METHOD'] === 'GET'
     ? studentPortalResultScope(false)
     : null;
 if ($studentPortalScope === null) {
-    requireSeniorAdmin();
+    requireAdminOrExamOfficer();
 }
 
 header('Content-Type: application/json; charset=utf-8');

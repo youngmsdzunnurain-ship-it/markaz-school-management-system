@@ -386,3 +386,5 @@ body .sidebar.open{z-index:1200!important}                 /* drawer above the d
   .welcome-card h2{font-size:26px}
   .welcome-card p{font-size:14px}
 }
+
+body.role-exam-officer .stats-grid .stat-card-students{order:1}body.role-exam-officer .stats-grid .stat-card-subjects{order:2}body.role-exam-officer .stats-grid .stat-card-classes{order:3}
