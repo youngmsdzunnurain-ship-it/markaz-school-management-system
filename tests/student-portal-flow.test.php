@@ -109,4 +109,19 @@ portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str
 portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
 portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-information-unified-grid'), 'student portal mobile layout refreshes the result stylesheet cache');
 
+portalAssert(
+    str_contains($resultApi, "'student_document_permissions'") &&
+    str_contains($resultApi, "systemAccessEnabled('student_' ."),
+    'Student print and PDF permissions are returned from the Admin-controlled role-wide settings and enforced by the result API'
+);
+portalAssert(
+    str_contains($resultScript, 'studentData?.student_document_permissions') &&
+    !str_contains($resultScript, 'can_print_results: true'),
+    'Student print and PDF actions follow the current permission payload instead of being granted unconditionally'
+);
+portalAssert(
+    str_contains($resultScript, 'await fetchStudentResultPayload(true, action)'),
+    'Student print and PDF actions are re-authorized by the server when clicked'
+);
+
 echo "Student portal official-report integration checks passed." . PHP_EOL;
