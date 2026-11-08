@@ -56,7 +56,6 @@ teacherPortalCheck(
     'Teacher class view and result saving remain restricted to assigned subjects'
 );
 
-echo "Teacher portal dashboard regression tests passed.\n";
 
 
 $authMe = file_get_contents(__DIR__ . '/../api/auth/me.php');
