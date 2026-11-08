@@ -157,4 +157,26 @@ teacherPortalCheck(
     'Dedicated print/export permission verification remains active after role resolution is moved to the protected result payload'
 );
 
+$attendanceClassesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
+$attendancePageJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
+$loginRolesJs = file_get_contents(__DIR__ . '/../public/js/login-roles.js');
+$loginRolesCss = file_get_contents(__DIR__ . '/../public/css/login-roles.css');
+
+teacherPortalCheck(
+    str_contains($attendanceClassesApi, "'available_class_types'") &&
+    str_contains($attendancePageJs, 'available_class_types') &&
+    str_contains($attendancePageJs, 'attendanceClassTypeField'),
+    'Teacher attendance category is automatically selected and hidden for a single assigned category'
+);
+teacherPortalCheck(
+    str_contains($loginRolesJs, 'setInterval(showCountdown, 1000)') &&
+    str_contains($loginRolesJs, 'message.dataset.kind = "error"') &&
+    str_contains($loginRolesCss, '.role-message[data-kind="error"]'),
+    'Teacher lockout countdown updates every second and login errors use the red error state'
+);
+teacherPortalCheck(
+    substr_count($dashboardHtml, 'href="./settings.html"') === 1,
+    'Admin sidebar contains one Settings navigation entry'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
