@@ -66,4 +66,11 @@ dashboardReportCheck(
     'attendance category charts are combo charts with a roster-based rate, and dashboard score labels are explicit'
 );
 
+dashboardReportCheck(
+    str_contains($dashboardScript, 'Number(row.student_count)') &&
+    str_contains($dashboardScript, 'present / studentCount * 100') &&
+    str_contains($dashboardScript, 'single-point'),
+    'attendance trend uses present students divided by active class enrolment and visibly marks a single-class result'
+);
+
 echo "Dashboard report regression tests passed (6 checks).\n";
