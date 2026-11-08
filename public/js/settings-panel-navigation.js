@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   "use strict";
 
   const page = document.querySelector(".settings-page");
@@ -12,9 +12,9 @@
     return [
       {
         id: "profile",
-        label: "General & Profile",
+        label: "Profile Information",
         icon: "fa-user-circle",
-        description: "Manage your administrator profile and account information.",
+        description: "Manage your profile information and account details.",
         elements: profile ? [profile] : []
       },
       {
@@ -104,8 +104,42 @@
     ].filter(category => category.elements.length);
   };
 
-  const categories = findSections();
-  if (!categories.length) return;
+  const allCategories = findSections();
+  if (!allCategories.length) return;
+
+  let currentRole = "admin";
+  try {
+    const response = await fetch("./api/auth/me.php", {
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
+    const account = await response.json();
+    if (!response.ok || !account.success || !account.admin) {
+      window.location.replace("login.html");
+      return;
+    }
+    currentRole = account.admin.role;
+  } catch {
+    window.location.replace("login.html");
+    return;
+  }
+
+  const isExamOfficer = currentRole === "exam_officer";
+  const examOfficerCategoryIds = new Set([
+    "profile", "result-release", "academic-archive", "academic", "results", "memorization"
+  ]);
+  const categories = isExamOfficer
+    ? allCategories.filter(category => examOfficerCategoryIds.has(category.id))
+    : allCategories;
+
+  if (isExamOfficer) {
+    page.querySelectorAll(":scope > section.settings-card").forEach(section => {
+      section.hidden = true;
+    });
+    const resetCard = page.querySelector(".academic-reset-settings-card");
+    if (resetCard) resetCard.hidden = true;
+  }
 
   const nav = document.createElement("nav");
   nav.id = "settingsCategoryNav";
@@ -159,5 +193,9 @@
   });
 
   activate("profile");
+  if (isExamOfficer) {
+    const releaseLabel = page.querySelector("#markazResultRelease .settings-label");
+    if (releaseLabel) releaseLabel.textContent = "ACADEMIC RESULTS";
+  }
   document.documentElement.classList.remove("settings-page-pending");
 })();
