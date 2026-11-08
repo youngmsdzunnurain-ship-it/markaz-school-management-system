@@ -4,7 +4,7 @@ declare(strict_types=1);
 function teacherDashboardAssert(bool $condition, string $message): void
 {
     if (!$condition) {
-        fwrite(STDERR, "FAIL: {$message}\n");
+        fwrite(STDERR, "FAIL: {$message}\\n");
         exit(1);
     }
 }
@@ -33,8 +33,9 @@ teacherDashboardAssert(
     'score saves must continue enforcing the assigned class and subject server-side'
 );
 teacherDashboardAssert(
-    str_contains($studentApi, 'requireTeacherFullClassAssignment($pdo, $classId, $classType)'),
-    'subject-only teachers must not open unrestricted individual result pages by changing the URL'
+    preg_match('/if \\(currentAdminRole\\(\\) === \'teacher\'\\) \\{[\\s\\S]*?http_response_code\\(403\\)/', $studentApi) === 1
+    && str_contains($studentApi, 'Individual student profile access is not available to teachers.'),
+    'all teachers, including Full Class Access, must be denied the individual student profile/results API'
 );
 teacherDashboardAssert(
     str_contains($behaviourApi, 'subject_id IS NULL')
@@ -72,8 +73,8 @@ teacherDashboardAssert(
 teacherDashboardAssert(
     str_contains($classJs, 'if (isTeacher) {')
     && str_contains($classJs, 'editClassButton?.remove()')
-    && str_contains($classJs, 'if (isTeacher && !teacherFullClassAccess) return;'),
-    'teacher class workspace must remove profile-management actions and block subject-only student-result links'
+    && str_contains($classJs, 'if (isTeacher) return;'),
+    'teacher class workspace must remove profile-management actions and block all individual student profile links'
 );
 
-echo "Teacher dashboard access regression tests passed.\n";
+echo "Teacher dashboard access regression tests passed.\\n";
