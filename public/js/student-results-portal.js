@@ -36,21 +36,24 @@
   const showWelcome = () => {
     experience.replaceChildren();
     const card = element('section', 'portal-welcome-card');
-    const mark = element('span', 'portal-welcome-mark', '✦');
+    card.setAttribute('role', 'status');
+    card.setAttribute('aria-live', 'polite');
+    const mark = element('span', 'portal-welcome-mark', '✓');
+    mark.setAttribute('aria-hidden', 'true');
     const eyebrow = element('p', 'portal-eyebrow', 'MARKAZ STUDENT RESULTS');
     const heading = element('h2', 'portal-welcome-title', 'Congratulations, ' + resultData.student.name + '!');
     const intro = element('p', 'portal-welcome-copy',
       'Your examination result for ' + resultData.academic_period.term_name + ' · ' +
-      resultData.academic_period.session_name + ' is ready. We are pleased to share your academic progress with you.');
-    const note = element('p', 'portal-welcome-note', 'May your learning continue to bring you knowledge, confidence and success.');
+      resultData.academic_period.session_name + ' is ready.');
+    const note = element('p', 'portal-welcome-note', 'May Allah bless your efforts and grant you continued knowledge and success.');
     card.append(mark, eyebrow, heading, intro, note,
-      actionButton('Check Results  →', 'portal-primary-action', openOfficialReport),
-      actionButton('Use another student record', 'portal-text-action', resetPortal));
+      actionButton('Check Results  →', 'portal-primary-action', openOfficialReport));
     experience.appendChild(card);
+    document.body.classList.add('student-success-mode');
     experience.hidden = false;
     form.hidden = true;
     message.classList.remove('visible');
-    experience.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const openOfficialReport = () => {
@@ -68,6 +71,7 @@
 
   const resetPortal = () => {
     resultData = null;
+    document.body.classList.remove('student-success-mode');
     experience.replaceChildren();
     experience.hidden = true;
     form.hidden = false;
