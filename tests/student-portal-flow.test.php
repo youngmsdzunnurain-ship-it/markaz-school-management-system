@@ -13,6 +13,7 @@ $root = dirname(__DIR__);
 $html = file_get_contents($root . '/public/student-login.html');
 $script = file_get_contents($root . '/public/js/student-results-portal.js');
 $css = file_get_contents($root . '/public/css/student-results-portal.css');
+$resultCss = file_get_contents($root . '/public/css/student-result.css');
 $portalApi = file_get_contents($root . '/api/results/student-portal.php');
 $resultApi = file_get_contents($root . '/api/results/student.php');
 $behaviourApi = file_get_contents($root . '/api/results/behavioural.php');
@@ -26,6 +27,7 @@ foreach ([
     'student portal page' => $html,
     'dedicated student portal script' => $script,
     'dedicated student portal stylesheet' => $css,
+    'shared result stylesheet' => $resultCss,
     'public lookup endpoint' => $portalApi,
     'official result API' => $resultApi,
     'behavioural report API' => $behaviourApi,
@@ -81,7 +83,7 @@ portalAssert(str_contains($behaviourApi, 'requireResultStaff()'), 'behaviour API
 portalAssert(str_contains($resultScript, 'document.body.classList.add("student-portal-result-view")'), 'student portal result view receives an isolated layout scope');
 portalAssert(str_contains($resultScript, 'document.body.classList.remove("student-portal-result-view")') === false, 'student portal layout scope is not removed during normal result rendering');
 portalAssert(str_contains($printPage, 'class="management-panel behavioural-management-panel"'), 'behavioural report remains a distinct section below academic results in the shared report markup');
-portalAssert(str_contains($css, '.student-portal-result-view .result-management-grid'), 'student portal has an isolated stacked result layout');
-portalAssert(str_contains($css, '.student-portal-result-view .behaviour-grid'), 'student portal behavioural ratings use a horizontal grid');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-card .result-management-grid'), 'student portal has an isolated stacked result layout');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-card .behaviour-grid'), 'student portal behavioural ratings use a horizontal grid');
 
 echo "Student portal official-report integration checks passed." . PHP_EOL;
