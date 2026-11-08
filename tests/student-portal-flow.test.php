@@ -42,7 +42,7 @@ portalAssert(str_contains($html, 'js/student-results-portal.js'), 'dedicated por
 portalAssert(!str_contains($legacyRoleScript, 'data-role="student-lookup"'), 'staff login script does not bind student lookup');
 portalAssert(str_contains($script, 'View My Result'), 'successful lookup presents the welcome action');
 portalAssert(str_contains($script, 'student-result-print.html'), 'View My Result opens the existing official printable page');
-portalAssert(str_contains($script, 'student_portal=1'), 'official report is opened in scoped student-portal mode');
+portalAssert(str_contains($script, "student_portal: '1'"), 'official report is opened in scoped student-portal mode');
 portalAssert(!str_contains($script, 'portal-report-sheet'), 'student portal does not render a second report card');
 portalAssert(!str_contains($css, '.portal-report-sheet'), 'portal stylesheet does not duplicate official report styling');
 portalAssert(str_contains($printPage, 'id="studentReportCard"'), 'official report-card template remains the destination');
