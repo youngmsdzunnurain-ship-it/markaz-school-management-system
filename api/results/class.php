@@ -177,19 +177,36 @@ try {
     $subjectStmt->execute($subjectParams);
     $subjects = $subjectStmt->fetchAll();
 
-    $studentStmt = $pdo->prepare(
-        "SELECT
+    $studentSql = "SELECT
             st.id,
             st.admission_number,
             st.first_name,
             st.middle_name,
             st.last_name,
-            st.is_active
-         FROM students st
+            st.is_active";
+
+    // Administrator and Exam Officer class management retains its existing
+    // roster details. Teacher responses deliberately omit student profile fields.
+    if (!$isTeacher) {
+        $studentSql .= ",
+            st.gender,
+            st.arabic_class_id,
+            ac.name AS arabic_class_name";
+    }
+
+    $studentSql .= "
+         FROM students st";
+
+    if (!$isTeacher) {
+        $studentSql .= " LEFT JOIN arabic_classes ac ON ac.id = st.arabic_class_id";
+    }
+
+    $studentSql .= "
          WHERE st.{$studentClassColumn} = ?
            AND st.is_active = 1
-         ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
-    );
+         ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number";
+
+    $studentStmt = $pdo->prepare($studentSql);
 
     $studentStmt->execute([$classId]);
     $students = $studentStmt->fetchAll();
@@ -308,6 +325,13 @@ try {
                     'first_name' => $student['first_name'],
                     'middle_name' => $student['middle_name'],
                     'last_name' => $student['last_name'],
+                    ...(!$isTeacher ? [
+                        'gender' => $student['gender'],
+                        'arabic_class_id' => $student['arabic_class_id']
+                            ? (int) $student['arabic_class_id']
+                            : null,
+                        'arabic_class_name' => $student['arabic_class_name']
+                    ] : []),
                     'is_active' => (bool) $student['is_active']
                 ];
             },
