@@ -401,3 +401,39 @@ body.role-teacher #teacherAssignmentsSection{display:block!important;margin:0!im
 .teacher-assignment-card .teacher-open-class:hover{background:#14472f}
 .teacher-assignment-empty{padding:20px;border:1px dashed #c9d7cc;border-radius:12px;color:#65756a;background:#fff}
 @media(max-width:640px){body.role-teacher #teacherAssignmentsSection{padding:16px!important}.teacher-assignment-card{padding:17px}.teacher-assignment-card h3{font-size:18px}}
+
+
+/* Teacher workspace: use the available viewport instead of scaling the desktop canvas down. */
+html.teacher-dashboard-natural { zoom: 1 !important; }
+body.role-teacher .page-content { width:100%;max-width:1480px;margin-inline:auto;padding:32px clamp(24px,3vw,48px) 44px;gap:28px; }
+body.role-teacher .welcome-card { min-height:156px;padding:34px clamp(28px,3vw,48px);border-radius:20px; }
+body.role-teacher .welcome-card h2 { font-size:clamp(30px,2.4vw,40px); }
+body.role-teacher .welcome-card p { max-width:760px; }
+body.role-teacher .teacher-assignments-section { margin:0!important;padding:28px!important;border-radius:20px; }
+body.role-teacher .teacher-assignments-section .panel-header { margin-bottom:22px; }
+body.role-teacher .teacher-assignments-section .panel-header h2 { font-size:25px; }
+body.role-teacher .teacher-assignments-section .panel-header p { margin-top:8px;font-size:14px; }
+body.role-teacher .teacher-assignments-list { display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px; }
+body.role-teacher .teacher-assignment-card { min-height:210px;padding:24px;border-radius:18px; }
+body.role-teacher .teacher-assignment-card h3 { font-size:22px;margin-bottom:16px; }
+body.role-teacher .teacher-assignment-card p { font-size:14px;line-height:1.65; }
+body.role-teacher .teacher-assignment-card .teacher-open-class { min-height:46px;padding-inline:20px; }
+@media (min-width:851px) and (max-width:1199px) {
+ body.role-teacher .page-content { padding:24px; }
+ body.role-teacher .teacher-assignments-section { padding:22px!important; }
+ body.role-teacher .teacher-assignments-list { grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); }
+}
+@media (max-width:850px) {
+ body.role-teacher .page-content { padding:18px 16px 30px;gap:18px; }
+ body.role-teacher .welcome-card { padding:24px 20px; }
+ body.role-teacher .welcome-card h2 { font-size:clamp(23px,6vw,30px);line-height:1.25; }
+ body.role-teacher .welcome-card p { font-size:14px; }
+ body.role-teacher .teacher-assignments-section { padding:18px!important; }
+ body.role-teacher .teacher-assignments-list { grid-template-columns:minmax(0,1fr);gap:14px; }
+ body.role-teacher .teacher-assignment-card { min-height:0;padding:18px; }
+}
+@media (max-width:420px) {
+ body.role-teacher .page-content { padding-inline:12px; }
+ body.role-teacher .teacher-assignments-section { padding:14px!important; }
+ body.role-teacher .teacher-assignment-card { padding:16px; }
+}
