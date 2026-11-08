@@ -4359,3 +4359,19 @@ body {
         margin-left: 0 !important;
     }
 }
+
+
+/* Match the report-preview student portrait frame in the Student Management profile. */
+.view-student-profile-header::after {
+ content:""!important;position:absolute!important;top:0!important;left:28px!important;
+ width:min(320px,calc(100% - 52px))!important;height:4px!important;border-radius:0 0 5px 5px!important;
+ background:linear-gradient(90deg,#087f5b 0%,#087f5b 72%,#c99a24 100%)!important;pointer-events:none!important;
+}
+.view-student-photo { position:relative!important;border-left:4px solid #c99a24!important;box-shadow:0 0 0 2px #087f5b,0 8px 18px rgba(18,61,42,.12)!important; }
+@media screen and (max-width:720px) {
+ .view-student-profile-header { grid-template-columns:minmax(0,1fr)!important;gap:10px!important; }
+ .view-student-photo { display:none!important; }
+ .view-student-profile-heading { grid-column:1/-1!important; }
+ .view-student-profile-header .student-status { grid-column:1/-1!important;justify-self:start!important; }
+ .view-student-profile-heading h3,.view-student-profile-heading p { overflow-wrap:anywhere!important; }
+}
