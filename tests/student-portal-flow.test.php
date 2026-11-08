@@ -100,6 +100,6 @@ portalAssert(str_contains($resultCss, 'min-height: 50px !important;') && str_con
 portalAssert(str_contains($resultCss, '@media screen and (min-width: 761px)') && str_contains($resultCss, 'justify-content: flex-end !important;'), 'student portal desktop action buttons are aligned together at the right');
 portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str_contains($resultCss, '.student-class-row > .detail-item {'), 'mobile field sizing applies to the actual nested row items');
 portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
-portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-final-profile-polish'), 'student portal mobile layout refreshes the result stylesheet cache');
+portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-desktop-profile-sizing'), 'student portal mobile layout refreshes the result stylesheet cache');
 
 echo "Student portal official-report integration checks passed." . PHP_EOL;
