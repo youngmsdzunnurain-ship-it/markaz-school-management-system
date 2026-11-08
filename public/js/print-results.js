@@ -39,6 +39,11 @@ function classType(item) {
     return item.class_type === "arabic" ? "arabic" : "conventional";
 }
 
+function displayClassLabel(item) {
+    return displayClassName(item) +
+        (classType(item) === "arabic" ? " · Arabic" : " · Conventional");
+}
+
 function className(item) {
     return item.class_name || item.name || item.title ||
            item.className || "Unnamed class";
@@ -102,8 +107,7 @@ function renderClasses() {
         button.className = "class-button";
 
         const title = document.createElement("strong");
-        title.textContent = displayClassName(item) +
-            (classType(item) === "arabic" ? " · Arabic" : " · Conventional");
+        title.textContent = displayClassLabel(item);
         const hint = document.createElement("small");
         hint.textContent = "View students and print results";
 
@@ -249,7 +253,7 @@ async function showStudents(selectedClass) {
   $("classesPanel").classList.add("hidden");
   $("studentsPanel").classList.remove("hidden");
   $("backToClasses").textContent = "← Go Back";
-  $("selectedClassTitle").textContent = displayClassName(selectedClass);
+  $("selectedClassTitle").textContent = displayClassLabel(selectedClass);
 
   const id = classId(selectedClass);
   const selectedType = classType(selectedClass);
@@ -311,7 +315,7 @@ async function showStudents(selectedClass) {
     const completion = await getClassCompletion(id, selectedType);
 
     // Ignore a late response if the user has navigated to another class.
-    if ($("selectedClassTitle").textContent !== displayClassName(selectedClass)) return;
+    if ($("selectedClassTitle").textContent !== displayClassLabel(selectedClass)) return;
 
     const eligibleIds = [];
     rows.forEach(({ status, missing, button }, sid) => {
