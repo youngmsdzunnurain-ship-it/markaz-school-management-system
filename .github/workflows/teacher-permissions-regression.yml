@@ -1,0 +1,63 @@
+name: Teacher Permission and Profile Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/auth/me.php'
+      - 'api/results/student-profile-save.php'
+      - 'api/results/student.php'
+      - 'api/results/behavioural.php'
+      - 'api/attendance/**'
+      - 'public/js/dashboard.js'
+      - 'public/js/student-result.js'
+      - 'public/js/management-shell.js'
+      - 'public/css/dashboard-2026.css'
+      - 'public/css/student-result.css'
+      - 'public/css/students.css'
+      - 'tests/teacher-portal-dashboard.test.php'
+      - '.github/workflows/teacher-permissions-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  teacher-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Check PHP syntax
+        run: |
+          set -e
+          php -l api/auth/me.php
+          php -l api/results/student-profile-save.php
+          php -l api/results/student.php
+          php -l api/results/behavioural.php
+          php -l api/attendance/_common.php
+          php -l api/attendance/classes.php
+          php -l api/attendance/register.php
+          php -l tests/teacher-portal-dashboard.test.php
+
+      - name: Check JavaScript syntax
+        run: |
+          set -e
+          node --check public/js/dashboard.js
+          node --check public/js/student-result.js
+          node --check public/js/management-shell.js
+
+      - name: Run teacher and permission regressions
+        run: |
+          set -e
+          php tests/teacher-portal-dashboard.test.php
+          php tests/teacher-document-permissions.test.php
+          php tests/attendance-validation.test.php
+          php tests/student-portal-flow.test.php
