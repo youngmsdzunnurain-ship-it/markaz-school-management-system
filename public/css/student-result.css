@@ -11141,3 +11141,110 @@ body.student-portal-result-view .student-information .memorization-value-row str
         padding: 10px !important;
     }
 }
+
+
+/* Student portal follow-up refinements: screen profile and desktop action alignment. */
+@media screen and (max-width: 760px) {
+    body.student-portal-result-view .student-information .student-profile-grid {
+        display: block !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body.student-portal-result-view .student-information .student-photo {
+        display: none !important;
+    }
+
+    body.student-portal-result-view .student-information .student-details {
+        width: 100% !important;
+        grid-column: 1 / -1 !important;
+    }
+}
+
+body.student-portal-result-view .student-information .memorization-detail-item {
+    min-height: 0 !important;
+}
+
+body.student-portal-result-view .student-information .memorization-value-row {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.student-portal-result-view .student-information #studentMemorizationPortion {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+}
+
+body.student-portal-result-view .student-information .student-class-row > .detail-item {
+    min-height: 50px !important;
+    height: auto !important;
+    padding: 8px 11px !important;
+}
+
+@media screen and (min-width: 761px) {
+    body.student-portal-result-view .student-result-page.management-view .result-page-header {
+        align-items: center !important;
+    }
+
+    body.student-portal-result-view .student-result-page.management-view .header-actions {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        align-self: center !important;
+        gap: 10px !important;
+        min-height: 42px !important;
+        margin-left: auto !important;
+    }
+
+    body.student-portal-result-view .student-result-page.management-view .document-actions,
+    body.student-portal-result-view .student-result-page.management-view .student-edit-actions {
+        display: flex !important;
+        flex: 0 0 auto !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        align-self: center !important;
+        gap: 8px !important;
+        width: auto !important;
+        min-height: 42px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.student-portal-result-view .student-result-page.management-view .header-actions button {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        align-items: center !important;
+        justify-content: center !important;
+        align-self: center !important;
+        min-width: 112px !important;
+        min-height: 42px !important;
+        height: 42px !important;
+        margin: 0 !important;
+        padding: 0 16px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        transform: none !important;
+        position: static !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .detail-item {
+        min-height: 50px !important;
+        height: auto !important;
+        padding: 8px 11px !important;
+    }
+}
