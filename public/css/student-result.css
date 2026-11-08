@@ -11559,7 +11559,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
    layout as the Student Portal Check Results preview. Screen-only: print and
    desktop layouts remain untouched. */
 @media screen and (max-width: 760px) {
-    .student-information .student-profile-grid {
+    body:not(.student-portal-result-view) .student-information .student-profile-grid {
         display: block !important;
         grid-template-columns: minmax(0, 1fr) !important;
         min-width: 0 !important;
@@ -11567,11 +11567,11 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         gap: 0 !important;
     }
 
-    .student-information .student-photo {
+    body:not(.student-portal-result-view) .student-information .student-photo {
         display: none !important;
     }
 
-    .student-information .student-details {
+    body:not(.student-portal-result-view) .student-information .student-details {
         display: grid !important;
         width: 100% !important;
         min-width: 0 !important;
@@ -11588,24 +11588,24 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         gap: 8px !important;
     }
 
-    .student-information .student-top-row,
-    .student-information .student-class-row {
+    body:not(.student-portal-result-view) .student-information .student-top-row,
+    body:not(.student-portal-result-view) .student-information .student-class-row {
         display: contents !important;
     }
 
-    .student-information .student-top-row > .student-name-item { grid-area: name !important; }
-    .student-information .student-top-row > .detail-item:nth-child(2) { grid-area: gender !important; }
-    .student-information .student-top-row > .detail-item:nth-child(3) { grid-area: age !important; }
-    .student-information .student-top-row > .detail-item:nth-child(4) { grid-area: student-type !important; }
-    .student-information .student-class-row > .conventional-class-item { grid-area: conventional-class !important; }
-    .student-information .student-class-row > .arabic-class-count-item { grid-area: class-size !important; }
-    .student-information .student-class-row > .arabic-class-item { grid-area: arabic-class !important; }
-    .student-information .student-class-row > .memorization-detail-item {
+    body:not(.student-portal-result-view) .student-information .student-top-row > .student-name-item { grid-area: name !important; }
+    body:not(.student-portal-result-view) .student-information .student-top-row > .detail-item:nth-child(2) { grid-area: gender !important; }
+    body:not(.student-portal-result-view) .student-information .student-top-row > .detail-item:nth-child(3) { grid-area: age !important; }
+    body:not(.student-portal-result-view) .student-information .student-top-row > .detail-item:nth-child(4) { grid-area: student-type !important; }
+    body:not(.student-portal-result-view) .student-information .student-class-row > .conventional-class-item { grid-area: conventional-class !important; }
+    body:not(.student-portal-result-view) .student-information .student-class-row > .arabic-class-count-item { grid-area: class-size !important; }
+    body:not(.student-portal-result-view) .student-information .student-class-row > .arabic-class-item { grid-area: arabic-class !important; }
+    body:not(.student-portal-result-view) .student-information .student-class-row > .memorization-detail-item {
         grid-area: memorization !important;
         min-width: 0 !important;
     }
 
-    .student-information .student-details .detail-item {
+    body:not(.student-portal-result-view) .student-information .student-details .detail-item {
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
@@ -11617,15 +11617,15 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         box-sizing: border-box !important;
     }
 
-    .student-information .student-details .detail-item > span {
+    body:not(.student-portal-result-view) .student-information .student-details .detail-item > span {
         font-size: .65rem !important;
         line-height: 1.15 !important;
         overflow-wrap: normal !important;
         word-break: normal !important;
     }
 
-    .student-information .student-details .detail-item > strong,
-    .student-information .student-details .memorization-value-row strong {
+    body:not(.student-portal-result-view) .student-information .student-details .detail-item > strong,
+    body:not(.student-portal-result-view) .student-information .student-details .memorization-value-row strong {
         max-width: 100% !important;
         font-size: .78rem !important;
         line-height: 1.2 !important;
@@ -11633,18 +11633,18 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         word-break: normal !important;
     }
 
-    .student-information .section-heading {
+    body:not(.student-portal-result-view) .student-information .section-heading {
         margin-bottom: 8px !important;
         padding-bottom: 7px !important;
     }
 
-    .report-card .behaviour-grid-container {
+    body:not(.student-portal-result-view) .report-card .behaviour-grid-container {
         width: 100% !important;
         max-width: 100% !important;
         overflow: visible !important;
     }
 
-    .report-card .behaviour-grid {
+    body:not(.student-portal-result-view) .report-card .behaviour-grid {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         grid-auto-flow: row !important;
@@ -11655,7 +11655,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         box-sizing: border-box !important;
     }
 
-    .report-card .behaviour-item {
+    body:not(.student-portal-result-view) .report-card .behaviour-item {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
@@ -11668,13 +11668,13 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         box-sizing: border-box !important;
     }
 
-    .report-card .behaviour-item > span {
+    body:not(.student-portal-result-view) .report-card .behaviour-item > span {
         min-width: 0 !important;
         overflow-wrap: anywhere !important;
         font-size: .7rem !important;
     }
 
-    .report-card .behaviour-item select {
+    body:not(.student-portal-result-view) .report-card .behaviour-item select {
         flex: 0 0 auto !important;
         min-width: 82px !important;
         max-width: 46% !important;
@@ -11683,7 +11683,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
 }
 
 @media screen and (max-width: 380px) {
-    .student-information .student-details {
+    body:not(.student-portal-result-view) .student-information .student-details {
         grid-template-columns: minmax(0, 1fr) !important;
         grid-template-areas:
             "name"
@@ -11696,7 +11696,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
             "memorization" !important;
     }
 
-    .report-card .behaviour-grid {
+    body:not(.student-portal-result-view) .report-card .behaviour-grid {
         grid-template-columns: minmax(0, 1fr) !important;
     }
 }
@@ -11704,8 +11704,8 @@ body.student-portal-result-view .student-information .student-class-row > .detai
 /* Respect the native hidden state for editable profile values. Earlier
    presentation rules set display:block !important on both nodes, which could
    expose the memorization input even while its permission state was hidden. */
-.student-information #studentMemorizationInput[hidden],
-.student-information #studentMemorizationPortion[hidden] {
+body:not(.student-portal-result-view) .student-information #studentMemorizationInput[hidden],
+body:not(.student-portal-result-view) .student-information #studentMemorizationPortion[hidden] {
     display: none !important;
 }
 
