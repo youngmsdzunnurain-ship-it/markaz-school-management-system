@@ -77,6 +77,12 @@ async function loadAdmin() {
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         window.markazCurrentRole = role;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
+        document.body.classList.toggle('role-teacher', role === 'teacher');
+        if (role === "teacher") {
+            document.getElementById("dashboardAttendancePanel")?.setAttribute("hidden", "");
+            document.querySelector(".dashboard-exam-section")?.setAttribute("hidden", "");
+            document.querySelector(".dashboard-completion-charts")?.setAttribute("hidden", "");
+        }
         loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
