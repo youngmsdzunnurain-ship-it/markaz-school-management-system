@@ -1128,6 +1128,7 @@ loadAcademicPeriodSettings();
     const section = document.createElement("section");
     section.id = "markazAccountDevices";
     section.className = "settings-card";
+    section.hidden = true;
     section.innerHTML = `
       <div class="settings-card-heading">
         <div>
@@ -1235,7 +1236,17 @@ loadAcademicPeriodSettings();
     }
 
     refresh.addEventListener("click", load);
-    load();
+    fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store" })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success || data.admin?.role !== "admin") {
+                section.remove();
+                return;
+            }
+            section.hidden = false;
+            load();
+        })
+        .catch(() => section.remove());
 })();
 
 /* MARKAZ ADMIN-ONLY ACADEMIC RESULT RELEASE */
