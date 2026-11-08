@@ -135,6 +135,7 @@ try {
             echo json_encode(['success' => false, 'message' => 'The selected student class is not valid.']);
             exit;
         }
+        $student['class_id'] = $classId;
         $student['class_name'] = $portalClass['name'];
     }
 
