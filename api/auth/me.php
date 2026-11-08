@@ -70,10 +70,10 @@ $resolvePermission = static function (string $permissionKey) use ($role, $accoun
 
     $assignmentStmt = $pdo->prepare(
         'SELECT 1 FROM teacher_assignments
-         WHERE account_id = ? AND class_type = ? AND is_active = 1 AND subject_id IS NULL
+         WHERE account_id = ? AND is_active = 1 AND subject_id IS NULL
          LIMIT 1'
     );
-    $assignmentStmt->execute([$accountId, 'conventional']);
+    $assignmentStmt->execute([$accountId]);
 
     return (bool) $assignmentStmt->fetchColumn();
 };
