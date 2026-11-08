@@ -11531,3 +11531,18 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         white-space: nowrap !important;
     }
 }
+
+
+/* Shared student information treatment for portal, Teacher, Exam Officer and Admin screens. */
+@media screen and (max-width:760px) {
+ .student-information .student-profile-grid { display:block!important;grid-template-columns:minmax(0,1fr)!important;min-width:0!important; }
+ .student-information .student-photo { display:none!important; }
+ .student-information .student-details { width:100%!important;min-width:0!important;grid-column:1/-1!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important; }
+ .student-information .student-name-item { grid-column:1/-1!important; }
+ .student-information .student-details .detail-item { min-width:0!important; }
+ .student-information .student-details .detail-item strong { max-width:100%!important;overflow-wrap:anywhere!important; }
+}
+@media screen and (max-width:420px) {
+ .student-information .student-details { grid-template-columns:minmax(0,1fr)!important; }
+ .student-information .student-name-item { grid-column:auto!important; }
+}
