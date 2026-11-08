@@ -579,8 +579,6 @@
 populateStudents(account.student_id || '');
         assignmentRows.innerHTML = '';
         attendancePermission.checked = Boolean(account.permissions && account.permissions.attendance_records);
-        printPermission.checked = Boolean(account.permissions && account.permissions.print_results);
-        exportPermission.checked = Boolean(account.permissions && account.permissions.export_results);
         const groupedAssignments = new Map();
         (account.assignments || []).forEach(assignment => {
             const key = `${assignment.class_type}:${assignment.class_id}`;
@@ -616,6 +614,10 @@ populateStudents(account.student_id || '');
             }
             addAssignmentRow(group);
         });
+
+        printPermission.checked = Boolean(account.permissions && account.permissions.print_results);
+        exportPermission.checked = Boolean(account.permissions && account.permissions.export_results);
+        syncTeacherDocumentPermissions();
 
         $('#accountFormHeading').textContent = `Edit account: ${account.name}`;
         saveButton.textContent = 'Save account changes';
