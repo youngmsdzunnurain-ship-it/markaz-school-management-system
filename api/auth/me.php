@@ -42,6 +42,14 @@ if (!$admin) {
 
 $role = (string) $admin['role'];
 $accountId = (int) $admin['id'];
+$canManageAttendance = $role === 'admin';
+if ($role === 'teacher') {
+    $attendancePermissionStmt = db()->prepare(
+        'SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $attendancePermissionStmt->execute([$accountId, 'attendance_records']);
+    $canManageAttendance = (int) $attendancePermissionStmt->fetchColumn() === 1;
+}
 
 $resolvePermission = static function (string $permissionKey) use ($role, $accountId): bool {
     if (!in_array($permissionKey, ['print_results', 'export_results'], true)) {
@@ -87,6 +95,7 @@ echo json_encode([
         'role' => $role,
         'profile_image' => $admin['profile_image'],
         'can_print_results' => $resolvePermission('print_results'),
-        'can_export_results' => $resolvePermission('export_results')
+        'can_export_results' => $resolvePermission('export_results'),
+        'can_manage_attendance' => $canManageAttendance
     ]
 ]);
