@@ -1120,6 +1120,124 @@ loadAcademicPeriodSettings();
     load();
 })();
 
+/* MARKAZ SENIOR ADMIN — ACCOUNT-SPECIFIC DEVICE ACCESS */
+(() => {
+    "use strict";
+    if (document.getElementById("markazAccountDevices")) return;
+
+    const section = document.createElement("section");
+    section.id = "markazAccountDevices";
+    section.className = "settings-card";
+    section.innerHTML = `
+      <div class="settings-card-heading">
+        <div>
+          <span class="settings-label">SENIOR ADMIN · SECURITY</span>
+          <h2>Account Devices</h2>
+          <p>Block a specific browser/device for one account without freezing the account on its other devices.</p>
+        </div>
+      </div>
+      <p id="markazDeviceStatus" role="status" aria-live="polite"></p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Last used</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="markazDeviceRows"></tbody>
+        </table>
+      </div>
+      <button type="button" id="markazRefreshDevices">Refresh Devices</button>`;
+    (document.querySelector(".settings-page") || document.querySelector("main") || document.body).appendChild(section);
+
+    const rows = section.querySelector("#markazDeviceRows");
+    const status = section.querySelector("#markazDeviceStatus");
+    const refresh = section.querySelector("#markazRefreshDevices");
+
+    async function request(method = "GET", body) {
+        const response = await fetch("./api/settings/account-devices.php", {
+            method,
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            ...(body === undefined ? {} : { body: JSON.stringify(body) })
+        });
+        const raw = await response.text();
+        let data;
+        try { data = JSON.parse(raw); }
+        catch { throw new Error("The account-device endpoint returned an invalid response."); }
+        if (!response.ok || !data.success) throw new Error(data.message || "Unable to update device access.");
+        return data;
+    }
+
+    function addCell(row, value) {
+        const cell = document.createElement("td");
+        cell.style.cssText = "padding:10px;border-bottom:1px solid #d5dfd8;vertical-align:top";
+        cell.textContent = String(value || "—");
+        row.appendChild(cell);
+        return cell;
+    }
+
+    async function load() {
+        refresh.disabled = true;
+        status.textContent = "Loading recognised devices…";
+        status.className = "form-message";
+        rows.replaceChildren();
+        try {
+            const data = await request();
+            if (!data.devices.length) {
+                status.textContent = "No recognised staff devices have signed in yet.";
+                status.className = "form-message success";
+                return;
+            }
+            status.textContent = data.devices.length + " recognised device(s).";
+            data.devices.forEach(device => {
+                const row = document.createElement("tr");
+                addCell(row, device.account_name);
+                addCell(row, device.role);
+                addCell(row, device.user_agent);
+                addCell(row, device.last_seen_at);
+                addCell(row, device.is_blocked ? "Blocked" : "Allowed");
+                const actionCell = document.createElement("td");
+                actionCell.style.padding = "10px";
+                const button = document.createElement("button");
+                button.type = "button";
+                button.textContent = device.is_blocked ? "Unblock device" : "Block device";
+                button.addEventListener("click", async () => {
+                    const action = device.is_blocked ? "unblock" : "block";
+                    const reason = action === "block"
+                        ? window.prompt("Why are you blocking this device for " + device.account_name + "?")
+                        : "";
+                    if (action === "block" && (reason === null || !reason.trim())) return;
+                    if (!window.confirm((action === "block" ? "Block" : "Unblock") + " this device for " + device.account_name + "?")) return;
+                    button.disabled = true;
+                    try {
+                        const result = await request("POST", {
+                            action,
+                            id: Number(device.id),
+                            reason: reason || ""
+                        });
+                        status.textContent = result.message;
+                        status.className = "form-message success";
+                        await load();
+                    } catch (error) {
+                        status.textContent = error.message;
+                        status.className = "form-message error";
+                        button.disabled = false;
+                    }
+                });
+                actionCell.appendChild(button);
+                row.appendChild(actionCell);
+                rows.appendChild(row);
+            });
+        } catch (error) {
+            status.textContent = error.message || "Unable to load recognised devices.";
+            status.className = "form-message error";
+        } finally {
+            refresh.disabled = false;
+        }
+    }
+
+    refresh.addEventListener("click", load);
+    load();
+})();
+
 /* MARKAZ ADMIN-ONLY ACADEMIC RESULT RELEASE */
 (() => {
     "use strict";
