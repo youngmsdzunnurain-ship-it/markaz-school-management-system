@@ -26,7 +26,8 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
-    str_contains($classApi, '$studentDisplayFields = $isTeacher')
+    str_contains($classApi, 'static function (array $student) use ($isTeacher): array')
+        && str_contains($classApi, '$studentDisplayFields = $isTeacher')
         && str_contains($classApi, "'gender' => $student['gender']")
         && str_contains($classApi, "'arabic_class_id' => $student['arabic_class_id']")
         && str_contains($classApi, "'arabic_class_name' => $student['arabic_class_name']"),
