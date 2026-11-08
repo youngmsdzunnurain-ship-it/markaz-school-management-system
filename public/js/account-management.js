@@ -112,6 +112,21 @@
                         <small>Attendance access is limited to the teacher’s assigned classes.</small>
                     </div>
 
+                    <div id="accountTeacherDocumentPermissions" hidden>
+                        <fieldset class="account-permission-group">
+                            <legend>Teacher result document permissions</legend>
+                            <label class="account-check">
+                                <input type="checkbox" id="accountCanPrintResults">
+                                Allow this teacher to print results
+                            </label>
+                            <label class="account-check">
+                                <input type="checkbox" id="accountCanExportResults">
+                                Allow this teacher to export/download results
+                            </label>
+                            <small>Requires Full Class Access and the role-wide permission to be enabled.</small>
+                        </fieldset>
+                    </div>
+
                     <label class="account-check account-active-check">
                         <input type="checkbox" id="accountIsActive" checked>
                         Account is active
@@ -151,6 +166,9 @@
     const assignmentsWrap = $('#accountTeacherAssignments');
     const attendancePermissionWrap = $('#accountAttendancePermission');
     const attendancePermission = $('#accountCanTakeAttendance');
+    const documentPermissionsWrap = $('#accountTeacherDocumentPermissions');
+    const printPermission = $('#accountCanPrintResults');
+    const exportPermission = $('#accountCanExportResults');
     const assignmentRows = $('#accountAssignmentRows');
     const saveButton = $('#saveManagedAccount');
 
@@ -274,6 +292,7 @@
         studentSelect.required = isStudent;
         assignmentsWrap.hidden = !isTeacher;
         attendancePermissionWrap.hidden = !isTeacher;
+        documentPermissionsWrap.hidden = !isTeacher;
         emailField.hidden = isTeacher;
         emailInput.required = !isTeacher;
         emailInput.disabled = isTeacher;
@@ -499,7 +518,10 @@
         role.querySelector('option[value="admin"]').hidden = true;
         $('#accountIsActive').disabled = false;
         $('#accountIsActive').checked = true;
-assignmentRows.innerHTML = '';
+        attendancePermission.checked = false;
+        printPermission.checked = false;
+        exportPermission.checked = false;
+        assignmentRows.innerHTML = '';
         $('#accountFormHeading').textContent = 'Create an account';
         saveButton.textContent = 'Create account';
         $('#accountPasswordHint').textContent = '(required for new accounts)';
@@ -537,6 +559,8 @@ assignmentRows.innerHTML = '';
 populateStudents(account.student_id || '');
         assignmentRows.innerHTML = '';
         attendancePermission.checked = Boolean(account.permissions && account.permissions.attendance_records);
+        printPermission.checked = Boolean(account.permissions && account.permissions.print_results);
+        exportPermission.checked = Boolean(account.permissions && account.permissions.export_results);
         const groupedAssignments = new Map();
         (account.assignments || []).forEach(assignment => {
             const key = `${assignment.class_type}:${assignment.class_id}`;
@@ -671,6 +695,8 @@ populateStudents(account.student_id || '');
             student_id: role.value === 'student' && studentSelect.value
                 ? Number(studentSelect.value) : null,
             attendance_records: role.value === 'teacher' && attendancePermission.checked,
+            print_results: role.value === 'teacher' && printPermission.checked,
+            export_results: role.value === 'teacher' && exportPermission.checked,
         };
 
     if (id) {
