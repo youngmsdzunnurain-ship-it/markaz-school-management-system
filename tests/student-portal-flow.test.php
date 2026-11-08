@@ -93,6 +93,7 @@ portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-
 portalAssert(str_contains($resultCss, 'width: 60px !important;') && str_contains($resultCss, 'height: 60px !important;'), 'student portal mobile profile photo is square');
 portalAssert(str_contains($resultCss, 'grid-template-areas:') && str_contains($resultCss, '"name name"') && str_contains($resultCss, '"gender age"') && str_contains($resultCss, '"student-type conventional-class"') && str_contains($resultCss, '"class-size arabic-class"') && str_contains($resultCss, '"memorization memorization"'), 'student portal mobile profile follows the five requested information rows');
 portalAssert(str_contains($resultCss, 'display: contents !important;'), 'student portal mobile rows share one responsive information grid');
+portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str_contains($resultCss, '.student-class-row > .detail-item {'), 'mobile field sizing applies to the actual nested row items');
 portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
 portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-mobile-polish'), 'student portal mobile layout refreshes the result stylesheet cache');
 

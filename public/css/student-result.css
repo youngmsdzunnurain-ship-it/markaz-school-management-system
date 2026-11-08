@@ -11100,7 +11100,8 @@ body.student-portal-result-view .student-information .memorization-value-row str
         min-width: 0 !important;
     }
 
-    body.student-portal-result-view .student-information .student-details > .detail-item {
+    body.student-portal-result-view .student-information .student-top-row > .detail-item,
+    body.student-portal-result-view .student-information .student-class-row > .detail-item {
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
