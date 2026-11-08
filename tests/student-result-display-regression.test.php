@@ -49,7 +49,7 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
-    str_contains($classHtml, 'class.js?v=20261106-targeted-student-display-fix')
+    str_contains($classHtml, 'class.js?v=20261107-result-progress-live-v1')
         && str_contains($classJs, 'display_version=20261106-targeted-student-display-fix'),
     'class workspace and student result navigation bypass stale cached markup/scripts'
 );
