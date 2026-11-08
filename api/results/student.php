@@ -165,6 +165,22 @@ try {
         exit;
     }
 
+    $isTeacher = $studentPortalScope === null && currentAdminRole() === 'teacher';
+    $teacherAccountId = (int) ($_SESSION['admin_id'] ?? 0);
+    if ($isTeacher) {
+        $assignmentCheck = $pdo->prepare(
+            'SELECT 1 FROM teacher_assignments
+             WHERE account_id = ? AND class_type = ? AND class_id = ?
+               AND is_active = 1 LIMIT 1'
+        );
+        $assignmentCheck->execute([$teacherAccountId, $classType, $classId]);
+        if (!$assignmentCheck->fetchColumn()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'You are not assigned to this class.']);
+            exit;
+        }
+    }
+
     if ($studentPortalScope !== null) {
         $periodStmt = $pdo->prepare(
             'SELECT ap.id, s.name AS session_name, t.name AS term_name,
@@ -210,6 +226,17 @@ try {
         ? 'arabic_class_id'
         : 'class_id';
 
+    $teacherSubjectScopeSql = $isTeacher
+        ? " AND EXISTS (
+              SELECT 1 FROM teacher_assignments ta
+              WHERE ta.account_id = {$teacherAccountId}
+                AND ta.class_type = '{$classType}'
+                AND ta.class_id = {$classId}
+                AND ta.is_active = 1
+                AND (ta.subject_id = s.id OR ta.subject_id IS NULL)
+          )"
+        : '';
+
     $subjectStmt = $pdo->prepare(
         "SELECT
             s.id,
@@ -225,6 +252,7 @@ try {
             ON s.id = cs.subject_id
         WHERE cs.{$mappingClassColumn} = ?
           AND s.is_active = 1
+          {$teacherSubjectScopeSql}
         ORDER BY
             cs.sort_order,
             s.name"
@@ -258,7 +286,8 @@ try {
                   ON current_subject_record.id = cs.subject_id
                  AND current_subject_record.is_active = 1
               WHERE cs.{$mappingClassColumn} = ?
-          )"
+          )
+          {$teacherSubjectScopeSql}
     );
 
     $resultStmt->execute([
@@ -401,6 +430,17 @@ try {
     /*
      * CLASS AVERAGES
      */
+    $teacherResultScopeSql = $isTeacher
+        ? " AND EXISTS (
+              SELECT 1 FROM teacher_assignments ta
+              WHERE ta.account_id = {$teacherAccountId}
+                AND ta.class_type = '{$classType}'
+                AND ta.class_id = {$classId}
+                AND ta.is_active = 1
+                AND (ta.subject_id = r.subject_id OR ta.subject_id IS NULL)
+          )"
+        : '';
+
     $classAverageStmt = $pdo->prepare(
         "SELECT
             st.id AS student_id,
@@ -424,6 +464,7 @@ try {
                WHERE current_subject.{$mappingClassColumn} = ?
                  AND current_subject.subject_id = r.subject_id
            )
+           {$teacherResultScopeSql}
         WHERE st.{$mappingClassColumn} = ?
           AND st.is_active = 1
         GROUP BY st.id"
