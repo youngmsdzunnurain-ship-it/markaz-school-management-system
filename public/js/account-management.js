@@ -56,7 +56,7 @@
 
                         <label for="accountUsername">Teacher username</label>
 
-                        <input id="accountUsername" name="username" type="text" maxlength="60" autocomplete="username" pattern="(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9._-]+" title="Use uppercase and lowercase letters; numbers are recommended.">
+                        <input id="accountUsername" name="username" type="text" maxlength="60" autocomplete="username" minlength="4" pattern="(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9._-]{4,60}" title="Use 4–60 characters with uppercase and lowercase letters; letters, numbers, dots, underscores and hyphens are allowed.">
 
                         <small>Use a unique username, for example TeacherA27.</small>
 
