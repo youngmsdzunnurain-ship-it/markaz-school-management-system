@@ -936,10 +936,8 @@ async function loadDashboardStats() {
 
                     const subjects = document.createElement("p");
                     subjects.textContent = item.full_class
-                        ? "Full class access · Behavioural assessments included"
-                        : (Array.isArray(item.subjects) && item.subjects.length
-                            ? `Subjects: ${item.subjects.join(", ")}`
-                            : "No active subjects assigned");
+                        ? "Full Class Access · Behavioural assessments included"
+                        : `${item.access_mode || "Assigned Subjects"}: ${(Array.isArray(item.subjects) ? item.subjects : []).join(", ")}`;
 
                     const progressLine = document.createElement("p");
                     progressLine.textContent =
