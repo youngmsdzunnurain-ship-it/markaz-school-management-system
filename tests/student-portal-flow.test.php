@@ -78,4 +78,10 @@ portalAssert(str_contains($behaviourApi, 'studentPortalResultScope()'), 'officia
 portalAssert(str_contains($resultApi, 'requireResultStaff()'), 'staff result API continues to enforce staff access when no student scope exists');
 portalAssert(str_contains($behaviourApi, 'requireResultStaff()'), 'behaviour API continues to enforce staff access when no student scope exists');
 
+portalAssert(str_contains($resultScript, 'document.body.classList.add("student-portal-result-view")'), 'student portal result view receives an isolated layout scope');
+portalAssert(str_contains($resultScript, 'document.body.classList.remove("student-portal-result-view")') === false, 'student portal layout scope is not removed during normal result rendering');
+portalAssert(str_contains($printPage, 'class="management-panel behavioural-management-panel"'), 'behavioural report remains a distinct section below academic results in the shared report markup');
+portalAssert(str_contains($css, '.student-portal-result-view .result-management-grid'), 'student portal has an isolated stacked result layout');
+portalAssert(str_contains($css, '.student-portal-result-view .behaviour-grid'), 'student portal behavioural ratings use a horizontal grid');
+
 echo "Student portal official-report integration checks passed." . PHP_EOL;
