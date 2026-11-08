@@ -94,6 +94,8 @@ async function loadAdmin() {
         if (adminName) adminName.textContent = name;
         if (welcomeAdminName) welcomeAdminName.textContent = name;
         if (adminDetailsName) adminDetailsName.textContent = name;
+        const profileRoleTitle = document.getElementById("dashboardProfileRoleTitle");
+        if (profileRoleTitle) profileRoleTitle.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
         if (adminEmail) adminEmail.textContent = email;
         if (profileName) profileName.textContent = name;
         if (profileEmail) profileEmail.textContent = email;
@@ -343,7 +345,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
         ></span>
         <span class="admin-profile-text">
             <strong id="topAdminName">Administrator</strong>
-            <span>Administrator</span>
+            <span id="topAdminRole">Administrator</span>
         </span>
         <span class="admin-profile-arrow">▾</span>
     `;
@@ -382,11 +384,13 @@ if (topbar && !document.querySelector(".topbar-actions")) {
     const topDropdownName = document.getElementById("topDropdownName");
     const topDropdownEmail = document.getElementById("topDropdownEmail");
     const topAdminInitials = document.getElementById("topAdminInitials");
+    const topAdminRole = document.getElementById("topAdminRole");
 
     function updateTopAdmin(name, email, profileImage) {
 
         const safeName = name || "Administrator";
         const safeEmail = email || "";
+        if (topAdminRole) topAdminRole.textContent = window.markazCurrentRole === "exam_officer" ? "Exam Officer" : "Administrator";
 
         if (topAdminName) {
             topAdminName.textContent = safeName;
