@@ -242,9 +242,11 @@ if ($method === 'GET') {
         $effectivePermissions = [];
         foreach (['print_results', 'export_results'] as $permissionKey) {
             $settingKey = $roleSettings[$permissionKey] ?? '';
-            $effectivePermissions[$permissionKey] = $settingKey !== ''
-                ? ($rolePermissionValues[$settingKey] ?? false)
-                : false;
+            $effectivePermissions[$permissionKey] = (string) $account['role'] === 'teacher'
+                ? ($permissions[$id][$permissionKey] ?? false)
+                : ($settingKey !== ''
+                    ? ($rolePermissionValues[$settingKey] ?? false)
+                    : false);
         }
 
         $effectivePermissions['attendance_records'] = $permissions[$id]['attendance_records'] ?? false;
@@ -575,8 +577,12 @@ try {
 
     if ($role === 'teacher') {
         saveAccountPermission($pdo, $targetId, 'attendance_records', filter_var($data['attendance_records'] ?? false, FILTER_VALIDATE_BOOLEAN));
+        saveAccountPermission($pdo, $targetId, 'print_results', filter_var($data['print_results'] ?? false, FILTER_VALIDATE_BOOLEAN));
+        saveAccountPermission($pdo, $targetId, 'export_results', filter_var($data['export_results'] ?? false, FILTER_VALIDATE_BOOLEAN));
     } else {
         saveAccountPermission($pdo, $targetId, 'attendance_records', false);
+        saveAccountPermission($pdo, $targetId, 'print_results', false);
+        saveAccountPermission($pdo, $targetId, 'export_results', false);
     }
 
     $pdo->commit();
