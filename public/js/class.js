@@ -607,7 +607,8 @@
     }
 
     function openStudent(studentId) {
-        if (isTeacher && !teacherFullClassAccess) return;
+        // Teachers enter scores in this workspace; individual student profiles are admin-only.
+        if (isTeacher) return;
         window.location.href =
             `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}&display_version=20261106-targeted-student-display-fix`;
     }
