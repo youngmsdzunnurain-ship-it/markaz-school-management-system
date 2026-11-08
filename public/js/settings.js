@@ -85,7 +85,7 @@ async function loadProfile() {
 
     } catch (error) {
         showMessage(
-            "Unable to load administrator profile.",
+            "Unable to load account profile.",
             "error"
         );
     }
