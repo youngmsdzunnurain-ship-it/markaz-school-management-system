@@ -69,6 +69,12 @@ function setStudentResultDocumentTitle() {
 async function getCurrentUserRole() {
     if (currentUserRole) return currentUserRole;
 
+    const payloadRole = String(studentData?.current_user_role || "").toLowerCase();
+    if (["admin", "exam_officer", "teacher", "management"].includes(payloadRole)) {
+        currentUserRole = payloadRole;
+        return currentUserRole;
+    }
+
     if (!currentUserRolePromise) {
         currentUserRolePromise = (async () => {
             const response = await fetch("./api/auth/me.php", {
