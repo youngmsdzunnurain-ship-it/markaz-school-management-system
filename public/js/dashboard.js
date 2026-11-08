@@ -79,9 +79,13 @@ async function loadAdmin() {
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
         if (role === "teacher") {
+            document.body.classList.add("role-teacher");
             document.getElementById("dashboardAttendancePanel")?.setAttribute("hidden", "");
             document.querySelector(".dashboard-exam-section")?.setAttribute("hidden", "");
             document.querySelector(".dashboard-completion-charts")?.setAttribute("hidden", "");
+            document.querySelector(".stats-grid")?.setAttribute("hidden", "");
+            document.querySelector(".dashboard-bottom-layout")?.setAttribute("hidden", "");
+            document.querySelector(".dashboard-attendance-footnote")?.setAttribute("hidden", "");
         }
         loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
@@ -897,84 +901,37 @@ async function loadDashboardStats() {
         }
 
         if (data.role === "teacher") {
-            const labels = document.querySelectorAll(".stat-card .stat-label");
-            const descriptions = document.querySelectorAll(".stat-card small");
-            const values = [
-                data.stats.assigned_students ?? 0,
-                data.stats.assigned_classes ?? 0,
-                data.stats.assigned_subjects ?? 0,
-            ];
-            const names = ["Assigned Students", "Assigned Classes", "Assigned Subjects"];
-            const notes = [
-                "Students in your assigned classes",
-                "Classes assigned to you",
-                "Subjects assigned to you",
-            ];
-
-            statCards.forEach((node, index) => node.textContent = values[index]);
-            labels.forEach((node, index) => node.textContent = names[index]);
-            descriptions.forEach((node, index) => node.textContent = notes[index]);
-
-            const charts = document.querySelector(".dashboard-completion-charts");
-            if (charts) charts.style.display = "none";
-
-            const progress = document.querySelector(".result-progress-section");
-            if (progress) progress.hidden = true;
-
             const section = document.getElementById("teacherAssignmentsSection");
             const list = document.getElementById("teacherAssignmentsList");
             if (section && list) {
-                section.style.display = "";
+                section.hidden = false;
+                section.style.display = "block";
                 list.replaceChildren();
 
                 const assignments = Array.isArray(data.assignments) ? data.assignments : [];
                 if (!assignments.length) {
                     const empty = document.createElement("p");
-                    empty.textContent = "No active teaching assignments yet.";
+                    empty.className = "teacher-assignment-empty";
+                    empty.textContent = "No active teaching assignments yet. Contact the Admin to configure your classes and subjects.";
                     list.appendChild(empty);
                 }
 
                 assignments.forEach(item => {
                     const card = document.createElement("article");
-                    card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
-
+                    card.className = "teacher-assignment-card";
                     const heading = document.createElement("h3");
-                    heading.textContent = `${item.class_name} · ${item.class_type === "arabic" ? "Arabic" : "Conventional"}`;
-                    heading.style.marginTop = "0";
-
+                    heading.textContent = item.class_name + " · " + (item.class_type === "arabic" ? "Arabic" : "Conventional");
+                    const scope = document.createElement("p");
+                    scope.textContent = item.full_class
+                        ? "Full Class Access · All subjects"
+                        : "Assigned subjects: " + ((item.subjects || []).join(", ") || "No active subjects");
                     const students = document.createElement("p");
-                    students.textContent = `${item.student_count} assigned students`;
-
-                    const subjects = document.createElement("p");
-                    subjects.textContent = item.full_class
-                        ? "Full class access · Behavioural assessments included"
-                        : (Array.isArray(item.subjects) && item.subjects.length
-                            ? `Subjects: ${item.subjects.join(", ")}`
-                            : "No active subjects assigned");
-
-                    const progressLine = document.createElement("p");
-                    progressLine.textContent =
-                        `Entry progress: ${item.completed_entries}/${item.expected_entries} (${Number(item.completion_percentage || 0).toFixed(2)}%)`;
-
-                    const track = document.createElement("div");
-                    track.style.cssText = "height:8px;background:#e8eee9;border-radius:8px;overflow:hidden;";
-                    const bar = document.createElement("div");
-                    bar.style.cssText = `height:100%;width:${Math.max(0, Math.min(100, Number(item.completion_percentage) || 0))}%;background:#198754;border-radius:8px;`;
-                    track.appendChild(bar);
-
-                    const button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "btn btn-primary";
-                    button.textContent = "Open Class";
-                    button.addEventListener("click", () => {
-                        const params = new URLSearchParams({
-                            class_id: String(item.class_id),
-                            class_type: String(item.class_type)
-                        });
-                        window.location.href = `./class.html?id=${encodeURIComponent(item.class_id)}&class_type=${encodeURIComponent(item.class_type)}`;
-                    });
-
-                    card.append(heading, students, subjects, progressLine, track, button);
+                    students.textContent = Number(item.student_count || 0) + " students in this class";
+                    const button = document.createElement("a");
+                    button.className = "teacher-open-class";
+                    button.href = "./class.html?id=" + encodeURIComponent(item.class_id) + "&class_type=" + encodeURIComponent(item.class_type);
+                    button.textContent = item.full_class ? "Open Class" : "Open Subject Workspace";
+                    card.append(heading, scope, students, button);
                     list.appendChild(card);
                 });
             }
