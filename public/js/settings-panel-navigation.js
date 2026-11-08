@@ -120,6 +120,7 @@
       return;
     }
     currentRole = account.admin.role;
+    if (!["admin", "exam_officer"].includes(currentRole)) { window.location.replace("dashboard.html"); return; }
   } catch {
     window.location.replace("login.html");
     return;
@@ -196,6 +197,8 @@
   if (isExamOfficer) {
     const releaseLabel = page.querySelector("#markazResultRelease .settings-label");
     if (releaseLabel) releaseLabel.textContent = "ACADEMIC RESULTS";
+    const categoryLabels = { "academic-archive": "Academic & Term Archive", results: "Result & Reports", memorization: "Core Memorization" };
+    categories.forEach(category => { if (categoryLabels[category.id]) { category.label = categoryLabels[category.id]; const button = buttons.get(category.id); if (button) button.querySelector("span").textContent = category.label; } });
   }
   document.documentElement.classList.remove("settings-page-pending");
 })();
