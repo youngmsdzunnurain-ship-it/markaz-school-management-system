@@ -75,6 +75,11 @@ async function loadAdmin() {
         if (greetingNode) greetingNode.textContent = greeting;
         const roleLabel = document.getElementById("welcomeRoleLabel");
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
+        const roleNames = {admin:"Administrator",exam_officer:"Exam Officer",teacher:"Teacher",management:"Management",student:"Student"};
+        const welcomeDescription = document.querySelector(".welcome-card .welcome-content p");
+        if (welcomeDescription && role === "teacher") {
+            welcomeDescription.textContent = "View your active teaching assignments and enter results for your assigned classes.";
+        }
         window.markazCurrentRole = role;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         loadDashboardAttendance();
@@ -95,11 +100,11 @@ async function loadAdmin() {
         if (welcomeAdminName) welcomeAdminName.textContent = name;
         if (adminDetailsName) adminDetailsName.textContent = name;
         const profileRoleTitle = document.getElementById("dashboardProfileRoleTitle");
-        if (profileRoleTitle) profileRoleTitle.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
+        if (profileRoleTitle) profileRoleTitle.textContent = roleNames[role] || "MARKAZ User";
         if (adminEmail) adminEmail.textContent = email;
         if (profileName) profileName.textContent = name;
         const sidebarRole = document.getElementById("sidebarProfileRole");
-        if (sidebarRole) sidebarRole.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
+        if (sidebarRole) sidebarRole.textContent = roleNames[role] || "MARKAZ User";
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
