@@ -12,19 +12,6 @@ if ($studentPortalScope === null) {
     requireResultStaff();
 }
 
-// Teachers enter results from the assigned-class workspace. The individual
-// student result endpoint also returns profile data and is never a teacher
-// profile view, including for Full Class Access assignments.
-if ($studentPortalScope === null && currentAdminRole() === 'teacher') {
-    http_response_code(403);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'success' => false,
-        'message' => 'Individual student profile access is not available to teachers.'
-    ]);
-    exit;
-}
-
 // Staff printing still requires its independently assigned permission.
 // A verified student portal session is read-only and cannot enter staff actions.
 if (($_GET['print'] ?? '') === '1' && $studentPortalScope === null) {
