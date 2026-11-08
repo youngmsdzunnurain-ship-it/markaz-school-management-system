@@ -86,10 +86,10 @@ portalAssert(str_contains($printPage, 'class="management-panel behavioural-manag
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-card .result-management-grid'), 'student portal has an isolated stacked result layout');
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-card .behaviour-grid'), 'student portal behavioural ratings use a horizontal grid');
 
-portalAssert(str_contains($resultCss, 'body.student-portal-result-view .document-actions'), 'student portal actions use a dedicated responsive action group');
-portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-class-row'), 'student portal class information has a compact equal-height row');
-portalAssert(str_contains($resultCss, 'body.student-portal-result-view .memorization-detail-item'), 'student portal memorization receives the remaining class-row width');
-portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-photo'), 'student portal profile photo height is compact and controlled');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-result-page.management-view .document-actions'), 'student portal actions use a dedicated responsive action group');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-class-row'), 'student portal class information has a compact equal-height row');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-class-row .memorization-detail-item'), 'student portal memorization receives the remaining class-row width');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-photo'), 'student portal profile photo height is compact and controlled');
 portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-mobile-polish'), 'student portal mobile layout refreshes the result stylesheet cache');
 
 echo "Student portal official-report integration checks passed." . PHP_EOL;
