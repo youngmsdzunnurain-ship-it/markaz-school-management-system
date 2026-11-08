@@ -75,11 +75,6 @@ async function loadAdmin() {
         if (greetingNode) greetingNode.textContent = greeting;
         const roleLabel = document.getElementById("welcomeRoleLabel");
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
-        const roleNames = {admin:"Administrator",exam_officer:"Exam Officer",teacher:"Teacher",management:"Management",student:"Student"};
-        const welcomeDescription = document.querySelector(".welcome-card .welcome-content p");
-        if (welcomeDescription && role === "teacher") {
-            welcomeDescription.textContent = "View your active teaching assignments and enter results for your assigned classes.";
-        }
         window.markazCurrentRole = role;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         loadDashboardAttendance();
@@ -100,11 +95,11 @@ async function loadAdmin() {
         if (welcomeAdminName) welcomeAdminName.textContent = name;
         if (adminDetailsName) adminDetailsName.textContent = name;
         const profileRoleTitle = document.getElementById("dashboardProfileRoleTitle");
-        if (profileRoleTitle) profileRoleTitle.textContent = roleNames[role] || "MARKAZ User";
+        if (profileRoleTitle) profileRoleTitle.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
         if (adminEmail) adminEmail.textContent = email;
         if (profileName) profileName.textContent = name;
         const sidebarRole = document.getElementById("sidebarProfileRole");
-        if (sidebarRole) sidebarRole.textContent = roleNames[role] || "MARKAZ User";
+        if (sidebarRole) sidebarRole.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
@@ -493,7 +488,6 @@ document.addEventListener("click", (event) => {
 
 
 function applyDashboardRoleAccess(role, permissions = {}) {
-    document.body.classList.toggle("role-teacher", role === "teacher");
     document.querySelectorAll("[data-role-access]").forEach((element) => {
         const requiredRole = element.dataset.roleAccess;
         let allowed = true;
@@ -929,7 +923,6 @@ async function loadDashboardStats() {
 
                 assignments.forEach(item => {
                     const card = document.createElement("article");
-                    card.className = "teacher-assignment-card";
                     card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
 
                     const heading = document.createElement("h3");
@@ -941,8 +934,10 @@ async function loadDashboardStats() {
 
                     const subjects = document.createElement("p");
                     subjects.textContent = item.full_class
-                        ? "Full Class Access · Behavioural assessments included"
-                        : `${item.access_mode || "Assigned Subjects"}: ${(Array.isArray(item.subjects) ? item.subjects : []).join(", ")}`;
+                        ? "Full class access · Behavioural assessments included"
+                        : (Array.isArray(item.subjects) && item.subjects.length
+                            ? `Subjects: ${item.subjects.join(", ")}`
+                            : "No active subjects assigned");
 
                     const progressLine = document.createElement("p");
                     progressLine.textContent =
