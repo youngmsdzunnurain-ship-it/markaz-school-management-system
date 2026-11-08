@@ -17,6 +17,8 @@ $studentApi = file_get_contents($root . '/api/results/student.php');
 $behaviourApi = file_get_contents($root . '/api/results/behavioural.php');
 $completionApi = file_get_contents($root . '/api/results/class-completion.php');
 $studentListApi = file_get_contents($root . '/api/students/list.php');
+$studentProfileSaveApi = file_get_contents($root . '/api/results/student-profile-save.php');
+$teacherStatsApi = file_get_contents($root . '/api/dashboard/teacher-stats.php');
 $dashboard = file_get_contents($root . '/public/dashboard.html');
 $dashboardJs = file_get_contents($root . '/public/js/dashboard.js');
 $classJs = file_get_contents($root . '/public/js/class.js');
@@ -52,6 +54,15 @@ teacherDashboardAssert(
 teacherDashboardAssert(
     str_contains($studentListApi, 'requireAdmin();'),
     'teacher accounts must not access the general student-management roster API'
+);
+teacherDashboardAssert(
+    str_contains($studentProfileSaveApi, 'requireSeniorAdmin();'),
+    'teacher access must not permit editing student profile or memorization-portion fields'
+);
+teacherDashboardAssert(
+    str_contains($teacherStatsApi, 'is_active = 1')
+    && str_contains($teacherStatsApi, "'access_mode'"),
+    'teacher dashboard must show only active assignments and label the assignment access mode'
 );
 teacherDashboardAssert(
     str_contains($dashboard, 'data-role-access="admin_or_exam_officer"')
