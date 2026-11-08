@@ -11546,3 +11546,11 @@ body.student-portal-result-view .student-information .student-class-row > .detai
  .student-information .student-details { grid-template-columns:minmax(0,1fr)!important; }
  .student-information .student-name-item { grid-column:auto!important; }
 }
+
+
+/* Complete the reference portrait frame with green and gold vertical rails beside the photo. */
+@media screen and (min-width: 761px) {
+  .student-information .student-photo {
+    box-shadow: -5px 0 0 #087f5b, -10px 0 0 #c99a24, 0 8px 20px rgba(15,23,42,.08) !important;
+  }
+}
