@@ -176,14 +176,16 @@ try {
 
     $isTeacher = $studentPortalScope === null && currentAdminRole() === 'teacher';
     $teacherAccountId = (int) ($_SESSION['admin_id'] ?? 0);
+    $teacherHasFullClassAccess = false;
     if ($isTeacher) {
         $assignmentCheck = $pdo->prepare(
-            'SELECT 1 FROM teacher_assignments
-             WHERE account_id = ? AND class_type = ? AND class_id = ?
-               AND is_active = 1 LIMIT 1'
+            'SELECT subject_id FROM teacher_assignments
+             WHERE account_id = ? AND class_type = ? AND class_id = ? AND is_active = 1'
         );
         $assignmentCheck->execute([$teacherAccountId, $classType, $classId]);
-        if (!$assignmentCheck->fetchColumn()) {
+        $teacherAssignmentSubjects = $assignmentCheck->fetchAll(PDO::FETCH_COLUMN);
+        $teacherHasFullClassAccess = in_array(null, $teacherAssignmentSubjects, true);
+        if (!$teacherAssignmentSubjects) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'You are not assigned to this class.']);
             exit;
@@ -664,7 +666,9 @@ try {
                 $memorizationDefault,
 
             'memorization_portion' =>
-                $effectiveMemorization
+                $effectiveMemorization,
+
+            'teacher_full_class_access' => $isTeacher && $teacherHasFullClassAccess
         ],
 
         'academic_period' => [
