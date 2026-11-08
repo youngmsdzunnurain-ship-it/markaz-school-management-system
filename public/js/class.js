@@ -166,7 +166,7 @@
                             <th>Student</th>
                             ${isTeacher ? "" : "<th>Gender</th><th>Arabic Class</th>"}
                             <th>Status</th>
-                            <th>Action</th>
+                            ${(!isTeacher || teacherFullClassAccess) ? "<th>Action</th>" : ""}
                         </tr>
                     </thead>
 
