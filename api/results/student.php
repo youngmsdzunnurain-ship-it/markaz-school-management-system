@@ -265,6 +265,17 @@ try {
     /*
      * STUDENT RESULTS
      */
+    $teacherResultSubjectScopeSql = $isTeacher
+        ? " AND EXISTS (
+              SELECT 1 FROM teacher_assignments ta
+              WHERE ta.account_id = {$teacherAccountId}
+                AND ta.class_type = '{$classType}'
+                AND ta.class_id = {$classId}
+                AND ta.is_active = 1
+                AND (ta.subject_id = results.subject_id OR ta.subject_id IS NULL)
+          )"
+        : '';
+
     $resultStmt = $pdo->prepare(
         "SELECT
             id,
@@ -287,7 +298,7 @@ try {
                  AND current_subject_record.is_active = 1
               WHERE cs.{$mappingClassColumn} = ?
           )
-          {$teacherSubjectScopeSql}
+          {$teacherResultSubjectScopeSql}"
     );
 
     $resultStmt->execute([
