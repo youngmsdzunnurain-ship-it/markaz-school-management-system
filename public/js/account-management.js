@@ -33,7 +33,7 @@
                     <input type="hidden" name="id" value="">
 
                     <label for="accountName">Full name</label>
-                    <input id="accountName" name="name" type="text" required maxlength="150" autocomplete="name">
+                    <input id="accountName" name="name" type="text" required maxlength="120" autocomplete="name">
 
                     <label for="accountRole">Account role</label>
                     <select id="accountRole" name="role" required>
