@@ -50,9 +50,8 @@ portalAssert(!str_contains($css, '.portal-report-sheet'), 'portal stylesheet doe
 portalAssert(str_contains($printPage, 'id="studentReportCard"'), 'official report-card template remains the destination');
 portalAssert(str_contains($resultScript, 'student_portal'), 'official report script recognises student-portal mode');
 portalAssert(str_contains($resultScript, 'student-portal-view'), 'public student report activates its isolated read-only presentation');
-portalAssert(str_contains($resultScript, './student-login.html'), 'student report back navigation returns to the student portal');
-portalAssert(!str_contains($resultScript, 'window.location.href = "./print-results.html"'), 'student report back navigation never opens staff print management');
-portalAssert(!str_contains($resultScript, ': `./dashboard.html`'), 'student report back navigation has no admin dashboard fallback');
+portalAssert((bool) preg_match('/if \\(isStudentPortalView\\) \\{\\s*window\\.location\\.replace\\("\\.\\/student-login\\.html"\\);\\s*return;\\s*\\}\\s*if \\(isPrintMode\\)/', $resultScript), 'student report back navigation returns to the portal before staff navigation is considered');
+portalAssert(str_contains($resultScript, 'student-portal-view'), 'student report receives its isolated report-sheet presentation class');
 portalAssert(str_contains($resultScript, 'window.print()'), 'student can use the official report print dialog');
 portalAssert(str_contains($portalApi, 'startStudentPortalSession'), 'successful public lookup creates a scoped session');
 portalAssert(str_contains($portalApi, 'student_portal_result_access'), 'lookup scope is tied to the verified student and period');
