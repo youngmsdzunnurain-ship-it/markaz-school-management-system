@@ -76,6 +76,7 @@ async function loadAdmin() {
         const roleLabel = document.getElementById("welcomeRoleLabel");
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         window.markazCurrentRole = role;
+        document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         loadDashboardAttendance();
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
@@ -474,12 +475,11 @@ document.addEventListener("click", (event) => {
     const label = item.textContent.trim().toLowerCase();
     if (label !== "profile" && label !== "settings") return;
 
-    if (window.markazCurrentRole !== "admin") {
-        window.location.href = "dashboard.html";
+    if (window.markazCurrentRole === "exam_officer") {
+        window.location.href = "exam-officer-settings.html";
         return;
     }
-
-    window.location.href = "settings.html";
+    if (window.markazCurrentRole === "admin") window.location.href = "settings.html";
 });
 
 
@@ -490,6 +490,10 @@ function applyDashboardRoleAccess(role, permissions = {}) {
 
         if (requiredRole === "admin") {
             allowed = role === "admin";
+        } else if (requiredRole === "admin_or_exam_officer") {
+            allowed = role === "admin" || role === "exam_officer";
+        } else if (requiredRole === "exam_officer_settings") {
+            allowed = role === "exam_officer";
         } else if (requiredRole === "exam_officer") {
             allowed = role === "admin" || role === "exam_officer";
         } else if (requiredRole === "print_results") {
@@ -849,6 +853,7 @@ document.addEventListener("visibilitychange", () => {
 // A dashboard restored from the browser back-forward cache does not rerun
 // its initial script. Refresh live statistics when that page is shown again.
 window.addEventListener("pageshow", () => {
+    loadAdmin();
     loadDashboardStats();
 });
 
@@ -1028,7 +1033,8 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Print Results": "print-results.html",
             "Attendance": "attendance.html",
             "School Fees": "school-fees.html",
-            "System Settings": "settings.html"
+            "System Settings": "settings.html",
+            "Settings": "exam-officer-settings.html"
         };
 
         const destination = destinations[button.textContent.trim()];
