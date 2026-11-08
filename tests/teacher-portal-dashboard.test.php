@@ -93,8 +93,8 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     !str_contains($managementShellJs, '<a href="/settings.html">Settings</a>') &&
-    str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }') ||
-    str_contains($studentResultCss, '.student-information .student-photo { display: none !important; }'),
+    (str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }') ||
+     str_contains($studentResultCss, '.student-information .student-photo { display: none !important; }')),
     'Avatar Settings is removed and mobile result profile photo is hidden'
 );
 teacherPortalCheck(
@@ -102,3 +102,5 @@ teacherPortalCheck(
     str_contains($studentsCss, 'background:linear-gradient(90deg,#087f5b 0%,#087f5b 72%,#c99a24 100%)'),
     'Student Management profile uses the green and gold top frame'
 );
+
+echo "Teacher portal dashboard regression tests passed.\\n";
