@@ -50,6 +50,23 @@ if ($loginIdentifier === '' || $password === '') {
 }
 
 $pdo = db();
+$pdo->exec("CREATE TABLE IF NOT EXISTS login_devices (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT UNSIGNED NOT NULL,
+    device_token_hash CHAR(64) NOT NULL,
+    user_agent VARCHAR(500) NOT NULL DEFAULT '',
+    last_seen_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_blocked TINYINT(1) NOT NULL DEFAULT 0,
+    blocked_at DATETIME NULL,
+    blocked_by BIGINT UNSIGNED NULL,
+    block_reason VARCHAR(500) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_login_device_account_token (account_id, device_token_hash),
+    KEY idx_login_device_account_status (account_id, is_blocked),
+    CONSTRAINT fk_login_devices_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
+    CONSTRAINT fk_login_devices_blocked_by FOREIGN KEY (blocked_by) REFERENCES admins(id) ON DELETE SET NULL
+) ENGINE=InnoDB");
 
 // Ensure failed-login tracking exists on installations that predate this table.
 try {
@@ -198,6 +215,26 @@ if (!empty($admin['is_frozen'])) {
     exit;
 }
 
+$deviceToken = (string) ($_COOKIE['MARKAZ_DEVICE_TOKEN'] ?? '');
+if (!preg_match('/^[a-f0-9]{64}$/i', $deviceToken)) {
+    $deviceToken = bin2hex(random_bytes(32));
+}
+$deviceTokenHash = hash('sha256', $deviceToken);
+$deviceCheckStmt = $pdo->prepare(
+    'SELECT is_blocked FROM login_devices
+     WHERE account_id = ? AND device_token_hash = ? LIMIT 1'
+);
+$deviceCheckStmt->execute([(int) $admin['id'], $deviceTokenHash]);
+if ((int) $deviceCheckStmt->fetchColumn() === 1) {
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'device_blocked' => true,
+        'message' => 'This device has been blocked for this account by the Senior Admin. The account can still be used from another device.'
+    ]);
+    exit;
+}
+
 if ($lockoutEnabled) {
     $pdo->prepare(
         'DELETE FROM login_lockouts WHERE role = ? AND identifier = ?'
@@ -263,6 +300,25 @@ if ($loginRole !== 'admin' && isset($portalSettings[$loginRole])) {
         exit;
     }
 }
+
+$deviceStmt = $pdo->prepare(
+    'INSERT INTO login_devices (account_id, device_token_hash, user_agent, last_seen_at)
+     VALUES (?, ?, ?, NOW())
+     ON DUPLICATE KEY UPDATE user_agent = VALUES(user_agent), last_seen_at = NOW()'
+);
+$deviceStmt->execute([
+    (int) $admin['id'],
+    $deviceTokenHash,
+    substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500)
+]);
+$_SESSION['device_token_hash'] = $deviceTokenHash;
+setcookie('MARKAZ_DEVICE_TOKEN', $deviceToken, [
+    'expires' => 0,
+    'path' => '/',
+    'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
 session_regenerate_id(true);
 
