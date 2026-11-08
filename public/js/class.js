@@ -30,8 +30,6 @@
     let resultSubjects = [];
     let classResults = [];
     let selectedSubjectId = "";
-    let isTeacher = false;
-    let teacherFullClassAccess = false;
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -84,20 +82,6 @@
             throw new Error(data.message || "Unable to load the assigned class.");
         }
 
-        isTeacher = !!data.teacher_access;
-        teacherFullClassAccess = !!data.teacher_access?.full_class;
-        if (isTeacher) {
-            document.body.classList.add("teacher-class-workspace");
-            editClassButton?.remove();
-            addStudentButton?.remove();
-            panelAddStudentButton?.remove();
-            const backLink = document.querySelector(".class-back-link");
-            if (backLink) backLink.href = "./dashboard.html";
-            const panelTitle = document.querySelector(".class-panel .panel-heading h2");
-            if (panelTitle) panelTitle.textContent = "Assigned Class Roster";
-            const panelCopy = document.querySelector(".class-panel .panel-heading p");
-            if (panelCopy) panelCopy.textContent = "Students in your assigned class for result entry only.";
-        }
         selectedClass = {
             ...data.class,
             id: data.class?.id ?? Number(classId),
@@ -164,9 +148,10 @@
                         <tr>
                             <th>Admission No.</th>
                             <th>Student</th>
-                            ${isTeacher ? "" : "<th>Gender</th><th>Arabic Class</th>"}
+                            <th>Gender</th>
+                            <th>Arabic Class</th>
                             <th>Status</th>
-                            ${(!isTeacher || teacherFullClassAccess) ? "<th>Action</th>" : ""}
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -192,7 +177,17 @@
                                         </strong>
                                     </td>
 
-                                     <td>
+                                    <td>
+                                        ${escapeHtml(student.gender || "—")}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            student.arabic_class_name || "—"
+                                        )}
+                                    </td>
+
+                                    <td>
                                         <span class="student-status ${
                                             active ? "active" : "inactive"
                                         }">
@@ -200,9 +195,14 @@
                                         </span>
                                     </td>
 
-                                    ${(!isTeacher || teacherFullClassAccess) ? `<td>
-                                        <button type="button" class="class-student-button" data-student-id="${escapeHtml(student.id)}">View Results</button>
-                                    </td>` : ""}
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="class-student-button"
+                                            data-student-id="${escapeHtml(student.id)}">
+                                            View Results
+                                        </button>
+                                    </td>
                                 </tr>
                             `;
                         }).join("")}
@@ -607,7 +607,6 @@
     }
 
     function openStudent(studentId) {
-        if (isTeacher && !teacherFullClassAccess) return;
         window.location.href =
             `./student-result.html?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}&display_version=20261106-targeted-student-display-fix`;
     }
@@ -620,13 +619,11 @@
     });
 
     function openAddStudent() {
-        if (isTeacher) return;
         window.location.href =
             `./students.html?class_id=${encodeURIComponent(selectedClass.id)}`;
     }
 
     function openEditClass() {
-        if (isTeacher) return;
         window.location.href =
             `./classes.html?edit_id=${encodeURIComponent(selectedClass.id)}`;
     }

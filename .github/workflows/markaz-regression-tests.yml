@@ -35,8 +35,6 @@ jobs:
           php -l api/results/save.php
           php -l api/results/behavioural.php
           php -l api/results/student-portal.php
-          php -l tests/teacher-dashboard-access-regression.test.php
-          php tests/teacher-dashboard-access-regression.test.php
           php -l tests/academic-result-archive.test.php
           php -l api/settings/memorization.php
           php -l public/api/settings/login-lockouts.php

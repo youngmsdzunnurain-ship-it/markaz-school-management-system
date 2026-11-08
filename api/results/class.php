@@ -60,22 +60,12 @@ try {
             exit;
         }
     }
-    $teacherFullClass = false;
-    if ($isTeacher) {
-        $fullAccessStmt = $pdo->prepare(
-            'SELECT 1 FROM teacher_assignments
-             WHERE account_id = ? AND class_type = ? AND class_id = ?
-               AND is_active = 1 AND subject_id IS NULL LIMIT 1'
-        );
-        $fullAccessStmt->execute([$accountId, $classType, $classId]);
-        $teacherFullClass = (bool) $fullAccessStmt->fetchColumn();
-    }
 
     $classSql = $classType === 'arabic'
         ? 'SELECT id, name, NULL AS level_group, is_active
-           FROM arabic_classes WHERE id = ? AND is_active = 1'
+           FROM arabic_classes WHERE id = ? LIMIT 1'
         : 'SELECT id, name, level_group, is_active
-           FROM classes WHERE id = ? AND is_active = 1';
+           FROM classes WHERE id = ? LIMIT 1';
 
     $classStmt = $pdo->prepare($classSql);
 
@@ -184,8 +174,14 @@ try {
             st.first_name,
             st.middle_name,
             st.last_name,
-            st.is_active
+            st.gender,
+            st.date_of_birth,
+            st.is_active,
+            st.arabic_class_id,
+            ac.name AS arabic_class_name
          FROM students st
+         LEFT JOIN arabic_classes ac
+            ON ac.id = st.arabic_class_id
          WHERE st.{$studentClassColumn} = ?
            AND st.is_active = 1
          ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
@@ -273,10 +269,6 @@ try {
             'level_group' => $class['level_group'],
             'is_active' => (bool) $class['is_active']
         ],
-        'teacher_access' => $isTeacher ? [
-            'full_class' => $teacherFullClass,
-            'subject_only' => !$teacherFullClass
-        ] : null,
         'academic_period' => [
             'id' => (int) $period['id'],
             'session_name' => $period['session_name'],
@@ -308,7 +300,13 @@ try {
                     'first_name' => $student['first_name'],
                     'middle_name' => $student['middle_name'],
                     'last_name' => $student['last_name'],
-                    'is_active' => (bool) $student['is_active']
+                    'gender' => $student['gender'],
+                    'date_of_birth' => $student['date_of_birth'],
+                    'is_active' => (bool) $student['is_active'],
+                    'arabic_class_id' => $student['arabic_class_id'] !== null
+                        ? (int) $student['arabic_class_id']
+                        : null,
+                    'arabic_class_name' => $student['arabic_class_name']
                 ];
             },
             $students

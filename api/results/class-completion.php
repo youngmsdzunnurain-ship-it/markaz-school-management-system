@@ -48,27 +48,6 @@ try {
         }
     }
 
-    $isTeacher = currentAdminRole() === 'teacher';
-    $teacherFullClass = false;
-    $teacherSubjectIds = [];
-    if ($isTeacher) {
-        $assignmentStmt = $pdo->prepare(
-            'SELECT subject_id FROM teacher_assignments
-             WHERE account_id = ? AND class_type = ? AND class_id = ? AND is_active = 1'
-        );
-        $assignmentStmt->execute([(int) ($_SESSION['admin_id'] ?? 0), $classType, $classId]);
-        $teacherAssignments = $assignmentStmt->fetchAll(PDO::FETCH_COLUMN);
-        if (!$teacherAssignments) {
-            http_response_code(403);
-            echo json_encode(['success' => false, 'message' => 'You are not assigned to this class.']);
-            exit;
-        }
-        foreach ($teacherAssignments as $assignedSubjectId) {
-            if ($assignedSubjectId === null) { $teacherFullClass = true; break; }
-            $teacherSubjectIds[] = (int) $assignedSubjectId;
-        }
-    }
-
     $periodStmt = $pdo->query(
         'SELECT ap.id FROM academic_periods ap
          INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
@@ -103,15 +82,6 @@ try {
     // Completion and print eligibility must use every required subject
     // assigned to the class, matching api/results/student.php.
     $subjectParams = [$classId];
-    if ($isTeacher && !$teacherFullClass) {
-        $teacherSubjectIds = array_values(array_unique($teacherSubjectIds));
-        if (!$teacherSubjectIds) {
-            $subjectSql .= ' AND 1 = 0';
-        } else {
-            $subjectSql .= ' AND s.id IN (' . implode(',', array_fill(0, count($teacherSubjectIds), '?')) . ')';
-            $subjectParams = array_merge($subjectParams, $teacherSubjectIds);
-        }
-    }
     $subjectSql .= ' ORDER BY cs.sort_order, s.name';
     $subjectStmt = $pdo->prepare($subjectSql);
     $subjectStmt->execute($subjectParams);
@@ -128,7 +98,6 @@ try {
         'tolerance' => 'Tolerance', 'attentiveness' => 'Attentiveness',
         'truthfulness' => 'Truthfulness'
     ];
-    if ($isTeacher && !$teacherFullClass) $behaviourFields = [];
     $scoreFields = ['ca1' => 'CA1', 'ca2' => 'CA2', 'exam' => 'Exam'];
     $resultMap = [];
     $behaviourMap = [];
@@ -202,12 +171,7 @@ try {
     }
 
     echo json_encode([
-        'success' => true,
-        'teacher_access' => $isTeacher ? [
-            'full_class' => $teacherFullClass,
-            'subject_ids' => $teacherFullClass ? [] : array_values(array_unique($teacherSubjectIds))
-        ] : null,
-        'class_type' => $classType,
+        'success' => true, 'class_type' => $classType,
         'class_id' => (int) $class['id'], 'class_name' => $class['name'],
         'academic_period_id' => (int) $periodId, 'threshold' => $threshold,
         'students' => $completionRows
