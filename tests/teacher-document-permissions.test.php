@@ -59,7 +59,7 @@ teacherDocumentPermissionCheck(
 teacherDocumentPermissionCheck(
     str_contains(file_get_contents(__DIR__ . '/../api/classes/list.php'), '"arabic" AS class_type') &&
     str_contains(file_get_contents(__DIR__ . '/../api/students/list.php'), '"arabic" AS class_type') &&
-    str_contains(file_get_contents(__DIR__ . '/../public/js/print-results.js'), 'class_type: type'),
+    str_contains(file_get_contents(__DIR__ . '/../public/js/print-results.js'), 'frameParams.set("class_type", "arabic")'),
     'Full-class teacher printing preserves conventional and Arabic class separation'
 );
 teacherDocumentPermissionCheck(
