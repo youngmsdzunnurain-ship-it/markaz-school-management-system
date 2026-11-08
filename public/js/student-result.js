@@ -19,6 +19,10 @@ let isEditMode = false;
 let originalEditState = null;
 let currentUserRole = "";
 let currentUserRolePromise = null;
+let currentUserPermissions = {
+    can_print_results: false,
+    can_export_results: false
+};
 let lastFocusedScoreInput = null;
 
 function escapeHtml(value) {
@@ -83,6 +87,10 @@ async function getCurrentUserRole() {
             }
 
             currentUserRole = role;
+            currentUserPermissions = {
+                can_print_results: data.admin.can_print_results === true,
+                can_export_results: data.admin.can_export_results === true
+            };
             return role;
         })();
     }
@@ -195,14 +203,16 @@ function setReportRemarks(score) {
     }
 }
 
-async function fetchStudentResultPayload(enforcePrintEligibility) {
+async function fetchStudentResultPayload(enforcePrintEligibility, action = "print") {
     const query = new URLSearchParams({
         student_id: studentId,
         class_type: classType
     });
 
     if (classId) query.set("class_id", classId);
-    if (enforcePrintEligibility && isPrintMode) query.set("print", "1");
+    if (enforcePrintEligibility && isPrintMode) {
+        query.set(action === "export" ? "export" : "print", "1");
+    }
 
     const response = await fetch(
         `./api/results/student.php?${query.toString()}`,
@@ -269,12 +279,31 @@ async function loadStudentResult() {
 
     if (isPrintMode) {
         try {
-            await fetchStudentResultPayload(true);
+            if (params.get("student_portal") === "1") {
+                currentUserPermissions = {
+                    can_print_results: true,
+                    can_export_results: true
+                };
+            } else {
+                await getCurrentUserRole();
+            }
+
+            const permissionAction = currentUserPermissions.can_print_results
+                ? "print"
+                : (currentUserPermissions.can_export_results ? "export" : null);
+
+            if (permissionAction) {
+                await fetchStudentResultPayload(true, permissionAction);
+            } else {
+                resultPrintBlocked = {
+                    message: "Your account does not have permission to print or export results."
+                };
+            }
         } catch (error) {
-            // An incomplete result or missing print permission blocks printing,
-            // not loading the student's read-only report preview.
+            // Check the action the account is independently allowed to perform.
+            // This keeps Export available when Print is disabled, and vice versa.
             resultPrintBlocked = error.completion || {
-                message: error.message || "Printing permission could not be verified."
+                message: error.message || "Result document permission could not be verified."
             };
         }
     }
@@ -289,7 +318,7 @@ async function loadStudentResult() {
     captureOriginalEditState();
     document.body.dataset.resultReady = "true";
     if (params.get("auto_print") === "1" && isPrintMode && !resultPrintBlocked) {
-        await authorizeAndPrint("export_results");
+        await authorizeAndPrint("print_results");
     }
 }
 function renderStudentResult(data) {
@@ -1697,9 +1726,16 @@ function setEditMode(editing) {
         cancelScoresButton.hidden = !editing;
     }
 
+    if (printStudentResultButton) {
+        printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
+    }
+    if (downloadStudentPdfButton) {
+        downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
+    }
     if (resultDocumentActions) {
-        // Print/PDF controls exist only on the dedicated printable page.
-        resultDocumentActions.hidden = !isPrintMode || editing || !studentData;
+        // Print and Export remain independently available on the dedicated page.
+        resultDocumentActions.hidden = !isPrintMode || editing || !studentData
+            || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
     }
 
     if (studentData) {
