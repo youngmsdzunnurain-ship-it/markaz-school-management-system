@@ -250,9 +250,9 @@ function showResultPrintBlockedNotice(completion) {
         : [];
 
     let message = completion?.message
-        || "This result is available for review, but printing is disabled until the required result entries are complete.";
+        || "This result is available for review, but printing and export are disabled until the required result entries are complete.";
     if (hasPercentage && hasThreshold) {
-        message = `This result is ${percentage}% complete. Printing requires at least ${threshold}% completion.`;
+        message = `This result is ${percentage}% complete. Printing or export requires at least ${threshold}% completion.`;
     }
     if (missingFields.length) {
         message += " Missing: " + missingFields.join(", ") + ".";
