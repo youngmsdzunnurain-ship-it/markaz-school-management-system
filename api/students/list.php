@@ -28,21 +28,33 @@ if (currentAdminRole() === 'teacher') {
 
     $stmt = db()->prepare(
         'SELECT s.id, s.admission_number, s.first_name, s.middle_name,
-                s.last_name, s.class_id, c.name AS class_name
+                s.last_name, s.class_id, "conventional" AS class_type,
+                c.name AS class_name
          FROM students s
          INNER JOIN classes c ON c.id = s.class_id
          WHERE s.is_active = 1
            AND EXISTS (
                SELECT 1 FROM teacher_assignments ta
-               WHERE ta.account_id = ?
-                 AND ta.class_type = "conventional"
-                 AND ta.class_id = s.class_id
-                 AND ta.subject_id IS NULL
+               WHERE ta.account_id = ? AND ta.class_type = "conventional"
+                 AND ta.class_id = s.class_id AND ta.subject_id IS NULL
                  AND ta.is_active = 1
            )
-         ORDER BY s.last_name ASC, s.first_name ASC'
+         UNION ALL
+         SELECT s.id, s.admission_number, s.first_name, s.middle_name,
+                s.last_name, s.arabic_class_id AS class_id, "arabic" AS class_type,
+                ac.name AS class_name
+         FROM students s
+         INNER JOIN arabic_classes ac ON ac.id = s.arabic_class_id
+         WHERE s.is_active = 1
+           AND EXISTS (
+               SELECT 1 FROM teacher_assignments ta
+               WHERE ta.account_id = ? AND ta.class_type = "arabic"
+                 AND ta.class_id = s.arabic_class_id AND ta.subject_id IS NULL
+                 AND ta.is_active = 1
+           )
+         ORDER BY last_name ASC, first_name ASC'
     );
-    $stmt->execute([$accountId]);
+    $stmt->execute([$accountId, $accountId]);
 } else {
     requireAdmin();
     $stmt = db()->query(
