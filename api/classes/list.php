@@ -27,20 +27,28 @@ if (currentAdminRole() === 'teacher') {
     }
 
     $stmt = db()->prepare(
-        'SELECT c.id, c.name, c.is_active,
+        'SELECT c.id, c.name, "conventional" AS class_type, c.is_active,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.class_id = c.id AND s.is_active = 1) AS student_count
          FROM classes c
          INNER JOIN teacher_assignments ta
-           ON ta.class_id = c.id
-          AND ta.account_id = ?
-          AND ta.class_type = "conventional"
-          AND ta.subject_id IS NULL
+           ON ta.class_id = c.id AND ta.account_id = ?
+          AND ta.class_type = "conventional" AND ta.subject_id IS NULL
           AND ta.is_active = 1
          WHERE c.is_active = 1
-         ORDER BY c.sort_order ASC, c.name ASC'
+         UNION ALL
+         SELECT ac.id, ac.name, "arabic" AS class_type, ac.is_active,
+                (SELECT COUNT(*) FROM students s
+                 WHERE s.arabic_class_id = ac.id AND s.is_active = 1) AS student_count
+         FROM arabic_classes ac
+         INNER JOIN teacher_assignments ta
+           ON ta.class_id = ac.id AND ta.account_id = ?
+          AND ta.class_type = "arabic" AND ta.subject_id IS NULL
+          AND ta.is_active = 1
+         WHERE ac.is_active = 1
+         ORDER BY name'
     );
-    $stmt->execute([$accountId]);
+    $stmt->execute([$accountId, $accountId]);
 } else {
     requireAdmin();
     $stmt = db()->query(
