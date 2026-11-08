@@ -409,7 +409,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         const safeName = name || "Administrator";
         const safeEmail = email || "";
-        if (topAdminRole) topAdminRole.textContent = window.markazCurrentRole === "exam_officer" ? "Exam Officer" : "Administrator";
+        if (topAdminRole) topAdminRole.textContent = ({admin:"Administrator",exam_officer:"Exam Officer",teacher:"Teacher",management:"Management",student:"Student"})[window.markazCurrentRole] || "School staff";
 
         if (topAdminName) {
             topAdminName.textContent = safeName;
