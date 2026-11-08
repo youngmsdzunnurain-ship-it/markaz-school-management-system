@@ -1,6 +1,8 @@
 (() => {
 "use strict";
 const path=location.pathname;
+let currentRole="";
+const loginPathForRole=role=>({teacher:"/teacher-login.html",exam_officer:"/exam-officer-login.html",management:"/management-login.html",student:"/student-login.html"})[String(role||"").toLowerCase()]||"/login.html";
 if(!/\/(students\.html|classes\.html|class\.html|class-subjects\/(index\.html)?|subjects\/(index\.html)?|attendance\.html|school-fees\.html|settings\.html|student-result\.html|print-results\.html)$/.test(path)) return;
 if(document.querySelector(".markaz-management-shell")) return;
 const header=document.createElement("header");
@@ -18,10 +20,10 @@ sidebar.querySelector("button").addEventListener("click",close);overlay.addEvent
 profile.addEventListener("click",()=>{profileMenu.hidden=!profileMenu.hidden;profile.setAttribute("aria-expanded",String(!profileMenu.hidden));});
 document.addEventListener("click",e=>{if(!header.contains(e.target)){profileMenu.hidden=true;profile.setAttribute("aria-expanded","false");}});
 fetch("/api/auth/me.php",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json()).then(data=>{
-if(!data.success||!data.admin)return;const a=data.admin,name=a.name||"Administrator";const initials=name.trim().split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
+if(!data.success||!data.admin)return;const a=data.admin;currentRole=String(a.role||"").toLowerCase();const name=a.name||"Administrator";const initials=name.trim().split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
 header.querySelector("#markazShellName").textContent=name;header.querySelector("#markazShellMenuName").textContent=name;header.querySelector("#markazShellInitials").textContent=initials||"AD";header.querySelector("#markazShellRole").textContent=String(a.role||"Management").replaceAll("_"," ");header.querySelector("#markazShellEmail").textContent=a.email||"";const attendanceLink=sidebar.querySelector("a[href=\"/attendance.html\"]");if(attendanceLink&&a.role==="teacher")attendanceLink.hidden=a.can_manage_attendance!==true;
 if(a.profile_image){const avatar=header.querySelector(".admin-profile-avatar");avatar.textContent="";const img=document.createElement("img");img.src="/"+String(a.profile_image).replace(/^\/+/,"");img.alt=name;avatar.appendChild(img);}
 }).catch(e=>console.error("Management profile load failed:",e));
-header.querySelector("#markazShellLogout").addEventListener("click",async()=>{const b=header.querySelector("#markazShellLogout");b.disabled=true;try{const r=await fetch("/api/auth/logout.php",{method:"POST",credentials:"same-origin"});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||"Logout failed.");location.replace("/login.html");}catch(e){b.disabled=false;alert(e.message||"Unable to log out.");}});
+header.querySelector("#markazShellLogout").addEventListener("click",async()=>{const b=header.querySelector("#markazShellLogout");b.disabled=true;try{const r=await fetch("/api/auth/logout.php",{method:"POST",credentials:"same-origin"});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||"Logout failed.");location.replace(loginPathForRole(currentRole));}catch(e){b.disabled=false;alert(e.message||"Unable to log out.");}});
 document.body.classList.add("markaz-management-shell-active");
 })();
