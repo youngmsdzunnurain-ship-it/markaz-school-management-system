@@ -1546,16 +1546,14 @@ async function authorizeAndPrint(permission) {
             class_type: classType || "conventional",
             student_id: studentId || ""
         });
-        if (params.get("student_portal") !== "1") {
-            const response = await fetch(
-                `./api/results/authorize-action.php?${actionQuery.toString()}`,
-                { credentials: "same-origin" }
-            );
-            const data = await response.json();
+        const response = await fetch(
+            `./api/results/authorize-action.php?${actionQuery.toString()}`,
+            { credentials: "same-origin" }
+        );
+        const data = await response.json();
 
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "You are not permitted to perform this action.");
-            }
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
         setStudentResultDocumentTitle();
