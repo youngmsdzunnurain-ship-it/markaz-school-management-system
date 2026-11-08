@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123d2a"><title>Exam Officer Settings | MARKAZ</title>
+<link rel="stylesheet" href="css/settings.css?v=20261107-settings-polish">
+<link rel="stylesheet" href="css/exam-officer-settings.css?v=20261108-v1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<script>document.documentElement.classList.add("settings-page-pending");</script>
+</head><body class="exam-officer-settings-page"><main class="settings-page">
+<header class="settings-header"><a href="dashboard.html" class="back-link">← Dashboard</a><div><span>MARKAZ · EXAMINATION OFFICE</span><h1>Settings</h1><p>Manage your profile and academic operations.</p></div></header>
+<nav class="officer-settings-nav" aria-label="Exam Officer settings">
+<button type="button" data-target="officerProfile" aria-current="page">Profile Information</button>
+<button type="button" data-target="officerRelease">Academic Results Release</button>
+<button type="button" data-target="officerArchive">Academic &amp; Term Archive</button>
+<button type="button" data-target="officerAcademic">Academic Settings</button>
+<button type="button" data-target="officerReports">Result &amp; Reports</button>
+<button type="button" data-target="officerMemorization">Core Memorization</button>
+</nav>
+<section class="settings-card officer-panel" id="officerProfile"><h2>Profile Information</h2><p>Update your own account details.</p>
+<form id="officerProfileForm" enctype="multipart/form-data"><div class="profile-preview"><div class="profile-photo" id="officerPhoto"><span>EO</span></div><div><strong id="officerNamePreview">Loading…</strong><span id="officerEmailPreview"></span><label class="upload-button">Choose Photo<input type="file" id="officerPhotoInput" name="profile_image" accept="image/jpeg,image/png,image/webp"></label><button type="button" id="officerRemovePhoto" class="remove-photo-button">Remove Photo</button></div></div>
+<label>Full Name<input name="name" id="officerName" required maxlength="120"></label><label>Email Address<input name="email" id="officerEmail" type="email" required maxlength="190"></label><label>Current Exam Officer Password<input name="current_password" type="password" required autocomplete="current-password"></label><p id="officerProfileMessage" class="form-message" role="status"></p><button type="submit">Save Profile Information</button></form></section>
+<section class="settings-card officer-panel" id="officerRelease" hidden><h2>Academic Results Release</h2><p>Each change requires your Exam Officer password.</p><p id="releaseMessage" class="form-message" role="status"></p><div id="releaseList" class="officer-list">Loading academic periods…</div></section>
+<section class="settings-card officer-panel" id="officerArchive" hidden><h2>Academic &amp; Term Archive</h2><div id="archiveCurrent" class="officer-current">Loading current academic period…</div><button id="finalizeTerm" type="button" disabled>Finalize &amp; Lock Current Term</button><p id="archiveMessage" class="form-message" role="status"></p><h3>Academic History</h3><div id="archiveList" class="officer-list"></div></section>
+<section class="settings-card officer-panel" id="officerAcademic" hidden><h2>Academic Settings</h2><p>Manage current session, term and Next Term Begins date.</p><form id="academicForm"><label>Academic Session<select name="academic_session_id" id="academicSession" required></select></label><label>Current Term<select name="term_id" id="academicTerm"><option value="1">First Term</option><option value="2">Second Term</option><option value="3">Third Term</option></select></label><label>Next Term Begins<input type="date" name="resumption_date" id="resumptionDate" required></label><p id="academicMessage" class="form-message" role="status"></p><button type="submit">Save Academic Settings</button></form></section>
+<section class="settings-card officer-panel" id="officerReports" hidden><h2>Result &amp; Reports</h2><p>These shared values appear on official printable results.</p><form id="reportsForm"><label>Class Teacher's Signature<input id="teacherSignature" maxlength="255"></label><label>Director / Principal's Signature<input id="directorSignature" maxlength="255"></label><label>Report Signature Date<input type="date" id="reportDate"></label><p id="reportsMessage" class="form-message" role="status"></p><button type="submit">Save Result &amp; Report Settings</button></form></section>
+<section class="settings-card officer-panel" id="officerMemorization" hidden><h2>Core Memorization</h2><p>Set the default portion of memorization for each Arabic class.</p><p id="memorizationMessage" class="form-message" role="status"></p><div id="memorizationList" class="officer-list">Loading Arabic classes…</div></section>
+<dialog id="passwordDialog"><form id="passwordForm"><h2 id="passwordTitle">Confirm your password</h2><p id="passwordDescription">Enter your Exam Officer password.</p><label>Exam Officer Password<input type="password" id="passwordInput" required autocomplete="current-password"></label><p id="passwordError" class="form-message" role="alert"></p><div><button type="button" id="passwordCancel" class="remove-photo-button">Cancel</button><button type="submit">Confirm</button></div></form></dialog>
+</main><script src="js/exam-officer-settings.js?v=20261108-v1"></script><script src="/js/markaz-global.js"></script></body></html>
