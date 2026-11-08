@@ -1040,7 +1040,7 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Attendance": "attendance.html",
             "School Fees": "school-fees.html",
             "System Settings": "settings.html",
-            "Settings": "exam-officer-settings.html"
+            "Settings": "settings.html"
         };
 
         const destination = destinations[button.textContent.trim()];
