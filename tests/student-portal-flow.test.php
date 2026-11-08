@@ -51,6 +51,7 @@ portalAssert(str_contains($printPage, 'id="studentReportCard"'), 'official repor
 portalAssert(str_contains($resultScript, 'student_portal'), 'official report script recognises student-portal mode');
 portalAssert(str_contains($resultScript, 'student-portal-view'), 'public student report activates its isolated read-only presentation');
 portalAssert(str_contains($resultScript, 'window.location.replace("./student-login.html");'), 'student report back navigation returns to the student portal');
+portalAssert(str_contains($resultScript, 'portalBackButton.textContent = "← Student Portal"'), 'student report back button is clearly labelled for portal navigation');
 portalAssert(strpos($resultScript, 'if (isStudentPortalView) {') < strpos($resultScript, 'if (isPrintMode) {'), 'student portal back navigation is handled before staff print navigation');
 portalAssert(str_contains($resultScript, 'window.print()'), 'student can use the official report print dialog');
 portalAssert(str_contains($portalApi, 'startStudentPortalSession'), 'successful public lookup creates a scoped session');
