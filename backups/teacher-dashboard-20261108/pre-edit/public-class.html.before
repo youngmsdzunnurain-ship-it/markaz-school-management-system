@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123d2a">
+
+    <title>Class | MARKAZ</title>
+
+    <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
+    <link rel="stylesheet" href="./css/class.css">
+    <link rel="stylesheet" href="css/app-watermark.css">
+    <link rel="stylesheet" href="css/website-image-polish.css">
+    <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
+    <link rel="stylesheet" href="/css/management-shell.css?v=20261104-avatar-unified">
+</head>
+
+<body>
+
+<div class="class-page">
+
+    <header class="class-topbar">
+
+        <a href="./classes.html" class="class-back-link" data-go-back>← Go Back</a>
+
+        <div class="class-heading-copy">
+            <span class="eyebrow">MARKAZ CLASS</span>
+
+            <h1 id="classTitle">Loading class...</h1>
+
+            <p id="classDescription">
+                Loading class information...
+            </p>
+        </div>
+
+        <div class="class-header-actions">
+            <button
+                type="button"
+                class="secondary-button"
+                id="editClassButton">
+                Edit Class
+            </button>
+
+            <button
+                type="button"
+                class="primary-button"
+                id="addStudentButton">
+                + Add Student
+            </button>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <section class="class-summary-grid">
+
+            <article class="class-summary-card">
+
+                <span class="summary-label">
+                    STUDENTS
+                </span>
+
+                <strong id="studentCount">
+                    0
+                </strong>
+
+                <span>
+                    Students in this class
+                </span>
+
+            </article>
+
+
+            <article class="class-summary-card">
+
+                <span class="summary-label">
+                    RESULTS
+                </span>
+
+                <strong>
+                    —
+                </strong>
+
+                <span>
+                    Result management
+                </span>
+
+            </article>
+
+
+            <article class="class-summary-card">
+
+                <span class="summary-label">
+                    STATUS
+                </span>
+
+                <strong id="classStatus">
+                    —
+                </strong>
+
+                <span>
+                    Class status
+                </span>
+
+            </article>
+
+        </section>
+
+
+        <section class="class-panel">
+
+            <div class="panel-heading">
+
+                <div>
+                    <span class="eyebrow">
+                        CLASS STUDENTS
+                    </span>
+
+                    <h2>
+                        Students
+                    </h2>
+
+                    <p>
+                        Students belonging to this class will appear here.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="primary-button"
+                    id="panelAddStudentButton">
+                    + Add Student
+                </button>
+
+            </div>
+
+
+            <div
+                id="classStudentsContainer"
+                class="class-students-container">
+
+                <div class="empty-state">
+                    Loading students...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="class-panel results-workspace" id="resultsWorkspace">
+    <div class="panel-heading results-panel-heading">
+        <div>
+            <span class="eyebrow">RESULT MANAGEMENT</span>
+            <h2>Class Results</h2>
+            <p id="resultsPeriodText">
+                Loading current academic period...
+            </p>
+        </div>
+
+    </div>
+
+    <div class="results-summary-grid">
+        <article class="result-summary-card">
+            <span class="summary-label">STUDENTS</span>
+            <strong id="resultsStudentCount">0</strong>
+            <span>Students in this class</span>
+        </article>
+
+        <article class="result-summary-card">
+            <span class="summary-label">SUBJECTS</span>
+            <strong id="resultsSubjectCount">0</strong>
+            <span>Assigned subjects</span>
+        </article>
+
+        <article class="result-summary-card">
+            <span class="summary-label">STATUS</span>
+            <strong id="resultsCompletion">0%</strong>
+            <span>Result completion</span>
+        </article>
+    </div>
+
+    <section class="results-completion-charts" aria-label="Result completion charts">
+        <article class="completion-chart-card">
+            <span class="eyebrow">CLASS OVERVIEW</span>
+            <h3>Overall Completion</h3>
+            <div id="classCompletionDonut" class="completion-donut" role="img" aria-label="Class result completion 0%">
+                <div><strong id="classCompletionDonutValue">0%</strong><span>Complete</span></div>
+            </div>
+        </article>
+        <article class="completion-chart-card completion-students-card">
+            <span class="eyebrow">STUDENT PROGRESS</span>
+            <h3>Completion by Student</h3>
+            <div id="studentCompletionChart" class="student-completion-chart">
+                <p class="empty-state">Loading student progress...</p>
+            </div>
+        </article>
+    </section>
+    <div class="results-toolbar">
+        <div class="result-subject-field">
+            <label for="resultSubjectSelect">Select Subject</label>
+            <select id="resultSubjectSelect">
+                <option value="">Loading subjects...</option>
+            </select>
+        </div>
+
+        <div class="result-search-field">
+            <label for="resultStudentSearch">Search Student</label>
+            <input
+                type="search"
+                id="resultStudentSearch"
+                list="resultStudentSuggestions"
+                placeholder="Search by name or admission number">
+            <div id="resultStudentSuggestions" class="result-student-suggestions" hidden></div>
+        </div>
+    </div>
+
+    <div
+        id="resultsMessage"
+        class="results-message"
+        aria-live="polite">
+    </div>
+
+    <div
+        id="resultsTableContainer"
+        class="results-table-container">
+        <div class="empty-state">
+            Loading results...
+        </div>
+    </div>
+</section>
+
+    </main>
+
+</div>
+
+
+<script src="./js/class.js?v=20261107-result-progress-live-v1"></script>
+
+    <script src="/js/markaz-global.js"></script>
+
+<script src="js/website-image-overrides.js"></script>
+    <script src="./js/go-back.js"></script>
+    <script src="/js/management-shell.js?v=20261104-avatar-unified"></script>
+</body>
+</html>

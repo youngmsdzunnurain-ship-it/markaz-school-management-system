@@ -187,6 +187,9 @@ foreach ($groups as $group) {
         'subjects' => $subjectNames,
         'subject_count' => count($subjectIds),
         'full_class' => $group['full_class'],
+        'access_mode' => $group['full_class']
+            ? 'Full Class Access'
+            : (count($subjectIds) === count($mappedIds) ? 'All Subjects' : 'Selected Subjects'),
         'completed_entries' => $completed,
         'expected_entries' => $expected,
         'completion_percentage' => $percentage

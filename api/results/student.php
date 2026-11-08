@@ -139,6 +139,10 @@ try {
         $student['class_name'] = $portalClass['name'];
     }
 
+    if ($studentPortalScope === null && currentAdminRole() === 'teacher') {
+        requireTeacherFullClassAssignment($pdo, $classId, $classType);
+    }
+
     if ($classId < 1) {
         http_response_code(422);
         echo json_encode([

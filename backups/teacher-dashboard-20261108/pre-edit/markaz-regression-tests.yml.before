@@ -1,0 +1,68 @@
+name: MARKAZ Targeted Regression Tests
+
+on:
+  push:
+    branches:
+      - main
+      - fix/academic-period-current-term-signature-baseline-20261106
+      - fix/targeted-result-print-flow-20261106
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  php-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Run academic-period, signature, and print-result regression tests
+        run: |
+          set -e
+          php -l api/attendance/periods.php
+          php -l api/attendance/history.php
+          php -l api/attendance/register.php
+          php -l tests/attendance-academic-history.test.php
+          node --check public/js/attendance.js
+          php tests/attendance-academic-history.test.php
+          php -l api/settings/finalize-academic-period.php
+          php -l public/api/settings/academic-period.php
+          php -l api/results/save.php
+          php -l api/results/behavioural.php
+          php -l api/results/student-portal.php
+          php -l tests/academic-result-archive.test.php
+          php -l api/settings/memorization.php
+          php -l public/api/settings/login-lockouts.php
+          php -l tests/settings-memorization-social-lockouts.test.php
+          node --check public/js/settings.js
+          node --check public/js/markaz-global.js
+          php tests/settings-memorization-social-lockouts.test.php
+          php -l app/helpers/result-progress.php
+          php -l public/api/dashboard/stats.php
+          php -l tests/dashboard-result-progress.test.php
+          php tests/dashboard-result-progress.test.php
+          node --check public/js/dashboard.js
+          node --check public/js/class.js
+          node --check public/js/settings-panel-navigation.js
+          php -l tests/admin-settings-profile-first-render.test.php
+          php tests/admin-settings-profile-first-render.test.php
+          php tests/academic-result-archive.test.php
+          php tests/academic-period-selection.test.php
+          php tests/result-footer-signatures.test.php
+          php tests/result-print-current-period.test.php
+          php tests/result-print-flow-isolation.test.php
+          php tests/student-result-display-regression.test.php
+          php tests/shared-public-footer.test.php
+          php tests/public-footer-spacing.test.php
+          php tests/public-interaction-motion.test.php
+          php tests/public-visual-hierarchy.test.php
+          php -l tests/public-seo.test.php
+          php tests/public-seo.test.php
+          php tests/public-network-resilience.test.php
+          node --check public/js/public-resilience.js
+          node --check public/sw.js
