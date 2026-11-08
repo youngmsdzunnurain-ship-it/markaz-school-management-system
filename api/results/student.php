@@ -12,6 +12,19 @@ if ($studentPortalScope === null) {
     requireResultStaff();
 }
 
+if ($studentPortalScope !== null) {
+    if (($_GET['print'] ?? '') === '1' && !systemAccessEnabled('student_print_results')) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Student printing is currently disabled by the Admin.']);
+        exit;
+    }
+    if (($_GET['export'] ?? '') === '1' && !systemAccessEnabled('student_export_results')) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Student PDF downloads are currently disabled by the Admin.']);
+        exit;
+    }
+}
+
 // Staff printing and export each require their own independently assigned permission.
 // A verified student portal session is read-only and cannot enter staff actions.
 if ($studentPortalScope === null) {
@@ -611,6 +624,10 @@ try {
     echo json_encode([
         'success' => true,
         'current_user_role' => $studentPortalScope === null ? currentAdminRole() : null,
+        'student_document_permissions' => $studentPortalScope !== null ? [
+            'can_print_results' => systemAccessEnabled('student_print_results'),
+            'can_export_results' => systemAccessEnabled('student_export_results'),
+        ] : null,
 
         'student' => [
             'id' => (int) $student['id'],
