@@ -353,19 +353,23 @@ $studentId = ($studentValue === null || $studentValue === '')
     ? null
     : filter_var($studentValue, FILTER_VALIDATE_INT);
 
-if (
-    $name === '' || mb_strlen($name) > 120
-    || ($role !== 'teacher' && (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190))
-    || ($role === 'teacher' && !preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-Za-z0-9]{4,60}$/', $username))
-    || !in_array($role, $allowedRoles, true)
-    || $isActive === null
-    || ($studentValue !== null && $studentValue !== ''
-        && (!$studentId || $studentId < 1))
-) {
-    accountResponse([
-        'success' => false,
-        'message' => 'Check the name, email, role, active status and student link.'
-    ], 400);
+if ($name === '' || mb_strlen($name) > 150) {
+    accountResponse(['success' => false, 'message' => 'A valid full name is required (1–150 characters).'], 400);
+}
+if (!in_array($role, $allowedRoles, true)) {
+    accountResponse(['success' => false, 'message' => 'Choose a valid account role.'], 400);
+}
+if ($isActive === null) {
+    accountResponse(['success' => false, 'message' => 'Choose whether this account is active.'], 400);
+}
+if ($role !== 'teacher' && (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190)) {
+    accountResponse(['success' => false, 'message' => 'Enter a valid email address (maximum 190 characters).'], 400);
+}
+if ($role === 'teacher' && !preg_match('/^(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9._-]{4,60}$/', $username)) {
+    accountResponse(['success' => false, 'message' => 'A teacher username must be 4–60 characters, contain uppercase and lowercase letters, and use only letters, numbers, dots, underscores or hyphens.'], 400);
+}
+if ($studentValue !== null && $studentValue !== '' && (!$studentId || $studentId < 1)) {
+    accountResponse(['success' => false, 'message' => 'Choose a valid linked student record.'], 400);
 }
 
 if ($role === 'student' && $studentId === null) {
