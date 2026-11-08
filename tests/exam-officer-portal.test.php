@@ -27,7 +27,7 @@ eoAssert(str_contains($settingsScript,'payload.password = password'),'Exam Offic
 eoAssert(str_contains($a,'function requireAdminOrExamOfficer()'),'operational settings guard exists');
 eoAssert(str_contains($r,'password_verify($password, $passwordHash)'),'root release API requires Exam Officer password');
 eoAssert(str_contains($publicRelease,'requireAdminOrExamOfficer();'),'public release API allows Admin and Exam Officer access');
-eoAssert(str_contains($progress,'            2\n        );'),'dashboard progress percentage is rounded to two decimal places at calculation time');
+eoAssert(str_contains($progress,"            2\n        );"),'dashboard progress percentage is rounded to two decimal places at calculation time');
 eoAssert(str_contains($j,'Number(item.completion_percentage || 0).toFixed(2)'),'class progress displays two decimal places');
 eoAssert(str_contains($publicRelease,'password_verify($password, $passwordHash)'),'public release API verifies the Exam Officer password before changing release status');
 eoAssert(str_contains($f,'role = ? AND is_active = 1'),'archive verifies the authenticated account role');
