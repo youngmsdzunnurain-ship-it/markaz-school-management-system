@@ -11249,33 +11249,153 @@ body.student-portal-result-view .student-information .student-class-row > .detai
     }
 }
 
-/* Student portal desktop profile: match the requested two-row information sizing.
-   Screen-only by design; the dedicated print stylesheet remains untouched. */
+/* Replaced by the unified desktop Student Information grid below. */
+
+
+
+/* Student portal desktop Student Information: one aligned 12-column grid.
+   Deliberately scoped to desktop screen rendering; mobile and print remain unchanged. */
 @media screen and (min-width: 761px) {
-    body.student-portal-result-view .student-information .student-top-row {
-        grid-template-columns: minmax(0, 333px) 64px 58px 96px !important;
-        gap: 9px !important;
+    body.student-portal-result-view .student-information .student-profile-grid {
+        display: flex !important;
         align-items: stretch !important;
+        gap: 12px !important;
+        padding: 16px !important;
+        box-sizing: border-box !important;
     }
 
+    body.student-portal-result-view .student-information .student-photo {
+        flex: 0 0 100px !important;
+        width: 100px !important;
+        min-width: 100px !important;
+        height: 124px !important;
+        min-height: 124px !important;
+        max-height: 124px !important;
+        align-self: stretch !important;
+        overflow: hidden !important;
+        border-radius: 12px !important;
+        object-fit: cover !important;
+        box-sizing: border-box !important;
+    }
+
+    body.student-portal-result-view .student-information .student-photo img {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+
+    body.student-portal-result-view .student-information .student-details {
+        display: grid !important;
+        flex: 1 1 0 !important;
+        grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+        grid-auto-rows: 56px !important;
+        align-content: start !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        min-width: 0 !important;
+        width: auto !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row,
     body.student-portal-result-view .student-information .student-class-row {
-        grid-template-columns: minmax(0, 109px) minmax(0, 109px) 102px minmax(0, 214px) !important;
-        gap: 9px !important;
-        align-items: stretch !important;
+        display: contents !important;
     }
 
-    body.student-portal-result-view .student-information .student-top-row > .detail-item {
-        min-height: 36px !important;
-        height: 36px !important;
-        padding: 4px 8px !important;
+    body.student-portal-result-view .student-information .student-top-row > .student-name-item {
+        grid-column: span 5 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(2) {
+        grid-column: span 2 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(3) {
+        grid-column: span 2 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(4) {
+        grid-column: span 3 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .conventional-class-item {
+        grid-column: span 3 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .arabic-class-item {
+        grid-column: span 3 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .arabic-class-count-item {
+        grid-column: span 2 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .memorization-detail-item {
+        grid-column: span 4 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-details .detail-item {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-self: stretch !important;
+        min-width: 0 !important;
+        min-height: 56px !important;
+        height: 56px !important;
+        max-height: 56px !important;
+        margin: 0 !important;
+        padding: 0 16px !important;
+        overflow: hidden !important;
         box-sizing: border-box !important;
     }
 
-    body.student-portal-result-view .student-information .student-class-row > .detail-item {
-        min-height: 44px !important;
-        height: 44px !important;
-        padding: 5px 8px !important;
-        box-sizing: border-box !important;
+    body.student-portal-result-view .student-information .student-details .detail-item > span,
+    body.student-portal-result-view .student-information .student-details .detail-item > strong {
+        display: block !important;
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+    }
+
+    body.student-portal-result-view .student-information .student-details .detail-item > span {
+        margin-bottom: 4px !important;
+    }
+
+    body.student-portal-result-view .student-information .student-name-item > strong {
+        font-size: 1.15rem !important;
+        white-space: nowrap !important;
+    }
+
+    body.student-portal-result-view .student-information .memorization-value-row {
+        display: contents !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    body.student-portal-result-view .student-information #studentMemorizationPortion {
+        display: block !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
     }
 }
-
