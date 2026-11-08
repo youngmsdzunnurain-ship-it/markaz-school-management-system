@@ -380,14 +380,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
             <span id="topDropdownEmail">Loading...</span>
         </div>
 
-        <button type="button" class="profile-dropdown-item">
-            Profile
-        </button>
-
-        <button type="button" class="profile-dropdown-item">
-            Settings
-        </button>
-
         <div class="profile-dropdown-divider"></div>
 
         <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
@@ -488,24 +480,6 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 loadAdmin();
 
 
-/* =========================================================
-   MARKAZ — BATCH 32
-   PROFILE + SETTINGS NAVIGATION
-   ========================================================= */
-
-document.addEventListener("click", (event) => {
-    const item = event.target.closest(".profile-dropdown-item");
-    if (!item) return;
-
-    const label = item.textContent.trim().toLowerCase();
-    if (label !== "profile" && label !== "settings") return;
-
-    if (window.markazCurrentRole === "admin" || window.markazCurrentRole === "exam_officer") {
-        window.location.href = "settings.html";
-    }
-});
-
-
 function applyDashboardRoleAccess(role, permissions = {}) {
     document.querySelectorAll("[data-role-access]").forEach((element) => {
         const requiredRole = element.dataset.roleAccess;
@@ -524,7 +498,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = role === "admin";
+            allowed = role === "admin" || (role === "teacher" && permissions.can_manage_attendance === true);
         }
 
         element.style.display = allowed ? "" : "none";
