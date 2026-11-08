@@ -103,4 +103,4 @@ teacherPortalCheck(
     'Student Management profile uses the green and gold top frame'
 );
 
-echo "Teacher portal dashboard regression tests passed.\\n";
+echo "Teacher portal dashboard regression tests passed.\n";
