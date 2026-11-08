@@ -102,4 +102,45 @@ teacherPortalCheck(
     'Student Management profile uses the green and gold top frame'
 );
 
+
+$studentResultHtml = file_get_contents(__DIR__ . '/../public/student-result.html');
+$studentResultPrintHtml = file_get_contents(__DIR__ . '/../public/student-result-print.html');
+$classHtml = file_get_contents(__DIR__ . '/../public/class.html');
+$dashboardLogoutJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
+$studentResultCss = file_get_contents(__DIR__ . '/../public/css/student-result.css');
+
+teacherPortalCheck(
+    str_contains($studentResultCss, 'Shared student information treatment') &&
+    str_contains($studentResultCss, 'grid-template-areas:') &&
+    str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }'),
+    'Staff result mobile profile follows the compact Student Portal layout and removes the photo column'
+);
+teacherPortalCheck(
+    str_contains($studentResultCss, '.report-card .behaviour-grid') &&
+    str_contains($studentResultCss, 'grid-template-columns: repeat(2, minmax(0, 1fr)) !important;'),
+    'Staff behavioural report uses the compact two-column mobile layout'
+);
+teacherPortalCheck(
+    str_contains($studentResultCss, '#studentMemorizationInput[hidden]') &&
+    str_contains($studentResultHtml, 'class="behaviour-rating" disabled'),
+    'Memorization input respects hidden state and behavioural controls start read-only until permission is granted'
+);
+teacherPortalCheck(
+    str_contains($classHtml, 'id="resultSubjectSelect"') &&
+    str_contains($classHtml, 'id="resultsToolbar"') === false,
+    'Subject selection remains available in the class result-entry workspace'
+);
+teacherPortalCheck(
+    str_contains($dashboardLogoutJs, 'teacher: "./teacher-login.html"') &&
+    str_contains($dashboardLogoutJs, 'exam_officer: "./exam-officer-login.html"') &&
+    str_contains($dashboardLogoutJs, 'management: "./management-login.html"') &&
+    str_contains($dashboardLogoutJs, 'student: "./student-login.html"'),
+    'Dashboard logout returns each role to its matching login page'
+);
+teacherPortalCheck(
+    str_contains($managementShellJs, 'loginPathForRole') &&
+    str_contains($managementShellJs, 'location.replace(loginPathForRole(currentRole))'),
+    'Management-page logout returns each role to its matching login page'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
