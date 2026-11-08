@@ -229,13 +229,16 @@ try {
     $teacherSubjectScopeSql = $isTeacher
         ? " AND EXISTS (
               SELECT 1 FROM teacher_assignments ta
-              WHERE ta.account_id = {$teacherAccountId}
-                AND ta.class_type = '{$classType}'
-                AND ta.class_id = {$classId}
+              WHERE ta.account_id = ?
+                AND ta.class_type = ?
+                AND ta.class_id = ?
                 AND ta.is_active = 1
                 AND (ta.subject_id = s.id OR ta.subject_id IS NULL)
           )"
         : '';
+    $teacherSubjectScopeParams = $isTeacher
+        ? [$teacherAccountId, $classType, $classId]
+        : [];
 
     $subjectStmt = $pdo->prepare(
         "SELECT
@@ -258,7 +261,7 @@ try {
             s.name"
     );
 
-    $subjectStmt->execute([$classId]);
+    $subjectStmt->execute(array_merge([$classId], $teacherSubjectScopeParams));
 
     $subjects = $subjectStmt->fetchAll();
 
@@ -268,13 +271,16 @@ try {
     $teacherResultSubjectScopeSql = $isTeacher
         ? " AND EXISTS (
               SELECT 1 FROM teacher_assignments ta
-              WHERE ta.account_id = {$teacherAccountId}
-                AND ta.class_type = '{$classType}'
-                AND ta.class_id = {$classId}
+              WHERE ta.account_id = ?
+                AND ta.class_type = ?
+                AND ta.class_id = ?
                 AND ta.is_active = 1
                 AND (ta.subject_id = results.subject_id OR ta.subject_id IS NULL)
           )"
         : '';
+    $teacherResultSubjectScopeParams = $isTeacher
+        ? [$teacherAccountId, $classType, $classId]
+        : [];
 
     $resultStmt = $pdo->prepare(
         "SELECT
@@ -306,7 +312,8 @@ try {
         $classType,
         $classId,
         $period['id'],
-        $classId
+        $classId,
+        ...$teacherResultSubjectScopeParams
     ]);
 
     $resultRows = $resultStmt->fetchAll();
@@ -444,13 +451,16 @@ try {
     $teacherResultScopeSql = $isTeacher
         ? " AND EXISTS (
               SELECT 1 FROM teacher_assignments ta
-              WHERE ta.account_id = {$teacherAccountId}
-                AND ta.class_type = '{$classType}'
-                AND ta.class_id = {$classId}
+              WHERE ta.account_id = ?
+                AND ta.class_type = ?
+                AND ta.class_id = ?
                 AND ta.is_active = 1
                 AND (ta.subject_id = r.subject_id OR ta.subject_id IS NULL)
           )"
         : '';
+    $teacherResultScopeParams = $isTeacher
+        ? [$teacherAccountId, $classType, $classId]
+        : [];
 
     $classAverageStmt = $pdo->prepare(
         "SELECT
@@ -486,7 +496,8 @@ try {
         $classId,
         $period['id'],
         $classId,
-        $classId
+        $classId,
+        ...$teacherResultScopeParams
     ]);
 
     $classAverageRows =
