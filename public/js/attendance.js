@@ -20,7 +20,7 @@
     const els = {
         date: $("attendanceDate"),
         type: $("attendanceClassType"),
-        typeField: $("attendanceClassType")?.closest(".attendance-field"),
+        attendanceClassTypeField: $("attendanceClassType")?.closest(".attendance-field"),
         period: $("attendancePeriod"),
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
@@ -231,7 +231,7 @@
         const availableTypes = state.availableClassTypes;
         const current = els.classSelect.value;
         const hasSingleCategory = state.role === "teacher" && availableTypes.length === 1;
-        if (els.typeField) els.typeField.hidden = hasSingleCategory;
+        if (els.attendanceClassTypeField) els.attendanceClassTypeField.hidden = hasSingleCategory;
         if (hasSingleCategory && els.type.value !== availableTypes[0]) {
             els.type.value = availableTypes[0];
             state.classType = availableTypes[0];
