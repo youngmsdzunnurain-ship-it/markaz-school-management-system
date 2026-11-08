@@ -272,6 +272,32 @@ function requireTeacherAssignment(
     }
 }
 
+/**
+ * A NULL subject assignment is the existing Full Class Access representation.
+ */
+function requireTeacherFullClassAssignment(PDO $pdo, int $classId, string $classType): void
+{
+    if (currentAdminRole() !== 'teacher') return;
+    if ($classId < 1 || !in_array($classType, ['conventional', 'arabic'], true)) {
+        http_response_code(422);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Valid class context is required.']);
+        exit;
+    }
+    $stmt = $pdo->prepare(
+        'SELECT 1 FROM teacher_assignments
+         WHERE account_id = ? AND class_type = ? AND class_id = ?
+           AND is_active = 1 AND subject_id IS NULL LIMIT 1'
+    );
+    $stmt->execute([(int) ($_SESSION['admin_id'] ?? 0), $classType, $classId]);
+    if (!$stmt->fetchColumn()) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Full Class Access is required for this result feature.']);
+        exit;
+    }
+}
+
 function requireRolePermission(string $permission): void
 {
     $role = currentAdminRole();
