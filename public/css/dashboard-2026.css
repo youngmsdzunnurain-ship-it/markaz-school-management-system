@@ -388,3 +388,16 @@ body .sidebar.open{z-index:1200!important}                 /* drawer above the d
 }
 
 body.role-exam-officer .stats-grid .stat-card-students{order:1}body.role-exam-officer .stats-grid .stat-card-subjects{order:2}body.role-exam-officer .stats-grid .stat-card-classes{order:3}
+
+
+/* Teacher portal assignment workspace */
+body.role-teacher .stats-grid,body.role-teacher .dashboard-exam-section,body.role-teacher .dashboard-attendance-panel,body.role-teacher .dashboard-attendance-footnote,body.role-teacher .dashboard-bottom-layout{display:none!important}
+body.role-teacher #teacherAssignmentsSection{display:block!important;margin:0!important;padding:22px!important}
+#teacherAssignmentsList{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+.teacher-assignment-card{min-width:0;padding:20px;border:1px solid #dce7df;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(20,71,47,.06)}
+.teacher-assignment-card h3{margin:0 0 12px;color:#14472f;font:600 20px/1.25 var(--serif)}
+.teacher-assignment-card p{margin:8px 0;color:#65756a;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+.teacher-assignment-card .teacher-open-class{min-height:42px;margin-top:10px;padding:0 16px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:#1f6b45;color:#fff;font:700 13px var(--sans)}
+.teacher-assignment-card .teacher-open-class:hover{background:#14472f}
+.teacher-assignment-empty{padding:20px;border:1px dashed #c9d7cc;border-radius:12px;color:#65756a;background:#fff}
+@media(max-width:640px){body.role-teacher #teacherAssignmentsSection{padding:16px!important}.teacher-assignment-card{padding:17px}.teacher-assignment-card h3{font-size:18px}}
