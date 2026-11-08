@@ -143,4 +143,11 @@ teacherPortalCheck(
     'Management-page logout returns each role to its matching login page'
 );
 
+
+teacherPortalCheck(
+    str_contains($studentResultApi, "'current_user_role' => \$studentPortalScope === null ? currentAdminRole() : null") &&
+    str_contains($studentResultJs, 'studentData?.current_user_role'),
+    'Staff result editor reuses the authenticated role from its protected result payload'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
