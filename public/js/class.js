@@ -192,7 +192,12 @@
                                         </strong>
                                     </td>
 
-                                     <td>
+                                    ${isTeacher ? "" : `
+                                        <td>${escapeHtml(student.gender || "—")}</td>
+                                        <td>${escapeHtml(student.arabic_class_name || "—")}</td>
+                                    `}
+
+                                    <td>
                                         <span class="student-status ${
                                             active ? "active" : "inactive"
                                         }">
