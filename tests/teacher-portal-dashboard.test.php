@@ -69,7 +69,7 @@ $studentsCss = file_get_contents(__DIR__ . '/../public/css/students.css');
 
 teacherPortalCheck(
     str_contains($authMe, "'attendance_records'") &&
-    str_contains($authMe, "'can_manage_attendance' => $canManageAttendance") &&
+    str_contains($authMe, '\'can_manage_attendance\' => $canManageAttendance') &&
     str_contains($dashboardJs, 'permissions.can_manage_attendance === true'),
     'Teacher dashboard Attendance navigation follows the individual account permission'
 );
