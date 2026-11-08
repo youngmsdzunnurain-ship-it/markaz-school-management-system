@@ -941,7 +941,7 @@ async function loadDashboardStats() {
 
                     const progressLine = document.createElement("p");
                     progressLine.textContent =
-                        `Entry progress: ${item.completed_entries}/${item.expected_entries} (${item.completion_percentage}%)`;
+                        `Entry progress: ${item.completed_entries}/${item.expected_entries} (${Number(item.completion_percentage || 0).toFixed(2)}%)`;
 
                     const track = document.createElement("div");
                     track.style.cssText = "height:8px;background:#e8eee9;border-radius:8px;overflow:hidden;";
@@ -1005,15 +1005,16 @@ async function loadDashboardStats() {
 
         if (resultCompletionPercentage) {
             resultCompletionPercentage.textContent =
-                `${data.stats.completion_percentage ?? 0}%`;
+                `${Number(data.stats.completion_percentage ?? 0).toFixed(2)}%`;
         }
 
         const overall = Number(data.stats.completion_percentage ?? 0);
+        const displayOverall = overall.toFixed(2);
         const donut = document.getElementById("dashboardCompletionPie");
         const donutValue = document.getElementById("dashboardCompletionPieValue");
         const overallCaption = document.getElementById("dashboardSchoolCompletionCaption");
-        if (donut) { donut.style.setProperty("--completion", overall + "%"); donut.setAttribute("aria-label", "Overall examination completion " + overall + "%"); }
-        if (donutValue) donutValue.textContent = overall + "%";
+        if (donut) { donut.style.setProperty("--completion", overall + "%"); donut.setAttribute("aria-label", "Overall examination completion " + displayOverall + "%"); }
+        if (donutValue) donutValue.textContent = displayOverall + "%";
         if (overallCaption) overallCaption.textContent = (data.stats.completed_results ?? 0) + " of " + (data.stats.expected_results ?? 0) + " required subject entries completed";
 
     } catch (error) {
