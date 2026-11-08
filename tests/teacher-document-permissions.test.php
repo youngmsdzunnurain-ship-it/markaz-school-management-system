@@ -63,6 +63,12 @@ teacherDocumentPermissionCheck(
     'Full-class teacher printing preserves conventional and Arabic class separation'
 );
 teacherDocumentPermissionCheck(
+    str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), "requireRolePermission('export_results')") &&
+    str_contains(file_get_contents(__DIR__ . '/../public/js/student-result.js'), 'action === "export" ? "export" : "print"') &&
+    str_contains(file_get_contents(__DIR__ . '/../public/js/student-result.js'), 'currentUserPermissions.can_export_results'),
+    'Export is independently authorized and remains available when teacher printing is disabled'
+);
+teacherDocumentPermissionCheck(
     str_contains(file_get_contents(__DIR__ . '/../api/results/class-completion.php'), 'ta.subject_id = s.id') &&
     str_contains(file_get_contents(__DIR__ . '/../api/results/class-completion.php'), '$hasFullClassAccess'),
     'Selective teachers receive completion progress only for their assigned subjects'
