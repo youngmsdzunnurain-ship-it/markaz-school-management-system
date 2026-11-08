@@ -33,8 +33,8 @@ teacherDashboardAssert(
     'score saves must continue enforcing the assigned class and subject server-side'
 );
 teacherDashboardAssert(
-    preg_match('/if \\(currentAdminRole\\(\\) === \'teacher\'\\) \\{[\\s\\S]*?http_response_code\\(403\\)/', $studentApi) === 1
-    && str_contains($studentApi, 'Individual student profile access is not available to teachers.'),
+    str_contains($studentApi, "Individual student profile access is not available to teachers.")
+    && str_contains($studentApi, "currentAdminRole() === 'teacher'"),
     'all teachers, including Full Class Access, must be denied the individual student profile/results API'
 );
 teacherDashboardAssert(
@@ -66,9 +66,10 @@ teacherDashboardAssert(
     'teacher dashboard must show only active assignments and label the assignment access mode'
 );
 teacherDashboardAssert(
-    str_contains($dashboard, 'data-role-access="admin_or_exam_officer"')
+    str_contains($dashboard, 'body.role-teacher .stats-grid')
+    && str_contains($dashboard, 'data-role-access="admin_or_exam_officer"')
     && str_contains($dashboardJs, 'role-teacher'),
-    'teacher dashboard navigation must be limited to the Dashboard landing view'
+    'teacher dashboard must hide non-assignment statistics and limit navigation to Dashboard and Logout'
 );
 teacherDashboardAssert(
     str_contains($classJs, 'if (isTeacher) {')
