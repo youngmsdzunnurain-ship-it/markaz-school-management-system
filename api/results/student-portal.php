@@ -144,10 +144,6 @@ try {
         studentPortalError(404, 'No results have been published for this student in the selected term and session.');
     }
 
-    if (!$published) {
-        studentPortalError(404, 'No results have been published for this student in the selected term and session.');
-    }
-
     $_SESSION['student_portal_result_access'] = [
         'student_id' => (int) $student['id'],
         'class_id' => (int) $class['id'],
