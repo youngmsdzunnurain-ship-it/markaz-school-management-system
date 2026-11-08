@@ -66,6 +66,34 @@ function setStudentResultDocumentTitle() {
     }
 }
 
+async function loadCurrentUserPermissions() {
+    const response = await fetch("./api/auth/me.php", {
+        credentials: "same-origin",
+        cache: "no-store"
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.success || !data.admin?.role) {
+        throw new Error(data.message || "Unable to verify your account permissions.");
+    }
+
+    const role = String(data.admin.role).toLowerCase();
+    if (!["admin", "exam_officer", "teacher", "management"].includes(role)) {
+        throw new Error("Your account cannot access student results.");
+    }
+
+    if (currentUserRole && currentUserRole !== role) {
+        throw new Error("Your signed-in role changed. Refresh the page and try again.");
+    }
+
+    currentUserRole = role;
+    currentUserPermissions = {
+        can_print_results: data.admin.can_print_results === true,
+        can_export_results: data.admin.can_export_results === true
+    };
+    return role;
+}
+
 async function getCurrentUserRole() {
     if (currentUserRole) return currentUserRole;
 
@@ -291,7 +319,7 @@ async function loadStudentResult() {
                     can_export_results: true
                 };
             } else {
-                await getCurrentUserRole();
+                await loadCurrentUserPermissions();
             }
 
             const permissionAction = currentUserPermissions.can_print_results
