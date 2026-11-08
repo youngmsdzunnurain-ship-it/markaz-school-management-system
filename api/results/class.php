@@ -73,9 +73,9 @@ try {
 
     $classSql = $classType === 'arabic'
         ? 'SELECT id, name, NULL AS level_group, is_active
-           FROM arabic_classes WHERE id = ? LIMIT 1'
+           FROM arabic_classes WHERE id = ? AND is_active = 1'
         : 'SELECT id, name, level_group, is_active
-           FROM classes WHERE id = ? LIMIT 1';
+           FROM classes WHERE id = ? AND is_active = 1';
 
     $classStmt = $pdo->prepare($classSql);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 function teacherDashboardAssert(bool $condition, string $message): void
 {
     if (!$condition) {
-        fwrite(STDERR, "FAIL: {$message}\n");
+        fwrite(STDERR, "FAIL: {$message}\\n");
         exit(1);
     }
 }
@@ -22,6 +22,7 @@ $teacherStatsApi = file_get_contents($root . '/api/dashboard/teacher-stats.php')
 $dashboard = file_get_contents($root . '/public/dashboard.html');
 $dashboardJs = file_get_contents($root . '/public/js/dashboard.js');
 $classJs = file_get_contents($root . '/public/js/class.js');
+$studentResultJs = file_get_contents($root . '/public/js/student-result.js');
 
 teacherDashboardAssert(
     str_contains($auth, 'function requireTeacherFullClassAssignment')
@@ -34,7 +35,7 @@ teacherDashboardAssert(
 );
 teacherDashboardAssert(
     str_contains($studentApi, 'requireTeacherFullClassAssignment($pdo, $classId, $classType)'),
-    'subject-only teachers must not open unrestricted individual result pages by changing the URL'
+    'only Full Class Access teachers may open the individual result-entry page'
 );
 teacherDashboardAssert(
     str_contains($behaviourApi, 'subject_id IS NULL')
@@ -61,19 +62,26 @@ teacherDashboardAssert(
 );
 teacherDashboardAssert(
     str_contains($teacherStatsApi, 'is_active = 1')
+    && str_contains($teacherStatsApi, 'AND is_active = 1')
     && str_contains($teacherStatsApi, "'access_mode'"),
     'teacher dashboard must show only active assignments and label the assignment access mode'
 );
 teacherDashboardAssert(
-    str_contains($dashboard, 'data-role-access="admin_or_exam_officer"')
+    str_contains($dashboard, 'body.role-teacher .stats-grid')
+    && str_contains($dashboard, 'data-role-access="admin_or_exam_officer"')
     && str_contains($dashboardJs, 'role-teacher'),
-    'teacher dashboard navigation must be limited to the Dashboard landing view'
+    'teacher dashboard must hide non-assignment statistics and limit navigation to Dashboard and Logout'
 );
 teacherDashboardAssert(
     str_contains($classJs, 'if (isTeacher) {')
     && str_contains($classJs, 'editClassButton?.remove()')
     && str_contains($classJs, 'if (isTeacher && !teacherFullClassAccess) return;'),
-    'teacher class workspace must remove profile-management actions and block subject-only student-result links'
+    'teacher class workspace must remove student-management actions and block individual results for subject-only teachers'
+);
+teacherDashboardAssert(
+    str_contains($studentResultJs, '["admin", "teacher"].includes(currentUserRole)')
+    && str_contains($studentResultJs, 'currentUserRole === "admin"'),
+    'Full Class Access teachers may edit behavioural assessments but memorization profile overrides remain Admin-only'
 );
 
-echo "Teacher dashboard access regression tests passed.\n";
+echo "Teacher dashboard access regression tests passed.\\n";

@@ -85,7 +85,7 @@ foreach ($groups as $group) {
     $studentClassColumn = $isArabic ? 'arabic_class_id' : 'class_id';
 
     $classStmt = $pdo->prepare(
-        "SELECT name FROM {$classTable} WHERE id = ? LIMIT 1"
+        "SELECT name FROM {$classTable} WHERE id = ? AND is_active = 1 LIMIT 1"
     );
     $classStmt->execute([$classId]);
     $className = $classStmt->fetchColumn();
