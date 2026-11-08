@@ -26,6 +26,14 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
+    str_contains($classApi, '$studentDisplayFields = $isTeacher')
+        && str_contains($classApi, "'gender' => $student['gender']")
+        && str_contains($classApi, "'arabic_class_id' => $student['arabic_class_id']")
+        && str_contains($classApi, "'arabic_class_name' => $student['arabic_class_name']"),
+    'administrator roster receives display fields while teacher roster projection stays restricted'
+);
+
+studentDisplayCheck(
     str_contains($classJs, 'student.arabic_class_name || "—"')
         && str_contains($classApi, "'first_name' =>")
         && str_contains($classApi, "'last_name' =>"),
