@@ -22,6 +22,7 @@ $teacherStatsApi = file_get_contents($root . '/api/dashboard/teacher-stats.php')
 $dashboard = file_get_contents($root . '/public/dashboard.html');
 $dashboardJs = file_get_contents($root . '/public/js/dashboard.js');
 $classJs = file_get_contents($root . '/public/js/class.js');
+$studentResultJs = file_get_contents($root . '/public/js/student-result.js');
 
 teacherDashboardAssert(
     str_contains($auth, 'function requireTeacherFullClassAssignment')
@@ -33,9 +34,8 @@ teacherDashboardAssert(
     'score saves must continue enforcing the assigned class and subject server-side'
 );
 teacherDashboardAssert(
-    str_contains($studentApi, "Individual student profile access is not available to teachers.")
-    && str_contains($studentApi, "currentAdminRole() === 'teacher'"),
-    'all teachers, including Full Class Access, must be denied the individual student profile/results API'
+    str_contains($studentApi, 'requireTeacherFullClassAssignment($pdo, $classId, $classType)'),
+    'only Full Class Access teachers may open the individual result-entry page'
 );
 teacherDashboardAssert(
     str_contains($behaviourApi, 'subject_id IS NULL')
@@ -75,8 +75,13 @@ teacherDashboardAssert(
 teacherDashboardAssert(
     str_contains($classJs, 'if (isTeacher) {')
     && str_contains($classJs, 'editClassButton?.remove()')
-    && str_contains($classJs, 'if (isTeacher) return;'),
-    'teacher class workspace must remove profile-management actions and block all individual student profile links'
+    && str_contains($classJs, 'if (isTeacher && !teacherFullClassAccess) return;'),
+    'teacher class workspace must remove student-management actions and block individual results for subject-only teachers'
+);
+teacherDashboardAssert(
+    str_contains($studentResultJs, '["admin", "teacher"].includes(currentUserRole)')
+    && str_contains($studentResultJs, 'currentUserRole === "admin"'),
+    'Full Class Access teachers may edit behavioural assessments but memorization profile overrides remain Admin-only'
 );
 
 echo "Teacher dashboard access regression tests passed.\\n";
