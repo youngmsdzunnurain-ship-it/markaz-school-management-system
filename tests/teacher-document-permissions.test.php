@@ -16,8 +16,9 @@ $currentUser = file_get_contents(__DIR__ . '/../api/auth/me.php');
 $resultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
 
 teacherDocumentPermissionCheck(
-    str_contains($accountsApi, "'print_results', filter_var") &&
-    str_contains($accountsApi, "'export_results', filter_var"),
+    str_contains($accountsApi, "'print_results',") &&
+    str_contains($accountsApi, "'export_results',") &&
+    str_contains($accountsApi, "saveAccountPermission("),
     'Admin account changes persist separate teacher print and export permissions'
 );
 teacherDocumentPermissionCheck(
