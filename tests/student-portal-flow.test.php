@@ -20,6 +20,7 @@ $printPage = file_get_contents($root . '/public/student-result-print.html');
 $resultScript = file_get_contents($root . '/public/js/student-result.js');
 $legacyRoleScript = file_get_contents($root . '/public/js/login-roles.js');
 $sessionMiddleware = file_get_contents($root . '/app/middleware/session.php');
+$portalAccessHelper = file_get_contents($root . '/app/helpers/student-portal-access.php');
 
 foreach ([
     'student portal page' => $html,
@@ -32,6 +33,7 @@ foreach ([
     'official result page script' => $resultScript,
     'staff login script' => $legacyRoleScript,
     'session middleware' => $sessionMiddleware,
+    'student portal access helper' => $portalAccessHelper,
 ] as $label => $content) {
     portalAssert(is_string($content), "{$label} exists");
 }
@@ -51,6 +53,8 @@ portalAssert(str_contains($resultScript, 'window.print()'), 'student can use the
 portalAssert(str_contains($portalApi, 'startStudentPortalSession'), 'successful public lookup creates a scoped session');
 portalAssert(str_contains($portalApi, 'student_portal_result_access'), 'lookup scope is tied to the verified student and period');
 portalAssert(str_contains($sessionMiddleware, 'MARKAZ_STUDENT_SESSION'), 'public student access uses a session cookie separate from staff authentication');
+portalAssert(str_contains($portalAccessHelper, "empty($_COOKIE['MARKAZ_STUDENT_SESSION'])"), 'ordinary staff requests do not start a public student session');
+portalAssert(str_contains($portalAccessHelper, 'session_write_close()'), 'invalid student scopes release the session before staff authentication continues');
 portalAssert(str_contains($portalApi, 'results_released'), 'public lookup still checks school result-release status');
 portalAssert(str_contains($portalApi, "AND r.class_type = 'conventional'"), 'public lookup preserves conventional result isolation');
 portalAssert(str_contains($resultApi, 'studentPortalResultScope()'), 'official result API accepts only a matching scoped student session');
