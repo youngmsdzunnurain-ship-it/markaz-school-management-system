@@ -32,7 +32,7 @@ teacherPortalCheck(
     'Account creation reports the specific invalid field instead of a misleading generic validation message'
 );
 teacherPortalCheck(
-    str_contains($dashboardApi, "$role === 'teacher'") &&
+    str_contains($dashboardApi, "role === 'teacher'") &&
     str_contains($dashboardApi, "'role' => 'teacher'") &&
     str_contains($dashboardApi, "'assignments' =>"),
     'Dashboard statistics endpoint returns assignment-scoped teacher workspace data before admin-only handling'
