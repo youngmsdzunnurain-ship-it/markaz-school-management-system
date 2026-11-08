@@ -107,7 +107,10 @@ function renderClasses() {
         button.className = "class-button";
 
         const title = document.createElement("strong");
-        title.textContent = displayClassLabel(item);
+        title.textContent = displayClassName(item);
+        if (currentRole === "teacher" && classType(item) === "arabic") {
+            title.textContent += " · Arabic";
+        }
         const hint = document.createElement("small");
         hint.textContent = "View students and print results";
 
@@ -121,10 +124,11 @@ function printStudent(sid, cid, type = "conventional") {
     const params = new URLSearchParams({
         student_id: String(sid),
         class_id: String(cid),
-        class_type: type,
+        class_type: "conventional",
         print: "1",
         display_version: "20261106-targeted-student-display-fix"
     });
+    if (type === "arabic") params.set("class_type", "arabic");
     window.location.href = "./student-result-print.html?" + params.toString();
 }
 
@@ -200,12 +204,14 @@ async function printAllEligibleStudents(classIdValue, studentIds, type = "conven
       const frame = document.createElement("iframe");
       frame.hidden = true;
       frame.setAttribute("aria-hidden", "true");
-      frame.src = "./student-result-print.html?" + new URLSearchParams({
+      const frameParams = new URLSearchParams({
         student_id: String(sid),
         class_id: String(classIdValue),
-        class_type: type,
+        class_type: "conventional",
         print: "1"
-      }).toString();
+      });
+      if (type === "arabic") frameParams.set("class_type", "arabic");
+      frame.src = "./student-result-print.html?" + frameParams.toString();
       document.body.appendChild(frame);
       frames.push(frame);
     }
@@ -312,7 +318,9 @@ async function showStudents(selectedClass) {
   if (!matching.length) return;
 
   try {
-    const completion = await getClassCompletion(id, selectedType);
+    const completion = selectedType === "arabic"
+      ? await getClassCompletion(id, "arabic")
+      : await getClassCompletion(id, "conventional");
 
     // Ignore a late response if the user has navigated to another class.
     if ($("selectedClassTitle").textContent !== displayClassLabel(selectedClass)) return;
@@ -353,7 +361,9 @@ async function showStudents(selectedClass) {
     printAllButton.hidden = eligibleIds.length === 0;
     printAllButton.disabled = eligibleIds.length === 0;
     printAllButton.textContent = "Print All Eligible (" + eligibleIds.length + ")";
-    printAllButton.onclick = () => printAllEligibleStudents(id, eligibleIds, selectedType);
+    printAllButton.onclick = () => selectedType === "arabic"
+      ? printAllEligibleStudents(id, eligibleIds, "arabic")
+      : printAllEligibleStudents(id, eligibleIds);
     $("studentMessage").textContent =
       "Only students meeting the configured result-entry completion threshold can be printed. Each eligible student will print on a separate page.";
   } catch (error) {
