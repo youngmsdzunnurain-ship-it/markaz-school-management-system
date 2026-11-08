@@ -610,6 +610,7 @@ try {
      */
     echo json_encode([
         'success' => true,
+        'current_user_role' => $studentPortalScope === null ? currentAdminRole() : null,
 
         'student' => [
             'id' => (int) $student['id'],
