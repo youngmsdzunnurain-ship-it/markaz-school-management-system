@@ -69,6 +69,8 @@ jobs:
           node --check public/js/student-result.js
           node --check public/js/print-results.js
           php tests/teacher-document-permissions.test.php
+          php -l tests/teacher-portal-dashboard.test.php
+          php tests/teacher-portal-dashboard.test.php
           php tests/result-print-flow-isolation.test.php
           php tests/student-result-display-regression.test.php
           php tests/shared-public-footer.test.php
