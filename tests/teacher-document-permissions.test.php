@@ -4,7 +4,7 @@ declare(strict_types=1);
 function teacherDocumentPermissionCheck(bool $condition, string $message): void
 {
     if (!$condition) {
-        fwrite(STDERR, "FAIL: {$message}\\n");
+        fwrite(STDERR, "FAIL: {$message}\n");
         exit(1);
     }
 }
@@ -16,15 +16,15 @@ $currentUser = file_get_contents(__DIR__ . '/../api/auth/me.php');
 $resultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
 
 teacherDocumentPermissionCheck(
-    str_contains($accountsApi, "saveAccountPermission($pdo, $targetId, 'print_results'") &&
-    str_contains($accountsApi, "saveAccountPermission($pdo, $targetId, 'export_results'"),
+    str_contains($accountsApi, "'print_results', filter_var") &&
+    str_contains($accountsApi, "'export_results', filter_var"),
     'Admin account changes persist separate teacher print and export permissions'
 );
 teacherDocumentPermissionCheck(
     str_contains($accountUi, 'accountCanPrintResults') &&
     str_contains($accountUi, 'accountCanExportResults') &&
-    str_contains($accountUi, 'print_results: role.value === \'teacher\'') &&
-    str_contains($accountUi, 'export_results: role.value === \'teacher\''),
+    str_contains($accountUi, "print_results: role.value === 'teacher'") &&
+    str_contains($accountUi, "export_results: role.value === 'teacher'"),
     'Admin account editor exposes independent teacher print and export controls'
 );
 teacherDocumentPermissionCheck(
@@ -44,4 +44,4 @@ teacherDocumentPermissionCheck(
     'Document authorization includes the class context for server-side scope enforcement'
 );
 
-echo "Teacher document permission regression tests passed.\\n";
+echo "Teacher document permission regression tests passed.\n";
