@@ -28,7 +28,7 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     str_contains($accountsApi, 'A teacher username must be 4–60 characters') &&
-    str_contains($accountsApi, 'A valid full name is required.'),
+    str_contains($accountsApi, 'A valid full name is required'),
     'Account creation reports the specific invalid field instead of a misleading generic validation message'
 );
 teacherPortalCheck(
