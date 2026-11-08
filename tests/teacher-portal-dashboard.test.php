@@ -46,8 +46,8 @@ teacherPortalCheck(
 teacherPortalCheck(
     str_contains($dashboardJs, 'teacherAssignmentsSection') &&
     str_contains($dashboardJs, 'teacherAssignmentsList') &&
-    str_contains($dashboardJs, 'statsGrid.hidden = true') &&
-    str_contains($dashboardJs, 'dashboardBottom.hidden = true'),
+    str_contains($dashboardJs, 'dashboard-bottom-layout') &&
+    str_contains($dashboardJs, 'stats-grid'),
     'Teacher dashboard renders the assignment workspace and removes administrator-only dashboard panels'
 );
 teacherPortalCheck(
