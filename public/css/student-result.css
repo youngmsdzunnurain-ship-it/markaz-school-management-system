@@ -10777,3 +10777,57 @@ html body .report-card .memorization-value-row input { display: block !important
 .result-print-blocked-notice[hidden] {
     display: none !important;
 }
+
+
+/* Public student portal: show the official report as a report sheet, not the staff management workspace. */
+html.student-portal-view .student-result-page {
+    width: min(100%, 210mm);
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 12px;
+}
+html.student-portal-view .result-page-header {
+    margin-bottom: 12px;
+}
+html.student-portal-view .header-label,
+html.student-portal-view .student-edit-actions,
+html.student-portal-view #editScoresButton,
+html.student-portal-view #saveScoresButton,
+html.student-portal-view #cancelScoresButton {
+    display: none !important;
+}
+html.student-portal-view .result-page-header {
+    justify-content: flex-end;
+}
+html.student-portal-view .result-management-grid {
+    display: block !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+}
+html.student-portal-view .management-panel {
+    display: contents !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+html.student-portal-view .report-card {
+    overflow: visible;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, .07);
+}
+html.student-portal-view .student-result-page::after {
+    pointer-events: none;
+}
+@media (max-width: 560px) {
+    html.student-portal-view .student-result-page {
+        padding: 8px;
+    }
+    html.student-portal-view .report-card {
+        border-radius: 10px;
+    }
+}

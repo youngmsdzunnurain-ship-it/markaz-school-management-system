@@ -3,6 +3,12 @@ const studentId = params.get("student_id");
 const classId = params.get("class_id");
 const classType = params.get("class_type") || "conventional";
 const isPrintMode = params.get("print") === "1";
+const isStudentPortalView = params.get("student_portal") === "1";
+if (isStudentPortalView) {
+    document.documentElement.classList.add("student-portal-view");
+    const portalBackButton = document.getElementById("backToClassButton");
+    if (portalBackButton) portalBackButton.textContent = "← Student Portal";
+}
 
 const $ = (id) => document.getElementById(id);
 
@@ -1295,6 +1301,10 @@ document.addEventListener("input", event => {
 
 
 function leaveStudentResultPage() {
+    if (isStudentPortalView) {
+        window.location.replace("./student-login.html");
+        return;
+    }
     if (isPrintMode) {
         window.location.href = "./print-results.html";
         return;
