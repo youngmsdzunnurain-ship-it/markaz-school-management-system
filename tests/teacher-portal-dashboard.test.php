@@ -18,7 +18,7 @@ $classApi = file_get_contents(__DIR__ . '/../api/results/class.php');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 teacherPortalCheck(
-    str_contains($accountsApi, "preg_match('/^(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9._-]{4,60}$/', $username)"),
+    str_contains($accountsApi, 'preg_match(\'/^(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9._-]{4,60}$/\', $username)'),
     'Teacher username API validation accepts the username formats advertised by the form'
 );
 teacherPortalCheck(
