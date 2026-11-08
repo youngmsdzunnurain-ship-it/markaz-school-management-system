@@ -62,6 +62,7 @@ teacherDashboardAssert(
 );
 teacherDashboardAssert(
     str_contains($teacherStatsApi, 'is_active = 1')
+    && str_contains($teacherStatsApi, 'AND is_active = 1')
     && str_contains($teacherStatsApi, "'access_mode'"),
     'teacher dashboard must show only active assignments and label the assignment access mode'
 );
