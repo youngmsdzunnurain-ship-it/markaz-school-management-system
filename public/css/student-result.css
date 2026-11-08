@@ -11248,3 +11248,34 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         padding: 8px 11px !important;
     }
 }
+
+/* Student portal desktop profile: match the requested two-row information sizing.
+   Screen-only by design; the dedicated print stylesheet remains untouched. */
+@media screen and (min-width: 761px) {
+    body.student-portal-result-view .student-information .student-top-row {
+        grid-template-columns: minmax(0, 333px) 64px 58px 96px !important;
+        gap: 9px !important;
+        align-items: stretch !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row {
+        grid-template-columns: minmax(0, 109px) minmax(0, 109px) 102px minmax(0, 214px) !important;
+        gap: 9px !important;
+        align-items: stretch !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item {
+        min-height: 36px !important;
+        height: 36px !important;
+        padding: 4px 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .detail-item {
+        min-height: 44px !important;
+        height: 44px !important;
+        padding: 5px 8px !important;
+        box-sizing: border-box !important;
+    }
+}
+
