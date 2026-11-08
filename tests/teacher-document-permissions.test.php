@@ -57,6 +57,11 @@ teacherDocumentPermissionCheck(
     'Teacher student-result views and class averages are restricted to assigned subjects'
 );
 teacherDocumentPermissionCheck(
+    str_contains(file_get_contents(__DIR__ . '/../api/results/class-completion.php'), 'ta.subject_id = s.id') &&
+    str_contains(file_get_contents(__DIR__ . '/../api/results/class-completion.php'), '$hasFullClassAccess'),
+    'Selective teachers receive completion progress only for their assigned subjects'
+);
+teacherDocumentPermissionCheck(
     str_contains(file_get_contents(__DIR__ . '/../api/classes/list.php'), 'subject_id IS NULL') &&
     str_contains(file_get_contents(__DIR__ . '/../api/students/list.php'), 'subject_id IS NULL'),
     'Teacher print roster exposes only assigned Full Class Access classes and students'
