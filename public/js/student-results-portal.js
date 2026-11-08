@@ -44,7 +44,7 @@
       resultData.academic_period.session_name + ' is ready. We are pleased to share your academic progress with you.');
     const note = element('p', 'portal-welcome-note', 'May your learning continue to bring you knowledge, confidence and success.');
     card.append(mark, eyebrow, heading, intro, note,
-      actionButton('View My Result  →', 'portal-primary-action', openOfficialReport),
+      actionButton('Check Results  →', 'portal-primary-action', openOfficialReport),
       actionButton('Use another student record', 'portal-text-action', resetPortal));
     experience.appendChild(card);
     experience.hidden = false;
@@ -60,7 +60,8 @@
       class_id: String(resultData.student.class_id),
       class_type: 'conventional',
       student_portal: '1',
-      print: '1'
+      print: '1',
+      display_version: '20261106-targeted-student-display-fix'
     });
     window.location.assign('student-result-print.html?' + query.toString());
   };
