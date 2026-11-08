@@ -55,6 +55,18 @@ jobs:
           php tests/academic-period-selection.test.php
           php tests/result-footer-signatures.test.php
           php tests/result-print-current-period.test.php
+          php -l api/settings/accounts.php
+          php -l app/middleware/auth.php
+          php -l api/auth/me.php
+          php -l api/classes/list.php
+          php -l api/students/list.php
+          php -l api/results/student.php
+          php -l tests/teacher-document-permissions.test.php
+          node --check public/js/account-management.js
+          node --check public/js/dashboard.js
+          node --check public/js/class.js
+          node --check public/js/student-result.js
+          php tests/teacher-document-permissions.test.php
           php tests/result-print-flow-isolation.test.php
           php tests/student-result-display-regression.test.php
           php tests/shared-public-footer.test.php
