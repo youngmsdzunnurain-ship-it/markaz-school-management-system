@@ -42,4 +42,17 @@ securityCheck(
     'Senior Admin unlock action must remove the persistent login lockout'
 );
 
+securityCheck(
+    str_contains($login, 'login_devices') &&
+    str_contains($login, 'login_device_blocks') &&
+    str_contains($login, "is_blocked = 1"),
+    'login checks account-specific blocked browser devices before establishing a session'
+);
+securityCheck(
+    str_contains($lockouts, 'block_device') &&
+    str_contains($lockouts, 'unblock_device') &&
+    str_contains($lockouts, 'login_devices'),
+    'Senior Admin can block and unblock a previously used device for one account'
+);
+
 echo "Account lockout and freeze enforcement regression tests passed.\n";
