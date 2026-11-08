@@ -12,7 +12,7 @@ if ($studentPortalScope === null) {
     requireResultStaff();
 }
 
-// Staff printing still requires its independently assigned permission.
+// Staff printing and export each require their own independently assigned permission.
 // A verified student portal session is read-only and cannot enter staff actions.
 if ($studentPortalScope === null) {
     if (($_GET['print'] ?? '') === '1') {
