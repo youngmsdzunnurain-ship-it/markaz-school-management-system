@@ -14,8 +14,13 @@ if ($studentPortalScope === null) {
 
 // Staff printing still requires its independently assigned permission.
 // A verified student portal session is read-only and cannot enter staff actions.
-if (($_GET['print'] ?? '') === '1' && $studentPortalScope === null) {
-    requireRolePermission('print_results');
+if ($studentPortalScope === null) {
+    if (($_GET['print'] ?? '') === '1') {
+        requireRolePermission('print_results');
+    }
+    if (($_GET['export'] ?? '') === '1') {
+        requireRolePermission('export_results');
+    }
 }
 header('Content-Type: application/json; charset=utf-8');
 
@@ -413,8 +418,10 @@ try {
         'missing_fields' => $missingFields,
     ];
 
-    if (($_GET['print'] ?? '') === '1'
-        && $completionPercent < $printThreshold) {
+    if (
+        (($_GET['print'] ?? '') === '1' || ($_GET['export'] ?? '') === '1')
+        && $completionPercent < $printThreshold
+    ) {
         http_response_code(403);
         echo json_encode([
             'success' => false,
