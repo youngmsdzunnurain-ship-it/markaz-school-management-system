@@ -61,6 +61,7 @@ jobs:
           php -l api/classes/list.php
           php -l api/students/list.php
           php -l api/results/student.php
+          php -l api/results/class-completion.php
           php -l tests/teacher-document-permissions.test.php
           node --check public/js/account-management.js
           node --check public/js/dashboard.js
