@@ -44,4 +44,15 @@ teacherDocumentPermissionCheck(
     'Document authorization includes the class context for server-side scope enforcement'
 );
 
+teacherDocumentPermissionCheck(
+    str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), '$teacherSubjectScopeSql') &&
+    str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), '$teacherResultScopeSql'),
+    'Teacher student-result views and class averages are restricted to assigned subjects'
+);
+teacherDocumentPermissionCheck(
+    str_contains(file_get_contents(__DIR__ . '/../api/classes/list.php'), 'subject_id IS NULL') &&
+    str_contains(file_get_contents(__DIR__ . '/../api/students/list.php'), 'subject_id IS NULL'),
+    'Teacher print roster exposes only assigned Full Class Access classes and students'
+);
+
 echo "Teacher document permission regression tests passed.\n";
