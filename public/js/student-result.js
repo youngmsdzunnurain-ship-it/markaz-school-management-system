@@ -82,7 +82,7 @@ async function getCurrentUserRole() {
             }
 
             const role = String(data.admin.role).toLowerCase();
-            if (!["admin", "exam_officer", "teacher"].includes(role)) {
+            if (!["admin", "exam_officer", "teacher", "management"].includes(role)) {
                 throw new Error("Your account cannot edit student results.");
             }
 
