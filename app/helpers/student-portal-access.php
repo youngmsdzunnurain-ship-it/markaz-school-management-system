@@ -10,15 +10,22 @@ require_once __DIR__ . '/../middleware/session.php';
  */
 function studentPortalResultScope(bool $requireQueryMatch = true): ?array
 {
+    // Do not start a student session on ordinary staff requests.
+    if (empty($_COOKIE['MARKAZ_STUDENT_SESSION'])) {
+        return null;
+    }
+
     startStudentPortalSession();
     $scope = $_SESSION['student_portal_result_access'] ?? null;
 
     if (!is_array($scope)) {
+        session_write_close();
         return null;
     }
 
     if ((int) ($scope['expires_at'] ?? 0) < time()) {
         unset($_SESSION['student_portal_result_access']);
+        session_write_close();
         return null;
     }
 
@@ -37,6 +44,7 @@ function studentPortalResultScope(bool $requireQueryMatch = true): ?array
         ($scope['class_type'] ?? '') !== $classType ||
         $classType !== 'conventional'
     ) {
+        session_write_close();
         return null;
     }
 
