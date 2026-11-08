@@ -269,7 +269,14 @@ async function logout() {
         return;
     }
 
-    window.location.replace("./login.html");
+    const roleLoginPaths = {
+        teacher: "./teacher-login.html",
+        exam_officer: "./exam-officer-login.html",
+        management: "./management-login.html",
+        student: "./student-login.html"
+    };
+    const signedInRole = String(window.markazCurrentRole || "").toLowerCase();
+    window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
 }
 
 if (menuButton) {
