@@ -1596,12 +1596,17 @@ function getBehaviourValues() {
     return values;
 }
 
+function teacherHasFullClassAccess() {
+    const value = studentData?.student?.teacher_full_class_access;
+    return value === true || value === 1 || value === "1";
+}
+
 function setBehaviourEditing(editing) {
-    document
-        .querySelectorAll(".behaviour-rating")
-        .forEach(select => {
-            select.disabled = !editing;
-        });
+    const canEdit = currentUserRole === "admin" ||
+        (currentUserRole === "teacher" && teacherHasFullClassAccess());
+    document.querySelectorAll(".behaviour-rating").forEach(select => {
+        select.disabled = !(editing && canEdit);
+    });
 }
 
 function getCurrentScoreValues() {
@@ -1690,10 +1695,10 @@ function setEditMode(editing) {
     if (isPrintMode) editing = false;
     isEditMode = editing;
 
-    const canEditBehaviour =
-        ["admin", "teacher"].includes(currentUserRole);
-    const canEditMemorization =
-        currentUserRole === "admin";
+    const canEditBehaviour = currentUserRole === "admin" ||
+        (currentUserRole === "teacher" && teacherHasFullClassAccess());
+    const canEditMemorization = currentUserRole === "admin" ||
+        (currentUserRole === "teacher" && teacherHasFullClassAccess());
 
     setBehaviourEditing(editing && canEditBehaviour);
 
@@ -1748,6 +1753,11 @@ function setEditMode(editing) {
 
 async function loadBehaviouralReport() {
     if (!studentId) return;
+    await getCurrentUserRole();
+    if (currentUserRole === "teacher" && !teacherHasFullClassAccess()) {
+        setBehaviourEditing(false);
+        return;
+    }
 
     const response = await fetch(
         `./api/results/behavioural.php?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId || "")}&class_type=${encodeURIComponent(classType)}`,
@@ -1943,7 +1953,7 @@ async function saveAllStudentChanges() {
     const originalPortion =
         originalEditState?.memorization ?? portion;
 
-    if (role === "admin" && portion !== originalPortion) {
+    if ((role === "admin" || (role === "teacher" && teacherHasFullClassAccess())) && portion !== originalPortion) {
         const memorizationResponse =
             await fetch(
                 "./api/results/student-profile-save.php",
@@ -1958,6 +1968,8 @@ async function saveAllStudentChanges() {
                             "student_id",
                             studentId
                         );
+                        formData.append("class_id", classId);
+                        formData.append("class_type", classType);
     
                         formData.append(
                             "memorization_portion",
