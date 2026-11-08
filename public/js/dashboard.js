@@ -481,11 +481,9 @@ document.addEventListener("click", (event) => {
     const label = item.textContent.trim().toLowerCase();
     if (label !== "profile" && label !== "settings") return;
 
-    if (window.markazCurrentRole === "exam_officer") {
-        window.location.href = "exam-officer-settings.html";
-        return;
+    if (window.markazCurrentRole === "admin" || window.markazCurrentRole === "exam_officer") {
+        window.location.href = "settings.html";
     }
-    if (window.markazCurrentRole === "admin") window.location.href = "settings.html";
 });
 
 
