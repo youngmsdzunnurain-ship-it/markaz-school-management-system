@@ -43,6 +43,13 @@ portalAssert(str_contains($html, 'css/student-results-portal.css'), 'portal-spec
 portalAssert(str_contains($html, 'js/student-results-portal.js'), 'dedicated portal workflow remains loaded');
 portalAssert(!str_contains($legacyRoleScript, 'data-role="student-lookup"'), 'staff login script does not bind student lookup');
 portalAssert(str_contains($script, 'Check Results'), 'successful lookup presents the requested Check Results action');
+portalAssert(str_contains($script, "document.body.classList.add('student-success-mode')"), 'successful lookup switches to a focused congratulations experience');
+portalAssert(str_contains($script, "document.body.classList.remove('student-success-mode')"), 'reset restores the normal student lookup screen');
+portalAssert(str_contains($css, '.student-success-mode .role-brand'), 'successful lookup hides school branding outside the congratulations message');
+portalAssert(str_contains($css, '.student-success-mode .role-heading'), 'successful lookup hides the original login heading');
+portalAssert(str_contains($css, '.student-success-mode .role-footer'), 'successful lookup hides the login footer');
+portalAssert(str_contains($css, 'backdrop-filter: blur('), 'congratulations experience uses a softened backdrop');
+portalAssert(str_contains($css, '@keyframes portal-celebration'), 'congratulations experience includes a restrained entrance animation');
 portalAssert(!str_contains($script, 'View My Result'), 'welcome action does not use the old View My Result label');
 portalAssert(str_contains($script, 'student-result-print.html'), 'Check Results opens the existing official printable page');
 portalAssert(str_contains($script, "display_version: '20261106-targeted-student-display-fix'"), 'student report uses the same preview version as the staff Print Results listing');
