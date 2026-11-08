@@ -44,7 +44,7 @@ function dashboardSummariseStudentProgress(array $rows): array
     if ($summary['expected_entries'] > 0) {
         $summary['completion_percentage'] = round(
             $summary['completed_entries'] / $summary['expected_entries'] * 100,
-            1
+            2
         );
     }
 
