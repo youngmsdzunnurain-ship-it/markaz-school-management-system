@@ -150,4 +150,11 @@ teacherPortalCheck(
     'Staff result editor reuses the authenticated role from its protected result payload'
 );
 
+
+teacherPortalCheck(
+    str_contains($studentResultJs, 'async function loadCurrentUserPermissions()') &&
+    str_contains($studentResultJs, 'await loadCurrentUserPermissions();'),
+    'Dedicated print/export permission verification remains active after role resolution is moved to the protected result payload'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
