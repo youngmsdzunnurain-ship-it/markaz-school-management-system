@@ -116,7 +116,7 @@
                     </div>
                 </div>
 
-                <section class="stats-grid" aria-label="School statistics">
+                <section class="stats-grid" aria-label="School statistics" data-dashboard-admin-only>
                     <article class="stat-card stat-card-students">
                         <span class="stat-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
                         <div class="stat-copy">
@@ -140,7 +140,7 @@
                     </article>
                 </section>
 
-                <section id="teacherAssignmentsSection" class="panel" style="display:none; margin:24px 0; padding:24px;">
+                <section id="teacherAssignmentsSection" class="panel" hidden style="margin:24px 0; padding:24px;">
                     <div class="panel-header">
                         <div>
                             <span class="eyebrow">YOUR WORK</span>
@@ -151,7 +151,7 @@
                     <div id="teacherAssignmentsList" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;"></div>
                 </section>
 
-                <section class="dashboard-exam-section" aria-label="Examination entry overview">
+                <section class="dashboard-exam-section" aria-label="Examination entry overview" data-dashboard-admin-only>
                     <section class="result-progress-section">
                         <div class="panel-header">
                             <div>
@@ -184,7 +184,7 @@
                     </section>
                 </section>
 
-                <section class="dashboard-attendance-panel" id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
+                <section class="dashboard-attendance-panel" data-dashboard-admin-only id="dashboardAttendancePanel" aria-labelledby="dashboardAttendanceTitle">
                     <div class="dashboard-attendance-heading">
                         <div><span class="eyebrow">School-wide daily overview</span><div class="attendance-title-line"><h2 id="dashboardAttendanceTitle">Today’s Attendance</h2><p id="dashboardAttendanceDate">Loading today’s attendance…</p></div></div>
                         <a href="./attendance.html" class="dashboard-attendance-link"><i class="fa-solid fa-calendar-check"></i> Open attendance management</a>
@@ -237,7 +237,7 @@
                 </section>
                 <p class="dashboard-attendance-footnote" data-role-access="admin">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
 
-                <section class="dashboard-grid dashboard-bottom-layout">
+                <section class="dashboard-grid dashboard-bottom-layout" data-dashboard-admin-only>
 
                     <article class="panel quick-access-panel">
                         <div class="panel-header">
