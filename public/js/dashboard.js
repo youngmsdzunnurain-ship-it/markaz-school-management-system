@@ -100,12 +100,19 @@ async function loadAdmin() {
         if (adminName) adminName.textContent = name;
         if (welcomeAdminName) welcomeAdminName.textContent = name;
         if (adminDetailsName) adminDetailsName.textContent = name;
+        const roleTitles = {
+            admin: "Administrator",
+            exam_officer: "Exam Officer",
+            teacher: "Teacher",
+            management: "Management",
+            student: "Student"
+        };
         const profileRoleTitle = document.getElementById("dashboardProfileRoleTitle");
-        if (profileRoleTitle) profileRoleTitle.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
+        if (profileRoleTitle) profileRoleTitle.textContent = roleTitles[role] || "School staff";
         if (adminEmail) adminEmail.textContent = email;
         if (profileName) profileName.textContent = name;
         const sidebarRole = document.getElementById("sidebarProfileRole");
-        if (sidebarRole) sidebarRole.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
+        if (sidebarRole) sidebarRole.textContent = roleTitles[role] || "School staff";
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
