@@ -11405,7 +11405,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
    The 56px grid rows and 12px row gap define the photo's natural stretched height. */
 @media screen and (min-width: 761px) {
     body.student-portal-result-view .student-information {
-        padding-bottom: 0 !important;
+        padding-bottom: 34px !important;
     }
 
     body.student-portal-result-view .student-information .student-profile-grid {
