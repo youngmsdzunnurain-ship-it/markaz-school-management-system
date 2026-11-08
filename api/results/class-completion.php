@@ -79,9 +79,20 @@ try {
         FROM {$mappingTable} cs
         INNER JOIN subjects s ON s.id = cs.subject_id
         WHERE cs.{$mappingClassColumn} = ? AND s.is_active = 1";
-    // Completion and print eligibility must use every required subject
-    // assigned to the class, matching api/results/student.php.
     $subjectParams = [$classId];
+    if (currentAdminRole() === 'teacher') {
+        $subjectSql .= " AND EXISTS (
+            SELECT 1 FROM teacher_assignments ta
+            WHERE ta.account_id = ?
+              AND ta.class_type = ?
+              AND ta.class_id = ?
+              AND ta.is_active = 1
+              AND (ta.subject_id = s.id OR ta.subject_id IS NULL)
+        )";
+        array_push($subjectParams, (int) ($_SESSION['admin_id'] ?? 0), $classType, $classId);
+    }
+    // Full-class teachers still evaluate every required subject; selective
+    // teachers see completion only for their assigned subjects.
     $subjectSql .= ' ORDER BY cs.sort_order, s.name';
     $subjectStmt = $pdo->prepare($subjectSql);
     $subjectStmt->execute($subjectParams);
@@ -91,13 +102,24 @@ try {
         static fn(array $subject): bool => in_array($subject['is_required'], [true, 1, '1'], true)
     ));
 
-    $behaviourFields = [
+    $hasFullClassAccess = currentAdminRole() !== 'teacher';
+    if (currentAdminRole() === 'teacher') {
+        $fullClassStmt = $pdo->prepare(
+            'SELECT 1 FROM teacher_assignments
+             WHERE account_id = ? AND class_type = ? AND class_id = ?
+               AND is_active = 1 AND subject_id IS NULL LIMIT 1'
+        );
+        $fullClassStmt->execute([(int) ($_SESSION['admin_id'] ?? 0), $classType, $classId]);
+        $hasFullClassAccess = (bool) $fullClassStmt->fetchColumn();
+    }
+
+    $behaviourFields = $hasFullClassAccess ? [
         'attendance' => 'Punctuality', 'neatness' => 'Neatness',
         'contentment' => 'Contentment', 'obedience' => 'Obedience',
         'responsiveness' => 'Responsiveness', 'calmness' => 'Calmness',
         'tolerance' => 'Tolerance', 'attentiveness' => 'Attentiveness',
         'truthfulness' => 'Truthfulness'
-    ];
+    ] : [];
     $scoreFields = ['ca1' => 'CA1', 'ca2' => 'CA2', 'exam' => 'Exam'];
     $resultMap = [];
     $behaviourMap = [];
