@@ -5,7 +5,6 @@ const classType = params.get("class_type") || "conventional";
 const isPrintMode = params.get("print") === "1";
 const isStudentPortalView = params.get("student_portal") === "1";
 if (isStudentPortalView) {
-    document.documentElement.classList.add("student-portal-view");
     const portalBackButton = document.getElementById("backToClassButton");
     if (portalBackButton) portalBackButton.textContent = "← Student Portal";
 }
