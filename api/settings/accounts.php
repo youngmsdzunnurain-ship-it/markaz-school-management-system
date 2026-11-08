@@ -240,10 +240,15 @@ if ($method === 'GET') {
             ? null : (int) $account['student_id'];
         $roleSettings = $rolePermissionSettings[(string) $account['role']] ?? [];
         $effectivePermissions = [];
+        $hasFullClassAccess = (string) $account['role'] === 'teacher'
+            && !empty(array_filter(
+                $assignments[$id] ?? [],
+                static fn(array $assignment): bool => $assignment['subject_id'] === null
+            ));
         foreach (['print_results', 'export_results'] as $permissionKey) {
             $settingKey = $roleSettings[$permissionKey] ?? '';
             $effectivePermissions[$permissionKey] = (string) $account['role'] === 'teacher'
-                ? ($permissions[$id][$permissionKey] ?? false)
+                ? ($hasFullClassAccess && ($permissions[$id][$permissionKey] ?? false))
                 : ($settingKey !== ''
                     ? ($rolePermissionValues[$settingKey] ?? false)
                     : false);
@@ -576,9 +581,27 @@ try {
     }
 
     if ($role === 'teacher') {
+        $fullClassCheck = $pdo->prepare(
+            'SELECT 1 FROM teacher_assignments
+             WHERE account_id = ? AND is_active = 1 AND subject_id IS NULL
+             LIMIT 1'
+        );
+        $fullClassCheck->execute([$targetId]);
+        $hasFullClassAccess = (bool) $fullClassCheck->fetchColumn();
+
         saveAccountPermission($pdo, $targetId, 'attendance_records', filter_var($data['attendance_records'] ?? false, FILTER_VALIDATE_BOOLEAN));
-        saveAccountPermission($pdo, $targetId, 'print_results', filter_var($data['print_results'] ?? false, FILTER_VALIDATE_BOOLEAN));
-        saveAccountPermission($pdo, $targetId, 'export_results', filter_var($data['export_results'] ?? false, FILTER_VALIDATE_BOOLEAN));
+        saveAccountPermission(
+            $pdo,
+            $targetId,
+            'print_results',
+            $hasFullClassAccess && filter_var($data['print_results'] ?? false, FILTER_VALIDATE_BOOLEAN)
+        );
+        saveAccountPermission(
+            $pdo,
+            $targetId,
+            'export_results',
+            $hasFullClassAccess && filter_var($data['export_results'] ?? false, FILTER_VALIDATE_BOOLEAN)
+        );
     } else {
         saveAccountPermission($pdo, $targetId, 'attendance_records', false);
         saveAccountPermission($pdo, $targetId, 'print_results', false);
