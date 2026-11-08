@@ -10777,3 +10777,86 @@ html body .report-card .memorization-value-row input { display: block !important
 .result-print-blocked-notice[hidden] {
     display: none !important;
 }
+
+
+/* Student portal only: keep academic results first and behavioural assessment below. */
+body.student-portal-result-view .report-card .result-management-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 18px !important;
+}
+
+body.student-portal-result-view .report-card .academic-management-panel,
+body.student-portal-result-view .report-card .behavioural-management-panel {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+body.student-portal-result-view .report-card .behavioural-management-panel .report-section {
+    min-width: 0 !important;
+}
+
+body.student-portal-result-view .report-card .behaviour-grid-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+body.student-portal-result-view .report-card .behaviour-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 10px !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+}
+
+body.student-portal-result-view .report-card .behaviour-item {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 58px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+}
+
+body.student-portal-result-view .report-card .behaviour-item > span {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+}
+
+body.student-portal-result-view .report-card .behaviour-item select {
+    flex: 0 0 auto !important;
+    min-width: 100px !important;
+    max-width: 46% !important;
+}
+
+@media (max-width: 700px) {
+    body.student-portal-result-view .report-card .behaviour-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+
+    body.student-portal-result-view .report-card .behaviour-item {
+        min-height: 56px !important;
+        padding: 9px !important;
+    }
+
+    body.student-portal-result-view .report-card .behaviour-item select {
+        min-width: 82px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    body.student-portal-result-view .report-card .behaviour-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
