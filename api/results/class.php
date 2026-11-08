@@ -177,6 +177,15 @@ try {
     $subjectStmt->execute($subjectParams);
     $subjects = $subjectStmt->fetchAll();
 
+    // Teachers receive only the identifiers needed for assigned result entry.
+    // Administrator roster views retain the additional class/profile display fields.
+    $studentDisplayFields = $isTeacher
+        ? ''
+        : ', st.gender, st.arabic_class_id, ac.name AS arabic_class_name';
+    $studentDisplayJoin = $isTeacher
+        ? ''
+        : ' LEFT JOIN arabic_classes ac ON ac.id = st.arabic_class_id';
+
     $studentStmt = $pdo->prepare(
         "SELECT
             st.id,
@@ -185,7 +194,9 @@ try {
             st.middle_name,
             st.last_name,
             st.is_active
+            {$studentDisplayFields}
          FROM students st
+         {$studentDisplayJoin}
          WHERE st.{$studentClassColumn} = ?
            AND st.is_active = 1
          ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
@@ -308,7 +319,14 @@ try {
                     'first_name' => $student['first_name'],
                     'middle_name' => $student['middle_name'],
                     'last_name' => $student['last_name'],
-                    'is_active' => (bool) $student['is_active']
+                    'is_active' => (bool) $student['is_active'],
+                    ...(!$isTeacher ? [
+                        'gender' => $student['gender'],
+                        'arabic_class_id' => $student['arabic_class_id']
+                            ? (int) $student['arabic_class_id']
+                            : null,
+                        'arabic_class_name' => $student['arabic_class_name']
+                    ] : [])
                 ];
             },
             $students
