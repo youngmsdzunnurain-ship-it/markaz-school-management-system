@@ -98,6 +98,8 @@ async function loadAdmin() {
         if (profileRoleTitle) profileRoleTitle.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
         if (adminEmail) adminEmail.textContent = email;
         if (profileName) profileName.textContent = name;
+        const sidebarRole = document.getElementById("sidebarProfileRole");
+        if (sidebarRole) sidebarRole.textContent = role === "exam_officer" ? "Exam Officer" : "Administrator";
         if (profileEmail) profileEmail.textContent = email;
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
