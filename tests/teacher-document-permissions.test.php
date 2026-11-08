@@ -28,6 +28,12 @@ teacherDocumentPermissionCheck(
     'Admin account editor exposes independent teacher print and export controls'
 );
 teacherDocumentPermissionCheck(
+    str_contains($accountUi, 'syncTeacherDocumentPermissions') &&
+    str_contains($accountUi, "assignment-mode") &&
+    str_contains($accountsApi, '$hasFullClassAccess && filter_var'),
+    'Teacher print/export switches are disabled and persisted off without Full Class Access'
+);
+teacherDocumentPermissionCheck(
     str_contains($auth, 'subject_id IS NULL LIMIT 1') &&
     str_contains($auth, '$individualPermission !== false') &&
     str_contains($auth, 'systemAccessEnabled($settingKey)'),
