@@ -116,9 +116,27 @@ try {
     /*
      * CURRENT ACADEMIC PERIOD
      */
-    $classId = $classType === 'arabic'
-        ? (int) ($student['arabic_class_id'] ?? 0)
-        : (int) ($student['class_id'] ?? 0);
+    $classId = $studentPortalScope !== null
+        ? (int) $studentPortalScope['class_id']
+        : ($classType === 'arabic'
+            ? (int) ($student['arabic_class_id'] ?? 0)
+            : (int) ($student['class_id'] ?? 0));
+
+    if ($studentPortalScope !== null) {
+        $portalClassStmt = $pdo->prepare(
+            "SELECT id, name FROM classes
+             WHERE id = ? AND COALESCE(level_group, '') <> 'Quranic'
+             LIMIT 1"
+        );
+        $portalClassStmt->execute([$classId]);
+        $portalClass = $portalClassStmt->fetch();
+        if (!$portalClass) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'The selected student class is not valid.']);
+            exit;
+        }
+        $student['class_name'] = $portalClass['name'];
+    }
 
     if ($classId < 1) {
         http_response_code(422);
