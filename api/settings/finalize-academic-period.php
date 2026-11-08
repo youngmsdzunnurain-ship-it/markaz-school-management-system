@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
-requireSeniorAdmin();
+requireAdminOrExamOfficer();
 
 function finalizePeriodResponse(int $status, array $payload): never
 {
@@ -73,7 +73,7 @@ $password = (string) ($input['password'] ?? '');
 if ($password === '') {
     finalizePeriodResponse(422, [
         'success' => false,
-        'message' => 'Enter your administrator password to finalize this term.'
+        'message' => 'Enter your account password to finalize this term.'
     ]);
 }
 
@@ -81,16 +81,16 @@ try {
     $pdo = db();
     $adminStmt = $pdo->prepare(
         'SELECT password_hash FROM admins
-         WHERE id = ? AND role = "admin" AND is_active = 1 AND is_frozen = 0
+         WHERE id = ? AND role = ? AND is_active = 1 AND is_frozen = 0
          LIMIT 1'
     );
-    $adminStmt->execute([(int) $_SESSION['admin_id']]);
+    $adminStmt->execute([(int) $_SESSION['admin_id'], (string) ($_SESSION['admin_role'] ?? '')]);
     $passwordHash = $adminStmt->fetchColumn();
 
     if (!is_string($passwordHash) || !password_verify($password, $passwordHash)) {
         finalizePeriodResponse(403, [
             'success' => false,
-            'message' => 'The administrator password is incorrect. The term has not been finalized.'
+            'message' => 'The account password is incorrect. The term has not been finalized.'
         ]);
     }
 } catch (Throwable $error) {
