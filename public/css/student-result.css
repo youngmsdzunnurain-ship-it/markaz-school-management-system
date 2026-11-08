@@ -11701,3 +11701,11 @@ body.student-portal-result-view .student-information .student-class-row > .detai
     }
 }
 
+/* Respect the native hidden state for editable profile values. Earlier
+   presentation rules set display:block !important on both nodes, which could
+   expose the memorization input even while its permission state was hidden. */
+.student-information #studentMemorizationInput[hidden],
+.student-information #studentMemorizationPortion[hidden] {
+    display: none !important;
+}
+
