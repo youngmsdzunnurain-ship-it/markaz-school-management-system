@@ -337,9 +337,11 @@ function renderStudentResult(data) {
             calculateAge(student.date_of_birth);
     }
 
-    $("studentMemorizationPortion") &&
-        ($("studentMemorizationPortion").textContent =
-            student.memorization_portion || "—");
+    if ($("studentMemorizationPortion")) {
+        const memorizationPortion = student.memorization_portion || "–";
+        $("studentMemorizationPortion").textContent = memorizationPortion;
+        $("studentMemorizationPortion").title = memorizationPortion;
+    }
 
     $("studentMemorizationInput") &&
         ($("studentMemorizationInput").value =
