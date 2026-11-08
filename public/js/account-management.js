@@ -285,6 +285,24 @@
         });
     }
 
+    function syncTeacherDocumentPermissions() {
+        const hasFullClassAccess = role.value === 'teacher'
+            && [...assignmentRows.querySelectorAll('.account-assignment-row')].some(row =>
+                row.querySelector('.assignment-class')?.value
+                && row.querySelector('.assignment-mode')?.value === 'full'
+            );
+
+        printPermission.disabled = !hasFullClassAccess;
+        exportPermission.disabled = !hasFullClassAccess;
+        if (!hasFullClassAccess) {
+            printPermission.checked = false;
+            exportPermission.checked = false;
+        }
+    }
+
+    assignmentRows.addEventListener('change', syncTeacherDocumentPermissions);
+    assignmentRows.addEventListener('click', syncTeacherDocumentPermissions);
+
     function updateRoleFields() {
         const isStudent = role.value === 'student';
         const isTeacher = role.value === 'teacher';
@@ -299,6 +317,7 @@
         usernameField.hidden = !isTeacher;
         usernameInput.required = isTeacher;
         usernameInput.disabled = !isTeacher;
+        syncTeacherDocumentPermissions();
     }
 
     function assignmentClassOptions(type, selectedId) {
@@ -455,6 +474,7 @@
         row.querySelector('.remove-account-assignment')
             .addEventListener('click', () => row.remove());
         assignmentRows.appendChild(row);
+        syncTeacherDocumentPermissions();
     }
 
     function readAssignments() {
