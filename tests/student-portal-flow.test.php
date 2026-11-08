@@ -89,12 +89,15 @@ portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-c
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-result-page.management-view .document-actions'), 'student portal actions use a dedicated responsive action group');
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-class-row'), 'student portal class information has a compact equal-height row');
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-class-row .memorization-detail-item'), 'student portal memorization receives the remaining class-row width');
-portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-photo {'), 'student portal uses a dedicated mobile passport photo');
-portalAssert(str_contains($resultCss, 'width: 60px !important;') && str_contains($resultCss, 'height: 60px !important;'), 'student portal mobile profile photo is square');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-photo {') && str_contains($resultCss, 'display: none !important;'), 'student portal hides the profile photo on mobile screens');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-profile-grid') && str_contains($resultCss, 'grid-template-columns: minmax(0, 1fr) !important;'), 'student portal profile details use the full mobile width without a photo column');
 portalAssert(str_contains($resultCss, 'grid-template-areas:') && str_contains($resultCss, '"name name"') && str_contains($resultCss, '"gender age"') && str_contains($resultCss, '"student-type conventional-class"') && str_contains($resultCss, '"class-size arabic-class"') && str_contains($resultCss, '"memorization memorization"'), 'student portal mobile profile follows the five requested information rows');
 portalAssert(str_contains($resultCss, 'display: contents !important;'), 'student portal mobile rows share one responsive information grid');
+portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .memorization-value-row') && str_contains($resultCss, 'display: block !important;'), 'memorization value is displayed below its label without a separate inline box');
+portalAssert(str_contains($resultCss, 'min-height: 50px !important;') && str_contains($resultCss, 'height: auto !important;'), 'student portal second-row fields use a compact natural height');
+portalAssert(str_contains($resultCss, '@media screen and (min-width: 761px)') && str_contains($resultCss, 'justify-content: flex-end !important;'), 'student portal desktop action buttons are aligned together at the right');
 portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str_contains($resultCss, '.student-class-row > .detail-item {'), 'mobile field sizing applies to the actual nested row items');
 portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
-portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-profile-rows'), 'student portal mobile layout refreshes the result stylesheet cache');
+portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-portal-final-profile-polish'), 'student portal mobile layout refreshes the result stylesheet cache');
 
 echo "Student portal official-report integration checks passed." . PHP_EOL;
