@@ -14,12 +14,13 @@
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="/css/management-shell.css?v=20261104-avatar-unified">
+    <style>html.settings-page-pending .settings-page { visibility: hidden; }</style>
     <script>
         document.documentElement.classList.add("settings-page-pending");
     </script>
 </head>
 
-<body data-role-access="admin">
+<body data-role-access="admin_or_exam_officer">
 
 
 
@@ -30,7 +31,7 @@
             <div>
                 <span>MARKAZ</span>
                 <h1>Settings</h1>
-                <p>Manage your administrator profile.</p>
+                <p id="settingsPageDescription">Manage your profile and school settings.</p>
             </div>
         </header>
 
@@ -38,7 +39,7 @@
 
             <div class="settings-card-heading">
                 <div>
-                    <span class="settings-label">ADMINISTRATOR</span>
+                    <span class="settings-label" id="profileRoleLabel">ADMINISTRATOR</span>
                     <h2>Profile Information</h2>
                     <p>Update your name, email and profile picture.</p>
                 </div>
@@ -227,8 +228,8 @@
             <form id="academicFinalizePasswordForm">
                 <span class="settings-label">SENSITIVE ACTION</span>
                 <h3 id="academicFinalizeDialogTitle">Confirm term finalization</h3>
-                <p>This action locks the current academic term. Enter your administrator password to continue.</p>
-                <label for="academicFinalizePassword">Administrator password</label>
+                <p>This action locks the current academic term. Enter your account password to continue.</p>
+                <label for="academicFinalizePassword">Account password</label>
                 <input type="password" id="academicFinalizePassword" name="password" autocomplete="current-password" required>
                 <div class="academic-finalize-dialog-actions">
                     <button type="button" id="cancelAcademicFinalize">Cancel</button>
@@ -459,7 +460,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261107-empty-memorization-lockouts"></script>
+    <script src="js/settings.js?v=20261108-shared-exam-officer"></script>
     <script src="js/result-print-threshold-settings.js?v=20261104-threshold"></script>
     <script src="js/account-management.js"></script>
 
@@ -468,7 +469,7 @@
 <script src="js/website-image-overrides.js"></script>
 <script src="js/website-image-manager.js"></script>
     <script src="js/social-settings.js"></script>
-    <script src="js/settings-panel-navigation.js?v=20261107-academic-archive"></script>
+    <script src="js/settings-panel-navigation.js?v=20261108-shared-exam-officer"></script>
     <script src="/js/management-shell.js?v=20261104-avatar-unified"></script>
 </body>
 </html>

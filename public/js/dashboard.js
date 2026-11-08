@@ -481,11 +481,9 @@ document.addEventListener("click", (event) => {
     const label = item.textContent.trim().toLowerCase();
     if (label !== "profile" && label !== "settings") return;
 
-    if (window.markazCurrentRole === "exam_officer") {
-        window.location.href = "exam-officer-settings.html";
-        return;
+    if (window.markazCurrentRole === "admin" || window.markazCurrentRole === "exam_officer") {
+        window.location.href = "settings.html";
     }
-    if (window.markazCurrentRole === "admin") window.location.href = "settings.html";
 });
 
 
@@ -1040,7 +1038,7 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Attendance": "attendance.html",
             "School Fees": "school-fees.html",
             "System Settings": "settings.html",
-            "Settings": "exam-officer-settings.html"
+            "Settings": "settings.html"
         };
 
         const destination = destinations[button.textContent.trim()];

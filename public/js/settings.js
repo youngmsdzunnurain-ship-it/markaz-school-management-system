@@ -45,9 +45,18 @@ async function loadProfile() {
             return;
         }
 
-        if (data.admin.role !== "admin") {
+        if (!["admin", "exam_officer"].includes(data.admin.role)) {
             window.location.replace("dashboard.html");
             return;
+        }
+
+        window.markazCurrentRole = data.admin.role;
+        const isExamOfficer = data.admin.role === "exam_officer";
+        const roleLabel = document.getElementById("profileRoleLabel");
+        const pageDescription = document.getElementById("settingsPageDescription");
+        if (roleLabel) roleLabel.textContent = isExamOfficer ? "EXAM OFFICER" : "ADMINISTRATOR";
+        if (pageDescription && isExamOfficer) {
+            pageDescription.textContent = "Manage your profile and shared academic settings.";
         }
 
         nameInput.value = data.admin.name || "";
@@ -76,7 +85,7 @@ async function loadProfile() {
 
     } catch (error) {
         showMessage(
-            "Unable to load administrator profile.",
+            "Unable to load account profile.",
             "error"
         );
     }
@@ -1215,10 +1224,20 @@ loadAcademicPeriodSettings();
                     toggle.disabled = true;
                     message.textContent = "Saving release status…";
                     try {
-                        const result = await request("POST", {
+                        const payload = {
                             period_id: Number(period.period_id),
                             released: requestedState
-                        });
+                        };
+                        if (window.markazCurrentRole === "exam_officer") {
+                            const password = window.prompt("Enter your Exam Officer password to change result visibility.");
+                            if (password === null || password === "") {
+                                toggle.checked = !requestedState;
+                                message.textContent = "Result visibility was not changed.";
+                                return;
+                            }
+                            payload.password = password;
+                        }
+                        const result = await request("POST", payload);
                         message.textContent = result.message || "Release status saved.";
                     } catch (error) {
                         toggle.checked = !requestedState;
