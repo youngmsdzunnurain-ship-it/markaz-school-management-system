@@ -122,6 +122,10 @@ try {
             ? (int) ($student['arabic_class_id'] ?? 0)
             : (int) ($student['class_id'] ?? 0));
 
+    if ($classType === 'arabic' && $studentPortalScope === null) {
+        $student['class_name'] = $student['arabic_class_name'] ?? '';
+    }
+
     if ($studentPortalScope !== null) {
         $portalClassStmt = $pdo->prepare(
             "SELECT id, name FROM classes
