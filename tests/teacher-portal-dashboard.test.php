@@ -57,3 +57,48 @@ teacherPortalCheck(
 );
 
 echo "Teacher portal dashboard regression tests passed.\n";
+
+
+$authMe = file_get_contents(__DIR__ . '/../api/auth/me.php');
+$attendanceCommon = file_get_contents(__DIR__ . '/../api/attendance/_common.php');
+$profileSaveApi = file_get_contents(__DIR__ . '/../api/results/student-profile-save.php');
+$studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
+$studentResultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
+$managementShellJs = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
+$studentResultCss = file_get_contents(__DIR__ . '/../public/css/student-result.css');
+$studentsCss = file_get_contents(__DIR__ . '/../public/css/students.css');
+
+teacherPortalCheck(
+    str_contains($authMe, "'attendance_records'") &&
+    str_contains($authMe, "'can_manage_attendance' => $canManageAttendance") &&
+    str_contains($dashboardJs, 'permissions.can_manage_attendance === true'),
+    'Teacher dashboard Attendance navigation follows the individual account permission'
+);
+teacherPortalCheck(
+    str_contains($attendanceCommon, "'attendance_records'") &&
+    str_contains($attendanceCommon, 'teacher_assignments') &&
+    str_contains($attendanceCommon, 'You are not assigned to this class.'),
+    'Attendance endpoints enforce teacher permission and assigned-class scope'
+);
+teacherPortalCheck(
+    str_contains($profileSaveApi, 'subject_id IS NULL') &&
+    str_contains($profileSaveApi, 'Full Class Access is required') &&
+    str_contains($profileSaveApi, 'Student does not belong to the assigned class.'),
+    'Memorization updates require a matching Full Class Access assignment on the server'
+);
+teacherPortalCheck(
+    str_contains($studentResultApi, 'teacher_full_class_access') &&
+    str_contains($studentResultJs, 'teacherHasFullClassAccess()'),
+    'Only Full Class Access teachers can edit behavioural and memorization fields'
+);
+teacherPortalCheck(
+    !str_contains($managementShellJs, '<a href="/settings.html">Settings</a>') &&
+    str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }') ||
+    str_contains($studentResultCss, '.student-information .student-photo { display: none !important; }'),
+    'Avatar Settings is removed and mobile result profile photo is hidden'
+);
+teacherPortalCheck(
+    str_contains($studentsCss, '.view-student-profile-header::after') &&
+    str_contains($studentsCss, 'background:linear-gradient(90deg,#087f5b 0%,#087f5b 72%,#c99a24 100%)'),
+    'Student Management profile uses the green and gold top frame'
+);
