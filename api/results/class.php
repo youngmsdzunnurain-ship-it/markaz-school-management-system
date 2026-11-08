@@ -312,7 +312,7 @@ try {
             $subjects
         ),
         'students' => array_map(
-            static function (array $student): array {
+            static function (array $student) use ($isTeacher): array {
                 return [
                     'id' => (int) $student['id'],
                     'admission_number' => $student['admission_number'],
