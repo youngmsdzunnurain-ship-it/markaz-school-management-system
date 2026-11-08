@@ -8,6 +8,114 @@ require_once __DIR__ . '/../../../app/helpers/result-progress.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
 
+$role = currentAdminRole();
+if ($role === 'teacher') {
+    try {
+        $pdo = db();
+        $accountId = (int) ($_SESSION['admin_id'] ?? 0);
+        $assignmentStmt = $pdo->prepare(
+            'SELECT ta.class_type, ta.class_id, ta.subject_id,
+                    CASE WHEN ta.class_type = "arabic" THEN ac.name ELSE c.name END AS class_name
+             FROM teacher_assignments ta
+             LEFT JOIN classes c ON ta.class_type = "conventional" AND c.id = ta.class_id
+             LEFT JOIN arabic_classes ac ON ta.class_type = "arabic" AND ac.id = ta.class_id
+             WHERE ta.account_id = ? AND ta.is_active = 1
+             ORDER BY ta.class_type, class_name, ta.subject_id'
+        );
+        $assignmentStmt->execute([$accountId]);
+        $rows = $assignmentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $grouped = [];
+        $assignedStudentIds = [];
+        $assignedSubjectIds = [];
+        foreach ($rows as $row) {
+            $key = $row['class_type'] . ':' . (int) $row['class_id'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'class_id' => (int) $row['class_id'],
+                    'class_type' => $row['class_type'],
+                    'class_name' => $row['class_name'] ?: 'Assigned class',
+                    'full_class' => false,
+                    'subjects' => [],
+                    'student_count' => 0,
+                ];
+            }
+            if ($row['subject_id'] === null) {
+                $grouped[$key]['full_class'] = true;
+                $grouped[$key]['subjects'] = [];
+            } elseif (!$grouped[$key]['full_class']) {
+                $subjectId = (int) $row['subject_id'];
+                $grouped[$key]['subjects'][$subjectId] = true;
+            }
+        }
+
+        foreach ($grouped as &$assignment) {
+            $classColumn = $assignment['class_type'] === 'arabic' ? 'arabic_class_id' : 'class_id';
+            $studentCountStmt = $pdo->prepare(
+                "SELECT COUNT(*) FROM students WHERE {$classColumn} = ? AND is_active = 1"
+            );
+            $studentCountStmt->execute([$assignment['class_id']]);
+            $assignment['student_count'] = (int) $studentCountStmt->fetchColumn();
+
+            $subjectIds = $assignment['full_class']
+                ? []
+                : array_keys($assignment['subjects']);
+            if ($assignment['full_class']) {
+                $mappingTable = $assignment['class_type'] === 'arabic' ? 'arabic_class_subjects' : 'class_subjects';
+                $mappingColumn = $assignment['class_type'] === 'arabic' ? 'arabic_class_id' : 'class_id';
+                $subjectStmt = $pdo->prepare(
+                    "SELECT subject_id FROM {$mappingTable} WHERE {$mappingColumn} = ?"
+                );
+                $subjectStmt->execute([$assignment['class_id']]);
+                $subjectIds = array_map('intval', $subjectStmt->fetchAll(PDO::FETCH_COLUMN));
+            }
+            $subjectNames = [];
+            if ($subjectIds) {
+                $placeholders = implode(',', array_fill(0, count($subjectIds), '?'));
+                $nameStmt = $pdo->prepare(
+                    "SELECT id, name FROM subjects WHERE is_active = 1 AND id IN ({$placeholders}) ORDER BY name"
+                );
+                $nameStmt->execute($subjectIds);
+                foreach ($nameStmt->fetchAll(PDO::FETCH_ASSOC) as $subject) {
+                    $subjectNames[] = $subject['name'];
+                    $assignedSubjectIds[(int) $subject['id']] = true;
+                }
+            }
+            $assignment['subjects'] = $subjectNames;
+            unset($assignment['subjects_map']);
+        }
+        unset($assignment);
+
+        foreach ($grouped as $assignment) {
+            $classColumn = $assignment['class_type'] === 'arabic' ? 'arabic_class_id' : 'class_id';
+            $studentStmt = $pdo->prepare(
+                "SELECT id FROM students WHERE {$classColumn} = ? AND is_active = 1"
+            );
+            $studentStmt->execute([$assignment['class_id']]);
+            foreach ($studentStmt->fetchAll(PDO::FETCH_COLUMN) as $studentId) {
+                $assignedStudentIds[(int) $studentId] = true;
+            }
+        }
+
+        echo json_encode([
+            'success' => true,
+            'role' => 'teacher',
+            'stats' => [
+                'assigned_students' => count($assignedStudentIds),
+                'assigned_classes' => count($grouped),
+                'assigned_subjects' => count($assignedSubjectIds),
+            ],
+            'assignments' => array_values($grouped),
+        ], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+        exit;
+    } catch (Throwable $error) {
+        error_log('Teacher dashboard data error: ' . $error->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Unable to load your teaching assignments.']);
+        exit;
+    }
+}
+
 requireAdmin();
 
 try {
