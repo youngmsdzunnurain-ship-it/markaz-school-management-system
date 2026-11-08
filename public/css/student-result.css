@@ -11012,3 +11012,132 @@ body.student-portal-result-view .student-information .memorization-value-row str
         grid-template-columns: minmax(0, .95fr) minmax(0, .95fr) minmax(42px, .6fr) minmax(0, 1.6fr) !important;
     }
 }
+
+
+/* Student portal: intentional mobile profile rows; screen-only so report printing stays unchanged. */
+@media screen and (max-width: 560px) {
+    body.student-portal-result-view .student-information .student-profile-grid {
+        grid-template-columns: 60px minmax(0, 1fr) !important;
+        align-items: start !important;
+        gap: 10px !important;
+    }
+
+    body.student-portal-result-view .student-information .student-photo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+        height: 60px !important;
+        min-height: 60px !important;
+        max-height: 60px !important;
+        aspect-ratio: 1 / 1 !important;
+        border-radius: 9px !important;
+        overflow: hidden !important;
+        align-self: start !important;
+        justify-self: start !important;
+        margin: 0 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+    }
+
+    body.student-portal-result-view .student-information .student-details {
+        grid-column: 2 !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-areas:
+            "name name"
+            "gender age"
+            "student-type conventional-class"
+            "class-size arabic-class"
+            "memorization memorization" !important;
+        align-content: start !important;
+        align-items: stretch !important;
+        gap: 7px !important;
+        min-width: 0 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row,
+    body.student-portal-result-view .student-information .student-class-row {
+        display: contents !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .student-name-item {
+        grid-area: name !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(2) {
+        grid-area: gender !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(3) {
+        grid-area: age !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item:nth-child(4) {
+        grid-area: student-type !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .conventional-class-item {
+        grid-area: conventional-class !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .arabic-class-count-item {
+        grid-area: class-size !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .arabic-class-item {
+        grid-area: arabic-class !important;
+    }
+
+    body.student-portal-result-view .student-information .student-class-row > .memorization-detail-item {
+        grid-area: memorization !important;
+        min-width: 0 !important;
+    }
+
+    body.student-portal-result-view .student-information .student-top-row > .detail-item,
+    body.student-portal-result-view .student-information .student-class-row > .detail-item {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        min-height: 48px !important;
+        height: auto !important;
+        padding: 7px 8px !important;
+        box-sizing: border-box !important;
+        gap: 3px !important;
+    }
+
+    body.student-portal-result-view .student-information .student-name-item {
+        min-height: 48px !important;
+    }
+
+    body.student-portal-result-view .student-information .detail-item > span {
+        font-size: .65rem !important;
+        line-height: 1.15 !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    body.student-portal-result-view .student-information .detail-item > strong,
+    body.student-portal-result-view .student-information .memorization-value-row strong {
+        font-size: .78rem !important;
+        line-height: 1.2 !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+    }
+
+    body.student-portal-result-view .student-information .section-heading {
+        margin-bottom: 8px !important;
+        padding-bottom: 7px !important;
+    }
+
+    body.student-portal-result-view .student-information {
+        padding: 10px !important;
+    }
+}
