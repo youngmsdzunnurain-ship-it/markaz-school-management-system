@@ -1753,8 +1753,8 @@ function setEditMode(editing) {
 
 async function loadBehaviouralReport() {
     if (!studentId) return;
-    await getCurrentUserRole();
-    if (currentUserRole === "teacher" && !teacherHasFullClassAccess()) {
+    if (!isStudentPortalView) await getCurrentUserRole();
+    if (!isStudentPortalView && currentUserRole === "teacher" && !teacherHasFullClassAccess()) {
         setBehaviourEditing(false);
         return;
     }
