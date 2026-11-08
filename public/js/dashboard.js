@@ -488,6 +488,7 @@ document.addEventListener("click", (event) => {
 
 
 function applyDashboardRoleAccess(role, permissions = {}) {
+    document.body.classList.toggle("role-teacher", role === "teacher");
     document.querySelectorAll("[data-role-access]").forEach((element) => {
         const requiredRole = element.dataset.roleAccess;
         let allowed = true;
@@ -923,6 +924,7 @@ async function loadDashboardStats() {
 
                 assignments.forEach(item => {
                     const card = document.createElement("article");
+                    card.className = "teacher-assignment-card";
                     card.style.cssText = "border:1px solid #dce7df;border-radius:14px;padding:18px;background:#fff;";
 
                     const heading = document.createElement("h3");
