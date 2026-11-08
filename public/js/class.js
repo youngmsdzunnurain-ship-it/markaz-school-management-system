@@ -26,6 +26,7 @@
     const resultsMessage = document.getElementById("resultsMessage");
 
     let selectedClass = null;
+    let currentRole = "";
     let classStudents = [];
     let resultSubjects = [];
     let classResults = [];
@@ -613,7 +614,7 @@
 
     classStudentsContainer.addEventListener("click", event => {
         const button = event.target.closest(".class-student-button");
-        if (button) {
+        if (button && currentRole !== "teacher") {
             openStudent(button.dataset.studentId);
         }
     });
@@ -632,6 +633,19 @@
         setLoadingState();
 
         try {
+            const identityResponse = await fetch("./api/auth/me.php", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+            const identity = await identityResponse.json();
+            currentRole = identity?.admin?.role || "";
+
+            if (currentRole === "teacher") {
+                [editClassButton, addStudentButton, panelAddStudentButton].forEach(button => {
+                    if (button) button.hidden = true;
+                });
+            }
+
             const classLoaded = await loadClass();
 
             if (!classLoaded) {
