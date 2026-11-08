@@ -353,7 +353,7 @@ $studentId = ($studentValue === null || $studentValue === '')
     ? null
     : filter_var($studentValue, FILTER_VALIDATE_INT);
 
-if ($name === '' || mb_strlen($name) > 150) {
+if ($name === '' || mb_strlen($name) > 120) {
     accountResponse(['success' => false, 'message' => 'A valid full name is required (1–150 characters).'], 400);
 }
 if (!in_array($role, $allowedRoles, true)) {
