@@ -41,13 +41,41 @@ if (!$admin) {
 }
 
 $role = (string) $admin['role'];
+$accountId = (int) $admin['id'];
 
-$resolvePermission = static function (string $permissionKey) use ($role): bool {
+$resolvePermission = static function (string $permissionKey) use ($role, $accountId): bool {
     if (!in_array($permissionKey, ['print_results', 'export_results'], true)) {
         return false;
     }
 
-    return systemAccessEnabled($role . '_' . $permissionKey);
+    if (!systemAccessEnabled($role . '_' . $permissionKey)) {
+        return false;
+    }
+
+    if ($role !== 'teacher') {
+        return true;
+    }
+
+    $pdo = db();
+    $permissionStmt = $pdo->prepare(
+        'SELECT is_allowed FROM account_permissions
+         WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $permissionStmt->execute([$accountId, $permissionKey]);
+    $individualPermission = $permissionStmt->fetchColumn();
+
+    if ($individualPermission === false || (int) $individualPermission !== 1) {
+        return false;
+    }
+
+    $assignmentStmt = $pdo->prepare(
+        'SELECT 1 FROM teacher_assignments
+         WHERE account_id = ? AND is_active = 1 AND subject_id IS NULL
+         LIMIT 1'
+    );
+    $assignmentStmt->execute([$accountId]);
+
+    return (bool) $assignmentStmt->fetchColumn();
 };
 
 echo json_encode([
