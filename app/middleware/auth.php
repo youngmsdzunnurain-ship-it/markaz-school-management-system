@@ -272,7 +272,11 @@ function requireTeacherAssignment(
     }
 }
 
-function requireRolePermission(string $permission): void
+function requireRolePermission(
+    string $permission,
+    ?int $classId = null,
+    ?string $classType = null
+): void
 {
     $role = currentAdminRole();
 
@@ -309,6 +313,39 @@ function requireRolePermission(string $permission): void
 
     $settingKey = $roleSettings[$role] . "_" . $permission;
     $allowed = systemAccessEnabled($settingKey);
+
+    if ($role === 'teacher') {
+        $accountId = (int) ($_SESSION['admin_id'] ?? 0);
+        $requestedClassId = $classId ?? (filter_var($_GET['class_id'] ?? null, FILTER_VALIDATE_INT) ?: null);
+        $requestedClassType = $classType ?? (string) ($_GET['class_type'] ?? 'conventional');
+
+        if (
+            !$allowed
+            || $accountId < 1
+            || !$requestedClassId
+            || !in_array($requestedClassType, ['conventional', 'arabic'], true)
+        ) {
+            $allowed = false;
+        } else {
+            $permissionStmt = db()->prepare(
+                'SELECT is_allowed FROM account_permissions
+                 WHERE account_id = ? AND permission_key = ? LIMIT 1'
+            );
+            $permissionStmt->execute([$accountId, $permission]);
+            $individualPermission = $permissionStmt->fetchColumn();
+
+            $assignmentStmt = db()->prepare(
+                'SELECT 1 FROM teacher_assignments
+                 WHERE account_id = ? AND class_type = ? AND class_id = ?
+                   AND is_active = 1 AND subject_id IS NULL LIMIT 1'
+            );
+            $assignmentStmt->execute([$accountId, $requestedClassType, $requestedClassId]);
+
+            $allowed = $individualPermission !== false
+                && (int) $individualPermission === 1
+                && (bool) $assignmentStmt->fetchColumn();
+        }
+    }
 
     if (!$allowed) {
         http_response_code(403);
