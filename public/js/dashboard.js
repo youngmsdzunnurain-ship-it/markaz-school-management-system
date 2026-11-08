@@ -461,18 +461,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
         }
     });
 
-    const dropdownItems =
-        dropdown.querySelectorAll(".profile-dropdown-item");
-
-    dropdownItems[0]?.addEventListener("click", () => {
-        console.log("Profile selected.");
-    });
-
-    dropdownItems[1]?.addEventListener("click", () => {
-        console.log("Settings selected.");
-    });
-
-    dropdownItems[2]?.addEventListener("click", logout);
+    dropdown.querySelector("#topProfileLogoutButton")?.addEventListener("click", logout);
 
     window.markazUpdateTopAdmin = updateTopAdmin;
 }
