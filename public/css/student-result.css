@@ -10940,16 +10940,6 @@ body.student-portal-result-view .student-information .memorization-value-row str
     white-space: normal !important;
 }
 
-body.student-portal-result-view .student-information .student-photo {
-    width: 68px !important;
-    min-width: 68px !important;
-    max-width: 68px !important;
-    height: 68px !important;
-    min-height: 68px !important;
-    max-height: 68px !important;
-    border-radius: 12px !important;
-}
-
 @media (max-width: 560px) {
     body.student-portal-result-view .student-result-page {
         padding: 10px !important;
@@ -10979,23 +10969,6 @@ body.student-portal-result-view .student-information .student-photo {
     body.student-portal-result-view .student-result-page.management-view .document-actions,
     body.student-portal-result-view .student-result-page.management-view .student-edit-actions {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
-
-    body.student-portal-result-view .student-information .student-profile-grid {
-        display: grid !important;
-        grid-template-columns: 60px minmax(0, 1fr) !important;
-        align-items: start !important;
-        gap: 8px !important;
-        min-height: 0 !important;
-    }
-
-    body.student-portal-result-view .student-information .student-photo {
-        width: 60px !important;
-        min-width: 60px !important;
-        max-width: 60px !important;
-        height: 60px !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
     }
 
     body.student-portal-result-view .student-information .student-top-row {
