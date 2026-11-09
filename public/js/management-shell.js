@@ -24,7 +24,21 @@ if(!data.success||!data.admin)return;const a=data.admin;currentRole=String(a.rol
 header.querySelector("#markazShellName").textContent=name;header.querySelector("#markazShellMenuName").textContent=name;header.querySelector("#markazShellInitials").textContent=initials||"AD";header.querySelector("#markazShellRole").textContent=String(a.role||"Management").replaceAll("_"," ");header.querySelector("#markazShellEmail").textContent=a.email||"";const settingsLink=header.querySelector("[data-shell-settings]");if(settingsLink)settingsLink.hidden=!["admin","exam_officer"].includes(currentRole);const attendanceLink=sidebar.querySelector("a[href=\"/attendance.html\"]");if(attendanceLink&&a.role==="teacher")attendanceLink.hidden=a.can_manage_attendance!==true;
 if(a.profile_image){const avatar=header.querySelector(".admin-profile-avatar");avatar.textContent="";const img=document.createElement("img");img.src="/"+String(a.profile_image).replace(/^\/+/,"");img.alt=name;avatar.appendChild(img);}
 }).catch(e=>console.error("Management profile load failed:",e));
-header.querySelector("#markazShellLogout").addEventListener("click",async()=>{const b=header.querySelector("#markazShellLogout");b.disabled=true;try{if(!currentRole){const identityResponse=await fetch("/api/auth/me.php",{credentials:"same-origin",cache:"no-store"});const identity=await identityResponse.json();currentRole=String(identity?.admin?.role||"").toLowerCase();}const r=await fetch("/api/auth/logout.php",{method:"POST",credentials:"same-origin"});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||"Logout failed.");currentRole=String(d.role||currentRole||"").toLowerCase();location.replace(loginPathForRole(currentRole));}catch(e){b.disabled=false;alert(e.message||"Unable to log out.");}});
+header.querySelector("#markazShellLogout").addEventListener("click",async()=>{
+const b=header.querySelector("#markazShellLogout");
+b.disabled=true;
+b.textContent="Logging out...";
+try{
+const r=await fetch("/api/auth/logout.php",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{Accept:"application/json"}});
+const d=await r.json();
+if(!r.ok||!d.success)throw new Error(d.message||"Logout failed.");
+currentRole=String(d.role||currentRole||"").toLowerCase();
+location.replace(loginPathForRole(currentRole));
+}catch(e){
+b.disabled=false;
+b.textContent="Logout";
+alert(e.message||"Unable to log out.");
+}});
 const activityScript=document.createElement("script");activityScript.src="/js/device-activity.js?v=20261109-device-activity";activityScript.dataset.activityRole="auto";activityScript.defer=true;document.head.appendChild(activityScript);
 document.body.classList.add("markaz-management-shell-active");
 })();
