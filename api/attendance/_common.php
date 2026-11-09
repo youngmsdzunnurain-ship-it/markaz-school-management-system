@@ -37,13 +37,15 @@ function attendanceClassTable(string $classType): ?string
     };
 }
 
-/**
- * Agabiya is an Arabic education category, not a conventional class.
- * Keep this rule shared by class listings, reports, and direct class access.
- */
-function attendanceIsArabicNamedClass(string $className): bool
+function attendanceHasArabicClassWithName(PDO $pdo, string $className): bool
 {
-    return preg_match('/^\\s*agabiya(?:\\s|[-]|$)/iu', trim($className)) === 1;
+    $stmt = $pdo->prepare(
+        'SELECT 1 FROM arabic_classes
+         WHERE is_active = 1 AND LOWER(TRIM(name)) = LOWER(TRIM(?))
+         LIMIT 1'
+    );
+    $stmt->execute([$className]);
+    return (bool) $stmt->fetchColumn();
 }
 
 function attendanceValidateDate(string $date, bool $allowFuture = false): string
@@ -107,7 +109,7 @@ function attendanceRequireClassAccess(PDO $pdo, string $classType, int $classId)
         attendanceJsonError(404, 'The selected class was not found or is inactive.');
     }
 
-    if ($classType === 'conventional' && attendanceIsArabicNamedClass((string) $class['name'])) {
+    if ($classType === 'conventional' && attendanceHasArabicClassWithName($pdo, (string) $class['name'])) {
         attendanceJsonError(404, 'The selected class belongs to the Arabic category.');
     }
 
