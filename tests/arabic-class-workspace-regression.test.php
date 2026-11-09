@@ -11,7 +11,6 @@ function arabicClassWorkspaceCheck(bool $condition, string $message): void
 
 $classListApi = file_get_contents(__DIR__ . '/../api/classes/list.php');
 $classListJs = file_get_contents(__DIR__ . '/../public/js/classes.js');
-$classPageHtml = file_get_contents(__DIR__ . '/../public/classes.html');
 $managementShellJs = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
 $classPageHtml = file_get_contents(__DIR__ . '/../public/classes.html');
 $classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
