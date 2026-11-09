@@ -14,6 +14,9 @@ $accountUi = file_get_contents(__DIR__ . '/../public/js/account-management.js');
 $dashboardApi = file_get_contents(__DIR__ . '/../public/api/dashboard/stats.php');
 $dashboardJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $dashboardHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
+$authMeApi = file_get_contents(__DIR__ . '/../api/auth/me.php');
+$managementShellJs = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
+$attendanceCommonApi = file_get_contents(__DIR__ . '/../api/attendance/_common.php');
 $classApi = file_get_contents(__DIR__ . '/../api/results/class.php');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
@@ -161,6 +164,16 @@ $attendanceClassesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.
 $attendancePageJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 $loginRolesJs = file_get_contents(__DIR__ . '/../public/js/login-roles.js');
 $loginRolesCss = file_get_contents(__DIR__ . '/../public/css/login-roles.css');
+
+teacherPortalCheck(
+    str_contains($authMeApi, "SELECT is_allowed FROM account_permissions") &&
+    str_contains($authMeApi, "'attendance_records'") &&
+    str_contains($authMeApi, "'can_manage_attendance' => $canManageAttendance") &&
+    str_contains($dashboardJs, "permissions.can_manage_attendance === true") &&
+    str_contains($managementShellJs, "a.can_manage_attendance!==true") &&
+    str_contains($attendanceCommonApi, "Attendance recording has not been enabled for your teacher account."),
+    'Attendance is hidden from unpermitted teachers and denied by the backend unless their individual permission is enabled'
+);
 
 teacherPortalCheck(
     str_contains($attendanceClassesApi, "'available_class_types'") &&
