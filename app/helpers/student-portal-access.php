@@ -10,6 +10,12 @@ require_once __DIR__ . '/../middleware/session.php';
  */
 function studentPortalResultScope(bool $requireQueryMatch = true): ?array
 {
+    // Only explicitly marked Student Portal requests may use the isolated student session.
+    // A leftover student cookie must never shadow a signed-in staff session.
+    if (($_GET['student_portal'] ?? '') !== '1') {
+        return null;
+    }
+
     // Do not start a student session on ordinary staff requests.
     if (empty($_COOKIE['MARKAZ_STUDENT_SESSION'])) {
         return null;
