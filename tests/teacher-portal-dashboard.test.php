@@ -203,7 +203,7 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
+    !str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
     str_contains($studentResultCss, 'min-width: 561px') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
     str_contains($studentResultCss, 'max-width: 760px'),
