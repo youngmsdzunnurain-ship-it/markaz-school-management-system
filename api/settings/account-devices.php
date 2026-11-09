@@ -86,7 +86,7 @@ if (!$deviceId || $deviceId < 1 || !in_array($action, ['block', 'unblock'], true
     deviceAdminJson(['success' => false, 'message' => 'Choose a valid device action.'], 400);
 }
 if ($action === 'block' && $reason === '') {
-    deviceAdminJson(['success' => false, 'message' => 'Enter a reason for blocking this device.'], 400);
+    deviceAdminJson(['success' => false, 'message' => 'Enter a reason for freezing this device.'], 400);
 }
 if (mb_strlen($reason) > 500) {
     deviceAdminJson(['success' => false, 'message' => 'The reason must not exceed 500 characters.'], 400);
