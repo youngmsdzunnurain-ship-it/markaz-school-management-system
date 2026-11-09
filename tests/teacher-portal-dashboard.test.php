@@ -285,7 +285,7 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     str_contains($classHierarchy, 'sort_order') &&
-    str_contains($classHierarchy, '((int) ($a[\'sort_order\'] ?? 0)) <=> ((int) ($b[\'sort_order\'] ?? 0))'),
+    str_contains($classHierarchy, "((int) (\$a['sort_order'] ?? 0)) <=> (int) (\$b['sort_order'] ?? 0)"),
     'Shared class ordering respects the saved database display order'
 );
 teacherPortalCheck(
