@@ -209,4 +209,45 @@ teacherPortalCheck(
     str_contains($studentResultCss, 'max-width: 760px'),
     'Student Portal and staff result profile rows stay aligned through tablet widths'
 );
+
+
+$dashboardNavigationHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
+$dashboardActiveCss = file_get_contents(__DIR__ . '/../public/css/dashboard-2026.css');
+$dashboardAttendanceJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
+$attendanceReportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
+
+teacherPortalCheck(
+    substr_count($dashboardNavigationHtml, '<section class="nav-section"') >= 5 &&
+    str_contains($dashboardNavigationHtml, 'aria-label="Overview"') &&
+    str_contains($dashboardNavigationHtml, 'aria-label="Academics"') &&
+    str_contains($dashboardNavigationHtml, 'aria-label="Assessment"'),
+    'Dashboard sidebar groups navigation into accessible hierarchy sections'
+);
+teacherPortalCheck(
+    str_contains($dashboardActiveCss, '.nav-section{') &&
+    str_contains($dashboardActiveCss, '.nav-section-label{') &&
+    str_contains($dashboardActiveCss, '.nav-section .nav-link'),
+    'Active dashboard stylesheet styles the grouped sidebar navigation'
+);
+teacherPortalCheck(
+    str_contains($dashboardNavigationHtml, 'dashboard-class-attendance-charts') &&
+    str_contains($dashboardNavigationHtml, 'dashboardConventionalAttendance') &&
+    str_contains($dashboardNavigationHtml, 'dashboardArabicAttendance') &&
+    str_contains($dashboardActiveCss, '.dashboard-class-attendance-charts{'),
+    'Dashboard keeps separate conventional and Arabic class attendance charts in the responsive layout'
+);
+teacherPortalCheck(
+    str_contains($dashboardAttendanceJs, 'allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type)') &&
+    str_contains($dashboardAttendanceJs, 'const rate = marked > 0 && studentCount > 0') &&
+    str_contains($dashboardAttendanceJs, ': null;'),
+    'Dashboard retains every class in its own category and represents unmarked classes without inventing a zero rate'
+);
+teacherPortalCheck(
+    str_contains($attendanceReportsApi, 'LEFT JOIN attendance_records ar') &&
+    str_contains($attendanceReportsApi, 'WHERE c.is_active = 1') &&
+    str_contains($attendanceReportsApi, "'classes'") &&
+    str_contains($attendanceReportsApi, "'arabic_classes'"),
+    'Attendance report supplies every active conventional and Arabic class, including classes with no saved marks'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
