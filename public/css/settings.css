@@ -5257,7 +5257,7 @@ body {
     outline-offset: 1px;
 }
 .settings-page #markazSocialSave,
-.settings-page .markaz-support-settings button,
+.settings-page .markaz-support-settings #saveSupportContactButton,
 .settings-page #markazRefreshLockouts {
     display: inline-flex;
     align-items: center;
@@ -5276,14 +5276,14 @@ body {
     transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
 }
 .settings-page #markazSocialSave:hover:not(:disabled),
-.settings-page .markaz-support-settings button:hover:not(:disabled),
+.settings-page .markaz-support-settings #saveSupportContactButton:hover:not(:disabled),
 .settings-page #markazRefreshLockouts:hover:not(:disabled) {
     background: linear-gradient(135deg, #176342, #0b3925);
     box-shadow: 0 7px 17px rgba(23, 99, 66, .22);
     transform: translateY(-1px);
 }
 .settings-page #markazSocialSave:disabled,
-.settings-page .markaz-support-settings button:disabled,
+.settings-page .markaz-support-settings #saveSupportContactButton:disabled,
 .settings-page #markazRefreshLockouts:disabled {
     opacity: .62;
     cursor: wait;
@@ -5299,6 +5299,21 @@ body {
 .settings-page .markaz-support-settings form > p {
     grid-column: 1 / -1;
     margin: 0;
+}
+.settings-page .markaz-support-settings #markazSupportStatus {
+    min-height: 1.5em;
+    padding: 9px 12px;
+    border-radius: 9px;
+    color: #52665a;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.settings-page .markaz-support-settings #markazSupportNumber {
+    box-sizing: border-box;
+}
+.settings-page .markaz-support-settings #saveSupportContactButton:focus-visible {
+    outline: 3px solid rgba(176, 139, 53, .32);
+    outline-offset: 3px;
 }
 .settings-page .markaz-locked-accounts-card > div[style*="overflow"] {
     margin: 16px 0;
@@ -5355,6 +5370,6 @@ body {
     .settings-page .social-settings-fields { grid-template-columns: minmax(0, 1fr); }
     .settings-page .markaz-support-settings form { grid-template-columns: minmax(0, 1fr); }
     .settings-page #markazSocialSave,
-    .settings-page .markaz-support-settings button,
+    .settings-page .markaz-support-settings #saveSupportContactButton,
     .settings-page #markazRefreshLockouts { width: 100%; }
 }
