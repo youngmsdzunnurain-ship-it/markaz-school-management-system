@@ -182,10 +182,10 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
-    !str_contains($dashboardComboJs, '"Basic 6"') &&
-    str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
-    'Attendance combo chart follows the complete conventional class hierarchy'
+    str_contains($dashboardComboJs, 'Array.from(uniqueRows.values())') &&
+    !str_contains($dashboardComboJs, 'const conventionalOrder') &&
+    !str_contains($dashboardComboJs, 'const arabicOrder'),
+    'Attendance chart preserves saved class order while keeping categories separate'
 );
 
 teacherPortalCheck(
@@ -222,17 +222,18 @@ $dashboardAttendanceJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js
 $attendanceReportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 
 teacherPortalCheck(
-    substr_count($dashboardNavigationHtml, '<section class="nav-section"') >= 5 &&
-    str_contains($dashboardNavigationHtml, 'aria-label="Overview"') &&
-    str_contains($dashboardNavigationHtml, 'aria-label="Academics"') &&
-    str_contains($dashboardNavigationHtml, 'aria-label="Assessment"'),
-    'Dashboard sidebar groups navigation into accessible hierarchy sections'
+    !str_contains($dashboardNavigationHtml, '<section class="nav-section"') &&
+    strpos($dashboardNavigationHtml, 'href="./dashboard.html"') < strpos($dashboardNavigationHtml, 'href="./students.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./students.html"') < strpos($dashboardNavigationHtml, 'href="./classes.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./classes.html"') < strpos($dashboardNavigationHtml, 'href="./subjects/"') &&
+    strpos($dashboardNavigationHtml, 'href="./subjects/"') < strpos($dashboardNavigationHtml, 'href="./print-results.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./print-results.html"') < strpos($dashboardNavigationHtml, 'href="./settings.html"'),
+    'Dashboard sidebar preserves its original navigation sequence'
 );
 teacherPortalCheck(
-    str_contains($dashboardActiveCss, '.nav-section{') &&
-    str_contains($dashboardActiveCss, '.nav-section-label{') &&
-    str_contains($dashboardActiveCss, '.nav-section .nav-link'),
-    'Active dashboard stylesheet styles the grouped sidebar navigation'
+    !str_contains($dashboardActiveCss, '.nav-section{') &&
+    str_contains($dashboardActiveCss, '.dashboard-class-attendance-charts{'),
+    'Dashboard attendance charts remain styled without changing sidebar layout'
 );
 teacherPortalCheck(
     str_contains($dashboardNavigationHtml, 'dashboard-class-attendance-charts') &&
@@ -300,6 +301,13 @@ teacherPortalCheck(
     str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
     str_contains($classWorkspaceCss, 'content: attr(data-label)'),
     'Teacher class student management converts student rows into labelled mobile cards'
+);
+
+$classHierarchyHelper = file_get_contents(__DIR__ . '/../app/helpers/class-hierarchy.php');
+teacherPortalCheck(
+    str_contains($classHierarchyHelper, 'sort_order') &&
+    str_contains($dashboardAttendanceJs, 'Array.from(uniqueRows.values())'),
+    'Class and attendance displays use the saved database ordering without a competing hard-coded chart hierarchy'
 );
 
 echo "Teacher portal dashboard regression tests passed.\n";
