@@ -196,7 +196,7 @@
                                         </span>
                                     </td>
 
-                                    <td data-label="View Results">
+                                    <td data-label="Action">
                                         <button
                                             type="button"
                                             class="class-student-button"
