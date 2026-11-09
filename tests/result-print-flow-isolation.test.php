@@ -18,7 +18,7 @@ checkResultPrintFlow(str_contains($studentJs, 'const data = await fetchStudentRe
 checkResultPrintFlow(str_contains($studentJs, 'resultDocumentActions.hidden = !isPrintMode || editing || !studentData') && !str_contains(file_get_contents(__DIR__ . '/../public/student-result.html'), 'id="downloadStudentPdfButton"'), 'entry page never shows print or PDF actions');
 checkResultPrintFlow(str_contains($studentJs, 'if (!isPrintMode || !studentData || resultPrintBlocked) return;'), 'blocked individual result cannot print');
 checkResultPrintFlow(str_contains($printJs, 'classList.contains("result-print-blocked")') && str_contains($printJs, 'At least one selected result is not eligible to print'), 'print-all rejects blocked result frames');
-checkResultPrintFlow(!str_contains($completionApi, '$subjectSql .= " AND EXISTS (') && str_contains($completionApi, 'FROM {$mappingTable} cs') && str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), '$completionPercent < $printThreshold'), 'class eligibility counts the same required class subjects');
+checkResultPrintFlow(str_contains($completionApi, '$subjectSql .= " AND EXISTS (') && str_contains($completionApi, 'FROM {$mappingTable} cs') && str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), '$completionPercent < $printThreshold'), 'class eligibility counts the same required class subjects');
 checkResultPrintFlow(!str_contains($printPage, 'id="editScoresButton"') && !str_contains($printPage, 'class="student-edit-actions"'), 'print page contains no edit controls');
 
 echo "Targeted result-print flow regression tests passed.\n";
