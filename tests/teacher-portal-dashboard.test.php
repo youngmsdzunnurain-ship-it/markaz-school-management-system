@@ -284,8 +284,9 @@ teacherPortalCheck(
     'Dashboard attendance charts retain the explicit conventional and Arabic class hierarchies'
 );
 teacherPortalCheck(
-    str_contains($classHierarchy, "'kg', 'nursery 1', 'nursery 2', 'primary 1', 'primary 2'") &&
-    str_contains($classHierarchy, "'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani'"),
+    str_contains($classHierarchy, "sort_order") &&
+    str_contains($classHierarchy, "'conventional' => 0, 'arabic' => 1") &&
+    !str_contains($classHierarchy, 'markazClassHierarchyRank'),
     'Shared class ordering preserves the established conventional and Arabic academic hierarchies'
 );
 teacherPortalCheck(
@@ -297,10 +298,45 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     str_contains($classWorkspaceJs, 'data-label="Admission No."') &&
-    str_contains($classWorkspaceJs, 'data-label="View Results"') &&
+    str_contains($classWorkspaceJs, 'data-label="Action"') &&
     str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
     str_contains($classWorkspaceCss, 'content: attr(data-label)'),
     'Teacher class student management converts student rows into labelled mobile cards'
+);
+
+
+$classesPageJs = file_get_contents(__DIR__ . '/../public/js/students.js');
+$classesPageCss = file_get_contents(__DIR__ . '/../public/css/students.css');
+$classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
+$classWorkspaceCss = file_get_contents(__DIR__ . '/../public/css/class.css');
+$classHierarchy = file_get_contents(__DIR__ . '/../app/helpers/class-hierarchy.php');
+
+teacherPortalCheck(
+    str_contains($classHierarchy, "sort_order") &&
+    str_contains($classHierarchy, "'conventional' => 0, 'arabic' => 1") &&
+    !str_contains($classHierarchy, 'markazClassHierarchyRank'),
+    'Shared class lists preserve saved sort_order while keeping conventional and Arabic classes in separate groups'
+);
+teacherPortalCheck(
+    str_contains($classesPageJs, 'data-label="Parent / Guardian"') &&
+    str_contains($classesPageJs, 'data-label="Parent Phone"') &&
+    str_contains($classesPageJs, 'data-label="Arabiyya Class"') &&
+    str_contains($classesPageJs, 'data-label="Student Type"') &&
+    str_contains($classesPageJs, 'data-label="Actions"') &&
+    str_contains($classesPageCss, '.students-page .students-table tbody tr') &&
+    str_contains($classesPageCss, 'min-width: 0 !important') &&
+    str_contains($classesPageCss, 'content: attr(data-label)') &&
+    str_contains(file_get_contents(__DIR__ . '/../public/students.html'), 'class="students-page"'),
+    'Student Management renders all eleven fields as labelled mobile cards without a forced wide table'
+);
+teacherPortalCheck(
+    str_contains($classWorkspaceJs, 'data-label="Admission No."') &&
+    str_contains($classWorkspaceJs, 'data-label="Action"') &&
+    !str_contains($classWorkspaceJs, 'data-label="View Results"') &&
+    str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
+    str_contains($classWorkspaceCss, 'td[data-label="Action"]') &&
+    str_contains($classWorkspaceCss, 'content: attr(data-label)'),
+    'Teacher class roster renders each student field and the result action in labelled mobile cards'
 );
 
 echo "Teacher portal dashboard regression tests passed.\n";
