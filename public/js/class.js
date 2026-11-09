@@ -103,6 +103,12 @@
             : "Inactive";
         document.title = `${classLabel} | MARKAZ`;
 
+        if (classType === "arabic") {
+            [editClassButton, addStudentButton, panelAddStudentButton].forEach(button => {
+                if (button) button.hidden = true;
+            });
+        }
+
         return true;
     }
 
