@@ -178,8 +178,10 @@ teacherPortalCheck(
 teacherPortalCheck(
     str_contains($attendanceClassesApi, "'available_class_types'") &&
     str_contains($attendancePageJs, 'available_class_types') &&
-    str_contains($attendancePageJs, 'attendanceClassTypeField'),
-    'Teacher attendance category is automatically selected and hidden for a single assigned category'
+    str_contains($attendancePageJs, 'attendanceClassTypeField') &&
+    str_contains($attendancePageJs, 'hasSingleAssignedClass') &&
+    str_contains($attendancePageJs, 'attendanceClassField.hidden = hasSingleAssignedClass'),
+    'Teacher attendance category and sole assigned class are automatically selected without redundant dropdowns'
 );
 teacherPortalCheck(
     str_contains($loginRolesJs, 'setInterval(showCountdown, 1000)') &&
@@ -193,6 +195,7 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
+    str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
     str_contains($studentResultCss, 'min-width: 561px') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
     str_contains($studentResultCss, 'max-width: 760px'),
