@@ -37,6 +37,15 @@ function attendanceClassTable(string $classType): ?string
     };
 }
 
+/**
+ * Agabiya is an Arabic education category, not a conventional class.
+ * Keep this rule shared by class listings, reports, and direct class access.
+ */
+function attendanceIsArabicNamedClass(string $className): bool
+{
+    return preg_match('/^\\s*agabiya(?:\\s|[-]|$)/iu', trim($className)) === 1;
+}
+
 function attendanceValidateDate(string $date, bool $allowFuture = false): string
 {
     if (!attendanceIsValidDate($date)) {
