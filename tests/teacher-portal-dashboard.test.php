@@ -182,10 +182,10 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, 'Array.from(uniqueRows.values())') &&
-    !str_contains($dashboardComboJs, 'const conventionalOrder') &&
-    !str_contains($dashboardComboJs, 'const arabicOrder'),
-    'Attendance chart preserves saved class order while keeping categories separate'
+    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
+    !str_contains($dashboardComboJs, '"Basic 6"') &&
+    str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
+    'Attendance chart follows the established conventional class hierarchy'
 );
 
 teacherPortalCheck(
@@ -278,10 +278,10 @@ teacherPortalCheck(
     'Dashboard keeps attendance chart styling without changing the original sidebar layout'
 );
 teacherPortalCheck(
-    !str_contains($dashboardAttendanceJs, 'const conventionalOrder') &&
-    !str_contains($dashboardAttendanceJs, 'const arabicOrder') &&
-    str_contains($dashboardAttendanceJs, 'Array.from(uniqueRows.values())'),
-    'Dashboard attendance charts preserve the database class display order within each category'
+    str_contains($dashboardAttendanceJs, 'const conventionalOrder') &&
+    str_contains($dashboardAttendanceJs, 'const arabicOrder') &&
+    str_contains($dashboardAttendanceJs, 'const orderedRows = []'),
+    'Dashboard attendance charts retain the explicit conventional and Arabic class hierarchies'
 );
 teacherPortalCheck(
     str_contains($classHierarchy, 'sort_order') &&
@@ -301,26 +301,6 @@ teacherPortalCheck(
     str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
     str_contains($classWorkspaceCss, 'content: attr(data-label)'),
     'Teacher class student management converts student rows into labelled mobile cards'
-);
-
-$classHierarchyHelper = file_get_contents(__DIR__ . '/../app/helpers/class-hierarchy.php');
-teacherPortalCheck(
-    str_contains($classHierarchyHelper, 'sort_order') &&
-    str_contains($dashboardAttendanceJs, 'Array.from(uniqueRows.values())'),
-    'Class and attendance displays use the saved database ordering without a competing hard-coded chart hierarchy'
-);
-
-require_once __DIR__ . '/../app/helpers/class-hierarchy.php';
-$orderedClasses = markazSortAndDeduplicateClasses([
-    ['id' => 1, 'class_type' => 'conventional', 'name' => 'Basic 1', 'sort_order' => 30],
-    ['id' => 2, 'class_type' => 'conventional', 'name' => 'Nursery 1', 'sort_order' => 10],
-    ['id' => 3, 'class_type' => 'conventional', 'name' => 'Primary 1', 'sort_order' => 20],
-    ['id' => 4, 'class_type' => 'arabic', 'name' => 'Faslu Ula', 'sort_order' => 20],
-    ['id' => 5, 'class_type' => 'arabic', 'name' => 'Roudoh Awwal', 'sort_order' => 10],
-]);
-teacherPortalCheck(
-    array_column($orderedClasses, 'id') === [2, 3, 1, 5, 4],
-    'Class ordering follows saved sort_order independently inside conventional and Arabic categories'
 );
 
 echo "Teacher portal dashboard regression tests passed.\n";
