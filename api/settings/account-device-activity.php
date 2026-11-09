@@ -10,8 +10,23 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
 
 $pdo = db();
+$input = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input') ?: '', true);
+    if (!is_array($input)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid activity request.']);
+        exit;
+    }
+}
+$activityContext = (string) ($input['context'] ?? 'staff');
+$studentScope = $activityContext === 'student' ? studentPortalResultScope(false) : null;
+if ($activityContext === 'student' && $studentScope === null) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Student session expired.']);
+    exit;
+}
 
-$studentScope = studentPortalResultScope(false);
 $identityType = 'staff';
 $identityId = 0;
 $identityKey = '';
@@ -92,13 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: GET, POST');
     echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
-    exit;
-}
-
-$input = json_decode(file_get_contents('php://input') ?: '', true);
-if (!is_array($input)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid activity request.']);
     exit;
 }
 
