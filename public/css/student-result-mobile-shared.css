@@ -2,13 +2,13 @@
    Uses the established Student Portal layout for staff and student views.
    Screen-only. Role permissions/data, desktop presentation and print remain separate. */
 
-body .report-card .behaviour-grid-container {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-grid-container {
     width: 100% !important;
     max-width: 100% !important;
     overflow: visible !important;
 }
 
-body .report-card .behaviour-grid {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-grid {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     grid-auto-flow: row !important;
@@ -19,7 +19,7 @@ body .report-card .behaviour-grid {
     box-sizing: border-box !important;
 }
 
-body .report-card .behaviour-item {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-item {
     width: auto !important;
     min-width: 0 !important;
     min-height: 58px !important;
@@ -31,53 +31,53 @@ body .report-card .behaviour-item {
     box-sizing: border-box !important;
 }
 
-body .report-card .behaviour-item > span {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-item > span {
     min-width: 0 !important;
     overflow-wrap: anywhere !important;
 }
 
-body .report-card .behaviour-item select {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-item select {
     flex: 0 0 auto !important;
     min-width: 100px !important;
     max-width: 46% !important;
 }
 
 @media (max-width: 700px) {
-    body .report-card .behaviour-grid {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 8px !important;
         padding: 10px !important;
     }
 
-    body .report-card .behaviour-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-item {
         min-height: 56px !important;
         padding: 9px !important;
     }
 
-    body .report-card .behaviour-item select {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-item select {
         min-width: 82px !important;
     }
 }
 
 @media (max-width: 380px) {
-    body .report-card .behaviour-grid {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .report-card .behaviour-grid {
         grid-template-columns: minmax(0, 1fr) !important;
     }
 }
 
-body .student-information .student-details {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-details {
     gap: 8px !important;
     min-width: 0 !important;
 }
 
-body .student-information .student-top-row,
-body .student-information .student-class-row {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row,
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row {
     align-items: stretch !important;
     gap: 8px !important;
 }
 
-body .student-information .student-top-row > .detail-item,
-body .student-information .student-class-row > .detail-item {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item,
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .detail-item {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -88,17 +88,17 @@ body .student-information .student-class-row > .detail-item {
     box-sizing: border-box !important;
 }
 
-body .student-information .student-class-row {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(58px, .65fr) minmax(0, 1.8fr) !important;
 }
 
-body .student-information .student-class-row .memorization-detail-item {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row .memorization-detail-item {
     grid-column: auto !important;
     min-width: 0 !important;
 }
 
-body .student-information .memorization-value-row,
-body .student-information .memorization-value-row strong {
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .memorization-value-row,
+body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .memorization-value-row strong {
     min-width: 0 !important;
     max-width: 100% !important;
     overflow-wrap: anywhere !important;
@@ -119,27 +119,27 @@ body .student-information .memorization-value-row strong {
 
     
 
-    body .student-information .student-top-row {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row {
         grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, .8fr)) !important;
     }
 
-    body .student-information .student-class-row {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(48px, .65fr) minmax(0, 1.8fr) !important;
     }
 
-    body .student-information .student-top-row > .detail-item,
-    body .student-information .student-class-row > .detail-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item,
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .detail-item {
         min-height: 58px !important;
         padding: 7px 6px !important;
     }
 
-    body .student-information .detail-item > span {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .detail-item > span {
         font-size: .58rem !important;
         line-height: 1.15 !important;
         overflow-wrap: anywhere !important;
     }
 
-    body .student-information .detail-item > strong {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .detail-item > strong {
         font-size: .72rem !important;
         line-height: 1.2 !important;
         overflow-wrap: anywhere !important;
@@ -149,11 +149,11 @@ body .student-information .memorization-value-row strong {
 @media (max-width: 380px) {
     
 
-    body .student-information .student-top-row {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row {
         grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, .75fr)) !important;
     }
 
-    body .student-information .student-class-row {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row {
         grid-template-columns: minmax(0, .95fr) minmax(0, .95fr) minmax(42px, .6fr) minmax(0, 1.6fr) !important;
     }
 }
@@ -161,13 +161,13 @@ body .student-information .memorization-value-row strong {
 
 /* Student portal: intentional mobile profile rows; screen-only so report printing stays unchanged. */
 @media screen and (max-width: 560px) {
-    body .student-information .student-profile-grid {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-profile-grid {
         grid-template-columns: 60px minmax(0, 1fr) !important;
         align-items: start !important;
         gap: 10px !important;
     }
 
-    body .student-information .student-photo {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-photo {
         grid-column: 1 !important;
         grid-row: 1 !important;
         width: 60px !important;
@@ -184,14 +184,14 @@ body .student-information .memorization-value-row strong {
         margin: 0 !important;
     }
 
-    body .student-information .student-photo img {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-photo img {
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
         object-position: center !important;
     }
 
-    body .student-information .student-details {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-details {
         grid-column: 2 !important;
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -207,46 +207,46 @@ body .student-information .memorization-value-row strong {
         min-width: 0 !important;
     }
 
-    body .student-information .student-top-row,
-    body .student-information .student-class-row {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row,
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row {
         display: contents !important;
     }
 
-    body .student-information .student-top-row > .student-name-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .student-name-item {
         grid-area: name !important;
     }
 
-    body .student-information .student-top-row > .detail-item:nth-child(2) {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item:nth-child(2) {
         grid-area: gender !important;
     }
 
-    body .student-information .student-top-row > .detail-item:nth-child(3) {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item:nth-child(3) {
         grid-area: age !important;
     }
 
-    body .student-information .student-top-row > .detail-item:nth-child(4) {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item:nth-child(4) {
         grid-area: student-type !important;
     }
 
-    body .student-information .student-class-row > .conventional-class-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .conventional-class-item {
         grid-area: conventional-class !important;
     }
 
-    body .student-information .student-class-row > .arabic-class-count-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .arabic-class-count-item {
         grid-area: class-size !important;
     }
 
-    body .student-information .student-class-row > .arabic-class-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .arabic-class-item {
         grid-area: arabic-class !important;
     }
 
-    body .student-information .student-class-row > .memorization-detail-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .memorization-detail-item {
         grid-area: memorization !important;
         min-width: 0 !important;
     }
 
-    body .student-information .student-top-row > .detail-item,
-    body .student-information .student-class-row > .detail-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-top-row > .detail-item,
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-class-row > .detail-item {
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
@@ -258,31 +258,31 @@ body .student-information .memorization-value-row strong {
         gap: 3px !important;
     }
 
-    body .student-information .student-name-item {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-name-item {
         min-height: 48px !important;
     }
 
-    body .student-information .detail-item > span {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .detail-item > span {
         font-size: .65rem !important;
         line-height: 1.15 !important;
         overflow-wrap: normal !important;
         word-break: normal !important;
     }
 
-    body .student-information .detail-item > strong,
-    body .student-information .memorization-value-row strong {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .detail-item > strong,
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .memorization-value-row strong {
         font-size: .78rem !important;
         line-height: 1.2 !important;
         overflow-wrap: anywhere !important;
         word-break: normal !important;
     }
 
-    body .student-information .section-heading {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .section-heading {
         margin-bottom: 8px !important;
         padding-bottom: 7px !important;
     }
 
-    body .student-information {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information {
         padding: 10px !important;
     }
 }
@@ -290,16 +290,16 @@ body .student-information .memorization-value-row strong {
 
 /* Student portal follow-up refinements: screen profile and desktop action alignment. */
 @media screen and (max-width: 760px) {
-    body .student-information .student-profile-grid {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-profile-grid {
         display: block !important;
         grid-template-columns: minmax(0, 1fr) !important;
     }
 
-    body .student-information .student-photo {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-photo {
         display: none !important;
     }
 
-    body .student-information .student-details {
+    body:is(.student-portal-result-view, :not(.student-portal-result-view)) .student-information .student-details {
         width: 100% !important;
         grid-column: 1 / -1 !important;
     }
