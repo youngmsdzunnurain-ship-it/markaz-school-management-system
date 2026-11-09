@@ -313,7 +313,7 @@ $deviceStmt->execute([
 ]);
 $_SESSION['device_token_hash'] = $deviceTokenHash;
 setcookie('MARKAZ_DEVICE_TOKEN', $deviceToken, [
-    'expires' => 0,
+    'expires' => time() + 31536000,
     'path' => '/',
     'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
     'httponly' => true,
