@@ -24,7 +24,7 @@ securityCheck(
 );
 securityCheck(
     str_contains($login, 'is_frozen') &&
-    str_contains($login, 'This account has been frozen'),
+    str_contains($login, 'This account has been blocked.'),
     'frozen accounts must be rejected during login'
 );
 securityCheck(
