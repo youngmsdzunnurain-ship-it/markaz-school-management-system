@@ -21,7 +21,8 @@ resultTypeCheck(
 );
 resultTypeCheck(
     str_contains($saveApi, "class_type'] ?? ''")
-        && str_contains($saveApi, 'AND {$studentClassColumn} = ?'),
+        && str_contains($saveApi, 'AND {$studentClassExpression} = ?')
+        && str_contains($saveApi, 'COALESCE(NULLIF(arabic_class_id, 0), arabia_class_id)'),
     'result saving requires an explicit class type and validates the student against that system'
 );
 resultTypeCheck(

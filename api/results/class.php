@@ -125,9 +125,9 @@ try {
     $mappingClassColumn = $classType === 'arabic'
         ? 'arabic_class_id'
         : 'class_id';
-    $studentClassColumn = $classType === 'arabic'
-        ? 'arabic_class_id'
-        : 'class_id';
+    $studentClassExpression = $classType === 'arabic'
+        ? 'COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)'
+        : 'st.class_id';
 
     $subjectSql = "
         SELECT
@@ -177,12 +177,12 @@ try {
             st.gender,
             st.date_of_birth,
             st.is_active,
-            st.arabic_class_id,
+            COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id) AS arabic_class_id,
             ac.name AS arabic_class_name
          FROM students st
          LEFT JOIN arabic_classes ac
-            ON ac.id = st.arabic_class_id
-         WHERE st.{$studentClassColumn} = ?
+            ON ac.id = COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)
+         WHERE {$studentClassExpression} = ?
            AND st.is_active = 1
          ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
     );
@@ -202,7 +202,7 @@ try {
             r.result_remark
         FROM results r
         INNER JOIN students st ON st.id = r.student_id
-        WHERE st.{$studentClassColumn} = ?
+        WHERE {$studentClassExpression} = ?
           AND r.class_type = ?
           AND r.class_id = ?
           AND r.academic_period_id = ?

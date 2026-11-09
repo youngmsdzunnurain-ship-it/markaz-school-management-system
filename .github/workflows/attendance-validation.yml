@@ -5,6 +5,9 @@ on:
     paths:
       - "api/attendance/**"
       - "api/results/**"
+      - "api/classes/list.php"
+      - "public/js/classes.js"
+      - "tests/arabic-class-workspace-regression.test.php"
       - "public/print-results.html"
       - "public/js/print-results.js"
       - "public/js/student-result.js"
@@ -76,6 +79,9 @@ jobs:
           php -l api/results/class.php
           php -l api/results/save.php
           php -l api/results/class-completion.php
+          php -l api/classes/list.php
+          php -l tests/arabic-class-workspace-regression.test.php
+          php -l tests/results-class-type-validation.test.php
           php -l tests/print-results-validation.test.php
           php -l tests/print-threshold-profile-image.test.php
           php -l tests/account-security-regression.test.php
@@ -100,6 +106,9 @@ jobs:
 
       - name: Run result class-type validation tests
         run: php tests/results-class-type-validation.test.php
+
+      - name: Run Arabic class workspace regression tests
+        run: php tests/arabic-class-workspace-regression.test.php
 
       - name: Run print results validation tests
         run: php tests/print-results-validation.test.php
@@ -137,6 +146,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check public/js/class.js
+          node --check public/js/classes.js
           node --check public/js/settings.js
           node --check public/js/print-results.js
           node --check public/js/student-result.js

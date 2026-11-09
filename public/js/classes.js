@@ -37,10 +37,12 @@ async function loadClasses() {
         const activeClasses = classRecords.filter(
             classItem => Number(classItem.is_active) === 1
         ).length;
-        const totalStudents = classRecords.reduce(
-            (sum, classItem) => sum + Number(classItem.student_count || 0),
-            0
-        );
+        const totalStudents = Number.isFinite(Number(data.total_students))
+            ? Number(data.total_students)
+            : classRecords.reduce(
+                (sum, classItem) => sum + Number(classItem.student_count || 0),
+                0
+            );
 
         if (totalClassesStat) totalClassesStat.textContent = totalClasses;
         if (activeClassesStat) activeClassesStat.textContent = activeClasses;
@@ -126,13 +128,21 @@ function renderClasses() {
 
             const active =
                 Number(classItem.is_active) === 1;
+            const classType = classItem.class_type === "arabic"
+                ? "arabic"
+                : "conventional";
+            const isArabicClass = classType === "arabic";
+            const actions = isArabicClass
+                ? '<span class="class-type-label">Arabic class</span>'
+                : '<button type="button" class="class-action-button edit-class-button" data-class-id="' + classItem.id + '">Edit</button>'
+                    + '<button type="button" class="class-action-button class-toggle-button" data-class-id="' + classItem.id + '">' + (active ? "Deactivate" : "Activate") + '</button>';
 
             return `
                 <tr>
 
                     <td>
                         <a
-                            href="./class.html?id=${encodeURIComponent(classItem.id)}"
+                            href="./class.html?id=${encodeURIComponent(classItem.id)}&class_type=${classType}"
                             class="class-name class-name-link">
                             ${escapeHtml(classItem.name)}
                         </a>
@@ -141,7 +151,7 @@ function renderClasses() {
                     <td>
                         <span class="class-group">
                             ${escapeHtml(
-                                classItem.level_group || "—"
+                                classItem.level_group || (isArabicClass ? "Arabic" : "—")
                             )}
                         </span>
                     </td>
@@ -164,25 +174,7 @@ function renderClasses() {
                         </span>
                     </td>
 
-                    <td>
-                        <div class="class-actions">
-
-                            <button
-                                type="button"
-                                class="class-action-button edit-class-button"
-                                data-class-id="${classItem.id}">
-                                Edit
-                            </button>
-
-                            <button
-                                type="button"
-                                class="class-action-button class-toggle-button"
-                                data-class-id="${classItem.id}">
-                                ${active ? "Deactivate" : "Activate"}
-                            </button>
-
-                        </div>
-                    </td>
+                    <td><div class="class-actions">${actions}</div></td>
 
                 </tr>
             `;
