@@ -220,71 +220,54 @@ function toggleProfileDropdown() {
 }
 
 async function logout() {
-    if (logoutButton) {
-        logoutButton.disabled = true;
-        logoutButton.innerHTML =
-            '<i class="fa-solid fa-spinner fa-spin"></i><span>Logging out...</span>';
-    }
+    const clickedButton = event?.currentTarget;
+    const logoutButtons = [...document.querySelectorAll(
+        "#logoutButton, #profileLogoutButton, .profile-dropdown-item.logout, #topProfileLogoutButton"
+    )];
 
-    if (profileLogoutButton) {
-        profileLogoutButton.disabled = true;
-    }
-
-    document.querySelectorAll(".profile-dropdown-item.logout").forEach(button => {
+    logoutButtons.forEach(button => {
         button.disabled = true;
+        if (button === clickedButton || button.id === "logoutButton") {
+            button.dataset.logoutOriginalHtml ||= button.innerHTML;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Logging out...</span>';
+        } else if (button.tagName === "BUTTON") {
+            button.textContent = "Logging out...";
+        }
     });
 
-    let logoutRole = String(window.markazCurrentRole || "").toLowerCase();
     try {
-        let signedInRole = logoutRole;
-        if (!signedInRole) {
-            const identityResponse = await fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" } });
-            const identity = await identityResponse.json();
-            signedInRole = String(identity?.admin?.role || "").toLowerCase();
-            logoutRole = signedInRole;
-        }
         const response = await fetch("./api/auth/logout.php", {
             method: "POST",
             credentials: "same-origin",
             cache: "no-store",
-            headers: {
-                "Accept": "application/json"
-            }
+            headers: { "Accept": "application/json" }
         });
-
-        if (!response.ok) {
-            throw new Error("Logout request failed with HTTP " + response.status);
-        }
-
         const result = await response.json();
-        if (!result.success) {
+        if (!response.ok || !result.success) {
             throw new Error(result.message || "The server did not confirm logout.");
         }
+
+        const roleLoginPaths = {
+            teacher: "./teacher-login.html",
+            exam_officer: "./exam-officer-login.html",
+            management: "./management-login.html",
+            student: "./student-login.html"
+        };
+        const signedInRole = String(result.role || window.markazCurrentRole || "").toLowerCase();
+        window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
     } catch (error) {
         console.error("Logout request failed:", error);
-        alert("We couldn't confirm logout with the server. Please try again.");
-        if (logoutButton) {
-            logoutButton.disabled = false;
-            logoutButton.innerHTML =
-                '<i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>';
-        }
-        if (profileLogoutButton) {
-            profileLogoutButton.disabled = false;
-        }
-        document.querySelectorAll(".profile-dropdown-item.logout").forEach(button => {
+        logoutButtons.forEach(button => {
             button.disabled = false;
+            if (button.dataset.logoutOriginalHtml) {
+                button.innerHTML = button.dataset.logoutOriginalHtml;
+                delete button.dataset.logoutOriginalHtml;
+            } else if (button.textContent === "Logging out...") {
+                button.textContent = "Logout";
+            }
         });
-        return;
+        alert("We couldn't confirm logout with the server. Please try again.");
     }
-
-    const roleLoginPaths = {
-        teacher: "./teacher-login.html",
-        exam_officer: "./exam-officer-login.html",
-        management: "./management-login.html",
-        student: "./student-login.html"
-    };
-    const signedInRole = String(result.role || logoutRole || window.markazCurrentRole || "").toLowerCase();
-    window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
 }
 
 if (menuButton) {
