@@ -1134,7 +1134,7 @@ loadAcademicPeriodSettings();
         <div>
           <span class="settings-label">SENIOR ADMIN · SECURITY</span>
           <h2>Account Devices</h2>
-          <p>Block a specific browser/device for one account without freezing the account on its other devices.</p>
+          <p>Freeze a specific browser/device for one account without freezing the account on its other devices.</p>
         </div>
       </div>
       <p id="markazDeviceStatus" role="status" aria-live="polite"></p>
@@ -1194,19 +1194,19 @@ loadAcademicPeriodSettings();
                 addCell(row, device.role);
                 addCell(row, device.user_agent);
                 addCell(row, device.last_seen_at);
-                addCell(row, device.is_blocked ? "Blocked" : "Allowed");
+                addCell(row, device.is_blocked ? "Frozen" : "Allowed");
                 const actionCell = document.createElement("td");
                 actionCell.style.padding = "10px";
                 const button = document.createElement("button");
                 button.type = "button";
-                button.textContent = device.is_blocked ? "Unblock device" : "Block device";
+                button.textContent = device.is_blocked ? "Unfreeze device" : "Freeze device";
                 button.addEventListener("click", async () => {
                     const action = device.is_blocked ? "unblock" : "block";
                     const reason = action === "block"
                         ? window.prompt("Why are you blocking this device for " + device.account_name + "?")
                         : "";
                     if (action === "block" && (reason === null || !reason.trim())) return;
-                    if (!window.confirm((action === "block" ? "Block" : "Unblock") + " this device for " + device.account_name + "?")) return;
+                    if (!window.confirm((action === "block" ? "Freeze" : "Unfreeze") + " this device for " + device.account_name + "?")) return;
                     button.disabled = true;
                     try {
                         const result = await request("POST", {
