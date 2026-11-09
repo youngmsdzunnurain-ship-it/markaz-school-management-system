@@ -124,4 +124,16 @@ portalAssert(
     'Student print and PDF actions are re-authorized by the server when clicked'
 );
 
+portalAssert(
+    str_contains($resultApi, "'student_document_permissions'") &&
+    str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
+    str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
+    'Student print and PDF actions are governed by the Admin role switches'
+);
+portalAssert(
+    str_contains($resultScript, 'studentData?.student_document_permissions') &&
+    !str_contains($resultScript, 'can_print_results: true') &&
+    str_contains($resultScript, 'api/results/authorize-action.php'),
+    'Student document actions use server-supplied permissions and are rechecked on click'
+);
 echo "Student portal official-report integration checks passed." . PHP_EOL;
