@@ -582,8 +582,8 @@ function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
-    const conventionalOrder = ["KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"];
-    const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
+    const conventionalOrder = ["Kindergarten", "KG", "Prinosgy 1", "Preschool 1", "Pre Nursery 1", "Prinosgy 2", "Preschool 2", "Pre Nursery 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JS 1", "JSS 1", "JS 2", "JSS 2", "JS 3", "JSS 3", "SS 1", "SS 2", "SS 3"];
+    const arabicOrder = ["Farabia", "Roudoh Ula", "Roudoh Awwal", "Roudoh Sani", "Faslu Awal", "Faslu Awwal", "Faslu Sani", "Faslu Thali", "Faslu Thalith", "Faslu Salis", "Faslu Robi", "Faslu Rabi", "Faslu Sali", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
     const uniqueRows = new Map();
