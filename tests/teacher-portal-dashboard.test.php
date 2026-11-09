@@ -291,17 +291,24 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     str_contains($classesPageJs, 'data-label="Parent / Guardian"') &&
+    str_contains($classesPageJs, 'data-label="Parent Phone"') &&
+    str_contains($classesPageJs, 'data-label="Arabiyya Class"') &&
+    str_contains($classesPageJs, 'data-label="Student Type"') &&
     str_contains($classesPageJs, 'data-label="Actions"') &&
-    str_contains($classesPageCss, '.students-table tbody tr') &&
-    str_contains($classesPageCss, 'content: attr(data-label)'),
-    'Admin and Exam Officer student management converts every student row into a labelled mobile card'
+    str_contains($classesPageCss, '.students-page .students-table tbody tr') &&
+    str_contains($classesPageCss, 'min-width: 0 !important') &&
+    str_contains($classesPageCss, 'content: attr(data-label)') &&
+    str_contains(file_get_contents(__DIR__ . '/../public/students.html'), 'class="students-page"'),
+    'Student Management renders all eleven fields as labelled mobile cards without a forced wide table'
 );
 teacherPortalCheck(
     str_contains($classWorkspaceJs, 'data-label="Admission No."') &&
-    str_contains($classWorkspaceJs, 'data-label="View Results"') &&
+    str_contains($classWorkspaceJs, 'data-label="Action"') &&
+    !str_contains($classWorkspaceJs, 'data-label="View Results"') &&
     str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
+    str_contains($classWorkspaceCss, 'td[data-label="Action"]') &&
     str_contains($classWorkspaceCss, 'content: attr(data-label)'),
-    'Teacher class student management converts student rows into labelled mobile cards'
+    'Teacher class roster renders each student field and the result action in labelled mobile cards'
 );
 
 echo "Teacher portal dashboard regression tests passed.\n";
