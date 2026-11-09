@@ -142,7 +142,7 @@ $sql = "INSERT INTO device_activity_sessions
      display_name, role, device_hash, user_agent, started_at, last_activity_at, ended_at, duration_seconds)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), {$endedAt}, 0)
     ON DUPLICATE KEY UPDATE
-        duration_seconds = duration_seconds + LEAST(45, GREATEST(0, TIMESTAMPDIFF(SECOND, last_activity_at, NOW()))),
+        duration_seconds = duration_seconds + IF(ended_at IS NULL, LEAST(45, GREATEST(0, TIMESTAMPDIFF(SECOND, last_activity_at, NOW()))), 0),
         display_name = VALUES(display_name),
         role = VALUES(role),
         user_agent = VALUES(user_agent),
