@@ -1764,16 +1764,33 @@ function setEditMode(editing) {
         cancelScoresButton.hidden = !editing;
     }
 
-    if (printStudentResultButton) {
-        printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
-    }
-    if (downloadStudentPdfButton) {
-        downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
-    }
-    if (resultDocumentActions) {
-        // Print and Export remain independently available on the dedicated page.
-        resultDocumentActions.hidden = !isPrintMode || editing || !studentData
-            || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
+    if (isStudentPortalView) {
+        // Disabled student actions must not exist in the page at all.
+        if (!currentUserPermissions.can_print_results) printStudentResultButton?.remove();
+        else if (printStudentResultButton) printStudentResultButton.hidden = !isPrintMode;
+
+        if (!currentUserPermissions.can_export_results) downloadStudentPdfButton?.remove();
+        else if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = !isPrintMode;
+
+        if (resultDocumentActions) {
+            const hasStudentDocumentAction = Boolean(
+                (currentUserPermissions.can_print_results && printStudentResultButton?.isConnected) ||
+                (currentUserPermissions.can_export_results && downloadStudentPdfButton?.isConnected)
+            );
+            resultDocumentActions.hidden = !isPrintMode || editing || !studentData || !hasStudentDocumentAction;
+            if (!hasStudentDocumentAction) resultDocumentActions.remove();
+        }
+    } else {
+        if (printStudentResultButton) {
+            printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
+        }
+        if (downloadStudentPdfButton) {
+            downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
+        }
+        if (resultDocumentActions) {
+            resultDocumentActions.hidden = !isPrintMode || editing || !studentData
+                || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
+        }
     }
 
     if (studentData) {
