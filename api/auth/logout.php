@@ -24,9 +24,12 @@ if (ini_get('session.use_cookies')) {
     );
 }
 
+$role = strtolower((string) ($_SESSION['admin_role'] ?? ''));
+
 session_destroy();
 
 echo json_encode([
+    'role' => $role,
     'success' => true,
     'message' => 'Logged out successfully.'
 ]);
