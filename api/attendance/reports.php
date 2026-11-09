@@ -68,9 +68,10 @@ foreach ($classDefinitions as $definition) {
               ON ar.class_type = ?
              AND ar.class_id = c.id
              AND ar.attendance_date BETWEEN ? AND ?
-            WHERE c.is_active = 1";
+            WHERE c.is_active = 1
+              AND NOT ( ? = 'conventional' AND LOWER(TRIM(c.name)) REGEXP '^agabiya([[:space:]-]|$)' )";
 
-    $classParams = [$type, $type, $from, $to];
+    $classParams = [$type, $type, $from, $to, $type];
 
     if ($classType !== '') {
         if ($classType !== $type) {
