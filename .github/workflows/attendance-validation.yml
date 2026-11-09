@@ -27,6 +27,8 @@ on:
       - "api/settings/login-lockouts.php"
       - "public/js/result-print-threshold-settings.js"
       - "api/students/**"
+      - "app/helpers/arabic-class-names.php"
+      - "public/js/settings-panel-navigation.js"
       - "public/js/students.js"
       - "public/settings.html"
       - "public/js/class.js"
@@ -79,6 +81,10 @@ jobs:
           php -l api/results/class.php
           php -l api/results/save.php
           php -l api/results/class-completion.php
+          php -l app/helpers/arabic-class-names.php
+          php -l api/students/list.php
+          php -l api/results/student.php
+          php -l api/attendance/reports.php
           php -l api/classes/list.php
           php -l tests/arabic-class-workspace-regression.test.php
           php -l tests/results-class-type-validation.test.php
@@ -148,6 +154,7 @@ jobs:
           node --check public/js/class.js
           node --check public/js/classes.js
           node --check public/js/settings.js
+          node --check public/js/settings-panel-navigation.js
           node --check public/js/print-results.js
           node --check public/js/student-result.js
           node --check public/js/attendance.js

@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
 require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -101,6 +102,13 @@ $classes = markazSortAndDeduplicateClasses(array_map(
     static fn (array $row): array => $row + ['id' => $row['class_id'], 'name' => $row['class_name']],
     $classes
 ));
+foreach ($classes as &$class) {
+    if (($class['class_type'] ?? '') === 'arabic') {
+        $class['class_name'] = markazCanonicalArabicClassName((string) ($class['class_name'] ?? ''));
+        $class['name'] = $class['class_name'];
+    }
+}
+unset($class);
 
 $summary = [
     'marked_records' => 0,

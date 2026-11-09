@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 
 requireResultStaff();
@@ -71,6 +72,9 @@ try {
 
     $classStmt->execute([$classId]);
     $class = $classStmt->fetch();
+    if ($class && $classType === 'arabic') {
+        $class['name'] = markazCanonicalArabicClassName((string) $class['name']);
+    }
 
     if (!$class) {
         http_response_code(404);
@@ -189,6 +193,12 @@ try {
 
     $studentStmt->execute([$classId]);
     $students = $studentStmt->fetchAll();
+    if ($classType === 'arabic') {
+        foreach ($students as &$student) {
+            $student['arabic_class_name'] = markazCanonicalArabicClassName((string) ($student['arabic_class_name'] ?? ''));
+        }
+        unset($student);
+    }
 
     $resultSql = "
         SELECT

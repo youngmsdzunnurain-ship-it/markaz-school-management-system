@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -38,6 +39,7 @@ if (currentAdminRole() === 'teacher') {
           AND ta.is_active = 1
          WHERE c.is_active = 1
            AND LOWER(TRIM(c.name)) <> "hufaz"
+           AND LOWER(TRIM(c.name)) NOT REGEXP "^(roudoh[[:space:]]*[12]|faslu[[:space:]]*[1-6])$"
          UNION ALL
          SELECT ac.id, ac.name, ac.sort_order, "arabic" AS class_type, ac.is_active,
                 (SELECT COUNT(*) FROM students s
@@ -62,6 +64,7 @@ if (currentAdminRole() === 'teacher') {
                  WHERE s.class_id = c.id AND s.is_active = 1) AS student_count
          FROM classes c
          WHERE LOWER(TRIM(c.name)) <> "hufaz"
+           AND LOWER(TRIM(c.name)) NOT REGEXP "^(roudoh[[:space:]]*[12]|faslu[[:space:]]*[1-6])$"
 
          UNION ALL
 
@@ -78,6 +81,12 @@ if (currentAdminRole() === 'teacher') {
 }
 
 $classes = markazSortAndDeduplicateClasses($stmt->fetchAll());
+foreach ($classes as &$class) {
+    if (($class['class_type'] ?? '') === 'arabic') {
+        $class['name'] = markazCanonicalArabicClassName((string) ($class['name'] ?? ''));
+    }
+}
+unset($class);
 if (currentAdminRole() === 'teacher') {
     $totalStudentsStmt = db()->prepare(
         'SELECT COUNT(DISTINCT s.id)
@@ -89,6 +98,7 @@ if (currentAdminRole() === 'teacher') {
                    INNER JOIN classes assigned_class
                      ON assigned_class.id = ta.class_id
                     AND LOWER(TRIM(assigned_class.name)) <> "hufaz"
+                     AND LOWER(TRIM(assigned_class.name)) NOT REGEXP "^(roudoh[[:space:]]*[12]|faslu[[:space:]]*[1-6])$"
                    WHERE ta.account_id = ? AND ta.class_type = "conventional"
                      AND ta.class_id = s.class_id AND ta.subject_id IS NULL
                      AND ta.is_active = 1
