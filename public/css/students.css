@@ -4375,3 +4375,114 @@ body {
  .view-student-profile-header .student-status { grid-column:1/-1!important;justify-self:start!important; }
  .view-student-profile-heading h3,.view-student-profile-heading p { overflow-wrap:anywhere!important; }
 }
+
+
+/* Mobile Student Management: turn the wide desktop table into readable records.
+   Desktop table geometry and the existing column order remain unchanged. */
+@media screen and (max-width: 760px) {
+    .students-page .students-table-wrap {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+    .students-page .students-table {
+        display: block;
+        width: 100%;
+        min-width: 0 !important;
+        table-layout: auto;
+        border: 0;
+        border-spacing: 0;
+        background: transparent;
+    }
+    .students-page .students-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+    .students-page .students-table tbody {
+        display: grid;
+        gap: 12px;
+        width: 100%;
+    }
+    .students-page .students-table tbody tr {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 12px;
+        padding: 10px 13px;
+        border: 1px solid #dce8e0;
+        border-radius: 14px;
+        background: #fff !important;
+        box-shadow: 0 5px 16px rgba(18, 61, 42, .06);
+    }
+    .students-page .students-table tbody td {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 5px;
+        min-width: 0;
+        padding: 10px 2px !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #20382b;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    .students-page .students-table tbody td::before {
+        content: attr(data-label);
+        color: #718176;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .055em;
+        line-height: 1.2;
+        text-transform: uppercase;
+    }
+    .students-page .students-table tbody td[data-label="Student"],
+    .students-page .students-table tbody td[data-label="Actions"] {
+        grid-column: 1 / -1;
+    }
+    .students-page .students-table tbody td[data-label="Student"] {
+        padding-top: 5px !important;
+        padding-bottom: 12px !important;
+        border-bottom: 1px solid #edf2ee !important;
+    }
+    .students-page .students-table tbody td[data-label="Student"]::before,
+    .students-page .students-table tbody td[data-label="Actions"]::before {
+        display: none;
+    }
+    .students-page .students-table .student-name-cell {
+        min-width: 0;
+        gap: 10px;
+    }
+    .students-page .students-table .student-name-cell strong {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+        font-size: 13px;
+    }
+    .students-page .students-table .student-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+    .students-page .students-table .student-actions button {
+        flex: 1 1 82px;
+        min-height: 38px;
+    }
+}
+@media screen and (max-width: 380px) {
+    .students-page .students-table tbody tr {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .students-page .students-table tbody td[data-label="Student"],
+    .students-page .students-table tbody td[data-label="Actions"] {
+        grid-column: auto;
+    }
+}
