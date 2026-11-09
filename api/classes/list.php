@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -80,6 +81,12 @@ if (currentAdminRole() === 'teacher') {
 }
 
 $classes = markazSortAndDeduplicateClasses($stmt->fetchAll());
+foreach ($classes as &$class) {
+    if (($class['class_type'] ?? '') === 'arabic') {
+        $class['name'] = markazCanonicalArabicClassName((string) ($class['name'] ?? ''));
+    }
+}
+unset($class);
 if (currentAdminRole() === 'teacher') {
     $totalStudentsStmt = db()->prepare(
         'SELECT COUNT(DISTINCT s.id)
