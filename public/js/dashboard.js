@@ -582,17 +582,28 @@ function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
-    const conventionalOrder = ["KG", "Primary 1", "Primary 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"];
+    const conventionalOrder = ["KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"];
     const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
-    const byName = new Map(rows.map(row => [normalize(row.class_name), row]));
-    const orderedRows = order
-        .map(name => byName.get(normalize(name)))
-        .filter(Boolean);
-    const orderedNames = new Set(orderedRows.map(row => normalize(row.class_name)));
+    const uniqueRows = new Map();
     rows.forEach(row => {
-        if (!orderedNames.has(normalize(row.class_name))) orderedRows.push(row);
+        const identity = String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name));
+        if (!uniqueRows.has(identity)) uniqueRows.set(identity, row);
+    });
+    const rowsByName = new Map();
+    uniqueRows.forEach(row => {
+        const name = normalize(row.class_name);
+        if (!rowsByName.has(name)) rowsByName.set(name, []);
+        rowsByName.get(name).push(row);
+    });
+    const orderedRows = [];
+    order.forEach(name => {
+        (rowsByName.get(normalize(name)) || []).forEach(row => orderedRows.push(row));
+    });
+    const orderedIdentities = new Set(orderedRows.map(row => String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name))));
+    uniqueRows.forEach((row, identity) => {
+        if (!orderedIdentities.has(identity)) orderedRows.push(row);
     });
     const data = orderedRows.map(row => {
         const name = String(row.class_name || "Unknown class");
