@@ -63,7 +63,15 @@ if (currentAdminRole() === 'teacher') {
 }
 
 $classes = markazSortAndDeduplicateClasses($stmt->fetchAll());
+$totalStudents = (int) db()->query(
+    'SELECT COUNT(DISTINCT s.id)
+     FROM students s
+     WHERE s.is_active = 1
+       AND (s.class_id IS NOT NULL
+            OR COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) IS NOT NULL)'
+)->fetchColumn();
 echo json_encode([
     'success' => true,
-    'classes' => $classes
+    'classes' => $classes,
+    'total_students' => $totalStudents
 ]);
