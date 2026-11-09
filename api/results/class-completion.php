@@ -19,7 +19,9 @@ if (!$classId || $classId < 1) {
     exit;
 }
 $classTable = $classType === 'arabic' ? 'arabic_classes' : 'classes';
-$studentClassColumn = $classType === 'arabic' ? 'arabic_class_id' : 'class_id';
+$studentClassExpression = $classType === 'arabic'
+    ? 'COALESCE(NULLIF(arabic_class_id, 0), arabia_class_id)'
+    : 'class_id';
 $mappingTable = $classType === 'arabic' ? 'arabic_class_subjects' : 'class_subjects';
 $mappingClassColumn = $classType === 'arabic' ? 'arabic_class_id' : 'class_id';
 
@@ -69,7 +71,7 @@ try {
 
     $studentStmt = $pdo->prepare(
         "SELECT id, admission_number, first_name, middle_name, last_name
-         FROM students WHERE {$studentClassColumn} = ? AND is_active = 1
+         FROM students WHERE {$studentClassExpression} = ? AND is_active = 1
          ORDER BY last_name ASC, first_name ASC, id ASC"
     );
     $studentStmt->execute([$classId]);
