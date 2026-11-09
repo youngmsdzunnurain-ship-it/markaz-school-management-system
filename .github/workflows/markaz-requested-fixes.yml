@@ -26,6 +26,10 @@ jobs:
           php -l app/middleware/auth.php
           php -l api/results/student.php
           php -l api/results/authorize-action.php
+          php -l app/helpers/class-hierarchy.php
+          php -l api/classes/list.php
+          php -l api/arabic-classes/list.php
+          php -l public/api/dashboard/stats.php
           php -l api/attendance/classes.php
           php -l api/attendance/reports.php
           php -l api/settings/account-devices.php
