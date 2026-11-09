@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 $studentPortalScope = studentPortalResultScope();
 if ($studentPortalScope === null) {
@@ -91,7 +92,7 @@ try {
             st.is_active,
             st.profile_image,
             st.class_id,
-            st.arabic_class_id,
+            COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id) AS arabic_class_id,
             st.memorization_portion_override,
 
             c.name AS class_name,
@@ -106,10 +107,10 @@ try {
             ON c.id = st.class_id
 
         LEFT JOIN arabic_classes ac
-            ON ac.id = st.arabic_class_id
+            ON ac.id = COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)
 
         LEFT JOIN arabic_class_memorization_defaults acm
-            ON acm.arabic_class_id = st.arabic_class_id
+            ON acm.arabic_class_id = COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)
 
         WHERE st.id = ?
 
@@ -141,7 +142,8 @@ try {
             : (int) ($student['class_id'] ?? 0));
 
     if ($classType === 'arabic' && $studentPortalScope === null) {
-        $student['class_name'] = $student['arabic_class_name'] ?? '';
+        $student['class_name'] = markazCanonicalArabicClassName((string) ($student['arabic_class'] ?? $student['arabic_class_name'] ?? ''));
+        $student['arabic_class'] = $student['class_name'];
     }
 
     if ($studentPortalScope !== null) {
