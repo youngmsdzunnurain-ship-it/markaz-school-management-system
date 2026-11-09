@@ -69,7 +69,11 @@ foreach ($classDefinitions as $definition) {
              AND ar.class_id = c.id
              AND ar.attendance_date BETWEEN ? AND ?
             WHERE c.is_active = 1
-              AND NOT ( ? = 'conventional' AND LOWER(TRIM(c.name)) REGEXP '^agabiya([[:space:]-]|$)' )";
+              AND ( ? <> 'conventional' OR NOT EXISTS (
+                  SELECT 1 FROM arabic_classes ac
+                  WHERE ac.is_active = 1
+                    AND LOWER(TRIM(ac.name)) = LOWER(TRIM(c.name))
+              ) )";
 
     $classParams = [$type, $type, $from, $to, $type];
 
