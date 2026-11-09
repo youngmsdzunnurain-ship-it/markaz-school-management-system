@@ -201,11 +201,6 @@
   });
 
   activate("profile");
-  if (isExamOfficer) {
-    const releaseLabel = page.querySelector("#markazResultRelease .settings-label");
-    if (releaseLabel) releaseLabel.textContent = "ACADEMIC RESULTS";
-    const categoryLabels = { "academic-archive": "Academic & Term Archive", results: "Result & Reports", memorization: "Core Memorization" };
-    categories.forEach(category => { if (categoryLabels[category.id]) { category.label = categoryLabels[category.id]; const button = buttons.get(category.id); if (button) button.querySelector("span").textContent = category.label; } });
-  }
+  // Shared settings retain identical names across Admin and Exam Officer portals.
   document.documentElement.classList.remove("settings-page-pending");
 })();

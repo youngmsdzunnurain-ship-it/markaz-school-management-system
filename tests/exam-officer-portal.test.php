@@ -20,7 +20,7 @@ eoAssert(str_contains($d,'data-role-access="admin" aria-label="Attendance by cla
 eoAssert(str_contains($settings,'data-role-access="admin_or_exam_officer"'),'shared settings page admits Admin and Exam Officer roles');
 eoAssert(str_contains($navigation,'result-release')&&str_contains($navigation,'academic-archive')&&str_contains($navigation,'memorization'),'shared navigation contains the requested settings categories');
 eoAssert(str_contains($navigation,'exam_officer'),'shared settings navigation has an Exam Officer category view');
-eoAssert(str_contains($navigation,'Core Memorization')&&str_contains($navigation,'Academic & Term Archive'),'Exam Officer sees the requested shared category names');
+eoAssert(str_contains($navigation,'Qur’an Memorization')&&str_contains($navigation,'Academic Records & Term Archive')&&str_contains($navigation,'Results & Reports')&&!str_contains($navigation,'Core Memorization')&&!str_contains($navigation,'Academic & Term Archive'),'Exam Officer sees the requested shared category names');
 eoAssert(!str_contains($settingsScript,'exam-officer-settings.html'),'settings logic does not route to a separate page');
 eoAssert(str_contains($settingsScript,"data.admin.role !== \"admin\"")===false,'profile loader no longer rejects Exam Officer accounts');
 eoAssert(str_contains($settingsScript,'payload.password = password'),'Exam Officer result release submits password confirmation');
@@ -28,7 +28,7 @@ eoAssert(str_contains($a,'function requireAdminOrExamOfficer()'),'operational se
 eoAssert(str_contains($r,'password_verify($password, $passwordHash)'),'root release API requires Exam Officer password');
 eoAssert(str_contains($publicRelease,'requireAdminOrExamOfficer();'),'public release API allows Admin and Exam Officer access');
 eoAssert(str_contains($progress,"            2\n        );"),'dashboard progress percentage is rounded to two decimal places at calculation time');
-eoAssert(str_contains($j,'Number(item.completion_percentage || 0).toFixed(2)'),'class progress displays two decimal places');
+eoAssert(str_contains($j,'Number(data.stats.completion_percentage ?? 0).toFixed(2)'),'class progress displays two decimal places');
 eoAssert(str_contains($publicRelease,'password_verify($password, $passwordHash)'),'public release API verifies the Exam Officer password before changing release status');
 eoAssert(str_contains($f,'role = ? AND is_active = 1'),'archive verifies the authenticated account role');
 eoAssert(str_contains($j,'const displayOverall = overall.toFixed(2);'),'overall examination completion is rounded to two decimal places for display');

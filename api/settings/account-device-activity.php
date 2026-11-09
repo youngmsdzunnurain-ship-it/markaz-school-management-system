@@ -138,6 +138,7 @@ $sql = "INSERT INTO device_activity_sessions
         display_name = VALUES(display_name),
         role = VALUES(role),
         user_agent = VALUES(user_agent),
+        device_hash = VALUES(device_hash),
         last_activity_at = NOW(),
         ended_at = {$endedAt}";
 $stmt = $pdo->prepare($sql);
