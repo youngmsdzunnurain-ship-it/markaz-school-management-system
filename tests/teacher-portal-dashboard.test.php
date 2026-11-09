@@ -161,6 +161,7 @@ teacherPortalCheck(
 );
 
 $attendanceClassesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
+$dashboardComboJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $attendancePageJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 $loginRolesJs = file_get_contents(__DIR__ . '/../public/js/login-roles.js');
 $loginRolesCss = file_get_contents(__DIR__ . '/../public/css/login-roles.css');
@@ -173,6 +174,13 @@ teacherPortalCheck(
     str_contains($managementShellJs, "a.can_manage_attendance!==true") &&
     str_contains($attendanceCommonApi, "Attendance recording has not been enabled for your teacher account."),
     'Attendance is hidden from unpermitted teachers and denied by the backend unless their individual permission is enabled'
+);
+
+teacherPortalCheck(
+    str_contains($dashboardComboJs, '"KG", "Primary 1", "Primary 2", "Nursery 1", "Nursery 2"') &&
+    str_contains($dashboardComboJs, '"Basic 6"') &&
+    str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
+    'Attendance combo chart follows the complete conventional class hierarchy'
 );
 
 teacherPortalCheck(
