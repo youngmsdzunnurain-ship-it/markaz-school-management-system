@@ -8,6 +8,8 @@ header('Content-Type: application/json; charset=utf-8');
 
 startSecureSession();
 
+$role = strtolower((string) ($_SESSION['admin_role'] ?? ''));
+
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
@@ -23,8 +25,6 @@ if (ini_get('session.use_cookies')) {
         (bool) $params['httponly']
     );
 }
-
-$role = strtolower((string) ($_SESSION['admin_role'] ?? ''));
 
 session_destroy();
 
