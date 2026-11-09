@@ -111,7 +111,8 @@ portalAssert(str_contains($printPage, 'student-result.css?v=20261108-student-inf
 
 portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
-    str_contains($resultApi, "systemAccessEnabled('student_' ."),
+    str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
+    str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
     'Student print and PDF permissions are returned from the Admin-controlled role-wide settings and enforced by the result API'
 );
 portalAssert(
@@ -120,7 +121,7 @@ portalAssert(
     'Student print and PDF actions follow the current permission payload instead of being granted unconditionally'
 );
 portalAssert(
-    str_contains($resultScript, 'await fetchStudentResultPayload(true, action)'),
+    str_contains($resultScript, 'await fetchStudentResultPayload(true, permissionAction)'),
     'Student print and PDF actions are re-authorized by the server when clicked'
 );
 
