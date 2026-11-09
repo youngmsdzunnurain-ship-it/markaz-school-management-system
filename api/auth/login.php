@@ -210,7 +210,7 @@ if (!empty($admin['is_frozen'])) {
     echo json_encode([
         'success' => false,
         'account_frozen' => true,
-        'message' => 'This account has been frozen by the Senior Admin. Contact the school administrator.'
+        'message' => 'This account has been blocked.'
     ]);
     exit;
 }
@@ -230,7 +230,7 @@ if ((int) $deviceCheckStmt->fetchColumn() === 1) {
     echo json_encode([
         'success' => false,
         'device_blocked' => true,
-        'message' => 'This device has been blocked for this account by the Senior Admin. The account can still be used from another device.'
+        'message' => 'This account has been blocked.'
     ]);
     exit;
 }
