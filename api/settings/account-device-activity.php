@@ -9,27 +9,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
 
 $pdo = db();
-$pdo->exec("CREATE TABLE IF NOT EXISTS device_activity_sessions (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    client_session_id CHAR(36) NOT NULL,
-    identity_type ENUM('staff','student') NOT NULL,
-    identity_key VARCHAR(190) NOT NULL,
-    account_id BIGINT UNSIGNED NULL,
-    student_id BIGINT UNSIGNED NULL,
-    display_name VARCHAR(190) NOT NULL,
-    role VARCHAR(40) NOT NULL,
-    device_hash CHAR(64) NOT NULL,
-    user_agent VARCHAR(500) NOT NULL DEFAULT '',
-    started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_activity_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ended_at DATETIME NULL,
-    duration_seconds BIGINT UNSIGNED NOT NULL DEFAULT 0,
-    UNIQUE KEY uq_device_activity_client_identity (client_session_id, identity_key),
-    KEY idx_device_activity_identity (identity_type, identity_key, device_hash),
-    KEY idx_device_activity_last_seen (last_activity_at),
-    CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
-    CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
-) ENGINE=InnoDB");
+
 $studentScope = studentPortalResultScope(false);
 $identityType = 'staff';
 $identityId = 0;
@@ -66,6 +46,27 @@ if ($displayName === '' || $identityId < 1) {
     exit;
 }
 
+$pdo->exec("CREATE TABLE IF NOT EXISTS device_activity_sessions (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    client_session_id CHAR(36) NOT NULL,
+    identity_type ENUM('staff','student') NOT NULL,
+    identity_key VARCHAR(190) NOT NULL,
+    account_id BIGINT UNSIGNED NULL,
+    student_id BIGINT UNSIGNED NULL,
+    display_name VARCHAR(190) NOT NULL,
+    role VARCHAR(40) NOT NULL,
+    device_hash CHAR(64) NOT NULL,
+    user_agent VARCHAR(500) NOT NULL DEFAULT '',
+    started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_activity_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ended_at DATETIME NULL,
+    duration_seconds BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    UNIQUE KEY uq_device_activity_client_identity (client_session_id, identity_key),
+    KEY idx_device_activity_identity (identity_type, identity_key, device_hash),
+    KEY idx_device_activity_last_seen (last_activity_at),
+    CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
+    CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+) ENGINE=InnoDB");
 $deviceToken = (string) ($_COOKIE['MARKAZ_DEVICE_TOKEN'] ?? '');
 if (!preg_match('/^[a-f0-9]{64}$/i', $deviceToken)) {
     $deviceToken = bin2hex(random_bytes(32));
