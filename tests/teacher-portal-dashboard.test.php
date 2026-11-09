@@ -310,4 +310,17 @@ teacherPortalCheck(
     'Class and attendance displays use the saved database ordering without a competing hard-coded chart hierarchy'
 );
 
+require_once __DIR__ . '/../app/helpers/class-hierarchy.php';
+$orderedClasses = markazSortAndDeduplicateClasses([
+    ['id' => 1, 'class_type' => 'conventional', 'name' => 'Basic 1', 'sort_order' => 30],
+    ['id' => 2, 'class_type' => 'conventional', 'name' => 'Nursery 1', 'sort_order' => 10],
+    ['id' => 3, 'class_type' => 'conventional', 'name' => 'Primary 1', 'sort_order' => 20],
+    ['id' => 4, 'class_type' => 'arabic', 'name' => 'Faslu Ula', 'sort_order' => 20],
+    ['id' => 5, 'class_type' => 'arabic', 'name' => 'Roudoh Awwal', 'sort_order' => 10],
+]);
+teacherPortalCheck(
+    array_column($orderedClasses, 'id') === [2, 3, 1, 5, 4],
+    'Class ordering follows saved sort_order independently inside conventional and Arabic categories'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
