@@ -6,7 +6,7 @@
 
   const findSections = () => {
     const profile = page.querySelector(
-      ':scope > section.settings-card:not(.academic-period-settings-card):not(.result-footer-settings-card):not(.memorization-settings-card):not(.markaz-account-management-card):not(.markaz-role-permissions-card):not(.markaz-locked-accounts-card):not(#websiteImageManager):not(#markazSocialSettings):not(#markazSupportSettings)'
+      ':scope > section.settings-card:not(.academic-period-settings-card):not(.result-footer-settings-card):not(.memorization-settings-card):not(.markaz-account-management-card):not(.markaz-role-permissions-card):not(.markaz-locked-accounts-card):not(.markaz-account-devices-card):not(#websiteImageManager):not(#markazSocialSettings):not(#markazSupportSettings)'
     );
 
     return [
@@ -37,6 +37,13 @@
         icon: "fa-lock",
         description: "Review and manage accounts locked by login security controls.",
         elements: [page.querySelector(".markaz-locked-accounts-card")].filter(Boolean)
+      },
+      {
+        id: "account-devices",
+        label: "Account Devices",
+        icon: "fa-laptop",
+        description: "Review staff and student device activity, usage time and recognised device access.",
+        elements: [page.querySelector("#markazAccountDevices")].filter(Boolean)
       },
       {
         id: "result-release",
