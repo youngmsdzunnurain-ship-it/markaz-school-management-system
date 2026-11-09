@@ -92,7 +92,6 @@ if (currentAdminRole() === 'teacher') {
                      ON assigned_class.id = ta.class_id
                     AND LOWER(TRIM(assigned_class.name)) <> "hufaz"
                      AND LOWER(TRIM(assigned_class.name)) NOT REGEXP "^(roudoh[[:space:]]*[12]|faslu[[:space:]]*[1-6])$"
-                    AND LOWER(TRIM(assigned_class.name)) NOT REGEXP "^(roudoh[[:space:]]*[12]|faslu[[:space:]]*[1-6])$"
                    WHERE ta.account_id = ? AND ta.class_type = "conventional"
                      AND ta.class_id = s.class_id AND ta.subject_id IS NULL
                      AND ta.is_active = 1
