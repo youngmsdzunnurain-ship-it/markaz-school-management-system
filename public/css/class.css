@@ -1509,7 +1509,7 @@
         text-transform: uppercase;
     }
     .class-students-table tbody td[data-label="Student"],
-    .class-students-table tbody td[data-label="View Results"] {
+    .class-students-table tbody td[data-label="Action"] {
         grid-column: 1 / -1;
     }
     .class-students-table tbody td[data-label="Student"] {
@@ -1528,7 +1528,7 @@
         grid-template-columns: minmax(0, 1fr);
     }
     .class-students-table tbody td[data-label="Student"],
-    .class-students-table tbody td[data-label="View Results"] {
+    .class-students-table tbody td[data-label="Action"] {
         grid-column: auto;
     }
 }
