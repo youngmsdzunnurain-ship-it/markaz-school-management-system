@@ -9,6 +9,25 @@ function markazNormaliseClassName(string $name): string
     return preg_replace('/\\s+/', ' ', $name) ?? $name;
 }
 
+function markazClassHierarchyRank(array $class): int
+{
+    static $orders = [
+        'conventional' => [
+            'kg', 'nursery 1', 'nursery 2', 'primary 1', 'primary 2',
+            'basic 1', 'basic 2', 'basic 3', 'basic 4', 'basic 5',
+            'jss 1', 'jss 2', 'jss 3', 'ss 1', 'ss 2', 'ss 3',
+        ],
+        'arabic' => [
+            'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani',
+            'faslu salis', 'faslu rabi', 'faslu khamis', 'faslu sadis',
+        ],
+    ];
+    $type = (string) ($class['class_type'] ?? 'conventional');
+    $order = $orders[$type] ?? $orders['conventional'];
+    $position = array_search(markazNormaliseClassName((string) ($class['name'] ?? '')), $order, true);
+    return $position === false ? 1000 + (int) ($class['sort_order'] ?? 0) : (int) $position;
+}
+
 /** Remove duplicate rows by category and database ID, not by display name. */
 function markazSortAndDeduplicateClasses(array $classes): array
 {
@@ -27,13 +46,10 @@ function markazSortAndDeduplicateClasses(array $classes): array
         }
     }
     $classes = array_values($unique);
-    // The Classes management page lets administrators set sort_order explicitly.
-    // Keep that saved order authoritative everywhere; never impose a second,
-    // hard-coded academic hierarchy on top of it.
     usort($classes, static function (array $a, array $b): int {
         $typeOrder = ['conventional' => 0, 'arabic' => 1];
         return (($typeOrder[$a['class_type'] ?? 'conventional'] ?? 9) <=> ($typeOrder[$b['class_type'] ?? 'conventional'] ?? 9))
-            ?: ((int) ($a['sort_order'] ?? 0) <=> (int) ($b['sort_order'] ?? 0))
+            ?: (markazClassHierarchyRank($a) <=> markazClassHierarchyRank($b))
             ?: strcasecmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? ''))
             ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0));
     });
