@@ -1321,7 +1321,7 @@ loadAcademicPeriodSettings();
                 section.remove();
                 return;
             }
-            section.hidden = false;
+            // The grouped settings navigator owns this section's visibility.
             loadDevices();
             loadActivity();
         })
