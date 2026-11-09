@@ -23,6 +23,7 @@
   if (!sessionId) return;
 
   let lastRequestAt = 0;
+  let lastInteractionAt = Date.now();
   let paused = document.visibilityState === "hidden";
 
   function payload(action) {
@@ -31,6 +32,10 @@
 
   async function heartbeat() {
     if (paused || document.visibilityState === "hidden") return;
+    if (Date.now() - lastInteractionAt > 60000) {
+      pause();
+      return;
+    }
     const now = Date.now();
     if (now - lastRequestAt < 5000) return;
     lastRequestAt = now;
@@ -65,10 +70,20 @@
 
   function resume() {
     if (document.visibilityState === "hidden") return;
+    lastInteractionAt = Date.now();
     paused = false;
     heartbeat();
   }
 
+  function markInteraction() {
+    lastInteractionAt = Date.now();
+    if (!paused && document.visibilityState !== "hidden") return;
+    resume();
+  }
+
+  ["pointerdown", "keydown", "touchstart", "scroll"].forEach(eventName => {
+    document.addEventListener(eventName, markInteraction, { passive: true });
+  });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pause();
     else resume();
