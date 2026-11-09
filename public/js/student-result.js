@@ -250,6 +250,7 @@ async function fetchStudentResultPayload(enforcePrintEligibility, action = "prin
     });
 
     if (classId) query.set("class_id", classId);
+    if (isStudentPortalView) query.set("student_portal", "1");
     if (enforcePrintEligibility && isPrintMode) {
         query.set(action === "export" ? "export" : "print", "1");
     }
@@ -1554,6 +1555,7 @@ async function authorizeAndPrint(permission) {
             class_type: classType || "conventional",
             student_id: studentId || ""
         });
+        if (isStudentPortalView) actionQuery.set("student_portal", "1");
         const response = await fetch(
             `./api/results/authorize-action.php?${actionQuery.toString()}`,
             { credentials: "same-origin" }
@@ -1821,8 +1823,15 @@ async function loadBehaviouralReport() {
         return;
     }
 
+    const behaviourQuery = new URLSearchParams({
+        student_id: studentId,
+        class_id: classId || "",
+        class_type: classType
+    });
+    if (isStudentPortalView) behaviourQuery.set("student_portal", "1");
+
     const response = await fetch(
-        `./api/results/behavioural.php?student_id=${encodeURIComponent(studentId)}&class_id=${encodeURIComponent(classId || "")}&class_type=${encodeURIComponent(classType)}`,
+        `./api/results/behavioural.php?${behaviourQuery.toString()}`,
         {
             credentials: "same-origin",
             cache: "no-store"
