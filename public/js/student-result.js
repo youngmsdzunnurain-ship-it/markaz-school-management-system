@@ -96,11 +96,15 @@ async function loadCurrentUserPermissions() {
 }
 
 async function getCurrentUserRole() {
-    if (currentUserRole) return currentUserRole;
+    if (currentUserRole) {
+        document.body.classList.toggle("teacher-result-view", currentUserRole === "teacher");
+        return currentUserRole;
+    }
 
     const payloadRole = String(studentData?.current_user_role || "").toLowerCase();
     if (["admin", "exam_officer", "teacher", "management"].includes(payloadRole)) {
         currentUserRole = payloadRole;
+        document.body.classList.toggle("teacher-result-view", currentUserRole === "teacher");
         return currentUserRole;
     }
 
@@ -122,6 +126,7 @@ async function getCurrentUserRole() {
             }
 
             currentUserRole = role;
+            document.body.classList.toggle("teacher-result-view", currentUserRole === "teacher");
             currentUserPermissions = {
                 can_print_results: data.admin.can_print_results === true,
                 can_export_results: data.admin.can_export_results === true
