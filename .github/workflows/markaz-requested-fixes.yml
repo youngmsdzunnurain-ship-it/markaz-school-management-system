@@ -34,7 +34,7 @@ jobs:
           php -l api/settings/account-device-activity.php
           php -l public/api/settings/account-device-activity.php
           php -l tests/account-device-activity-regression.test.php
-          php -l tests/exam-officer-portal.test.php
+          php -l tests/shared-settings-labels.test.php
           php -l public/api/settings/account-devices.php
           php -l tests/student-portal-flow.test.php
           php -l tests/teacher-portal-dashboard.test.php
@@ -60,7 +60,7 @@ jobs:
           php tests/dashboard-report-regression.test.php
           php tests/account-security-regression.test.php
           php tests/account-device-activity-regression.test.php
-          php tests/exam-officer-portal.test.php
+          php tests/shared-settings-labels.test.php
           php tests/attendance-validation.test.php
           php tests/teacher-document-permissions.test.php
           php tests/result-print-flow-isolation.test.php
