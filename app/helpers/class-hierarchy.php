@@ -1,7 +1,34 @@
 <?php
 declare(strict_types=1);
 
-/** Remove duplicate rows by category and database ID, preserving saved class order. */
+function markazNormaliseClassName(string $name): string
+{
+    $name = strtolower(trim($name));
+    $name = str_replace(["’", "'"], "", $name);
+    $name = preg_replace('/[._-]+/', ' ', $name) ?? $name;
+    return preg_replace('/\\s+/', ' ', $name) ?? $name;
+}
+
+function markazClassHierarchyRank(array $class): int
+{
+    static $orders = [
+        'conventional' => [
+            'kg', 'nursery 1', 'nursery 2', 'primary 1', 'primary 2',
+            'basic 1', 'basic 2', 'basic 3', 'basic 4', 'basic 5',
+            'jss 1', 'jss 2', 'jss 3', 'ss 1', 'ss 2', 'ss 3',
+        ],
+        'arabic' => [
+            'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani',
+            'faslu salis', 'faslu rabi', 'faslu khamis', 'faslu sadis',
+        ],
+    ];
+    $type = (string) ($class['class_type'] ?? 'conventional');
+    $order = $orders[$type] ?? $orders['conventional'];
+    $position = array_search(markazNormaliseClassName((string) ($class['name'] ?? '')), $order, true);
+    return $position === false ? 1000 + (int) ($class['sort_order'] ?? 0) : (int) $position;
+}
+
+/** Remove duplicate rows by category and database ID, not by display name. */
 function markazSortAndDeduplicateClasses(array $classes): array
 {
     $unique = [];
@@ -18,18 +45,13 @@ function markazSortAndDeduplicateClasses(array $classes): array
             $unique[] = $class;
         }
     }
-
     $classes = array_values($unique);
     usort($classes, static function (array $a, array $b): int {
         $typeOrder = ['conventional' => 0, 'arabic' => 1];
-        $aType = (string) ($a['class_type'] ?? 'conventional');
-        $bType = (string) ($b['class_type'] ?? 'conventional');
-
-        return (($typeOrder[$aType] ?? 9) <=> ($typeOrder[$bType] ?? 9))
-            ?: ((int) ($a['sort_order'] ?? 0) <=> (int) ($b['sort_order'] ?? 0))
+        return (($typeOrder[$a['class_type'] ?? 'conventional'] ?? 9) <=> ($typeOrder[$b['class_type'] ?? 'conventional'] ?? 9))
+            ?: (markazClassHierarchyRank($a) <=> markazClassHierarchyRank($b))
             ?: strcasecmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? ''))
             ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0));
     });
-
     return $classes;
 }
