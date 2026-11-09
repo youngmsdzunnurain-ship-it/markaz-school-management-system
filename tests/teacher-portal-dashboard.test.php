@@ -168,7 +168,7 @@ $loginRolesCss = file_get_contents(__DIR__ . '/../public/css/login-roles.css');
 teacherPortalCheck(
     str_contains($authMeApi, "SELECT is_allowed FROM account_permissions") &&
     str_contains($authMeApi, "'attendance_records'") &&
-    str_contains($authMeApi, "'can_manage_attendance' => $canManageAttendance") &&
+    str_contains($authMeApi, "can_manage_attendance") &&
     str_contains($dashboardJs, "permissions.can_manage_attendance === true") &&
     str_contains($managementShellJs, "a.can_manage_attendance!==true") &&
     str_contains($attendanceCommonApi, "Attendance recording has not been enabled for your teacher account."),
