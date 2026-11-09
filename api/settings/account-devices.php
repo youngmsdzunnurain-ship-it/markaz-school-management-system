@@ -145,8 +145,8 @@ try {
     deviceAdminJson([
         'success' => true,
         'message' => $action === 'block'
-            ? 'Device blocked. This account remains usable from its other devices.'
-            : 'Device unblocked. The account can sign in from this device again.'
+            ? 'Device frozen. This account remains usable from its other devices.'
+            : 'Device unfrozen. The account can sign in from this device again.'
     ]);
 } catch (Throwable $error) {
     if ($pdo->inTransaction()) $pdo->rollBack();
