@@ -11463,3 +11463,40 @@ body:not(.student-portal-result-view) .student-information #studentMemorizationP
         box-sizing: border-box !important;
     }
 }
+
+
+/* Teacher desktop: give the behavioural workspace the full report width.
+   Each trait remains a calm, aligned label + score row. */
+@media screen and (min-width: 761px) {
+    body.teacher-result-view .report-card .behavioural-management-panel {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.teacher-result-view .report-card .behavioural-management-panel .behaviour-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 10px !important;
+    }
+
+    body.teacher-result-view .report-card .behavioural-management-panel .behaviour-item {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        gap: 14px !important;
+    }
+
+    body.teacher-result-view .report-card .behavioural-management-panel .behaviour-item select {
+        flex: 0 0 160px !important;
+        width: 160px !important;
+        min-width: 160px !important;
+        max-width: 160px !important;
+    }
+}
