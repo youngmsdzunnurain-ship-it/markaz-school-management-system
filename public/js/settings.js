@@ -1120,86 +1120,131 @@ loadAcademicPeriodSettings();
     load();
 })();
 
-/* MARKAZ SENIOR ADMIN — ACCOUNT-SPECIFIC DEVICE ACCESS */
+/* MARKAZ SENIOR ADMIN — ACCOUNT DEVICES AND USAGE HISTORY */
 (() => {
     "use strict";
-    if (document.getElementById("markazAccountDevices")) return;
-
-    const section = document.createElement("section");
+    const section = document.getElementById("markazAccountDevices") || document.createElement("section");
     section.id = "markazAccountDevices";
-    section.className = "settings-card";
+    section.className = "settings-card markaz-account-devices-card account-devices-card";
     section.hidden = true;
     section.innerHTML = `
       <div class="settings-card-heading">
         <div>
           <span class="settings-label">SENIOR ADMIN · SECURITY</span>
           <h2>Account Devices</h2>
-          <p>Freeze a specific browser/device for one account without freezing the account on its other devices.</p>
+          <p>Review recognised staff and student devices, monitor active usage, and manage device access.</p>
         </div>
       </div>
-      <p id="markazDeviceStatus" role="status" aria-live="polite"></p>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Last sign-in</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody id="markazDeviceRows"></tbody>
-        </table>
-      </div>
-      <button type="button" id="markazRefreshDevices">Refresh Devices</button>`;
-    (document.querySelector(".settings-page") || document.querySelector("main") || document.body).appendChild(section);
+
+      <section class="account-device-section" aria-labelledby="deviceAccessHeading">
+        <div class="account-device-section-heading">
+          <div><h3 id="deviceAccessHeading">Device Access</h3><p>Freeze or restore access for a recognised staff device.</p></div>
+          <button type="button" class="account-device-secondary" id="markazRefreshDevices">Refresh Devices</button>
+        </div>
+        <p id="markazDeviceStatus" class="account-device-status" role="status" aria-live="polite"></p>
+        <div class="account-device-table-wrap">
+          <table class="account-device-table">
+            <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Last sign-in</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="markazDeviceRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="account-device-section account-device-usage" aria-labelledby="deviceUsageHeading">
+        <div class="account-device-section-heading">
+          <div><h3 id="deviceUsageHeading">Device Usage History</h3><p>Active time is accumulated while the page is visible and the user is interacting with MARKAZ. Historical records remain until the Senior Admin clears them.</p></div>
+          <button type="button" class="account-device-danger" id="markazClearDeviceActivity">Clear Activity History</button>
+        </div>
+        <p id="markazActivityStatus" class="account-device-status" role="status" aria-live="polite"></p>
+        <div class="account-device-table-wrap">
+          <table class="account-device-table">
+            <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Total Active Time</th><th>Last Activity</th><th>Presence</th></tr></thead>
+            <tbody id="markazActivityRows"></tbody>
+          </table>
+        </div>
+      </section>`;
+    if (!section.isConnected) {
+        (document.querySelector(".settings-page") || document.querySelector("main") || document.body).appendChild(section);
+    }
 
     const rows = section.querySelector("#markazDeviceRows");
     const status = section.querySelector("#markazDeviceStatus");
     const refresh = section.querySelector("#markazRefreshDevices");
+    const activityRows = section.querySelector("#markazActivityRows");
+    const activityStatus = section.querySelector("#markazActivityStatus");
+    const clearActivity = section.querySelector("#markazClearDeviceActivity");
 
-    async function request(method = "GET", body) {
+    async function requestDevices(method = "GET", body) {
         const response = await fetch("./api/settings/account-devices.php", {
-            method,
-            credentials: "same-origin",
-            cache: "no-store",
+            method, credentials: "same-origin", cache: "no-store",
             headers: { "Content-Type": "application/json", "Accept": "application/json" },
             ...(body === undefined ? {} : { body: JSON.stringify(body) })
         });
-        const raw = await response.text();
-        let data;
-        try { data = JSON.parse(raw); }
-        catch { throw new Error("The account-device endpoint returned an invalid response."); }
+        const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.message || "Unable to update device access.");
         return data;
     }
 
-    function addCell(row, value) {
+    async function requestActivity(method = "GET", body) {
+        const response = await fetch("./api/settings/account-device-activity.php", {
+            method, credentials: "same-origin", cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            ...(body === undefined ? {} : { body: JSON.stringify(body) })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.message || "Unable to load device activity.");
+        return data;
+    }
+
+    function addCell(row, value, className) {
         const cell = document.createElement("td");
-        cell.style.cssText = "padding:10px;border-bottom:1px solid #d5dfd8;vertical-align:top";
-        cell.textContent = String(value || "—");
+        if (className) cell.className = className;
+        cell.textContent = String(value ?? "—");
         row.appendChild(cell);
         return cell;
     }
 
-    async function load() {
+    function formatDuration(value) {
+        const seconds = Math.max(0, Number(value) || 0);
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainder = seconds % 60;
+        if (hours) return hours + "h " + minutes + "m";
+        if (minutes) return minutes + "m " + remainder + "s";
+        return remainder + "s";
+    }
+
+    function formatDate(value) {
+        if (!value) return "Not recorded";
+        const date = new Date(String(value).replace(" ", "T"));
+        return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+    }
+
+    async function loadDevices() {
         refresh.disabled = true;
-        status.textContent = "Loading recognised devices…";
-        status.className = "form-message";
+        status.textContent = "Loading recognised staff devices…";
+        status.className = "account-device-status";
         rows.replaceChildren();
         try {
-            const data = await request();
+            const data = await requestDevices();
             if (!data.devices.length) {
                 status.textContent = "No recognised staff devices have signed in yet.";
-                status.className = "form-message success";
                 return;
             }
-            status.textContent = data.devices.length + " recognised device(s).";
+            status.textContent = data.devices.length + " recognised staff device(s).";
             data.devices.forEach(device => {
                 const row = document.createElement("tr");
                 addCell(row, device.account_name);
                 addCell(row, device.role);
-                addCell(row, device.user_agent);
-                addCell(row, device.last_seen_at);
-                addCell(row, device.is_blocked ? "Frozen" : "Allowed");
+                addCell(row, device.user_agent, "account-device-agent");
+                addCell(row, formatDate(device.last_seen_at));
+                const state = addCell(row, device.is_blocked ? "Frozen" : "Allowed");
+                state.className = device.is_blocked ? "account-device-state is-blocked" : "account-device-state is-allowed";
                 const actionCell = document.createElement("td");
-                actionCell.style.padding = "10px";
                 const button = document.createElement("button");
                 button.type = "button";
-                button.textContent = device.is_blocked ? "Unfreeze device" : "Freeze device";
+                button.className = device.is_blocked ? "account-device-secondary" : "account-device-danger";
+                button.textContent = device.is_blocked ? "Unfreeze" : "Freeze";
                 button.addEventListener("click", async () => {
                     const action = device.is_blocked ? "unblock" : "block";
                     const reason = action === "block"
@@ -1209,17 +1254,11 @@ loadAcademicPeriodSettings();
                     if (!window.confirm((action === "block" ? "Freeze" : "Unfreeze") + " this device for " + device.account_name + "?")) return;
                     button.disabled = true;
                     try {
-                        const result = await request("POST", {
-                            action,
-                            id: Number(device.id),
-                            reason: reason || ""
-                        });
+                        const result = await requestDevices("POST", { action, id: Number(device.id), reason: reason || "" });
                         status.textContent = result.message;
-                        status.className = "form-message success";
-                        await load();
+                        await loadDevices();
                     } catch (error) {
                         status.textContent = error.message;
-                        status.className = "form-message error";
                         button.disabled = false;
                     }
                 });
@@ -1229,13 +1268,52 @@ loadAcademicPeriodSettings();
             });
         } catch (error) {
             status.textContent = error.message || "Unable to load recognised devices.";
-            status.className = "form-message error";
         } finally {
             refresh.disabled = false;
         }
     }
 
-    refresh.addEventListener("click", load);
+    async function loadActivity() {
+        activityStatus.textContent = "Loading staff and student activity…";
+        activityRows.replaceChildren();
+        try {
+            const data = await requestActivity();
+            if (!data.activity.length) {
+                activityStatus.textContent = "No device activity has been recorded yet.";
+                return;
+            }
+            activityStatus.textContent = data.activity.length + " account/device record(s).";
+            data.activity.forEach(item => {
+                const row = document.createElement("tr");
+                addCell(row, item.display_name);
+                addCell(row, item.role === "student" ? "Student" : item.role.replaceAll("_", " "));
+                addCell(row, item.user_agent, "account-device-agent");
+                addCell(row, formatDuration(item.total_active_seconds), "account-device-duration");
+                addCell(row, formatDate(item.last_activity_at));
+                const presence = addCell(row, item.is_active ? "Active now" : "Inactive");
+                presence.className = item.is_active ? "account-device-state is-active" : "account-device-state is-inactive";
+                activityRows.appendChild(row);
+            });
+        } catch (error) {
+            activityStatus.textContent = error.message || "Unable to load device activity.";
+        }
+    }
+
+    refresh.addEventListener("click", () => { loadDevices(); loadActivity(); });
+    clearActivity.addEventListener("click", async () => {
+        if (!window.confirm("Clear all staff and student device activity history? This cannot be undone.")) return;
+        clearActivity.disabled = true;
+        try {
+            const result = await requestActivity("POST", { action: "clear_history" });
+            activityStatus.textContent = result.message;
+            await loadActivity();
+        } catch (error) {
+            activityStatus.textContent = error.message || "Unable to clear activity history.";
+        } finally {
+            clearActivity.disabled = false;
+        }
+    });
+
     fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store" })
         .then(response => response.json())
         .then(data => {
@@ -1244,7 +1322,8 @@ loadAcademicPeriodSettings();
                 return;
             }
             section.hidden = false;
-            load();
+            loadDevices();
+            loadActivity();
         })
         .catch(() => section.remove());
 })();
