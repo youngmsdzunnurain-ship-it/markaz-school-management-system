@@ -47,7 +47,6 @@
 .secure-note { display:inline-flex; align-items:center; gap:7px; color:#4e7660; font-size:11px; font-weight:700; }
 .attendance-filters { display:grid; grid-template-columns:minmax(160px,.8fr) minmax(190px,1fr) minmax(220px,1.3fr) auto; align-items:end; gap:13px; margin-top:22px; }
 .attendance-field { display:flex; min-width:0; flex-direction:column; gap:8px; }
-.attendance-field[hidden] { display:none !important; }
 .attendance-field>span { color:#4c5c52; font-size:11px; font-weight:750; }
 .attendance-field input,.attendance-field select { width:100%; min-height:46px; padding:0 12px; border:1px solid #dce6df; border-radius:10px; outline:none; color:var(--att-ink); background:#fbfdfb; font:inherit; font-size:13px; }
 .attendance-field input:focus,.attendance-field select:focus,.attendance-search:focus-within { border-color:var(--att-green); box-shadow:0 0 0 3px rgba(23,100,58,.1); }
