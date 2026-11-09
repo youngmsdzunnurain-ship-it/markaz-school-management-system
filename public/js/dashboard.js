@@ -574,9 +574,24 @@ function renderAttendanceComboChart(rows, category, target) {
         const identity = String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name));
         if (!uniqueRows.has(identity)) uniqueRows.set(identity, row);
     });
+    const arabicDisplayNames = new Map([
+        ["roudoh ula", "Roudoh Ula"],
+        ["roudoh sani", "Roudoh Thani"],
+        ["faslu ula", "Faslu Awal"],
+        ["faslu sani", "Faslu Thani"],
+        ["faslu salis", "Faslu Thalith"],
+        ["faslu rabia", "Faslu Rabia"],
+        ["faslu khamis", "Faslu Khamis"],
+        ["faslu sadis", "Faslu Sadis"]
+    ]);
+    const displayClassName = value => {
+        const rawName = normalize(value);
+        return category === "arabic" ? (arabicDisplayNames.get(rawName) || String(value || "Unknown class")) : String(value || "Unknown class");
+    };
     const rowsByName = new Map();
     uniqueRows.forEach(row => {
-        const name = normalize(row.class_name);
+        const rawName = normalize(row.class_name);
+        const name = category === "arabic" ? normalize(displayClassName(row.class_name)) : rawName;
         if (!rowsByName.has(name)) rowsByName.set(name, []);
         rowsByName.get(name).push(row);
     });
@@ -589,7 +604,7 @@ function renderAttendanceComboChart(rows, category, target) {
         if (!orderedIdentities.has(identity)) orderedRows.push(row);
     });
     const data = orderedRows.map(row => {
-        const name = String(row.class_name || "Unknown class");
+        const name = displayClassName(row.class_name);
         const present = Math.max(0, Number(row.present_count) || 0);
         const absent = Math.max(0, Number(row.absent_count) || 0);
         const late = Math.max(0, Number(row.late_count) || 0);
@@ -787,15 +802,9 @@ async function loadDashboardAttendance() {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
                 const arabicOnlyLabels = new Set([
-                    "agabia", "agabiya",
-                    "farabia", "farabiyyah", "farabiyya",
-                    "roudohula", "roudahula", "raudahula", "raudhoula", "roudohawwal", "roudahawwal",
-                    "roudohthani", "roudahthani", "raudahthani", "roudohsani", "roudahsani", "raudahsani",
-                    "fasluawal", "fasluawwal", "fasluula",
-                    "fasluthani", "faslusani",
-                    "fasluthalith", "fasluthali", "faslusalis",
-                    "faslurobi", "faslurabi", "faslurabia",
-                    "faslusali", "faslukhamis", "faslusadis"
+                    "roudoh1", "roudoh2",
+                    "faslu1", "faslu2", "faslu3", "faslu4", "faslu5", "faslu6",
+                    "hufaz"
                 ]);
                 rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
             }
