@@ -29,6 +29,8 @@ jobs:
           php -l api/attendance/classes.php
           php -l api/attendance/reports.php
           php -l api/settings/account-devices.php
+          php -l app/helpers/device-activity-schema.php
+          php -l api/results/student-portal.php
           php -l api/settings/account-device-activity.php
           php -l public/api/settings/account-device-activity.php
           php -l tests/account-device-activity-regression.test.php
