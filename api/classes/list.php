@@ -86,6 +86,9 @@ if (currentAdminRole() === 'teacher') {
            AND (
                EXISTS (
                    SELECT 1 FROM teacher_assignments ta
+                   INNER JOIN classes assigned_class
+                     ON assigned_class.id = ta.class_id
+                    AND LOWER(TRIM(assigned_class.name)) <> "hufaz"
                    WHERE ta.account_id = ? AND ta.class_type = "conventional"
                      AND ta.class_id = s.class_id AND ta.subject_id IS NULL
                      AND ta.is_active = 1
@@ -106,8 +109,18 @@ if (currentAdminRole() === 'teacher') {
         'SELECT COUNT(DISTINCT s.id)
          FROM students s
          WHERE s.is_active = 1
-           AND (s.class_id IS NOT NULL
-                OR COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) IS NOT NULL)'
+           AND (
+               EXISTS (
+                   SELECT 1 FROM classes assigned_class
+                   WHERE assigned_class.id = s.class_id
+                     AND LOWER(TRIM(assigned_class.name)) <> "hufaz"
+               )
+               OR EXISTS (
+                   SELECT 1 FROM arabic_classes assigned_arabic_class
+                   WHERE assigned_arabic_class.id =
+                     COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)
+               )
+           )'
     )->fetchColumn();
 }
 echo json_encode([
