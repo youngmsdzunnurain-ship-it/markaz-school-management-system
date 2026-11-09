@@ -283,7 +283,7 @@ async function logout() {
         management: "./management-login.html",
         student: "./student-login.html"
     };
-    const signedInRole = logoutRole || String(window.markazCurrentRole || "").toLowerCase();
+    const signedInRole = String(result.role || logoutRole || window.markazCurrentRole || "").toLowerCase();
     window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
 }
 
