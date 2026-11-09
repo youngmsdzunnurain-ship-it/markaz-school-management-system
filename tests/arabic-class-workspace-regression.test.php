@@ -25,9 +25,11 @@ arabicClassWorkspaceCheck(
     'class listing includes Arabic classes, counts current and legacy Arabic assignments, and excludes Hufaz'
 );
 arabicClassWorkspaceCheck(
-    str_contains($classListJs, 'class_type=') 
+    str_contains($classListJs, 'class_type=')
         && str_contains($classListJs, 'classItem.class_type')
-        && str_contains($classListJs, 'View Results'),
+        && str_contains($classListJs, 'class.html?id=')
+        && str_contains($classListJs, 'class-type-label')
+        && str_contains($classListJs, 'data.total_students'),
     'Arabic class rows open the correctly typed class-results workspace without conventional edit actions'
 );
 arabicClassWorkspaceCheck(
