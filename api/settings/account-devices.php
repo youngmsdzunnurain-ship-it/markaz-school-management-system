@@ -76,6 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input') ?: '', true);
+if (!is_array($input)) {
+    deviceAdminJson(['success' => false, 'message' => 'Invalid device request.'], 400);
+}
 $deviceId = filter_var($input['id'] ?? null, FILTER_VALIDATE_INT);
 $action = (string) ($input['action'] ?? '');
 $reason = trim((string) ($input['reason'] ?? ''));
