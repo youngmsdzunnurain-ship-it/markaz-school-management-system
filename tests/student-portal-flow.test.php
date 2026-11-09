@@ -14,6 +14,7 @@ $html = file_get_contents($root . '/public/student-login.html');
 $script = file_get_contents($root . '/public/js/student-results-portal.js');
 $css = file_get_contents($root . '/public/css/student-results-portal.css');
 $resultCss = file_get_contents($root . '/public/css/student-result.css');
+$staffResultHtml = file_get_contents($root . '/public/student-result.html');
 $portalApi = file_get_contents($root . '/api/results/student-portal.php');
 $resultApi = file_get_contents($root . '/api/results/student.php');
 $behaviourApi = file_get_contents($root . '/api/results/behavioural.php');
@@ -119,7 +120,8 @@ portalAssert(str_contains($resultCss, 'min-height: 50px !important;') && str_con
 portalAssert(str_contains($resultCss, '@media screen and (min-width: 761px)') && str_contains($resultCss, 'justify-content: flex-end !important;'), 'student portal desktop action buttons are aligned together at the right');
 portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str_contains($resultCss, '.student-class-row > .detail-item {'), 'mobile field sizing applies to the actual nested row items');
 portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
-portalAssert(str_contains($printPage, 'student-result.css?v=20261109-mobile-profile-behaviour-layout'), 'student portal mobile layout refreshes the result stylesheet cache');
+portalAssert(str_contains($printPage, 'student-result.css?v=20261109-mobile-parity-cleanup-v3') && str_contains($staffResultHtml, 'student-result.css?v=20261109-mobile-parity-cleanup-v3'), 'staff and student report pages load the consolidated mobile stylesheet');
+portalAssert(!str_contains($resultCss, 'Final mobile parity for staff result previews and Student Check Results'), 'student result CSS does not append the duplicate final mobile override block');
 
 portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
