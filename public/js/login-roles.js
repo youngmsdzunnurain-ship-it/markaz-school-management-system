@@ -90,7 +90,8 @@ document.querySelectorAll('.preview-form[data-role="exam-officer"]').forEach((fo
               : `${minutes}m ${seconds}s`;
 
           message.textContent = `Account temporarily locked. Time remaining: ${timeLeft}. The server will check access when the lock expires.`;
-          message.classList.add("visible");
+          message.dataset.kind = "error";
+      message.classList.add("visible");
 
           if (remaining <= 0) {
             clearInterval(countdownTimer);
@@ -112,7 +113,8 @@ document.querySelectorAll('.preview-form[data-role="exam-officer"]').forEach((fo
           ? `Invalid email or password. ${attemptsRemaining} attempt(s) remaining before a 7-day lockout.`
           : error.message || "Unable to sign in. Please try again.";
 
-        message.classList.add("visible");
+        message.dataset.kind = "error";
+      message.classList.add("visible");
         submitButton.disabled = false;
       }
     }
@@ -121,6 +123,8 @@ document.querySelectorAll('.preview-form[data-role="exam-officer"]').forEach((fo
 
 
 document.querySelectorAll('.preview-form[data-role="teacher"]').forEach((form) => {
+  let countdownTimer = null;
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -130,6 +134,10 @@ document.querySelectorAll('.preview-form[data-role="teacher"]').forEach((form) =
     const password = form.querySelector('[name="password"]');
 
     if (!message || !submitButton || !username || !password) return;
+    if (countdownTimer) {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+    }
 
     const originalButtonHtml = submitButton.innerHTML;
     message.textContent = "";
@@ -174,21 +182,36 @@ document.querySelectorAll('.preview-form[data-role="teacher"]').forEach((form) =
       const lockout = error.loginData;
 
       if (lockout?.locked && Number(lockout.remaining_seconds) > 0) {
-        const seconds = Math.floor(Number(lockout.remaining_seconds));
-        const days = Math.floor(seconds / 86400);
-        const hours = Math.floor((seconds % 86400) / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainder = seconds % 60;
-        message.textContent = `Account locked. Time remaining: ${days}d ${hours}h ${minutes}m ${remainder}s.`;
+        let remaining = Math.floor(Number(lockout.remaining_seconds));
+        submitButton.disabled = true;
+        const showCountdown = () => {
+          const days = Math.floor(remaining / 86400);
+          const hours = Math.floor((remaining % 86400) / 3600);
+          const minutes = Math.floor((remaining % 3600) / 60);
+          const seconds = remaining % 60;
+          message.textContent = `Account locked. Time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s.`;
+          message.dataset.kind = "error";
+          message.classList.add("visible");
+          if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+            message.textContent = "The displayed lockout period has ended. You can try signing in again.";
+            submitButton.disabled = false;
+            return;
+          }
+          remaining -= 1;
+        };
+        showCountdown();
+        countdownTimer = setInterval(showCountdown, 1000);
       } else {
         const remaining = Number(lockout?.attempts_remaining);
         message.textContent = Number.isInteger(remaining)
           ? `Invalid username or password. ${remaining} attempt(s) remaining before a 7-day lockout.`
           : (error.message || "Unable to sign in. Please try again.");
+        message.dataset.kind = "error";
+        message.classList.add("visible");
+        submitButton.disabled = false;
       }
-
-      message.classList.add("visible");
-      submitButton.disabled = false;
     }
   });
 });
@@ -265,7 +288,8 @@ document.querySelectorAll('.preview-form[data-role="management"]').forEach((form
           const seconds = remaining % 60;
 
           message.textContent = `Account locked. Time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s.`;
-          message.classList.add("visible");
+          message.dataset.kind = "error";
+      message.classList.add("visible");
 
           if (remaining <= 0) {
             clearInterval(countdownTimer);
@@ -285,7 +309,8 @@ document.querySelectorAll('.preview-form[data-role="management"]').forEach((form
         message.textContent = Number.isInteger(attemptsRemaining)
           ? `Invalid email or password. ${attemptsRemaining} attempt(s) remaining before a 7-day lockout.`
           : (error.message || "Unable to sign in. Please try again.");
-        message.classList.add("visible");
+        message.dataset.kind = "error";
+      message.classList.add("visible");
         submitButton.disabled = false;
       }
     }
@@ -308,6 +333,7 @@ document.querySelectorAll('.preview-form[data-role="student"]').forEach((form) =
 
     const showMessage = (text, kind = 'error') => {
       message.textContent = text;
+      message.dataset.kind = 'error';
       message.classList.add('visible');
       message.dataset.kind = kind;
     };

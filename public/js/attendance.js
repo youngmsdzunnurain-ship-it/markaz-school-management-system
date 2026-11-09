@@ -4,6 +4,7 @@
     const $ = (id) => document.getElementById(id);
     const state = {
         classes: [],
+        availableClassTypes: [],
         students: [],
         role: "",
         classType: "conventional",
@@ -19,6 +20,7 @@
     const els = {
         date: $("attendanceDate"),
         type: $("attendanceClassType"),
+        attendanceClassTypeField: $("attendanceClassType")?.closest(".attendance-field"),
         period: $("attendancePeriod"),
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
@@ -226,8 +228,18 @@
     }
 
     function populateClasses() {
-        const type = els.type.value;
+        const availableTypes = state.availableClassTypes;
         const current = els.classSelect.value;
+        const hasSingleCategory = state.role === "teacher" && availableTypes.length === 1;
+        if (els.attendanceClassTypeField) {
+            els.attendanceClassTypeField.hidden = hasSingleCategory;
+            els.attendanceClassTypeField.style.display = hasSingleCategory ? "none" : "";
+        }
+        if (hasSingleCategory && els.type.value !== availableTypes[0]) {
+            els.type.value = availableTypes[0];
+            state.classType = availableTypes[0];
+        }
+        const type = els.type.value;
         const filtered = state.classes.filter((item) => item.class_type === type);
         els.classSelect.innerHTML = "";
         if (!filtered.length) {
@@ -280,25 +292,32 @@
     }
 
     async function loadClasses() {
-        const requestedType = els.type.value;
         setNotice("Loading available classes…");
         try {
-            const data = await requestJson("./api/attendance/classes.php?class_type=" + encodeURIComponent(requestedType));
-            // A slow response from the previous category must never repopulate
-            // the dropdown after the user has switched categories.
-            if (els.type.value !== requestedType) return;
-            state.classes = (data.classes || []).filter((item) => item.class_type === requestedType);
+            const data = await requestJson("./api/attendance/classes.php");
+            state.classes = data.classes || [];
             state.role = data.role || "";
+            state.availableClassTypes = Array.isArray(data.available_class_types)
+                ? data.available_class_types
+                : [...new Set(state.classes.map(item => item.class_type))];
+            const requestedType = els.type.value;
+            if (state.role === "teacher" && state.availableClassTypes.length === 1) {
+                els.type.value = state.availableClassTypes[0];
+            } else if (!state.availableClassTypes.includes(requestedType) && state.availableClassTypes.length) {
+                els.type.value = state.availableClassTypes[0];
+            }
+            state.classType = els.type.value;
             populateClasses();
-            if (!state.classes.length) {
-                setNotice("No active " + (requestedType === "arabic" ? "Arabic" : "conventional") + " classes are available to this account.", "error");
+            const filtered = state.classes.filter(item => item.class_type === els.type.value);
+            if (!filtered.length) {
+                setNotice("No active " + (els.type.value === "arabic" ? "Arabic" : "conventional") + " classes are available to this account.", "error");
             } else {
                 setNotice("Choose a class and date to load the register.");
             }
             refreshActions();
         } catch (error) {
-            if (els.type.value !== requestedType) return;
             state.classes = [];
+            state.availableClassTypes = [];
             populateClasses();
             setNotice(error.message, "error");
             refreshActions();
@@ -546,9 +565,7 @@
         populateStudentDropdown();
         state.dirty = false;
         els.classSelect.value = "";
-        state.classes = [];
         populateClasses();
-        loadClasses();
         updateSummary();
         renderRegister();
         els.subtitle.textContent = "Select a class and date to begin.";

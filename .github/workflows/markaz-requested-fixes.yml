@@ -1,0 +1,56 @@
+name: MARKAZ Requested Fixes Regression
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  requested-fixes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Check PHP syntax
+        run: |
+          set -e
+          php -l api/auth/login.php
+          php -l api/auth/me.php
+          php -l app/middleware/auth.php
+          php -l api/results/student.php
+          php -l api/results/authorize-action.php
+          php -l api/attendance/classes.php
+          php -l api/attendance/reports.php
+          php -l api/settings/account-devices.php
+          php -l public/api/settings/account-devices.php
+          php -l tests/student-portal-flow.test.php
+          php -l tests/teacher-portal-dashboard.test.php
+          php -l tests/dashboard-report-regression.test.php
+          php -l tests/account-security-regression.test.php
+
+      - name: Check JavaScript syntax
+        run: |
+          set -e
+          node --check public/js/student-result.js
+          node --check public/js/attendance.js
+          node --check public/js/dashboard.js
+          node --check public/js/login-roles.js
+          node --check public/js/settings.js
+
+      - name: Run focused regression tests
+        run: |
+          set -e
+          php tests/student-portal-flow.test.php
+          php tests/teacher-portal-dashboard.test.php
+          php tests/dashboard-report-regression.test.php
+          php tests/account-security-regression.test.php
+          php tests/attendance-validation.test.php
+          php tests/teacher-document-permissions.test.php
+          php tests/result-print-flow-isolation.test.php

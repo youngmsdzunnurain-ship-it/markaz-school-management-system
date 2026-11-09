@@ -13,6 +13,8 @@ $login = file_get_contents(__DIR__ . '/../api/auth/login.php');
 $auth = file_get_contents(__DIR__ . '/../app/middleware/auth.php');
 $freezes = file_get_contents(__DIR__ . '/../api/settings/account-freezes.php');
 $lockouts = file_get_contents(__DIR__ . '/../api/settings/login-lockouts.php');
+$devices = file_get_contents(__DIR__ . '/../api/settings/account-devices.php');
+$deviceRoute = file_get_contents(__DIR__ . '/../public/api/settings/account-devices.php');
 
 securityCheck(
     str_contains($login, '$attempts >= 3') &&
@@ -40,6 +42,21 @@ securityCheck(
 securityCheck(
     str_contains($lockouts, 'DELETE FROM login_lockouts WHERE id = ? AND locked_until IS NOT NULL'),
     'Senior Admin unlock action must remove the persistent login lockout'
+);
+
+securityCheck(
+    str_contains($login, 'login_devices') &&
+    str_contains($login, "SELECT is_blocked FROM login_devices") &&
+    str_contains($login, "device_blocked") &&
+    str_contains($auth, "device_token_hash"),
+    'login checks account-specific blocked browser devices before establishing a session'
+);
+securityCheck(
+    str_contains($devices, 'login_device_blocks') &&
+    str_contains($devices, "is_blocked = 1") &&
+    str_contains($devices, "['block', 'unblock']") &&
+    str_contains($deviceRoute, "api/settings/account-devices.php"),
+    'Senior Admin can block and unblock a previously used device for one account'
 );
 
 echo "Account lockout and freeze enforcement regression tests passed.\n";

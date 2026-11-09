@@ -576,14 +576,27 @@ function renderAttendanceComboChart(rows, category, target) {
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
     const byName = new Map(rows.map(row => [normalize(row.class_name), row]));
-    const data = order.map(name => {
-        const row = byName.get(normalize(name)) || {};
+    const orderedRows = order
+        .map(name => byName.get(normalize(name)))
+        .filter(Boolean);
+    const orderedNames = new Set(orderedRows.map(row => normalize(row.class_name)));
+    rows.forEach(row => {
+        if (!orderedNames.has(normalize(row.class_name))) orderedRows.push(row);
+    });
+    const data = orderedRows.map(row => {
+        const name = String(row.class_name || "Unknown class");
         const present = Math.max(0, Number(row.present_count) || 0);
         const absent = Math.max(0, Number(row.absent_count) || 0);
         const late = Math.max(0, Number(row.late_count) || 0);
         const excused = Math.max(0, Number(row.excused_count) || 0);
         const marked = present + absent + late + excused;
-        return { name, present, absent, late, excused, marked, rate: marked > 0 ? present / marked * 100 : null };
+        const studentCount = Math.max(0, Number(row.student_count) || 0);
+        // Attendance rate is measured against the full active class roster.
+        // A one-student class with that student present therefore correctly shows 100%.
+        const rate = marked > 0 && studentCount > 0
+            ? Math.min(100, present / studentCount * 100)
+            : null;
+        return { name, present, absent, late, excused, marked, studentCount, rate };
     });
 
     // Every class keeps its own slot, even with no records. The chart fills its card and only
@@ -655,13 +668,14 @@ function renderAttendanceComboChart(rows, category, target) {
         : "").join("");
     const circles = data.map((item, index) => {
         if (item.rate === null) return "";
-        return '<circle cx="' + x(index) + '" cy="' + yRate(item.rate) + '" r="4.5" class="combo-rate-point"><title>' +
-            escape(item.name) + ": " + item.present + " present of " + item.marked + " marked records (" + item.rate.toFixed(1) + "%)</title></circle>";
+        const singlePoint = ratePaths.some(path => path.length === 1 && path[0][0] === x(index));
+        return '<circle cx="' + x(index) + '" cy="' + yRate(item.rate) + '" r="' + (singlePoint ? 6 : 4.5) + '" class="combo-rate-point' + (singlePoint ? ' single-point' : '') + '"><title>' +
+            escape(item.name) + ": " + item.present + " present of " + item.studentCount + " active students (" + item.rate.toFixed(1) + "%)</title></circle>";
     }).join("");
 
     return '<div class="dashboard-attendance-combo-scroll"><svg class="dashboard-attendance-combo-chart" viewBox="0 0 ' + width + " " + height +
         '" width="' + width + '" height="' + height + '" role="img" aria-label="' + escape(category) +
-        ' attendance chart. Stacked bars show present, absent, late and excused marked records; the line shows present rate among marked records.">' +
+        ' attendance chart. Stacked bars show present, absent, late and excused marked records; the line shows present students as a percentage of active class enrolment.">' +
         grid + '<line x1="' + left + '" y1="' + (top + plotHeight) + '" x2="' + (width - right) + '" y2="' + (top + plotHeight) + '" class="combo-baseline"/>' +
         bars + lines + circles + "</svg></div>";
 }

@@ -65,6 +65,10 @@ if ($role === 'teacher') {
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
+// Advertise the teacher's actual assigned categories so the UI can avoid
+// presenting a category selector when only one category is available.
+$availableClassTypes = array_values(array_unique(array_column($classes, 'class_type')));
+
 // Return only the requested education category. Filtering is enforced here,
 // not merely by the browser, so categories cannot leak into each other's list.
 $classTypeFilter = (string) ($_GET['class_type'] ?? '');
@@ -96,4 +100,5 @@ echo json_encode([
     'success' => true,
     'role' => $role,
     'classes' => $classes,
+    'available_class_types' => $availableClassTypes,
 ], JSON_UNESCAPED_UNICODE);

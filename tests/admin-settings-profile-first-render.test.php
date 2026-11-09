@@ -23,7 +23,7 @@ settingsFirstRenderAssert(
     'the initial-render guard must be activated in the document head before settings content can paint'
 );
 settingsFirstRenderAssert(
-    preg_match('/<section class="settings-card">\s*<div class="settings-card-heading">\s*<div>\s*<span class="settings-label">ADMINISTRATOR<\/span>\s*<h2>Profile Information<\/h2>/s', $html) === 1,
+    preg_match('/<section class="settings-card">\s*<div class="settings-card-heading">\s*<div>\s*<span class="settings-label"[^>]*>ADMINISTRATOR<\/span>\s*<h2>Profile Information<\/h2>/s', $html) === 1,
     'Admin Profile Information must remain the first settings card'
 );
 settingsFirstRenderAssert(

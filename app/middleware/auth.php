@@ -43,6 +43,30 @@ function requireLogin(): void
         exit;
     }
 
+    // A device block also revokes an already authenticated session from that browser.
+    $deviceHash = (string) ($_SESSION['device_token_hash'] ?? '');
+    if (preg_match('/^[a-f0-9]{64}$/i', $deviceHash)) {
+        $deviceStmt = db()->prepare(
+            'SELECT is_blocked FROM login_devices
+             WHERE account_id = ? AND device_token_hash = ? LIMIT 1'
+        );
+        $deviceStmt->execute([(int) $_SESSION['admin_id'], $deviceHash]);
+        if ((int) $deviceStmt->fetchColumn() === 1) {
+            $_SESSION = [];
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'success' => false,
+                'device_blocked' => true,
+                'message' => 'This device has been blocked for this account by the Senior Admin.'
+            ]);
+            exit;
+        }
+    }
+
     // Admin is exempt from portal switches; other roles are rechecked per request.
     $role = (string) ($_SESSION['admin_role'] ?? '');
     $portalSettings = [

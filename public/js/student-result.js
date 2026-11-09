@@ -315,8 +315,8 @@ async function loadStudentResult() {
         try {
             if (params.get("student_portal") === "1") {
                 currentUserPermissions = {
-                    can_print_results: true,
-                    can_export_results: true
+                    can_print_results: studentData?.student_document_permissions?.can_print_results === true,
+                    can_export_results: studentData?.student_document_permissions?.can_export_results === true
                 };
             } else {
                 await loadCurrentUserPermissions();
@@ -1540,21 +1540,20 @@ async function authorizeAndPrint(permission) {
         // A public student can print/export only the read-only report bound to
         // the verified, short-lived student portal session. Staff still use
         // the existing role permission endpoint.
-        if (params.get("student_portal") !== "1") {
-            const actionQuery = new URLSearchParams({
-                action: permission,
-                class_id: classId || "",
-                class_type: classType || "conventional"
-            });
-            const response = await fetch(
-                `./api/results/authorize-action.php?${actionQuery.toString()}`,
-                { credentials: "same-origin" }
-            );
-            const data = await response.json();
+        const actionQuery = new URLSearchParams({
+            action: permission,
+            class_id: classId || "",
+            class_type: classType || "conventional",
+            student_id: studentId || ""
+        });
+        const response = await fetch(
+            `./api/results/authorize-action.php?${actionQuery.toString()}`,
+            { credentials: "same-origin" }
+        );
+        const data = await response.json();
 
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "You are not permitted to perform this action.");
-            }
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
         setStudentResultDocumentTitle();

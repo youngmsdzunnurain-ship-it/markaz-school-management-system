@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
-requireLogin();
+$studentPortalScope = studentPortalResultScope();
+if ($studentPortalScope === null) {
+    requireLogin();
+}
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -23,7 +27,23 @@ if (!isset($permissions[$action])) {
     exit;
 }
 
-requireRolePermission($permissions[$action]);
+if ($studentPortalScope !== null) {
+    $studentSetting = $action === 'print_results'
+        ? 'student_print_results'
+        : 'student_export_results';
+    if (!systemAccessEnabled($studentSetting)) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'message' => $action === 'print_results'
+                ? 'Student printing is currently disabled by the Admin.'
+                : 'Student PDF downloads are currently disabled by the Admin.'
+        ]);
+        exit;
+    }
+} else {
+    requireRolePermission($permissions[$action]);
+}
 
 echo json_encode([
     'success' => true,

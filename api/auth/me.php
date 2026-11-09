@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 header('Content-Type: application/json; charset=utf-8');
 
 startSecureSession();
+requireLogin();
 
 if (empty($_SESSION['admin_id']) || empty($_SESSION['admin_role'])) {
     http_response_code(401);

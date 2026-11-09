@@ -44,7 +44,7 @@ check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi
 check(str_contains($reportsApi, 'student_count_sql') && str_contains($reportsApi, 'AS student_count'), 'attendance reports provide the active class roster denominator for present-rate charts');
 check(!str_contains($reportsApi, 'NOT EXISTS') && !str_contains($reportsApi, 'arabic_class.name'), 'school reports include same-named conventional and Arabic classes independently');
 check(str_contains($attendanceJs, 'item.class_type === type'), 'attendance class dropdown filters strictly by selected class category');
-check(str_contains($attendanceJs, 'classes.php?class_type='), 'attendance page requests only its selected category');
+check(str_contains($attendanceJs, 'requestJson("./api/attendance/classes.php")') && str_contains($attendanceJs, 'available_class_types'), 'attendance page loads assigned categories once so it can auto-select a single teacher category and filter locally');
 check(str_contains($classesApi, '$classTypeFilter') && str_contains($classesApi, '$class[\'class_type\'] === $classTypeFilter'), 'attendance class API filters by class_type on the server');
 
 check(str_contains($attendanceJs, 'setInterval') && str_contains($attendanceJs, 'updateDateLabel'), 'refreshes displayed school date while page remains open');
