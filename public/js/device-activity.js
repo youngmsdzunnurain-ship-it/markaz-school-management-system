@@ -2,6 +2,11 @@
   "use strict";
 
   const endpoint = "/api/settings/account-device-activity.php";
+  const script = document.currentScript;
+  const configuredContext = script?.dataset.activityRole || "staff";
+  const context = configuredContext === "student" ||
+    (configuredContext === "auto" && new URLSearchParams(window.location.search).get("student_portal") === "1")
+    ? "student" : "staff";
   const storageKey = "markaz-device-activity-session";
   let sessionId = "";
 
@@ -27,7 +32,7 @@
   let paused = document.visibilityState === "hidden";
 
   function payload(action) {
-    return JSON.stringify({ action, session_id: sessionId });
+    return JSON.stringify({ action, session_id: sessionId, context });
   }
 
   async function heartbeat() {
