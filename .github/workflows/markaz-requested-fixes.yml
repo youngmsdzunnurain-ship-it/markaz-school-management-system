@@ -61,6 +61,7 @@ jobs:
           php tests/account-security-regression.test.php
           php tests/account-device-activity-regression.test.php
           php tests/shared-settings-labels.test.php
+          php tests/exam-officer-portal.test.php
           php tests/attendance-validation.test.php
           php tests/teacher-document-permissions.test.php
           php tests/result-print-flow-isolation.test.php
