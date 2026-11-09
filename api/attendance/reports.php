@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
+require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -90,6 +91,11 @@ foreach ($classDefinitions as $definition) {
         $classes[] = $row;
     }
 }
+
+$classes = markazSortAndDeduplicateClasses(array_map(
+    static fn (array $row): array => $row + ['id' => $row['class_id'], 'name' => $row['class_name']],
+    $classes
+));
 
 $summary = [
     'marked_records' => 0,
