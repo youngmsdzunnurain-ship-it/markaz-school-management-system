@@ -88,6 +88,18 @@ portalAssert(str_contains($resultCss, 'body.student-portal-result-view .report-c
 
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-result-page.management-view .document-actions'), 'student portal actions use a dedicated responsive action group');
 portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-information .student-class-row'), 'student portal class information has a compact equal-height row');
+portalAssert(
+    str_contains($resultCss, 'body:not(.student-portal-result-view) .student-information .student-details') &&
+    str_contains($resultCss, 'body:not(.student-portal-result-view) .report-card .behaviour-grid') &&
+    str_contains($resultCss, 'grid-template-areas:'),
+    'Admin, Teacher and Exam Officer report previews reuse the student portal mobile profile and behavioural layout'
+);
+portalAssert(
+    str_contains($resultScript, 'studentDocumentPermissionsResolved') &&
+    str_contains($resultScript, 'printStudentResultButton?.remove()') &&
+    str_contains($resultScript, 'downloadStudentPdfButton?.remove()'),
+    'Student Portal removes unavailable document actions only after server permissions are resolved'
+);
 portalAssert(str_contains($resultCss, 'grid-template-columns: repeat(12, minmax(0, 1fr)) !important;') && str_contains($resultCss, 'grid-auto-rows: 56px !important;'), 'desktop student profile uses one 12-column grid with equal 56px rows');
 portalAssert(str_contains($resultCss, 'grid-column: span 5 !important;') && substr_count($resultCss, 'grid-column: span 2 !important;') >= 3 && substr_count($resultCss, 'grid-column: span 3 !important;') >= 3 && str_contains($resultCss, 'grid-column: span 4 !important;'), 'desktop student profile applies the requested 5/2/2/3 and 3/3/2/4 column spans');
 portalAssert(str_contains($resultCss, 'gap: 12px !important;') && str_contains($resultCss, 'height: 56px !important;') && str_contains($resultCss, 'padding: 0 16px !important;'), 'desktop student profile uses consistent 12px spacing, 56px boxes and 16px horizontal padding');
