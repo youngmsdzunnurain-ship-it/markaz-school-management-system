@@ -208,11 +208,10 @@ document.querySelectorAll('.preview-form[data-role="teacher"]').forEach((form) =
         message.textContent = Number.isInteger(remaining)
           ? `Invalid username or password. ${remaining} attempt(s) remaining before a 7-day lockout.`
           : (error.message || "Unable to sign in. Please try again.");
+        message.dataset.kind = "error";
+        message.classList.add("visible");
+        submitButton.disabled = false;
       }
-
-      message.dataset.kind = "error";
-      message.classList.add("visible");
-      submitButton.disabled = false;
     }
   });
 });
