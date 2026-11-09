@@ -566,7 +566,7 @@ function renderAttendanceComboChart(rows, category, target) {
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
     const conventionalOrder = ["Kindergarten", "KG", "Prinosgy 1", "Preschool 1", "Pre Nursery 1", "Prinosgy 2", "Preschool 2", "Pre Nursery 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JS 1", "JSS 1", "JS 2", "JSS 2", "JS 3", "JSS 3", "SS 1", "SS 2", "SS 3"];
-    const arabicOrder = ["Roudoh Ula", "Roudoh Sani", "Faslu Awal", "Faslu Thani", "Faslu Thali", "Faslu Thalith", "Faslu Rabia", "Faslu Khamis", "Faslu Sadis"];
+    const arabicOrder = ["Roudoh Ula", "Roudoh Thani", "Faslu Awal", "Faslu Thani", "Faslu Thalith", "Faslu Rabia", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
     const uniqueRows = new Map();
@@ -780,17 +780,15 @@ async function loadDashboardAttendance() {
 
             let rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
 
-            // These Quranic class labels were mistakenly stored in the Conventional
-            // class list. Hide only those labels from the Conventional chart; retain
-            // every genuine Conventional class, including SS 1, SS 2 and SS 3.
+            // Keep Arabic-category class names out of the Conventional chart,
+            // without suppressing any other Conventional classes (including SS 1-3).
             if (type === "conventional") {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
                 const arabicOnlyLabels = new Set([
-                    "roudoh1", "roudoh2",
-                    "faslu1", "faslu2", "faslu3",
-                    "faslu4", "faslu5", "faslu6",
-                    "hufaz"
+                    "roudohula", "roudohthani",
+                    "fasluawal", "fasluthani", "fasluthalith",
+                    "faslurabia", "faslukhamis", "faslusadis"
                 ]);
                 rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
             }
