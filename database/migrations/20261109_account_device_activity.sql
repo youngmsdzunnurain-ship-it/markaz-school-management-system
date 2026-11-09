@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS device_activity_sessions (
     last_activity_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ended_at DATETIME NULL,
     duration_seconds BIGINT UNSIGNED NOT NULL DEFAULT 0,
-    UNIQUE KEY uq_device_activity_client_session (client_session_id),
+    UNIQUE KEY uq_device_activity_client_identity (client_session_id, identity_key),
     KEY idx_device_activity_identity (identity_type, identity_key, device_hash),
     KEY idx_device_activity_last_seen (last_activity_at),
     CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
