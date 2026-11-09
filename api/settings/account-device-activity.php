@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/device-activity-schema.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
 
@@ -45,6 +46,8 @@ if ($displayName === '' || $identityId < 1) {
     echo json_encode(['success' => false, 'message' => 'An active account is required.']);
     exit;
 }
+
+ensureDeviceActivitySchema($pdo);
 
 
 $deviceToken = (string) ($_COOKIE['MARKAZ_DEVICE_TOKEN'] ?? '');
