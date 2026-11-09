@@ -11570,7 +11570,7 @@ body.student-portal-result-view .student-information .student-class-row > .detai
             "memorization memorization" !important;
         align-content: start !important;
         align-items: stretch !important;
-        gap: 8px !important;
+        gap: 7px !important;
     }
 
     body:not(.student-portal-result-view) .student-information .student-top-row,
@@ -11595,9 +11595,9 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         flex-direction: column !important;
         justify-content: center !important;
         min-width: 0 !important;
-        min-height: 50px !important;
+        min-height: 48px !important;
         height: auto !important;
-        padding: 8px 9px !important;
+        padding: 7px 8px !important;
         gap: 3px !important;
         box-sizing: border-box !important;
     }
@@ -11632,11 +11632,11 @@ body.student-portal-result-view .student-information .student-class-row > .detai
     /* Reference mobile Behavioural Report: one full-width rating card per row. */
     body:not(.student-portal-result-view) .report-card .behaviour-grid {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         grid-auto-flow: row !important;
         width: 100% !important;
         min-width: 0 !important;
-        gap: 9px !important;
+        gap: 8px !important;
         padding: 10px !important;
         box-sizing: border-box !important;
     }
@@ -11649,9 +11649,8 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         gap: 8px !important;
         width: auto !important;
         min-width: 0 !important;
-        min-height: 58px !important;
-        padding: 10px 12px !important;
-        border-radius: 12px !important;
+        min-height: 56px !important;
+        padding: 9px !important;
         box-sizing: border-box !important;
     }
 
@@ -11663,9 +11662,21 @@ body.student-portal-result-view .student-information .student-class-row > .detai
 
     body:not(.student-portal-result-view) .report-card .behaviour-item select {
         flex: 0 0 auto !important;
-        min-width: 112px !important;
-        max-width: 48% !important;
-        height: 38px !important;
+        min-width: 82px !important;
+        max-width: 46% !important;
+    }
+}
+
+
+/* Exact Student Portal mobile profile spacing and section padding. */
+@media screen and (max-width: 560px) {
+    body:not(.student-portal-result-view) .student-information {
+        padding: 10px !important;
+    }
+
+    body:not(.student-portal-result-view) .student-information .student-details .detail-item {
+        min-height: 48px !important;
+        padding: 7px 8px !important;
     }
 }
 
