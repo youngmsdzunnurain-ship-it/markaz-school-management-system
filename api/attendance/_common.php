@@ -107,6 +107,10 @@ function attendanceRequireClassAccess(PDO $pdo, string $classType, int $classId)
         attendanceJsonError(404, 'The selected class was not found or is inactive.');
     }
 
+    if ($classType === 'conventional' && attendanceIsArabicNamedClass((string) $class['name'])) {
+        attendanceJsonError(404, 'The selected class belongs to the Arabic category.');
+    }
+
     if ($role === 'teacher') {
         $assignment = $pdo->prepare(
             'SELECT 1
