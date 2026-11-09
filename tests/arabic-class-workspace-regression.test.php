@@ -83,4 +83,4 @@ arabicClassWorkspaceCheck(
     'emergency support contact has a dedicated styled save action and visible status feedback'
 );
 
-echo "Arabic class workspace regression tests passed (8 checks).\\n";
+echo "Arabic class workspace regression tests passed (8 checks).\n";
