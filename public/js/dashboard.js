@@ -235,6 +235,12 @@ async function logout() {
     });
 
     try {
+        let signedInRole = String(window.markazCurrentRole || "").toLowerCase();
+        if (!signedInRole) {
+            const identityResponse = await fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" } });
+            const identity = await identityResponse.json();
+            signedInRole = String(identity?.admin?.role || "").toLowerCase();
+        }
         const response = await fetch("./api/auth/logout.php", {
             method: "POST",
             credentials: "same-origin",
