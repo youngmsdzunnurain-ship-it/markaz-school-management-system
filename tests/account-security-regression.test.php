@@ -14,6 +14,7 @@ $auth = file_get_contents(__DIR__ . '/../app/middleware/auth.php');
 $freezes = file_get_contents(__DIR__ . '/../api/settings/account-freezes.php');
 $lockouts = file_get_contents(__DIR__ . '/../api/settings/login-lockouts.php');
 $devices = file_get_contents(__DIR__ . '/../api/settings/account-devices.php');
+$deviceRoute = file_get_contents(__DIR__ . '/../public/api/settings/account-devices.php');
 
 securityCheck(
     str_contains($login, '$attempts >= 3') &&
@@ -53,7 +54,8 @@ securityCheck(
 securityCheck(
     str_contains($devices, 'login_device_blocks') &&
     str_contains($devices, "is_blocked = 1") &&
-    str_contains($devices, "['block', 'unblock']"),
+    str_contains($devices, "['block', 'unblock']") &&
+    str_contains($deviceRoute, "api/settings/account-devices.php"),
     'Senior Admin can block and unblock a previously used device for one account'
 );
 
