@@ -29,6 +29,7 @@ jobs:
           php -l api/attendance/classes.php
           php -l api/attendance/reports.php
           php -l api/settings/account-devices.php
+          php -l public/api/settings/account-devices.php
           php -l tests/student-portal-flow.test.php
           php -l tests/teacher-portal-dashboard.test.php
           php -l tests/dashboard-report-regression.test.php
