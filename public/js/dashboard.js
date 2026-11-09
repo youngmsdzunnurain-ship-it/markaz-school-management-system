@@ -569,10 +569,25 @@ function renderAttendanceComboChart(rows, category, target) {
     const arabicOrder = ["Roudoh Ula", "Roudoh Thani", "Faslu Awal", "Faslu Thani", "Faslu Thalith", "Faslu Rabia", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
+    const arabicDisplayNames = new Map([
+        ["roudoh ula", "Roudoh Ula"],
+        ["roudoh sani", "Roudoh Thani"],
+        ["faslu ula", "Faslu Awal"],
+        ["faslu sani", "Faslu Thani"],
+        ["faslu salis", "Faslu Thalith"],
+        ["faslu rabia", "Faslu Rabia"],
+        ["faslu khamis", "Faslu Khamis"],
+        ["faslu sadis", "Faslu Sadis"]
+    ]);
     const uniqueRows = new Map();
     rows.forEach(row => {
-        const identity = String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name));
-        if (!uniqueRows.has(identity)) uniqueRows.set(identity, row);
+        const sourceName = String(row.class_name || "").trim();
+        const chartName = category === "arabic"
+            ? (arabicDisplayNames.get(normalize(sourceName)) || sourceName)
+            : sourceName;
+        const chartRow = chartName === sourceName ? row : { ...row, class_name: chartName };
+        const identity = String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(sourceName));
+        if (!uniqueRows.has(identity)) uniqueRows.set(identity, chartRow);
     });
     const rowsByName = new Map();
     uniqueRows.forEach(row => {
@@ -780,22 +795,15 @@ async function loadDashboardAttendance() {
 
             let rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
 
-            // Arabic class labels must never leak into the Conventional chart.
-            // Match the established Arabic hierarchy aliases, while retaining all
-            // conventional classes (including SS 1, SS 2 and SS 3).
+            // These nine records are Arabic-only classes stored in the Conventional table.
+            // Filter exact normalized labels only; never infer category from chart position.
             if (type === "conventional") {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
                 const arabicOnlyLabels = new Set([
-                    "agabia", "agabiya",
-                    "farabia", "farabiyyah", "farabiyya",
-                    "roudohula", "roudahula", "raudahula", "raudhoula", "roudohawwal", "roudahawwal",
-                    "roudohthani", "roudahthani", "raudahthani", "roudohsani", "roudahsani", "raudahsani",
-                    "fasluawal", "fasluawwal", "fasluula",
-                    "fasluthani", "faslusani",
-                    "fasluthalith", "fasluthali", "faslusalis",
-                    "faslurobi", "faslurabi", "faslurabia",
-                    "faslusali", "faslukhamis", "faslusadis"
+                    "roudoh1", "roudoh2",
+                    "faslu1", "faslu2", "faslu3", "faslu4", "faslu5", "faslu6",
+                    "hufaz"
                 ]);
                 rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
             }
