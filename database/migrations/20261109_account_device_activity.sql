@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS device_activity_sessions (
     UNIQUE KEY uq_device_activity_client_identity (client_session_id, identity_key),
     KEY idx_device_activity_identity (identity_type, identity_key, device_hash),
     KEY idx_device_activity_last_seen (last_activity_at),
-    CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
-    CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+    CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE SET NULL,
+    CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
