@@ -787,6 +787,7 @@ async function loadDashboardAttendance() {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
                 const arabicOnlyLabels = new Set([
+                    "agabia", "agabiya",
                     "farabia", "farabiyyah", "farabiyya",
                     "roudohula", "roudahula", "raudahula", "raudhoula", "roudohawwal", "roudahawwal",
                     "roudohthani", "roudahthani", "raudahthani", "roudohsani", "roudahsani", "raudahsani",
