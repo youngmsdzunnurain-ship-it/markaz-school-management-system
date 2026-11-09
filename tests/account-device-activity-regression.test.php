@@ -18,6 +18,7 @@ $read = static function (string $path) use ($root): string {
 
 $migration = $read('database/migrations/20261109_account_device_activity.sql');
 $activityApi = $read('api/settings/account-device-activity.php');
+$schemaHelper = $read('app/helpers/device-activity-schema.php');
 $deviceSettingsApi = $read('api/settings/account-devices.php');
 $activityScript = $read('public/js/device-activity.js');
 $settingsScript = $read('public/js/settings.js');
@@ -43,10 +44,18 @@ deviceActivityAssert(
 );
 deviceActivityAssert(
     str_contains($activityApi, 'studentPortalResultScope(false)') &&
+    str_contains($activityApi, "\$input['context']") &&
+    str_contains($activityApi, "\$activityContext === 'student'") &&
     str_contains($activityApi, 'requireLogin()') &&
     str_contains($activityApi, 'duration_seconds') &&
     str_contains($activityApi, 'total_active_seconds'),
     'activity endpoint derives identity from authenticated staff or verified student sessions and updates server-calculated duration'
+);
+deviceActivityAssert(
+    str_contains($schemaHelper, 'information_schema.tables') &&
+    str_contains($schemaHelper, 'ON DELETE SET NULL') &&
+    str_contains($activityApi, 'ensureDeviceActivitySchema($pdo)'),
+    'device activity schema is initialized once when missing and retained when accounts are deleted'
 );
 deviceActivityAssert(
     str_contains($activityApi, "'clear_history'") &&
