@@ -297,10 +297,11 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     str_contains($classWorkspaceJs, 'data-label="Admission No."') &&
-    str_contains($classWorkspaceJs, 'data-label="View Results"') &&
+    str_contains($classWorkspaceJs, 'data-label="Action"') &&
     str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
     str_contains($classWorkspaceCss, 'content: attr(data-label)'),
     'Teacher class student management converts student rows into labelled mobile cards'
 );
+
 
 echo "Teacher portal dashboard regression tests passed.\n";
