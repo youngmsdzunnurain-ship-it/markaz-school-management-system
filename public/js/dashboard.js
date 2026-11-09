@@ -582,29 +582,9 @@ function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
-    const conventionalOrder = ["KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"];
-    const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
-    const order = category === "arabic" ? arabicOrder : conventionalOrder;
-    const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");
-    const uniqueRows = new Map();
-    rows.forEach(row => {
-        const identity = String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name));
-        if (!uniqueRows.has(identity)) uniqueRows.set(identity, row);
-    });
-    const rowsByName = new Map();
-    uniqueRows.forEach(row => {
-        const name = normalize(row.class_name);
-        if (!rowsByName.has(name)) rowsByName.set(name, []);
-        rowsByName.get(name).push(row);
-    });
-    const orderedRows = [];
-    order.forEach(name => {
-        (rowsByName.get(normalize(name)) || []).forEach(row => orderedRows.push(row));
-    });
-    const orderedIdentities = new Set(orderedRows.map(row => String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name))));
-    uniqueRows.forEach((row, identity) => {
-        if (!orderedIdentities.has(identity)) orderedRows.push(row);
-    });
+    // The API returns each category in the administrator's saved sort_order.
+    // Preserve that order here instead of applying a competing name-based list.
+    const orderedRows = Array.from(uniqueRows.values());
     const data = orderedRows.map(row => {
         const name = String(row.class_name || "Unknown class");
         const present = Math.max(0, Number(row.present_count) || 0);
