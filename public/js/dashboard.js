@@ -780,17 +780,12 @@ async function loadDashboardAttendance() {
 
             let rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
 
-            // Keep Arabic-category class names out of the Conventional chart,
-            // without suppressing any other Conventional classes (including SS 1-3).
+            // Exclude only the stray Agabia entry from the Conventional chart.
+            // Keep SS 1, SS 2, SS 3 and every other Conventional class visible.
             if (type === "conventional") {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
-                const arabicOnlyLabels = new Set([
-                    "roudohula", "roudohthani",
-                    "fasluawal", "fasluthani", "fasluthalith",
-                    "faslurabia", "faslukhamis", "faslusadis"
-                ]);
-                rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
+                rows = rows.filter(item => normaliseClassLabel(item.class_name) !== "agabia");
             }
             const categoryValues = [
                 { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#2a8f58" },
