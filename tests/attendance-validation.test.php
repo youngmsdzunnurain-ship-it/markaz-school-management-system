@@ -33,13 +33,18 @@ check(is_file(__DIR__ . '/../public/api/attendance/classes.php'), 'publishes the
 check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes the register endpoint under the public API path');
 
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
+$classListApi = file_get_contents(__DIR__ . '/../api/classes/list.php');
+$arabicClassesApi = file_get_contents(__DIR__ . '/../api/arabic-classes/list.php');
 require_once __DIR__ . '/../app/helpers/class-hierarchy.php';
 $reportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
+check(str_contains($classesApi, 'markazSortAndDeduplicateClasses') && str_contains($classListApi, 'markazSortAndDeduplicateClasses') && str_contains($arabicClassesApi, 'markazSortAndDeduplicateClasses'), 'class management, Arabic class selectors and attendance share one hierarchy implementation');
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 $ordered = markazSortAndDeduplicateClasses([['id'=>1,'class_type'=>'conventional','name'=>'SS 1','sort_order'=>15],['id'=>2,'class_type'=>'conventional','name'=>'Basic 2','sort_order'=>7],['id'=>3,'class_type'=>'conventional','name'=>'Nursery 1','sort_order'=>4],['id'=>4,'class_type'=>'conventional','name'=>'Primary 1','sort_order'=>3]]);
 check(array_column($ordered, 'name') === ['Nursery 1','Primary 1','Basic 2','SS 1'], 'sorts conventional classes from the lowest to highest level');
 $arabicOrdered = markazSortAndDeduplicateClasses([['id'=>1,'class_type'=>'arabic','name'=>'Faslu Salis'],['id'=>2,'class_type'=>'arabic','name'=>'Roudoh Awwal'],['id'=>3,'class_type'=>'arabic','name'=>'Faslu Ula']]);
 check(array_column($arabicOrdered, 'name') === ['Roudoh Awwal','Faslu Ula','Faslu Salis'], 'sorts Arabic classes from the lowest to highest level');
+$deduped = markazSortAndDeduplicateClasses([['id'=>8,'class_type'=>'conventional','name'=>'Basic 1'],['id'=>8,'class_type'=>'conventional','name'=>'Basic 1'],['id'=>8,'class_type'=>'arabic','name'=>'Basic 1']]);
+check(count($deduped) === 2, 'removes duplicate class IDs within one category but preserves separate category identities');
 check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
 check(str_contains($classesApi, "'conventional' AS class_type") && str_contains($classesApi, "'arabic' AS class_type"), 'returns conventional and Arabic classes with explicit independent type labels');
