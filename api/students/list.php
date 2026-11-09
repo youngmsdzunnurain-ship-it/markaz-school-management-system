@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -41,15 +42,15 @@ if (currentAdminRole() === 'teacher') {
            )
          UNION ALL
          SELECT s.id, s.admission_number, s.first_name, s.middle_name,
-                s.last_name, s.arabic_class_id AS class_id, "arabic" AS class_type,
+                s.last_name, COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) AS class_id, "arabic" AS class_type,
                 ac.name AS class_name
          FROM students s
-         INNER JOIN arabic_classes ac ON ac.id = s.arabic_class_id
+         INNER JOIN arabic_classes ac ON ac.id = COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)
          WHERE s.is_active = 1
            AND EXISTS (
                SELECT 1 FROM teacher_assignments ta
                WHERE ta.account_id = ? AND ta.class_type = "arabic"
-                 AND ta.class_id = s.arabic_class_id AND ta.subject_id IS NULL
+                 AND ta.class_id = COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) AND ta.subject_id IS NULL
                  AND ta.is_active = 1
            )
          ORDER BY last_name ASC, first_name ASC'
@@ -65,12 +66,20 @@ if (currentAdminRole() === 'teacher') {
                 c.name AS class_name, ac.name AS arabic_class_name
          FROM students s
          INNER JOIN classes c ON c.id = s.class_id
-         LEFT JOIN arabic_classes ac ON ac.id = s.arabic_class_id
+         LEFT JOIN arabic_classes ac ON ac.id = COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)
          ORDER BY s.last_name ASC, s.first_name ASC'
     );
 }
 
 echo json_encode([
     'success' => true,
-    'students' => $stmt->fetchAll()
+    'students' => array_map(static function (array $student): array {
+        if (($student['class_type'] ?? '') === 'arabic') {
+            $student['class_name'] = markazCanonicalArabicClassName((string) ($student['class_name'] ?? ''));
+        }
+        if (!empty($student['arabic_class_name'])) {
+            $student['arabic_class_name'] = markazCanonicalArabicClassName((string) $student['arabic_class_name']);
+        }
+        return $student;
+    }, $stmt->fetchAll())
 ]);
