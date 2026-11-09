@@ -177,7 +177,7 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, '"KG", "Primary 1", "Primary 2", "Nursery 1", "Nursery 2"') &&
+    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
     !str_contains($dashboardComboJs, '"Basic 6"') &&
     str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
     'Attendance combo chart follows the complete conventional class hierarchy'
