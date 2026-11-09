@@ -16,6 +16,11 @@ $classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
 $classResultsApi = file_get_contents(__DIR__ . '/../api/results/class.php');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
+$studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
+$arabicNamesHelper = file_get_contents(__DIR__ . '/../app/helpers/arabic-class-names.php');
+$settingsNavigationJs = file_get_contents(__DIR__ . '/../public/js/settings-panel-navigation.js');
+$settingsCss = file_get_contents(__DIR__ . '/../public/css/settings.css');
+$settingsJs = file_get_contents(__DIR__ . '/../public/js/settings.js');
 
 arabicClassWorkspaceCheck(
     str_contains($classListApi, 'FROM arabic_classes')
@@ -55,4 +60,27 @@ arabicClassWorkspaceCheck(
     'class save button is addressable and the modal form has balanced structure'
 );
 
-echo "Arabic class workspace regression tests passed (5 checks).\n";
+arabicClassWorkspaceCheck(
+    str_contains($arabicNamesHelper, "'roudoh sani' => 'Roudoh Thani'")
+        && str_contains($arabicNamesHelper, "'faslu ula' => 'Faslu Awal'")
+        && str_contains($arabicNamesHelper, "'faslu salis' => 'Faslu Thalith'")
+        && str_contains($classListApi, 'markazCanonicalArabicClassName')
+        && str_contains($classResultsApi, 'markazCanonicalArabicClassName')
+        && str_contains($studentResultApi, 'markazCanonicalArabicClassName')
+        && str_contains($studentResultApi, 'COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)'),
+    'canonical Arabic spellings are used by class lists, class results, and printable student results with legacy assignments'
+);
+arabicClassWorkspaceCheck(
+    strpos($settingsNavigationJs, 'activate("profile")') < strpos($settingsNavigationJs, 'fetch("./api/auth/me.php"')
+        && str_contains($settingsNavigationJs, 'Render the Settings navigation immediately')
+        && str_contains(file_get_contents(__DIR__ . '/../public/settings.html'), 'settings-page-pending'),
+    'Settings shows the profile and navigation immediately instead of waiting on the identity request'
+);
+arabicClassWorkspaceCheck(
+    str_contains($settingsJs, 'id="saveSupportContactButton"')
+        && str_contains($settingsCss, '.markaz-support-settings #saveSupportContactButton')
+        && str_contains($settingsCss, '#markazSupportStatus'),
+    'emergency support contact has a dedicated styled save action and visible status feedback'
+);
+
+echo "Arabic class workspace regression tests passed (8 checks).\\n";
