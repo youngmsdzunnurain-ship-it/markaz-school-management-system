@@ -179,4 +179,10 @@ teacherPortalCheck(
     'Admin sidebar contains one Settings navigation entry'
 );
 
+teacherPortalCheck(
+    str_contains($studentResultCss, 'min-width: 561px') &&
+    str_contains($studentResultCss, 'grid-template-areas:') &&
+    str_contains($studentResultCss, 'max-width: 760px'),
+    'Student Portal and staff result profile rows stay aligned through tablet widths'
+);
 echo "Teacher portal dashboard regression tests passed.\n";
