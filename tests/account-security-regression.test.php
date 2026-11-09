@@ -53,7 +53,6 @@ securityCheck(
 securityCheck(
     str_contains($devices, 'login_device_blocks') &&
     str_contains($devices, "is_blocked = 1") &&
-    str_contains($devices, "'block', 'unblock'") === false &&
     str_contains($devices, "['block', 'unblock']"),
     'Senior Admin can block and unblock a previously used device for one account'
 );
