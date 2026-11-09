@@ -26,7 +26,11 @@ if ($role === 'teacher') {
          WHERE ta.account_id = ? AND ta.class_type = 'conventional'
            AND ta.is_active = 1 AND c.is_active = 1
            AND (c.level_group IS NULL OR c.level_group <> 'Quranic')
-           AND LOWER(TRIM(c.name)) NOT REGEXP '^agabiya([[:space:]-]|$)'
+           AND NOT EXISTS (
+               SELECT 1 FROM arabic_classes ac
+               WHERE ac.is_active = 1
+                 AND LOWER(TRIM(ac.name)) = LOWER(TRIM(c.name))
+           )
           "
     );
     $stmt->execute([$accountId]);
@@ -52,7 +56,6 @@ if ($role === 'teacher') {
          LEFT JOIN students s ON s.class_id = c.id AND s.is_active = 1
          WHERE c.is_active = 1
            AND (c.level_group IS NULL OR c.level_group <> 'Quranic')
-           AND LOWER(TRIM(c.name)) NOT REGEXP '^agabiya([[:space:]-]|$)'
          GROUP BY c.id, c.name, c.sort_order"
     );
     $classes = array_merge($classes, $stmt->fetchAll(PDO::FETCH_ASSOC));
