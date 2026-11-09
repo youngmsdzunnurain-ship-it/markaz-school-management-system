@@ -8,7 +8,7 @@ declare(strict_types=1);
 function markazCanonicalArabicClassName(?string $name): string
 {
     $value = trim((string) $name);
-    $key = mb_strtolower(preg_replace('/\\s+/u', ' ', $value) ?? $value, 'UTF-8');
+    $key = strtolower(preg_replace('/\\s+/u', ' ', $value) ?? $value);
 
     $names = [
         'roudoh ula' => 'Roudoh Ula',
