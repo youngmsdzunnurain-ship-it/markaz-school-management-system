@@ -21,6 +21,7 @@
         date: $("attendanceDate"),
         type: $("attendanceClassType"),
         attendanceClassTypeField: $("attendanceClassType")?.closest(".attendance-field"),
+        attendanceClassField: $("attendanceClass")?.closest(".attendance-field"),
         period: $("attendancePeriod"),
         classSelect: $("attendanceClass"),
         load: $("loadRegisterButton"),
@@ -241,6 +242,11 @@
         }
         const type = els.type.value;
         const filtered = state.classes.filter((item) => item.class_type === type);
+        const hasSingleAssignedClass = state.role === "teacher" && filtered.length === 1;
+        if (els.attendanceClassField) {
+            els.attendanceClassField.hidden = hasSingleAssignedClass;
+            els.attendanceClassField.style.display = hasSingleAssignedClass ? "none" : "";
+        }
         els.classSelect.innerHTML = "";
         if (!filtered.length) {
             const option = document.createElement("option");
@@ -263,7 +269,10 @@
             option.textContent = item.name + " · " + item.student_count + (item.student_count === 1 ? " student" : " students");
             els.classSelect.appendChild(option);
         });
-        if (filtered.some((item) => String(item.id) === current)) {
+        if (hasSingleAssignedClass) {
+            state.classId = String(filtered[0].id);
+            els.classSelect.value = state.classId;
+        } else if (filtered.some((item) => String(item.id) === current)) {
             els.classSelect.value = current;
             state.classId = current;
         } else {
@@ -722,7 +731,7 @@
 
     const today = localDateValue();
     $("historyDate").value = today;
-    loadAcademicPeriods();
+    const periodsReady = loadAcademicPeriods();
 
     const initialParams = new URLSearchParams(window.location.search);
     const initialType = initialParams.get("class_type");
@@ -742,7 +751,7 @@
     updateSummary();
     renderAttendanceChart({ total: 0, present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 });
     refreshActions();
-    loadClasses().then(() => {
+    Promise.all([periodsReady, loadClasses()]).then(() => {
         const params = new URLSearchParams(window.location.search);
         const requestedClass = params.get("class_id");
         const requestedDate = params.get("date");
@@ -757,6 +766,10 @@
             loadRegister();
             return;
         }
-        setNotice("Choose your class and load the daily register.");
+        if (state.role === "teacher" && state.classId) {
+            loadRegister();
+            return;
+        }
+        setNotice("Choose your assigned class and load the daily register.");
     });
 })();
