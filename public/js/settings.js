@@ -1203,7 +1203,7 @@ loadAcademicPeriodSettings();
                 button.addEventListener("click", async () => {
                     const action = device.is_blocked ? "unblock" : "block";
                     const reason = action === "block"
-                        ? window.prompt("Why are you blocking this device for " + device.account_name + "?")
+                        ? window.prompt("Why are you freezing this device for " + device.account_name + "?")
                         : "";
                     if (action === "block" && (reason === null || !reason.trim())) return;
                     if (!window.confirm((action === "block" ? "Freeze" : "Unfreeze") + " this device for " + device.account_name + "?")) return;
