@@ -168,27 +168,27 @@
 
                             return `
                                 <tr>
-                                    <td>
+                                    <td data-label="Admission No.">
                                         ${escapeHtml(student.admission_number)}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Student">
                                         <strong>
                                             ${escapeHtml(fullName)}
                                         </strong>
                                     </td>
 
-                                    <td>
+                                    <td data-label="Gender">
                                         ${escapeHtml(student.gender || "—")}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Arabic Class">
                                         ${escapeHtml(
                                             student.arabic_class_name || "—"
                                         )}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Status">
                                         <span class="student-status ${
                                             active ? "active" : "inactive"
                                         }">
@@ -196,7 +196,7 @@
                                         </span>
                                     </td>
 
-                                    <td>
+                                    <td data-label="View Results">
                                         <button
                                             type="button"
                                             class="class-student-button"
