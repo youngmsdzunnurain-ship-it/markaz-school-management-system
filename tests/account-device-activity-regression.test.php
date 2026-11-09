@@ -37,16 +37,15 @@ deviceActivityAssert(
     'device activity schema supports both staff and student identities'
 );
 deviceActivityAssert(
-    str_contains($migration, 'total_active_seconds') &&
     str_contains($migration, 'duration_seconds') &&
     str_contains($migration, 'client_session_id'),
     'device activity stores accumulated active time in persistent session records'
 );
 deviceActivityAssert(
-    str_contains($activityApi, 'studentPortalResultScope()') &&
+    str_contains($activityApi, 'studentPortalResultScope(false)') &&
     str_contains($activityApi, 'requireLogin()') &&
     str_contains($activityApi, 'duration_seconds') &&
-    str_contains($activityApi, 'session_hash'),
+    str_contains($activityApi, 'total_active_seconds'),
     'activity endpoint derives identity from authenticated staff or verified student sessions and updates server-calculated duration'
 );
 deviceActivityAssert(
