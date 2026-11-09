@@ -255,4 +255,51 @@ teacherPortalCheck(
     'Attendance report supplies every active conventional and Arabic class, including classes with no saved marks'
 );
 
+
+$classesPageJs = file_get_contents(__DIR__ . '/../public/js/students.js');
+$classesPageCss = file_get_contents(__DIR__ . '/../public/css/students.css');
+$classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
+$classWorkspaceCss = file_get_contents(__DIR__ . '/../public/css/class.css');
+$classHierarchy = file_get_contents(__DIR__ . '/../app/helpers/class-hierarchy.php');
+
+teacherPortalCheck(
+    !str_contains($dashboardNavigationHtml, '<section class="nav-section"') &&
+    strpos($dashboardNavigationHtml, 'href="./dashboard.html"') < strpos($dashboardNavigationHtml, 'href="./students.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./students.html"') < strpos($dashboardNavigationHtml, 'href="./classes.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./classes.html"') < strpos($dashboardNavigationHtml, 'href="./subjects/"') &&
+    strpos($dashboardNavigationHtml, 'href="./subjects/"') < strpos($dashboardNavigationHtml, 'href="./print-results.html"') &&
+    strpos($dashboardNavigationHtml, 'href="./print-results.html"') < strpos($dashboardNavigationHtml, 'href="./settings.html"'),
+    'Dashboard sidebar preserves the original navigation sequence without newly grouped sections'
+);
+teacherPortalCheck(
+    !str_contains($dashboardActiveCss, '.nav-section{') &&
+    str_contains($dashboardActiveCss, '.dashboard-class-attendance-charts{'),
+    'Dashboard keeps attendance chart styling without changing the original sidebar layout'
+);
+teacherPortalCheck(
+    !str_contains($dashboardAttendanceJs, 'const conventionalOrder') &&
+    !str_contains($dashboardAttendanceJs, 'const arabicOrder') &&
+    str_contains($dashboardAttendanceJs, 'Array.from(uniqueRows.values())'),
+    'Dashboard attendance charts preserve the database class display order within each category'
+);
+teacherPortalCheck(
+    str_contains($classHierarchy, 'sort_order') &&
+    str_contains($classHierarchy, '((int) ($a[\'sort_order\'] ?? 0)) <=> ((int) ($b[\'sort_order\'] ?? 0))'),
+    'Shared class ordering respects the saved database display order'
+);
+teacherPortalCheck(
+    str_contains($classesPageJs, 'data-label="Parent / Guardian"') &&
+    str_contains($classesPageJs, 'data-label="Actions"') &&
+    str_contains($classesPageCss, '.students-table tbody tr') &&
+    str_contains($classesPageCss, 'content: attr(data-label)'),
+    'Admin and Exam Officer student management converts every student row into a labelled mobile card'
+);
+teacherPortalCheck(
+    str_contains($classWorkspaceJs, 'data-label="Admission No."') &&
+    str_contains($classWorkspaceJs, 'data-label="View Results"') &&
+    str_contains($classWorkspaceCss, '.class-students-table tbody tr') &&
+    str_contains($classWorkspaceCss, 'content: attr(data-label)'),
+    'Teacher class student management converts student rows into labelled mobile cards'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
