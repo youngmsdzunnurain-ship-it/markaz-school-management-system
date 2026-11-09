@@ -37,10 +37,12 @@ if (currentAdminRole() === 'teacher') {
           AND ta.class_type = "conventional" AND ta.subject_id IS NULL
           AND ta.is_active = 1
          WHERE c.is_active = 1
+           AND LOWER(TRIM(c.name)) <> "hufaz"
          UNION ALL
          SELECT ac.id, ac.name, ac.sort_order, "arabic" AS class_type, ac.is_active,
                 (SELECT COUNT(*) FROM students s
-                 WHERE s.arabic_class_id = ac.id AND s.is_active = 1) AS student_count
+                 WHERE COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id
+                   AND s.is_active = 1) AS student_count
          FROM arabic_classes ac
          INNER JOIN teacher_assignments ta
            ON ta.class_id = ac.id AND ta.account_id = ?
@@ -76,13 +78,38 @@ if (currentAdminRole() === 'teacher') {
 }
 
 $classes = markazSortAndDeduplicateClasses($stmt->fetchAll());
-$totalStudents = (int) db()->query(
-    'SELECT COUNT(DISTINCT s.id)
-     FROM students s
-     WHERE s.is_active = 1
-       AND (s.class_id IS NOT NULL
-            OR COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) IS NOT NULL)'
-)->fetchColumn();
+if (currentAdminRole() === 'teacher') {
+    $totalStudentsStmt = db()->prepare(
+        'SELECT COUNT(DISTINCT s.id)
+         FROM students s
+         WHERE s.is_active = 1
+           AND (
+               EXISTS (
+                   SELECT 1 FROM teacher_assignments ta
+                   WHERE ta.account_id = ? AND ta.class_type = "conventional"
+                     AND ta.class_id = s.class_id AND ta.subject_id IS NULL
+                     AND ta.is_active = 1
+               )
+               OR EXISTS (
+                   SELECT 1 FROM teacher_assignments ta
+                   WHERE ta.account_id = ? AND ta.class_type = "arabic"
+                     AND ta.class_id = COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)
+                     AND ta.subject_id IS NULL AND ta.is_active = 1
+               )
+           )'
+    );
+    $accountId = (int) ($_SESSION['admin_id'] ?? 0);
+    $totalStudentsStmt->execute([$accountId, $accountId]);
+    $totalStudents = (int) $totalStudentsStmt->fetchColumn();
+} else {
+    $totalStudents = (int) db()->query(
+        'SELECT COUNT(DISTINCT s.id)
+         FROM students s
+         WHERE s.is_active = 1
+           AND (s.class_id IS NOT NULL
+                OR COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) IS NOT NULL)'
+    )->fetchColumn();
+}
 echo json_encode([
     'success' => true,
     'classes' => $classes,
