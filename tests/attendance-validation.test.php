@@ -35,7 +35,7 @@ check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes th
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 $reportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
-check(str_contains($classesApi, '$conventionalOrder') && str_contains($classesApi, "'kg', 'primary 1', 'primary 2', 'nursery 1', 'nursery 2'") && str_contains($classesApi, "'basic 6'") && str_contains($classesApi, "'ss 3'"), 'uses the requested conventional school class hierarchy');
+check(str_contains($classesApi, '$conventionalOrder') && str_contains($classesApi, "'kg', 'primary 1', 'primary 2', 'nursery 1', 'nursery 2'") && !str_contains($classesApi, "'basic 6'") && str_contains($classesApi, "'ss 3'"), 'uses the requested conventional school class hierarchy');
 check(str_contains($classesApi, '$arabicOrder') && str_contains($classesApi, "'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani'") && str_contains($classesApi, "'faslu sadis'"), 'uses the requested ascending Arabic class hierarchy');
 check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
