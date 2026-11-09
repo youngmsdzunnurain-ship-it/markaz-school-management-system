@@ -780,15 +780,22 @@ async function loadDashboardAttendance() {
 
             let rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
 
-            // Keep Arabic-category class names out of the Conventional chart,
-            // without suppressing any other Conventional classes (including SS 1-3).
+            // Arabic class labels must never leak into the Conventional chart.
+            // Match the established Arabic hierarchy aliases, while retaining all
+            // conventional classes (including SS 1, SS 2 and SS 3).
             if (type === "conventional") {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
                 const arabicOnlyLabels = new Set([
-                    "roudohula", "roudohthani",
-                    "fasluawal", "fasluthani", "fasluthalith",
-                    "faslurabia", "faslukhamis", "faslusadis"
+                    "agabia", "agabiya",
+                    "farabia", "farabiyyah", "farabiyya",
+                    "roudohula", "roudahula", "raudahula", "raudhoula", "roudohawwal", "roudahawwal",
+                    "roudohthani", "roudahthani", "raudahthani", "roudohsani", "roudahsani", "raudahsani",
+                    "fasluawal", "fasluawwal", "fasluula",
+                    "fasluthani", "faslusani",
+                    "fasluthalith", "fasluthali", "faslusalis",
+                    "faslurobi", "faslurabi", "faslurabia",
+                    "faslusali", "faslukhamis", "faslusadis"
                 ]);
                 rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
             }
