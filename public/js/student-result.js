@@ -23,6 +23,7 @@ let currentUserPermissions = {
     can_print_results: false,
     can_export_results: false
 };
+let studentDocumentPermissionsResolved = !isStudentPortalView || !isPrintMode;
 let lastFocusedScoreInput = null;
 
 function escapeHtml(value) {
@@ -341,6 +342,8 @@ async function loadStudentResult() {
             };
         }
     }
+
+    if (isStudentPortalView && isPrintMode) studentDocumentPermissionsResolved = true;
 
     if (resultPrintBlocked) {
         showResultPrintBlockedNotice(resultPrintBlocked);
@@ -1764,16 +1767,37 @@ function setEditMode(editing) {
         cancelScoresButton.hidden = !editing;
     }
 
-    if (printStudentResultButton) {
-        printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
-    }
-    if (downloadStudentPdfButton) {
-        downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
-    }
-    if (resultDocumentActions) {
-        // Print and Export remain independently available on the dedicated page.
-        resultDocumentActions.hidden = !isPrintMode || editing || !studentData
-            || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
+    if (isStudentPortalView && studentDocumentPermissionsResolved) {
+        // Disabled student actions must not exist in the page at all.
+        if (!currentUserPermissions.can_print_results) printStudentResultButton?.remove();
+        else if (printStudentResultButton) printStudentResultButton.hidden = !isPrintMode;
+
+        if (!currentUserPermissions.can_export_results) downloadStudentPdfButton?.remove();
+        else if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = !isPrintMode;
+
+        if (resultDocumentActions) {
+            const hasStudentDocumentAction = Boolean(
+                (currentUserPermissions.can_print_results && printStudentResultButton?.isConnected) ||
+                (currentUserPermissions.can_export_results && downloadStudentPdfButton?.isConnected)
+            );
+            resultDocumentActions.hidden = !isPrintMode || editing || !studentData || !hasStudentDocumentAction;
+            if (!hasStudentDocumentAction) resultDocumentActions.remove();
+        }
+    } else if (isStudentPortalView) {
+        if (printStudentResultButton) printStudentResultButton.hidden = true;
+        if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = true;
+        if (resultDocumentActions) resultDocumentActions.hidden = true;
+    } else {
+        if (printStudentResultButton) {
+            printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
+        }
+        if (downloadStudentPdfButton) {
+            downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
+        }
+        if (resultDocumentActions) {
+            resultDocumentActions.hidden = !isPrintMode || editing || !studentData
+                || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
+        }
     }
 
     if (studentData) {

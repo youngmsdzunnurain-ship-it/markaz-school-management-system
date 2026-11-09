@@ -1,0 +1,244 @@
+/* MARKAZ Account Devices — structured, responsive security workspace */
+.account-devices-card {
+    --device-green: #176b45;
+    --device-green-dark: #104d33;
+    --device-gold: #c79a35;
+    --device-border: #e1e9e3;
+    --device-muted: #64756b;
+    width: 100%;
+    min-width: 0;
+}
+
+.account-devices-card .settings-card-heading {
+    align-items: flex-start;
+    margin-bottom: 22px;
+}
+
+.account-device-section {
+    min-width: 0;
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid var(--device-border);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fbf9 100%);
+    box-shadow: 0 8px 24px rgba(20, 55, 37, .045);
+}
+
+.account-device-section + .account-device-section {
+    margin-top: 18px;
+}
+
+.account-device-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.account-device-section-heading h3 {
+    margin: 0;
+    color: #173d2b;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -.015em;
+}
+
+.account-device-section-heading p {
+    max-width: 720px;
+    margin: 6px 0 0;
+    color: var(--device-muted);
+    font-size: .86rem;
+    line-height: 1.55;
+}
+
+.account-device-table-wrap {
+    width: 100%;
+    overflow: auto;
+    border: 1px solid var(--device-border);
+    border-radius: 13px;
+    background: #fff;
+    scrollbar-width: thin;
+}
+
+.account-device-table {
+    width: 100%;
+    min-width: 780px;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.account-device-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 13px 14px;
+    border-bottom: 1px solid #dce6df;
+    background: #f0f6f2;
+    color: #456252;
+    font-size: .7rem;
+    font-weight: 850;
+    letter-spacing: .065em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.account-device-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #edf1ee;
+    color: #263b30;
+    font-size: .84rem;
+    line-height: 1.45;
+    vertical-align: middle;
+}
+
+.account-device-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.account-device-table tbody tr:hover {
+    background: #f8fbf9;
+}
+
+.account-device-agent {
+    max-width: 250px;
+    color: #63736a !important;
+    overflow-wrap: anywhere;
+}
+
+.account-device-duration {
+    color: var(--device-green-dark) !important;
+    font-size: .92rem !important;
+    font-weight: 850;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.account-device-state {
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.account-device-state::before {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin: 0 7px 1px 0;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+}
+
+.account-device-state.is-active,
+.account-device-state.is-allowed {
+    color: #16734a !important;
+}
+
+.account-device-state.is-inactive {
+    color: #77837c !important;
+}
+
+.account-device-state.is-blocked {
+    color: #b43d36 !important;
+}
+
+.account-device-secondary,
+.account-device-danger {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 13px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.account-device-secondary {
+    border-color: #cbded1;
+    background: #edf6f0;
+    color: #145c38;
+}
+
+.account-device-secondary:hover {
+    border-color: #a8cbb5;
+    background: #e1f0e6;
+}
+
+.account-device-danger {
+    border-color: #f0d0ca;
+    background: #fff3f0;
+    color: #a7352d;
+}
+
+.account-device-danger:hover {
+    border-color: #e5aaa1;
+    background: #ffe8e3;
+}
+
+.account-device-secondary:active,
+.account-device-danger:active {
+    transform: translateY(1px);
+}
+
+.account-device-secondary:disabled,
+.account-device-danger:disabled {
+    cursor: wait;
+    opacity: .58;
+}
+
+.account-device-secondary:focus-visible,
+.account-device-danger:focus-visible {
+    outline: 3px solid rgba(199, 154, 53, .42);
+    outline-offset: 3px;
+}
+
+.account-device-status {
+    min-height: 22px;
+    margin: 0 0 10px;
+    color: var(--device-muted);
+    font-size: .82rem;
+}
+
+.account-device-status:empty {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    .account-device-section {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .account-device-section-heading {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .account-device-section-heading > button {
+        align-self: flex-start;
+    }
+
+    .account-device-table {
+        min-width: 720px;
+    }
+}
+
+@media (max-width: 420px) {
+    .account-device-section {
+        padding: 11px;
+    }
+
+    .account-device-section-heading h3 {
+        font-size: .98rem;
+    }
+
+    .account-device-section-heading p {
+        font-size: .8rem;
+    }
+}

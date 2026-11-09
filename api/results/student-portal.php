@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/device-activity-schema.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -143,6 +144,10 @@ try {
     if (!$published) {
         studentPortalError(404, 'No results have been published for this student in the selected term and session.');
     }
+
+
+
+    ensureDeviceActivitySchema($pdo);
 
     $_SESSION['student_portal_result_access'] = [
         'student_id' => (int) $student['id'],

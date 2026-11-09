@@ -38,7 +38,7 @@ function requireLogin(): void
             'account_frozen' => $isFrozen !== false,
             'message' => $isFrozen === false
                 ? 'This account is no longer available.'
-                : 'This account has been frozen by the Senior Admin. Contact the school administrator.'
+                : 'This account has been blocked.'
         ]);
         exit;
     }
@@ -61,7 +61,7 @@ function requireLogin(): void
             echo json_encode([
                 'success' => false,
                 'device_blocked' => true,
-                'message' => 'This device has been blocked for this account by the Senior Admin.'
+                'message' => 'This account has been blocked.'
             ]);
             exit;
         }

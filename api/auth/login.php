@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/device-activity-schema.php';
 require_once __DIR__ . '/../../app/middleware/session.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -50,6 +51,7 @@ if ($loginIdentifier === '' || $password === '') {
 }
 
 $pdo = db();
+ensureDeviceActivitySchema($pdo);
 $pdo->exec("CREATE TABLE IF NOT EXISTS login_devices (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     account_id BIGINT UNSIGNED NOT NULL,
@@ -67,6 +69,8 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS login_devices (
     CONSTRAINT fk_login_devices_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE CASCADE,
     CONSTRAINT fk_login_devices_blocked_by FOREIGN KEY (blocked_by) REFERENCES admins(id) ON DELETE SET NULL
 ) ENGINE=InnoDB");
+
+
 
 // Ensure failed-login tracking exists on installations that predate this table.
 try {
@@ -210,7 +214,7 @@ if (!empty($admin['is_frozen'])) {
     echo json_encode([
         'success' => false,
         'account_frozen' => true,
-        'message' => 'This account has been frozen by the Senior Admin. Contact the school administrator.'
+        'message' => 'This account has been blocked.'
     ]);
     exit;
 }
@@ -230,7 +234,7 @@ if ((int) $deviceCheckStmt->fetchColumn() === 1) {
     echo json_encode([
         'success' => false,
         'device_blocked' => true,
-        'message' => 'This device has been blocked for this account by the Senior Admin. The account can still be used from another device.'
+        'message' => 'This account has been blocked.'
     ]);
     exit;
 }

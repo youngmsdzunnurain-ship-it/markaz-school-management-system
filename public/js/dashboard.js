@@ -389,6 +389,9 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         <div class="profile-dropdown-divider"></div>
 
+        <a href="./settings.html" class="profile-dropdown-item" data-role-access="admin_or_exam_officer">
+            Settings
+        </a>
         <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
             Logout
         </button>
