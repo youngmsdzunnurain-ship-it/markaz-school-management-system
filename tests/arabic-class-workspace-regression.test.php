@@ -52,7 +52,7 @@ arabicClassWorkspaceCheck(
 
 arabicClassWorkspaceCheck(
     str_contains($classPageHtml, 'id="saveClassButton"')
-        && !str_contains($classPageHtml, "            </div>\\n\\n            </div>\\n\\n        </form>"),
+        && !str_contains($classPageHtml, "            </div>\n\n            </div>\n\n        </form>"),
     'class save button is addressable and the modal form has balanced structure'
 );
 arabicClassWorkspaceCheck(
@@ -61,4 +61,4 @@ arabicClassWorkspaceCheck(
     'Settings appears once in the management navigation, not in both sidebar and profile menu'
 );
 
-echo "Arabic class workspace regression tests passed (6 checks).\\n";
+echo "Arabic class workspace regression tests passed (6 checks).\n";
