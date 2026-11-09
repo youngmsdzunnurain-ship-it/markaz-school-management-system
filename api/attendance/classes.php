@@ -26,6 +26,9 @@ if ($role === 'teacher') {
          WHERE ta.account_id = ? AND ta.class_type = 'conventional'
            AND ta.is_active = 1 AND c.is_active = 1
            AND (c.level_group IS NULL OR c.level_group <> 'Quranic')
+           AND LOWER(TRIM(c.name)) NOT REGEXP '^agabiya([[:space:]-]|$)'
+           AND LOWER(TRIM(c.name)) NOT REGEXP '^agabiya([[:space:]-]|$)'
+           AND LOWER(TRIM(c.name)) NOT REGEXP '^agabiya([[:space:]-]|$)'
           "
     );
     $stmt->execute([$accountId]);
