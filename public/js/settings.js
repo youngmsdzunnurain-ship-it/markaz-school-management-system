@@ -1140,7 +1140,7 @@ loadAcademicPeriodSettings();
       <p id="markazDeviceStatus" role="status" aria-live="polite"></p>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse">
-          <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Last used</th><th>Status</th><th>Action</th></tr></thead>
+          <thead><tr><th>Account</th><th>Role</th><th>Device / Browser</th><th>Last sign-in</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="markazDeviceRows"></tbody>
         </table>
       </div>
