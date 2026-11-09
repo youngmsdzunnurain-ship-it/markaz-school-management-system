@@ -23,6 +23,7 @@ let currentUserPermissions = {
     can_print_results: false,
     can_export_results: false
 };
+let studentDocumentPermissionsResolved = !isStudentPortalView || !isPrintMode;
 let lastFocusedScoreInput = null;
 
 function escapeHtml(value) {
@@ -341,6 +342,8 @@ async function loadStudentResult() {
             };
         }
     }
+
+    if (isStudentPortalView && isPrintMode) studentDocumentPermissionsResolved = true;
 
     if (resultPrintBlocked) {
         showResultPrintBlockedNotice(resultPrintBlocked);
@@ -1764,7 +1767,7 @@ function setEditMode(editing) {
         cancelScoresButton.hidden = !editing;
     }
 
-    if (isStudentPortalView) {
+    if (isStudentPortalView && studentDocumentPermissionsResolved) {
         // Disabled student actions must not exist in the page at all.
         if (!currentUserPermissions.can_print_results) printStudentResultButton?.remove();
         else if (printStudentResultButton) printStudentResultButton.hidden = !isPrintMode;
@@ -1780,6 +1783,10 @@ function setEditMode(editing) {
             resultDocumentActions.hidden = !isPrintMode || editing || !studentData || !hasStudentDocumentAction;
             if (!hasStudentDocumentAction) resultDocumentActions.remove();
         }
+    } else if (isStudentPortalView) {
+        if (printStudentResultButton) printStudentResultButton.hidden = true;
+        if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = true;
+        if (resultDocumentActions) resultDocumentActions.hidden = true;
     } else {
         if (printStudentResultButton) {
             printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
