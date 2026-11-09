@@ -16,6 +16,8 @@ $classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
 $classResultsApi = file_get_contents(__DIR__ . '/../api/results/class.php');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 $completionApi = file_get_contents(__DIR__ . '/../api/results/class-completion.php');
+$studentListApi = file_get_contents(__DIR__ . '/../api/students/list.php');
+$attendanceReportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 $studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 $arabicNamesHelper = file_get_contents(__DIR__ . '/../app/helpers/arabic-class-names.php');
 $settingsNavigationJs = file_get_contents(__DIR__ . '/../public/js/settings-panel-navigation.js');
@@ -67,7 +69,10 @@ arabicClassWorkspaceCheck(
         && str_contains($classListApi, 'markazCanonicalArabicClassName')
         && str_contains($classResultsApi, 'markazCanonicalArabicClassName')
         && str_contains($studentResultApi, 'markazCanonicalArabicClassName')
-        && str_contains($studentResultApi, 'COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)'),
+        && str_contains($studentResultApi, 'COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)')
+        && str_contains($studentListApi, 'markazCanonicalArabicClassName')
+        && str_contains($studentListApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id)')
+        && str_contains($attendanceReportsApi, 'markazCanonicalArabicClassName'),
     'canonical Arabic spellings are used by class lists, class results, and printable student results with legacy assignments'
 );
 arabicClassWorkspaceCheck(
