@@ -91,7 +91,7 @@ unset($class);
 
 $conventionalOrder = [
     'kg', 'primary 1', 'primary 2', 'nursery 1', 'nursery 2',
-    'basic 1', 'basic 2', 'basic 3', 'basic 4', 'basic 5', 'basic 6',
+    'basic 1', 'basic 2', 'basic 3', 'basic 4', 'basic 5',
     'jss 1', 'jss 2', 'jss 3', 'ss 1', 'ss 2', 'ss 3',
 ];
 $arabicOrder = [
