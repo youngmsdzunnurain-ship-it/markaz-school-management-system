@@ -114,40 +114,7 @@
   const allCategories = findSections();
   if (!allCategories.length) return;
 
-  let currentRole = "admin";
-  try {
-    const response = await fetch("./api/auth/me.php", {
-      credentials: "same-origin",
-      cache: "no-store",
-      headers: { Accept: "application/json" }
-    });
-    const account = await response.json();
-    if (!response.ok || !account.success || !account.admin) {
-      window.location.replace("login.html");
-      return;
-    }
-    currentRole = account.admin.role;
-    if (!["admin", "exam_officer"].includes(currentRole)) { window.location.replace("dashboard.html"); return; }
-  } catch {
-    window.location.replace("login.html");
-    return;
-  }
-
-  const isExamOfficer = currentRole === "exam_officer";
-  const examOfficerCategoryIds = new Set([
-    "profile", "result-release", "academic-archive", "academic", "results", "memorization"
-  ]);
-  const categories = isExamOfficer
-    ? allCategories.filter(category => examOfficerCategoryIds.has(category.id))
-    : allCategories;
-
-  if (isExamOfficer) {
-    page.querySelectorAll(":scope > section.settings-card").forEach(section => {
-      section.hidden = true;
-    });
-    const resetCard = page.querySelector(".academic-reset-settings-card");
-    if (resetCard) resetCard.hidden = true;
-  }
+  const categories = allCategories;
 
   const nav = document.createElement("nav");
   nav.id = "settingsCategoryNav";
@@ -201,6 +168,41 @@
   });
 
   activate("profile");
-  // Shared settings retain identical names across Admin and Exam Officer portals.
+
+  // Render the Settings navigation immediately; resolve permissions in the background.
   document.documentElement.classList.remove("settings-page-pending");
+
+  fetch("./api/auth/me.php", {
+    credentials: "same-origin",
+    cache: "no-store",
+    headers: { Accept: "application/json" }
+  }).then(async response => {
+    const account = await response.json();
+    if (!response.ok || !account.success || !account.admin) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    const role = account.admin.role;
+    if (role === "admin") return;
+    if (role !== "exam_officer") {
+      window.location.replace("dashboard.html");
+      return;
+    }
+
+    const allowedIds = new Set([
+      "profile", "result-release", "academic-archive", "academic", "results", "memorization"
+    ]);
+    categories.forEach(category => {
+      if (allowedIds.has(category.id)) return;
+      category.elements.forEach(element => { element.hidden = true; });
+      buttons.get(category.id)?.remove();
+      buttons.delete(category.id);
+    });
+    const allowedCategories = categories.filter(category => allowedIds.has(category.id));
+    categories.splice(0, categories.length, ...allowedCategories);
+    activate("profile");
+  }).catch(() => {
+    window.location.replace("login.html");
+  });
 })();
