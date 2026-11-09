@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
 require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
+require_once __DIR__ . '/../../app/helpers/arabic-class-names.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
