@@ -41,6 +41,11 @@ teacherPortalCheck(
     'Dashboard statistics endpoint returns assignment-scoped teacher workspace data before admin-only handling'
 );
 teacherPortalCheck(
+    str_contains($dashboardApi, 'markazSortAndDeduplicateClasses') &&
+    str_contains($dashboardApi, 'orderedAssignments'),
+    'Teacher dashboard class assignments use the shared lowest-to-highest hierarchy'
+);
+teacherPortalCheck(
     str_contains($dashboardApi, 'assigned_students') &&
     str_contains($dashboardApi, 'assigned_classes') &&
     str_contains($dashboardApi, 'assigned_subjects'),
