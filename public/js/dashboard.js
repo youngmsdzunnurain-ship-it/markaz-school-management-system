@@ -234,12 +234,14 @@ async function logout() {
         button.disabled = true;
     });
 
+    let logoutRole = String(window.markazCurrentRole || "").toLowerCase();
     try {
-        let signedInRole = String(window.markazCurrentRole || "").toLowerCase();
+        let signedInRole = logoutRole;
         if (!signedInRole) {
             const identityResponse = await fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" } });
             const identity = await identityResponse.json();
             signedInRole = String(identity?.admin?.role || "").toLowerCase();
+            logoutRole = signedInRole;
         }
         const response = await fetch("./api/auth/logout.php", {
             method: "POST",
@@ -281,7 +283,7 @@ async function logout() {
         management: "./management-login.html",
         student: "./student-login.html"
     };
-    const signedInRole = String(window.markazCurrentRole || "").toLowerCase();
+    const signedInRole = logoutRole || String(window.markazCurrentRole || "").toLowerCase();
     window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
 }
 
