@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../../app/config/app.php';
 require_once __DIR__ . '/../../../app/middleware/auth.php';
 require_once __DIR__ . '/../../../app/helpers/result-progress.php';
+require_once __DIR__ . '/../../../app/helpers/class-hierarchy.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -15,7 +16,8 @@ if ($role === 'teacher') {
         $accountId = (int) ($_SESSION['admin_id'] ?? 0);
         $assignmentStmt = $pdo->prepare(
             'SELECT ta.class_type, ta.class_id, ta.subject_id,
-                    CASE WHEN ta.class_type = "arabic" THEN ac.name ELSE c.name END AS class_name
+                    CASE WHEN ta.class_type = "arabic" THEN ac.name ELSE c.name END AS class_name,
+                    CASE WHEN ta.class_type = "arabic" THEN ac.sort_order ELSE c.sort_order END AS sort_order
              FROM teacher_assignments ta
              LEFT JOIN classes c ON ta.class_type = "conventional" AND c.id = ta.class_id
              LEFT JOIN arabic_classes ac ON ta.class_type = "arabic" AND ac.id = ta.class_id
@@ -35,6 +37,7 @@ if ($role === 'teacher') {
                     'class_id' => (int) $row['class_id'],
                     'class_type' => $row['class_type'],
                     'class_name' => $row['class_name'] ?: 'Assigned class',
+                    'sort_order' => (int) ($row['sort_order'] ?? 0),
                     'full_class' => false,
                     'subjects' => [],
                     'student_count' => 0,
@@ -97,6 +100,19 @@ if ($role === 'teacher') {
             }
         }
 
+        $orderedAssignments = markazSortAndDeduplicateClasses(array_map(
+            static function (array $assignment): array {
+                $assignment['id'] = $assignment['class_id'];
+                $assignment['name'] = $assignment['class_name'];
+                return $assignment;
+            },
+            array_values($grouped)
+        ));
+        $orderedAssignments = array_map(static function (array $assignment): array {
+            unset($assignment['id'], $assignment['name']);
+            return $assignment;
+        }, $orderedAssignments);
+
         echo json_encode([
             'success' => true,
             'role' => 'teacher',
@@ -105,7 +121,7 @@ if ($role === 'teacher') {
                 'assigned_classes' => count($grouped),
                 'assigned_subjects' => count($assignedSubjectIds),
             ],
-            'assignments' => array_values($grouped),
+            'assignments' => $orderedAssignments,
         ], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
         exit;
     } catch (Throwable $error) {
