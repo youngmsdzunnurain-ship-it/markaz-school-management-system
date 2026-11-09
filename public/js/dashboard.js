@@ -780,12 +780,23 @@ async function loadDashboardAttendance() {
 
             let rows = allClasses.filter(item => String(item.class_type || "").trim().toLowerCase() === type);
 
-            // Exclude only the stray Agabia entry from the Conventional chart.
-            // Keep SS 1, SS 2, SS 3 and every other Conventional class visible.
+            // Arabic class labels must never leak into the Conventional chart.
+            // Match the established Arabic hierarchy aliases, while retaining all
+            // conventional classes (including SS 1, SS 2 and SS 3).
             if (type === "conventional") {
                 const normaliseClassLabel = value => String(value || "")
                     .toLowerCase().replace(/[^a-z0-9]/g, "");
-                rows = rows.filter(item => normaliseClassLabel(item.class_name) !== "agabia");
+                const arabicOnlyLabels = new Set([
+                    "farabia", "farabiyyah", "farabiyya",
+                    "roudohula", "roudahula", "raudahula", "raudhoula", "roudohawwal", "roudahawwal",
+                    "roudohthani", "roudahthani", "raudahthani", "roudohsani", "roudahsani", "raudahsani",
+                    "fasluawal", "fasluawwal", "fasluula",
+                    "fasluthani", "faslusani",
+                    "fasluthalith", "fasluthali", "faslusalis",
+                    "faslurobi", "faslurabi", "faslurabia",
+                    "faslusali", "faslukhamis", "faslusadis"
+                ]);
+                rows = rows.filter(item => !arabicOnlyLabels.has(normaliseClassLabel(item.class_name)));
             }
             const categoryValues = [
                 { label: "Present", value: rows.reduce((sum, item) => sum + Number(item.present_count || 0), 0), color: "#2a8f58" },
