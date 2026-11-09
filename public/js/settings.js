@@ -849,7 +849,7 @@ loadAcademicPeriodSettings();
       <input id="markazSupportNumber" name="whatsapp_number" type="tel"
         inputmode="tel" autocomplete="tel" required value="07048657955"
         placeholder="e.g. 07048657955 or +2347048657955">
-      <button type="submit">Save Support Number</button>
+      <button type="submit" id="saveSupportContactButton">Save Support Number</button>
       <p id="markazSupportStatus" role="status" aria-live="polite"></p>
     </form>`;
   host.appendChild(section);
@@ -867,6 +867,9 @@ loadAcademicPeriodSettings();
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
+    const saveButton = form.querySelector("#saveSupportContactButton");
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving…";
     status.textContent = "Saving…";
     try {
       const response = await fetch("./api/settings/support-contact.php", {
@@ -878,8 +881,13 @@ loadAcademicPeriodSettings();
       if (!response.ok || !data.success) throw new Error(data.message || "Save failed.");
       input.value = data.whatsapp_number || input.value;
       status.textContent = data.message || "Support WhatsApp number saved.";
+      saveButton.textContent = "Saved";
     } catch (error) {
       status.textContent = error.message || "Could not save the support number.";
+      saveButton.textContent = "Retry";
+    } finally {
+      saveButton.disabled = false;
+      window.setTimeout(() => { saveButton.textContent = "Save Support Number"; }, 1400);
     }
   });
 })();
