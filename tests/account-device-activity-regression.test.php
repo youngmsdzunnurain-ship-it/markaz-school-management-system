@@ -39,7 +39,7 @@ deviceActivityAssert(
 deviceActivityAssert(
     str_contains($migration, 'total_active_seconds') &&
     str_contains($migration, 'duration_seconds') &&
-    str_contains($migration, 'session_hash'),
+    str_contains($migration, 'client_session_id'),
     'device activity stores accumulated active time in persistent session records'
 );
 deviceActivityAssert(
@@ -61,7 +61,7 @@ deviceActivityAssert(
     'browser activity tracking counts active visible usage and closes or pauses sessions'
 );
 deviceActivityAssert(
-    str_contains($settingsScript, 'markazDeviceUsage') &&
+    str_contains($settingsScript, 'markazActivityRows') &&
     str_contains($settingsScript, 'total_active_seconds') &&
     str_contains($settingsScript, 'Clear Activity History'),
     'Account Devices shows usage duration and gives the Admin a clear-history action'
@@ -83,7 +83,7 @@ deviceActivityAssert(
 );
 deviceActivityAssert(
     str_contains($studentPortalApi, 'student_id') &&
-    str_contains($studentPortalScript, 'MarkazDeviceActivity') &&
+    str_contains($studentPortalScript, 'student_portal') &&
     str_contains($studentLoginHtml, 'device-activity.js') &&
     str_contains($studentReportHtml, 'device-activity.js'),
     'student result lookups and official report viewing are included in device activity tracking'
@@ -95,8 +95,8 @@ deviceActivityAssert(
     'blocked-account messaging does not disclose the blocking administrator or suggest a device bypass'
 );
 deviceActivityAssert(
-    str_contains($resultScript, 'printStudentResultButton.remove()') &&
-    str_contains($resultScript, 'downloadStudentPdfButton.remove()'),
+    str_contains($resultScript, 'printStudentResultButton?.remove()') &&
+    str_contains($resultScript, 'downloadStudentPdfButton?.remove()'),
     'student result portal removes unavailable Print and Download PDF actions from the DOM'
 );
 
