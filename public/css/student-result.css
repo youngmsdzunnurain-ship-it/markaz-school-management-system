@@ -11523,22 +11523,6 @@ body.student-portal-result-view .student-information .student-class-row > .detai
 }
 
 
-/* Shared student information treatment for portal, Teacher, Exam Officer and Admin screens. */
-@media screen and (max-width:760px) {
- .student-information .student-profile-grid { display:grid!important;grid-template-columns:76px minmax(0,1fr)!important;align-items:start!important;gap:12px!important;min-width:0!important; }
- .student-information .student-photo { display:flex!important;grid-column:1!important;grid-row:1!important;width:76px!important;height:76px!important;min-width:76px!important;overflow:hidden!important;align-self:start!important; }
- .student-information .student-photo img { display:block!important;width:100%!important;height:100%!important;object-fit:cover!important; }
- .student-information .student-details { display:grid!important;width:100%!important;min-width:0!important;grid-column:2!important;grid-row:1!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important; }
- .student-information .student-name-item { grid-column:1/-1!important; }
- .student-information .student-details .detail-item { min-width:0!important; }
- .student-information .student-details .detail-item strong { max-width:100%!important;overflow-wrap:anywhere!important; }
-}
-@media screen and (max-width:420px) {
- .student-information .student-details { grid-template-columns:minmax(0,1fr)!important; }
- .student-information .student-name-item { grid-column:auto!important; }
-}
-
-
 /* Complete the reference portrait frame with green and gold vertical rails beside the photo. */
 @media screen and (min-width: 761px) {
   .student-information .student-photo {
@@ -11645,13 +11629,14 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         overflow: visible !important;
     }
 
+    /* Reference mobile Behavioural Report: one full-width rating card per row. */
     body:not(.student-portal-result-view) .report-card .behaviour-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-columns: minmax(0, 1fr) !important;
         grid-auto-flow: row !important;
         width: 100% !important;
         min-width: 0 !important;
-        gap: 8px !important;
+        gap: 9px !important;
         padding: 10px !important;
         box-sizing: border-box !important;
     }
@@ -11664,8 +11649,9 @@ body.student-portal-result-view .student-information .student-class-row > .detai
         gap: 8px !important;
         width: auto !important;
         min-width: 0 !important;
-        min-height: 56px !important;
-        padding: 9px !important;
+        min-height: 58px !important;
+        padding: 10px 12px !important;
+        border-radius: 12px !important;
         box-sizing: border-box !important;
     }
 
@@ -11677,9 +11663,9 @@ body.student-portal-result-view .student-information .student-class-row > .detai
 
     body:not(.student-portal-result-view) .report-card .behaviour-item select {
         flex: 0 0 auto !important;
-        min-width: 82px !important;
-        max-width: 46% !important;
-        height: 34px !important;
+        min-width: 112px !important;
+        max-width: 48% !important;
+        height: 38px !important;
     }
 }
 
