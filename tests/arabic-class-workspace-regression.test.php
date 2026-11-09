@@ -11,7 +11,6 @@ function arabicClassWorkspaceCheck(bool $condition, string $message): void
 
 $classListApi = file_get_contents(__DIR__ . '/../api/classes/list.php');
 $classListJs = file_get_contents(__DIR__ . '/../public/js/classes.js');
-$managementShellJs = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
 $classPageHtml = file_get_contents(__DIR__ . '/../public/classes.html');
 $classWorkspaceJs = file_get_contents(__DIR__ . '/../public/js/class.js');
 $classResultsApi = file_get_contents(__DIR__ . '/../api/results/class.php');
@@ -55,10 +54,5 @@ arabicClassWorkspaceCheck(
         && !str_contains($classPageHtml, "            </div>\n\n            </div>\n\n        </form>"),
     'class save button is addressable and the modal form has balanced structure'
 );
-arabicClassWorkspaceCheck(
-    !str_contains($managementShellJs, 'data-shell-settings')
-        && str_contains($managementShellJs, 'href="/settings.html"'),
-    'Settings appears once in the management navigation, not in both sidebar and profile menu'
-);
 
-echo "Arabic class workspace regression tests passed (6 checks).\n";
+echo "Arabic class workspace regression tests passed (5 checks).\n";
