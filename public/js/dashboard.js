@@ -219,7 +219,7 @@ function toggleProfileDropdown() {
     }
 }
 
-async function logout() {
+async function logout(event) {
     const clickedButton = event?.currentTarget;
     const logoutButtons = [...document.querySelectorAll(
         "#logoutButton, #profileLogoutButton, .profile-dropdown-item.logout, #topProfileLogoutButton"
