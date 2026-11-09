@@ -234,7 +234,15 @@ async function logout() {
         button.disabled = true;
     });
 
+    let logoutRole = String(window.markazCurrentRole || "").toLowerCase();
     try {
+        let signedInRole = logoutRole;
+        if (!signedInRole) {
+            const identityResponse = await fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" } });
+            const identity = await identityResponse.json();
+            signedInRole = String(identity?.admin?.role || "").toLowerCase();
+            logoutRole = signedInRole;
+        }
         const response = await fetch("./api/auth/logout.php", {
             method: "POST",
             credentials: "same-origin",
@@ -275,7 +283,7 @@ async function logout() {
         management: "./management-login.html",
         student: "./student-login.html"
     };
-    const signedInRole = String(window.markazCurrentRole || "").toLowerCase();
+    const signedInRole = logoutRole || String(window.markazCurrentRole || "").toLowerCase();
     window.location.replace(roleLoginPaths[signedInRole] || "./login.html");
 }
 
@@ -574,7 +582,7 @@ function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
-    const conventionalOrder = ["KG", "Pre-Nursery 1", "Pre-Nursery 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JSS 1", "JSS 2", "JSS 3", "SS 1"];
+    const conventionalOrder = ["KG", "Primary 1", "Primary 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "Basic 6", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"];
     const arabicOrder = ["Roudoh Awwal", "Roudoh Sani", "Faslu Ula", "Faslu Sani", "Faslu Salis", "Faslu Rabi'", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");

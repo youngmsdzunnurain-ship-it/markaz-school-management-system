@@ -35,7 +35,8 @@ check(is_file(__DIR__ . '/../public/api/attendance/register.php'), 'publishes th
 $classesApi = file_get_contents(__DIR__ . '/../api/attendance/classes.php');
 $reportsApi = file_get_contents(__DIR__ . '/../api/attendance/reports.php');
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
-check(str_contains($classesApi, 'sort_order') && str_contains($classesApi, '$a[\'sort_order\'] <=> $b[\'sort_order\']'), 'preserves configured class hierarchy after combining categories');
+check(str_contains($classesApi, '$conventionalOrder') && str_contains($classesApi, "'kg', 'primary 1', 'primary 2', 'nursery 1', 'nursery 2'") && str_contains($classesApi, "'basic 6'") && str_contains($classesApi, "'ss 3'"), 'uses the requested conventional school class hierarchy');
+check(str_contains($classesApi, '$arabicOrder') && str_contains($classesApi, "'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani'") && str_contains($classesApi, "'faslu sadis'"), 'uses the requested ascending Arabic class hierarchy');
 check(str_contains($classesApi, 'COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id AND s.is_active = 1'), 'counts active Arabic students using the current field with legacy Arabic class fallback');
 check(str_contains($classesApi, 's.class_id = c.id AND s.is_active = 1'), 'counts active conventional students against conventional class assignments');
 check(str_contains($classesApi, "'conventional' AS class_type") && str_contains($classesApi, "'arabic' AS class_type"), 'returns conventional and Arabic classes with explicit independent type labels');
@@ -44,6 +45,8 @@ check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi
 check(str_contains($reportsApi, 'student_count_sql') && str_contains($reportsApi, 'AS student_count'), 'attendance reports provide the active class roster denominator for present-rate charts');
 check(!str_contains($reportsApi, 'NOT EXISTS') && !str_contains($reportsApi, 'arabic_class.name'), 'school reports include same-named conventional and Arabic classes independently');
 check(str_contains($attendanceJs, 'item.class_type === type'), 'attendance class dropdown filters strictly by selected class category');
+check(str_contains($attendanceJs, 'hasSingleAssignedClass') && str_contains($attendanceJs, 'attendanceClassField.hidden = hasSingleAssignedClass'), 'hides the class dropdown when a teacher has exactly one assigned class');
+check(str_contains($attendanceJs, 'Promise.all([periodsReady, loadClasses()])') && str_contains($attendanceJs, 'if (state.role === "teacher" && state.classId)'), 'waits for periods and assignments, then auto-loads the sole teacher class');
 check(str_contains($attendanceJs, 'requestJson("./api/attendance/classes.php")') && str_contains($attendanceJs, 'available_class_types'), 'attendance page loads assigned categories once so it can auto-select a single teacher category and filter locally');
 check(str_contains($classesApi, '$classTypeFilter') && str_contains($classesApi, '$class[\'class_type\'] === $classTypeFilter'), 'attendance class API filters by class_type on the server');
 
