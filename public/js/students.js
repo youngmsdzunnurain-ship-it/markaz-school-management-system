@@ -335,53 +335,53 @@ function renderStudents() {
 
         return `
             <tr>
-                <td>
+                <td data-label="Student">
                     <div class="student-name-cell">
                         ${studentAvatar}
                         <strong>${escapeHtml(fullName)}</strong>
                     </div>
                 </td>
 
-                <td class="student-parent-name-cell">
+                <td class="student-parent-name-cell" data-label="Parent / Guardian">
                     ${parentGuardianMarkup}
                 </td>
 
-                <td class="student-parent-phone-cell">
+                <td class="student-parent-phone-cell" data-label="Parent Phone">
                     ${parentGuardianPhoneMarkup}
                 </td>
 
-                <td>
+                <td data-label="Admission No.">
                     <strong class="student-admission-number">
                         ${escapeHtml(student.admission_number)}
                     </strong>
                 </td>
 
-                <td>
+                <td data-label="Class">
                     ${escapeHtml(student.class_name || "—")}
                 </td>
 
-                <td class="student-arabiyya-class">
+                <td class="student-arabiyya-class" data-label="Arabiyya Class">
                     ${escapeHtml(student.arabic_class_name || "—")}
                 </td>
 
-                <td class="student-age">
+                <td class="student-age" data-label="Age">
                     ${escapeHtml(String(age))}
                 </td>
 
-                <td>
+                <td data-label="Gender">
                     ${escapeHtml(student.gender || "—")}
                 </td>
-                  <td>
+                  <td data-label="Student Type">
                       ${escapeHtml(student.student_type || "Day Student")}
                   </td>
 
-                <td>
+                <td data-label="Status">
                     <span class="student-status ${statusLabel.toLowerCase()}">
                         ${statusLabel}
                     </span>
                 </td>
 
-                <td>
+                <td data-label="Actions">
                     <div class="student-actions">
                         <button
                             type="button"
