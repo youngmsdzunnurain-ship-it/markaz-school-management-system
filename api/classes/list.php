@@ -53,12 +53,25 @@ if (currentAdminRole() === 'teacher') {
 } else {
     requireAdmin();
     $stmt = db()->query(
-        'SELECT c.id, c.name, c.level_group, c.sort_order, c.is_active,
+        'SELECT c.id, c.name, c.level_group, c.sort_order,
+                "conventional" AS class_type, c.is_active,
                 c.created_at, c.updated_at,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.class_id = c.id AND s.is_active = 1) AS student_count
          FROM classes c
-         ORDER BY c.sort_order ASC, c.name ASC'
+         WHERE LOWER(TRIM(c.name)) <> "hufaz"
+
+         UNION ALL
+
+         SELECT ac.id, ac.name, NULL AS level_group, ac.sort_order,
+                "arabic" AS class_type, ac.is_active,
+                ac.created_at, ac.updated_at,
+                (SELECT COUNT(*) FROM students s
+                 WHERE COALESCE(NULLIF(s.arabic_class_id, 0), s.arabia_class_id) = ac.id
+                   AND s.is_active = 1) AS student_count
+         FROM arabic_classes ac
+
+         ORDER BY sort_order ASC, name ASC'
     );
 }
 
