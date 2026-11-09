@@ -41,6 +41,11 @@ teacherPortalCheck(
     'Dashboard statistics endpoint returns assignment-scoped teacher workspace data before admin-only handling'
 );
 teacherPortalCheck(
+    str_contains($dashboardApi, 'markazSortAndDeduplicateClasses') &&
+    str_contains($dashboardApi, 'orderedAssignments'),
+    'Teacher dashboard class assignments use the shared lowest-to-highest hierarchy'
+);
+teacherPortalCheck(
     str_contains($dashboardApi, 'assigned_students') &&
     str_contains($dashboardApi, 'assigned_classes') &&
     str_contains($dashboardApi, 'assigned_subjects'),
@@ -177,7 +182,7 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, '"KG", "Primary 1", "Primary 2", "Nursery 1", "Nursery 2"') &&
+    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
     !str_contains($dashboardComboJs, '"Basic 6"') &&
     str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
     'Attendance combo chart follows the complete conventional class hierarchy'
@@ -203,7 +208,7 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
+    !str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
     str_contains($studentResultCss, 'min-width: 561px') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
     str_contains($studentResultCss, 'max-width: 760px'),

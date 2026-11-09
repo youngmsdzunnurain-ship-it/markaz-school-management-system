@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
+require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -89,33 +90,7 @@ foreach ($classes as &$class) {
 }
 unset($class);
 
-$conventionalOrder = [
-    'kg', 'primary 1', 'primary 2', 'nursery 1', 'nursery 2',
-    'basic 1', 'basic 2', 'basic 3', 'basic 4', 'basic 5',
-    'jss 1', 'jss 2', 'jss 3', 'ss 1', 'ss 2', 'ss 3',
-];
-$arabicOrder = [
-    'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani',
-    'faslu salis', 'faslu rabi', 'faslu khamis', 'faslu sadis',
-];
-$normaliseClassName = static function (string $name): string {
-    $name = strtolower(trim($name));
-    $name = preg_replace('/\\s+/', ' ', str_replace(['-', '_'], ' ', $name)) ?? $name;
-    return preg_replace('/^(j\\.?\\s*s\\.?\\s*s\\.?)/', 'jss', $name)
-        ?? $name;
-};
-$classOrder = static function (array $class) use ($conventionalOrder, $arabicOrder, $normaliseClassName): int {
-    $order = $class['class_type'] === 'arabic' ? $arabicOrder : $conventionalOrder;
-    $name = $normaliseClassName((string) $class['name']);
-    $position = array_search($name, $order, true);
-    return $position === false ? 1000 + (int) $class['sort_order'] : (int) $position;
-};
-usort($classes, static function (array $a, array $b) use ($classOrder): int {
-    $typeOrder = ['conventional' => 0, 'arabic' => 1];
-    return ($typeOrder[$a['class_type']] <=> $typeOrder[$b['class_type']])
-        ?: ($classOrder($a) <=> $classOrder($b))
-        ?: strcasecmp((string) $a['name'], (string) $b['name']);
-});
+$classes = markazSortAndDeduplicateClasses($classes);
 
 echo json_encode([
     'success' => true,

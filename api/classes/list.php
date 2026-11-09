@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -27,7 +28,7 @@ if (currentAdminRole() === 'teacher') {
     }
 
     $stmt = db()->prepare(
-        'SELECT c.id, c.name, "conventional" AS class_type, c.is_active,
+        'SELECT c.id, c.name, c.sort_order, "conventional" AS class_type, c.is_active,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.class_id = c.id AND s.is_active = 1) AS student_count
          FROM classes c
@@ -37,7 +38,7 @@ if (currentAdminRole() === 'teacher') {
           AND ta.is_active = 1
          WHERE c.is_active = 1
          UNION ALL
-         SELECT ac.id, ac.name, "arabic" AS class_type, ac.is_active,
+         SELECT ac.id, ac.name, ac.sort_order, "arabic" AS class_type, ac.is_active,
                 (SELECT COUNT(*) FROM students s
                  WHERE s.arabic_class_id = ac.id AND s.is_active = 1) AS student_count
          FROM arabic_classes ac
@@ -46,7 +47,7 @@ if (currentAdminRole() === 'teacher') {
           AND ta.class_type = "arabic" AND ta.subject_id IS NULL
           AND ta.is_active = 1
          WHERE ac.is_active = 1
-         ORDER BY name'
+         ORDER BY class_type, sort_order, name'
     );
     $stmt->execute([$accountId, $accountId]);
 } else {
@@ -61,7 +62,7 @@ if (currentAdminRole() === 'teacher') {
     );
 }
 
-$classes = $stmt->fetchAll();
+$classes = markazSortAndDeduplicateClasses($stmt->fetchAll());
 echo json_encode([
     'success' => true,
     'classes' => $classes
