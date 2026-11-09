@@ -133,15 +133,15 @@ try {
         exit;
     }
 
-    $studentClassColumn = $classType === 'arabic'
-        ? 'arabic_class_id'
+    $studentClassExpression = $classType === 'arabic'
+        ? 'COALESCE(NULLIF(arabic_class_id, 0), arabia_class_id)'
         : 'class_id';
 
     $studentStmt = $pdo->prepare(
         "SELECT id
          FROM students
          WHERE id = ?
-           AND {$studentClassColumn} = ?
+           AND {$studentClassExpression} = ?
            AND is_active = 1
          LIMIT 1"
     );
