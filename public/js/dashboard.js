@@ -585,15 +585,9 @@ function renderAttendanceComboChart(rows, category, target) {
         (rowsByName.get(normalize(name)) || []).forEach(row => orderedRows.push(row));
     });
     const orderedIdentities = new Set(orderedRows.map(row => String(row.class_type || category) + ":" + String(row.class_id ?? row.id ?? normalize(row.class_name))));
-    // The Conventional chart must stop at SS 3. Do not append unrecognised
-    // database rows after the configured school hierarchy; those rows are not
-    // part of the approved Conventional class list and caused stray labels
-    // to appear after SS 3. Keep the Arabic chart's existing fallback intact.
-    if (category === "arabic") {
-        uniqueRows.forEach((row, identity) => {
-            if (!orderedIdentities.has(identity)) orderedRows.push(row);
-        });
-    }
+    uniqueRows.forEach((row, identity) => {
+        if (!orderedIdentities.has(identity)) orderedRows.push(row);
+    });
     const data = orderedRows.map(row => {
         const name = String(row.class_name || "Unknown class");
         const present = Math.max(0, Number(row.present_count) || 0);
