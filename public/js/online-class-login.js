@@ -23,7 +23,7 @@ loadOptions().catch(error=>{$('onlineLoginMessage').textContent=error.message;})
 $('onlineLoginForm').addEventListener('submit',async event=>{
  event.preventDefault();
  const button=$('onlineLoginButton'),message=$('onlineLoginMessage');
- button.disabled=true;message.textContent='Signing in…';
+ button.disabled=true;message.textContent='Checking your details…';
  try{
   const response=await fetch('api/online-class/student-login.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({admission_number:$('onlineAdmission').value.trim(),level_id:$('onlineLevel').value,section:$('onlineSection').value,academic_session:$('onlineSession').value.trim(),term:$('onlineTerm').value})});
   const data=await response.json().catch(()=>({}));
