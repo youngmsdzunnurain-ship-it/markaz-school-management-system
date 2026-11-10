@@ -25,9 +25,23 @@ if ($method === 'GET') {
         $subjects = $pdo->query('SELECT s.*, l.name AS level_name FROM online_class_subjects s JOIN online_class_levels l ON l.id=s.level_id ORDER BY l.sort_order,s.sort_order,s.name')->fetchAll(PDO::FETCH_ASSOC);
         $counts = $pdo->query('SELECT level_id, COUNT(*) AS total FROM online_class_students WHERE is_active=1 GROUP BY level_id')->fetchAll(PDO::FETCH_KEY_PAIR);
         foreach ($levels as &$level) {
-            $level['id']=(int)$level['id']; $level['student_count']=(int)($counts[$level['id']] ?? 0);
-        } unset($level);
-        $signatureStmt=$pdo->query(\"SELECT setting_key,setting_value FROM markaz_app_settings WHERE setting_key IN ('result_footer_class_teacher_image','result_footer_director_image','result_footer_signature_date')\");\n        $signatureRows=$signatureStmt->fetchAll(PDO::FETCH_KEY_PAIR);\n        onlineClassJson(['success'=>true,'levels'=>$levels,'subjects'=>$subjects,'terms'=>$terms,'signatures'=>['teacher'=>$signatureRows['result_footer_class_teacher_image']??'','director'=>$signatureRows['result_footer_director_image']??'','date'=>$signatureRows['result_footer_signature_date']??'']]);
+            $level['id'] = (int) $level['id'];
+            $level['student_count'] = (int) ($counts[$level['id']] ?? 0);
+        }
+        unset($level);
+        $signatureStmt = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('class_teacher_signature', 'director_signature', 'result_signature_date')");
+        $signatureRows = $signatureStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        onlineClassJson([
+            'success' => true,
+            'levels' => $levels,
+            'subjects' => $subjects,
+            'terms' => $terms,
+            'signatures' => [
+                'teacher' => $signatureRows['class_teacher_signature'] ?? '',
+                'director' => $signatureRows['director_signature'] ?? '',
+                'date' => $signatureRows['result_signature_date'] ?? ''
+            ]
+        ]);
     }
     if ($action === 'students') {
         $levelId = isset($_GET['level_id']) && $_GET['level_id']!=='' ? $validLevel($_GET['level_id']) : null;
