@@ -15,9 +15,7 @@ if ($dashboardRole === 'teacher') {
     exit;
 }
 
-if ($dashboardRole !== 'management') {
-    requireAdmin();
-}
+requireAdmin();
 
 $pdo = db();
 
