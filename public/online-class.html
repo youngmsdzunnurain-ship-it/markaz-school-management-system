@@ -8,24 +8,25 @@
 <link rel="stylesheet" href="css/dashboard-2026.css?v=20261110-online-class">
 <link rel="stylesheet" href="css/online-class.css?v=20261110-online-class-final">
 </head>
-<body>
+<body class="online-workspace-page">
 <div class="app">
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-header"><div class="brand-logo"><img src="./assets/images/markaz-logo.jpg" alt="MARKAZ"></div><div class="brand-text"><strong>MARKAZ</strong><span>Online Class</span></div></div>
 <nav class="sidebar-nav" aria-label="Online Class navigation">
 <div class="nav-section-label">Workspace</div>
 <a class="nav-link" href="./dashboard.html"><i class="fa-solid fa-arrow-left"></i><span>Main Dashboard</span></a>
-<a class="nav-link active" href="./online-class.html"><i class="fa-solid fa-house"></i><span>Classes</span></a>
+<a class="nav-link active" href="#overview" data-tab-link="overview"><i class="fa-solid fa-house"></i><span>Overview</span></a>
 <a class="nav-link" href="#students" data-tab-link="students"><i class="fa-solid fa-users"></i><span>Students</span></a>
 <a class="nav-link" href="#subjects" data-tab-link="subjects"><i class="fa-solid fa-book-open"></i><span>Subjects</span></a>
 <a class="nav-link" href="#attendance" data-tab-link="attendance"><i class="fa-solid fa-calendar-check"></i><span>Attendance</span></a>
 <a class="nav-link" href="#results" data-tab-link="results"><i class="fa-solid fa-file-lines"></i><span>Results &amp; Reports</span></a>
 <a class="nav-link" href="#settings" data-tab-link="settings"><i class="fa-solid fa-sliders"></i><span>Level Settings</span></a>
 </nav>
-<div class="sidebar-bottom"><div class="sidebar-user"><span class="sidebar-user-avatar">OC</span><span class="sidebar-user-text"><strong>Online Class</strong><small>Academic workspace</small></span><a class="logout-button" href="./dashboard.html" aria-label="Back to dashboard"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></div></div>
+
 </aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 <main class="main-content">
-<header class="topbar"><button type="button" id="menuButton" class="menu-button" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button><div><h1>MARKAZ Online Class</h1><p>Independent learning, attendance and academic records</p></div></header>
+<header class="topbar"><button type="button" id="menuButton" class="menu-button" aria-label="Open menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div><h1>MARKAZ Online Class</h1><p>Independent learning, attendance and academic records</p></div></header>
 <div class="online-class-page">
 <section class="online-hero"><div><span class="online-eyebrow">MARKAZ · ONLINE LEARNING</span><h1>Online Class Workspace</h1><p>Manage learners, levels, attendance and termly Qur’an assessments.</p></div><div class="online-hero-mark"><i class="fa-solid fa-book-quran"></i></div></section>
 <div class="online-tabs" role="tablist">
