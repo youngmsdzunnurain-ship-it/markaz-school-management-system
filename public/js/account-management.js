@@ -104,13 +104,6 @@
                         </fieldset>
                     </div>
 
-                    <div id="accountOnlineClassPermission" hidden>
-                        <fieldset class="account-permission-group">
-                            <legend>MARKAZ Online Class access</legend>
-                            <label class="account-check"><input type="checkbox" id="accountCanAccessOnlineClass"> Allow this account to manage MARKAZ Online Class, including its students, classes, subjects, attendance, results and assigned settings</label>
-                        </fieldset>
-                    </div>
-
                     <div id="accountManagementPermissions" hidden>
                         <fieldset class="account-permission-group">
                             <legend>Management workspace assignments</legend>
@@ -183,7 +176,7 @@
     const assignmentsWrap = $('#accountTeacherAssignments');
     const managementPermissionsWrap = $('#accountManagementPermissions');
     const onlineClassPermissionWrap = $('#accountOnlineClassPermission');
-    const onlineClassPermission = $('#accountCanAccessOnlineClass');
+    const onlineClassPermission = $('#accountCanOnlineClass');
     const managementAttendancePermission = $('#managementCanAttendance');
     const managementStudentsPermission = $('#managementCanStudents');
     const managementSchoolFeesPermission = $('#managementCanSchoolFees');
