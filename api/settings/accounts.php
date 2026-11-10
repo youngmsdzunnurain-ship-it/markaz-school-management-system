@@ -156,7 +156,7 @@ if ($method === 'GET') {
     $permissionStmt = $pdo->query(
         'SELECT account_id, permission_key, is_allowed
          FROM account_permissions
-         WHERE permission_key IN ("print_results", "export_results", "attendance_records", "management_attendance", "management_students", "management_school_fees")'
+         WHERE permission_key IN ("print_results", "export_results", "attendance_records", "management_attendance", "management_students", "management_school_fees", "online_class_access")'
     );
 
     $permissions = [];
@@ -258,6 +258,7 @@ if ($method === 'GET') {
         $effectivePermissions['management_attendance'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_attendance'] ?? false);
         $effectivePermissions['management_students'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_students'] ?? false);
         $effectivePermissions['management_school_fees'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_school_fees'] ?? false);
+        $effectivePermissions['online_class_access'] = in_array((string) $account['role'], ['exam_officer', 'teacher', 'management'], true) && ($permissions[$id]['online_class_access'] ?? false);
         $account['permissions'] = $effectivePermissions;
         $account['assignments'] = $assignments[$id] ?? [];
     }
@@ -621,6 +622,10 @@ try {
             && filter_var($data['management_permissions'][$managementPermission] ?? false, FILTER_VALIDATE_BOOLEAN);
         saveAccountPermission($pdo, $targetId, 'management_' . $managementPermission, $allowed);
     }
+
+    $onlineClassAllowed = in_array($role, ['exam_officer', 'teacher', 'management'], true)
+        && filter_var($data['online_class_access'] ?? false, FILTER_VALIDATE_BOOLEAN);
+    saveAccountPermission($pdo, $targetId, 'online_class_access', $onlineClassAllowed);
 
     $pdo->commit();
 
