@@ -19,6 +19,7 @@ jobs:
           set -e
           php -l tests/dashboard-shell-overflow-regression.test.php
           php -l tests/online-class-portal-ui-regression.test.php
+          node --check public/js/online-class.js
           node --check public/js/online-class-login.js
           node --check public/js/online-class-portal.js
           node --check public/js/dashboard.js
