@@ -86,7 +86,7 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, "event.key==='Escape'") &&
     str_contains($workspaceJs, "sidebarOverlay") &&
     str_contains($workspaceJs, 'function closeSidebar()') &&
-    str_contains($workspaceJs, 'function populateResultEntryOptions()') &&
+    str_contains($workspaceJs, 'async function populateResultEntryOptions()') &&
     str_contains($workspaceJs, 'function updateResultCalculations()') &&
     str_contains($workspaceJs, 'Mashallah, Barakallahu fi'),
     'Staff sessions must begin in 2026 and sidebar must support overlay and Escape dismissal'
@@ -97,9 +97,9 @@ onlinePortalUiAssert(
     !str_contains($onlineCss, 'margin-left:280px') &&
     str_contains($onlineCss, '.online-results-report::before') &&
     str_contains($login, 'css/login-shared.css') &&
-    str_contains($portal, 'css/app-watermark.css'),
+    str_contains($portal, 'css/app-watermark.css') &&
     str_contains($onlineCss, 'grid-template-columns:260px minmax(0,1fr)') &&
-    str_contains($onlineCss, 'padding:18px') &&
+    str_contains($onlineCss, 'padding:18px'),
     'Online Class pages and reports must show the MARKAZ watermark with responsive sidebar states'
 );
 onlinePortalUiAssert(
