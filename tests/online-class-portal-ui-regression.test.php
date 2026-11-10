@@ -30,13 +30,18 @@ onlinePortalUiAssert(
     substr_count($login, 'id="onlineLevel"') === 1 &&
     substr_count($login, 'id="onlineSection"') === 1 &&
     substr_count($login, 'id="onlineTerm"') === 1 &&
-    !str_contains($login, 'id="onlineSession"') &&
-    !str_contains($login, 'name="academic_session"'),
-    'Student login must contain exactly four fields: admission, level, section and term'
+    substr_count($login, 'id="onlineSession"') === 1 &&
+    substr_count($login, 'name="academic_session"') === 1 &&
+    !str_contains($login, 'online-portal-switch') &&
+    !str_contains($portal, 'online-portal-home') &&
+    str_contains($login, 'online-support-footer') && str_contains($portal, 'online-support-footer'),
+    'Student login must contain exactly five fields, remove cross-portal links and provide support footers'
 );
 onlinePortalUiAssert(
-    str_contains($loginJs, 'function currentAcademicSession()') &&
-    str_contains($loginJs, 'academic_session: currentAcademicSession()') &&
+    str_contains($loginJs, 'function populateAcademicSessions()') &&
+    str_contains($loginJs, 'Array.from({ length: 10 }') &&
+    str_contains($loginJs, "academic_session:$('onlineSession').value") &&
+    str_contains($loginJs, 'function isAcademicSession(value)') &&
     str_contains($loginJs, 'api/online-class/portal-options.php') &&
     str_contains($loginJs, 'level_id') &&
     str_contains($loginJs, 'section'),
