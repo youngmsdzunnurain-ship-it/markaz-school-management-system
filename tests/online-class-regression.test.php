@@ -11,7 +11,7 @@ $auth = file_get_contents($root . '/app/middleware/auth.php');
 $dashboard = file_get_contents($root . '/public/dashboard.html');
 $accounts = file_get_contents($root . '/public/js/account-management.js');
 $apiAccounts = file_get_contents($root . '/api/settings/accounts.php');
-$login = file_get_contents($root . '/public/online-class-login.html');
+$login = file_get_contents($root . '/api/online-class/student-login.php');
 $page = file_get_contents($root . '/public/online-class.html');
 onlineCheck(str_contains($schema, 'CREATE TABLE IF NOT EXISTS online_class_students') && str_contains($schema, 'CREATE TABLE IF NOT EXISTS online_class_results'), 'Online students and results have isolated tables');
 onlineCheck(str_contains($schema, 'attendance_score DECIMAL(5,2)') && str_contains($schema, 'test_score DECIMAL(5,2)') && str_contains($schema, 'exam_score DECIMAL(5,2)'), 'Results store Attendance 20, Test 20 and Exam 60 separately');
