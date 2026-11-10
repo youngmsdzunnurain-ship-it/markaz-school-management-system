@@ -17,7 +17,15 @@ foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row){
  $complete=!in_array(null,$scores,true);
  $total=$complete?array_sum(array_map('floatval',$scores)):null;
  $grade=$complete?onlineClassGrade((float)$total):null;
- $results[]=$row+['total'=>$total,'percentage'=>$total,'grade'=>$grade['grade']??null,'grade_remark'=>$grade['remark']??null];
+ $teacherRemark = trim((string)($row['teacher_remark'] ?? ''));
+ $directorRemark = trim((string)($row['director_remark'] ?? ''));
+ if ($complete && $teacherRemark === '') {
+  $teacherRemark = $total >= 80 ? 'Mashallah! Your dedication and excellent effort are truly commendable. May Allah increase you in beneficial knowledge.' : ($total >= 70 ? 'Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.' : ($total >= 50 ? 'You are making promising progress. Continue with regular revision and confidence; every step matters.' : ($total >= 40 ? 'You have made a beginning. With patient practice and consistent revision, you can make stronger progress.' : 'Please do not be discouraged. Learning is a journey; take it one step at a time and keep trying.')));
+ }
+ if ($complete && $directorRemark === '') {
+  $directorRemark = $total >= 80 ? 'Excellent achievement. May Allah preserve your knowledge and grant you continued success.' : ($total >= 70 ? 'A very good effort. We encourage you to maintain this consistency and continue striving.' : ($total >= 50 ? 'Your progress is encouraging. More regular revision will help you reach the next level.' : ($total >= 40 ? 'We appreciate your effort. With support, patience and consistency, further improvement is within reach.' : 'Every learner deserves encouragement. Let us continue supporting your learning journey with patience and care.')));
+ }
+ $results[]=$row+['teacher_remark'=>$teacherRemark,'director_remark'=>$directorRemark,'total'=>$total,'percentage'=>$total,'grade'=>$grade['grade']??null,'grade_remark'=>$grade['remark']??null];
 }
 $signatureRows=db()->query("SELECT setting_key,setting_value FROM settings WHERE setting_key IN ('class_teacher_signature','director_signature','class_teacher_signature_image','director_signature_image','result_signature_date')")->fetchAll(PDO::FETCH_KEY_PAIR);
 $signatures=['teacher'=>$signatureRows['class_teacher_signature_image']?:($signatureRows['class_teacher_signature']??''),'director'=>$signatureRows['director_signature_image']?:($signatureRows['director_signature']??''),'date'=>$signatureRows['result_signature_date']??''];
