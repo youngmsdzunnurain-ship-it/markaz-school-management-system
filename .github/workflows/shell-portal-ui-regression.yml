@@ -1,0 +1,29 @@
+name: MARKAZ Shell and Online Portal UI Regression
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  shell-and-portal-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate shell and portal assets
+        run: |
+          set -e
+          php -l tests/dashboard-shell-overflow-regression.test.php
+          php -l tests/online-class-portal-ui-regression.test.php
+          node --check public/js/online-class-login.js
+          node --check public/js/online-class-portal.js
+          node --check public/js/dashboard.js
+      - name: Run shell and portal UI regression checks
+        run: |
+          set -e
+          php tests/dashboard-shell-overflow-regression.test.php
+          php tests/online-class-portal-ui-regression.test.php
