@@ -122,8 +122,8 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     str_contains($workspaceApi, "if (\$action === 'subjects')") &&
-    str_contains($workspaceApi, 'WHERE level_id=? AND is_active=1') &&
-    str_contains($workspaceJs, "action=subjects&level_id=") &&
+    str_contains($workspaceApi, 'WHERE level_id = ? AND is_active = 1') &&
+    str_contains($workspaceJs, "request(API+'?action=subjects'+query)") &&
     str_contains($workspaceJs, 'Promise.allSettled') &&
     str_contains($workspaceJs, 'resultOptionsRequest'),
     'Result-entry subjects must load independently from results and be filtered by the selected Online Class level'
