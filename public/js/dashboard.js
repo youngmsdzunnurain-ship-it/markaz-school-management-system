@@ -105,7 +105,7 @@ async function loadAdmin() {
             const shortcutList = document.getElementById("managementDashboardShortcuts");
             if (shortcutList) {
                 shortcutList.replaceChildren();
-                managerLinks.filter(item => managerPermissions[item[0]] === true).forEach(item => {
+                managerLinks.filter(item => item[0] === "online_class_access" ? data.admin.can_access_online_class === true : managerPermissions[item[0]] === true).forEach(item => {
                     const link = document.createElement("a");
                     link.className = "management-dashboard-shortcut";
                     link.href = item[2];
