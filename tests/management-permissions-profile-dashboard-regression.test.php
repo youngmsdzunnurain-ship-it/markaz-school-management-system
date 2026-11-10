@@ -68,7 +68,7 @@ managementPermissionsCheck(
         && str_contains($settingsJs, '"management"')
         && str_contains($settingsJs, 'profile_image')
         && str_contains($settingsProfileJs, 'compressProfileImage')
-        && str_contains($profileApi, "$profileRole !== 'management' && !password_verify"),
+        && str_contains($profileApi, '$profileRole !== \'management\' && !password_verify'),
     'Management profile is password-change-free and profile images are prepared before upload'
 );
 managementPermissionsCheck(
