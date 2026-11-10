@@ -171,3 +171,15 @@
  .online-workspace-page .main-content::before,.online-login-page::before,.online-results-page::before{display:none}
  .online-results-report,.online-workspace-page .online-report{background:#fff}
 }
+
+
+/* Online Class student login: five clear fields and matching help footer. */
+.online-login-form .role-field { min-width: 0; }
+.online-support-footer { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px 16px; margin:18px auto 0; padding:15px 12px 0; border-top:1px solid #e2e9df; color:#65766a; font-size:12px; line-height:1.6; text-align:center; }
+.online-support-footer strong { flex-basis:100%; color:#174d32; font-size:13px; }
+.online-support-footer > span { flex-basis:100%; }
+.online-support-footer a { color:#1d6742; font-weight:700; text-decoration:none; }
+.online-support-footer a:hover { text-decoration:underline; }
+.online-support-footer a i { margin-right:5px; }
+.online-support-footer-results { margin-top:28px; padding:20px 12px 8px; }
+@media(max-width:650px) { .online-login-form { grid-template-columns:minmax(0,1fr); } .online-support-footer { gap:7px 12px; } .online-support-footer a { overflow-wrap:anywhere; } }

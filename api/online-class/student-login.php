@@ -16,7 +16,7 @@ $section=trim((string)($input['section']??''));
 $session=trim((string)($input['academic_session']??''));
 $term=(string)($input['term']??'');
 
-if($admission===''||!$levelId||$section===''||mb_strlen($section)>80||!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true) ){
+if($admission===''||!$levelId||$section===''||mb_strlen($section)>80||preg_match('/^\d{4}\/\d{4}$/',$section)||!preg_match('/^(202[6-9]|203[0-5])\/(202[7-9]|203[0-6])$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true) ){
  http_response_code(422);echo json_encode(['success'=>false,'message'=>'Enter your admission number, level, section, academic session and term.']);exit;
 }
 $enabled=db()->query("SELECT setting_value FROM settings WHERE setting_key='online_class_student_access' LIMIT 1")->fetchColumn();
