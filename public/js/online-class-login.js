@@ -12,9 +12,9 @@ function escapeHtml(value) {
 function populateSessions() {
   const select = $('onlineSession');
   const currentYear = new Date().getFullYear();
-  const firstYear = 2020;
-  const lastYear = Math.max(currentYear + 10, 2035);
-  const currentSessionStart = new Date().getMonth() >= 8 ? currentYear : currentYear - 1;
+  const firstYear = 2021;
+  const lastYear = 2030;
+  const currentSessionStart = Math.min(2030, Math.max(2021, new Date().getMonth() >= 8 ? currentYear : currentYear - 1));
   const sessions = [];
   for (let year = firstYear; year <= lastYear; year += 1) {
     sessions.push(year + '/' + (year + 1));
@@ -53,6 +53,9 @@ async function loadOptions() {
   const data = await response.json().catch(() => ({}));
   if (!response.ok || !data.success) {
     throw new Error(data.message || 'Unable to load Online Class levels and sections.');
+  }
+  if (!Array.isArray(data.levels) || !Array.isArray(data.sections)) {
+    throw new Error('Online Class setup is incomplete. Please contact the school administrator.');
   }
 
   portalOptions = data;
