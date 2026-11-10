@@ -80,6 +80,54 @@ async function loadAdmin() {
         window.markazCurrentRole = role;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
+        if (role === "management") {
+            document.body.classList.add("role-management");
+            const managerPermissions = data.admin.management_permissions || {};
+            document.querySelectorAll("[data-dashboard-admin-only]").forEach(element => element.hidden = true);
+            const chartSection = document.querySelector(".dashboard-class-attendance-charts");
+            if (chartSection) chartSection.hidden = managerPermissions.attendance !== true;
+            const attendanceFootnote = document.querySelector(".dashboard-attendance-footnote");
+            if (attendanceFootnote) attendanceFootnote.hidden = managerPermissions.attendance !== true;
+            const managementDashboard = document.getElementById("managementDashboard");
+            if (managementDashboard) managementDashboard.hidden = false;
+            const managerLinks = [
+                ["students", "Students", "./students.html", "fa-users"],
+                ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
+                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"]
+            ];
+            const shortcutList = document.getElementById("managementDashboardShortcuts");
+            if (shortcutList) {
+                shortcutList.replaceChildren();
+                managerLinks.filter(item => managerPermissions[item[0]] === true).forEach(item => {
+                    const link = document.createElement("a");
+                    link.className = "management-dashboard-shortcut";
+                    link.href = item[2];
+                    const icon = document.createElement("i");
+                    icon.className = "fa-solid " + item[3];
+                    icon.setAttribute("aria-hidden", "true");
+                    const label = document.createElement("span");
+                    label.textContent = item[1];
+                    link.append(icon, label);
+                    shortcutList.appendChild(link);
+                });
+            }
+            const managerProfileName = document.getElementById("managementDashboardName");
+            const managerProfileEmail = document.getElementById("managementDashboardEmail");
+            if (managerProfileName) managerProfileName.textContent = name;
+            if (managerProfileEmail) managerProfileEmail.textContent = email;
+            const managerProfilePhoto = document.getElementById("managementDashboardPhoto");
+            if (managerProfilePhoto) {
+                managerProfilePhoto.replaceChildren();
+                if (profileImage) {
+                    const managerImage = document.createElement("img");
+                    managerImage.src = "/" + profileImage.replace(/^\/+/, "");
+                    managerImage.alt = name;
+                    managerProfilePhoto.appendChild(managerImage);
+                } else {
+                    managerProfilePhoto.textContent = initials;
+                }
+            }
+        }
         if (role === "teacher") {
             document.body.classList.add("role-teacher");
             document.getElementById("dashboardAttendancePanel")?.setAttribute("hidden", "");
@@ -488,7 +536,11 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = role === "admin" || (role === "teacher" && permissions.can_manage_attendance === true);
+            allowed = role === "admin" || (role === "teacher" && permissions.can_manage_attendance === true) || (role === "management" && permissions.management_permissions?.attendance === true);
+        } else if (requiredRole === "students") {
+            allowed = role === "admin" || role === "exam_officer" || (role === "management" && permissions.management_permissions?.students === true);
+        } else if (requiredRole === "school_fees") {
+            allowed = role === "admin" || (role === "management" && permissions.management_permissions?.school_fees === true);
         }
 
         element.style.display = allowed ? "" : "none";
@@ -704,7 +756,7 @@ async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
     if (!panel) return;
 
-    if ((window.markazCurrentRole || "") !== "admin") {
+    if (!["admin", "management"].includes(window.markazCurrentRole || "")) {
         panel.hidden = true;
         return;
     }
