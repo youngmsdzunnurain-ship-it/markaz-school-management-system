@@ -104,6 +104,13 @@
                         </fieldset>
                     </div>
 
+                    <div id="accountOnlineClassPermission" hidden>
+                        <fieldset class="account-permission-group">
+                            <legend>MARKAZ Online Class access</legend>
+                            <label class="account-check"><input type="checkbox" id="accountCanAccessOnlineClass"> Allow this account to manage Online Class students, subjects, attendance, results and level settings</label>
+                        </fieldset>
+                    </div>
+
                     <div id="accountManagementPermissions" hidden>
                         <fieldset class="account-permission-group">
                             <legend>Management workspace assignments</legend>
