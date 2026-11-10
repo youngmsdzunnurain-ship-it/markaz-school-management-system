@@ -17,10 +17,13 @@ $studentCreate = $read('api/students/create.php');
 $studentUpdate = $read('api/students/update.php');
 $studentToggle = $read('api/students/toggle-status.php');
 $studentList = $read('api/students/list.php');
+$conventionalClassList = $read('api/classes/list.php');
+$arabicClassList = $read('api/arabic-classes/list.php');
 $profileApi = $read('api/settings/admin-profile.php');
 $dashboardJs = $read('public/js/dashboard.js');
 $dashboardHtml = $read('public/dashboard.html');
 $shellJs = $read('public/js/management-shell.js');
+$settingsProfileJs = $read('public/js/settings.js');
 
 managementPermissionsCheck(
     str_contains($chartCss, 'body.sidebar-desktop-closed .dashboard-class-attendance-charts')
@@ -55,19 +58,25 @@ managementPermissionsCheck(
         && str_contains($studentCreate, "requireAdminOrManagementPermission('students')")
         && str_contains($studentUpdate, "requireAdminOrManagementPermission('students')")
         && str_contains($studentToggle, "requireAdminOrManagementPermission('students')")
-        && str_contains($studentList, "requireAdminOrManagementPermission('students')"),
-    'attendance and student APIs enforce the selected Management assignment'
+        && str_contains($studentList, "requireAdminOrManagementPermission('students')")
+        && str_contains($conventionalClassList, "requireAdminOrManagementPermission('students')")
+        && str_contains($arabicClassList, "requireAdminOrManagementPermission('students')"),
+    'attendance, student CRUD and student class-option APIs enforce the selected Management assignment'
 );
 managementPermissionsCheck(
     str_contains($profileApi, "'management'")
         && str_contains($settingsJs, '"management"')
-        && str_contains($settingsJs, 'profile_image'),
-    'Management can access profile information without receiving password-change settings'
+        && str_contains($settingsJs, 'profile_image')
+        && str_contains($settingsProfileJs, 'compressProfileImage')
+        && str_contains($profileApi, "$profileRole !== 'management' && !password_verify"),
+    'Management profile is password-change-free and profile images are prepared before upload'
 );
 managementPermissionsCheck(
     str_contains($dashboardHtml, 'management_students')
         && str_contains($dashboardJs, 'management_permissions')
-        && str_contains($shellJs, 'management_permissions'),
-    'Management dashboard and shared navigation show only assigned shortcuts'
+        && str_contains($shellJs, 'management_permissions')
+        && str_contains($dashboardHtml, 'id="managementDashboardShortcuts"')
+        && str_contains($dashboardJs, 'window.markazManagementPermissions?.attendance === true'),
+    'Management dashboard, attendance summaries, profile and shared navigation use individual permissions'
 );
 echo "Management permissions/profile/dashboard regression tests passed (8 checks).\n";
