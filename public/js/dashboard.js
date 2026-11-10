@@ -538,6 +538,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "students") {
             allowed = role === "admin" || role === "exam_officer"
                 || (role === "management" && permissions.management_permissions?.students === true);
+        } else if (requiredRole === "management_students") {
+            allowed = role === "management" && permissions.management_permissions?.students === true;
         } else if (requiredRole === "management_school_fees") {
             allowed = role === "admin" || (role === "management" && permissions.management_permissions?.school_fees === true);
         } else if (requiredRole === "exam_officer_settings") {
@@ -1087,6 +1089,7 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
     button.addEventListener("click", () => {
         const destinations = {
             "Add Student": "students.html",
+            "Students": "students.html",
             "Manage Classes": "classes.html",
             "Manage Subjects": "subjects/index.html",
             "Enter Results": "classes.html",
