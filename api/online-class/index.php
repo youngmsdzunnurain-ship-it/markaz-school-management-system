@@ -155,7 +155,7 @@ if($action==='save_student'){
         $admission='MOC-'.date('Y').'-'.str_pad((string)$newId,6,'0',STR_PAD_LEFT);
         $pdo->prepare('UPDATE online_class_students SET admission_number=? WHERE id=?')->execute([$admission,$newId]);
         $pdo->commit();
-        onlineClassJson(['success'=>true,'message'=>'Online student created. Give the student the admission number and temporary password below.','student'=>['id'=>$newId,'admission_number'=>$admission],'temporary_password'=>$password],201);
+        onlineClassJson(['success'=>true,'message'=>'Online student created. Give the learner their admission number, level and section for result lookup.','student'=>['id'=>$newId,'admission_number'=>$admission]],201);
     }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
 }
 if($action==='save_attendance'){
