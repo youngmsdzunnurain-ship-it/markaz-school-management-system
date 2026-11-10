@@ -485,3 +485,11 @@ body.role-teacher .teacher-assignment-card .teacher-open-class { min-height:46px
 @media (max-width:850px) {
     .dashboard-class-attendance-charts {grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* Sidebar closed: give the Conventional combo chart more horizontal room. */
+@media (min-width: 851px) {
+    body.sidebar-desktop-closed .dashboard-class-attendance-charts {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+}
