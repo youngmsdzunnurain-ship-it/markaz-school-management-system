@@ -118,3 +118,37 @@ jobs:
           node --check public/js/class.js
           node --check public/js/student-result.js
           php tests/teacher-document-permissions.test.php
+
+  management-permissions-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Verify Management permission boundaries and profile workflow
+        run: |
+          set -e
+          php -l app/middleware/auth.php
+          php -l api/auth/me.php
+          php -l api/settings/accounts.php
+          php -l api/settings/admin-profile.php
+          php -l api/attendance/_common.php
+          php -l api/attendance/classes.php
+          php -l api/attendance/reports.php
+          php -l api/classes/list.php
+          php -l api/arabic-classes/list.php
+          php -l api/students/list.php
+          php -l api/students/create.php
+          php -l api/students/update.php
+          php -l api/students/toggle-status.php
+          php -l tests/management-permissions-profile-dashboard-regression.test.php
+          node --check public/js/dashboard.js
+          node --check public/js/settings.js
+          node --check public/js/settings-panel-navigation.js
+          node --check public/js/account-management.js
+          node --check public/js/management-shell.js
+          php tests/management-permissions-profile-dashboard-regression.test.php
