@@ -25,9 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $currentPassword = $_POST['current_password'] ?? '';
 $name = trim($_POST['name'] ?? '');
+
+if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+    http_response_code(413);
+    echo json_encode([
+        'success' => false,
+        'message' => 'The selected image is larger than the server upload limit. Choose a smaller image.'
+    ]);
+    exit;
+}
 $email = trim($_POST['email'] ?? '');
 
-if ($currentPassword === '') {
+if ($profileRole !== 'management' && $currentPassword === '') {
     http_response_code(422);
     echo json_encode([
         'success' => false,
@@ -75,7 +84,7 @@ if (!$admin) {
     exit;
 }
 
-if (!password_verify($currentPassword, $admin['password_hash'])) {
+if ($profileRole !== 'management' && !password_verify($currentPassword, $admin['password_hash'])) {
     http_response_code(401);
     echo json_encode([
         'success' => false,
