@@ -61,11 +61,11 @@ if ($method === 'GET') {
         onlineLevel($pdo, (int) $levelId);
         $date = attendanceValidateDate((string) ($_GET['date'] ?? date('Y-m-d')));
         $stmt = $pdo->prepare(
-            'SELECT a.id, a.student_id, a.attendance_date, a.status, a.remarks, s.admission_number, s.first_name, s.last_name
-             FROM online_class_attendance a JOIN online_class_students s ON s.id = a.student_id
-             WHERE s.level_id = ? AND a.attendance_date = ? ORDER BY s.last_name, s.first_name'
+            'SELECT s.id AS student_id, a.id, a.attendance_date, a.status, a.remarks, s.admission_number, s.first_name, s.last_name
+             FROM online_class_students s LEFT JOIN online_class_attendance a ON a.student_id = s.id AND a.attendance_date = ?
+             WHERE s.level_id = ? AND s.is_active = 1 ORDER BY s.last_name, s.first_name'
         );
-        $stmt->execute([(int) $levelId, $date]);
+        $stmt->execute([$date, (int) $levelId]);
         $attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (in_array($term, ['First Term','Second Term','Third Term'], true) && $session !== '') {
             $stmt = $pdo->prepare(
@@ -84,8 +84,11 @@ if ($method === 'GET') {
             $stmt->execute([$session, $term, (int) $levelId]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
+        $releaseStmt = $pdo->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id = ? AND academic_session = ? AND term = ? LIMIT 1');
+        $releaseStmt->execute([(int) $levelId, $session, $term]);
+        $release = ['is_released' => (bool) $releaseStmt->fetchColumn()];
     }
-    onlineJson(['success' => true, 'levels' => $levels, 'students' => $students, 'subjects' => $subjects, 'attendance' => $attendance, 'results' => $results]);
+    onlineJson(['success' => true, 'levels' => $levels, 'students' => $students, 'subjects' => $subjects, 'attendance' => $attendance, 'results' => $results, 'release' => $release ?? ['is_released' => false]]);
 }
 
 if ($method !== 'POST') onlineJson(['success' => false, 'message' => 'Method not allowed.'], 405);
@@ -181,7 +184,7 @@ try {
         $studentId=filter_var($data['student_id']??null,FILTER_VALIDATE_INT);
         $subjectId=filter_var($data['subject_id']??null,FILTER_VALIDATE_INT);
         $session=trim((string)($data['academic_session']??'')); $term=(string)($data['term']??'');
-        if(!$studentId||!$subjectId||$session===''||mb_strlen($session)>30||!in_array($term,['First Term','Second Term','Third Term'],true)) onlineJson(['success'=>false,'message'=>'Choose a valid student, subject, session and term.'],422);
+        if(!$studentId||!$subjectId||!preg_match('/^\\d{4}\\/\\d{4}$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true)) onlineJson(['success'=>false,'message'=>'Choose a valid student, subject, session and term.'],422);
         $ownership=$pdo->prepare('SELECT s.level_id, sub.id FROM online_class_students s JOIN online_class_subjects sub ON sub.level_id=s.level_id AND sub.id=? WHERE s.id=? AND s.is_active=1');
         $ownership->execute([$subjectId,$studentId]);
         if(!$ownership->fetch()) onlineJson(['success'=>false,'message'=>'That subject is not assigned to this Online Class student.'],422);
