@@ -57,7 +57,7 @@ if (currentAdminRole() === 'teacher') {
     );
     $stmt->execute([$accountId, $accountId]);
 } else {
-    requireAdmin();
+    requireAdminOrManagementPermission('students');
     $stmt = db()->query(
         'SELECT s.id, s.admission_number, s.first_name, s.middle_name,
                 s.last_name, s.parent_guardian_name, s.parent_guardian_phone,
