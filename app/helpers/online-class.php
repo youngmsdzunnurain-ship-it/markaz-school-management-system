@@ -78,3 +78,21 @@ function onlineClassValidateScores(array $input): array
     }
     return $scores;
 }
+
+function onlineClassTutorRemark(float $score): string
+{
+    if ($score >= 80) return 'Mashallah! Your dedication and excellent effort are truly commendable. May Allah increase you in beneficial knowledge.';
+    if ($score >= 70) return 'Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.';
+    if ($score >= 50) return 'You are making promising progress. Continue with regular revision and confidence; every step matters.';
+    if ($score >= 30) return 'You have made a beginning. With patient practice and consistent revision, you can make stronger progress.';
+    return 'Please do not be discouraged. Learning is a journey; take it one step at a time and keep trying.';
+}
+
+function onlineClassDirectorRemark(float $score): string
+{
+    if ($score >= 80) return 'Excellent achievement. May Allah preserve your knowledge and grant you continued success.';
+    if ($score >= 70) return 'A very good effort. We encourage you to maintain this consistency and continue striving.';
+    if ($score >= 50) return 'Your progress is encouraging. More regular revision will help you reach the next level.';
+    if ($score >= 30) return 'We appreciate your effort. With support, patience and consistency, further improvement is within reach.';
+    return 'Every learner deserves encouragement. Let us continue supporting your learning journey with patience and care.';
+}
