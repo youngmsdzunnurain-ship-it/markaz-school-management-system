@@ -15,9 +15,9 @@ $js=$read('public/js/online-class.js');
 $portalJs=$read('public/js/online-class-portal.js');
 $portalOptions=$read('api/online-class/portal-options.php');
 $checks=[
- 'online students have a separately stored section'=>str_contains($schema,'section VARCHAR(80)')||str_contains($read('database/migrations/20261110_markaz_online_class_portal_identity.sql'),'ADD COLUMN IF NOT EXISTS section'),
+ 'online students have a separately stored section'=>str_contains($schema,'section VARCHAR(80)')||str_contains($read('database/migrations/20261110_markaz_online_class_sections.sql'),'ADD COLUMN IF NOT EXISTS section'),
  'student portal login requires admission, level, section, session, term and password'=>str_contains($login,'level_id')&&str_contains($login,'section')&&str_contains($login,'academic_session')&&str_contains($login,'term'),
- 'student portal options expose only active levels and configured sections'=>$portalOptions!==''&&str_contains($portalOptions,'online_class_levels')&&str_contains($portalOptions,'section'),
+ 'student portal options expose active levels and available sections'=>$portalOptions!==''&&str_contains($portalOptions,'online_class_levels')&&str_contains($portalOptions,'section'),
  'new levels can be added without hardcoding the four defaults'=>str_contains($api,"action==='create_level'")&&str_contains($api,'INSERT INTO online_class_levels'),
  'student registration saves the section and student listings return it'=>str_contains($api,'section')&&str_contains($api,'s.section'),
 
