@@ -130,9 +130,9 @@
 .online-workspace-page .topbar h1{margin:0;color:#174d32;font-size:clamp(17px,2vw,22px);font-weight:800}
 .online-workspace-page .topbar p{margin:3px 0 0;color:#65766a;font-size:12px}
 .online-workspace-page .menu-button{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:1px solid #dce7dd;border-radius:12px;background:#fff;color:#205d38;font-size:18px;cursor:pointer}
-.online-workspace-page .sidebar{position:fixed;inset:0 auto 0 0;width:280px;max-width:86vw;z-index:1200;overflow-y:auto;overscroll-behavior:contain;transition:transform .22s ease}
+.online-workspace-page .sidebar{position:fixed;inset:0 auto 0 0;width:280px;max-width:86vw;z-index:1201!important;overflow-y:auto;overscroll-behavior:contain;transition:transform .22s ease}
 .online-workspace-page .sidebar.desktop-closed{transform:translateX(-100%)}
-.online-workspace-page .sidebar-overlay{position:fixed;inset:0;z-index:1100;background:rgba(10,30,20,.52);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+.online-workspace-page .sidebar-overlay{position:fixed;inset:0;z-index:1200!important;background:rgba(10,30,20,.52);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
 .online-workspace-page .sidebar-overlay.visible{opacity:1;visibility:visible}
 .online-workspace-page .sidebar-nav{padding-bottom:28px}
 .online-workspace-page .online-class-page{position:relative;z-index:1;min-width:0}
@@ -146,9 +146,9 @@
 .online-results-report .online-report-details,.online-results-report .online-report-comments section{background-color:rgba(250,252,247,.94)}
 .online-report{background:rgba(255,255,255,.94)}
 @media(min-width:851px){
- .online-workspace-page .main-content{margin-left:280px;width:calc(100% - 280px);transition:margin-left .22s ease,width .22s ease}
+ .online-workspace-page .main-content{margin-left:280px;width:auto;flex:1 1 auto;transition:margin-left .22s ease}
  .online-workspace-page .sidebar.desktop-closed~.sidebar-overlay{display:none}
- .online-workspace-page .sidebar.desktop-closed+.sidebar-overlay+.main-content{margin-left:0;width:100%}
+ .online-workspace-page .sidebar.desktop-closed+.sidebar-overlay+.main-content{margin-left:0;width:auto;flex:1 1 auto}
 }
 @media(max-width:850px){
  .online-workspace-page .sidebar{transform:translateX(-100%)}
