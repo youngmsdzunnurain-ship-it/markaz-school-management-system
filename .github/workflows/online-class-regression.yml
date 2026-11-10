@@ -22,6 +22,7 @@ jobs:
           php -l app/helpers/online-class.php
           php -l api/online-class/index.php
           php -l api/online-class/student-login.php
+          php -l api/online-class/portal-options.php
           php -l api/online-class/student-results.php
           php -l api/online-class/student-footer.php
           php -l api/online-class/footer.php
