@@ -570,3 +570,60 @@ body.role-teacher .teacher-assignment-card .teacher-open-class { min-height:46px
     .management-dashboard { grid-template-columns: minmax(0, 1fr); }
     .management-dashboard-workspaces, .management-dashboard-profile { padding: 20px; }
 }
+
+
+/* Management profile panel — consistent, deliberate account-card styling. */
+.management-dashboard-profile {
+    position: relative;
+    overflow: hidden;
+    border-color: #dce8df;
+    background: linear-gradient(145deg, #ffffff 0%, #f7fbf6 100%);
+}
+.management-dashboard-profile::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #1d6039, #c5a45d);
+}
+.management-dashboard-profile .panel-header { margin-bottom: 18px; }
+.management-dashboard-profile .panel-header h2 { font-family: var(--sans); font-size: 18px; font-weight: 800; }
+.management-dashboard-profile-body {
+    padding: 16px;
+    border: 1px solid #e2ebe0;
+    border-radius: 15px;
+    background: rgba(255,255,255,.88);
+}
+.management-dashboard-photo {
+    width: 82px;
+    height: 82px;
+    border: 3px solid #d3bd80;
+    box-shadow: 0 5px 16px rgba(32,93,56,.12);
+}
+.management-dashboard-profile-copy strong { font-size: 19px; }
+.management-dashboard-profile-copy span { font-size: 13px; line-height: 1.45; }
+.management-dashboard-profile-copy small {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    margin-top: 3px;
+    padding: 5px 9px;
+    border-radius: 99px;
+    background: #eaf5ec;
+}
+.management-dashboard-profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 10px 13px;
+    border: 1px solid #d8e5d8;
+    border-radius: 10px;
+    background: #fff;
+    color: #205d38;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+.management-dashboard-profile-link:hover { border-color: #c5a45d; background: #fbfaf5; }
