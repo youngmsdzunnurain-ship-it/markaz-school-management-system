@@ -100,7 +100,7 @@ fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", header
       if (settingsLink) settingsLink.hidden = true;
       if (settingsNav) settingsNav.hidden = true;
     } else {
-      sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = true);
+      sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = false);
     }
 
     if (account.profile_image) {
