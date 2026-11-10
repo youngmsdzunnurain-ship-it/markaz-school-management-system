@@ -141,6 +141,17 @@ if($action==='save_subject'){
     else{$stmt=$pdo->prepare('INSERT INTO online_class_subjects(level_id,name,sort_order) VALUES(?,?,?)');$stmt->execute([$levelId,$name,$sort]);}
     onlineClassJson(['success'=>true,'message'=>'Subject saved.']);
 }
+if($action==='set_student_status'){
+    $id=filter_var($data['id']??null,FILTER_VALIDATE_INT);
+    $active=filter_var($data['is_active']??null,FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE);
+    if(!$id||$active===null) onlineClassJsonError(422,'Choose a valid student and account status.');
+    $exists=$pdo->prepare('SELECT id FROM online_class_students WHERE id=? LIMIT 1');
+    $exists->execute([$id]);
+    if(!$exists->fetchColumn()) onlineClassJsonError(404,'Online Class student not found.');
+    $stmt=$pdo->prepare('UPDATE online_class_students SET is_active=? WHERE id=?');
+    $stmt->execute([$active?1:0,$id]);
+    onlineClassJson(['success'=>true,'message'=>$active?'Online student account reactivated.':'Online student account deactivated.','is_active'=>$active?1:0]);
+}
 if($action==='save_student'){
     $id=filter_var($data['id']??null,FILTER_VALIDATE_INT);
     $levelId=$validLevel($data['level_id']??0);
@@ -155,7 +166,11 @@ if($action==='save_student'){
         $stmt=$pdo->prepare('UPDATE online_class_students SET first_name=?,middle_name=?,last_name=?,gender=?,level_id=?,section=?,email=?,phone=?,is_active=COALESCE(?,is_active) WHERE id=?');
         $active = array_key_exists('is_active', $data) ? (filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : null;
         $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$section,$email?:null,$phone?:null,$active,$id]);
-        onlineClassJson(['success'=>true,'message'=>'Online student updated.']);
+        $verify=$pdo->prepare('SELECT id,admission_number,first_name,middle_name,last_name,gender,level_id,section,email,phone,is_active FROM online_class_students WHERE id=? LIMIT 1');
+        $verify->execute([$id]);
+        $updated=$verify->fetch(PDO::FETCH_ASSOC);
+        if(!$updated) onlineClassJsonError(404,'Online Class student not found after saving.');
+        onlineClassJson(['success'=>true,'message'=>'Online student details saved successfully.','student'=>$updated]);
     }
     $password='M'.bin2hex(random_bytes(6)).'!';
     $pdo->beginTransaction();
