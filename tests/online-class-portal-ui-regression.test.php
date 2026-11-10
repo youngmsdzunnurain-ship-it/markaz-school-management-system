@@ -52,4 +52,19 @@ onlinePortalUiAssert(
     'Student results, report rendering and logout hooks must remain intact'
 );
 
+
+$workspace = (string) file_get_contents($root . '/public/online-class.html');
+$workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
+$dashboard = (string) file_get_contents($root . '/public/dashboard.html');
+$dashboardJs = (string) file_get_contents($root . '/public/js/dashboard.js');
+$onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
+onlinePortalUiAssert(substr_count($html, 'id="onlineSection"') === 1, 'Student login must render exactly one section selector');
+onlinePortalUiAssert(str_contains($js, 'const firstYear = 2021;') && str_contains($js, 'const lastYear = 2030;'), 'Student portal must offer the ten requested sessions from 2021/2022 through 2030/2031');
+onlinePortalUiAssert(strpos($dashboard, '<section class="stats-grid"') > strpos($dashboard, '<div class="welcome-card">') && strpos($dashboard, '<section class="stats-grid"') < strpos($dashboard, 'id="teacherAssignmentsSection"'), 'Dashboard KPI cards must remain immediately below the welcome banner and above lower dashboard panels');
+onlinePortalUiAssert(!str_contains($dashboardJs, 'pageContent.insertBefore(welcomeCard'), 'Dashboard script must not move the welcome banner down the page');
+onlinePortalUiAssert(str_contains($workspace, 'id="sidebarOverlay"') && str_contains($workspaceJs, 'sidebarOverlay') && str_contains($workspaceJs, 'Escape'), 'Online Class sidebar must have working overlay, close and Escape handling');
+onlinePortalUiAssert(!str_contains($workspace, 'class="logout-button"'), 'Online Class workspace sidebar must not show the redundant logout listing');
+onlinePortalUiAssert(str_contains($workspace, 'css/app-watermark.css') && str_contains($onlineCss, '.online-report::before') && str_contains($onlineCss, '.online-results-report::before'), 'Online Class workspace and printed reports must display the MARKAZ watermark');
+onlinePortalUiAssert(str_contains($workspaceJs, 'const rows = state.results.filter(item => String(item.student_id) === String(studentId))') && str_contains($workspaceJs, 'Overall Average'), 'Staff report printing must include every subject for the selected learner');
+
 echo "Online Class student portal UI regression checks passed.\n";
