@@ -73,6 +73,7 @@ function attendanceRequireStaff(): string
     }
 
     if ($role === 'management') {
+        requireManagementPermission('attendance');
         return $role;
     }
 
