@@ -232,7 +232,7 @@ form.addEventListener("submit", async event => {
             const compressedImage = await compressProfileImage(selectedImage);
             formData.set("profile_image", compressedImage, compressedImage.name);
         } catch (imageError) {
-            showMessage("The selected image could not be prepared. Please choose another image.", "error");
+            showMessage(imageError.message || "The selected image could not be prepared. Please choose another image.", "error");
             saveButton.disabled = false;
             saveButton.textContent = "Save Changes";
             return;
