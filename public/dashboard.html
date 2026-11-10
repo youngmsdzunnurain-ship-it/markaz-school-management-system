@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261110-management-dashboard-final2">
+    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261110-management-dashboard-final3">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -64,6 +64,7 @@
                 <a href="./classes.html" class="nav-link" data-role-access="exam_officer"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i><span>Enter Results</span></a>
                 <a href="./print-results.html" class="nav-link" data-role-access="print_results"><i class="fa-solid fa-print" aria-hidden="true"></i><span>Print Results</span></a>
                 <div class="nav-section-label" data-role-access="admin">Attendance &amp; Fees</div>
+                <a href="./online-class.html" class="nav-link" data-role-access="online_class"><i class="fa-solid fa-laptop" aria-hidden="true"></i><span>MARKAZ Online Class</span></a>
                 <a href="./attendance.html" class="nav-link" data-role-access="attendance"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></a>
                 <a href="./school-fees.html" class="nav-link" data-role-access="management_school_fees"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
                 <div class="nav-section-label" data-role-access="admin">System</div>
@@ -109,65 +110,13 @@
                     <div class="welcome-content">
                         <span class="eyebrow" id="welcomeRoleLabel">School administration</span>
                         <h2><span id="welcomeGreeting">Good evening</span>, <span id="adminName">Mas’ud Adebiyi</span></h2>
-                        <p>
+                        <p id="dashboardWelcomeDescription">
                             Manage students, classes, subjects, examination results and school operations from one place.
                         </p>
                     </div>
                 </div>
 
-                <section id="managementDashboard" class="management-dashboard" hidden aria-label="Management workspace">
-                    <article class="management-dashboard-workspaces">
-                        <div class="panel-header">
-                            <div>
-                                <span class="eyebrow">YOUR ASSIGNED ACCESS</span>
-                                <h2>My Workspaces</h2>
-                                <p>Open only the school areas assigned to your account.</p>
-                            </div>
-                        </div>
-                        <div id="managementDashboardShortcuts" class="management-dashboard-shortcuts"></div>
-                    </article>
-                    <article class="management-dashboard-profile">
-                        <div class="panel-header">
-                            <div>
-                                <span class="eyebrow">ACCOUNT</span>
-                                <h2>My Profile</h2>
-                            </div>
-                        </div>
-                        <div class="management-dashboard-profile-body">
-                            <div class="management-dashboard-photo" id="managementDashboardPhoto">MS</div>
-                            <div class="management-dashboard-profile-copy">
-                                <strong id="managementDashboardName">Management</strong>
-                                <span id="managementDashboardEmail"></span>
-                                <small><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Active</small>
-                            </div>
-                        </div>
-                        <a class="management-dashboard-profile-link" href="./settings.html">View profile information</a>
-                    </article>
-                </section>
 
-                <section class="stats-grid" aria-label="School statistics" data-dashboard-admin-only>
-                    <article class="stat-card stat-card-students">
-                        <span class="stat-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
-                        <div class="stat-copy">
-                            <span class="stat-label">Students</span>
-                            <div class="stat-main"><strong>0</strong><small>Registered students</small></div>
-                        </div>
-                    </article>
-                    <article class="stat-card stat-card-classes">
-                        <span class="stat-icon"><i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i></span>
-                        <div class="stat-copy">
-                            <span class="stat-label">Classes</span>
-                            <div class="stat-main"><strong>0</strong><small>Active classes</small></div>
-                        </div>
-                    </article>
-                    <article class="stat-card stat-card-subjects">
-                        <span class="stat-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
-                        <div class="stat-copy">
-                            <span class="stat-label">Subjects</span>
-                            <div class="stat-main"><strong>0</strong><small>Active subjects</small></div>
-                        </div>
-                    </article>
-                </section>
 
                 <section id="teacherAssignmentsSection" class="panel teacher-assignments-section" hidden>
                     <div class="panel-header">
@@ -266,6 +215,60 @@
                 </section>
                 <p class="dashboard-attendance-footnote" data-role-access="attendance">Figures include saved attendance marks for today only. Each class category is calculated from its own saved attendance records. Unmarked students are not counted as present.</p>
 
+                <section id="managementDashboard" class="management-dashboard" hidden aria-label="Management workspace">
+                    <article class="management-dashboard-workspaces">
+                        <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">YOUR ASSIGNED ACCESS</span>
+                                <h2>My Workspaces</h2>
+                                <p>Open only the school areas assigned to your account.</p>
+                            </div>
+                        </div>
+                        <div id="managementDashboardShortcuts" class="management-dashboard-shortcuts"></div>
+                    </article>
+                    <article class="management-dashboard-profile">
+                        <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">ACCOUNT</span>
+                                <h2>My Profile</h2>
+                            </div>
+                        </div>
+                        <div class="management-dashboard-profile-body">
+                            <div class="management-dashboard-photo" id="managementDashboardPhoto">MS</div>
+                            <div class="management-dashboard-profile-copy">
+                                <strong id="managementDashboardName">Management</strong>
+                                <span id="managementDashboardEmail"></span>
+                                <small><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Active</small>
+                            </div>
+                        </div>
+                        <a class="management-dashboard-profile-link" href="./settings.html">View profile information</a>
+                    </article>
+                </section>
+
+                <section class="stats-grid" aria-label="School statistics" data-dashboard-admin-only>
+                    <article class="stat-card stat-card-students">
+                        <span class="stat-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                        <div class="stat-copy">
+                            <span class="stat-label">Students</span>
+                            <div class="stat-main"><strong>0</strong><small>Registered students</small></div>
+                        </div>
+                    </article>
+                    <article class="stat-card stat-card-classes">
+                        <span class="stat-icon"><i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i></span>
+                        <div class="stat-copy">
+                            <span class="stat-label">Classes</span>
+                            <div class="stat-main"><strong>0</strong><small>Active classes</small></div>
+                        </div>
+                    </article>
+                    <article class="stat-card stat-card-subjects">
+                        <span class="stat-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
+                        <div class="stat-copy">
+                            <span class="stat-label">Subjects</span>
+                            <div class="stat-main"><strong>0</strong><small>Active subjects</small></div>
+                        </div>
+                    </article>
+                </section>
+
                 <section class="dashboard-grid dashboard-bottom-layout" data-dashboard-admin-only>
 
                     <article class="panel quick-access-panel">
@@ -284,6 +287,7 @@
                             <button type="button" data-role-access="exam_officer"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i><span>Enter Results</span></button>
                             <button type="button" data-role-access="print_results"><i class="fa-solid fa-print" aria-hidden="true"></i><span>Print Results</span></button>
                             <button type="button" data-role-access="attendance"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></button>
+                            <button type="button" data-role-access="online_class"><i class="fa-solid fa-laptop" aria-hidden="true"></i><span>MARKAZ Online Class</span></button>
                             <button type="button" data-role-access="management_school_fees"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></button>
                             <button type="button" data-role-access="admin"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>System Settings</span></button>
                             <button type="button" data-role-access="admin_or_exam_officer_or_management"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>Settings</span></button>
@@ -340,7 +344,7 @@
 
     </div>
 
-    <script src="js/dashboard.js?v=20261110-management-attendance-permissions"></script>
+    <script src="js/dashboard.js?v=20261110-online-class-access"></script>
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
 
     <script src="/js/markaz-global.js"></script>

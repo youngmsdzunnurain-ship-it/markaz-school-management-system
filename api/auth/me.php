@@ -69,6 +69,15 @@ if ($role === 'teacher') {
     $canManageAttendance = (int) $attendancePermissionStmt->fetchColumn() === 1;
 }
 
+$canAccessOnlineClass = $role === 'admin';
+if (in_array($role, ['exam_officer', 'teacher', 'management'], true)) {
+    $onlineClassPermissionStmt = db()->prepare(
+        'SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $onlineClassPermissionStmt->execute([$accountId, 'online_class_access']);
+    $canAccessOnlineClass = (int) $onlineClassPermissionStmt->fetchColumn() === 1;
+}
+
 $resolvePermission = static function (string $permissionKey) use ($role, $accountId): bool {
     if (!in_array($permissionKey, ['print_results', 'export_results'], true)) {
         return false;
@@ -115,6 +124,7 @@ echo json_encode([
         'can_print_results' => $resolvePermission('print_results'),
         'can_export_results' => $resolvePermission('export_results'),
         'can_manage_attendance' => $canManageAttendance,
-        'management_permissions' => $managementPermissions
+        'management_permissions' => $managementPermissions,
+        'can_access_online_class' => $canAccessOnlineClass
     ]
 ]);

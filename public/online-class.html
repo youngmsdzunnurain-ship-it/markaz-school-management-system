@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#174d32"><title>MARKAZ Online Class</title>
+<link rel="icon" href="./assets/images/markaz-logo.jpg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/dashboard-2026.css?v=20261110-online-class">
+<link rel="stylesheet" href="css/online-class.css?v=20261110-online-class-final">
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header"><div class="brand-logo"><img src="./assets/images/markaz-logo.jpg" alt="MARKAZ"></div><div class="brand-text"><strong>MARKAZ</strong><span>Online Class</span></div></div>
+<nav class="sidebar-nav" aria-label="Online Class navigation">
+<div class="nav-section-label">Workspace</div>
+<a class="nav-link" href="./dashboard.html"><i class="fa-solid fa-arrow-left"></i><span>Main Dashboard</span></a>
+<a class="nav-link active" href="./online-class.html"><i class="fa-solid fa-house"></i><span>Classes</span></a>
+<a class="nav-link" href="#students" data-tab-link="students"><i class="fa-solid fa-users"></i><span>Students</span></a>
+<a class="nav-link" href="#subjects" data-tab-link="subjects"><i class="fa-solid fa-book-open"></i><span>Subjects</span></a>
+<a class="nav-link" href="#attendance" data-tab-link="attendance"><i class="fa-solid fa-calendar-check"></i><span>Attendance</span></a>
+<a class="nav-link" href="#results" data-tab-link="results"><i class="fa-solid fa-file-lines"></i><span>Results &amp; Reports</span></a>
+<a class="nav-link" href="#settings" data-tab-link="settings"><i class="fa-solid fa-sliders"></i><span>Level Settings</span></a>
+</nav>
+<div class="sidebar-bottom"><div class="sidebar-user"><span class="sidebar-user-avatar">OC</span><span class="sidebar-user-text"><strong>Online Class</strong><small>Academic workspace</small></span><a class="logout-button" href="./dashboard.html" aria-label="Back to dashboard"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></div></div>
+</aside>
+<main class="main-content">
+<header class="topbar"><button type="button" id="menuButton" class="menu-button" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button><div><h1>MARKAZ Online Class</h1><p>Independent learning, attendance and academic records</p></div></header>
+<div class="online-class-page">
+<section class="online-hero"><div><span class="online-eyebrow">MARKAZ · ONLINE LEARNING</span><h1>Online Class Workspace</h1><p>Manage learners, levels, attendance and termly Qur’an assessments.</p></div><div class="online-hero-mark"><i class="fa-solid fa-book-quran"></i></div></section>
+<div class="online-tabs" role="tablist">
+<button class="active" data-tab="overview">Classes</button><button data-tab="students">Students</button><button data-tab="subjects">Subjects</button><button data-tab="attendance">Attendance</button><button data-tab="results">Results &amp; Reports</button><button data-tab="settings">Level Settings</button>
+</div>
+<div id="onlineMessage" class="online-message online-hidden" role="status" aria-live="polite"></div>
+<section id="tab-overview" class="online-tab-panel">
+<div class="online-stat-grid" id="onlineLevelStats"></div>
+<div class="online-panel"><h2>Academic levels</h2><div class="online-table-wrap"><table class="online-table"><thead><tr><th>Level</th><th>Tutor</th><th>Active Students</th><th>Memorisation Portion</th><th>Action</th></tr></thead><tbody id="onlineLevelsTable"></tbody></table></div></div>
+</section>
+<section id="tab-students" class="online-tab-panel online-hidden">
+<div class="online-panel"><h2 id="studentFormTitle">Register an Online Student</h2><form id="onlineStudentForm"><input type="hidden" id="onlineStudentId"><div class="online-form-grid">
+<div class="online-field"><label for="onlineFirstName">First name</label><input id="onlineFirstName" required maxlength="100"></div><div class="online-field"><label for="onlineMiddleName">Middle name</label><input id="onlineMiddleName" maxlength="100"></div><div class="online-field"><label for="onlineLastName">Last name</label><input id="onlineLastName" required maxlength="100"></div><div class="online-field"><label for="onlineGender">Gender</label><select id="onlineGender"><option value="">Not specified</option><option>Female</option><option>Male</option></select></div><div class="online-field"><label for="onlineStudentLevel">Level</label><select id="onlineStudentLevel" required></select></div><div class="online-field"><label for="onlineStudentSection">Section</label><input id="onlineStudentSection" required maxlength="80" placeholder="e.g. A"></div><div class="online-field"><label for="onlineStudentEmail">Email (optional)</label><input id="onlineStudentEmail" type="email"></div><div class="online-field"><label for="onlineStudentPhone">Phone (optional)</label><input id="onlineStudentPhone" type="tel"></div><div class="online-field"><label for="onlineStudentActive">Account status</label><select id="onlineStudentActive"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+</div><div class="online-actions" style="margin-top:14px"><button class="online-btn primary" type="submit">Save Student</button><button class="online-btn" type="button" id="clearStudentForm">Clear</button></div></form><div id="newStudentCredentials" class="online-message online-hidden"></div></div>
+<div class="online-panel"><div class="online-toolbar"><div class="online-field"><label for="studentLevelFilter">Filter by level</label><select id="studentLevelFilter"><option value="">All levels</option></select></div><button class="online-btn" id="refreshStudents" type="button">Refresh students</button></div><div class="online-table-wrap"><table class="online-table"><thead><tr><th>Admission No.</th><th>Student</th><th>Level</th><th>Contact</th><th>Status</th><th>Action</th></tr></thead><tbody id="onlineStudentsTable"></tbody></table></div></div>
+</section>
+<section id="tab-subjects" class="online-tab-panel online-hidden">
+<div class="online-panel"><h2>Add a subject to a level</h2><form id="onlineSubjectForm" class="online-toolbar"><div class="online-field"><label for="subjectLevel">Level</label><select id="subjectLevel" required></select></div><div class="online-field"><label for="subjectName">Subject name</label><input id="subjectName" required maxlength="150"></div><div class="online-field"><label for="subjectOrder">Display order</label><input id="subjectOrder" type="number" min="0" value="0"></div><button class="online-btn primary" type="submit">Save Subject</button></form></div>
+<div class="online-panel"><h2>Online Class subjects</h2><div class="online-table-wrap"><table class="online-table"><thead><tr><th>Level</th><th>Subject</th><th>Order</th><th>Status</th></tr></thead><tbody id="onlineSubjectsTable"></tbody></table></div></div>
+</section>
+<section id="tab-attendance" class="online-tab-panel online-hidden">
+<div class="online-panel"><h2>Simple daily attendance</h2><div class="online-toolbar"><div class="online-field"><label for="attendanceDate">Attendance date</label><input type="date" id="attendanceDate" required></div><div class="online-field"><label for="attendanceLevel">Level</label><select id="attendanceLevel"><option value="">All levels</option></select></div><button class="online-btn" type="button" id="loadOnlineAttendance">Load register</button></div><p>Mark each learner Present, Absent, Late or Excused, then save the register.</p><div class="online-table-wrap"><table class="online-table"><thead><tr><th>Admission No.</th><th>Student</th><th>Level</th><th>Attendance</th><th>Remarks</th></tr></thead><tbody id="onlineAttendanceTable"></tbody></table></div><button class="online-btn primary" type="button" id="saveOnlineAttendance" style="margin-top:14px">Save Attendance</button></div>
+</section>
+<section id="tab-results" class="online-tab-panel online-hidden">
+<div class="online-panel"><h2>Term results</h2><div class="online-toolbar"><div class="online-field"><label for="resultLevel">Level</label><select id="resultLevel"></select></div><div class="online-field"><label for="resultSession">Academic session</label><input id="resultSession" value="2026/2027" pattern="\d{4}/\d{4}"></div><div class="online-field"><label for="resultTerm">Term</label><select id="resultTerm"><option>First Term</option><option>Second Term</option><option>Third Term</option></select></div><button class="online-btn" type="button" id="loadOnlineResults">Load results</button></div><div class="online-toolbar"><span id="resultReleaseStatus">Results are currently hidden from students.</span><button class="online-btn primary" id="toggleOnlineRelease" type="button">Release results</button></div><div class="online-table-wrap"><table class="online-table"><thead><tr><th>Student</th><th>Subject</th><th>Attendance /20</th><th>Test /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th><th>Report</th></tr></thead><tbody id="onlineResultsTable"></tbody></table></div></div>
+<div class="online-panel"><h2 id="resultEditorTitle">Enter / update result</h2><form id="onlineResultForm"><input type="hidden" id="resultStudentId"><input type="hidden" id="resultSubjectId"><div class="online-form-grid"><div class="online-field"><label>Student</label><input id="resultStudentName" readonly></div><div class="online-field"><label>Subject</label><input id="resultSubjectName" readonly></div><div class="online-field"><label for="scoreAttendance">Attendance (out of 20)</label><input id="scoreAttendance" type="number" min="0" max="20" step="0.5"></div><div class="online-field"><label for="scoreTest" id="resultTestLabel">Test (out of 20)</label><input id="scoreTest" type="number" min="0" max="20" step="0.5"></div><div class="online-field"><label for="scoreExam">Final examination (out of 60)</label><input id="scoreExam" type="number" min="0" max="60" step="0.5"></div><div class="online-field"><label for="teacherRemark">Tutor's remark</label><textarea id="teacherRemark" rows="2"></textarea></div><div class="online-field"><label for="directorRemark">Director's remark</label><textarea id="directorRemark" rows="2"></textarea></div></div><button class="online-btn primary" type="submit" style="margin-top:14px">Save Result</button></form></div>
+</section>
+<section id="tab-settings" class="online-tab-panel online-hidden"><div class="online-panel"><h2>Student portal access</h2><p>Control whether Online Class learners can sign in to view results released for their level and term.</p><div class="online-toolbar"><strong id="onlinePortalAccessStatus">Checking portal access…</strong><div class="online-field"><label for="onlinePortalAccess">Student login</label><select id="onlinePortalAccess"><option value="1">Enabled</option><option value="0">Disabled</option></select></div><button type="button" class="online-btn primary" id="saveOnlinePortalAccess">Save portal access</button></div></div><div class="online-panel"><h2>Add an academic level</h2><p>Create additional levels whenever the programme expands. New levels automatically appear in student registration and the student portal.</p><form id="onlineCreateLevelForm" class="online-toolbar"><div class="online-field"><label for="onlineNewLevelName">New level name</label><input id="onlineNewLevelName" maxlength="40" placeholder="e.g. Level 5" required></div><button class="online-btn primary" type="submit">Add Level</button></form></div><div class="online-panel"><h2>Level-specific settings</h2><p>Set the tutor, two task labels, memorisation portion and separate resumption date for every level.</p><div id="onlineLevelSettings"></div></div></section>
+</div>
+</main></div>
+<div id="onlineReport" class="online-report online-hidden" aria-label="Printable Online Class report"></div>
+<script src="js/online-class.js?v=20261110-online-class-final"></script>
+<script src="js/website-image-overrides.js"></script>
+</body></html>

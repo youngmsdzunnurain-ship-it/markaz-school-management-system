@@ -23,6 +23,7 @@ const logoutButton = document.getElementById("logoutButton");
 const profileLogoutButton = document.getElementById("profileLogoutButton");
 
 const dashboardSearch = document.getElementById("dashboardSearch");
+const dashboardWelcomeDescription = document.getElementById("dashboardWelcomeDescription");
 
 function getInitials(name) {
     if (!name) return "AD";
@@ -69,6 +70,15 @@ async function loadAdmin() {
         const name = data.admin.name || "Administrator";
         const email = data.admin.email || "";
         const role = data.admin.role || "";
+        const welcomeDescriptions = {
+            admin: "Manage students, classes, subjects, examination results and school operations from one place.",
+            exam_officer: "Review academic progress, manage examination records and release results for the school.",
+            teacher: "Continue with your assigned classes, student progress and teaching responsibilities.",
+            management: "Your assigned school workspaces are ready. Open the areas selected for your account."
+        };
+        if (dashboardWelcomeDescription) {
+            dashboardWelcomeDescription.textContent = welcomeDescriptions[role] || welcomeDescriptions.admin;
+        }
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
         const hour = new Date().getHours();
@@ -79,15 +89,24 @@ async function loadAdmin() {
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
-        if (welcomeDescription && role === "management") welcomeDescription.hidden = true;
-        if (role === "management" && roleLabel) roleLabel.hidden = true;
+        if (welcomeDescription && role === "management") { welcomeDescription.hidden = false; welcomeDescription.textContent = "Your assigned school workspaces are ready below. Open a section to manage your responsibilities."; }
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
+        window.markazManagementPermissions.online_class_access = data.admin.can_access_online_class === true;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
+        if (role === "admin") {
+            const welcomeCard = document.querySelector(".welcome-card");
+            const pageContent = document.querySelector(".page-content");
+            const shortcutsSection = document.querySelector(".dashboard-bottom-layout");
+            if (welcomeCard && pageContent && shortcutsSection) {
+                pageContent.insertBefore(welcomeCard, shortcutsSection);
+            }
+        }
         if (role === "management") {
             document.body.classList.add("role-management");
             const managerPermissions = data.admin.management_permissions || {};
+            managerPermissions.online_class = data.admin.can_access_online_class === true;
             document.querySelectorAll("[data-dashboard-admin-only]").forEach(element => element.hidden = true);
             const chartSection = document.querySelector(".dashboard-class-attendance-charts");
             if (chartSection) chartSection.hidden = managerPermissions.attendance !== true;
@@ -98,12 +117,13 @@ async function loadAdmin() {
             const managerLinks = [
                 ["students", "Students", "./students.html", "fa-users"],
                 ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
-                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"]
+                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"],
+                ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"]
             ];
             const shortcutList = document.getElementById("managementDashboardShortcuts");
             if (shortcutList) {
                 shortcutList.replaceChildren();
-                managerLinks.filter(item => managerPermissions[item[0]] === true).forEach(item => {
+                managerLinks.filter(item => item[0] === "online_class_access" ? data.admin.can_access_online_class === true : managerPermissions[item[0]] === true).forEach(item => {
                     const link = document.createElement("a");
                     link.className = "management-dashboard-shortcut";
                     link.href = item[2];
@@ -548,6 +568,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = permissions.can_print_results === true;
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
+        } else if (requiredRole === "online_class") {
+            allowed = role === "admin" || permissions.can_access_online_class === true;
         } else if (requiredRole === "attendance") {
             allowed = role === "admin"
                 || (role === "teacher" && permissions.can_manage_attendance === true)
@@ -1093,6 +1115,8 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Enter Results": "classes.html",
             "Print Results": "print-results.html",
             "Attendance": "attendance.html",
+            "MARKAZ Online Class": "online-class.html",
+            "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
             "System Settings": "settings.html",
             "Settings": "settings.html"

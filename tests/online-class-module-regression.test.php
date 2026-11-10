@@ -1,0 +1,35 @@
+<?php
+declare(strict_types=1);
+$root=dirname(__DIR__);
+$read=static fn(string $path):string=>is_file($root.'/'.$path)?(string)file_get_contents($root.'/'.$path):'';
+$schema=$read('database/migrations/20261110_markaz_online_class.sql');
+$helper=$read('app/helpers/online-class.php');
+$auth=$read('app/middleware/auth.php');
+$api=$read('api/online-class/index.php');
+$portal=$read('api/online-class/student-results.php');
+$login=$read('api/online-class/student-login.php');
+$page=$read('public/online-class.html');
+$portalPage=$read('public/online-class-portal.html');
+$loginPage=$read('public/online-class-login.html');
+$js=$read('public/js/online-class.js');
+$portalJs=$read('public/js/online-class-portal.js');
+$portalOptions=$read('api/online-class/portal-options.php');
+$checks=[
+ 'online students have a separately stored section'=>str_contains($schema,'section VARCHAR(80)')||str_contains($read('database/migrations/20261110_markaz_online_class_sections.sql'),'ADD COLUMN IF NOT EXISTS section'),
+ 'student portal login matches the school lookup fields'=>str_contains($login,'level_id')&&str_contains($login,'section')&&str_contains($login,'academic_session')&&str_contains($login,'term')&&!str_contains($login,'password_verify'),
+ 'student portal options expose active levels and available sections'=>$portalOptions!==''&&str_contains($portalOptions,'online_class_levels')&&str_contains($portalOptions,'section'),
+ 'new levels can be added without hardcoding the four defaults'=>str_contains($api,"action==='create_level'")&&str_contains($api,'INSERT INTO online_class_levels')&&str_contains($page,'onlineCreateLevelForm'),
+ 'student registration captures and displays the section'=>str_contains($page,'onlineStudentSection')&&str_contains($js,'section:$(' . "'onlineStudentSection'" . ')')&&str_contains($js,"s.level_name+' · '+s.section")&&!str_contains($js,'temporary_password'),
+ 'student registration saves the section and student listings return it'=>str_contains($api,'section')&&str_contains($api,'s.section'),
+
+ 'isolated online academic tables and four default levels'=>str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_students')&&str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_results')&&str_contains($schema,"('Level 4', 4)"),
+ 'score limits are attendance 20, test 20 and exam 60'=>str_contains($helper,"'attendance_score'=>20")&&str_contains($helper,"'test_score'=>20")&&str_contains($helper,"'exam_score'=>60"),
+ 'grade boundaries match Awesome, Phenomenal, Impressive, Promising and Poor'=>str_contains($helper,'$score >= 80')&&str_contains($helper,'$score >= 70')&&str_contains($helper,'$score >= 50')&&str_contains($helper,'$score >= 30')&&str_contains($helper,"'remark' => 'Awesome'")&&str_contains($helper,"'remark' => 'Phenomenal'")&&str_contains($helper,"'remark' => 'Impressive'")&&str_contains($helper,"'remark' => 'Promising'")&&str_contains($helper,"'remark' => 'Poor'")&&str_contains($js,"if(n>=50)return{grade:'C',remark:'Impressive'}")&&str_contains($js,"if(n>=30)return{grade:'D',remark:'Promising'}")&&str_contains($portalJs,"score>=50)return ['C','Impressive'];if(score>=30)return ['D','Promising'];"),
+ 'each level stores tutor, two task labels, memorisation and separate term dates'=>str_contains($schema,'tutor_name')&&str_contains($schema,'task_one_name')&&str_contains($schema,'task_two_name')&&str_contains($schema,'third_term_resumption'),
+ 'staff access is individually permission-gated'=>str_contains($auth,'online_class_access')&&str_contains($auth,'requireOnlineClassAccess')&&str_contains($api,'onlineClassStaffAccess'),
+ 'student portal uses separate online student credentials and sessions'=>str_contains($login,'online_class_students')&&str_contains($login,'online_student_id')&&str_contains($portal,'onlineClassStudentSession'),
+ 'results release is level and term specific'=>str_contains($schema,'online_class_result_releases')&&str_contains($api,'release_results'),
+ 'workspace and landscape report interfaces exist'=>str_contains($page,'online-class.js')&&str_contains($page,'Level Settings')&&str_contains($js,'online-report-title')&&str_contains($js,'window.print()')&&str_contains($portalPage,'online-class-portal.js')&&str_contains($loginPage,'online-class-login.js')&&str_contains($loginPage,'online-class-login.js'),
+];
+foreach($checks as $label=>$passed){echo ($passed?'PASS ':'FAIL ').$label.PHP_EOL;if(!$passed)exit(1);}
+echo 'Online Class module regression checks passed ('.count($checks).').'.PHP_EOL;

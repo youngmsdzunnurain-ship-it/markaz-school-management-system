@@ -542,3 +542,4 @@ html.settings-page-pending .settings-category-description {
 
 /* Do not flash Admin/Exam Officer security controls before a Management role is resolved. */
 html.settings-page-pending .password-section { visibility: hidden; }
+html.settings-page-pending body .settings-page { visibility: hidden; }
