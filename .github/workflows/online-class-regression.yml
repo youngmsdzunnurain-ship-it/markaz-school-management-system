@@ -34,6 +34,7 @@ jobs:
           php -l tests/online-class-module-regression.test.php
           php -l tests/online-class-architecture-regression.test.php
           php -l tests/settings-role-first-dashboard-order.test.php
+          php -l tests/online-class-portal-ui-regression.test.php
       - name: JavaScript syntax checks
         run: |
           set -e
@@ -50,3 +51,4 @@ jobs:
           php tests/online-class-module-regression.test.php
           php tests/online-class-architecture-regression.test.php
           php tests/settings-role-first-dashboard-order.test.php
+          php tests/online-class-portal-ui-regression.test.php
