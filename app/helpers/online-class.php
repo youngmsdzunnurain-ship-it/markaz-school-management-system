@@ -49,6 +49,10 @@ function onlineClassStudentSession(): int
     startSecureSession();
     $id = (int)($_SESSION['online_student_id'] ?? 0);
     if ($id < 1) onlineClassJsonError(401, 'Please sign in to your Online Class account.');
+    $stmt = db()->prepare('SELECT id, is_active FROM online_class_students WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$student || (int)$student['is_active'] !== 1) { unset($_SESSION['online_student_id']); onlineClassJsonError(401, 'This Online Class account is unavailable.'); }
     return $id;
 }
 function onlineClassGrade(float $score): array
