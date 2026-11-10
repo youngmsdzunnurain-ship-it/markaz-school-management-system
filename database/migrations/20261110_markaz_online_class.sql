@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS online_class_students (
     last_name VARCHAR(100) NOT NULL,
     gender ENUM('Male','Female') NULL,
     level_id BIGINT UNSIGNED NOT NULL,
+    section VARCHAR(80) NOT NULL DEFAULT 'A',
     email VARCHAR(190) NULL,
     phone VARCHAR(40) NULL,
     password_hash VARCHAR(255) NOT NULL,
