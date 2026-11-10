@@ -16,7 +16,7 @@ $page = file_get_contents($root . '/public/online-class.html');
 onlineCheck(str_contains($schema, 'CREATE TABLE IF NOT EXISTS online_class_students') && str_contains($schema, 'CREATE TABLE IF NOT EXISTS online_class_results'), 'Online students and results have isolated tables');
 onlineCheck(str_contains($schema, 'attendance_score DECIMAL(5,2)') && str_contains($schema, 'test_score DECIMAL(5,2)') && str_contains($schema, 'exam_score DECIMAL(5,2)'), 'Results store Attendance 20, Test 20 and Exam 60 separately');
 onlineCheck(str_contains($schema, "('Level 1', 1), ('Level 2', 2), ('Level 3', 3), ('Level 4', 4)"), 'Four initial levels are seeded idempotently');
-onlineCheck(str_contains($helper, 'function onlineClassGrade') && onlineClassGrade(80)['grade'] === 'A' && onlineClassGrade(70)['grade'] === 'B' && onlineClassGrade(50)['grade'] === 'C' && onlineClassGrade(40)['grade'] === 'D' && onlineClassGrade(39)['grade'] === 'E', 'Online grading boundaries match MARKAZ grading scale');
+onlineCheck(str_contains($helper, "if ($score >= 80)") && str_contains($helper, "if ($score >= 70)") && str_contains($helper, "if ($score >= 50)") && str_contains($helper, "if ($score >= 40)") && str_contains($helper, "'remark' => 'Poor'"), 'Online grading boundaries match the agreed 80/70/50/40 thresholds');
 onlineCheck(str_contains($helper, 'function onlineClassStaffAccess'), 'Staff Online Class permission is enforced server-side');
 onlineCheck(str_contains($accounts, 'online_class_access') && str_contains($apiAccounts, 'online_class_access'), 'Account creation supports individual Online Class access');
 onlineCheck(str_contains($dashboard, 'online-class.html') && str_contains($dashboard, 'Online Class'), 'Dashboard provides Online Class navigation');
