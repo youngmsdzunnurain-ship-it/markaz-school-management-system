@@ -15,6 +15,12 @@ $validLevel = static function($value) use ($levelIds): int {
     return (int)$id;
 };
 if ($method === 'GET') {
+    if ($action === 'footer_settings') {
+        $stmt=$pdo->prepare('SELECT setting_key,setting_value FROM settings WHERE setting_key IN (?,?,?,?,?)');
+        $stmt->execute(['class_teacher_signature','director_signature','class_teacher_signature_image','director_signature_image','result_signature_date']);
+        $settings=[]; foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) $settings[$row['setting_key']]=$row['setting_value']??'';
+        onlineClassJson(['success'=>true,'settings'=>$settings]);
+    }
     if ($action === 'bootstrap') {
         $subjects = $pdo->query('SELECT s.*, l.name AS level_name FROM online_class_subjects s JOIN online_class_levels l ON l.id=s.level_id ORDER BY l.sort_order,s.sort_order,s.name')->fetchAll(PDO::FETCH_ASSOC);
         $counts = $pdo->query('SELECT level_id, COUNT(*) AS total FROM online_class_students WHERE is_active=1 GROUP BY level_id')->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -126,8 +132,15 @@ if($action==='save_result'){
     $scope=$pdo->prepare('SELECT s.id FROM online_class_students s JOIN online_class_subjects sub ON sub.level_id=s.level_id WHERE s.id=? AND sub.id=? AND s.is_active=1 AND sub.is_active=1');
     $scope->execute([$studentId,$subjectId]);if(!$scope->fetchColumn()) onlineClassJsonError(422,'That subject does not belong to this student’s level.');
     $scores=onlineClassValidateScores($data);
+    $teacherRemark=trim((string)($data['teacher_remark']??''));
+    $directorRemark=trim((string)($data['director_remark']??''));
+    if(!in_array(null,$scores,true)){
+        $total=(float)$scores['attendance_score']+(float)$scores['test_score']+(float)$scores['exam_score'];
+        $teacherRemark=$teacherRemark?:onlineClassTutorRemark($total);
+        $directorRemark=$directorRemark?:onlineClassDirectorRemark($total);
+    }
     $stmt=$pdo->prepare('INSERT INTO online_class_results(student_id,subject_id,academic_session,term,attendance_score,test_score,exam_score,teacher_remark,director_remark,created_by,updated_by) VALUES(?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE attendance_score=VALUES(attendance_score),test_score=VALUES(test_score),exam_score=VALUES(exam_score),teacher_remark=VALUES(teacher_remark),director_remark=VALUES(director_remark),updated_by=VALUES(updated_by)');
-    $stmt->execute([$studentId,$subjectId,$session,$term,$scores['attendance_score'],$scores['test_score'],$scores['exam_score'],trim((string)($data['teacher_remark']??''))?:null,trim((string)($data['director_remark']??''))?:null,$staffId,$staffId]);
+    $stmt->execute([$studentId,$subjectId,$session,$term,$scores['attendance_score'],$scores['test_score'],$scores['exam_score'],$teacherRemark?:null,$directorRemark?:null,$staffId,$staffId]);
     onlineClassJson(['success'=>true,'message'=>'Online Class result saved.']);
 }
 if($action==='release_results'){
