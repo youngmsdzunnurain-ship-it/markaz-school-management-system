@@ -175,8 +175,25 @@ if ($removeProfileImage) {
 
     $uploadDirectory = dirname(__DIR__, 2) . '/public/uploads/admins';
 
-    if (!is_dir($uploadDirectory)) {
-        mkdir($uploadDirectory, 0700, true);
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Unable to create the profile image directory.'
+        ]);
+        exit;
+    }
+
+    // Profile images are served directly by the web server as public avatars.
+    // The directory and image therefore need read/execute permissions for it.
+    @chmod($uploadDirectory, 0755);
+    if (!is_writable($uploadDirectory)) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'The profile image directory is not writable by the application.'
+        ]);
+        exit;
     }
 
     $filename = bin2hex(random_bytes(16)) . '.' . $allowedMimeTypes[$mimeType];
@@ -191,6 +208,7 @@ if ($removeProfileImage) {
         exit;
     }
 
+    @chmod($destination, 0644);
     $profileImage = 'uploads/admins/' . $filename;
 }
 
