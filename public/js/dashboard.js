@@ -69,6 +69,8 @@ async function loadAdmin() {
         const name = data.admin.name || "Administrator";
         const email = data.admin.email || "";
         const role = data.admin.role || "";
+        const profileImage = data.admin.profile_image || "";
+        const initials = getInitials(name);
         const hour = new Date().getHours();
         const greeting = hour < 12 ? "Good morning" : (hour < 17 ? "Good afternoon" : "Good evening");
         const greetingNode = document.getElementById("welcomeGreeting");
@@ -77,6 +79,7 @@ async function loadAdmin() {
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
+        if (welcomeDescription && role === "management") welcomeDescription.textContent = "Your assigned school workspaces are available below.";
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
@@ -129,11 +132,6 @@ async function loadAdmin() {
                 }
             }
         }
-        if (role === "management") {
-            document.body.classList.add("role-management");
-            document.querySelector(".stats-grid")?.setAttribute("hidden", "");
-            document.querySelector(".dashboard-exam-section")?.setAttribute("hidden", "");
-        }
         if (role === "teacher") {
             document.body.classList.add("role-teacher");
             document.getElementById("dashboardAttendancePanel")?.setAttribute("hidden", "");
@@ -144,8 +142,6 @@ async function loadAdmin() {
             document.querySelector(".dashboard-attendance-footnote")?.setAttribute("hidden", "");
         }
         loadDashboardAttendance();
-        const profileImage = data.admin.profile_image || "";
-        const initials = getInitials(name);
 
         console.log("MARKAZ ADMIN DATA:", {
             name,
@@ -551,11 +547,9 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "attendance") {
-            allowed = role === "admin" || (role === "teacher" && permissions.can_manage_attendance === true) || (role === "management" && permissions.management_permissions?.attendance === true);
-        } else if (requiredRole === "students") {
-            allowed = role === "admin" || role === "exam_officer" || (role === "management" && permissions.management_permissions?.students === true);
-        } else if (requiredRole === "school_fees") {
-            allowed = role === "admin" || (role === "management" && permissions.management_permissions?.school_fees === true);
+            allowed = role === "admin"
+                || (role === "teacher" && permissions.can_manage_attendance === true)
+                || (role === "management" && permissions.management_permissions?.attendance === true);
         }
 
         element.style.display = allowed ? "" : "none";
@@ -771,7 +765,10 @@ async function loadDashboardAttendance() {
     const panel = document.getElementById("dashboardAttendancePanel");
     if (!panel) return;
 
-    if (!["admin", "management"].includes(window.markazCurrentRole || "")) {
+    const role = window.markazCurrentRole || "";
+    const attendanceAllowed = role === "admin"
+        || (role === "management" && window.markazManagementPermissions?.attendance === true);
+    if (!attendanceAllowed) {
         panel.hidden = true;
         return;
     }
