@@ -95,14 +95,6 @@ async function loadAdmin() {
         window.markazManagementPermissions.online_class_access = data.admin.can_access_online_class === true;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
-        if (role === "admin") {
-            const welcomeCard = document.querySelector(".welcome-card");
-            const pageContent = document.querySelector(".page-content");
-            const shortcutsSection = document.querySelector(".dashboard-bottom-layout");
-            if (welcomeCard && pageContent && shortcutsSection) {
-                pageContent.insertBefore(welcomeCard, shortcutsSection);
-            }
-        }
         if (role === "management") {
             document.body.classList.add("role-management");
             const managerPermissions = data.admin.management_permissions || {};
