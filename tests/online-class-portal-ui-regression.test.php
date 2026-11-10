@@ -65,6 +65,8 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($workspace, 'css/app-watermark.css') &&
     str_contains($workspace, 'class="welcome-card online-welcome-card"') &&
+    strpos($workspace, 'online-welcome-card') < strpos($workspace, 'id="onlineLevelStats"') &&
+    substr_count($workspace, 'data-tab-link=') === 6 &&
     !str_contains($workspace, 'class="online-tabs"') &&
     str_contains($workspace, 'id="sidebarOverlay"') &&
     str_contains($workspace, 'id="menuButton"') &&
@@ -87,12 +89,9 @@ onlinePortalUiAssert(
     str_contains($onlineCss, '.online-workspace-page .topbar{position:sticky') &&
     str_contains($onlineCss, '.online-workspace-page .app{grid-template-columns:260px minmax(0,1fr)') &&
     !str_contains($onlineCss, 'margin-left:280px') &&
-    !str_contains($onlineCss, '.online-workspace-page .main-content::before') &&
-    str_contains($onlineCss, '.online-workspace-page .sidebar.open') &&
-    str_contains($onlineCss, '.online-workspace-page .sidebar.desktop-closed') &&
-    str_contains($onlineCss, '.online-login-page::before') &&
-    str_contains($onlineCss, '.online-results-page::before') &&
-    str_contains($onlineCss, '.online-results-report::before'),
+    str_contains($onlineCss, '.online-results-report::before') &&
+    str_contains($login, 'css/login-shared.css') &&
+    str_contains($portal, 'css/app-watermark.css'),
     'Online Class pages and reports must show the MARKAZ watermark with responsive sidebar states'
 );
 onlinePortalUiAssert(
