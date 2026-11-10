@@ -5,6 +5,9 @@ const passwordInput = document.getElementById("currentPassword");
 const imageInput = document.getElementById("profileImage");
 const message = document.getElementById("formMessage");
 const saveButton = document.getElementById("saveProfileButton");
+let originalProfileName = "";
+let originalProfileEmail = "";
+let currentProfileRole = "";
 
 const previewName = document.getElementById("profilePreviewName");
 const previewEmail = document.getElementById("profilePreviewEmail");
@@ -31,6 +34,18 @@ function showMessage(text, type) {
     message.className = "form-message " + type;
 }
 
+function updateProfilePasswordRequirement() {
+    if (!passwordInput || currentProfileRole === "management") return;
+    const identityChanged = nameInput.value.trim() !== originalProfileName
+        || emailInput.value.trim() !== originalProfileEmail;
+    passwordInput.required = identityChanged;
+    const securitySection = document.querySelector(".password-section");
+    if (securitySection) securitySection.hidden = !identityChanged;
+}
+
+nameInput.addEventListener("input", updateProfilePasswordRequirement);
+emailInput.addEventListener("input", updateProfilePasswordRequirement);
+
 async function loadProfile() {
     try {
         const response = await fetch("./api/auth/me.php", {
@@ -51,6 +66,9 @@ async function loadProfile() {
         }
 
         window.markazCurrentRole = data.admin.role;
+        currentProfileRole = data.admin.role;
+        originalProfileName = data.admin.name || "";
+        originalProfileEmail = data.admin.email || "";
         const isExamOfficer = data.admin.role === "exam_officer";
         const isManagement = data.admin.role === "management";
         const roleLabel = document.getElementById("profileRoleLabel");
@@ -62,6 +80,7 @@ async function loadProfile() {
             passwordInput.required = false;
             passwordInput.disabled = true;
         }
+        updateProfilePasswordRequirement();
         if (pageDescription && isExamOfficer) {
             pageDescription.textContent = "Manage your profile and shared academic settings.";
         } else if (pageDescription && isManagement) {
@@ -107,22 +126,46 @@ async function compressProfileImage(file) {
         image.src = objectUrl;
         await new Promise((resolve, reject) => {
             image.onload = resolve;
-            image.onerror = reject;
+            image.onerror = () => reject(new Error("The selected image format could not be opened."));
         });
-        const maxDimension = 1600;
-        const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
-        const width = Math.max(1, Math.round(image.naturalWidth * scale));
-        const height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+        const maxBytes = 1.5 * 1024 * 1024;
+        const maxDimension = 1200;
+        let scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+        let quality = 0.84;
+        let blob = null;
         const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const context = canvas.getContext("2d");
-        if (!context) throw new Error("Image processing is unavailable.");
-        context.drawImage(image, 0, 0, width, height);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.82));
-        if (!blob) throw new Error("Image compression failed.");
+
+        for (let attempt = 0; attempt < 10; attempt += 1) {
+            const width = Math.max(1, Math.round(image.naturalWidth * scale));
+            const height = Math.max(1, Math.round(image.naturalHeight * scale));
+            canvas.width = width;
+            canvas.height = height;
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("Image processing is unavailable.");
+            context.clearRect(0, 0, width, height);
+            context.drawImage(image, 0, 0, width, height);
+            blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+            if (!blob) throw new Error("Image compression failed.");
+            if (blob.size <= maxBytes) break;
+
+            if (quality > 0.60) {
+                quality = Math.max(0.60, quality - 0.08);
+            } else {
+                scale *= 0.82;
+                quality = 0.76;
+            }
+        }
+
+        if (!blob || blob.size > maxBytes) {
+            throw new Error("The image could not be reduced below the 1.5MB upload limit.");
+        }
+
         const safeName = (file.name || "profile-photo").replace(/\.[^.]+$/, "");
-        return new File([blob], safeName + ".jpg", {type: "image/jpeg", lastModified: Date.now()});
+        return new File([blob], safeName + ".jpg", {
+            type: "image/jpeg",
+            lastModified: Date.now()
+        });
     } finally {
         URL.revokeObjectURL(objectUrl);
     }
@@ -140,6 +183,7 @@ removeProfileButton?.addEventListener("click", () => {
     profilePhoto.appendChild(initialsSpan);
 
     removeProfileButton.dataset.remove = "1";
+    showMessage("Photo removal selected. Save Changes to apply it.", "success");
 });
 
 imageInput.addEventListener("change", () => {
@@ -163,6 +207,7 @@ imageInput.addEventListener("change", () => {
     };
 
     reader.readAsDataURL(file);
+    showMessage("Photo selected. Save Changes to upload it.", "success");
 
     if (removeProfileButton) {
         removeProfileButton.dataset.remove = "0";
@@ -208,11 +253,15 @@ form.addEventListener("submit", async event => {
             }
         );
 
-        const data = await response.json();
+        if (response.redirected) {
+            showMessage("The profile request was redirected. Your session was not changed; reload Settings and try again.", "error");
+            return;
+        }
+        const data = await response.json().catch(() => null);
 
-        if (!response.ok || !data.success) {
+        if (!response.ok || !data || !data.success) {
             showMessage(
-                data.message || "Unable to save changes.",
+                data?.message || (response.status === 401 ? "Your session has expired. Sign in again before saving." : "Unable to save changes."),
                 "error"
             );
             return;
@@ -220,6 +269,8 @@ form.addEventListener("submit", async event => {
 
         previewName.textContent = data.admin.name;
         previewEmail.textContent = data.admin.email;
+        originalProfileName = data.admin.name || "";
+        originalProfileEmail = data.admin.email || "";
 
         profilePhoto.innerHTML = "";
 
@@ -242,6 +293,7 @@ form.addEventListener("submit", async event => {
         }
 
         passwordInput.value = "";
+        updateProfilePasswordRequirement();
 
         showMessage(
             "Profile updated successfully.",
