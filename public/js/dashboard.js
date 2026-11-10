@@ -154,6 +154,13 @@ async function loadAdmin() {
         });
 
         applyDashboardRoleAccess(role, data.admin);
+        if (role === "admin") {
+            const welcomeCard = document.querySelector(".welcome-card");
+            const quickAccessPanel = document.querySelector(".quick-access-panel");
+            if (welcomeCard && quickAccessPanel) {
+                quickAccessPanel.insertAdjacentElement("afterend", welcomeCard);
+            }
+        }
         if (role !== "management") loadDashboardStats();
 
         if (adminName) adminName.textContent = name;
