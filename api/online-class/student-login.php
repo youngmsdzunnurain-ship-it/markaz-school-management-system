@@ -22,7 +22,7 @@ $enabled=db()->query("SELECT setting_value FROM settings WHERE setting_key='onli
 if(!in_array(strtolower(trim((string)$enabled)),['1','true','yes','on'],true)){http_response_code(403);echo json_encode(['success'=>false,'message'=>'Online Class student login is currently closed.']);exit;}
 $stmt=db()->prepare('SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.level_id,s.section,l.name AS level_name,s.password_hash,s.is_active FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id WHERE s.admission_number=? AND s.level_id=? AND l.is_active=1 LIMIT 1');
 $stmt->execute([$admission,$levelId]);$student=$stmt->fetch(PDO::FETCH_ASSOC);
-if(!$student||!(int)$student['is_active']){http_response_code(401);echo json_encode(['success'=>false,'message'=>'The admission number, level or section does not match our records.']);exit;}
+if(!$student||!(int)$student['is_active']){http_response_code(401);echo json_encode(['success'=>false,'message'=>'The admission number or level does not match our records.']);exit;}
 session_regenerate_id(true);
 unset($_SESSION['admin_id'], $_SESSION['admin_role'], $_SESSION['admin_name'], $_SESSION['admin_email']);
 $_SESSION=[];
