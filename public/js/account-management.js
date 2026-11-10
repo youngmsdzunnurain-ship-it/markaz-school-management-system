@@ -121,6 +121,13 @@
                         </fieldset>
                     </div>
 
+                    <div id="accountOnlineClassPermission" hidden>
+                        <fieldset class="account-permission-group">
+                            <legend>MARKAZ Online Class access</legend>
+                            <label class="account-check"><input type="checkbox" id="accountCanOnlineClass"> Allow this account to access the complete Online Class workspace, including its settings, students, subjects, attendance and results</label>
+                        </fieldset>
+                    </div>
+
                     <div id="accountAttendancePermission" hidden>
                         <label class="account-check">
                             <input type="checkbox" id="accountCanTakeAttendance">
@@ -181,7 +188,9 @@
     const studentLink = $('#accountStudentLink');
     const studentSelect = $('#accountStudentId');
     const assignmentsWrap = $('#accountTeacherAssignments');
-    const managementPermissionsWrap = $('#accountManagementPermissions');\n    const onlineClassPermissionWrap = $('#accountOnlineClassPermission');\n    const onlineClassPermission = $('#accountCanOnlineClass');
+    const managementPermissionsWrap = $('#accountManagementPermissions');
+    const onlineClassPermissionWrap = $('#accountOnlineClassPermission');
+    const onlineClassPermission = $('#accountCanOnlineClass');\n    const onlineClassPermissionWrap = $('#accountOnlineClassPermission');\n    const onlineClassPermission = $('#accountCanOnlineClass');
     const onlineClassPermissionWrap = $('#accountOnlineClassPermission');
     const onlineClassPermission = $('#accountCanAccessOnlineClass');
     const managementAttendancePermission = $('#managementCanAttendance');
@@ -331,7 +340,8 @@
         const isTeacher = role.value === 'teacher';
         studentLink.hidden = !isStudent;
         studentSelect.required = isStudent;
-        const isManagement = role.value === 'management';\n        onlineClassPermissionWrap.hidden = !['exam_officer', 'teacher', 'management'].includes(role.value);
+        const isManagement = role.value === 'management';
+        onlineClassPermissionWrap.hidden = !['exam_officer','teacher','management'].includes(role.value);\n        onlineClassPermissionWrap.hidden = !['exam_officer', 'teacher', 'management'].includes(role.value);
         onlineClassPermissionWrap.hidden = !['exam_officer', 'teacher', 'management'].includes(role.value);
         managementPermissionsWrap.hidden = !isManagement;
         assignmentsWrap.hidden = !isTeacher;
@@ -567,7 +577,8 @@
         attendancePermission.checked = false;
         managementAttendancePermission.checked = false;
         managementStudentsPermission.checked = false;
-        managementSchoolFeesPermission.checked = false;\n        onlineClassPermission.checked = false;
+        managementSchoolFeesPermission.checked = false;
+        onlineClassPermission.checked = false;\n        onlineClassPermission.checked = false;
         printPermission.checked = false;
         exportPermission.checked = false;
         assignmentRows.innerHTML = '';
@@ -610,7 +621,8 @@ populateStudents(account.student_id || '');
         attendancePermission.checked = Boolean(account.permissions && account.permissions.attendance_records);
         managementAttendancePermission.checked = Boolean(account.permissions && account.permissions.management_attendance);
         managementStudentsPermission.checked = Boolean(account.permissions && account.permissions.management_students);
-        managementSchoolFeesPermission.checked = Boolean(account.permissions && account.permissions.management_school_fees);\n        onlineClassPermission.checked = Boolean(account.permissions && account.permissions.online_class_access);
+        managementSchoolFeesPermission.checked = Boolean(account.permissions && account.permissions.management_school_fees);
+        onlineClassPermission.checked = Boolean(account.permissions && account.permissions.online_class_access);\n        onlineClassPermission.checked = Boolean(account.permissions && account.permissions.online_class_access);
         onlineClassPermission.checked = Boolean(account.permissions && account.permissions.online_class_access);
         const groupedAssignments = new Map();
         (account.assignments || []).forEach(assignment => {
@@ -753,7 +765,8 @@ populateStudents(account.student_id || '');
             print_results: role.value === 'teacher' && printPermission.checked,
             export_results: role.value === 'teacher' && exportPermission.checked,
             online_class_access: ['exam_officer', 'teacher', 'management'].includes(role.value) && onlineClassPermission.checked,
-            online_class_access: ['exam_officer', 'teacher', 'management'].includes(role.value) && onlineClassPermission.checked,\n            management_permissions: role.value === 'management' ? {
+            online_class_access: ['exam_officer', 'teacher', 'management'].includes(role.value) && onlineClassPermission.checked,\n            online_class_access: ['exam_officer','teacher','management'].includes(role.value) && onlineClassPermission.checked,
+            management_permissions: role.value === 'management' ? {
                 attendance: managementAttendancePermission.checked,
                 students: managementStudentsPermission.checked,
                 school_fees: managementSchoolFeesPermission.checked
