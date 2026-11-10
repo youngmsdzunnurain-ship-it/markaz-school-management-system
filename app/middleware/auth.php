@@ -315,6 +315,27 @@ function managementPermissionAllowed(string $permissionKey): bool
     return (int) $stmt->fetchColumn() === 1;
 }
 
+/** Require an individually assigned Online Class workspace permission. */
+function requireOnlineClassAccess(): void
+{
+    $role = currentAdminRole();
+    if ($role === 'admin') return;
+    if (!in_array($role, ['exam_officer', 'teacher', 'management'], true)) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Online Class staff access is required.']);
+        exit;
+    }
+    $stmt = db()->prepare('SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1');
+    $stmt->execute([(int) ($_SESSION['admin_id'] ?? 0), 'online_class_access']);
+    if ((int) $stmt->fetchColumn() !== 1) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Online Class access has not been assigned to this account.']);
+        exit;
+    }
+}
+
 function requireManagementPermission(string $permissionKey): void
 {
     if (!managementPermissionAllowed($permissionKey)) {
