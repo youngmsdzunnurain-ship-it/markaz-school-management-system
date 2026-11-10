@@ -16,6 +16,10 @@ $validLevel = static function($value) use ($levelIds): int {
     return (int)$id;
 };
 if ($method === 'GET') {
+    if ($action === 'portal_access') {
+        $value = $pdo->query("SELECT setting_value FROM settings WHERE setting_key='online_class_student_access' LIMIT 1")->fetchColumn();
+        onlineClassJson(['success'=>true,'enabled'=>in_array(strtolower(trim((string)$value)),['1','true','yes','on'],true)]);
+    }
     if ($action === 'footer_settings') {
         $stmt=$pdo->prepare('SELECT setting_key,setting_value FROM settings WHERE setting_key IN (?,?,?,?,?)');
         $stmt->execute(['class_teacher_signature','director_signature','class_teacher_signature_image','director_signature_image','result_signature_date']);
@@ -78,6 +82,12 @@ if ($method !== 'POST') onlineClassJsonError(405,'Use GET or POST.');
 attendanceRequireSafePost();
 $data=onlineClassInput();
 $staffId=(int)($_SESSION['admin_id'] ?? 0);
+if($action==='set_portal_access'){
+    $enabled=filter_var($data['enabled']??false,FILTER_VALIDATE_BOOLEAN)?'1':'0';
+    $stmt=$pdo->prepare("INSERT INTO settings(setting_key,setting_value,setting_type) VALUES('online_class_student_access',?,'boolean') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value),setting_type='boolean'");
+    $stmt->execute([$enabled]);
+    onlineClassJson(['success'=>true,'message'=>$enabled==='1'?'Online Class student login has been enabled.':'Online Class student login has been disabled.']);
+}
 if($action==='save_level'){
     $id=$validLevel($data['id']??0);
     $tutor=trim((string)($data['tutor_name']??''));
