@@ -5,7 +5,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let report=null;
 async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||'Unable to complete request.');return d;}
 function showMessage(text,error=false){$('portalMessage').textContent=text;$('portalMessage').style.color=error?'#a33d2c':'#285b3a';}
-function grade(score){return score>=80?['A','Awesome']:score>=70?['B','Phenomenal']:score>=50?['C','Promising']:score>=40?['D','Impressive']:['E','Poor'];}
+function grade(score){return score>=80?['A','Awesome']:score>=70?['B','Phenomenal']:score>=50?['C','Impressive']:score>=30?['D','Promising']:['E','Poor'];}
 async function loadResults(){
  const session=$('portalSession').value.trim(),term=$('portalTerm').value;
  if(!/^\d{4}\/\d{4}$/.test(session)){showMessage('Enter a valid academic session.',true);return;}
@@ -21,7 +21,7 @@ async function loadResults(){
   const sig=d.signatures||{},sigImg=v=>v?'<img src="'+esc(String(v))+'" alt="Signature" style="max-width:135px;max-height:38px;object-fit:contain">':'_____________________';
   const tutor=rows.map(r=>r.teacher_remark).find(Boolean)||'Your effort and progress are appreciated. Continue learning with confidence and regular revision.';
   const director=rows.map(r=>r.director_remark).find(Boolean)||'May Allah grant you beneficial knowledge and continued progress.';
-  $('portalRemarks').innerHTML='<section><b>Tutor’s Remark</b><p>'+esc(tutor)+'</p><p>Signature: '+sigImg(sig.teacher)+'</p><p>Date: '+esc(sig.date||'')+'</p></section><section><b>Coordinator’s / Director’s Remark</b><p>'+esc(director)+'</p><p>Signature: '+sigImg(sig.director)+'</p><p>Date: '+esc(sig.date||'')+'</p></section>';
+  $('portalRemarks').innerHTML='<section><b>Tutor’s Remark</b><p>'+esc(tutor)+'</p><p>Signature: '+sigMarkup(sig.teacher_image,sig.teacher_text,'Tutor signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section><section><b>Coordinator’s / Director’s Remark</b><p>'+esc(director)+'</p><p>Signature: '+sigMarkup(sig.director_image,sig.director_text,'Director signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section>';
   $('portalReport').style.display='block';showMessage('Your released results are ready. You can print or save the report as PDF.');
  }catch(e){showMessage(e.message,true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}
 }
