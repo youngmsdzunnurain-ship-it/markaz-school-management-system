@@ -255,7 +255,7 @@ form.addEventListener("submit", async event => {
         );
 
         if (response.redirected) {
-            showMessage("The profile request was redirected. Your session was not changed; reload Settings and try again.", "error");
+            showMessage("The profile request was redirected to sign-in. Please sign in again; the photo was not saved.", "error");
             return;
         }
         const data = await response.json().catch(() => null);
