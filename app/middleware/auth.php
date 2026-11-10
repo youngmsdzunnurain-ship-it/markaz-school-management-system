@@ -296,6 +296,56 @@ function requireTeacherAssignment(
     }
 }
 
+/** Check an individually assigned Management workspace permission. */
+function managementPermissionAllowed(string $permissionKey): bool
+{
+    if (!in_array($permissionKey, ['attendance', 'students', 'school_fees'], true)) {
+        return false;
+    }
+
+    if (currentAdminRole() !== 'management') {
+        return false;
+    }
+
+    $stmt = db()->prepare(
+        'SELECT is_allowed FROM account_permissions
+         WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $stmt->execute([(int) ($_SESSION['admin_id'] ?? 0), 'management_' . $permissionKey]);
+    return (int) $stmt->fetchColumn() === 1;
+}
+
+function requireManagementPermission(string $permissionKey): void
+{
+    if (!managementPermissionAllowed($permissionKey)) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'message' => 'This workspace has not been assigned to your Management account.'
+        ]);
+        exit;
+    }
+}
+
+/** Keep existing Admin/Exam Officer access while allowing assigned managers. */
+function requireAdminOrManagementPermission(string $permissionKey): void
+{
+    $role = currentAdminRole();
+    if (in_array($role, ['admin', 'exam_officer'], true)) {
+        requireAdmin();
+        return;
+    }
+    if ($role === 'management') {
+        requireManagementPermission($permissionKey);
+        return;
+    }
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'You do not have access to this workspace.']);
+    exit;
+}
+
 function requireRolePermission(
     string $permission,
     ?int $classId = null,
