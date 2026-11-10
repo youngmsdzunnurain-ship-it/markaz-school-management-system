@@ -65,6 +65,7 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($workspace, 'css/app-watermark.css') &&
     str_contains($workspace, 'class="welcome-card online-welcome-card"') &&
+    str_contains($workspace, 'class="dashboard-footer"') &&
     strpos($workspace, 'online-welcome-card') < strpos($workspace, 'id="onlineLevelStats"') &&
     substr_count($workspace, 'data-tab-link=') === 6 &&
     !str_contains($workspace, 'class="online-tabs"') &&
@@ -77,6 +78,8 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($workspaceJs, 'function loadWorkspaceGreeting()') &&
     str_contains($workspaceJs, './api/auth/me.php') &&
+    str_contains($workspaceJs, "const d=await request(API+'?action=bootstrap')") &&
+    !str_contains($workspaceJs, "Promise.all([request(API+'?action=bootstrap')") &&
     str_contains($workspaceJs, 'function populateResultSessions()') &&
     str_contains($workspaceJs, 'const first=2026;') &&
     str_contains($workspaceJs, 'populateResultSessions();') &&
