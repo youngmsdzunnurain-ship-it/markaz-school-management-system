@@ -2,10 +2,10 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../../app/helpers/online-class.php';
 $studentId=onlineClassStudentSession();
-$studentStmt=db()->prepare('SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,l.name AS level_name,l.tutor_name,l.task_one_name,l.task_two_name,l.memorization_portion,l.first_term_resumption,l.second_term_resumption,l.third_term_resumption FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id WHERE s.id=? AND s.is_active=1 LIMIT 1');
+$studentStmt=db()->prepare('SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.section,l.name AS level_name,l.tutor_name,l.task_one_name,l.task_two_name,l.memorization_portion,l.first_term_resumption,l.second_term_resumption,l.third_term_resumption FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id WHERE s.id=? AND s.is_active=1 LIMIT 1');
 $studentStmt->execute([$studentId]);$student=$studentStmt->fetch(PDO::FETCH_ASSOC);
 if(!$student) onlineClassJsonError(401,'This Online Class account is no longer active.');
-$session=trim((string)($_GET['academic_session']??''));$term=(string)($_GET['term']??'First Term');
+$session=trim((string)($_SESSION['online_student_academic_session']??''));$term=(string)($_SESSION['online_student_term']??'');
 if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true)) onlineClassJsonError(422,'Choose a valid academic session and term.');
 $release=db()->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=(SELECT level_id FROM online_class_students WHERE id=?) AND academic_session=? AND term=? LIMIT 1');
 $release->execute([$studentId,$session,$term]);
