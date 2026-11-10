@@ -84,7 +84,7 @@ managementPermissionsCheck(
     'Management dashboard, attendance summaries, profile and shared navigation use individual permissions'
 );
 managementPermissionsCheck(
-    str_contains($accountsApi, "saveAccountPermission($pdo, $targetId, 'management_' . $managementPermission, $allowed)")
+    str_contains($accountsApi, 'saveAccountPermission($pdo, $targetId, \'management_\' . $managementPermission, $allowed)')
         && str_contains($accountJs, 'management_permissions: role.value === \'management\''),
     'Each Management account stores its own independently selected workspace permissions'
 );
