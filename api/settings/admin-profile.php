@@ -131,10 +131,18 @@ if ($removeProfileImage) {
     $file = $_FILES['profile_image'];
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
+        $uploadErrorMessage = match ((int) $file['error']) {
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'The selected image exceeds the server upload limit. Choose a smaller image.',
+            UPLOAD_ERR_PARTIAL => 'The image upload was interrupted. Please select the image again.',
+            UPLOAD_ERR_NO_TMP_DIR => 'The server upload temporary folder is unavailable.',
+            UPLOAD_ERR_CANT_WRITE => 'The server could not write the uploaded image.',
+            UPLOAD_ERR_EXTENSION => 'The server blocked this image upload.',
+            default => 'Profile image upload failed. Please try another image.'
+        };
         http_response_code(422);
         echo json_encode([
             'success' => false,
-            'message' => 'Profile image upload failed.'
+            'message' => $uploadErrorMessage
         ]);
         exit;
     }
