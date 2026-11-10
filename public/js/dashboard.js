@@ -78,6 +78,7 @@ async function loadAdmin() {
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
         window.markazCurrentRole = role;
+        window.markazManagementPermissions = data.admin.management_permissions || {};
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
         if (role === "management") {
@@ -127,6 +128,11 @@ async function loadAdmin() {
                     managerProfilePhoto.textContent = initials;
                 }
             }
+        }
+        if (role === "management") {
+            document.body.classList.add("role-management");
+            document.querySelector(".stats-grid")?.setAttribute("hidden", "");
+            document.querySelector(".dashboard-exam-section")?.setAttribute("hidden", "");
         }
         if (role === "teacher") {
             document.body.classList.add("role-teacher");
@@ -527,6 +533,13 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin";
         } else if (requiredRole === "admin_or_exam_officer") {
             allowed = role === "admin" || role === "exam_officer";
+        } else if (requiredRole === "admin_or_exam_officer_or_management") {
+            allowed = role === "admin" || role === "exam_officer" || role === "management";
+        } else if (requiredRole === "students") {
+            allowed = role === "admin" || role === "exam_officer"
+                || (role === "management" && permissions.management_permissions?.students === true);
+        } else if (requiredRole === "management_school_fees") {
+            allowed = role === "management" && permissions.management_permissions?.school_fees === true;
         } else if (requiredRole === "exam_officer_settings") {
             allowed = role === "exam_officer";
         } else if (requiredRole === "exam_officer") {
