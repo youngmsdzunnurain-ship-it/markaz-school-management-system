@@ -152,3 +152,33 @@ jobs:
           node --check public/js/account-management.js
           node --check public/js/management-shell.js
           php tests/management-permissions-profile-dashboard-regression.test.php
+
+  online-class-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Verify MARKAZ Online Class module
+        run: |
+          set -e
+          php -l app/helpers/online-class.php
+          php -l api/online-class/index.php
+          php -l api/online-class/login.php
+          php -l api/online-class/logout.php
+          php -l api/online-class/student-results.php
+          php -l api/online-class/footer.php
+          php -l api/auth/login.php
+          php -l api/auth/me.php
+          php -l api/settings/accounts.php
+          php -l tests/online-class-regression.test.php
+          node --check public/js/online-class.js
+          node --check public/js/online-class-login.js
+          node --check public/js/online-class-portal.js
+          node --check public/js/account-management.js
+          node --check public/js/dashboard.js
+          php tests/online-class-regression.test.php
