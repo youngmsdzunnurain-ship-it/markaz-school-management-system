@@ -13,7 +13,7 @@ $css = (string) file_get_contents(__DIR__ . '/../public/css/dashboard-2026.css')
 $html = (string) file_get_contents(__DIR__ . '/../public/dashboard.html');
 
 shellUiAssert(
-    preg_match('/\.sidebar\{[^}]*height:100dvh[^}]*min-height:0/s', $css) === 1,
+    preg_match('/\.sidebar\{[^}]*height:calc\(100dvh\s*\/\s*var\(--page-zoom,1\)\)[^}]*min-height:0/s', $css) === 1,
     'Desktop sidebar must occupy the viewport without being clipped by a scaled fixed height'
 );
 shellUiAssert(
@@ -21,8 +21,8 @@ shellUiAssert(
     'Sidebar navigation must own a scrollable flex region between the header and account footer'
 );
 shellUiAssert(
-    preg_match('/\.topbar\{[^}]*min-height:78px[^}]*min-width:0/s', $css) === 1 &&
-    preg_match('/\.topbar > div\{[^}]*min-width:0/s', $css) === 1,
+    preg_match('/\.topbar\{[^}]*min-width:0[^}]*min-height:78px/s', $css) === 1 &&
+    preg_match('/\.topbar\s*>\s*div\{[^}]*min-width:0/s', $css) === 1,
     'Top bar and its title region must shrink safely rather than clip at narrow desktop and mobile widths'
 );
 shellUiAssert(
