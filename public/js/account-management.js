@@ -176,7 +176,7 @@
     const assignmentsWrap = $('#accountTeacherAssignments');
     const managementPermissionsWrap = $('#accountManagementPermissions');
     const onlineClassPermissionWrap = $('#accountOnlineClassPermission');
-    const onlineClassPermission = $('#accountCanOnlineClass');
+    const onlineClassPermission = $('#accountCanAccessOnlineClass');
     const managementAttendancePermission = $('#managementCanAttendance');
     const managementStudentsPermission = $('#managementCanStudents');
     const managementSchoolFeesPermission = $('#managementCanSchoolFees');
