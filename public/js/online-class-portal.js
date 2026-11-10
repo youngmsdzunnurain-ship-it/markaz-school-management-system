@@ -5,7 +5,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let report=null;
 async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||'Unable to complete request.');return d;}
 function showMessage(text,error=false){$('portalMessage').textContent=text;$('portalMessage').style.color=error?'#a33d2c':'#285b3a';}
-function grade(score){return score>=80?['A','Awesome']:score>=70?['B','Phenomenal']:score>=50?['C','Promising']:score>=40?['D','Impressive']:['E','Poor'];}
+function grade(score){return score>=80?['A','Awesome']:score>=70?['B','Phenomenal']:score>=50?['C','Impressive']:score>=30?['D','Promising']:['E','Poor'];}
 function sigMarkup(image,text,alt){const value=image||text||'';if(!value)return '_____________________';if(image||/^data:image\//i.test(value)||/\.(png|jpe?g|webp|svg)(\?.*)?$/i.test(value))return '<img src=\"'+esc(value)+'\" alt=\"'+esc(alt)+'\" style=\"max-width:135px;max-height:38px;object-fit:contain\">';return esc(value);}
 async function loadResults(){
  const session=$('portalSession').value.trim(),term=$('portalTerm').value;
