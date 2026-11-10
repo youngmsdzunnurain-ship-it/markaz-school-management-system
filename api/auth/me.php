@@ -42,6 +42,12 @@ if (!$admin) {
 }
 
 $role = (string) $admin['role'];
+$canAccessOnlineClass = $role === 'admin';
+if (in_array($role, ['exam_officer','teacher','management'], true)) {
+    $onlinePermission = db()->prepare('SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1');
+    $onlinePermission->execute([(int)$admin['id'], 'online_class_access']);
+    $canAccessOnlineClass = (int)$onlinePermission->fetchColumn() === 1;
+}
 $accountId = (int) $admin['id'];
 $canManageAttendance = $role === 'admin';
 $managementPermissions = ['attendance' => false, 'students' => false, 'school_fees' => false];
@@ -114,6 +120,7 @@ echo json_encode([
         'profile_image' => $admin['profile_image'],
         'can_print_results' => $resolvePermission('print_results'),
         'can_export_results' => $resolvePermission('export_results'),
+        'can_access_online_class' => $canAccessOnlineClass,
         'can_manage_attendance' => $canManageAttendance,
         'management_permissions' => $managementPermissions
     ]
