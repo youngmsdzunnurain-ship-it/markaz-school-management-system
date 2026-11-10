@@ -80,7 +80,6 @@ async function loadProfile() {
             passwordInput.required = false;
             passwordInput.disabled = true;
         }
-        updateProfilePasswordRequirement();
         if (pageDescription && isExamOfficer) {
             pageDescription.textContent = "Manage your profile and shared academic settings.";
         } else if (pageDescription && isManagement) {
@@ -89,6 +88,7 @@ async function loadProfile() {
 
         nameInput.value = data.admin.name || "";
         emailInput.value = data.admin.email || "";
+        updateProfilePasswordRequirement();
 
         previewName.textContent =
             data.admin.name || "Administrator";
@@ -217,6 +217,7 @@ imageInput.addEventListener("change", () => {
 form.addEventListener("submit", async event => {
 
     event.preventDefault();
+    updateProfilePasswordRequirement();
 
     saveButton.disabled = true;
     saveButton.textContent = "Saving...";
