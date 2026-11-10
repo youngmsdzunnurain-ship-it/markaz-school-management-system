@@ -125,7 +125,6 @@ echo json_encode([
         'can_export_results' => $resolvePermission('export_results'),
         'can_manage_attendance' => $canManageAttendance,
         'management_permissions' => $managementPermissions,
-        'online_class_access' => $onlineClassAccess,
         'can_access_online_class' => $canAccessOnlineClass
     ]
 ]);
