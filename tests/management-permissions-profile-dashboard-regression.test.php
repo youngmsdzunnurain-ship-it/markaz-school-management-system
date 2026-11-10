@@ -24,6 +24,8 @@ $dashboardJs = $read('public/js/dashboard.js');
 $dashboardHtml = $read('public/dashboard.html');
 $shellJs = $read('public/js/management-shell.js');
 $settingsProfileJs = $read('public/js/settings.js');
+$dashboardStatsApi = $read('api/dashboard/stats.php');
+$settingsHtml = $read('public/settings.html');
 
 managementPermissionsCheck(
     str_contains($chartCss, 'body.sidebar-desktop-closed .dashboard-class-attendance-charts')
