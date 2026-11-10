@@ -83,4 +83,28 @@ managementPermissionsCheck(
         && str_contains($dashboardJs, 'window.markazManagementPermissions?.attendance === true'),
     'Management dashboard, attendance summaries, profile and shared navigation use individual permissions'
 );
-echo "Management permissions/profile/dashboard regression tests passed (8 checks).\n";
+managementPermissionsCheck(
+    str_contains($accountsApi, "saveAccountPermission($pdo, $targetId, 'management_' . $managementPermission, $allowed)")
+        && str_contains($accountJs, 'management_permissions: role.value === \'management\''),
+    'Each Management account stores its own independently selected workspace permissions'
+);
+managementPermissionsCheck(
+    str_contains($dashboardStatsApi, 'requireAdmin();')
+        && str_contains($dashboardJs, 'if (role !== "management") loadDashboardStats();')
+        && str_contains($dashboardJs, 'if (window.markazCurrentRole === "management") return;'),
+    'Management dashboard does not load unrestricted examination statistics'
+);
+managementPermissionsCheck(
+    str_contains($profileApi, '$identityChanged')
+        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && $currentPassword === \'\'')
+        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && !password_verify'),
+    'Profile-photo-only updates do not require password re-entry, while name/email edits remain verified'
+);
+managementPermissionsCheck(
+    str_contains($settingsProfileJs, 'maxBytes = 1.5 * 1024 * 1024')
+        && str_contains($settingsProfileJs, 'Photo selected. Save Changes to upload it.')
+        && str_contains($settingsProfileJs, 'response.redirected')
+        && str_contains($settingsHtml, 'data-role-access="admin_or_exam_officer_or_management"'),
+    'Profile photos are compressed below the upload limit and Management profile settings are available'
+);
+echo "Management permissions/profile/dashboard regression tests passed (12 checks).\n";
