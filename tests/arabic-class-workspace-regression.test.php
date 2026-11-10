@@ -39,9 +39,11 @@ arabicClassWorkspaceCheck(
     str_contains($classListJs, 'class_type=')
         && str_contains($classListJs, 'classItem.class_type')
         && str_contains($classListJs, 'class.html?id=')
-        && str_contains($classListJs, 'class-type-label')
+        && str_contains($classListJs, 'data-class-type=')
+        && str_contains($classListJs, 'api/arabic-classes/update.php')
+        && str_contains($classListJs, 'api/arabic-classes/toggle-status.php')
         && str_contains($classListJs, 'data.total_students'),
-    'Arabic class rows open the correctly typed class-results workspace without conventional edit actions'
+    'Arabic class rows expose type-aware edit and activation actions without crossing into conventional class records'
 );
 arabicClassWorkspaceCheck(
     str_contains($classWorkspaceJs, 'classType === "arabic"')

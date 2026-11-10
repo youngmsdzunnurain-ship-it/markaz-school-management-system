@@ -7,6 +7,7 @@ const classModal = document.getElementById("classModal");
 const classForm = document.getElementById("classForm");
 
 let classRecords = [];
+let editingClassType = "conventional";
 
 
 /* ================================
@@ -132,10 +133,9 @@ function renderClasses() {
                 ? "arabic"
                 : "conventional";
             const isArabicClass = classType === "arabic";
-            const actions = isArabicClass
-                ? '<span class="class-type-label">Arabic class</span>'
-                : '<button type="button" class="class-action-button edit-class-button" data-class-id="' + classItem.id + '">Edit</button>'
-                    + '<button type="button" class="class-action-button class-toggle-button" data-class-id="' + classItem.id + '">' + (active ? "Deactivate" : "Activate") + '</button>';
+            const actions =
+                '<button type="button" class="class-action-button edit-class-button" data-class-id="' + classItem.id + '" data-class-type="' + classType + '">Edit</button>'
+                + '<button type="button" class="class-action-button class-toggle-button" data-class-id="' + classItem.id + '" data-class-type="' + classType + '">' + (active ? "Deactivate" : "Activate") + '</button>';
 
             return `
                 <tr>
@@ -190,6 +190,9 @@ function renderClasses() {
 function openClassModal(classItem = null) {
 
     classForm.reset();
+    editingClassType = classItem?.class_type === "arabic" ? "arabic" : "conventional";
+    const levelGroupField = document.getElementById("classLevelGroup")?.closest(".form-field");
+    if (levelGroupField) levelGroupField.hidden = editingClassType === "arabic";
 
     document.getElementById("classId").value =
         classItem?.id || "";
@@ -295,10 +298,11 @@ classForm.addEventListener("submit", async event => {
     const formData =
         new FormData(classForm);
 
-    const endpoint =
-        id
-            ? "./api/classes/update.php"
-            : "./api/classes/create.php";
+    const endpoint = id
+        ? (editingClassType === "arabic"
+            ? "./api/arabic-classes/update.php"
+            : "./api/classes/update.php")
+        : "./api/classes/create.php";
 
 
     saveButton.disabled = true;
@@ -367,8 +371,8 @@ classesTableBody.addEventListener("click", event => {
 
         const classItem =
             classRecords.find(item =>
-                String(item.id) ===
-                String(editButton.dataset.classId)
+                String(item.id) === String(editButton.dataset.classId)
+                && (item.class_type === "arabic" ? "arabic" : "conventional") === editButton.dataset.classType
             );
 
 
@@ -383,7 +387,8 @@ classesTableBody.addEventListener("click", event => {
     if (toggleButton) {
 
         toggleClassStatus(
-            toggleButton.dataset.classId
+            toggleButton.dataset.classId,
+            toggleButton.dataset.classType
         );
     }
 
@@ -394,12 +399,12 @@ classesTableBody.addEventListener("click", event => {
    TOGGLE STATUS
 ================================ */
 
-async function toggleClassStatus(classId) {
+async function toggleClassStatus(classId, classType = "conventional") {
 
     const classItem =
         classRecords.find(item =>
-            String(item.id) ===
-            String(classId)
+            String(item.id) === String(classId)
+            && (item.class_type === "arabic" ? "arabic" : "conventional") === classType
         );
 
 
@@ -436,7 +441,9 @@ async function toggleClassStatus(classId) {
 
         const response =
             await fetch(
-                "./api/classes/toggle-status.php",
+                classType === "arabic"
+                    ? "./api/arabic-classes/toggle-status.php"
+                    : "./api/classes/toggle-status.php",
                 {
                     method: "POST",
                     body: formData,
