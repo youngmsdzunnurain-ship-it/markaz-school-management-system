@@ -539,7 +539,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer"
                 || (role === "management" && permissions.management_permissions?.students === true);
         } else if (requiredRole === "management_school_fees") {
-            allowed = role === "management" && permissions.management_permissions?.school_fees === true;
+            allowed = role === "admin" || (role === "management" && permissions.management_permissions?.school_fees === true);
         } else if (requiredRole === "exam_officer_settings") {
             allowed = role === "exam_officer";
         } else if (requiredRole === "exam_officer") {
