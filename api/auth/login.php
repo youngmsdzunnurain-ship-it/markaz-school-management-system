@@ -326,6 +326,7 @@ setcookie('MARKAZ_DEVICE_TOKEN', $deviceToken, [
 
 session_regenerate_id(true);
 
+unset($_SESSION['online_student_id']);
 $_SESSION['admin_id'] = (int) $admin['id'];
 $_SESSION['admin_name'] = $admin['name'];
 $_SESSION['admin_email'] = $admin['email'];
