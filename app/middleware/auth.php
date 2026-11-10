@@ -346,6 +346,41 @@ function requireAdminOrManagementPermission(string $permissionKey): void
     exit;
 }
 
+/** Access to the independent MARKAZ Online Class workspace. */
+function onlineClassPermissionAllowed(): bool
+{
+    $role = currentAdminRole();
+    if ($role === 'admin') {
+        return true;
+    }
+    if (!in_array($role, ['exam_officer', 'teacher', 'management'], true)) {
+        return false;
+    }
+    $accountId = (int) ($_SESSION['admin_id'] ?? 0);
+    if ($accountId < 1) {
+        return false;
+    }
+    $stmt = db()->prepare(
+        'SELECT is_allowed FROM account_permissions
+         WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $stmt->execute([$accountId, 'online_class_access']);
+    return (int) $stmt->fetchColumn() === 1;
+}
+
+function requireOnlineClassAccess(): void
+{
+    if (!onlineClassPermissionAllowed()) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'message' => 'MARKAZ Online Class access has not been assigned to this account.'
+        ]);
+        exit;
+    }
+}
+
 function requireRolePermission(
     string $permission,
     ?int $classId = null,
