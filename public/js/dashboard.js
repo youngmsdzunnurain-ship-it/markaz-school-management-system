@@ -89,6 +89,7 @@ async function loadAdmin() {
         if (role === "management") {
             document.body.classList.add("role-management");
             const managerPermissions = data.admin.management_permissions || {};
+            managerPermissions.online_class = data.admin.can_access_online_class === true;
             document.querySelectorAll("[data-dashboard-admin-only]").forEach(element => element.hidden = true);
             const chartSection = document.querySelector(".dashboard-class-attendance-charts");
             if (chartSection) chartSection.hidden = managerPermissions.attendance !== true;
@@ -100,6 +101,7 @@ async function loadAdmin() {
                 ["students", "Students", "./students.html", "fa-users"],
                 ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
                 ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"],
+                ["online_class", "Online Class", "./online-class.html", "fa-laptop"],
                 ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"]
             ];
             const shortcutList = document.getElementById("managementDashboardShortcuts");
