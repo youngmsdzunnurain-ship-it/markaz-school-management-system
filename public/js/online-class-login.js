@@ -12,14 +12,6 @@ function populateAcademicSessions() {
   select.value = sessions[0];
 }
 function isAcademicSession(value) { return /^\d{4}\/\d{4}$/.test(String(value).trim()); }
-function updateSections() {
-  const levelId = Number($('onlineLevel').value);
-  const sections = [...new Set(portalOptions.sections.filter(item => Number(item.level_id) === levelId).map(item => String(item.section).trim()).filter(section => section && !isAcademicSession(section)))].sort((a,b) => a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
-  const select = $('onlineSection');
-  select.innerHTML = '<option value="">Choose your registered section</option>' + sections.map(section => '<option value="' + escapeHtml(section) + '">' + escapeHtml(section) + '</option>').join('');
-  select.disabled = !levelId || sections.length === 0;
-  if (levelId && sections.length === 0) select.innerHTML = '<option value="">No registered section available</option>';
-}
 async function loadOptions() {
   const response = await fetch('api/online-class/portal-options.php',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
   const data = await response.json().catch(()=>({}));
