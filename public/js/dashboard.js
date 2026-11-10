@@ -90,7 +90,6 @@ async function loadAdmin() {
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
         if (welcomeDescription && role === "management") { welcomeDescription.hidden = false; welcomeDescription.textContent = "Your assigned school workspaces are ready below. Open a section to manage your responsibilities."; }
-        if (role === "management" && roleLabel) roleLabel.hidden = true;
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
         window.markazManagementPermissions.online_class_access = data.admin.can_access_online_class === true;
