@@ -23,6 +23,7 @@ const logoutButton = document.getElementById("logoutButton");
 const profileLogoutButton = document.getElementById("profileLogoutButton");
 
 const dashboardSearch = document.getElementById("dashboardSearch");
+const dashboardWelcomeDescription = document.getElementById("dashboardWelcomeDescription");
 
 function getInitials(name) {
     if (!name) return "AD";
@@ -69,6 +70,15 @@ async function loadAdmin() {
         const name = data.admin.name || "Administrator";
         const email = data.admin.email || "";
         const role = data.admin.role || "";
+        const welcomeDescriptions = {
+            admin: "Manage students, classes, subjects, examination results and school operations from one place.",
+            exam_officer: "Review academic progress, manage examination records and release results for the school.",
+            teacher: "Continue with your assigned classes, student progress and teaching responsibilities.",
+            management: "Your assigned school workspaces are ready. Open the areas selected for your account."
+        };
+        if (dashboardWelcomeDescription) {
+            dashboardWelcomeDescription.textContent = welcomeDescriptions[role] || welcomeDescriptions.admin;
+        }
         const profileImage = data.admin.profile_image || "";
         const initials = getInitials(name);
         const hour = new Date().getHours();
