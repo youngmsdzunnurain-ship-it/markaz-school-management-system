@@ -13,6 +13,7 @@ if($admission===''||$password===''){http_response_code(422);echo json_encode(['s
 $stmt=db()->prepare('SELECT id,admission_number,first_name,middle_name,last_name,level_id,password_hash,is_active FROM online_class_students WHERE admission_number=? LIMIT 1');
 $stmt->execute([$admission]);$student=$stmt->fetch(PDO::FETCH_ASSOC);
 if(!$student||!(int)$student['is_active']||!password_verify($password,(string)$student['password_hash'])){http_response_code(401);echo json_encode(['success'=>false,'message'=>'Invalid admission number or password.']);exit;}
+$_SESSION = [];
 session_regenerate_id(true);
 $_SESSION['online_student_id']=(int)$student['id'];
 
