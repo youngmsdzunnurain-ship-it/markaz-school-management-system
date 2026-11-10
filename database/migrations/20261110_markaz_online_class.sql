@@ -34,6 +34,14 @@ CREATE TABLE IF NOT EXISTS online_class_subjects (
         REFERENCES online_class_levels(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS online_class_admission_sequences (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO settings (setting_key, setting_value, setting_type)
+VALUES ('online_class_student_access', '1', 'boolean');
+
 CREATE TABLE IF NOT EXISTS online_class_students (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     admission_number VARCHAR(40) NOT NULL UNIQUE,
