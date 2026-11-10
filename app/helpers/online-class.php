@@ -49,8 +49,8 @@ function onlineClassGrade(float $score): array
 {
     if ($score >= 80) return ['grade' => 'A', 'remark' => 'Awesome'];
     if ($score >= 70) return ['grade' => 'B', 'remark' => 'Phenomenal'];
-    if ($score >= 50) return ['grade' => 'C', 'remark' => 'Promising'];
-    if ($score >= 40) return ['grade' => 'D', 'remark' => 'Impressive'];
+    if ($score >= 50) return ['grade' => 'C', 'remark' => 'Impressive'];
+    if ($score >= 30) return ['grade' => 'D', 'remark' => 'Promising'];
     return ['grade' => 'E', 'remark' => 'Poor'];
 }
 
