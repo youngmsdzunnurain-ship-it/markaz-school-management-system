@@ -29,7 +29,6 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     substr_count($login, 'id="onlineAdmission"') === 1 &&
     substr_count($login, 'id="onlineLevel"') === 1 &&
-    substr_count($login, 'id="onlineSection"') === 1 &&
     substr_count($login, 'id="onlineTerm"') === 1 &&
     substr_count($login, 'id="onlineSession"') === 1 &&
     substr_count($login, 'name="academic_session"') === 1 &&
@@ -39,17 +38,18 @@ onlinePortalUiAssert(
     str_contains($portal, 'id="onlineSupportLink"') && !str_contains($login, 'online-support-footer') &&
     !str_contains($portal, 'online-support-footer') && !str_contains($login, '+234 807') &&
     !str_contains($portal, '+234 807') && !str_contains($studentLogin, 'online-portal-switch'),
-    'Student login must contain exactly five fields, remove cross-portal links and provide support footers'
+    !str_contains($login, 'onlineSection') &&
+    'Student login must contain the four requested fields, remove cross-portal links and provide support footers'
 );
 onlinePortalUiAssert(
     str_contains($loginJs, 'function populateAcademicSessions()') &&
     str_contains($loginJs, 'Array.from({ length: 10 }') &&
     str_contains($loginJs, 'academic_session:') && str_contains($loginJs, "onlineSession').value") &&
-    str_contains($loginJs, 'function isAcademicSession(value)') &&
     str_contains($loginJs, 'api/online-class/portal-options.php') &&
     str_contains($loginJs, 'level_id') &&
-    str_contains($loginJs, 'section'),
-    'Student login must automatically supply the current academic session and load registered sections'
+    !str_contains($loginJs, 'onlineSection') &&
+    !str_contains($loginJs, 'section:'),
+    'Student login must use admission number, level, session and term without a section field'
 );
 onlinePortalUiAssert(
     str_contains($portal, 'id="portalReport"') &&
@@ -85,7 +85,10 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'populateResultSessions();') &&
     str_contains($workspaceJs, "event.key==='Escape'") &&
     str_contains($workspaceJs, "sidebarOverlay") &&
-    str_contains($workspaceJs, 'function closeSidebar()'),
+    str_contains($workspaceJs, 'function closeSidebar()') &&
+    str_contains($workspaceJs, 'function populateResultEntryOptions()') &&
+    str_contains($workspaceJs, 'function updateResultCalculations()') &&
+    str_contains($workspaceJs, 'Mashallah, Barakallahu fi'),
     'Staff sessions must begin in 2026 and sidebar must support overlay and Escape dismissal'
 );
 onlinePortalUiAssert(
@@ -95,6 +98,8 @@ onlinePortalUiAssert(
     str_contains($onlineCss, '.online-results-report::before') &&
     str_contains($login, 'css/login-shared.css') &&
     str_contains($portal, 'css/app-watermark.css'),
+    str_contains($onlineCss, 'grid-template-columns:260px minmax(0,1fr)') &&
+    str_contains($onlineCss, 'padding:18px') &&
     'Online Class pages and reports must show the MARKAZ watermark with responsive sidebar states'
 );
 onlinePortalUiAssert(
