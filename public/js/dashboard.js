@@ -83,6 +83,7 @@ async function loadAdmin() {
         if (role === "management" && roleLabel) roleLabel.hidden = true;
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
+        window.markazManagementPermissions.online_class_access = data.admin.can_access_online_class === true;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
         if (role === "management") {
@@ -550,7 +551,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "online_class") {
-            allowed = role === "admin" || permissions.online_class_access === true;
+            allowed = role === "admin" || permissions.can_access_online_class === true || permissions.online_class_access === true;
         } else if (requiredRole === "attendance") {
             allowed = role === "admin"
                 || (role === "teacher" && permissions.can_manage_attendance === true)
