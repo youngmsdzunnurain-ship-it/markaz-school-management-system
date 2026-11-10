@@ -141,4 +141,33 @@ foreach (['index.php','portal-options.php','student-login.php','student-results.
     );
 }
 
+
+onlinePortalUiAssert(
+    str_contains($workspaceApi, "if(\$action==='set_student_status')") &&
+    str_contains($workspaceApi, 'UPDATE online_class_students SET is_active=? WHERE id=?') &&
+    str_contains($workspaceApi, 'Online student status updated.'),
+    'Online Class students must have a dedicated, validated deactivate/reactivate endpoint'
+);
+onlinePortalUiAssert(
+    str_contains($workspaceJs, 'data-toggle-student=') &&
+    str_contains($workspaceJs, 'async function setStudentStatus') &&
+    str_contains($workspaceJs, 'Deactivate') &&
+    str_contains($workspaceJs, 'Reactivate'),
+    'Student list must expose working deactivate and reactivate actions'
+);
+onlinePortalUiAssert(
+    str_contains($workspaceJs, 'data-status=') &&
+    str_contains($onlineCss, '.attendance-status[data-status="present"]') &&
+    str_contains($onlineCss, '.attendance-status[data-status="absent"]') &&
+    str_contains($onlineCss, '.attendance-status[data-status="late"]') &&
+    str_contains($onlineCss, '.attendance-status[data-status="excused"]'),
+    'Attendance status controls must use clear, accessible status-specific colours'
+);
+onlinePortalUiAssert(
+    preg_match('/@page\\s*\\{[^}]*size:\\s*A4\\s+landscape/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, '#onlineReport') &&
+    str_contains($workspaceJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
+    'Staff Online Class reports must print as A4 landscape with Attendance, Test and Final Examination columns'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
