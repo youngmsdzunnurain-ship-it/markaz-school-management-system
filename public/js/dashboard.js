@@ -98,7 +98,8 @@ async function loadAdmin() {
             const managerLinks = [
                 ["students", "Students", "./students.html", "fa-users"],
                 ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
-                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"]
+                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"],
+                ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"]
             ];
             const shortcutList = document.getElementById("managementDashboardShortcuts");
             if (shortcutList) {
@@ -548,6 +549,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = permissions.can_print_results === true;
         } else if (requiredRole === "export_results") {
             allowed = permissions.can_export_results === true;
+        } else if (requiredRole === "online_class") {
+            allowed = role === "admin" || permissions.online_class_access === true;
         } else if (requiredRole === "attendance") {
             allowed = role === "admin"
                 || (role === "teacher" && permissions.can_manage_attendance === true)
