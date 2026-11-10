@@ -169,9 +169,6 @@
 
   activate("profile");
 
-  // Render the Settings navigation immediately; resolve permissions in the background.
-  document.documentElement.classList.remove("settings-page-pending");
-
   fetch("./api/auth/me.php", {
     credentials: "same-origin",
     cache: "no-store",
@@ -184,15 +181,21 @@
     }
 
     const role = account.admin.role;
-    if (role === "admin") return;
-    if (role !== "exam_officer") {
+    if (role === "admin") {
+      document.documentElement.classList.remove("settings-page-pending");
+      return;
+    }
+    if (!["exam_officer", "management"].includes(role)) {
       window.location.replace("dashboard.html");
       return;
     }
 
-    const allowedIds = new Set([
-      "profile", "result-release", "academic-archive", "academic", "results", "memorization"
-    ]);
+    const allowedIds = role === "management"
+      ? new Set(["profile"])
+      : new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"]);
+    if (role === "management") {
+      page.querySelector(".password-section")?.setAttribute("hidden", "");
+    }
     categories.forEach(category => {
       if (allowedIds.has(category.id)) return;
       category.elements.forEach(element => { element.hidden = true; });
@@ -202,6 +205,7 @@
     const allowedCategories = categories.filter(category => allowedIds.has(category.id));
     categories.splice(0, categories.length, ...allowedCategories);
     activate("profile");
+    document.documentElement.classList.remove("settings-page-pending");
   }).catch(() => {
     window.location.replace("login.html");
   });

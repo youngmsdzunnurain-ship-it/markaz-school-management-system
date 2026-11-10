@@ -22,6 +22,11 @@ on:
       - "tests/teacher-enrollment-regression.test.php"
       - "public/js/account-management.js"
       - "api/settings/accounts.php"
+      - "api/settings/admin-profile.php"
+      - "api/arabic-classes/list.php"
+      - "tests/management-permissions-profile-dashboard-regression.test.php"
+      - "public/js/management-shell.js"
+      - "public/css/dashboard-2026.css"
       - "public/api/settings/website-images.php"
       - "public/js/website-image-overrides.js"
       - "api/auth/login.php"
@@ -89,6 +94,9 @@ jobs:
           php -l api/results/student.php
           php -l api/attendance/reports.php
           php -l api/classes/list.php
+          php -l api/settings/admin-profile.php
+          php -l api/arabic-classes/list.php
+          php -l tests/management-permissions-profile-dashboard-regression.test.php
           php -l api/arabic-classes/update.php
           php -l api/arabic-classes/toggle-status.php
           php -l tests/settings-dashboard-polish-regression.test.php
@@ -115,6 +123,9 @@ jobs:
           php -l tests/dashboard-report-regression.test.php
           php -l tests/dashboard-layout-attendance-access.test.php
           php -l tests/dashboard-progress-eligibility.test.php
+
+      - name: Run management permissions and profile regression tests
+        run: php tests/management-permissions-profile-dashboard-regression.test.php
 
       - name: Run result class-type validation tests
         run: php tests/results-class-type-validation.test.php
@@ -162,6 +173,7 @@ jobs:
         run: |
           node --check public/js/class.js
           node --check public/js/classes.js
+          node --check public/js/management-shell.js
           node --check public/js/settings.js
           node --check public/js/settings-panel-navigation.js
           node --check public/js/print-results.js

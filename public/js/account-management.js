@@ -104,6 +104,16 @@
                         </fieldset>
                     </div>
 
+                    <div id="accountManagementPermissions" hidden>
+                        <fieldset class="account-permission-group">
+                            <legend>Management workspace assignments</legend>
+                            <label class="account-check"><input type="checkbox" id="managementCanAttendance"> Attendance — dashboard charts, school-wide summaries, reports and attendance workspace</label>
+                            <label class="account-check"><input type="checkbox" id="managementCanStudents"> Students — view, add, edit and manage student records</label>
+                            <label class="account-check"><input type="checkbox" id="managementCanSchoolFees"> School Fees — reserved access for the school-fees module</label>
+                            <small>Each Management account receives only the sections selected here. You can assign different access to each manager.</small>
+                        </fieldset>
+                    </div>
+
                     <div id="accountAttendancePermission" hidden>
                         <label class="account-check">
                             <input type="checkbox" id="accountCanTakeAttendance">
@@ -164,6 +174,10 @@
     const studentLink = $('#accountStudentLink');
     const studentSelect = $('#accountStudentId');
     const assignmentsWrap = $('#accountTeacherAssignments');
+    const managementPermissionsWrap = $('#accountManagementPermissions');
+    const managementAttendancePermission = $('#managementCanAttendance');
+    const managementStudentsPermission = $('#managementCanStudents');
+    const managementSchoolFeesPermission = $('#managementCanSchoolFees');
     const attendancePermissionWrap = $('#accountAttendancePermission');
     const attendancePermission = $('#accountCanTakeAttendance');
     const documentPermissionsWrap = $('#accountTeacherDocumentPermissions');
@@ -308,6 +322,8 @@
         const isTeacher = role.value === 'teacher';
         studentLink.hidden = !isStudent;
         studentSelect.required = isStudent;
+        const isManagement = role.value === 'management';
+        managementPermissionsWrap.hidden = !isManagement;
         assignmentsWrap.hidden = !isTeacher;
         attendancePermissionWrap.hidden = !isTeacher;
         documentPermissionsWrap.hidden = !isTeacher;
@@ -539,6 +555,9 @@
         $('#accountIsActive').disabled = false;
         $('#accountIsActive').checked = true;
         attendancePermission.checked = false;
+        managementAttendancePermission.checked = false;
+        managementStudentsPermission.checked = false;
+        managementSchoolFeesPermission.checked = false;
         printPermission.checked = false;
         exportPermission.checked = false;
         assignmentRows.innerHTML = '';
@@ -579,6 +598,9 @@
 populateStudents(account.student_id || '');
         assignmentRows.innerHTML = '';
         attendancePermission.checked = Boolean(account.permissions && account.permissions.attendance_records);
+        managementAttendancePermission.checked = Boolean(account.permissions && account.permissions.management_attendance);
+        managementStudentsPermission.checked = Boolean(account.permissions && account.permissions.management_students);
+        managementSchoolFeesPermission.checked = Boolean(account.permissions && account.permissions.management_school_fees);
         const groupedAssignments = new Map();
         (account.assignments || []).forEach(assignment => {
             const key = `${assignment.class_type}:${assignment.class_id}`;
@@ -719,6 +741,11 @@ populateStudents(account.student_id || '');
             attendance_records: role.value === 'teacher' && attendancePermission.checked,
             print_results: role.value === 'teacher' && printPermission.checked,
             export_results: role.value === 'teacher' && exportPermission.checked,
+            management_permissions: role.value === 'management' ? {
+                attendance: managementAttendancePermission.checked,
+                students: managementStudentsPermission.checked,
+                school_fees: managementSchoolFeesPermission.checked
+            } : {},
         };
 
     if (id) {

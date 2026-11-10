@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-requireAdmin();
+requireAdminOrManagementPermission('students');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

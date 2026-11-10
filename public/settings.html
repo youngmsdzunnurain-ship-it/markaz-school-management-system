@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="css/settings.css?v=20261110-signature-save">
     <link rel="stylesheet" href="css/account-devices.css?v=20261109-device-activity">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="css/settings-panel-navigation.css?v=20261110-settings-ui-polish">
+    <link rel="stylesheet" href="css/settings-panel-navigation.css?v=20261110-role-first-settings-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
-    <link rel="stylesheet" href="/css/management-shell.css?v=20261109-avatar-device-activity">
+    <link rel="stylesheet" href="/css/management-shell.css?v=20261110-management-shell-final">
     <script>document.documentElement.classList.add("settings-page-pending");</script>
 </head>
 
-<body data-role-access="admin_or_exam_officer">
+<body data-role-access="admin_or_exam_officer_or_management">
 
 
 
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <form id="profileForm" enctype="multipart/form-data">
+            <form id="profileForm" method="post" action="./api/settings/admin-profile.php" enctype="multipart/form-data">
 
                 <div class="profile-preview">
                     <div class="profile-photo" id="profilePhoto">
@@ -116,8 +116,7 @@
                     <h3>Confirm your password</h3>
 
                     <p>
-                        Your current password is required before profile
-                        changes can be saved.
+                        Confirm your password when changing your name or email. Profile-photo-only updates use your active signed-in session.
                     </p>
 
                     <label>
@@ -128,7 +127,6 @@
                             name="current_password"
                             placeholder="...................."
                             autocomplete="current-password"
-                            required
                         >
                     </label>
 
@@ -460,7 +458,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261110-support-save-polish"></script>
+    <script src="js/settings.js?v=20261110-profile-upload-final2"></script>
     <script src="js/result-print-threshold-settings.js?v=20261104-threshold"></script>
     <script src="js/account-management.js"></script>
 
@@ -469,7 +467,7 @@
 <script src="js/website-image-overrides.js"></script>
 <script src="js/website-image-manager.js"></script>
     <script src="js/social-settings.js"></script>
-    <script src="js/settings-panel-navigation.js?v=20261110-clear-category-labels"></script>
-    <script src="/js/management-shell.js?v=20261109-avatar-device-activity"></script>
+    <script src="js/settings-panel-navigation.js?v=20261110-role-first-settings-final"></script>
+    <script src="/js/management-shell.js?v=20261110-management-shell-final"></script>
 </body>
 </html>

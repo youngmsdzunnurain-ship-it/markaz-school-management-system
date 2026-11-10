@@ -156,7 +156,7 @@ if ($method === 'GET') {
     $permissionStmt = $pdo->query(
         'SELECT account_id, permission_key, is_allowed
          FROM account_permissions
-         WHERE permission_key IN ("print_results", "export_results", "attendance_records")'
+         WHERE permission_key IN ("print_results", "export_results", "attendance_records", "management_attendance", "management_students", "management_school_fees")'
     );
 
     $permissions = [];
@@ -255,6 +255,9 @@ if ($method === 'GET') {
         }
 
         $effectivePermissions['attendance_records'] = $permissions[$id]['attendance_records'] ?? false;
+        $effectivePermissions['management_attendance'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_attendance'] ?? false);
+        $effectivePermissions['management_students'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_students'] ?? false);
+        $effectivePermissions['management_school_fees'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_school_fees'] ?? false);
         $account['permissions'] = $effectivePermissions;
         $account['assignments'] = $assignments[$id] ?? [];
     }
@@ -610,6 +613,13 @@ try {
         saveAccountPermission($pdo, $targetId, 'attendance_records', false);
         saveAccountPermission($pdo, $targetId, 'print_results', false);
         saveAccountPermission($pdo, $targetId, 'export_results', false);
+    }
+
+    foreach (['attendance', 'students', 'school_fees'] as $managementPermission) {
+        $allowed = $role === 'management'
+            && is_array($data['management_permissions'] ?? null)
+            && filter_var($data['management_permissions'][$managementPermission] ?? false, FILTER_VALIDATE_BOOLEAN);
+        saveAccountPermission($pdo, $targetId, 'management_' . $managementPermission, $allowed);
     }
 
     $pdo->commit();

@@ -44,6 +44,23 @@ if (!$admin) {
 $role = (string) $admin['role'];
 $accountId = (int) $admin['id'];
 $canManageAttendance = $role === 'admin';
+$managementPermissions = ['attendance' => false, 'students' => false, 'school_fees' => false];
+if ($role === 'management') {
+    $managementPermissionStmt = db()->prepare(
+        'SELECT permission_key, is_allowed FROM account_permissions
+         WHERE account_id = ? AND permission_key IN (?, ?, ?)'
+    );
+    $managementPermissionStmt->execute([
+        $accountId, 'management_attendance', 'management_students', 'management_school_fees'
+    ]);
+    foreach ($managementPermissionStmt->fetchAll(PDO::FETCH_ASSOC) as $permissionRow) {
+        $key = str_replace('management_', '', (string) $permissionRow['permission_key']);
+        if (array_key_exists($key, $managementPermissions)) {
+            $managementPermissions[$key] = (int) $permissionRow['is_allowed'] === 1;
+        }
+    }
+    $canManageAttendance = $managementPermissions['attendance'];
+}
 if ($role === 'teacher') {
     $attendancePermissionStmt = db()->prepare(
         'SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1'
@@ -97,6 +114,7 @@ echo json_encode([
         'profile_image' => $admin['profile_image'],
         'can_print_results' => $resolvePermission('print_results'),
         'can_export_results' => $resolvePermission('export_results'),
-        'can_manage_attendance' => $canManageAttendance
+        'can_manage_attendance' => $canManageAttendance,
+        'management_permissions' => $managementPermissions
     ]
 ]);

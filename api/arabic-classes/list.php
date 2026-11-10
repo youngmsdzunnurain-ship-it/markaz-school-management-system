@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../app/helpers/class-hierarchy.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-requireAdmin();
+requireAdminOrManagementPermission('students');
 
 $stmt = db()->query(
     'SELECT
