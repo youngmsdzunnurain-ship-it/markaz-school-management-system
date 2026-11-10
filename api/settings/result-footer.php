@@ -9,7 +9,12 @@ $studentPortalScope = $_SERVER['REQUEST_METHOD'] === 'GET'
     ? studentPortalResultScope(false)
     : null;
 if ($studentPortalScope === null) {
-    requireAdminOrExamOfficer();
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET'
+        && in_array(currentAdminRole(), ['teacher', 'management'], true)) {
+        requireOnlineClassAccess();
+    } else {
+        requireAdminOrExamOfficer();
+    }
 }
 
 header('Content-Type: application/json; charset=utf-8');
