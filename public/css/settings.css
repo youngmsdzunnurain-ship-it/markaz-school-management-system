@@ -5397,3 +5397,6 @@ body {
 .signature-editor-actions button:hover:not(:disabled) {
     transform:translateY(-1px); box-shadow:0 5px 12px rgba(18,61,42,.12);
 }
+
+/* Prevent another role's settings from flashing before account permissions resolve. */
+html.settings-page-pending body .settings-page{visibility:hidden!important}
