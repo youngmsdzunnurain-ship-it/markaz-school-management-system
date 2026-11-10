@@ -69,14 +69,19 @@ if ($method === 'GET') {
         $attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (in_array($term, ['First Term','Second Term','Third Term'], true) && $session !== '') {
             $stmt = $pdo->prepare(
-                'SELECT r.*, s.admission_number, s.first_name, s.middle_name, s.last_name, sub.name AS subject_name
-                 FROM online_class_results r
-                 JOIN online_class_students s ON s.id = r.student_id
-                 JOIN online_class_subjects sub ON sub.id = r.subject_id
-                 WHERE s.level_id = ? AND r.academic_session = ? AND r.term = ?
-                 ORDER BY s.last_name, s.first_name, sub.sort_order'
+                'SELECT s.id AS student_id, s.admission_number, s.first_name, s.middle_name, s.last_name,
+                        sub.id AS subject_id, sub.name AS subject_name,
+                        r.id, r.attendance_score, r.test_score, r.exam_score,
+                        r.teacher_remark, r.director_remark
+                 FROM online_class_students s
+                 JOIN online_class_subjects sub ON sub.level_id = s.level_id AND sub.is_active = 1
+                 LEFT JOIN online_class_results r
+                   ON r.student_id = s.id AND r.subject_id = sub.id
+                  AND r.academic_session = ? AND r.term = ?
+                 WHERE s.level_id = ? AND s.is_active = 1
+                 ORDER BY s.last_name, s.first_name, sub.sort_order, sub.name'
             );
-            $stmt->execute([(int) $levelId, $session, $term]);
+            $stmt->execute([$session, $term, (int) $levelId]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
