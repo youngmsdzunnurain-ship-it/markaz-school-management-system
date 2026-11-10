@@ -78,10 +78,11 @@ arabicClassWorkspaceCheck(
     'canonical Arabic spellings are used by class lists, class results, and printable student results with legacy assignments'
 );
 arabicClassWorkspaceCheck(
-    strpos($settingsNavigationJs, 'activate("profile")') < strpos($settingsNavigationJs, 'fetch("./api/auth/me.php"')
-        && strpos($settingsNavigationJs, 'fetch("./api/auth/me.php"') < strpos($settingsNavigationJs, 'classList.remove("settings-page-pending")')
+    strpos($settingsNavigationJs, 'await fetch("./api/auth/me.php"') < strpos($settingsNavigationJs, 'const allCategories = [')
+        && strpos($settingsNavigationJs, 'const allCategories = [') < strrpos($settingsNavigationJs, 'classList.remove("settings-page-pending")')
         && str_contains($settingsNavigationJs, 'role === "management"')
-        && str_contains(file_get_contents(__DIR__ . '/../public/settings.html'), 'settings-page-pending'),
+        && str_contains(file_get_contents(__DIR__ . '/../public/settings.html'), 'settings-page-pending')
+        && str_contains($settingsCss, 'html.settings-page-pending body .settings-page{visibility:hidden!important}'),
     'Settings keeps role-specific navigation hidden until the authenticated role is resolved'
 );
 arabicClassWorkspaceCheck(
