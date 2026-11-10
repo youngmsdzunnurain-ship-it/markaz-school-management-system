@@ -15,6 +15,7 @@ $loginJs = (string) file_get_contents($root . '/public/js/online-class-login.js'
 $portal = (string) file_get_contents($root . '/public/online-class-portal.html');
 $workspace = (string) file_get_contents($root . '/public/online-class.html');
 $studentLogin = (string) file_get_contents($root . '/public/student-login.html');
+$studentAuth = (string) file_get_contents($root . '/api/online-class/student-login.php');
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
@@ -48,7 +49,9 @@ onlinePortalUiAssert(
     str_contains($loginJs, 'api/online-class/portal-options.php') &&
     str_contains($loginJs, 'level_id') &&
     !str_contains($loginJs, 'onlineSection') &&
-    !str_contains($loginJs, 'section:'),
+    !str_contains($loginJs, 'section:') &&
+    !str_contains($studentAuth, "\$input['section']") &&
+    !str_contains($studentAuth, 's.section=?'),
     'Student login must use admission number, level, session and term without a section field'
 );
 onlinePortalUiAssert(
@@ -72,6 +75,10 @@ onlinePortalUiAssert(
     str_contains($workspace, 'id="sidebarOverlay"') &&
     str_contains($workspace, 'id="menuButton"') &&
     str_contains($workspace, 'id="resultSession"') &&
+    str_contains($workspace, '<select id="resultStudentName"') &&
+    str_contains($workspace, '<select id="resultSubjectName"') &&
+    str_contains($workspace, 'id="resultTotal"') &&
+    str_contains($workspace, 'id="markAllPresent"') &&
     preg_match('/<select[^>]*id="resultSession"/', $workspace) === 1,
     'Staff workspace must use the shared watermark, responsive shell and session dropdown'
 );
