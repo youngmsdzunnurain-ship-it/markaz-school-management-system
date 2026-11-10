@@ -530,3 +530,11 @@
 html.settings-page-pending .settings-page > :not(.settings-header):not(.settings-card:first-of-type):not(.markaz-global-footer) {
     display: none;
 }
+
+
+/* Keep role-specific Settings categories out of the first paint. */
+html.settings-page-pending .settings-category-nav,
+html.settings-page-pending .settings-category-heading,
+html.settings-page-pending .settings-category-description {
+    visibility: hidden;
+}
