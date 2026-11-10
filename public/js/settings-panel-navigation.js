@@ -193,6 +193,9 @@
     const allowedIds = role === "management"
       ? new Set(["profile"])
       : new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"]);
+    if (role === "management") {
+      page.querySelector(".password-section")?.setAttribute("hidden", "");
+    }
     categories.forEach(category => {
       if (allowedIds.has(category.id)) return;
       category.elements.forEach(element => { element.hidden = true; });
