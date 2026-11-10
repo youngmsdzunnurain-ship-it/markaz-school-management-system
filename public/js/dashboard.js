@@ -79,7 +79,8 @@ async function loadAdmin() {
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
-        if (welcomeDescription && role === "management") welcomeDescription.textContent = "Your assigned school workspaces are available below.";
+        if (welcomeDescription && role === "management") welcomeDescription.hidden = true;
+        if (role === "management" && roleLabel) roleLabel.hidden = true;
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
