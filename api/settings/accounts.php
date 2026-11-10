@@ -628,10 +628,6 @@ try {
         saveAccountPermission($pdo, $targetId, 'management_' . $managementPermission, $allowed);
     }
 
-    $onlineClassAllowed = in_array($role, ['exam_officer', 'teacher', 'management'], true)
-        && filter_var($data['online_class_access'] ?? false, FILTER_VALIDATE_BOOLEAN);
-    saveAccountPermission($pdo, $targetId, 'online_class_access', $onlineClassAllowed);
-
     $pdo->commit();
 
     accountResponse([
