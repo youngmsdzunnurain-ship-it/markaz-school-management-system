@@ -1,25 +1,24 @@
 <?php
 declare(strict_types=1);
 $root = dirname(__DIR__);
-$checks = [
-    'isolated online-class tables and four default levels' => is_file($root . '/database/migrations/20261110_markaz_online_class.sql')
-        && str_contains(file_get_contents($root . '/database/migrations/20261110_markaz_online_class.sql'), "('Level 4', 4)"),
-    'online-class score contract is 20 + 20 + 60' => is_file($root . '/api/online-class/_common.php')
-        && str_contains(file_get_contents($root . '/api/online-class/_common.php'), "'attendance' => 20")
-        && str_contains(file_get_contents($root . '/api/online-class/_common.php'), "'test' => 20")
-        && str_contains(file_get_contents($root . '/api/online-class/_common.php'), "'exam' => 60"),
-    'online student login is isolated from conventional student accounts' => is_file($root . '/api/online-class/portal-login.php')
-        && str_contains(file_get_contents($root . '/api/online-class/portal-login.php'), 'online_class_students')
-        && str_contains(file_get_contents($root . '/api/online-class/portal-login.php'), 'online_student_id'),
-    'online-class staff permission is enforced server-side' => is_file($root . '/app/middleware/auth.php')
-        && str_contains(file_get_contents($root . '/app/middleware/auth.php'), 'function requireOnlineClassAccess'),
-    'landscape result sheet and direct print flow exist' => is_file($root . '/public/online-class-results.html')
-        && str_contains(file_get_contents($root . '/public/online-class-results.html'), 'A4 landscape'),
+$read = static fn(string $path): string => is_file($root . '/' . $path) ? (string) file_get_contents($root . '/' . $path) : '';
+$schema=$read('database/migrations/20261110_markaz_online_class.sql');
+$helper=$read('app/helpers/online-class.php');
+$api=$read('api/online-class/index.php');
+$portal=$read('api/online-class/student-results.php');
+$login=$read('api/online-class/student-login.php');
+$page=$read('public/online-class.html');
+$portalPage=$read('public/online-class-login.html');
+$js=$read('public/js/online-class.js');
+$checks=[
+ 'isolated online academic tables and four default levels'=>str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_students')&&str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_results')&&str_contains($schema,"('Level 4', 4)"),
+ 'score limits are attendance 20, test 20 and exam 60'=>str_contains($helper,"'attendance_score'=>20")&&str_contains($helper,"'test_score'=>20")&&str_contains($helper,"'exam_score'=>60"),
+ 'requested grade boundaries are consistent on server and browser'=>str_contains($helper,"$"."score >= 40")&&str_contains($helper,"'remark' => 'Impressive'")&&str_contains($helper,"'remark' => 'Poor'")&&str_contains($js,"if(n>=40)return{grade:'D',remark:'Impressive'}"),
+ 'each level stores tutor, task labels, memorisation and term dates'=>str_contains($schema,'tutor_name')&&str_contains($schema,'task_one_name')&&str_contains($schema,'task_two_name')&&str_contains($schema,'third_term_resumption'),
+ 'staff access is individually permission-gated'=>str_contains($helper,'online_class_access')&&str_contains($api,'onlineClassStaffAccess'),
+ 'student portal uses separate online student credentials and session'=>str_contains($login,'online_class_students')&&str_contains($login,'online_student_id')&&str_contains($portal,'onlineClassStudentSession'),
+ 'results release is level and term specific'=>str_contains($schema,'online_class_result_releases')&&str_contains($api,'release_results'),
+ 'workspace and landscape report interface exist'=>str_contains($page,'online-class.js')&&str_contains($page,'Level Settings')&&str_contains($js,'online-report-title')&&str_contains($js,'window.print()')&&str_contains($portalPage,'online-class-portal.js'),
 ];
-$failed = [];
-foreach ($checks as $label => $passed) {
-    echo ($passed ? "PASS " : "FAIL ") . $label . PHP_EOL;
-    if (!$passed) $failed[] = $label;
-}
-if ($failed) exit(1);
-echo "Online Class regression checks passed (" . count($checks) . ")." . PHP_EOL;
+foreach($checks as $label=>$passed){echo ($passed?'PASS ':'FAIL ').$label.PHP_EOL;if(!$passed)exit(1);}
+echo 'Online Class module regression checks passed ('.count($checks).').'.PHP_EOL;
