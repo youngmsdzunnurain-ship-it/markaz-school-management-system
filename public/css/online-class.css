@@ -171,3 +171,9 @@
  .online-workspace-page .online-class-page{padding:12px}
  .online-workspace-page .online-form-grid{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Keep the app grid in sync with the shared shell at every sidebar breakpoint. */
+body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
+@media(max-width:850px){
+ .online-workspace-page .app{grid-template-columns:minmax(0,1fr)}
+}
