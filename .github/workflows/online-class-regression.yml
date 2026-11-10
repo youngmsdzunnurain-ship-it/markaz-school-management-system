@@ -31,6 +31,7 @@ jobs:
           php -l tests/online-class-regression.test.php
           php -l tests/online-class-module-regression.test.php
           php -l tests/online-class-architecture-regression.test.php
+          php -l tests/settings-role-first-dashboard-order.test.php
       - name: JavaScript syntax checks
         run: |
           set -e
@@ -39,9 +40,11 @@ jobs:
           node --check public/js/online-class-portal.js
           node --check public/js/account-management.js
           node --check public/js/dashboard.js
+          node --check public/js/settings-panel-navigation.js
       - name: Online Class regression tests
         run: |
           set -e
           php tests/online-class-regression.test.php
           php tests/online-class-module-regression.test.php
           php tests/online-class-architecture-regression.test.php
+          php tests/settings-role-first-dashboard-order.test.php
