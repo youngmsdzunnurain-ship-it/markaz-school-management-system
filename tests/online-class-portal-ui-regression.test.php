@@ -13,6 +13,7 @@ $root = dirname(__DIR__);
 $html = (string) file_get_contents($root . '/public/online-class-login.html');
 $js = (string) file_get_contents($root . '/public/js/online-class-login.js');
 $levels = (string) file_get_contents($root . '/database/migrations/20261110_markaz_online_class.sql');
+$levelSeed = (string) file_get_contents($root . '/database/migrations/20261110_online_class_default_levels.sql');
 $portal = (string) file_get_contents($root . '/public/online-class-portal.html');
 
 onlinePortalUiAssert(
@@ -40,7 +41,8 @@ onlinePortalUiAssert(
 );
 onlinePortalUiAssert(
     str_contains($levels, "('Level 1', 1), ('Level 2', 2), ('Level 3', 3), ('Level 4', 4)") &&
-    str_contains($levels, 'INSERT IGNORE INTO online_class_levels'),
+    str_contains($levelSeed, "('Level 1', 1)") && str_contains($levelSeed, "('Level 4', 4)") &&
+    str_contains($levelSeed, 'INSERT IGNORE INTO online_class_levels'),
     'Four initial levels must remain safely seeded while additional levels stay supported'
 );
 onlinePortalUiAssert(
