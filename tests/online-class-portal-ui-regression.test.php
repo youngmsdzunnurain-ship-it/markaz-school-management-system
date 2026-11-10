@@ -156,7 +156,7 @@ onlinePortalUiAssert(
     'Student list must expose working deactivate and reactivate actions'
 );
 onlinePortalUiAssert(
-    str_contains($workspaceJs, 'data-status=') &&
+    str_contains($workspaceJs, 'dataset.status=value') &&
     str_contains($onlineCss, '.attendance-status[data-status="present"]') &&
     str_contains($onlineCss, '.attendance-status[data-status="absent"]') &&
     str_contains($onlineCss, '.attendance-status[data-status="late"]') &&
