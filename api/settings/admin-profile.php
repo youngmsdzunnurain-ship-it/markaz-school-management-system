@@ -4,7 +4,13 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 
-requireAdminOrExamOfficer();
+$profileRole = currentAdminRole();
+if (!in_array($profileRole, ['admin', 'exam_officer', 'management'], true)) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Profile access is not available for this account.']);
+    exit;
+}
 
 header('Content-Type: application/json; charset=utf-8');
 
