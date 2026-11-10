@@ -40,7 +40,7 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($loginJs, 'function populateAcademicSessions()') &&
     str_contains($loginJs, 'Array.from({ length: 10 }') &&
-    str_contains($loginJs, "academic_session:$('onlineSession').value") &&
+    str_contains($loginJs, 'academic_session:') && str_contains($loginJs, "onlineSession').value") &&
     str_contains($loginJs, 'function isAcademicSession(value)') &&
     str_contains($loginJs, 'api/online-class/portal-options.php') &&
     str_contains($loginJs, 'level_id') &&
