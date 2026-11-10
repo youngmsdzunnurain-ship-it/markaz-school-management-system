@@ -7,4 +7,4 @@ $enabled=db()->query("SELECT setting_value FROM settings WHERE setting_key='onli
 if(!in_array(strtolower(trim((string)$enabled)),['1','true','yes','on'],true)){http_response_code(403);echo json_encode(['success'=>false,'message'=>'Online Class student portal is currently closed.']);exit;}
 $levels=db()->query('SELECT id,name FROM online_class_levels WHERE is_active=1 ORDER BY sort_order,id')->fetchAll(PDO::FETCH_ASSOC);
 $sections=db()->query("SELECT DISTINCT level_id,section FROM online_class_students WHERE is_active=1 AND TRIM(section)<>'' AND TRIM(section) NOT REGEXP '^[0-9]{4}/[0-9]{4}$' ORDER BY level_id,section")->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode(['success'=>true,'levels'=>$levels,'sections'=>$sections,'terms'=>['First Term','Second Term','Third Term']],JSON_UNESCAPED_UNICODE);
+echo json_encode(['success'=>true,'levels'=>$levels,'terms'=>['First Term','Second Term','Third Term']],JSON_UNESCAPED_UNICODE);

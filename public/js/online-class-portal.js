@@ -22,7 +22,7 @@ async function loadResults(){
   $('portalResultsRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.subject_name)+'</td><td>'+esc(r.attendance_score??'—')+'</td><td>'+esc(r.test_score??'—')+'</td><td>'+esc(r.exam_score??'—')+'</td><td>'+esc(r.total??'—')+'</td><td>'+esc(r.grade??'Pending')+'</td><td>'+esc(r.grade_remark??'—')+'</td></tr>').join('')+'<tr><td colspan="4"><b>Overall Average</b></td><td><b>'+average.toFixed(1)+'%</b></td><td><b>'+g[0]+'</b></td><td><b>'+g[1]+'</b></td></tr>';
   const sig=d.signatures||{},sigImg=v=>v?'<img src="'+esc(String(v))+'" alt="Signature" style="max-width:135px;max-height:38px;object-fit:contain">':'_____________________';
   const tutor=rows.map(r=>r.teacher_remark).find(Boolean)||'Your effort and progress are appreciated. Continue learning with confidence and regular revision.';
-  const director=rows.map(r=>r.director_remark).find(Boolean)||'May Allah grant you beneficial knowledge and continued progress.';
+  const director='Mashallah, Barakallahu fi';
   $('portalRemarks').innerHTML='<section><b>Tutor’s Remark</b><p>'+esc(tutor)+'</p><p>Signature: '+sigMarkup(sig.teacher_image,sig.teacher_text,'Tutor signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section><section><b>Coordinator’s / Director’s Remark</b><p>'+esc(director)+'</p><p>Signature: '+sigMarkup(sig.director_image,sig.director_text,'Director signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section>';
   $('portalReport').style.display='block';showMessage('Your released results are ready. You can print or save the report as PDF.');
  }catch(e){showMessage(e.message,true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}

@@ -135,3 +135,45 @@
  .online-workspace-page .main-content::before,.online-login-page::before,.online-results-page::before{display:none!important}
  .online-results-report,.online-workspace-page .online-report{background:#fff}
 }
+
+
+/* Match the compact desktop dashboard rhythm and shared sidebar geometry. */
+.online-workspace-page{background:var(--page,#f5f7f1)}
+.online-workspace-page .app{grid-template-columns:260px minmax(0,1fr);align-items:stretch}
+.online-workspace-page .sidebar{width:260px;padding:16px;transition:transform .25s ease}
+.online-workspace-page .sidebar-header{height:72px;min-height:72px;margin-bottom:20px}
+.online-workspace-page .sidebar-nav .nav-link{height:42px;min-height:42px;padding:0 12px;margin:0 0 4px;font-size:14px;gap:12px}
+.online-workspace-page .topbar{min-height:78px;padding:0 28px;background:linear-gradient(90deg,#a9cbb4,#e6d9a4 70%,#efe9d2);border:0;backdrop-filter:none;box-shadow:none}
+.online-workspace-page .topbar h1{font-family:var(--serif,Georgia,serif);font-weight:600}
+.online-workspace-page .online-class-page{max-width:none;padding:22px 28px 28px;gap:20px}
+.online-workspace-page .online-welcome-card{min-height:92px;padding:20px 30px;margin-bottom:0;border-radius:16px}
+.online-workspace-page .online-panel{padding:18px;border-radius:16px;margin-bottom:14px;box-shadow:0 4px 14px rgba(20,71,47,.05)}
+.online-workspace-page .online-panel h2{font-size:17px;margin-bottom:12px}
+.online-workspace-page .online-toolbar{gap:10px;margin-bottom:12px}
+.online-workspace-page .online-field{gap:5px}
+.online-workspace-page .online-field input,.online-workspace-page .online-field select,.online-workspace-page .online-field textarea{padding:9px 10px;border-radius:9px}
+.online-workspace-page .online-table th{padding:10px 11px}
+.online-workspace-page .online-table td{padding:9px 11px;font-size:12px}
+.online-workspace-page .online-stat-grid{gap:12px}
+.online-workspace-page .online-stat{padding:14px;border-radius:13px}
+.online-workspace-page .online-stat strong{font-size:24px}
+.online-workspace-page .online-form-grid{gap:10px}
+.online-workspace-page .online-btn{padding:9px 13px;border-radius:9px}
+.online-workspace-page .sidebar-overlay{z-index:1190}
+.online-workspace-page .sidebar.open{z-index:1200}
+@media(max-width:850px){
+ .online-workspace-page .topbar{padding:10px 14px}
+ .online-workspace-page .online-class-page{padding:16px 14px 24px}
+ .online-workspace-page .online-panel{padding:16px}
+}
+@media(max-width:640px){
+ .online-workspace-page .topbar{padding:10px 12px}
+ .online-workspace-page .online-class-page{padding:12px}
+ .online-workspace-page .online-form-grid{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Keep the app grid in sync with the shared shell at every sidebar breakpoint. */
+body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
+@media(max-width:850px){
+ .online-workspace-page .app{grid-template-columns:minmax(0,1fr)}
+}
