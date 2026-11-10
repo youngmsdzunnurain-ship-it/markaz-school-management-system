@@ -9,7 +9,7 @@ $session=trim((string)($_SESSION['online_student_academic_session']??''));$term=
 if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true)) onlineClassJsonError(422,'Choose a valid academic session and term.');
 $release=db()->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=(SELECT level_id FROM online_class_students WHERE id=?) AND academic_session=? AND term=? LIMIT 1');
 $release->execute([$studentId,$session,$term]);
-if((int)$release->fetchColumn()!==1) onlineClassJson(['success'=>true,'released'=>false,'student'=>$student,'results'=>[]]);
+if((int)$release->fetchColumn()!==1) onlineClassJson(['success'=>true,'released'=>false,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>[]]);
 $stmt=db()->prepare('SELECT sub.name AS subject_name,sub.sort_order,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_subjects sub LEFT JOIN online_class_results r ON r.subject_id=sub.id AND r.student_id=? AND r.academic_session=? AND r.term=? WHERE sub.level_id=(SELECT level_id FROM online_class_students WHERE id=?) AND sub.is_active=1 ORDER BY sub.sort_order,sub.name');
 $stmt->execute([$studentId,$session,$term,$studentId]);$results=[];
 foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row){
