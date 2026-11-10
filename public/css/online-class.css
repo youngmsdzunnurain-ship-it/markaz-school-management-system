@@ -5,3 +5,88 @@
 .online-portal-switch{text-align:center;font-size:13px;color:#65766a;margin:16px 0}.online-portal-switch a{color:#1d6742;font-weight:700}
 .online-portal-body{min-height:100vh;background:linear-gradient(145deg,#edf4eb,#f8faf6);padding:28px 16px}.online-portal-shell{max-width:920px;margin:0 auto}.online-portal-brand{display:flex;align-items:center;gap:14px;margin:0 auto 24px;max-width:700px}.online-portal-brand img{width:62px;height:62px;object-fit:contain}.online-portal-brand strong,.online-portal-brand span{display:block}.online-portal-brand strong{font:700 22px Georgia,serif;color:#205c3b}.online-portal-brand span{font-size:12px;color:#65766a}.online-portal-login{max-width:480px;margin:0 auto;background:#fff;border:1px solid #e1e9df;border-radius:20px;padding:30px;box-shadow:0 16px 42px #173e2a12}.online-portal-icon{width:54px;height:54px;border-radius:16px;background:#edf5e9;color:#205c3b;display:grid;place-items:center;font-size:23px;margin-bottom:16px}.online-portal-login h1,.online-portal-welcome h1{font:700 27px Georgia,serif;color:#174d32;margin:8px 0}.online-portal-login>p{color:#65766a;font-size:13px;line-height:1.6}.online-portal-login form{display:grid;gap:9px;margin-top:20px}.online-portal-login label{font-size:12px;font-weight:700;color:#465b4b}.online-portal-login input{width:100%;padding:12px;border:1px solid #d7e1d4;border-radius:10px;font:inherit;margin-bottom:8px}.online-portal-login .online-btn{margin-top:8px}.online-portal-welcome{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.online-portal-welcome p{margin:0;color:#65766a;font-size:13px}.online-portal-controls{display:flex;align-items:end;gap:12px}.online-portal-footer{text-align:center;color:#829086;font-size:11px;margin:24px 0}.online-portal-actions{display:flex;justify-content:flex-end;margin-top:16px}
 @media print{.app,.online-portal-brand,.online-portal-login,.online-portal-welcome,.online-portal-controls,.online-portal-footer,.online-portal-actions,.no-print{display:none!important}#onlineReport{display:block!important}.online-report{display:block!important;padding:0!important}.online-report-signature{max-height:38px}.online-portal-body{padding:0!important;background:#fff!important}#onlinePortalLogin,#onlinePortalResults>header,#onlinePortalResults>.online-portal-controls,#onlinePortalResultMessage{display:none!important}#onlinePortalResultCard{display:block!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important}}
+
+
+/* ---------- ONLINE CLASS STUDENT PORTAL POLISH ---------- */
+.online-login-page{overflow-x:hidden}
+.online-login-card{max-width:780px!important;padding:32px 38px 28px!important}
+.online-login-brand .role-logo{margin:0 auto 12px}
+.online-login-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px;align-items:start}
+.online-login-form .role-field{margin-bottom:12px}
+.online-login-form .role-input{min-width:0}
+.online-login-form .role-input select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:8px}
+.online-login-form .role-input select:disabled{opacity:.65;cursor:not-allowed}
+.online-login-form .preview-notice,.online-login-form .role-message,.online-login-form .role-submit{grid-column:1/-1}
+.online-login-form .role-submit{margin-top:2px}
+.online-login-message{min-height:0;margin:0}
+.online-login-message:not(.visible){display:none}
+.online-login-message[data-kind="error"]{color:#b42318;background:#fef3f2;border:1px solid #fecdca}
+.online-login-message[data-kind="success"]{color:#17683b;background:#eaf5ee}
+.online-results-page{min-height:100vh;margin:0;padding:28px 18px 18px;background:linear-gradient(145deg,#edf4eb 0%,#f8faf6 58%,#f1f6ef 100%);font:400 14px/1.55 Inter,Arial,sans-serif;color:#203528}
+.online-portal-shell{width:min(100%,1120px);margin:0 auto}
+.online-portal-brand{display:flex;align-items:center;gap:14px;margin:0 auto 22px;max-width:none}
+.online-portal-brand img{width:58px;height:58px;object-fit:contain;flex:none}
+.online-portal-brand strong{font:800 21px/1.2 Inter,Arial,sans-serif;letter-spacing:1px;color:#174d32}
+.online-portal-brand span{display:block;margin-top:3px;font-size:12px;color:#65766a}
+.online-portal-home{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #d8e5d8;border-radius:10px;background:#fff;color:#205d38;font-size:12px;font-weight:700}
+.online-results-welcome{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:26px 30px;border-radius:18px;background:linear-gradient(120deg,#174d32,#2b784d);color:#fff;box-shadow:0 12px 30px #173e2a20}
+.online-results-welcome .online-eyebrow{color:#e7d69a}
+.online-results-welcome h1{margin:6px 0 4px;color:#fff;font:700 clamp(23px,3vw,32px)/1.2 Georgia,serif;overflow-wrap:anywhere}
+.online-results-welcome p{margin:0;color:#e0eddf;font-size:13px;line-height:1.6}
+.online-btn-light{background:#fff!important;color:#205c3b!important;border-color:#fff!important;white-space:nowrap}
+.online-results-status{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding:20px 22px;border:1px solid #e0e9df;border-radius:16px;background:#fff;box-shadow:0 8px 24px #173e2a0b}
+.online-results-status-copy{display:flex;align-items:center;gap:13px;min-width:0}
+.online-results-status-icon{width:44px;height:44px;display:grid;place-items:center;flex:none;border-radius:13px;background:#edf5e9;color:#205c3b;font-size:19px}
+.online-results-status h2{margin:0;color:#184a30;font-size:17px}
+.online-results-status p{margin:3px 0 0;color:#65766a;font-size:12px;overflow-wrap:anywhere}
+.online-results-message{min-height:0;margin:12px 0;color:#285b3a;font-size:13px;line-height:1.6}
+.online-results-message:empty{display:none}
+.online-results-report{display:none;margin-top:16px;padding:26px;border:1px solid #e0e8dc;border-radius:16px;background:#fff;box-shadow:0 8px 24px #173e2a0b;overflow:hidden}
+.online-report-head{grid-template-columns:76px minmax(0,1fr) 115px;gap:14px}
+.online-report-head h2{font:700 17px/1.3 Georgia,serif}
+.online-report-stamp{text-align:center;color:#205c3b;font-size:11px;letter-spacing:.6px}
+.online-report-title{border-radius:7px}
+.online-report-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px;border-radius:9px;line-height:1.55;overflow-wrap:anywhere}
+.online-results-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.online-report-table{min-width:720px}
+.online-report-comments{margin-top:16px}
+.online-report-comments section{border-radius:9px;overflow-wrap:anywhere}
+.online-report-footer{gap:12px;flex-wrap:wrap;line-height:1.5}
+.online-portal-actions{margin-top:18px}
+.online-portal-footer{text-align:center;color:#829086;font-size:11px;margin:22px 0 8px}
+@media(max-width:650px){
+ .online-login-card{padding:27px 21px 23px!important}
+ .online-login-form{grid-template-columns:minmax(0,1fr);gap:0}
+ .online-login-form .preview-notice,.online-login-form .role-message,.online-login-form .role-submit{grid-column:1}
+ .online-results-page{padding:16px 12px}
+ .online-portal-brand{gap:10px;margin-bottom:16px}
+ .online-portal-brand img{width:48px;height:48px}
+ .online-portal-brand strong{font-size:18px}
+ .online-portal-home{padding:8px 10px;font-size:11px}
+ .online-results-welcome{align-items:flex-start;padding:21px 18px;flex-direction:column}
+ .online-results-welcome .online-btn{align-self:flex-end}
+ .online-results-status{align-items:stretch;flex-direction:column;padding:17px}
+ .online-results-status>.online-btn{width:100%}
+ .online-results-report{padding:14px}
+ .online-report-head{grid-template-columns:54px minmax(0,1fr);gap:9px;text-align:left}
+ .online-report-head img{width:50px;height:50px}
+ .online-report-head h2{font-size:12px}
+ .online-report-head p{font-size:9px}
+ .online-report-stamp{display:none}
+ .online-report-details{grid-template-columns:minmax(0,1fr)}
+ .online-report-comments{grid-template-columns:minmax(0,1fr)}
+ .online-report-footer{font-size:9px}
+}
+@media print{
+ .online-results-page{padding:0!important;background:#fff!important}
+ .online-portal-shell{width:100%;max-width:none;margin:0}
+ .online-portal-brand,.online-results-welcome,.online-results-status,.online-results-message,.online-portal-footer,.online-portal-actions,.no-print{display:none!important}
+ .online-results-report{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;overflow:visible}
+ .online-report-head{grid-template-columns:76px minmax(0,1fr) 115px}
+ .online-report-head h2{font-size:17px}
+ .online-report-stamp{display:block}
+ .online-report-details{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .online-report-comments{grid-template-columns:1fr 1fr}
+ .online-results-table-wrap{overflow:visible}
+ .online-report-table{min-width:0}
+}
