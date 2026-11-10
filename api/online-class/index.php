@@ -16,6 +16,11 @@ $validLevel = static function($value) use ($levelIds): int {
     return (int)$id;
 };
 if ($method === 'GET') {
+    if ($action === 'portal_options') {
+        $activeLevels = $pdo->query('SELECT id, name FROM online_class_levels WHERE is_active = 1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
+        $sections = $pdo->query('SELECT DISTINCT level_id, section FROM online_class_students WHERE is_active = 1 ORDER BY section')->fetchAll(PDO::FETCH_ASSOC);
+        onlineClassJson(['success'=>true,'levels'=>$activeLevels,'sections'=>$sections,'terms'=>$terms]);
+    }
     if ($action === 'portal_access') {
         $value = $pdo->query("SELECT setting_value FROM settings WHERE setting_key='online_class_student_access' LIMIT 1")->fetchColumn();
         onlineClassJson(['success'=>true,'enabled'=>in_array(strtolower(trim((string)$value)),['1','true','yes','on'],true)]);
@@ -52,7 +57,7 @@ if ($method === 'GET') {
     }
     if ($action === 'students') {
         $levelId = isset($_GET['level_id']) && $_GET['level_id']!=='' ? $validLevel($_GET['level_id']) : null;
-        $sql='SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.gender,s.level_id,l.name AS level_name,s.email,s.phone,s.is_active,s.created_at FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id';
+        $sql='SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.gender,s.level_id,s.section,l.name AS level_name,s.email,s.phone,s.is_active,s.created_at FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id';
         if ($levelId) { $stmt=$pdo->prepare($sql.' WHERE s.level_id=? ORDER BY s.last_name,s.first_name'); $stmt->execute([$levelId]); }
         else { $stmt=$pdo->query($sql.' ORDER BY l.sort_order,s.last_name,s.first_name'); }
         onlineClassJson(['success'=>true,'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
@@ -90,6 +95,14 @@ if($action==='set_portal_access'){
     $stmt->execute([$enabled]);
     onlineClassJson(['success'=>true,'message'=>$enabled==='1'?'Online Class student login has been enabled.':'Online Class student login has been disabled.']);
 }
+if($action==='create_level'){
+    $name=trim((string)($data['name']??''));
+    if($name===''||mb_strlen($name)>40) onlineClassJsonError(422,'Enter a level name (maximum 40 characters).');
+    $sort=(int)$pdo->query('SELECT COALESCE(MAX(sort_order),0)+1 FROM online_class_levels')->fetchColumn();
+    try{$stmt=$pdo->prepare('INSERT INTO online_class_levels(name,sort_order) VALUES(?,?)');$stmt->execute([$name,$sort]);}
+    catch(PDOException $e){if((string)$e->getCode()==='23000') onlineClassJsonError(409,'That level already exists.');throw $e;}
+    onlineClassJson(['success'=>true,'message'=>'New Online Class level created.','level'=>['id'=>(int)$pdo->lastInsertId(),'name'=>$name,'sort_order'=>$sort]],201);
+}
 if($action==='save_level'){
     $id=$validLevel($data['id']??0);
     $tutor=trim((string)($data['tutor_name']??''));
@@ -122,20 +135,22 @@ if($action==='save_student'){
     $levelId=$validLevel($data['level_id']??0);
     $first=trim((string)($data['first_name']??''));$middle=trim((string)($data['middle_name']??''));$last=trim((string)($data['last_name']??''));
     $gender=(string)($data['gender']??'');
+    $section=trim((string)($data['section']??''));
+    if($section===''||mb_strlen($section)>80) onlineClassJsonError(422,'Enter a valid student section (maximum 80 characters).');
     if($first===''||$last===''||mb_strlen($first)>100||mb_strlen($last)>100||($gender!==''&&!in_array($gender,['Male','Female'],true))) onlineClassJsonError(422,'Enter a valid student name and gender.');
     $email=trim((string)($data['email']??''));$phone=trim((string)($data['phone']??''));
     if($email!==''&&!filter_var($email,FILTER_VALIDATE_EMAIL)) onlineClassJsonError(422,'Enter a valid email address.');
     if($id){
-        $stmt=$pdo->prepare('UPDATE online_class_students SET first_name=?,middle_name=?,last_name=?,gender=?,level_id=?,email=?,phone=?,is_active=COALESCE(?,is_active) WHERE id=?');
+        $stmt=$pdo->prepare('UPDATE online_class_students SET first_name=?,middle_name=?,last_name=?,gender=?,level_id=?,section=?,email=?,phone=?,is_active=COALESCE(?,is_active) WHERE id=?');
         $active = array_key_exists('is_active', $data) ? (filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : null;
-        $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$email?:null,$phone?:null,$active,$id]);
+        $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$section,$email?:null,$phone?:null,$active,$id]);
         onlineClassJson(['success'=>true,'message'=>'Online student updated.']);
     }
     $password='M'.bin2hex(random_bytes(6)).'!';
     $pdo->beginTransaction();
     try{
-        $stmt=$pdo->prepare("INSERT INTO online_class_students(admission_number,first_name,middle_name,last_name,gender,level_id,email,phone,password_hash) VALUES(?,?,?,?,?,?,?,?,?)");
-        $stmt->execute(['PENDING-'.bin2hex(random_bytes(8)),$first,$middle?:null,$last,$gender?:null,$levelId,$email?:null,$phone?:null,password_hash($password,PASSWORD_DEFAULT)]);
+        $stmt=$pdo->prepare("INSERT INTO online_class_students(admission_number,first_name,middle_name,last_name,gender,level_id,section,email,phone,password_hash) VALUES(?,?,?,?,?,?,?,?,?,?)");
+        $stmt->execute(['PENDING-'.bin2hex(random_bytes(8)),$first,$middle?:null,$last,$gender?:null,$levelId,$section,$email?:null,$phone?:null,password_hash($password,PASSWORD_DEFAULT)]);
         $newId=(int)$pdo->lastInsertId();
         $admission='MOC-'.date('Y').'-'.str_pad((string)$newId,6,'0',STR_PAD_LEFT);
         $pdo->prepare('UPDATE online_class_students SET admission_number=? WHERE id=?')->execute([$admission,$newId]);
