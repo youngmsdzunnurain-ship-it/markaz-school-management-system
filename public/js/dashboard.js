@@ -1098,6 +1098,8 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Enter Results": "classes.html",
             "Print Results": "print-results.html",
             "Attendance": "attendance.html",
+            "MARKAZ Online Class": "online-class.html",
+            "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
             "System Settings": "settings.html",
             "Settings": "settings.html"
