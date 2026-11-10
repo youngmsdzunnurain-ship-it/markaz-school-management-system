@@ -258,9 +258,6 @@ if ($method === 'GET') {
         $effectivePermissions['management_attendance'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_attendance'] ?? false);
         $effectivePermissions['management_students'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_students'] ?? false);
         $effectivePermissions['management_school_fees'] = (string) $account['role'] === 'management' && ($permissions[$id]['management_school_fees'] ?? false);
-        $effectivePermissions['online_class_access'] = in_array((string)$account['role'], ['exam_officer','teacher','management'], true) && ($permissions[$id]['online_class_access'] ?? false);
-        $effectivePermissions['online_class_access'] = in_array((string) $account['role'], ['exam_officer','teacher','management'], true) && ($permissions[$id]['online_class_access'] ?? false);
-        $effectivePermissions['online_class_access'] = in_array((string) $account['role'], ['exam_officer', 'teacher', 'management'], true) && ($permissions[$id]['online_class_access'] ?? false);
         $effectivePermissions['online_class_access'] = in_array((string) $account['role'], ['exam_officer', 'teacher', 'management'], true) && ($permissions[$id]['online_class_access'] ?? false);
         $account['permissions'] = $effectivePermissions;
         $account['assignments'] = $assignments[$id] ?? [];
@@ -634,14 +631,6 @@ try {
     $onlineClassAllowed = in_array($role, ['exam_officer', 'teacher', 'management'], true)
         && filter_var($data['online_class_access'] ?? false, FILTER_VALIDATE_BOOLEAN);
     saveAccountPermission($pdo, $targetId, 'online_class_access', $onlineClassAllowed);
-
-    $onlineClassAllowed = in_array($role, ['exam_officer', 'teacher', 'management'], true)
-        && filter_var($data['online_class_access'] ?? false, FILTER_VALIDATE_BOOLEAN);
-    saveAccountPermission($pdo, $targetId, 'online_class_access', $onlineClassAllowed);
-
-    $onlineAllowed = in_array($role, ['exam_officer','teacher','management'], true)
-        && filter_var($data['online_class_access'] ?? false, FILTER_VALIDATE_BOOLEAN);
-    saveAccountPermission($pdo, $targetId, 'online_class_access', $onlineAllowed);
 
     $pdo->commit();
 
