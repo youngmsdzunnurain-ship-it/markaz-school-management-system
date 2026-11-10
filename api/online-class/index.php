@@ -27,7 +27,14 @@ if ($method === 'GET') {
         foreach ($levels as &$level) {
             $level['id']=(int)$level['id']; $level['student_count']=(int)($counts[$level['id']] ?? 0);
         } unset($level);
-        $signatureStmt=$pdo->query(\"SELECT setting_key,setting_value FROM markaz_app_settings WHERE setting_key IN ('result_footer_class_teacher_image','result_footer_director_image','result_footer_signature_date')\");\n        $signatureRows=$signatureStmt->fetchAll(PDO::FETCH_KEY_PAIR);\n        onlineClassJson(['success'=>true,'levels'=>$levels,'subjects'=>$subjects,'terms'=>$terms,'signatures'=>['teacher'=>$signatureRows['result_footer_class_teacher_image']??'','director'=>$signatureRows['result_footer_director_image']??'','date'=>$signatureRows['result_footer_signature_date']??'']]);
+        $pdo->exec("CREATE TABLE IF NOT EXISTS markaz_app_settings (setting_key VARCHAR(100) NOT NULL PRIMARY KEY, setting_value TEXT NULL) ENGINE=InnoDB");
+        $signatureStmt = $pdo->query("SELECT setting_key, setting_value FROM markaz_app_settings WHERE setting_key IN ('result_footer_class_teacher_image', 'result_footer_director_image', 'result_footer_signature_date')");
+        $signatureRows = $signatureStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        onlineClassJson(['success'=>true,'levels'=>$levels,'subjects'=>$subjects,'terms'=>$terms,'signatures'=>[
+            'teacher'=>$signatureRows['result_footer_class_teacher_image'] ?? '',
+            'director'=>$signatureRows['result_footer_director_image'] ?? '',
+            'date'=>$signatureRows['result_footer_signature_date'] ?? ''
+        ]]);
     }
     if ($action === 'students') {
         $levelId = isset($_GET['level_id']) && $_GET['level_id']!=='' ? $validLevel($_GET['level_id']) : null;
