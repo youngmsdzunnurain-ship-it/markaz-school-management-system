@@ -153,6 +153,7 @@ async function loadAdmin() {
         });
 
         applyDashboardRoleAccess(role, data.admin);
+        if (role !== "management") loadDashboardStats();
 
         if (adminName) adminName.textContent = name;
         if (welcomeAdminName) welcomeAdminName.textContent = name;
@@ -952,7 +953,7 @@ window.addEventListener("resize", () => {
 document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
         loadDashboardAttendance();
-        loadDashboardStats();
+        if (window.markazCurrentRole !== "management") loadDashboardStats();
     }
 });
 
@@ -960,7 +961,6 @@ document.addEventListener("visibilitychange", () => {
 // its initial script. Refresh live statistics when that page is shown again.
 window.addEventListener("pageshow", () => {
     loadAdmin();
-    loadDashboardStats();
 });
 
 async function loadDashboardStats() {
@@ -1078,8 +1078,6 @@ async function loadDashboardStats() {
         console.error("Unable to load dashboard statistics:", error);
     }
 }
-
-loadDashboardStats();
 
 /* =========================================================
    MARKAZ — QUICK ACCESS NAVIGATION
