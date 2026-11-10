@@ -79,9 +79,10 @@ arabicClassWorkspaceCheck(
 );
 arabicClassWorkspaceCheck(
     strpos($settingsNavigationJs, 'activate("profile")') < strpos($settingsNavigationJs, 'fetch("./api/auth/me.php"')
-        && str_contains($settingsNavigationJs, 'Render the Settings navigation immediately')
+        && strpos($settingsNavigationJs, 'fetch("./api/auth/me.php"') < strpos($settingsNavigationJs, 'classList.remove("settings-page-pending")')
+        && str_contains($settingsNavigationJs, 'role === "management"')
         && str_contains(file_get_contents(__DIR__ . '/../public/settings.html'), 'settings-page-pending'),
-    'Settings shows the profile and navigation immediately instead of waiting on the identity request'
+    'Settings keeps role-specific navigation hidden until the authenticated role is resolved'
 );
 arabicClassWorkspaceCheck(
     str_contains($settingsJs, 'id="saveSupportContactButton"')
