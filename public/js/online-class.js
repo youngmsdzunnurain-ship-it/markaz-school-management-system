@@ -71,7 +71,7 @@ async function printResult(studentId) {
     const average = totals.reduce((sum, value) => sum + value, 0) / totals.length;
     const overallGrade = gradeFor(average);
     const teacherRemark = rows.map(item => item.teacher_remark).find(Boolean) || tutorComment(average);
-    const directorRemark = rows.map(item => item.director_remark).find(Boolean) || directorComment(average);
+    const directorRemark = 'Mashallah, Barakallahu fi';
     const teacherSignature = signatureMarkup("class_teacher_signature_image", "class_teacher_signature", "Tutor signature");
     const directorSignature = signatureMarkup("director_signature_image", "director_signature", "Director signature");
     const signatureDate = esc(state.footer.result_signature_date || new Date().toLocaleDateString());
