@@ -121,7 +121,7 @@ async function compressProfileImage(file) {
         context.drawImage(image, 0, 0, width, height);
         const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.82));
         if (!blob) throw new Error("Image compression failed.");
-        const safeName = (file.name || "profile-photo").replace(/\\.[^.]+$/, "");
+        const safeName = (file.name || "profile-photo").replace(/\.[^.]+$/, "");
         return new File([blob], safeName + ".jpg", {type: "image/jpeg", lastModified: Date.now()});
     } finally {
         URL.revokeObjectURL(objectUrl);
