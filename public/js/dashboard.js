@@ -79,13 +79,21 @@ async function loadAdmin() {
         if (roleLabel) roleLabel.textContent = ({admin:"School administration",exam_officer:"Examination office",teacher:"Teacher workspace",management:"School management",student:"Student portal"})[role] || "MARKAZ School portal";
         const welcomeDescription = document.querySelector(".welcome-card .welcome-content > p");
         if (welcomeDescription && role === "teacher") welcomeDescription.textContent = "Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.";
-        if (welcomeDescription && role === "management") welcomeDescription.hidden = true;
+        if (welcomeDescription && role === "management") { welcomeDescription.hidden = false; welcomeDescription.textContent = "Your assigned school workspaces are ready below. Open a section to manage your responsibilities."; }
         if (role === "management" && roleLabel) roleLabel.hidden = true;
         window.markazCurrentRole = role;
         window.markazManagementPermissions = data.admin.management_permissions || {};
         window.markazManagementPermissions.online_class_access = data.admin.can_access_online_class === true;
         document.body.classList.toggle('role-exam-officer', role === 'exam_officer');
         document.body.classList.toggle('role-teacher', role === 'teacher');
+        if (role === "admin") {
+            const welcomeCard = document.querySelector(".welcome-card");
+            const pageContent = document.querySelector(".page-content");
+            const shortcutsSection = document.querySelector(".dashboard-bottom-layout");
+            if (welcomeCard && pageContent && shortcutsSection) {
+                pageContent.insertBefore(welcomeCard, shortcutsSection);
+            }
+        }
         if (role === "management") {
             document.body.classList.add("role-management");
             const managerPermissions = data.admin.management_permissions || {};
