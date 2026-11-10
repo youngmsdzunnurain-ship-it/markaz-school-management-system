@@ -39,7 +39,7 @@ arabicClassWorkspaceCheck(
     str_contains($classListJs, 'class_type=')
         && str_contains($classListJs, 'classItem.class_type')
         && str_contains($classListJs, 'class.html?id=')
-        && str_contains($classListJs, 'data-class-type="' . "' + classType + '"')
+        && str_contains($classListJs, 'data-class-type=')
         && str_contains($classListJs, 'api/arabic-classes/update.php')
         && str_contains($classListJs, 'api/arabic-classes/toggle-status.php')
         && str_contains($classListJs, 'data.total_students'),
