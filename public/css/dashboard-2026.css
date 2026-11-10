@@ -634,3 +634,6 @@ body.role-teacher .teacher-assignment-card .teacher-open-class { min-height:46px
     text-decoration: none;
 }
 .management-dashboard-profile-link:hover { border-color: #c5a45d; background: #fbfaf5; }
+
+/* The dashboard profile is appended dynamically; keep it out of the title flex slot. */
+.topbar>.topbar-actions{flex:0 0 auto;margin-left:auto;justify-content:flex-end;align-self:center;min-width:max-content}
