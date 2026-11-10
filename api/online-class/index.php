@@ -55,6 +55,17 @@ if ($method === 'GET') {
             ]
         ]);
     }
+    if ($action === 'subjects') {
+        $levelId = $validLevel($_GET['level_id'] ?? 0);
+        $stmt = $pdo->prepare(
+            'SELECT id, level_id, name, sort_order, is_active
+             FROM online_class_subjects
+             WHERE level_id = ? AND is_active = 1
+             ORDER BY sort_order, name'
+        );
+        $stmt->execute([$levelId]);
+        onlineClassJson(['success' => true, 'subjects' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    }
     if ($action === 'students') {
         $levelId = isset($_GET['level_id']) && $_GET['level_id']!=='' ? $validLevel($_GET['level_id']) : null;
         $sql='SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.gender,s.level_id,s.section,l.name AS level_name,s.email,s.phone,s.is_active,s.created_at FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id';

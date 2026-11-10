@@ -18,7 +18,9 @@ $studentLogin = (string) file_get_contents($root . '/public/student-login.html')
 $studentAuth = (string) file_get_contents($root . '/api/online-class/student-login.php');
 $portalOptions = (string) file_get_contents($root . '/api/online-class/portal-options.php');
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
+$workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php');
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
+$dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
 $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
 
 onlinePortalUiAssert(
@@ -115,6 +117,21 @@ onlinePortalUiAssert(
     strpos($dashboard, '<div class="welcome-card">') < strpos($dashboard, '<section class="stats-grid"') &&
     strpos($dashboard, '<section class="stats-grid"') < strpos($dashboard, 'id="teacherAssignmentsSection"'),
     'Dashboard greeting must precede student, class and subject totals'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($workspaceApi, "if (\$action === 'subjects')") &&
+    str_contains($workspaceApi, 'WHERE level_id = ? AND is_active = 1') &&
+    str_contains($workspaceJs, "request(API+'?action=subjects'+query)") &&
+    str_contains($workspaceJs, 'Promise.allSettled') &&
+    str_contains($workspaceJs, 'resultOptionsRequest'),
+    'Result-entry subjects must load independently from results and be filtered by the selected Online Class level'
+);
+onlinePortalUiAssert(
+    str_contains($dashboardCss, '.topbar>.topbar-actions{flex:0 0 auto') &&
+    str_contains($dashboardCss, 'margin-left:auto'),
+    'The dynamically inserted admin profile control must remain aligned to the top-right at responsive widths'
 );
 
 foreach (['index.php','portal-options.php','student-login.php','student-results.php','student-footer.php','footer.php','logout.php'] as $file) {
