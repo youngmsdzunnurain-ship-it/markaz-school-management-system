@@ -20,5 +20,5 @@ onlineCheck(str_contains($helper, '$score >= 80') && str_contains($helper, '$sco
 onlineCheck(str_contains($helper, 'function onlineClassStaffAccess'), 'Staff Online Class permission is enforced server-side');
 onlineCheck(str_contains($accounts, 'online_class_access') && str_contains($apiAccounts, 'online_class_access'), 'Account creation supports individual Online Class access');
 onlineCheck(str_contains($dashboard, 'online-class.html') && str_contains($dashboard, 'Online Class'), 'Dashboard provides Online Class navigation');
-onlineCheck(str_contains($login, 'online_student') && str_contains($page, 'online-class.js'), 'Separate Online Class student login and workspace exist');
+onlineCheck(str_contains($login, 'Online Class Student Portal') && str_contains($page, 'online-class.js'), 'Separate Online Class student login and workspace exist');
 echo "MARKAZ Online Class regression checks passed (8 checks).\n";
