@@ -5373,3 +5373,27 @@ body {
     .settings-page .markaz-support-settings #saveSupportContactButton,
     .settings-page #markazRefreshLockouts { width: 100%; }
 }
+
+
+/* Result-footer signature controls: consistent primary action styling. */
+.settings-page .result-footer-settings-card #saveResultFooterButton {
+    display:inline-flex; align-items:center; justify-content:center;
+    min-height:44px; padding:0 22px; border:1px solid #123d2a;
+    border-radius:11px; background:linear-gradient(135deg,#17643a,#0d2f20);
+    color:#fff; font:inherit; font-size:13px; font-weight:800;
+    box-shadow:0 6px 15px rgba(18,61,42,.16); cursor:pointer;
+    transition:transform .16s ease,box-shadow .16s ease;
+}
+.settings-page .result-footer-settings-card #saveResultFooterButton:hover:not(:disabled) {
+    transform:translateY(-1px); box-shadow:0 9px 19px rgba(18,61,42,.22);
+}
+.settings-page .result-footer-settings-card #saveResultFooterButton:disabled {opacity:.62;cursor:wait}
+.signature-setting-actions button,.signature-editor-tools button,.signature-editor-actions button {
+    min-height:40px; padding:0 14px; border-radius:10px; font-weight:750;
+    transition:transform .16s ease,box-shadow .16s ease;
+}
+.signature-setting-actions button:hover:not(:disabled),
+.signature-editor-tools button:hover:not(:disabled),
+.signature-editor-actions button:hover:not(:disabled) {
+    transform:translateY(-1px); box-shadow:0 5px 12px rgba(18,61,42,.12);
+}
