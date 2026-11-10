@@ -402,6 +402,30 @@ function requireOnlineClassAccess(): void
     }
 }
 
+/** Grant Online Class workspace access only to individually assigned staff. */
+function requireOnlineClassAccess(): void
+{
+    $role = currentAdminRole();
+    if ($role === 'admin') return;
+    if (!in_array($role, ['exam_officer', 'teacher', 'management'], true)) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Staff access is required.']);
+        exit;
+    }
+    $stmt = db()->prepare(
+        'SELECT is_allowed FROM account_permissions
+         WHERE account_id = ? AND permission_key = ? LIMIT 1'
+    );
+    $stmt->execute([(int) ($_SESSION['admin_id'] ?? 0), 'online_class_access']);
+    if ((int) $stmt->fetchColumn() !== 1) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Online Class access has not been assigned to this account.']);
+        exit;
+    }
+}
+
 function requireRolePermission(
     string $permission,
     ?int $classId = null,
