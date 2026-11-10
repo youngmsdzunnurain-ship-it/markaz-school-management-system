@@ -179,6 +179,18 @@ if($action==='release_results'){
     $levelId=$validLevel($data['level_id']??0);$session=trim((string)($data['academic_session']??''));$term=(string)($data['term']??'');
     if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,$terms,true)) onlineClassJsonError(422,'Choose a valid session and term.');
     $released=!empty($data['is_released'])?1:0;
+    if ($released) {
+        $studentCount = $pdo->prepare('SELECT COUNT(*) FROM online_class_students WHERE level_id = ? AND is_active = 1');
+        $studentCount->execute([$levelId]);
+        $subjectCount = $pdo->prepare('SELECT COUNT(*) FROM online_class_subjects WHERE level_id = ? AND is_active = 1');
+        $subjectCount->execute([$levelId]);
+        if ((int)$studentCount->fetchColumn() < 1 || (int)$subjectCount->fetchColumn() < 1) {
+            onlineClassJsonError(409, 'Add at least one active student and one active subject before releasing results.');
+        }
+        $missing = $pdo->prepare('SELECT COUNT(*) FROM online_class_students s JOIN online_class_subjects sub ON sub.level_id = s.level_id AND sub.is_active = 1 LEFT JOIN online_class_results r ON r.student_id = s.id AND r.subject_id = sub.id AND r.academic_session = ? AND r.term = ? WHERE s.level_id = ? AND s.is_active = 1 AND (r.id IS NULL OR r.attendance_score IS NULL OR r.test_score IS NULL OR r.exam_score IS NULL)');
+        $missing->execute([$session, $term, $levelId]);
+        if ((int)$missing->fetchColumn() > 0) onlineClassJsonError(409, 'Complete all Attendance, Test and Final Examination scores for this level before releasing results.');
+    }
     $stmt=$pdo->prepare('INSERT INTO online_class_result_releases(level_id,academic_session,term,is_released,released_by,released_at) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE is_released=VALUES(is_released),released_by=VALUES(released_by),released_at=VALUES(released_at)');
     $stmt->execute([$levelId,$session,$term,$released?:0,$released?$staffId:null,$released?date('Y-m-d H:i:s'):null]);
     onlineClassJson(['success'=>true,'message'=>$released?'Online Class results released.':'Online Class results hidden from students.']);
