@@ -22,7 +22,7 @@ async function loadResults(){
   const sig=d.signatures||{},sigImg=v=>v?'<img src="'+esc(String(v))+'" alt="Signature" style="max-width:135px;max-height:38px;object-fit:contain">':'_____________________';
   const tutor=rows.map(r=>r.teacher_remark).find(Boolean)||'Your effort and progress are appreciated. Continue learning with confidence and regular revision.';
   const director=rows.map(r=>r.director_remark).find(Boolean)||'May Allah grant you beneficial knowledge and continued progress.';
-  $('portalRemarks').innerHTML='<section><b>Tutor’s Remark</b><p>'+esc(tutor)+'</p><p>Signature: '+sigMarkup(sig.teacher_image,sig.teacher_text,'Tutor signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section><section><b>Coordinator’s / Director’s Remark</b><p>'+esc(director)+'</p><p>Signature: '+sigMarkup(sig.director_image,sig.director_text,'Director signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section>';
+  $('portalRemarks').innerHTML='<section><b>Tutor’s Remark</b><p>'+esc(tutor)+'</p><p>Signature: '+sigMarkup(sig.teacher,'','Tutor signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section><section><b>Coordinator’s / Director’s Remark</b><p>'+esc(director)+'</p><p>Signature: '+sigMarkup(sig.director,'','Director signature')+'</p><p>Date: '+esc(sig.date||'')+'</p></section>';
   $('portalReport').style.display='block';showMessage('Your released results are ready. You can print or save the report as PDF.');
  }catch(e){showMessage(e.message,true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}
 }
