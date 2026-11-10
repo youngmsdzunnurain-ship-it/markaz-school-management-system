@@ -36,15 +36,6 @@ if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
 }
 $email = trim($_POST['email'] ?? '');
 
-if ($profileRole !== 'management' && $currentPassword === '') {
-    http_response_code(422);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Current password is required.'
-    ]);
-    exit;
-}
-
 if ($name === '') {
     http_response_code(422);
     echo json_encode([
@@ -84,7 +75,19 @@ if (!$admin) {
     exit;
 }
 
-if ($profileRole !== 'management' && !password_verify($currentPassword, $admin['password_hash'])) {
+$identityChanged = $name !== (string) $admin['name']
+    || $email !== (string) ($admin['email'] ?? '');
+
+if ($profileRole !== 'management' && $identityChanged && $currentPassword === '') {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Current password is required when changing your name or email.'
+    ]);
+    exit;
+}
+
+if ($profileRole !== 'management' && $identityChanged && !password_verify($currentPassword, $admin['password_hash'])) {
     http_response_code(401);
     echo json_encode([
         'success' => false,
