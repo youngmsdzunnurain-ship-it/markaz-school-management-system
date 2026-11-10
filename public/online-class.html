@@ -29,10 +29,7 @@
 <main class="main-content">
 <header class="topbar"><button type="button" id="menuButton" class="menu-button" aria-label="Open menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div><h1>MARKAZ Online Class</h1><p>Independent learning, attendance and academic records</p></div></header>
 <div class="online-class-page">
-<section class="online-hero"><div><span class="online-eyebrow">MARKAZ · ONLINE LEARNING</span><h1>Online Class Workspace</h1><p>Manage learners, levels, attendance and termly Qur’an assessments.</p></div><div class="online-hero-mark"><i class="fa-solid fa-book-quran"></i></div></section>
-<div class="online-tabs" role="tablist">
-<button class="active" data-tab="overview">Classes</button><button data-tab="students">Students</button><button data-tab="subjects">Subjects</button><button data-tab="attendance">Attendance</button><button data-tab="results">Results &amp; Reports</button><button data-tab="settings">Level Settings</button>
-</div>
+<section class="welcome-card online-welcome-card" aria-labelledby="onlineWelcomeTitle"><div class="welcome-content"><span class="eyebrow" id="welcomeRoleLabel">Online Class workspace</span><h2 id="onlineWelcomeTitle"><span id="welcomeGreeting">Welcome</span>, <span id="welcomeAdminName">Administrator</span></h2><p id="dashboardWelcomeDescription">Manage learners, levels, attendance records and termly Qur’an assessments from one workspace.</p></div></section>
 <div id="onlineMessage" class="online-message online-hidden" role="status" aria-live="polite"></div>
 <section id="tab-overview" class="online-tab-panel">
 <div class="online-stat-grid" id="onlineLevelStats"></div>
@@ -57,6 +54,7 @@
 </section>
 <section id="tab-settings" class="online-tab-panel online-hidden"><div class="online-panel"><h2>Student portal access</h2><p>Control whether Online Class learners can sign in to view results released for their level and term.</p><div class="online-toolbar"><strong id="onlinePortalAccessStatus">Checking portal access…</strong><div class="online-field"><label for="onlinePortalAccess">Student login</label><select id="onlinePortalAccess"><option value="1">Enabled</option><option value="0">Disabled</option></select></div><button type="button" class="online-btn primary" id="saveOnlinePortalAccess">Save portal access</button></div></div><div class="online-panel"><h2>Add an academic level</h2><p>Create additional levels whenever the programme expands. New levels automatically appear in student registration and the student portal.</p><form id="onlineCreateLevelForm" class="online-toolbar"><div class="online-field"><label for="onlineNewLevelName">New level name</label><input id="onlineNewLevelName" maxlength="40" placeholder="e.g. Level 5" required></div><button class="online-btn primary" type="submit">Add Level</button></form></div><div class="online-panel"><h2>Level-specific settings</h2><p>Set the tutor, two task labels, memorisation portion and separate resumption date for every level.</p><div id="onlineLevelSettings"></div></div></section>
 </div>
+<footer class="dashboard-footer"><span class="footer-brand">MARKAZ</span><span class="footer-school">Centre for Learning and Memorization of the Glorious Qur’an</span><span class="footer-copyright">© 2026 MARKAZ. All Rights Reserved.</span></footer>
 </main></div>
 <div id="onlineReport" class="online-report online-hidden" aria-label="Printable Online Class report"></div>
 <script src="js/online-class.js?v=20261110-online-class-final"></script>
