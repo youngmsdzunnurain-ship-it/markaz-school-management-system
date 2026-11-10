@@ -45,7 +45,7 @@ if ($method === 'GET') {
         $session=trim((string)($_GET['academic_session'] ?? ''));
         $term=(string)($_GET['term'] ?? 'First Term');
         if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,$terms,true)) onlineClassJsonError(422,'Choose a valid academic session and term.');
-        $stmt=$pdo->prepare('SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,sub.id AS subject_id,sub.name AS subject_name,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_students s JOIN online_class_subjects sub ON sub.level_id=s.level_id AND sub.is_active=1 LEFT JOIN online_class_results r ON r.student_id=s.id AND r.subject_id=sub.id AND r.academic_session=? AND r.term=? WHERE s.level_id=? AND s.is_active=1 ORDER BY s.last_name,s.first_name,sub.sort_order,sub.name');
+        $stmt=$pdo->prepare('SELECT s.id,s.id AS student_id,s.admission_number,s.first_name,s.middle_name,s.last_name,sub.id AS subject_id,sub.name AS subject_name,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_students s JOIN online_class_subjects sub ON sub.level_id=s.level_id AND sub.is_active=1 LEFT JOIN online_class_results r ON r.student_id=s.id AND r.subject_id=sub.id AND r.academic_session=? AND r.term=? WHERE s.level_id=? AND s.is_active=1 ORDER BY s.last_name,s.first_name,sub.sort_order,sub.name');
         $stmt->execute([$session,$term,$levelId]);
         $release=$pdo->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=?');
         $release->execute([$levelId,$session,$term]);
