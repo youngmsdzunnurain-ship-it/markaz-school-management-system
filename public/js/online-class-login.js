@@ -25,7 +25,7 @@ $('onlineLoginForm').addEventListener('submit',async event=>{
  const button=$('onlineLoginButton'),message=$('onlineLoginMessage');
  button.disabled=true;message.textContent='Signing in…';
  try{
-  const response=await fetch('api/online-class/student-login.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({admission_number:$('onlineAdmission').value.trim(),level_id:$('onlineLevel').value,section:$('onlineSection').value,academic_session:$('onlineSession').value.trim(),term:$('onlineTerm').value,password:$('onlinePassword').value})});
+  const response=await fetch('api/online-class/student-login.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({admission_number:$('onlineAdmission').value.trim(),level_id:$('onlineLevel').value,section:$('onlineSection').value,academic_session:$('onlineSession').value.trim(),term:$('onlineTerm').value})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.success)throw new Error(data.message||'Unable to sign in.');
   window.location.replace('online-class-portal.html');
