@@ -8,14 +8,14 @@ function showMessage(text,error=false){$('portalMessage').textContent=text;$('po
 function grade(score){if(score>=80)return ['A','Awesome'];if(score>=70)return ['B','Phenomenal'];if(score>=50)return ['C','Impressive'];if(score>=30)return ['D','Promising'];return ['E','Poor'];}
 function sigMarkup(image,text,alt){const value=image||text||'';if(!value)return '_____________________';if(image||/^data:image\//i.test(value)||/\.(png|jpe?g|webp|svg)(\?.*)?$/i.test(value))return '<img src=\"'+esc(value)+'\" alt=\"'+esc(alt)+'\" style=\"max-width:135px;max-height:38px;object-fit:contain\">';return esc(value);}
 async function loadResults(){
- const session=$('portalSession').value.trim(),term=$('portalTerm').value;
- if(!/^\d{4}\/\d{4}$/.test(session)){showMessage('Enter a valid academic session.',true);return;}
  try{
-  const d=await api('./api/online-class/student-results.php?academic_session='+encodeURIComponent(session)+'&term='+encodeURIComponent(term));report=d;
+  const d=await api('./api/online-class/student-results.php');report=d;
+  const session=d.academic_session,term=d.term;
+  $('portalSelectedPeriod').textContent='Selected: '+term+' · '+session;
   if(!d.released){$('portalReport').style.display='none';showMessage('Your '+term+' results have not been released yet. Please check again later.');return;}
   const rows=d.results||[],complete=rows.filter(r=>r.total!==null),average=complete.length?complete.reduce((sum,r)=>sum+Number(r.total),0)/complete.length:0,g=grade(average);
   $('portalStudentName').textContent='Welcome, '+[d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' ');
-  $('portalStudentDetails').textContent='Admission No: '+d.student.admission_number+' · '+d.student.level_name;
+  $('portalStudentDetails').textContent='Admission No: '+d.student.admission_number+' · '+d.student.level_name+' · Section '+d.student.section;
   $('portalReportTitle').textContent=term.toUpperCase()+' RESULT SHEET · '+session;
   $('portalReportDetails').innerHTML='<b>Name:</b> '+esc([d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' '))+' &nbsp; <b>Admission:</b> '+esc(d.student.admission_number)+' &nbsp; <b>Level:</b> '+esc(d.student.level_name)+' &nbsp; <b>Tutor:</b> '+esc(d.student.tutor_name||'—')+' &nbsp; <b>Next Term Begins:</b> '+esc(({ 'First Term':d.student.first_term_resumption,'Second Term':d.student.second_term_resumption,'Third Term':d.student.third_term_resumption})[term]||'To be announced')+'<br><b>Portion of Memorisation:</b> '+esc(d.student.memorization_portion||'—')+' &nbsp; <b>Task 1:</b> '+esc(d.student.task_one_name||'—')+' &nbsp; <b>Task 2:</b> '+esc(d.student.task_two_name||'—');
   $('portalResultsRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.subject_name)+'</td><td>'+esc(r.attendance_score??'—')+'</td><td>'+esc(r.test_score??'—')+'</td><td>'+esc(r.exam_score??'—')+'</td><td>'+esc(r.total??'—')+'</td><td>'+esc(r.grade??'Pending')+'</td><td>'+esc(r.grade_remark??'—')+'</td></tr>').join('')+'<tr><td colspan="4"><b>Overall Average</b></td><td><b>'+average.toFixed(1)+'%</b></td><td><b>'+g[0]+'</b></td><td><b>'+g[1]+'</b></td></tr>';
