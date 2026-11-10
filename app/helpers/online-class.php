@@ -34,6 +34,11 @@ function onlineClassStudentSession(): int
     startSecureSession();
     $id = (int)($_SESSION['online_student_id'] ?? 0);
     if ($id < 1) onlineClassJsonError(401, 'Please sign in to your Online Class account.');
+    $portalEnabled = db()->query("SELECT setting_value FROM settings WHERE setting_key = 'online_class_student_access' LIMIT 1")->fetchColumn();
+    if (!in_array(strtolower(trim((string)$portalEnabled)), ['1', 'true', 'yes', 'on'], true)) {
+        unset($_SESSION['online_student_id'], $_SESSION['online_student_name']);
+        onlineClassJsonError(403, 'Online Class student access is currently closed.');
+    }
     $stmt = db()->prepare('SELECT id, is_active FROM online_class_students WHERE id = ? LIMIT 1');
     $stmt->execute([$id]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
