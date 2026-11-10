@@ -5,6 +5,7 @@ function onlineCheck(bool $condition, string $message): void {
     if (!$condition) { fwrite(STDERR, "FAIL: {$message}\n"); exit(1); }
 }
 $root = dirname(__DIR__);
+require_once $root . '/app/helpers/online-class.php';
 $schema = file_get_contents($root . '/database/migrations/20261110_markaz_online_class.sql');
 $helper = file_get_contents($root . '/app/helpers/online-class.php');
 $auth = file_get_contents($root . '/app/middleware/auth.php');
@@ -20,5 +21,5 @@ onlineCheck(str_contains($helper, 'function onlineClassGrade') && onlineClassGra
 onlineCheck(str_contains($helper, 'function onlineClassStaffAccess'), 'Staff Online Class permission is enforced server-side');
 onlineCheck(str_contains($accounts, 'online_class_access') && str_contains($apiAccounts, 'online_class_access'), 'Account creation supports individual Online Class access');
 onlineCheck(str_contains($dashboard, 'online-class.html') && str_contains($dashboard, 'Online Class'), 'Dashboard provides Online Class navigation');
-onlineCheck(str_contains($login, 'online_student') && str_contains($page, 'online-class.js'), 'Separate Online Class student login and workspace exist');
+onlineCheck(str_contains(file_get_contents($root . '/api/online-class/student-login.php'), 'online_student_id') && str_contains($page, 'online-class.js'), 'Separate Online Class student login and workspace exist');
 echo "MARKAZ Online Class regression checks passed (8 checks).\n";
