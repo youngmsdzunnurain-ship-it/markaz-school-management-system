@@ -126,8 +126,9 @@ if($action==='save_student'){
     $email=trim((string)($data['email']??''));$phone=trim((string)($data['phone']??''));
     if($email!==''&&!filter_var($email,FILTER_VALIDATE_EMAIL)) onlineClassJsonError(422,'Enter a valid email address.');
     if($id){
-        $stmt=$pdo->prepare('UPDATE online_class_students SET first_name=?,middle_name=?,last_name=?,gender=?,level_id=?,email=?,phone=?,is_active=? WHERE id=?');
-        $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$email?:null,$phone?:null,!empty($data['is_active'])?1:0,$id]);
+        $stmt=$pdo->prepare('UPDATE online_class_students SET first_name=?,middle_name=?,last_name=?,gender=?,level_id=?,email=?,phone=?,is_active=COALESCE(?,is_active) WHERE id=?');
+        $active = array_key_exists('is_active', $data) ? (filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : null;
+        $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$email?:null,$phone?:null,$active,$id]);
         onlineClassJson(['success'=>true,'message'=>'Online student updated.']);
     }
     $password=bin2hex(random_bytes(5));
