@@ -45,18 +45,21 @@ async function loadProfile() {
             return;
         }
 
-        if (!["admin", "exam_officer"].includes(data.admin.role)) {
+        if (!["admin", "exam_officer", "management"].includes(data.admin.role)) {
             window.location.replace("dashboard.html");
             return;
         }
 
         window.markazCurrentRole = data.admin.role;
         const isExamOfficer = data.admin.role === "exam_officer";
+        const isManagement = data.admin.role === "management";
         const roleLabel = document.getElementById("profileRoleLabel");
         const pageDescription = document.getElementById("settingsPageDescription");
         if (roleLabel) roleLabel.textContent = isExamOfficer ? "EXAM OFFICER" : "ADMINISTRATOR";
         if (pageDescription && isExamOfficer) {
             pageDescription.textContent = "Manage your profile and shared academic settings.";
+        } else if (pageDescription && isManagement) {
+            pageDescription.textContent = "View and update your management account profile.";
         }
 
         nameInput.value = data.admin.name || "";
