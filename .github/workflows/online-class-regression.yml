@@ -1,0 +1,47 @@
+name: MARKAZ Online Class Regression
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feat/markaz-online-class-module-20261110]
+jobs:
+  online-class:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: PHP syntax checks
+        run: |
+          set -e
+          php -l app/helpers/online-class.php
+          php -l api/online-class/index.php
+          php -l api/online-class/student-login.php
+          php -l api/online-class/student-results.php
+          php -l api/online-class/student-footer.php
+          php -l api/online-class/logout.php
+          php -l app/middleware/auth.php
+          php -l api/settings/accounts.php
+          php -l api/auth/me.php
+          php -l tests/online-class-regression.test.php
+          php -l tests/online-class-module-regression.test.php
+          php -l tests/online-class-architecture-regression.test.php
+      - name: JavaScript syntax checks
+        run: |
+          set -e
+          node --check public/js/online-class.js
+          node --check public/js/online-class-login.js
+          node --check public/js/online-class-portal.js
+          node --check public/js/account-management.js
+          node --check public/js/dashboard.js
+      - name: Online Class regression tests
+        run: |
+          set -e
+          php tests/online-class-regression.test.php
+          php tests/online-class-module-regression.test.php
+          php tests/online-class-architecture-regression.test.php
