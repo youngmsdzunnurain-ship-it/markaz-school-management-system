@@ -24,21 +24,21 @@ a{color:inherit;text-decoration:none}
 .eyebrow{display:block;font:500 11px/1.2 var(--sans);letter-spacing:1px;color:var(--gold-d);text-transform:none}
 
 /* ---------- SHELL ---------- */
-.app{display:grid;grid-template-columns:260px minmax(0,1fr)}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:calc(100dvh / var(--page-zoom,1));align-items:stretch}
 body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
-.main-content{min-width:0;min-height:calc(100vh / var(--page-zoom,1));min-height:calc(100dvh / var(--page-zoom,1));display:flex;flex-direction:column}
+.main-content{min-width:0;min-height:calc(100vh / var(--page-zoom,1));min-height:calc(100dvh / var(--page-zoom,1));display:flex;flex-direction:column;overflow:visible}
 
 /* ---------- SIDEBAR ---------- */
-.sidebar{position:sticky;top:0;height:calc(100vh / var(--page-zoom,1));height:calc(100dvh / var(--page-zoom,1));padding:16px;display:flex;flex-direction:column;
-  background:linear-gradient(180deg,#145035,#0e3724);color:#c4dccb;z-index:60;overflow:hidden}
+.sidebar{position:sticky;top:0;height:calc(100vh / var(--page-zoom,1));height:calc(100dvh / var(--page-zoom,1));min-height:0;padding:16px;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#145035,#0e3724);color:#c4dccb;z-index:60;overflow:hidden;overscroll-behavior:contain}
 .sidebar.desktop-closed{display:none}
-.sidebar-header{height:72px;display:flex;align-items:center;gap:12px;margin-bottom:20px;flex:none}
+.sidebar-header{height:72px;display:flex;align-items:center;gap:12px;margin-bottom:20px;flex:0 0 72px}
 .brand-logo{width:48px;height:48px;border-radius:50%;border:2px solid var(--gold);background:#fff;flex:none;overflow:hidden;display:grid;place-items:center}
 .brand-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .brand-text{min-width:0;display:flex;flex-direction:column;gap:4px}
 .brand-text strong{font:600 20px/1 var(--serif);letter-spacing:2px;color:#e6d9a4}
 .brand-text span{font-size:12px;line-height:1.2;color:#9fc4ad}
-.sidebar-nav{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#2a6b4a transparent}
+.sidebar-nav{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:12px;scrollbar-width:thin;scrollbar-color:#2a6b4a transparent}
 .nav-section-label{font:600 11px/1 var(--sans);letter-spacing:1.5px;text-transform:uppercase;color:#fff;padding:0 12px;margin:20px 0 12px}
 .nav-section-label:first-child{margin-top:0}
 .nav-link{position:relative;display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;margin:0 0 4px;border-radius:10px;
@@ -49,20 +49,22 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 .nav-link.active{background:var(--mg);color:#fff;font-weight:600}
 .nav-link.active i{color:#e6d9a4}
 .nav-link.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--gold)}
-.sidebar-bottom{flex:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
+.sidebar-bottom{flex:0 0 auto;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
 /* anything else injected into the sidebar bottom (old duplicate logout buttons) stays hidden */
 .sidebar-bottom>*:not(.sidebar-user){display:none!important}
 .sidebar-overlay{display:none}
 
 
 /* ---------- TOP BAR ---------- */
-.topbar{position:sticky;top:0;z-index:40;height:78px;padding:0 28px;display:flex;align-items:center;gap:12px;flex:none;
+.topbar{position:sticky;top:0;z-index:40;width:100%;min-width:0;min-height:78px;height:auto;padding:0 28px;display:flex;align-items:center;gap:12px;flex:0 0 auto;overflow:visible;
   background:linear-gradient(90deg,#a9cbb4,#e6d9a4 70%,#efe9d2)}
 .menu-button{width:40px;height:40px;flex:none;border:0;border-radius:12px;background:rgba(255,255,255,.75);color:var(--dg);font-size:16px;cursor:pointer;display:grid;place-items:center}
 .menu-button:hover{background:#fff}
 .topbar h1{margin:0;font:600 22px/1.2 var(--serif);color:var(--dg)}
-.topbar p{margin:2px 0 0;font-size:12px;color:#4d6455}
-.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar p{margin:2px 0 0;font-size:12px;color:#4d6455;max-width:100%;overflow-wrap:anywhere}
+.topbar>div{min-width:0;flex:1 1 auto}
+.topbar h1{max-width:100%;overflow-wrap:anywhere}
+.topbar-actions{margin-left:auto;min-width:0;flex:0 1 auto;display:flex;align-items:center;gap:12px}
 .admin-profile-wrap{position:relative}
 .admin-profile-button{height:46px;min-width:0;padding:0 14px 0 6px;border:0;border-radius:23px;background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:12px}
 .admin-profile-avatar{width:34px;height:34px;border-radius:50%;flex:none;overflow:hidden;display:grid;place-items:center;font-size:12px;font-weight:700}
@@ -287,12 +289,15 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:850px){
   .app{grid-template-columns:minmax(0,1fr)}
-  .sidebar{position:fixed;top:0;bottom:0;left:0;width:260px;height:auto;transform:translateX(-100%);transition:transform .25s ease;box-shadow:none}
+  .sidebar{position:fixed;top:0;bottom:0;left:0;width:260px;height:100dvh;max-height:100dvh;min-height:0;padding-bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-100%);transition:transform .25s ease;box-shadow:none}
   .sidebar.desktop-closed{display:flex}
   .sidebar.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.3)}
   .sidebar-overlay{display:block;position:fixed;inset:0;background:rgba(8,30,20,.45);opacity:0;visibility:hidden;transition:opacity .2s;z-index:55}
   .sidebar-overlay.visible{opacity:1;visibility:visible}
-  .topbar{padding:0 20px}
+  .topbar{min-height:72px;padding:0 20px;gap:10px}
+  .topbar>div{flex:1 1 0}
+  .topbar h1{font-size:clamp(16px,4.5vw,20px);line-height:1.2}
+  .topbar p{font-size:clamp(10px,2.8vw,12px);line-height:1.3}
   .page-content{padding:20px}
   .dashboard-footer{padding:16px 20px 24px}
 }
@@ -301,7 +306,9 @@ body.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)}
   .quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
   .welcome-card{padding:20px}
   .welcome-card h2{font-size:22px}
-  .topbar{padding:0 12px}
+  .topbar{padding:0 12px;gap:8px}
+  .menu-button{width:38px;height:38px}
+  .topbar-actions{gap:6px}
   .topbar h1{font-size:18px}
   .admin-profile-text,.admin-profile-arrow{display:none}
   .admin-profile-button{padding:0 6px;width:46px;justify-content:center}
