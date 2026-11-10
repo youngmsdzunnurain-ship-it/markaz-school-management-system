@@ -6,7 +6,7 @@ $html=(string)file_get_contents($root.'/public/settings.html');
 $dashboard=(string)file_get_contents($root.'/public/js/dashboard.js');
 $css=(string)file_get_contents($root.'/public/css/dashboard-2026.css');
 $checks=[
- 'role is fetched before Settings categories are created'=>strpos($navigation,'await fetch("./api/auth/me.php")') < strpos($navigation,'const allCategories = ['),
+ 'role is fetched before Settings categories are created'=>strpos($navigation,'await fetch("./api/auth/me.php",') < strpos($navigation,'const allCategories = ['),
  'Management Settings are restricted to profile information'=>str_contains($navigation,'new Set(["profile"])'),
  'Exam Officer Settings have their own explicit category allow-list'=>str_contains($navigation,'new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])'),
  'Settings remain hidden until role resolution completes'=>str_contains($html,'settings-page-pending')&&str_contains($navigation,'classList.remove("settings-page-pending")'),
