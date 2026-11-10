@@ -13,7 +13,14 @@ $portalPage=$read('public/online-class-portal.html');
 $loginPage=$read('public/online-class-login.html');
 $js=$read('public/js/online-class.js');
 $portalJs=$read('public/js/online-class-portal.js');
+$portalOptions=$read('api/online-class/portal-options.php');
 $checks=[
+ 'online students have a separately stored section'=>str_contains($schema,'section VARCHAR(80)')||str_contains($read('database/migrations/20261110_markaz_online_class_portal_identity.sql'),'ADD COLUMN IF NOT EXISTS section'),
+ 'student portal login requires admission, level, section, session, term and password'=>str_contains($login,'level_id')&&str_contains($login,'section')&&str_contains($login,'academic_session')&&str_contains($login,'term'),
+ 'student portal options expose only active levels and configured sections'=>$portalOptions!==''&&str_contains($portalOptions,'online_class_levels')&&str_contains($portalOptions,'section'),
+ 'new levels can be added without hardcoding the four defaults'=>str_contains($api,"action==='create_level'")&&str_contains($api,'INSERT INTO online_class_levels'),
+ 'student registration saves the section and student listings return it'=>str_contains($api,'section')&&str_contains($api,'s.section'),
+
  'isolated online academic tables and four default levels'=>str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_students')&&str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_results')&&str_contains($schema,"('Level 4', 4)"),
  'score limits are attendance 20, test 20 and exam 60'=>str_contains($helper,"'attendance_score'=>20")&&str_contains($helper,"'test_score'=>20")&&str_contains($helper,"'exam_score'=>60"),
  'grade boundaries match Awesome, Phenomenal, Impressive, Promising and Poor'=>str_contains($helper,'$score >= 80')&&str_contains($helper,'$score >= 70')&&str_contains($helper,'$score >= 50')&&str_contains($helper,'$score >= 30')&&str_contains($helper,"'remark' => 'Awesome'")&&str_contains($helper,"'remark' => 'Phenomenal'")&&str_contains($helper,"'remark' => 'Impressive'")&&str_contains($helper,"'remark' => 'Promising'")&&str_contains($helper,"'remark' => 'Poor'")&&str_contains($js,"if(n>=50)return{grade:'C',remark:'Impressive'}")&&str_contains($js,"if(n>=30)return{grade:'D',remark:'Promising'}")&&str_contains($portalJs,"score>=50)return ['C','Impressive'];if(score>=30)return ['D','Promising'];"),
