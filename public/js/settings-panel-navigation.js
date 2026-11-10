@@ -40,14 +40,14 @@
       },
       {
         id: "account-devices",
-        label: "Account Devices",
+        label: "Account Device Activity",
         icon: "fa-laptop",
         description: "Review staff and student device activity, usage time and recognised device access.",
         elements: [page.querySelector("#markazAccountDevices")].filter(Boolean)
       },
       {
         id: "result-release",
-        label: "Academic Results Release",
+        label: "Student Result Release Controls",
         icon: "fa-toggle-on",
         description: "Control when students can view results for each academic term.",
         elements: [page.querySelector("#markazResultRelease")].filter(Boolean)
@@ -61,51 +61,51 @@
       },
       {
         id: "academic",
-        label: "Academic Settings",
+        label: "Academic Session & Term Settings",
         icon: "fa-calendar-alt",
-        description: "Set the current academic session, term, and next-term resumption date.",
+        description: "Choose the active academic session and term, and set the next-term resumption date.",
         elements: [page.querySelector(".academic-period-settings-card")].filter(Boolean)
       },
       {
         id: "results",
-        label: "Results & Reports",
+        label: "Result Footer Signatures & Date",
         icon: "fa-file-signature",
-        description: "Manage the signatures and report-date information printed on results.",
+        description: "Manage the class teacher and director signatures and report date printed on student results.",
         elements: [page.querySelector(".result-footer-settings-card")].filter(Boolean)
       },
       {
         id: "result-print-threshold",
-        label: "Print Eligibility Threshold",
+        label: "Result Print Eligibility",
         icon: "fa-clipboard-check",
         description: "Set the minimum result-entry completion required before a student's result can be printed.",
         elements: [page.querySelector(".result-print-threshold-card")].filter(Boolean)
       },
       {
         id: "memorization",
-        label: "Qur’an Memorization",
+        label: "Arabic Class Memorization Settings",
         icon: "fa-book-open",
-        description: "Manage the existing Qur’an memorization settings and class defaults.",
+        description: "Set memorization portion defaults for each Arabic class.",
         elements: [page.querySelector(".memorization-settings-card")].filter(Boolean)
       },
       {
         id: "images",
-        label: "Website & Images",
+        label: "Website Image Manager",
         icon: "fa-images",
         description: "Manage the website images available through the existing image manager.",
         elements: [page.querySelector("#websiteImageManager")].filter(Boolean)
       },
       {
         id: "social",
-        label: "Website & Social Links",
+        label: "Website Social Media Links",
         icon: "fa-share-alt",
-        description: "Update the official social-media profile URLs shown on the public website.",
+        description: "Update the official social-media profile links displayed on the public website.",
         elements: [page.querySelector("#markazSocialSettings")].filter(Boolean)
       },
       {
         id: "support",
-        label: "System Support & Emergency Contact",
+        label: "Emergency Contact & System Support",
         icon: "fa-life-ring",
-        description: "Manage the WhatsApp contact for technical help and system-management emergencies.",
+        description: "Manage the WhatsApp contact for technical support and system emergencies.",
         elements: [page.querySelector("#markazSupportSettings")].filter(Boolean)
       }
     ].filter(category => category.elements.length);
