@@ -1,7 +1,6 @@
 (() => {
 'use strict';
 const $ = id => document.getElementById(id);
-let portalOptions = { levels: [] };
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
@@ -11,13 +10,11 @@ function populateAcademicSessions() {
   select.innerHTML = '<option value="">Select academic session</option>' + sessions.map(session => '<option value="' + session + '">' + session + '</option>').join('');
   select.value = sessions[0];
 }
-function isAcademicSession(value) { return /^\d{4}\/\d{4}$/.test(String(value).trim()); }
 async function loadOptions() {
   const response = await fetch('api/online-class/portal-options.php',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
   const data = await response.json().catch(()=>({}));
-  if (!response.ok || !data.success) throw new Error(data.message || 'Unable to load Online Class levels and sections.');
+  if (!response.ok || !data.success) throw new Error(data.message || 'Unable to load Online Class levels.');
   if (!Array.isArray(data.levels)) throw new Error('Online Class setup is incomplete. Please contact the school administrator.');
-  portalOptions = data;
   const select = $('onlineLevel');
   select.innerHTML = '<option value="">Choose your level</option>' + data.levels.map(level=>'<option value="'+Number(level.id)+'">'+escapeHtml(level.name)+'</option>').join('');
   select.disabled = data.levels.length === 0;
