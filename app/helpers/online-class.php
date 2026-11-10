@@ -57,12 +57,13 @@ function onlineClassStudentSession(): int
 }
 function onlineClassGrade(float $score): array
 {
-    if ($score >= 80) return ['grade'=>'A','remark'=>'Awesome'];
-    if ($score >= 70) return ['grade'=>'B','remark'=>'Phenomenal'];
-    if ($score >= 50) return ['grade'=>'C','remark'=>'Promising'];
-    if ($score >= 40) return ['grade'=>'D','remark'=>'Impressive'];
-    return ['grade'=>'E','remark'=>'Poor'];
+    if ($score >= 80) return ['grade' => 'A', 'remark' => 'Awesome'];
+    if ($score >= 70) return ['grade' => 'B', 'remark' => 'Phenomenal'];
+    if ($score >= 50) return ['grade' => 'C', 'remark' => 'Impressive'];
+    if ($score >= 30) return ['grade' => 'D', 'remark' => 'Promising'];
+    return ['grade' => 'E', 'remark' => 'Poor'];
 }
+
 function onlineClassValidateScores(array $input): array
 {
     $limits = ['attendance_score'=>20, 'test_score'=>20, 'exam_score'=>60];
