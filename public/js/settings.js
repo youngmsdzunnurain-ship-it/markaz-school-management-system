@@ -55,7 +55,13 @@ async function loadProfile() {
         const isManagement = data.admin.role === "management";
         const roleLabel = document.getElementById("profileRoleLabel");
         const pageDescription = document.getElementById("settingsPageDescription");
-        if (roleLabel) roleLabel.textContent = isExamOfficer ? "EXAM OFFICER" : "ADMINISTRATOR";
+        if (roleLabel) roleLabel.textContent = isManagement ? "MANAGEMENT" : (isExamOfficer ? "EXAM OFFICER" : "ADMINISTRATOR");
+        const securitySection = document.querySelector(".password-section");
+        if (securitySection && isManagement) {
+            securitySection.hidden = true;
+            passwordInput.required = false;
+            passwordInput.disabled = true;
+        }
         if (pageDescription && isExamOfficer) {
             pageDescription.textContent = "Manage your profile and shared academic settings.";
         } else if (pageDescription && isManagement) {
@@ -91,6 +97,34 @@ async function loadProfile() {
             "Unable to load account profile.",
             "error"
         );
+    }
+}
+
+async function compressProfileImage(file) {
+    const objectUrl = URL.createObjectURL(file);
+    try {
+        const image = new Image();
+        image.src = objectUrl;
+        await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = reject;
+        });
+        const maxDimension = 1600;
+        const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+        const width = Math.max(1, Math.round(image.naturalWidth * scale));
+        const height = Math.max(1, Math.round(image.naturalHeight * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("Image processing is unavailable.");
+        context.drawImage(image, 0, 0, width, height);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.82));
+        if (!blob) throw new Error("Image compression failed.");
+        const safeName = (file.name || "profile-photo").replace(/\\.[^.]+$/, "");
+        return new File([blob], safeName + ".jpg", {type: "image/jpeg", lastModified: Date.now()});
+    } finally {
+        URL.revokeObjectURL(objectUrl);
     }
 }
 
@@ -145,6 +179,19 @@ form.addEventListener("submit", async event => {
     showMessage("", "");
 
     const formData = new FormData(form);
+
+    if (imageInput.files[0]) {
+        try {
+            const selectedImage = imageInput.files[0];
+            const compressedImage = await compressProfileImage(selectedImage);
+            formData.set("profile_image", compressedImage, compressedImage.name);
+        } catch (imageError) {
+            showMessage("The selected image could not be prepared. Please choose another image.", "error");
+            saveButton.disabled = false;
+            saveButton.textContent = "Save Changes";
+            return;
+        }
+    }
 
     if (removeProfileButton?.dataset.remove === "1") {
         formData.set("remove_profile_image", "1");
