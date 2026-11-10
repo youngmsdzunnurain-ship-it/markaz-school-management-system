@@ -131,7 +131,7 @@ if($action==='save_student'){
         $stmt->execute([$first,$middle?:null,$last,$gender?:null,$levelId,$email?:null,$phone?:null,$active,$id]);
         onlineClassJson(['success'=>true,'message'=>'Online student updated.']);
     }
-    $password=bin2hex(random_bytes(5));
+    $password='M'.bin2hex(random_bytes(6)).'!';
     $pdo->beginTransaction();
     try{
         $stmt=$pdo->prepare("INSERT INTO online_class_students(admission_number,first_name,middle_name,last_name,gender,level_id,email,phone,password_hash) VALUES(?,?,?,?,?,?,?,?,?)");
