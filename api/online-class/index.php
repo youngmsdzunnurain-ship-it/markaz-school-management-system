@@ -34,7 +34,7 @@ if ($method === 'GET') {
             $level['student_count'] = (int) ($counts[$level['id']] ?? 0);
         }
         unset($level);
-        $signatureStmt = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('class_teacher_signature', 'director_signature', 'result_signature_date')");
+        $signatureStmt = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('class_teacher_signature', 'director_signature', 'class_teacher_signature_image', 'director_signature_image', 'result_signature_date')");
         $signatureRows = $signatureStmt->fetchAll(PDO::FETCH_KEY_PAIR);
         onlineClassJson([
             'success' => true,
@@ -42,8 +42,10 @@ if ($method === 'GET') {
             'subjects' => $subjects,
             'terms' => $terms,
             'signatures' => [
-                'teacher' => $signatureRows['class_teacher_signature'] ?? '',
-                'director' => $signatureRows['director_signature'] ?? '',
+                'teacher' => $signatureRows['class_teacher_signature_image'] ?? '',
+                'teacher_text' => $signatureRows['class_teacher_signature'] ?? '',
+                'director' => $signatureRows['director_signature_image'] ?? '',
+                'director_text' => $signatureRows['director_signature'] ?? '',
                 'date' => $signatureRows['result_signature_date'] ?? ''
             ]
         ]);
