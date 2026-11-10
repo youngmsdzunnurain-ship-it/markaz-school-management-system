@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../../app/helpers/online-class.php';
+require_once __DIR__ . '/../attendance/_common.php';
 onlineClassStaffAccess();
 $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -74,6 +75,7 @@ if ($method === 'GET') {
     onlineClassJsonError(404,'Unknown Online Class request.');
 }
 if ($method !== 'POST') onlineClassJsonError(405,'Use GET or POST.');
+attendanceRequireSafePost();
 $data=onlineClassInput();
 $staffId=(int)($_SESSION['admin_id'] ?? 0);
 if($action==='save_level'){
