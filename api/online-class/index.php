@@ -183,11 +183,10 @@ if($action==='save_result'){
     $scope->execute([$studentId,$subjectId]);if(!$scope->fetchColumn()) onlineClassJsonError(422,'That subject does not belong to this student’s level.');
     $scores=onlineClassValidateScores($data);
     $teacherRemark=trim((string)($data['teacher_remark']??''));
-    $directorRemark=trim((string)($data['director_remark']??''));
+    $directorRemark='Mashallah, Barakallahu fi';
     if(!in_array(null,$scores,true)){
         $total=(float)$scores['attendance_score']+(float)$scores['test_score']+(float)$scores['exam_score'];
         $teacherRemark=onlineClassTutorRemark($total);
-        $directorRemark='Mashallah, Barakallahu fi';
     }
     $stmt=$pdo->prepare('INSERT INTO online_class_results(student_id,subject_id,academic_session,term,attendance_score,test_score,exam_score,teacher_remark,director_remark,created_by,updated_by) VALUES(?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE attendance_score=VALUES(attendance_score),test_score=VALUES(test_score),exam_score=VALUES(exam_score),teacher_remark=VALUES(teacher_remark),director_remark=VALUES(director_remark),updated_by=VALUES(updated_by)');
     $stmt->execute([$studentId,$subjectId,$session,$term,$scores['attendance_score'],$scores['test_score'],$scores['exam_score'],$teacherRemark?:null,$directorRemark?:null,$staffId,$staffId]);
