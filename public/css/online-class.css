@@ -90,3 +90,31 @@
  .online-results-table-wrap{overflow:visible}
  .online-report-table{min-width:0}
 }
+
+/* MARKAZ Online Class workspace uses the same shell behavior and visual hierarchy as the main dashboard. */
+.online-workspace-page{min-height:100vh;background:var(--page,#f5f7f1)}
+.online-workspace-page .main-content{min-width:0}
+.online-workspace-page .topbar{min-height:78px;height:auto}
+.online-workspace-page .online-class-page{width:100%;max-width:none;padding:22px 28px 28px;flex:1 0 auto}
+.online-workspace-page .online-hero{border-radius:16px;padding:24px 28px;box-shadow:0 4px 14px rgba(20,71,47,.08)}
+.online-workspace-page .online-tabs{margin:18px 0;gap:8px}
+.online-workspace-page .online-panel{border-radius:16px;box-shadow:0 4px 14px rgba(20,71,47,.05)}
+.online-workspace-page .sidebar-overlay{display:none}
+.online-workspace-page .sidebar-bottom{display:none!important}
+.online-workspace-page .online-report{position:relative;isolation:isolate;overflow:hidden;background:#fff}
+.online-workspace-page .online-report::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:url("../assets/images/markaz-logo.jpg") center/230px repeat;opacity:.055}
+.online-workspace-page .online-report>*{position:relative;z-index:1}
+.online-results-report{position:relative;isolation:isolate}
+.online-results-report::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:url("../assets/images/markaz-logo.jpg") center/250px repeat;opacity:.065}
+.online-results-report>*{position:relative;z-index:1}
+.online-results-report .online-report-details,.online-results-report .online-report-comments section{background-color:rgba(255,255,255,.82)}
+@media(max-width:850px){
+ .online-workspace-page .sidebar-overlay{display:block}
+ .online-workspace-page .online-class-page{padding:16px 14px 24px}
+ .online-workspace-page .topbar{padding:0 16px}
+}
+@media(max-width:640px){.online-workspace-page .online-class-page{padding:12px}}
+@media print{
+ .online-results-report::before,.online-workspace-page .online-report::before{opacity:.075;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ .online-results-report,.online-workspace-page .online-report{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
