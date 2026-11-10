@@ -123,10 +123,10 @@ async function compressProfileImage(file) {
     const objectUrl = URL.createObjectURL(file);
     try {
         const image = new Image();
-        image.src = objectUrl;
         await new Promise((resolve, reject) => {
             image.onload = resolve;
             image.onerror = () => reject(new Error("The selected image format could not be opened."));
+            image.src = objectUrl;
         });
 
         const maxBytes = 1.5 * 1024 * 1024;
