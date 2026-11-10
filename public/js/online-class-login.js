@@ -9,20 +9,10 @@ function escapeHtml(value) {
   }[char]));
 }
 
-function populateSessions() {
-  const select = $('onlineSession');
-  const currentYear = new Date().getFullYear();
-  const firstYear = 2021;
-  const lastYear = 2030;
-  const currentSessionStart = Math.min(2030, Math.max(2021, new Date().getMonth() >= 8 ? currentYear : currentYear - 1));
-  const sessions = [];
-  for (let year = firstYear; year <= lastYear; year += 1) {
-    sessions.push(year + '/' + (year + 1));
-  }
-  select.innerHTML = '<option value="">Choose academic session</option>' +
-    sessions.map(session => '<option value="' + session + '">' + session + '</option>').join('');
-  const preferred = currentSessionStart + '/' + (currentSessionStart + 1);
-  select.value = sessions.includes(preferred) ? preferred : '';
+function currentAcademicSession() {
+  const now = new Date();
+  const startYear = Math.max(2026, now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1);
+  return startYear + '/' + (startYear + 1);
 }
 
 function updateSections() {
@@ -76,7 +66,6 @@ function showMessage(message, kind) {
   node.classList.add('visible');
 }
 
-populateSessions();
 loadOptions().catch(error => {
   showMessage(error.message, 'error');
 });
@@ -97,7 +86,7 @@ $('onlineLoginForm').addEventListener('submit', async event => {
         admission_number: $('onlineAdmission').value.trim(),
         level_id: $('onlineLevel').value,
         section: $('onlineSection').value,
-        academic_session: $('onlineSession').value,
+        academic_session: currentAcademicSession(),
         term: $('onlineTerm').value
       })
     });
