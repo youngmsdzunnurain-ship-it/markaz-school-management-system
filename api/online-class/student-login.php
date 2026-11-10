@@ -18,6 +18,7 @@ $stmt=db()->prepare('SELECT id,admission_number,first_name,middle_name,last_name
 $stmt->execute([$admission]);$student=$stmt->fetch(PDO::FETCH_ASSOC);
 if(!$student||!(int)$student['is_active']||!password_verify($password,(string)$student['password_hash'])){http_response_code(401);echo json_encode(['success'=>false,'message'=>'Invalid admission number or password.']);exit;}
 session_regenerate_id(true);
+unset($_SESSION['admin_id'], $_SESSION['admin_role'], $_SESSION['admin_name'], $_SESSION['admin_email']);
 $_SESSION = [];
 $_SESSION['online_student_id']=(int)$student['id'];
 $_SESSION['online_student_name']=trim($student['first_name'].' '.($student['middle_name']??'').' '.$student['last_name']);
