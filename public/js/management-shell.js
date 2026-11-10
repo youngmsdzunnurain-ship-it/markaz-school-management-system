@@ -94,9 +94,9 @@ fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", header
         return;
       }
     } else if (currentRole === "teacher") {
+      sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = false);
       const attendanceLink = sidebar.querySelector('[href="/attendance.html"]');
       if (attendanceLink) attendanceLink.hidden = account.can_manage_attendance !== true;
-      sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = true);
       if (settingsLink) settingsLink.hidden = true;
       if (settingsNav) settingsNav.hidden = true;
     } else {
