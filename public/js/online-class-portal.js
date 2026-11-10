@@ -9,16 +9,16 @@ async function load(){
  const session=$('portalSession').value.trim(),term=$('portalTerm').value;
  if(!/^\d{4}\/\d{4}$/.test(session)){$('portalMessage').textContent='Enter a valid academic session, e.g. 2026/2027.';return;}
  try{
-  const [d,footer]=await Promise.all([request('api/online-class/student-results.php?academic_session='+encodeURIComponent(session)+'&term='+encodeURIComponent(term)),request('api/online-class/footer.php')]);
+  const [d,footer]=await Promise.all([request('api/online-class/student-results.php?academic_session='+encodeURIComponent(session)+'&term='+encodeURIComponent(term)),request('api/online-class/student-footer.php')]);
   $('portalStudentName').textContent=[d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' ');
   $('portalStudentDetails').textContent=d.student.admission_number+' · '+d.student.level_name;
   $('portalMessage').textContent=d.released?'Your released results are shown below.':'Results for this term have not yet been released.';
   $('portalReport').style.display=d.released?'block':'none';
   if(!d.released)return;
   $('portalReportTitle').textContent=term.toUpperCase()+' RESULT SHEET · SESSION '+session;
-  $('portalReportDetails').innerHTML='<b>Student:</b> '+esc([d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' '))+' &nbsp; <b>Admission No:</b> '+esc(d.student.admission_number)+' &nbsp; <b>Level:</b> '+esc(d.student.level_name)+' &nbsp; <b>Tutor:</b> '+esc(d.student.tutor_name||'—')+' &nbsp; <b>Portion of Memorisation:</b> '+esc(d.student.memorization_portion||'—');
+  $('portalReportDetails').innerHTML='<b>Student:</b> '+esc([d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' '))+' &nbsp; <b>Admission No:</b> '+esc(d.student.admission_number)+' &nbsp; <b>Level:</b> '+esc(d.student.level_name)+' &nbsp; <b>Tutor:</b> '+esc(d.student.tutor_name||'—')+' &nbsp; <b>Portion of Memorisation:</b> '+esc(d.student.memorization_portion||'—')+' &nbsp; <b>Next Term Begins:</b> '+esc(d.student[({'First Term':'first_term_resumption','Second Term':'second_term_resumption','Third Term':'third_term_resumption'})[term]]||'To be announced');
   const rows=d.results||[];
-  $('portalResultsRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.subject_name)+'</td><td>'+esc(r.attendance_score??'—')+'</td><td>'+esc(r.test_score??'—')+'</td><td>'+esc(r.exam_score??'—')+'</td><td><b>'+esc(r.total??'—')+'</b></td><td>'+esc(r.grade||'Pending')+'</td><td>'+esc(r.grade_remark||'')+'</td></tr>').join('');
+  $('portalResultsRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.subject_name)+'</td><td>'+esc(r.attendance_score??'—')+'</td><td>'+esc(r.test_score??'—')+'</td><td>'+esc(r.exam_score??'—')+'</td><td><b>'+esc(r.total??'—')+'</b></td><td>'+esc(r.grade||'Pending')+'</td><td>'+esc(r.grade_remark||'')+'</td></tr>' ).join('');
   const complete=rows.filter(r=>r.total!==null&&r.total!==undefined);
   const average=complete.length?complete.reduce((sum,r)=>sum+Number(r.total),0)/complete.length:0;
   const overall=grade(average);
