@@ -964,6 +964,8 @@ window.addEventListener("pageshow", () => {
 });
 
 async function loadDashboardStats() {
+    if (window.markazCurrentRole === "management") return;
+
     const statCards = document.querySelectorAll(".stat-card .stat-main > strong");
 
     if (statCards.length < 3) return;
