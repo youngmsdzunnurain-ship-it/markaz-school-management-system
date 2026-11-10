@@ -45,6 +45,12 @@ $role = (string) $admin['role'];
 $accountId = (int) $admin['id'];
 $canManageAttendance = $role === 'admin';
 $managementPermissions = ['attendance' => false, 'students' => false, 'school_fees' => false];
+$onlineClassAccess = $role === 'admin';
+if (in_array($role, ['exam_officer','teacher','management'], true)) {
+    $onlineAccessStmt = db()->prepare('SELECT is_allowed FROM account_permissions WHERE account_id = ? AND permission_key = ? LIMIT 1');
+    $onlineAccessStmt->execute([$accountId, 'online_class_access']);
+    $onlineClassAccess = (int)$onlineAccessStmt->fetchColumn() === 1;
+}
 if ($role === 'management') {
     $managementPermissionStmt = db()->prepare(
         'SELECT permission_key, is_allowed FROM account_permissions
@@ -125,6 +131,7 @@ echo json_encode([
         'can_export_results' => $resolvePermission('export_results'),
         'can_manage_attendance' => $canManageAttendance,
         'management_permissions' => $managementPermissions,
+        'online_class_access' => $onlineClassAccess,
         'can_access_online_class' => $canAccessOnlineClass
     ]
 ]);
