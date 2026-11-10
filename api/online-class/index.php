@@ -134,7 +134,13 @@ if($action==='save_attendance'){
     $date=(string)($data['date']??'');$dt=DateTimeImmutable::createFromFormat('!Y-m-d',$date);
     if(!$dt||$dt->format('Y-m-d')!==$date) onlineClassJsonError(422,'Choose a valid attendance date.');
     $records=$data['records']??null;if(!is_array($records)||!$records) onlineClassJsonError(422,'No attendance records were submitted.');
-    $ids=array_map('intval',array_keys($records));$placeholders=implode(',',array_fill(0,count($ids),'?'));
+    $levelId=isset($data['level_id'])&&$data['level_id']!==''?$validLevel($data['level_id']):null;
+    $rosterSql='SELECT id FROM online_class_students WHERE is_active=1'.($levelId?' AND level_id=?':'').' ORDER BY id';
+    $rosterStmt=$pdo->prepare($rosterSql);$rosterStmt->execute($levelId?[$levelId]:[]);
+    $roster=array_map('intval',$rosterStmt->fetchAll(PDO::FETCH_COLUMN));
+    $ids=array_map('intval',array_keys($records));$submitted=$ids;sort($roster);sort($submitted);
+    if($submitted!==$roster) onlineClassJsonError(409,'The selected Online Class roster changed or is incomplete. Reload attendance before saving.');
+    $placeholders=implode(',',array_fill(0,count($ids),'?'));
     $check=$pdo->prepare("SELECT id FROM online_class_students WHERE is_active=1 AND id IN ($placeholders)");$check->execute($ids);
     if(count($check->fetchAll(PDO::FETCH_COLUMN))!==count(array_unique($ids))) onlineClassJsonError(422,'An attendance student is invalid.');
     $save=$pdo->prepare('INSERT INTO online_class_attendance(student_id,attendance_date,status,remarks,marked_by) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE status=VALUES(status),remarks=VALUES(remarks),marked_by=VALUES(marked_by)');
