@@ -28,6 +28,7 @@ $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
 $footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-footer.php');
 $studentResultsApi = (string) file_get_contents($root . '/api/online-class/student-results.php');
 $studentFooterApi = (string) file_get_contents($root . '/api/online-class/student-footer.php');
+$supportContactApi = (string) file_get_contents($root . '/public/api/settings/support-contact.php');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
@@ -340,7 +341,12 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-student-loading-support2'),
+    str_contains($portal, '20261111-student-loading-support3') &&
+    str_contains($portal, 'document.querySelector') &&
+    str_contains($portalJs, "replace(/\\D/g,'')") &&
+    !str_contains($portalJs, "digits==='2347048657955'") &&
+    str_contains($supportContactApi, "setting_key = 'support_whatsapp_number'") &&
+    str_contains($supportContactApi, "'07048657955'"),
     'Student portal must expose API loading failures, prevent indefinite loading, and use a polite WhatsApp message without the known incorrect fallback number'
 );
 
