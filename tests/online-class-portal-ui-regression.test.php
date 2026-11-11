@@ -174,9 +174,9 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     preg_match('/body\\.online-workspace-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/#onlineReport,\\s*body\\.online-workspace-page\\s+#onlineReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
+    preg_match('/body\\.online-workspace-page\\s+#onlineReport,\\s*body\\.online-workspace-page\\s+#onlineReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
     preg_match('/body\\.online-results-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/#portalReport,\\s*body\\.online-results-page\\s+#portalReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
+    preg_match('/body\\.online-results-page\\s+#portalReport,\\s*body\\.online-results-page\\s+#portalReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
     preg_match('/height:\\s*200mm/', $onlineCss) === 1 &&
     preg_match('/overflow:\\s*hidden\\s*!important/', $onlineCss) === 1,
     'Staff and student reports must each print alone on one constrained A4 landscape page'
