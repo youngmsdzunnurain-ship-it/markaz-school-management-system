@@ -189,4 +189,20 @@ onlinePortalUiAssert(
     str_contains($portalJs ?? '', 'function formatOnlineReportDate(value)'),
     'Online Class release controls and resumption dates must be explicit and consistently formatted'
 );
+onlinePortalUiAssert(
+    preg_match('/@page\\s*\\{[^}]*size:\\s*297mm\\s+210mm/s', $onlineCss) === 1 &&
+    preg_match('/#onlineReport,\\s*#portalReport\\s*\\{[^}]*width:\\s*285mm/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, 'min-height: 198mm') &&
+    !str_contains($workspaceJs, 'fitOnlineReportForPrint') &&
+    !str_contains($portalJs, 'fitOnlineReportForPrint'),
+    'Online Class reports must use true landscape page geometry without shrinking the report to fit a portrait sheet'
+);
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'display: flex !important') &&
+    str_contains($onlineCss, 'flex-direction: column !important') &&
+    str_contains($onlineCss, 'margin-top: auto !important') &&
+    str_contains($onlineCss, 'background-image:') &&
+    str_contains($onlineCss, 'markaz-logo.jpg'),
+    'Landscape reports must use the full page with a balanced report layout and school watermark'
+);
 echo "Online Class student portal and responsive shell regression checks passed.\n";
