@@ -18,6 +18,7 @@ $studentLogin = (string) file_get_contents($root . '/public/student-login.html')
 $studentAuth = (string) file_get_contents($root . '/api/online-class/student-login.php');
 $portalOptions = (string) file_get_contents($root . '/api/online-class/portal-options.php');
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
+$js = $workspaceJs;
 $portalJs = (string) file_get_contents($root . '/public/js/online-class-portal.js');
 $workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php');
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
@@ -166,7 +167,7 @@ onlinePortalUiAssert(
     'Attendance status controls must use clear, accessible status-specific colours'
 );
 onlinePortalUiAssert(
-    preg_match('/@page\\s*\\{[^}]*size:\\s*landscape/s', $onlineCss) === 1 &&
+    preg_match('/@page\\s*\\{[^}]*size:\\s*letter landscape/s', $onlineCss) === 1 &&
     str_contains($onlineCss, '#onlineReport') &&
     str_contains($workspaceJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
     'Staff Online Class reports must preserve their existing design and print in landscape orientation'
@@ -175,7 +176,9 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     preg_match('/body\\.online-workspace-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
     preg_match('/body\\.online-results-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    str_contains($onlineCss, 'width: 287mm !important') &&
+    str_contains($onlineCss, 'width: 269.4mm !important') &&
+    str_contains($onlineCss, 'font-size: 8.5pt !important') &&
+    !str_contains($onlineCss, 'font-size: 7pt !important') &&
     !str_contains($onlineCss, 'display: flex !important') &&
     !str_contains($onlineCss, '#onlineReport::before'),
     'Printing must retain the existing report structure and styles without introducing a redesigned flex layout or watermark treatment'
@@ -187,5 +190,16 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'Results are RELEASED to students.') &&
     str_contains($portalJs ?? '', 'function formatOnlineReportDate(value)'),
     'Online Class release controls and resumption dates must be explicit and consistently formatted'
+);
+
+onlinePortalUiAssert(
+    str_contains($js ?? '', 'مركز تعليم وتحفيظ القرآن الكريم') &&
+    str_contains($workspaceJs, 'مركز تعليم وتحفيظ القرآن الكريم') &&
+    str_contains($workspaceJs, 'class="school-name-ar"') &&
+    str_contains($portal, 'مركز تعليم وتحفيظ القرآن الكريم') &&
+    str_contains($portal, 'class="school-name-ar"') &&
+    str_contains($onlineCss, 'size: letter landscape') &&
+    !str_contains($onlineCss, 'width: 287mm !important'),
+    'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
 );
 echo "Online Class student portal and responsive shell regression checks passed.\n";
