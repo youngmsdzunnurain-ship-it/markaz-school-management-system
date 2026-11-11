@@ -1160,78 +1160,60 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
    their own hover transforms; this observer only animates their containing sections. */
 function initDashboardMotion() {
     const root = document.documentElement;
+    const page = document.querySelector(".page-content");
+    if (!page) return;
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targets = Array.from(document.querySelectorAll(
-        ".page-content > .welcome-card, .page-content > .stats-grid, .page-content > .dashboard-exam-section, .page-content > .dashboard-bottom-layout, .page-content > .teacher-assignments-section, .page-content > .panel"
-    )).filter(element => !element.hidden && getComputedStyle(element).display !== "none");
+    const selector = [
+        ":scope > .welcome-card",
+        ":scope > .stats-grid",
+        ":scope > .dashboard-exam-section",
+        ":scope > .dashboard-bottom-layout",
+        ":scope > .teacher-assignments-section",
+        ":scope > .panel"
+    ].join(", ");
 
-    targets.forEach((element, index) => {
-        element.setAttribute("data-mk-dashboard-reveal", "");
-        element.style.setProperty("--mk-dashboard-delay", Math.min(index % 3, 2) * 75 + "ms");
-    });
-
-    if (reduceMotion || !("IntersectionObserver" in window)) {
-        targets.forEach(element => element.classList.add("mk-dashboard-visible"));
-        return;
+    let observer = window.markazDashboardRevealObserver;
+    if (!reduceMotion && "IntersectionObserver" in window && !observer) {
+        observer = new IntersectionObserver((entries, activeObserver) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("mk-dashboard-visible");
+                activeObserver.unobserve(entry.target);
+            });
+        }, {threshold:0.04, rootMargin:"0px 0px -4% 0px"});
+        window.markazDashboardRevealObserver = observer;
     }
 
-    root.classList.add("mk-dashboard-motion-ready");
-    const observer = new IntersectionObserver((entries, activeObserver) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("mk-dashboard-visible");
-            activeObserver.unobserve(entry.target);
+    function registerTargets() {
+        page.querySelectorAll(selector).forEach((element, index) => {
+            if (element.hidden || getComputedStyle(element).display === "none") return;
+            if (element.dataset.mkDashboardObserved === "1") return;
+
+            element.dataset.mkDashboardObserved = "1";
+            element.setAttribute("data-mk-dashboard-reveal", "");
+            element.style.setProperty("--mk-dashboard-delay", Math.min(index % 3, 2) * 75 + "ms");
+
+            if (reduceMotion || !observer) {
+                element.classList.add("mk-dashboard-visible");
+                return;
+            }
+
+            root.classList.add("mk-dashboard-motion-ready");
+            observer.observe(element);
         });
-    }, {threshold:0.04, rootMargin:"0px 0px -4% 0px"});
-    targets.forEach(element => observer.observe(element));
+    }
+
+    registerTargets();
+
+    if (!page.dataset.mkDashboardMotionWatching && "MutationObserver" in window) {
+        page.dataset.mkDashboardMotionWatching = "1";
+        const mutations = new MutationObserver(registerTargets);
+        mutations.observe(page, {
+            childList:true,
+            subtree:true,
+            attributes:true,
+            attributeFilter:["hidden", "style"]
+        });
+    }
 }
-
-
-/* =========================================================
-   MARKAZ DASHBOARD MOTION
-   Progressive, one-time reveals; no layout measurements or
-   transforms are applied to the dashboard's grid containers.
-   ========================================================= */
-(() => {
-    const root = document.documentElement;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targets = document.querySelectorAll([
-        ".welcome-card",
-        ".stats-grid > .stat-card",
-        ".result-progress-section",
-        ".result-progress-grid > .progress-card",
-        ".dashboard-shortcuts > button",
-        ".dashboard-shortcuts > a",
-        ".quick-actions > button",
-        ".management-dashboard-shortcut",
-        ".teacher-assignment-card",
-        ".page-content > .panel",
-        ".teacher-assignments-section",
-        ".dashboard-class-attendance-charts",
-        ".administrator-panel",
-        ".management-dashboard-profile-card"
-    ].join(","));
-
-    if (!targets.length) return;
-
-    targets.forEach((element, index) => {
-        element.setAttribute("data-mk-dashboard-reveal", "");
-        element.style.setProperty("--mk-dashboard-delay", (Math.min(index % 4, 3) * 65) + "ms");
-    });
-
-    if (reduceMotion || !("IntersectionObserver" in window)) {
-        targets.forEach(element => element.classList.add("mk-dashboard-visible"));
-        return;
-    }
-
-    root.classList.add("mk-dashboard-motion-ready");
-    const observer = new IntersectionObserver((entries, activeObserver) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("mk-dashboard-visible");
-            activeObserver.unobserve(entry.target);
-        });
-    }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
-
-    targets.forEach(element => observer.observe(element));
-})();
