@@ -418,4 +418,18 @@ onlinePortalUiAssert(
     'Student portal must show its shared report preview before printing and use the student name plus academic session as the PDF filename'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'May Allah increase you in beneficial knowledge and guide you through the Qur’an.') &&
+    str_contains($reportJs, 'function compactRemark(') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport { display: flex !important;') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-signature {') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-signature {') &&
+    str_contains($onlineCss, '.online-report-programme { display: flex; justify-content: center;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-head { margin-top: 1.5mm !important;') &&
+    str_contains($portalJs, "report?.term") &&
+    str_contains($portalJs, "report?.academic_session"),
+    'Staff and student reports must keep the footer on-page, compact the remark/signature/date area, centre the programme heading, lower the student heading slightly and name PDFs with student, year and term'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
