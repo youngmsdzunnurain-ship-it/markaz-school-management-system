@@ -840,22 +840,22 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
     gap: 5mm !important;
     padding: 2.5mm 4mm !important;
     margin: 0 0 1.5mm !important;
-    font-size: 8.5pt !important;
-    line-height: 1.2 !important;
+    font-size: 9pt !important;
+    line-height: 1.3 !important;
     align-items: start !important;
   }
   body.online-workspace-page #onlineReport .online-report-details-staff-column {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    gap: 2.2mm !important;
+    gap: 3mm !important;
   }
   body.online-workspace-page #onlineReport .online-report-details-staff-column > span {
     min-width: 0 !important;
     overflow-wrap: anywhere !important;
   }
   body.online-workspace-page #onlineReport::before {
-    width: 245mm !important;
-    height: 245mm !important;
+    width: 190mm !important;
+    height: 190mm !important;
     opacity: .105 !important;
   }
 }
