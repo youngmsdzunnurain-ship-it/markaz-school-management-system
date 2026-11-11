@@ -32,7 +32,8 @@ foreach ($pages as $label => $file) {
 
 $admin = file_get_contents($root . '/public/login.html');
 bookAuthAssert(str_contains($admin, 'id="loginForm"') && str_contains($admin, 'id="email"') && str_contains($admin, 'id="password"'), 'Admin keeps the existing login form and credential selectors');
-bookAuthAssert(str_contains($admin, 'js/book-auth.js') < str_contains($admin, 'js/login.js'), 'Admin loads book interactions before its existing login handler');
+bookAuthAssert(strpos($admin, 'js/book-auth.js') < strpos($admin, 'js/login.js'), 'Admin loads book interactions before its existing login handler');
+bookAuthAssert(str_contains($admin, 'id="remember"') && str_contains($admin, 'name="remember"'), 'Admin keeps the requested Remember me field');
 
 $rolePages = [
     'teacher-login.html' => 'teacher',
@@ -69,7 +70,7 @@ $studentApi = file_get_contents($root . '/api/results/student-portal.php');
 $onlineApi = file_get_contents($root . '/api/online-class/student-login.php');
 bookAuthAssert(str_contains($loginApi, 'expected_role') && str_contains($loginApi, 'password_verify'), 'Staff authentication keeps role checks and password verification');
 bookAuthAssert(str_contains($studentApi, 'startStudentPortalSession'), 'Student result lookup keeps its scoped public session');
-bookAuthAssert(str_contains($onlineApi, 'session_regenerate_id(true)') && str_contains($onlineApi, "unset($_SESSION['admin_id']"), 'Online Class authentication rotates the session ID and clears staff identity');
+bookAuthAssert(str_contains($onlineApi, 'session_regenerate_id(true)') && str_contains($onlineApi, 'unset($_SESSION[\'admin_id\']'), 'Online Class authentication rotates the session ID and clears staff identity');
 
 $officialPrint = file_get_contents($root . '/public/student-result-print.html');
 $onlinePortal = file_get_contents($root . '/public/online-class-portal.html');
