@@ -116,8 +116,10 @@ async function printResult(studentId) {
         });
         $("onlineReport").classList.remove("online-hidden");
         await waitForReportImages($("onlineReport"));
+        document.title=onlineReportPdfTitle(student,$("resultSession").value,$("resultTerm").value);
         window.print();
     } catch (error) {
+        document.title=originalReportDocumentTitle;
         message(error.message || "Unable to prepare this report for printing.", true);
     }
 }
