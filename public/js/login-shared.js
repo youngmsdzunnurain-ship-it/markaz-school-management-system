@@ -48,18 +48,16 @@
   copyright.className = "markaz-login-copyright";
   copyright.textContent = "© 2026 MARKAZ. All Rights Reserved.";
 
-  const fallback = "2347048657955";
-  const message = `Hello MARKAZ Support, I am trying to log in as ${role} and I am having trouble accessing my account. Please help me.`;
+  const message = `As-salamu alaykum MARKAZ Support. I am trying to log in as ${role} and I am having trouble accessing my account. Please assist me. Jazakumullahu khairan.`;
 
   const setSupportNumber = value => {
     let digits = String(value || "").replace(/\D/g, "");
     if (digits.startsWith("0")) digits = "234" + digits.slice(1);
     else if (digits.startsWith("2340")) digits = "234" + digits.slice(4);
-    if (digits.length < 10 || digits.length > 15) digits = fallback;
+    if (digits.length < 10 || digits.length > 15) { support.removeAttribute("href"); return; }
     support.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
   };
 
-  setSupportNumber(fallback);
   fetch("api/settings/support-contact.php", { credentials: "same-origin" })
     .then(response => response.ok ? response.json() : null)
     .then(data => {

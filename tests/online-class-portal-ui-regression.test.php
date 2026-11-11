@@ -29,6 +29,7 @@ $footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-fo
 $studentResultsApi = (string) file_get_contents($root . '/api/online-class/student-results.php');
 $studentFooterApi = (string) file_get_contents($root . '/api/online-class/student-footer.php');
 $supportContactApi = (string) file_get_contents($root . '/public/api/settings/support-contact.php');
+$loginShared = (string) file_get_contents($root . '/public/js/login-shared.js');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
@@ -350,3 +351,15 @@ onlinePortalUiAssert(
     'Student portal must expose API loading failures, prevent indefinite loading, and use a polite WhatsApp message without the known incorrect fallback number'
 );
 
+
+
+onlinePortalUiAssert(
+    !str_contains($portalJs, '\\nwindow.addEventListener') &&
+    str_contains($portalJs, "window.addEventListener('afterprint'") &&
+    str_contains($loginShared, 'As-salamu alaykum MARKAZ Support.') &&
+    !str_contains($loginShared, 'const fallback = "2347048657955"') &&
+    !str_contains($loginShared, 'setSupportNumber(fallback)') &&
+    str_contains($portal, 'href="home.html"') &&
+    str_contains($portal, 'Back to MARKAZ Home'),
+    'Student portal JavaScript must remain syntactically valid; login support must use the Islamic greeting and database-configured number; logged-in portal must provide a route back to the MARKAZ homepage'
+);
