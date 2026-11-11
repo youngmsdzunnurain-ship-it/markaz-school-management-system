@@ -13,7 +13,7 @@ function whenStaffRole(allowedRoles, callback) {
     return window.markazSettingsAccountPromise.then(result => {
         const account = result.data?.admin;
         if (result.ok && result.data?.success && account && allowedRoles.includes(account.role)) {
-            callback(account);
+            return callback(account);
         }
     }).catch(error => console.error("Unable to resolve settings role:", error));
 }
