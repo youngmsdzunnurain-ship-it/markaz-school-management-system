@@ -183,6 +183,12 @@
                             id="studentPhoto"
                             name="profile_image"
                             accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+                        <input
+                            type="file"
+                            id="studentPhotoCamera"
+                            accept="image/jpeg,image/png,image/webp"
                             capture="environment"
                             hidden
                         >
@@ -190,10 +196,16 @@
                         <button
                             type="button"
                             class="secondary-button"
-                            id="captureStudentPhotoButton"
-
+                            id="chooseStudentPhotoButton"
                         >
-                            Camera
+                            Upload from device
+                        </button>
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            id="captureStudentPhotoButton"
+                        >
+                            Take selfie
                         </button>
                     </div>
                 </div>
@@ -385,17 +397,24 @@
                     id="editStudentPhoto"
                     name="profile_image"
                     accept="image/jpeg,image/png,image/webp"
-                    capture="environment"
                     hidden
                 >
             </label>
+
+            <input
+                type="file"
+                id="editStudentPhotoCamera"
+                accept="image/jpeg,image/png,image/webp"
+                capture="environment"
+                hidden
+            >
 
             <button
                 type="button"
                 class="secondary-button"
                 id="captureEditStudentPhotoButton"
             >
-                Camera
+                Take selfie
             </button>
 
             <button
