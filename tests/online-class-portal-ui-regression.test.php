@@ -440,11 +440,15 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'window.MarkazOnlineClassReport.renderStaff({') &&
     str_contains($portalJs, 'window.MarkazOnlineClassReport.render({') &&
     str_contains($reportJs, 'online-report-details-staff') &&
+    str_contains($reportJs, 'online-report-details-staff-column') &&
     str_contains($reportJs, '<b>Section:</b>') &&
     str_contains($reportJs, '<b>Next Term Begins:</b>') &&
     str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
-    str_contains($reportJs, '<b>Assessments:</b>'),
-    'Admin memorization report must use a staff-only two-row details layout while the student result portal keeps the original shared report'
+    str_contains($reportJs, '<b>Assessments:</b>') &&
+    str_contains($css, 'grid-template-columns: repeat(2, minmax(0, 1fr))') &&
+    str_contains($css, 'body.online-workspace-page #onlineReport::before { width: 245mm !important;') &&
+    !str_contains($portalJs, 'online-report-details-staff-column'),
+    'Admin memorization report must stack the four student details vertically in the left column and the four report details vertically in the right column, enlarge only the staff watermark, and leave the student portal layout unchanged'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
