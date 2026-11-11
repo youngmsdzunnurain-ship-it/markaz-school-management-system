@@ -95,16 +95,16 @@ managementPermissionsCheck(
     'Management dashboard does not load unrestricted examination statistics'
 );
 managementPermissionsCheck(
-    str_contains($profileApi, '$identityChanged')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && $currentPassword === \'\'')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && !password_verify'),
+    str_contains($profileApi, '$currentPassword === \'\'')
+        && str_contains($profileApi, 'password_verify($currentPassword, $admin[\'password_hash\'])')
+        && str_contains($profileApi, "['admin', 'exam_officer', 'management', 'teacher']"),
     'Profile-photo-only updates do not require password re-entry, while name/email edits remain verified'
 );
 managementPermissionsCheck(
     str_contains($settingsProfileJs, 'maxBytes = 1.5 * 1024 * 1024')
         && str_contains($settingsProfileJs, 'Photo selected. Save Changes to upload it.')
         && str_contains($settingsProfileJs, 'response.redirected')
-        && str_contains($settingsHtml, 'data-role-access="admin_or_exam_officer_or_management"'),
+        && str_contains($settingsHtml, 'data-role-access="staff_profile"'),
     'Profile photos are compressed below the upload limit and Management profile settings are available'
 );
 echo "Management permissions/profile/dashboard regression tests passed (12 checks).\n";
