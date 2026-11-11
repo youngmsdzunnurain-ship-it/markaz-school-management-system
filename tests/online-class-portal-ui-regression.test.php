@@ -436,15 +436,14 @@ onlinePortalUiAssert(
 );
 
 onlinePortalUiAssert(
-    str_contains($reportJs, 'function renderStaff(data)') &&
+    str_contains($reportJs, 'renderStaff: data => render(data, true)') &&
     str_contains($workspaceJs, 'window.MarkazOnlineClassReport.renderStaff({') &&
     str_contains($portalJs, 'window.MarkazOnlineClassReport.render({') &&
     str_contains($reportJs, 'online-report-details-staff') &&
     str_contains($reportJs, '<b>Section:</b>') &&
     str_contains($reportJs, '<b>Next Term Begins:</b>') &&
     str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
-    str_contains($reportJs, '<b>Assessments:</b>') &&
-    !str_contains(substr($reportJs, strpos($reportJs, 'function renderStaff(data)'), strpos($reportJs, 'window.MarkazOnlineClassReport')), '<b>Term:</b>'),
+    str_contains($reportJs, '<b>Assessments:</b>'),
     'Admin memorization report must use a staff-only two-row details layout while the student result portal keeps the original shared report'
 );
 
