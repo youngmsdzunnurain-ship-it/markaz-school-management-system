@@ -6,19 +6,21 @@
   if (!page || document.getElementById("settingsCategoryNav")) return;
 
   try {
-    const response = await fetch("./api/auth/me.php", {
-      credentials: "same-origin",
-      cache: "no-store",
-      headers: { Accept: "application/json" }
-    });
-    const account = await response.json();
-    if (!response.ok || !account.success || !account.admin) {
+    const accountResult = window.markazSettingsAccountPromise
+      ? await window.markazSettingsAccountPromise
+      : await fetch("./api/auth/me.php", {
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { Accept: "application/json" }
+        }).then(async response => ({ok:response.ok, data:await response.json()}));
+    const account = accountResult.data;
+    if (!accountResult.ok || !account?.success || !account.admin) {
       window.location.replace("login.html");
       return;
     }
 
     const role = account.admin.role;
-    if (!["admin", "exam_officer", "management"].includes(role)) {
+    if (!["admin", "exam_officer", "management", "teacher"].includes(role)) {
       window.location.replace("dashboard.html");
       return;
     }
@@ -45,12 +47,12 @@
 
     const allowedIds = role === "admin"
       ? new Set(allCategories.map(category => category.id))
-      : role === "management"
-        ? new Set(["profile"])
-        : new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"]);
+      : role === "exam_officer"
+        ? new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])
+        : new Set(["profile"]);
     const categories = allCategories.filter(category => allowedIds.has(category.id));
     allCategories.forEach(category => category.elements.forEach(element => { element.hidden = true; }));
-    if (role === "management") page.querySelector(".password-section")?.setAttribute("hidden", "");
+
 
     const nav = document.createElement("nav");
     nav.id = "settingsCategoryNav";
