@@ -36,7 +36,7 @@ loginForm.addEventListener('submit', async (event) => {
 
     loginButton.disabled = true;
     loginButton.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i><span>Signing in...</span>';
+        '<span>Signing in...</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg>';
 
     try {
         const response = await fetch('api/auth/login.php', {
@@ -86,6 +86,6 @@ loginForm.addEventListener('submit', async (event) => {
 
         loginButton.disabled = false;
         loginButton.innerHTML =
-            '<span>Sign In</span><i class="fa-solid fa-arrow-right"></i>';
+            '<span>Sign In</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg>';
 }
 });
