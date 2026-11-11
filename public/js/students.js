@@ -718,6 +718,7 @@ if (addStudentModal) {
     let baseScale = 1;
     let zoom = 1;
     let isPreparing = false;
+    const confirmedFiles = new WeakMap();
 
     function showCropError(message) {
         if (!errorMessage) return;
@@ -762,6 +763,25 @@ if (addStudentModal) {
 
     function updateZoomLabel() {
         if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + "%";
+    }
+
+    function cancelCropper() {
+        if (activeInput) {
+            const previousFile = confirmedFiles.get(activeInput);
+            if (previousFile) {
+                try {
+                    const transfer = new DataTransfer();
+                    transfer.items.add(previousFile);
+                    activeInput.files = transfer.files;
+                    setPreview(activePreview, previousFile);
+                } catch (error) {
+                    activeInput.value = "";
+                }
+            } else {
+                activeInput.value = "";
+            }
+        }
+        closeCropper();
     }
 
     function closeCropper() {
@@ -906,6 +926,7 @@ if (addStudentModal) {
             }
 
             setSelectedFile(activeInput, croppedFile);
+            confirmedFiles.set(activeInput, croppedFile);
             setPreview(activePreview, croppedFile);
 
             if (activeInput === editStudentPhoto) {
@@ -923,19 +944,13 @@ if (addStudentModal) {
     }
 
     [cancelButton, cancelBottomButton].forEach(button => {
-        button?.addEventListener("click", () => {
-            if (activeInput) activeInput.value = "";
-            closeCropper();
-        });
+        button?.addEventListener("click", cancelCropper);
     });
 
     confirmButton.addEventListener("click", confirmCrop);
 
     modal.addEventListener("click", event => {
-        if (event.target === modal) {
-            if (activeInput) activeInput.value = "";
-            closeCropper();
-        }
+        if (event.target === modal) cancelCropper();
     });
 
     zoomInput.addEventListener("input", () => {
@@ -973,10 +988,7 @@ if (addStudentModal) {
     });
 
     document.addEventListener("keydown", event => {
-        if (event.key === "Escape" && !modal.hidden) {
-            if (activeInput) activeInput.value = "";
-            closeCropper();
-        }
+        if (event.key === "Escape" && !modal.hidden) cancelCropper();
     });
 
     function bindInput(input, preview) {
