@@ -5400,3 +5400,23 @@ body {
 
 /* Prevent another role's settings from flashing before account permissions resolve. */
 html.settings-page-pending body .settings-page{visibility:hidden!important}
+
+/* Shared square profile-photo crop editor for all staff roles. */
+.staff-photo-crop-modal[hidden]{display:none!important}
+.staff-photo-crop-modal{position:fixed;inset:0;z-index:12050;display:grid;place-items:center;padding:16px;background:rgba(8,31,21,.68);overflow-y:auto;box-sizing:border-box}
+.staff-photo-crop-dialog{width:min(100%,460px);max-height:calc(100dvh - 32px);overflow-y:auto;padding:22px;border:1px solid rgba(184,146,58,.45);border-radius:18px;background:#fbfcf6;box-shadow:0 24px 72px rgba(0,0,0,.28);box-sizing:border-box}
+.staff-photo-crop-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.staff-photo-crop-heading h2{margin:5px 0;color:#123d2a;font-size:21px}
+.staff-photo-crop-heading p{margin:0;color:#718078;font-size:13px;line-height:1.5}
+.staff-photo-crop-close{width:36px;height:36px;flex:none;border:1px solid #dfe8e2;border-radius:50%;background:#fff;color:#123d2a;font-size:24px;line-height:1;cursor:pointer}
+.staff-photo-crop-stage{width:min(100%,320px);aspect-ratio:1;margin:0 auto 16px;overflow:hidden;border:3px solid #b8923a;border-radius:15px;background:#e9eee8;box-shadow:0 6px 20px rgba(8,45,30,.12);touch-action:none}
+#staffPhotoCropCanvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#staffPhotoCropCanvas:active{cursor:grabbing}
+.staff-photo-crop-zoom{display:grid;grid-template-columns:auto minmax(0,1fr) 52px;gap:12px;align-items:center;color:#145035;font-size:13px;font-weight:750}
+.staff-photo-crop-zoom input{width:100%;accent-color:#145035}
+.staff-photo-crop-zoom strong{text-align:right;font-variant-numeric:tabular-nums}
+.staff-photo-crop-error{margin:12px 0 0;color:#a12626;font-size:13px}
+.staff-photo-crop-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.staff-photo-crop-actions button{min-height:42px;cursor:pointer}
+@media(max-width:480px){.staff-photo-crop-modal{padding:10px}.staff-photo-crop-dialog{padding:16px;max-height:calc(100dvh - 20px)}.staff-photo-crop-stage{width:min(100%,min(320px,calc(100vw - 60px)))}.staff-photo-crop-actions{display:grid;grid-template-columns:1fr 1.3fr}.staff-photo-crop-actions button{width:100%;padding-inline:10px}}
+@media(prefers-reduced-motion:reduce){.staff-photo-crop-modal *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
