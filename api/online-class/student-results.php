@@ -27,6 +27,14 @@ foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row){
  }
  $results[]=array_merge($row,['teacher_remark'=>$teacherRemark,'director_remark'=>$directorRemark,'total'=>$total,'percentage'=>$total,'grade'=>$grade['grade']??null,'grade_remark'=>$grade['remark']??null]);
 }
-$signatureRows=db()->query("SELECT setting_key,setting_value FROM settings WHERE setting_key IN ('class_teacher_signature','director_signature','class_teacher_signature_image','director_signature_image','result_signature_date')")->fetchAll(PDO::FETCH_KEY_PAIR);
+$signatureRows=db()->query("SELECT CASE setting_key
+ WHEN 'result_footer_class_teacher_signature' THEN 'class_teacher_signature'
+ WHEN 'result_footer_director_signature' THEN 'director_signature'
+ WHEN 'result_footer_class_teacher_image' THEN 'class_teacher_signature_image'
+ WHEN 'result_footer_director_image' THEN 'director_signature_image'
+ WHEN 'result_footer_signature_date' THEN 'result_signature_date'
+ END AS setting_key,setting_value
+ FROM markaz_app_settings
+ WHERE setting_key IN ('result_footer_class_teacher_signature','result_footer_director_signature','result_footer_class_teacher_image','result_footer_director_image','result_footer_signature_date')")->fetchAll(PDO::FETCH_KEY_PAIR);
 $signatures=['teacher_image'=>$signatureRows['class_teacher_signature_image']??'','teacher_text'=>$signatureRows['class_teacher_signature']??'','director_image'=>$signatureRows['director_signature_image']??'','director_text'=>$signatureRows['director_signature']??'','date'=>$signatureRows['result_signature_date']??''];
 onlineClassJson(['success'=>true,'released'=>true,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>$results,'signatures'=>$signatures]);
