@@ -73,7 +73,7 @@ onlinePortalUiAssert(
     str_contains($portal, 'css/app-watermark.css') &&
     str_contains($reportJs, 'Attendance 20 · Test 20 · Final Examination 60') &&
     str_contains($reportJs, '<th>Attendance</th><th>Test</th><th>Final Examination</th>') &&
-    str_contains($reportJs, "average.toFixed(1) + ' / 100'"),
+    str_contains($reportJs, "average.toFixed(1) + ' / 100</b>"),
     'Student report must retain the report card, watermark and 20/20/60 scoring layout'
 );
 onlinePortalUiAssert(
