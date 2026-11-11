@@ -31,7 +31,7 @@ foreach ($pages as $label => $file) {
 }
 
 $admin = file_get_contents($root . '/public/login.html');
-bookAuthAssert(str_contains($admin, 'id="loginForm"') && str_contains($admin, 'id="email"') && str_contains($admin, 'id="password"'), 'Admin keeps the existing login form and credential selectors');
+bookAuthAssert(str_contains($admin, 'id="loginForm"') && str_contains($admin, 'id="email"') && str_contains($admin, 'id="password"') && str_contains($admin, 'id="loginBtn"'), 'Admin keeps the existing login form and credential selectors');
 bookAuthAssert(strpos($admin, 'js/book-auth.js') < strpos($admin, 'js/login.js'), 'Admin loads book interactions before its existing login handler');
 bookAuthAssert(str_contains($admin, 'id="remember"') && str_contains($admin, 'name="remember"'), 'Admin keeps the requested Remember me field');
 
@@ -51,6 +51,8 @@ $student = file_get_contents($root . '/public/student-login.html');
 foreach (['data-role="student-lookup"', 'id="admissionNumber"', 'id="studentClass"', 'id="academicTerm"', 'id="academicSession"', 'id="studentPortalExperience"'] as $required) {
     bookAuthAssert(str_contains($student, $required), "Student Results preserves {$required}");
 }
+$studentScript = file_get_contents($root . '/public/js/student-results-portal.js');
+bookAuthAssert(str_contains($studentScript, "form.querySelector('#studentId')"), 'Student Results script uses the book design admission field');
 bookAuthAssert(strpos($student, 'js/book-auth.js') < strpos($student, 'js/student-results-portal.js'), 'Student Results loads book interactions before its existing lookup handler');
 bookAuthAssert(!str_contains($student, 'class-1'), 'Student Results does not use demonstration class options');
 
