@@ -917,3 +917,69 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
     text-align: center !important;
   }
 }
+
+/* Student portal print: mirror the approved staff report visual refinements. */
+@media print {
+  body.online-results-page #portalReport .school-name-ar::after {
+    content: "" !important;
+    display: block !important;
+    width: 75px !important;
+    height: 2px !important;
+    margin: 5px auto 0 !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #166534, #c99a2e, #166534) !important;
+  }
+  body.online-results-page #portalReport::before {
+    width: 218mm !important;
+    height: 218mm !important;
+    opacity: .105 !important;
+  }
+  body.online-results-page #portalReport .online-report-details {
+    font-size: 8.5pt !important;
+    line-height: 1.25 !important;
+    row-gap: 1.8mm !important;
+    padding: 2.5mm 3mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments {
+    gap: 3.5mm !important;
+    margin-top: 1.5mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments section {
+    padding: 2mm 3mm 1.5mm !important;
+    font-size: 9pt !important;
+    line-height: 1.25 !important;
+  }
+  body.online-results-page #portalReport .online-report-comments section > b {
+    font-size: 9.5pt !important;
+    font-weight: 600 !important;
+  }
+  body.online-results-page #portalReport .online-report-comments p {
+    margin: .8mm 0 !important;
+    line-height: 1.2 !important;
+  }
+  body.online-results-page #portalReport .online-report-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: .5mm !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    padding-top: 1.5mm !important;
+    color: rgba(18,18,18,.62) !important;
+    border-top-color: rgba(18,18,18,.35) !important;
+    box-shadow: 0 -.3mm 0 rgba(18,18,18,.12) !important;
+    font-size: 8pt !important;
+    font-weight: 500 !important;
+    line-height: 1.15 !important;
+  }
+  body.online-results-page #portalReport .online-report-footer p,
+  body.online-results-page #portalReport .online-report-footer .official-results-label {
+    width: 100% !important;
+    margin: 0 !important;
+    color: rgba(18,18,18,.62) !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+  }
+}
