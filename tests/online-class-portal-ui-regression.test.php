@@ -180,7 +180,7 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     preg_match('/@page\\s*\\{[^}]*size:\\s*letter landscape/s', $onlineCss) === 1 &&
     str_contains($onlineCss, '#onlineReport') &&
-    str_contains($workspaceJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
+    str_contains($reportJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
     'Staff Online Class reports must preserve their existing design and print in landscape orientation'
 );
 
@@ -215,9 +215,9 @@ onlinePortalUiAssert(
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
 );
 onlinePortalUiAssert(
-    str_contains($workspaceJs, 'غواغوالادا، أبوجا') &&
+    str_contains($reportJs, 'غواغوالادا، أبوجا') &&
     !str_contains($workspaceJs, 'جواغوالادا') &&
-    !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
+    !str_contains($reportJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
     str_contains($portal, 'غواغوالادا، أبوجا') &&
     !str_contains($portal, 'جواغوالادا') &&
     !str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة') &&
@@ -288,12 +288,12 @@ onlinePortalUiAssert(
  str_contains($workspaceJs, 'await waitForReportImages($("onlineReport"))') &&
  str_contains($portalJs, 'function waitForReportImages(root)') &&
  str_contains($portalJs, "await waitForReportImages($('portalPrintReport'))") &&
- str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
+ str_contains($reportJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
- str_contains($workspaceJs, 'Academic Report • Official School Record') &&
+ str_contains($reportJs, 'Academic Report • Official School Record') &&
   str_contains($workspaceJs, 'غواغوالادا، أبوجا') &&
   !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
- str_contains($workspaceJs, 'online-report-signature-date') &&
+ str_contains($reportJs, 'online-report-signature-date') &&
  str_contains($onlineCss, 'width:172mm!important') &&
  str_contains($onlineCss, 'border:.45mm double rgba(185,154,72,.82)') &&
  str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-signature-date span') &&
