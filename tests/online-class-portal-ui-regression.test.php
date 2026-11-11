@@ -217,6 +217,26 @@ onlinePortalUiAssert(
     'Both printable Online Class reports must show only the two confirmed school phone numbers and the published email'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($workspaceApi, "'class_teacher_signature_image'") &&
+    str_contains($workspaceApi, "'director_signature_image'") &&
+    str_contains($portalJs, 'function signatureImageSource(value)') &&
+    str_contains($portalJs, "raw.replace(/^\\/+/, '')") &&
+    str_contains($workspaceJs, 'function signatureImageSource(value)') &&
+    str_contains($workspaceJs, 'data-signature-fallback') &&
+    str_contains($portalJs, 'data-signature-fallback'),
+    'Both Online Class reports must resolve the existing saved signature image paths like the main student-result page and fall back safely only if an image is unavailable'
+);
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'font-family:"Amiri"') &&
+    str_contains($onlineCss, 'font-family:"Cormorant Garamond"') &&
+    str_contains($onlineCss, 'grid-template-columns:248px minmax(0,1fr)') &&
+    str_contains($onlineCss, 'height:38px!important') &&
+    str_contains($onlineCss, 'padding:12px!important'),
+    'Online Class heading typography must be calligraphic and its sidebar navigation must use a tighter, narrower layout'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
 
 
