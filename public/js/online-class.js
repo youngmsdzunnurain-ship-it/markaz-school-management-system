@@ -5,6 +5,7 @@ const $=id=>document.getElementById(id);
 const state={levels:[],subjects:[],students:[],attendance:[],results:[],release:false,footer:{},resultStudents:[],resultOptionsRequest:0,session:'2026/2027',term:'First Term',signatures:{teacher:'',director:'',date:''}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date().toLocaleDateString('en-CA');
+function fitOnlineReportForPrint(report){report.style.transform='none';report.style.transformOrigin='top left';const maxHeight=200*96/25.4;const maxWidth=287*96/25.4;const contentHeight=report.scrollHeight;const contentWidth=report.scrollWidth;const scale=Math.min(1,maxHeight/Math.max(contentHeight,1),maxWidth/Math.max(contentWidth,1));report.style.transform='scale('+scale+')';}
 function formatOnlineReportDate(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return match?match[3]+'/'+match[2]+'/'+match[1]:(value||'To be announced');}
 function populateResultSessions(){const select=$('resultSession');if(!select)return;const current=new Date().getFullYear();const first=2026;const last=Math.max(current+10,2036);const sessions=[];for(let year=first;year<=last;year++)sessions.push(year+'/'+(year+1));select.innerHTML=sessions.map(value=>'<option value="'+value+'">'+value+'</option>').join('');const startYear=Math.max(2026,new Date().getMonth()>=8?current:current-1);const preferred=startYear+'/'+(startYear+1);select.value=sessions.includes(preferred)?preferred:sessions[0];state.session=select.value;}
 function signatureMarkup(imageKey,textKey,alt){const image=state.footer[imageKey],legacy=state.footer[textKey];return image?'<img src="'+esc(String(image))+'" alt="'+esc(alt)+'" style="max-width:150px;max-height:48px;object-fit:contain">':esc(legacy||'—');}
@@ -126,12 +127,13 @@ async function printResult(studentId) {
     ].join("");
     $("onlineReport").innerHTML = html;
     $("onlineReport").classList.remove("online-hidden");
+    fitOnlineReportForPrint($("onlineReport"));
     window.print();
     setTimeout(() => $("onlineReport").classList.add("online-hidden"), 500);
 }
 function tutorComment(score){if(score>=80)return'Mashallah! Your dedication and excellent effort are truly commendable. May Allah increase you in beneficial knowledge.';if(score>=70)return'Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.';if(score>=50)return'You are making promising progress. Continue with regular revision and confidence; every step matters.';if(score>=40)return'You have made a beginning. With patient practice and consistent revision, you can make stronger progress.';return'Please do not be discouraged. Learning is a journey; take it one step at a time and keep trying.';}
 function directorComment(score){if(score>=80)return'Excellent achievement. May Allah preserve your knowledge and grant you continued success.';if(score>=70)return'A very good effort. We encourage you to maintain this consistency and continue striving.';if(score>=50)return'Your progress is encouraging. More regular revision will help you reach the next level.';if(score>=30)return'We appreciate your effort. With support, patience and consistency, further improvement is within reach.';return'Every learner deserves encouragement. Let us continue supporting your learning journey with patience and care.';}
-window.addEventListener('afterprint',()=>{$('onlineReport').classList.add('online-hidden');});
+window.addEventListener('afterprint',()=>{$('onlineReport').classList.add('online-hidden');$('onlineReport').style.transform='';});
 loadWorkspaceGreeting();
 bootstrap();
 })();
