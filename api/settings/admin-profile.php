@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 
 $profileRole = currentAdminRole();
-if (!in_array($profileRole, ['admin', 'exam_officer', 'management'], true)) {
+if (!in_array($profileRole, ['admin', 'exam_officer', 'management', 'teacher'], true)) {
     http_response_code(403);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['success' => false, 'message' => 'Profile access is not available for this account.']);
@@ -78,16 +78,16 @@ if (!$admin) {
 $identityChanged = $name !== (string) $admin['name']
     || $email !== (string) ($admin['email'] ?? '');
 
-if ($profileRole !== 'management' && $identityChanged && $currentPassword === '') {
+if ($currentPassword === '') {
     http_response_code(422);
     echo json_encode([
         'success' => false,
-        'message' => 'Current password is required when changing your name or email.'
+        'message' => 'Enter your current password to confirm and save profile changes.'
     ]);
     exit;
 }
 
-if ($profileRole !== 'management' && $identityChanged && !password_verify($currentPassword, $admin['password_hash'])) {
+if (!password_verify($currentPassword, $admin['password_hash'])) {
     http_response_code(401);
     echo json_encode([
         'success' => false,
