@@ -33,7 +33,7 @@ foreach ([
 studentCropAssert(str_contains($html, 'id="studentPhotoCropCanvas" width="320" height="320"'), 'crop viewport is square');
 studentCropAssert(str_contains($js, 'createImageBitmap'), 'cropper decodes selected images with orientation-aware browser support');
 studentCropAssert(str_contains($js, 'drawImage'), 'cropper renders the selected area to a canvas');
-studentCropAssert(str_contains($js, 'canvas.toBlob'), 'cropper produces a real image file for upload');
+studentCropAssert(str_contains($js, 'outputCanvas.toBlob'), 'cropper produces a real image file for upload');
 studentCropAssert(str_contains($js, 'image/jpeg'), 'cropped image is normalized to JPEG for consistent uploads');
 studentCropAssert(str_contains($js, 'new File('), 'cropped image replaces the selected upload file');
 studentCropAssert(str_contains($js, 'studentPhotoCropZoom'), 'cropper exposes zoom control');
