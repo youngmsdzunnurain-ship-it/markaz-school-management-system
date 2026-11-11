@@ -833,6 +833,36 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
   min-width: 0;
   overflow-wrap: anywhere;
 }
+/* Admin memorization report: give both individual remark boxes a little more room. */
+@media print {
+  body.online-workspace-page #onlineReport .online-report-comments {
+    gap: 3.5mm !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments section {
+    padding: 2mm 3mm 1.5mm !important;
+    font-size: 9pt !important;
+    line-height: 1.25 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments section > b {
+    font-size: 9.5pt !important;
+    font-weight: 600 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments p {
+    margin: .8mm 0 !important;
+    line-height: 1.2 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer {
+    color: rgba(18,18,18,.62) !important;
+    border-top-color: rgba(18,18,18,.35) !important;
+    box-shadow: 0 -.3mm 0 rgba(18,18,18,.12) !important;
+    font-weight: 500 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer p,
+  body.online-workspace-page #onlineReport .online-report-footer .official-results-label {
+    color: rgba(18,18,18,.62) !important;
+    font-weight: 500 !important;
+  }
+}
 @media print {
   body.online-workspace-page #onlineReport .online-report-details-staff {
     display: grid !important;
@@ -854,8 +884,8 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
     overflow-wrap: anywhere !important;
   }
   body.online-workspace-page #onlineReport::before {
-    width: 190mm !important;
-    height: 190mm !important;
+    width: 218mm !important;
+    height: 218mm !important;
     opacity: .105 !important;
   }
 }
