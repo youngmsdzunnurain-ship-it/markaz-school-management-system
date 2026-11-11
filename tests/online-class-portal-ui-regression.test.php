@@ -208,10 +208,28 @@ onlinePortalUiAssert(
     str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة، جواغوالادا، أبوجا، نيجيريا') &&
     str_contains($workspaceJs, '+234 807 319 1275') &&
     str_contains($workspaceJs, '+234 807 095 5833') &&
-    str_contains($workspaceJs, '+234 704 865 7955') &&
+    !str_contains($workspaceJs, '+234 704 865 7955') &&
+    str_contains($portal, '+234 807 319 1275') &&
+    str_contains($portal, '+234 807 095 5833') &&
+    !str_contains($portal, '+234 704 865 7955') &&
     str_contains($portal, 'markazilquran@gmail.com') &&
     str_contains($portal, 'school-contact-line'),
-    'Both printable Online Class reports must include the Arabic school location and the published school phone numbers and email'
+    'Both printable Online Class reports must show only the two confirmed school phone numbers and the published email'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
+
+
+onlinePortalUiAssert(
+ str_contains($workspaceJs, 'function waitForReportImages(root)') &&
+ str_contains($workspaceJs, 'await waitForReportImages($("onlineReport"))') &&
+ str_contains($portalJs, 'function waitForReportImages(root)') &&
+ str_contains($portalJs, "await waitForReportImages($('portalReport'))") &&
+ str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
+ str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
+ str_contains($workspaceJs, 'Academic Report · Official School Record') &&
+ str_contains($onlineCss, 'width:172mm!important') &&
+ str_contains($onlineCss, 'border:.45mm double rgba(185,154,72,.82)') &&
+ str_contains($onlineCss, 'official-results-label'),
+ 'Online Class certificates must use the corrected bilingual heading, loaded saved signatures, larger centered watermark, refined frame and official-results footer'
+);
