@@ -119,7 +119,7 @@ portalAssert(str_contains($resultCss, 'body.student-portal-result-view .student-
 portalAssert(str_contains($resultCss, 'min-height: 50px !important;') && str_contains($resultCss, 'height: auto !important;'), 'student portal second-row fields use a compact natural height');
 portalAssert(str_contains($resultCss, '@media screen and (min-width: 761px)') && str_contains($resultCss, 'justify-content: flex-end !important;'), 'student portal desktop action buttons are aligned together at the right');
 portalAssert(str_contains($resultCss, '.student-top-row > .detail-item,') && str_contains($resultCss, '.student-class-row > .detail-item {'), 'mobile field sizing applies to the actual nested row items');
-portalAssert(str_contains($resultCss, '@media screen and (max-width: 560px)'), 'student portal mobile profile changes apply to screen and not printed output');
+portalAssert(str_contains($resultCss, '@media screen and (max-width: 760px)'), 'student portal mobile profile changes apply to screen and not printed output');
 portalAssert(str_contains($printPage, 'student-result.css?v=20261109-staff-mobile-parity-v2') && str_contains($staffResultHtml, 'student-result.css?v=20261109-staff-mobile-parity-v2'), 'staff and student report pages load the consolidated mobile stylesheet');
 portalAssert(!str_contains($resultCss, 'Final mobile parity for staff result previews and Student Check Results'), 'student result CSS does not append the duplicate final mobile override block');
 
