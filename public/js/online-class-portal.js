@@ -2,6 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fitOnlineReportForPrint(report){report.style.transform='none';report.style.transformOrigin='top left';const maxHeight=200*96/25.4;const maxWidth=287*96/25.4;const contentHeight=report.scrollHeight;const contentWidth=report.scrollWidth;const scale=Math.min(1,maxHeight/Math.max(contentHeight,1),maxWidth/Math.max(contentWidth,1));report.style.transform='scale('+scale+')';}
 function formatOnlineReportDate(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return match?match[3]+'/'+match[2]+'/'+match[1]:(value||'To be announced');}
 let report=null;
 async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||'Unable to complete request.');return d;}
@@ -28,9 +29,10 @@ async function loadResults(){
   $('portalReport').style.display='block';showMessage('Your released results are ready. You can print or save the report as PDF.');
  }catch(e){showMessage(e.message,true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}
 }
+window.addEventListener('afterprint',()=>{$('portalReport').style.transform='';});
 configureSupportLink();
 $('portalLoad').addEventListener('click',loadResults);
-$('portalPrint').addEventListener('click',()=>{if(report?.released)window.print();});
+$('portalPrint').addEventListener('click',()=>{if(report?.released){fitOnlineReportForPrint($('portalReport'));window.print();}});
 $('portalLogout').addEventListener('click',async()=>{try{await api('./api/online-class/logout.php',{method:'POST',body:'{}'});}catch(_){}location.replace('online-class-login.html');});
 loadResults();
 })();
