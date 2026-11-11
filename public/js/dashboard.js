@@ -165,6 +165,7 @@ async function loadAdmin() {
         });
 
         applyDashboardRoleAccess(role, data.admin);
+        initDashboardMotion();
         if (role !== "management") loadDashboardStats();
 
         if (adminName) adminName.textContent = name;
@@ -1151,3 +1152,34 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
         timer = window.setTimeout(clean, 50);
     }).observe(sidebar, { childList: true, subtree: true });
 })();
+
+
+/* Reveal existing dashboard sections after role filtering. Interactive cards keep
+   their own hover transforms; this observer only animates their containing sections. */
+function initDashboardMotion() {
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = Array.from(document.querySelectorAll(
+        ".page-content > .welcome-card, .page-content > .stats-grid, .page-content > .dashboard-exam-section, .page-content > .dashboard-bottom-layout, .page-content > .teacher-assignments-section, .page-content > .panel"
+    )).filter(element => !element.hidden && getComputedStyle(element).display !== "none");
+
+    targets.forEach((element, index) => {
+        element.setAttribute("data-mk-dashboard-reveal", "");
+        element.style.setProperty("--mk-dashboard-delay", Math.min(index % 3, 2) * 75 + "ms");
+    });
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+        targets.forEach(element => element.classList.add("mk-dashboard-visible"));
+        return;
+    }
+
+    root.classList.add("mk-dashboard-motion-ready");
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("mk-dashboard-visible");
+            activeObserver.unobserve(entry.target);
+        });
+    }, {threshold:0.04, rootMargin:"0px 0px -4% 0px"});
+    targets.forEach(element => observer.observe(element));
+}
