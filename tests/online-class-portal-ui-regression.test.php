@@ -166,20 +166,19 @@ onlinePortalUiAssert(
     'Attendance status controls must use clear, accessible status-specific colours'
 );
 onlinePortalUiAssert(
-    preg_match('/@page\\s*\\{[^}]*size:\\s*A4\\s+landscape/s', $onlineCss) === 1 &&
+    preg_match('/@page\\s*\\{[^}]*size:\\s*297mm\\s+210mm/s', $onlineCss) === 1 &&
     str_contains($onlineCss, '#onlineReport') &&
     str_contains($workspaceJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
     'Staff Online Class reports must print as A4 landscape with Attendance, Test and Final Examination columns'
 );
 
 onlinePortalUiAssert(
-    preg_match('/body\\.online-workspace-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/body\\.online-workspace-page\\s+#onlineReport,\\s*body\\.online-workspace-page\\s+#onlineReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/body\\.online-results-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/body\\.online-results-page\\s+#portalReport,\\s*body\\.online-results-page\\s+#portalReport\\s+\\*\\s*\\{\\s*visibility:\\s*visible\\s*!important/', $onlineCss) === 1 &&
-    preg_match('/height:\\s*200mm/', $onlineCss) === 1 &&
-    preg_match('/overflow:\\s*hidden\\s*!important/', $onlineCss) === 1,
-    'Staff and student reports must each print alone on one constrained A4 landscape page'
+    str_contains($onlineCss, 'body.online-workspace-page > .app') &&
+    str_contains($onlineCss, '.online-results-support') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport') &&
+    str_contains($onlineCss, 'overflow: hidden !important'),
+    'Staff and student reports must print alone without hiding the student report parent'
 );
 onlinePortalUiAssert(
     str_contains($workspace, 'Enabling student login does not release results') &&
@@ -188,5 +187,21 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'Results are RELEASED to students.') &&
     str_contains($portalJs ?? '', 'function formatOnlineReportDate(value)'),
     'Online Class release controls and resumption dates must be explicit and consistently formatted'
+);
+onlinePortalUiAssert(
+    preg_match('/@page\\s*\\{[^}]*size:\\s*297mm\\s+210mm/s', $onlineCss) === 1 &&
+    preg_match('/body\\.online-workspace-page #onlineReport,\\s*body\\.online-results-page #portalReport\\s*\\{[^}]*width:\\s*281mm/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, 'min-height: 194mm') &&
+    !str_contains($workspaceJs, 'fitOnlineReportForPrint') &&
+    !str_contains($portalJs, 'fitOnlineReportForPrint'),
+    'Online Class reports must use true landscape page geometry without shrinking the report to fit a portrait sheet'
+);
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'display: flex !important') &&
+    str_contains($onlineCss, 'flex-direction: column !important') &&
+    str_contains($onlineCss, 'margin: auto 0 0 !important') &&
+    str_contains($onlineCss, 'background-image:') &&
+    str_contains($onlineCss, 'markaz-logo.jpg'),
+    'Landscape reports must use the full page with a balanced report layout and school watermark'
 );
 echo "Online Class student portal and responsive shell regression checks passed.\n";
