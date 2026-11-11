@@ -40,7 +40,7 @@ studentCropAssert(str_contains($js, 'studentPhotoCropZoom'), 'cropper exposes zo
 studentCropAssert(str_contains($js, 'setPointerCapture'), 'crop viewport supports mouse and touch dragging');
 studentCropAssert(str_contains($js, 'studentPhotoCamera'), 'camera capture continues to use the same crop flow');
 studentCropAssert(str_contains($js, 'editStudentPhotoCamera'), 'edit camera capture continues to use the same crop flow');
-studentCropAssert(str_contains($css, '.student-photo-crop-viewport'), 'crop interface has responsive viewport styling');
+studentCropAssert(str_contains($css, '.student-photo-crop-stage'), 'crop interface has responsive viewport styling');
 studentCropAssert(str_contains($css, 'prefers-reduced-motion'), 'crop interface respects reduced-motion preferences');
 studentCropAssert(str_contains($reportCss, 'object-fit:cover'), 'result sheet keeps the cropped photo fitted without distortion');
 studentCropAssert(str_contains($reportCss, 'object-position:center center'), 'result sheet displays the centre of the confirmed square crop');
