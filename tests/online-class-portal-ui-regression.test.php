@@ -29,6 +29,7 @@ $footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-fo
 $studentResultsApi = (string) file_get_contents($root . '/api/online-class/student-results.php');
 $studentFooterApi = (string) file_get_contents($root . '/api/online-class/student-footer.php');
 $supportContactApi = (string) file_get_contents($root . '/public/api/settings/support-contact.php');
+$loginShared = (string) file_get_contents($root . '/public/js/login-shared.js');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
