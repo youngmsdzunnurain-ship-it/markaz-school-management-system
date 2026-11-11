@@ -52,10 +52,14 @@ document.addEventListener("click", event => {
   }
 });
 
-fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", headers: {Accept: "application/json"}})
-  .then(async response => {
-    const data = await response.json();
-    if (!response.ok || !data.success || !data.admin) {
+const shellAccountPromise = window.markazSettingsAccountPromise
+  ? window.markazSettingsAccountPromise
+  : fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", headers: {Accept: "application/json"}})
+      .then(async response => ({ok:response.ok, data:await response.json()}));
+
+shellAccountPromise
+  .then(({ok, data}) => {
+    if (!ok || !data?.success || !data.admin) {
       location.replace(loginPathForRole(currentRole));
       return;
     }
