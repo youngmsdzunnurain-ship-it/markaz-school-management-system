@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#123d2a">
     <title>Students | MARKAZ</title>
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="./css/students.css?v=20261112-photo-picker1">
+    <link rel="stylesheet" href="./css/students.css?v=20261112-photo-crop1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
@@ -606,11 +606,50 @@
 
 </div>
 
+<!-- STUDENT PHOTO CROP DIALOG -->
+<div
+    class="student-photo-crop-modal"
+    id="studentPhotoCropModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="studentPhotoCropTitle"
+    aria-describedby="studentPhotoCropHelp"
+    hidden
+>
+    <div class="student-photo-crop-dialog">
+        <div class="student-photo-crop-header">
+            <div>
+                <span class="eyebrow">STUDENT PROFILE PHOTO</span>
+                <h2 id="studentPhotoCropTitle">Adjust Photo</h2>
+                <p id="studentPhotoCropHelp">Move the photo and zoom until the face is centred inside the square.</p>
+            </div>
+            <button type="button" class="modal-close" id="cancelStudentPhotoCrop" aria-label="Cancel photo crop">&times;</button>
+        </div>
+
+        <div class="student-photo-crop-stage">
+            <canvas id="studentPhotoCropCanvas" width="320" height="320" aria-label="Photo crop area. Drag the image to reposition it."></canvas>
+        </div>
+
+        <label class="student-photo-crop-zoom" for="studentPhotoCropZoom">
+            <span>Zoom</span>
+            <input type="range" id="studentPhotoCropZoom" min="1" max="3" step="0.01" value="1">
+            <strong id="studentPhotoCropZoomValue">100%</strong>
+        </label>
+
+        <p class="student-photo-crop-error" id="studentPhotoCropError" role="alert" hidden></p>
+
+        <div class="student-photo-crop-actions">
+            <button type="button" class="secondary-button" id="cancelStudentPhotoCropBottom">Cancel</button>
+            <button type="button" class="primary-button" id="confirmStudentPhotoCrop">Use This Photo</button>
+        </div>
+    </div>
+</div>
+
 <script type="module" src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/vision_bundle.mjs"></script>
 
 
 
-<script src="./js/students.js?v=20261112-photo-picker1"></script>
+<script src="./js/students.js?v=20261112-photo-crop1"></script>
 <script src="/js/markaz-global.js"></script>
 
 <script src="js/website-image-overrides.js"></script>

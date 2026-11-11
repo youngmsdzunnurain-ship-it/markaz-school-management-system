@@ -690,37 +690,320 @@ if (addStudentModal) {
     });
 }
 
-if (studentPhoto) {
-    studentPhoto.addEventListener("change", () => {
-        const file = studentPhoto.files?.[0];
+/* Square student-photo cropper.
+   The crop is stored in the existing profile_image file input, so both
+   create/update endpoints and their current validation remain unchanged. */
+(() => {
+    const modal = document.getElementById("studentPhotoCropModal");
+    const canvas = document.getElementById("studentPhotoCropCanvas");
+    const zoomInput = document.getElementById("studentPhotoCropZoom");
+    const zoomValue = document.getElementById("studentPhotoCropZoomValue");
+    const confirmButton = document.getElementById("confirmStudentPhotoCrop");
+    const cancelButton = document.getElementById("cancelStudentPhotoCrop");
+    const cancelBottomButton = document.getElementById("cancelStudentPhotoCropBottom");
+    const errorMessage = document.getElementById("studentPhotoCropError");
+    const context = canvas?.getContext("2d");
 
-        if (!file) {
-            studentPhotoPreview.style.backgroundImage = "";
-            studentPhotoPreview.innerHTML =
-                "<span>ST</span>";
+    if (!modal || !canvas || !context || !zoomInput || !confirmButton) return;
+
+    const cropSize = canvas.width;
+    let imageBitmap = null;
+    let imageObjectUrl = null;
+    let activeInput = null;
+    let activePreview = null;
+    let activePointerId = null;
+    let dragStart = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let baseScale = 1;
+    let zoom = 1;
+    let isPreparing = false;
+    const confirmedFiles = new WeakMap();
+
+    function showCropError(message) {
+        if (!errorMessage) return;
+        errorMessage.textContent = message;
+        errorMessage.hidden = !message;
+    }
+
+    function releaseImage() {
+        if (imageBitmap && typeof imageBitmap.close === "function") {
+            imageBitmap.close();
+        }
+        imageBitmap = null;
+        if (imageObjectUrl) URL.revokeObjectURL(imageObjectUrl);
+        imageObjectUrl = null;
+    }
+
+    function clampOffsets() {
+        if (!imageBitmap) return;
+        const scale = baseScale * zoom;
+        const maxX = Math.max(0, (imageBitmap.width * scale - cropSize) / 2);
+        const maxY = Math.max(0, (imageBitmap.height * scale - cropSize) / 2);
+        offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+        offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
+    }
+
+    function drawCrop() {
+        if (!imageBitmap) return;
+        clampOffsets();
+        const scale = baseScale * zoom;
+        const width = imageBitmap.width * scale;
+        const height = imageBitmap.height * scale;
+        const x = (cropSize - width) / 2 + offsetX;
+        const y = (cropSize - height) / 2 + offsetY;
+
+        context.clearRect(0, 0, cropSize, cropSize);
+        context.fillStyle = "#e9eee8";
+        context.fillRect(0, 0, cropSize, cropSize);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+        context.drawImage(imageBitmap, x, y, width, height);
+    }
+
+    function updateZoomLabel() {
+        if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + "%";
+    }
+
+    function restoreConfirmedFile(input, preview) {
+        if (!input) return;
+        const previousFile = confirmedFiles.get(input);
+        if (!previousFile) {
+            input.value = "";
             return;
         }
-
-        if (file.size > 3 * 1024 * 1024) {
-            alert(
-                "Student photo must not exceed 3MB."
-            );
-            studentPhoto.value = "";
-            return;
+        try {
+            setSelectedFile(input, previousFile);
+            setPreview(preview, previousFile);
+        } catch (error) {
+            input.value = "";
         }
+    }
 
-        const reader = new FileReader();
+    function cancelCropper() {
+        restoreConfirmedFile(activeInput, activePreview);
+        closeCropper();
+    }
 
-        reader.onload = event => {
-            studentPhotoPreview.style.backgroundImage =
-                `url("${event.target.result}")`;
+    function closeCropper() {
+        modal.hidden = true;
+        activeInput = null;
+        activePreview = null;
+        activePointerId = null;
+        dragStart = null;
+        isPreparing = false;
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Use This Photo";
+        showCropError("");
+        releaseImage();
+        context.clearRect(0, 0, cropSize, cropSize);
+    }
 
-            studentPhotoPreview.innerHTML = "";
+    function setPreview(preview, file) {
+        if (!preview || !file) return;
+        const previewUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+            preview.style.backgroundImage = "";
+            preview.innerHTML = "";
+            image.alt = "Cropped student profile photo";
+            image.style.width = "100%";
+            image.style.height = "100%";
+            image.style.display = "block";
+            image.style.objectFit = "cover";
+            image.style.objectPosition = "center";
+            preview.appendChild(image);
+            URL.revokeObjectURL(previewUrl);
         };
+        image.onerror = () => URL.revokeObjectURL(previewUrl);
+        image.src = previewUrl;
+    }
 
-        reader.readAsDataURL(file);
+    async function openCropper(file, input, preview) {
+        if (!file || !input) return;
+        if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
+            alert("Please choose a JPG, PNG or WEBP image.");
+            restoreConfirmedFile(input, preview);
+            return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+            alert("Student photo must not exceed 3MB.");
+            input.value = "";
+            return;
+        }
+
+        isPreparing = true;
+        activeInput = input;
+        activePreview = preview;
+        confirmButton.disabled = true;
+        confirmButton.textContent = "Preparing...";
+        modal.hidden = false;
+        showCropError("");
+
+        try {
+            releaseImage();
+            if ("createImageBitmap" in window) {
+                try {
+                    imageBitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+                } catch (orientationError) {
+                    imageBitmap = await createImageBitmap(file);
+                }
+            } else {
+                imageObjectUrl = URL.createObjectURL(file);
+                imageBitmap = await new Promise((resolve, reject) => {
+                    const image = new Image();
+                    image.onload = () => resolve(image);
+                    image.onerror = () => reject(new Error("This image could not be opened."));
+                    image.src = imageObjectUrl;
+                });
+            }
+
+            baseScale = Math.max(cropSize / imageBitmap.width, cropSize / imageBitmap.height);
+            zoom = 1;
+            offsetX = 0;
+            offsetY = 0;
+            zoomInput.value = "1";
+            updateZoomLabel();
+            drawCrop();
+            isPreparing = false;
+            confirmButton.disabled = false;
+            confirmButton.textContent = "Use This Photo";
+            zoomInput.focus({ preventScroll: true });
+        } catch (error) {
+            console.error("Student photo crop preparation failed:", error);
+            showCropError("This image could not be opened. Please choose another JPG, PNG or WEBP photo.");
+            confirmButton.disabled = true;
+            confirmButton.textContent = "Photo unavailable";
+        }
+    }
+
+    function setSelectedFile(input, file) {
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        input.files = transfer.files;
+    }
+
+    async function confirmCrop() {
+        if (isPreparing || !imageBitmap || !activeInput) return;
+        confirmButton.disabled = true;
+        confirmButton.textContent = "Preparing photo...";
+
+        try {
+            const outputCanvas = document.createElement("canvas");
+            outputCanvas.width = 600;
+            outputCanvas.height = 600;
+            const outputContext = outputCanvas.getContext("2d");
+            if (!outputContext) throw new Error("Photo editor is unavailable.");
+
+            const scale = baseScale * zoom * (600 / cropSize);
+            const width = imageBitmap.width * scale;
+            const height = imageBitmap.height * scale;
+            const x = (600 - width) / 2 + offsetX * (600 / cropSize);
+            const y = (600 - height) / 2 + offsetY * (600 / cropSize);
+            outputContext.fillStyle = "#ffffff";
+            outputContext.fillRect(0, 0, 600, 600);
+            outputContext.imageSmoothingEnabled = true;
+            outputContext.imageSmoothingQuality = "high";
+            outputContext.drawImage(imageBitmap, x, y, width, height);
+
+            const blob = await new Promise((resolve, reject) => {
+                outputCanvas.toBlob(result => {
+                    if (result) resolve(result);
+                    else reject(new Error("The cropped image could not be created."));
+                }, "image/jpeg", 0.9);
+            });
+
+            const originalName = (activeInput.files?.[0]?.name || "student-photo")
+                .replace(/\.[^.]+$/, "")
+                .replace(/[^a-z0-9_-]/gi, "-")
+                .slice(0, 60) || "student-photo";
+            const croppedFile = new File([blob], originalName + "-cropped.jpg", {
+                type: "image/jpeg",
+                lastModified: Date.now()
+            });
+
+            if (croppedFile.size > 3 * 1024 * 1024) {
+                throw new Error("The cropped photo is still larger than 3MB. Please zoom in and try again.");
+            }
+
+            setSelectedFile(activeInput, croppedFile);
+            confirmedFiles.set(activeInput, croppedFile);
+            setPreview(activePreview, croppedFile);
+
+            if (activeInput === editStudentPhoto) {
+                removeStudentPhoto = false;
+                if (removeStudentPhotoButton) removeStudentPhotoButton.dataset.remove = "0";
+            }
+
+            closeCropper();
+        } catch (error) {
+            console.error("Student photo crop failed:", error);
+            showCropError(error.message || "Unable to crop this photo. Please try another image.");
+            confirmButton.disabled = false;
+            confirmButton.textContent = "Try Again";
+        }
+    }
+
+    [cancelButton, cancelBottomButton].forEach(button => {
+        button?.addEventListener("click", cancelCropper);
     });
-}
+
+    confirmButton.addEventListener("click", confirmCrop);
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) cancelCropper();
+    });
+
+    zoomInput.addEventListener("input", () => {
+        zoom = Number(zoomInput.value) || 1;
+        updateZoomLabel();
+        drawCrop();
+    });
+
+    canvas.addEventListener("pointerdown", event => {
+        if (!imageBitmap || isPreparing) return;
+        activePointerId = event.pointerId;
+        canvas.setPointerCapture(event.pointerId);
+        dragStart = { x: event.clientX, y: event.clientY, offsetX, offsetY };
+    });
+
+    canvas.addEventListener("pointermove", event => {
+        if (!dragStart || event.pointerId !== activePointerId) return;
+        const rect = canvas.getBoundingClientRect();
+        const factor = cropSize / rect.width;
+        offsetX = dragStart.offsetX + (event.clientX - dragStart.x) * factor;
+        offsetY = dragStart.offsetY + (event.clientY - dragStart.y) * factor;
+        drawCrop();
+    });
+
+    function endDrag(event) {
+        if (event.pointerId !== activePointerId) return;
+        dragStart = null;
+        activePointerId = null;
+    }
+    canvas.addEventListener("pointerup", endDrag);
+    canvas.addEventListener("pointercancel", endDrag);
+    canvas.addEventListener("lostpointercapture", () => {
+        dragStart = null;
+        activePointerId = null;
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !modal.hidden) cancelCropper();
+    });
+
+    function bindInput(input, preview) {
+        input?.addEventListener("change", () => {
+            const file = input.files?.[0];
+            if (file) openCropper(file, input, preview);
+        });
+    }
+
+    bindInput(studentPhoto, studentPhotoPreview);
+    bindInput(editStudentPhoto, editStudentPhotoPreview);
+})();
+
+/* Photo previews are updated only after the crop is confirmed. */
 
 if (addStudentForm) {
     addStudentForm.addEventListener(
@@ -1207,52 +1490,7 @@ if (removeStudentPhotoButton) {
     });
 }
 
-if (editStudentPhoto) {
-    editStudentPhoto.addEventListener(
-        "change",
-        () => {
-            const file =
-                editStudentPhoto.files?.[0];
-
-            if (!file) return;
-
-            removeStudentPhoto = false;
-
-            if (removeStudentPhotoButton) {
-                removeStudentPhotoButton.dataset.remove = "0";
-            }
-
-            if (
-                file.size >
-                3 * 1024 * 1024
-            ) {
-                alert(
-                    "Student photo must not exceed 3MB."
-                );
-
-                editStudentPhoto.value =
-                    "";
-
-                return;
-            }
-
-            const reader =
-                new FileReader();
-
-            reader.onload =
-                event => {
-                    editStudentPhotoPreview.style.backgroundImage = "";
-                    editStudentPhotoPreview.innerHTML =
-                        `<img
-                            src="${event.target.result}"
-                            alt="Selected student photo"
-                        >`;
-                };
-
-            reader.readAsDataURL(file);
-        }
-    );
-}
+/* Edit photo preview is likewise updated only after crop confirmation. */
 
 if (editStudentForm) {
     editStudentForm.addEventListener(
@@ -1442,6 +1680,11 @@ document.addEventListener(
     "keydown",
     event => {
         if (event.key !== "Escape") {
+            return;
+        }
+
+        // Let the topmost photo-crop dialog handle Escape before its parent modal.
+        if (document.getElementById("studentPhotoCropModal")?.hidden === false) {
             return;
         }
 
