@@ -47,7 +47,7 @@ foreach ([
     'IntersectionObserver',
     'prefers-reduced-motion',
     'requestAnimationFrame',
-    'main > section',
+    ':scope > section',
     'mk-is-scrolled',
     'mk-scroll-progress',
 ] as $required) {
