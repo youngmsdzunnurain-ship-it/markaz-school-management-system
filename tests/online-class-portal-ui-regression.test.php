@@ -283,16 +283,13 @@ onlinePortalUiAssert(
     'Student preview and print must render one shared report with the same 205mm watermark and staff landscape geometry'
 );
 
-echo "Online Class student portal and responsive shell regression checks passed.\n";
-
-
 onlinePortalUiAssert(
  str_contains($workspaceJs, 'function waitForReportImages(root)') &&
  str_contains($workspaceJs, 'await waitForReportImages($("onlineReport"))') &&
  str_contains($portalJs, 'function waitForReportImages(root)') &&
  str_contains($portalJs, "await waitForReportImages($('portalReport'))") &&
  str_contains($reportJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
- str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
+ str_contains($reportJs, 'الفصل الدراسي عبر الإنترنت') &&
  str_contains($reportJs, 'Academic Report • Official School Record') &&
   str_contains($reportJs, 'غواغوالادا، أبوجا') &&
   !str_contains($reportJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
@@ -408,3 +405,5 @@ onlinePortalUiAssert(
     str_contains($onlineCss, 'table-layout: fixed !important;'),
     'Student landscape print must fit the full sheet within a defined internal margin and prevent table overflow at the right edge'
 );
+
+echo "Online Class student portal and responsive shell regression checks passed.\n";
