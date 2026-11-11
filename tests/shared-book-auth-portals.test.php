@@ -48,7 +48,7 @@ foreach ($rolePages as $file => $role) {
 }
 
 $student = file_get_contents($root . '/public/student-login.html');
-foreach (['data-role="student-lookup"', 'id="admissionNumber"', 'id="studentClass"', 'id="academicTerm"', 'id="academicSession"', 'id="studentPortalExperience"'] as $required) {
+foreach (['id="resultForm"', 'data-role="student-lookup"', 'id="studentId" name="student_id"', 'id="studentClass"', 'id="academicTerm"', 'id="academicSession"', 'id="resultBtn"', 'id="studentPortalExperience"'] as $required) {
     bookAuthAssert(str_contains($student, $required), "Student Results preserves {$required}");
 }
 $studentScript = file_get_contents($root . '/public/js/student-results-portal.js');
