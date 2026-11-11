@@ -99,6 +99,23 @@
     });
 
     activate("profile");
+
+    if (role === "admin") {
+      const adminModules = [
+        "/js/result-print-threshold-settings.js?v=20261104-threshold",
+        "/js/account-management.js",
+        "/js/website-image-overrides.js",
+        "/js/website-image-manager.js",
+        "/js/social-settings.js"
+      ];
+      adminModules.forEach(src => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = false;
+        document.body.appendChild(script);
+      });
+    }
+
     document.documentElement.classList.remove("settings-page-pending");
   } catch (_) {
     window.location.replace("login.html");
