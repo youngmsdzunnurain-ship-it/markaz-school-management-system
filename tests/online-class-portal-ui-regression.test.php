@@ -363,3 +363,22 @@ onlinePortalUiAssert(
     str_contains($portal, 'Back to MARKAZ Home'),
     'Student portal JavaScript must remain syntactically valid; login support must use the Islamic greeting and database-configured number; logged-in portal must provide a route back to the MARKAZ homepage'
 );
+
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'data.extraDetails') &&
+    str_contains($portalJs, "extraDetails: [") &&
+    str_contains($portalJs, "label: 'Section'") &&
+    str_contains($portalJs, "label: 'Task 1'") &&
+    str_contains($portalJs, "label: 'Task 2'"),
+    'Student landscape print must include the same student-specific details shown in the portal preview: section and both task labels'
+);
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'class="official-results-label"') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-signature-date') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-comments section') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-footer') &&
+    str_contains($onlineCss, 'rgba(83,102,90,.72)'),
+    'Student landscape print must retain the dashboard signature/date/footer layout and use a subdued official footer'
+);
