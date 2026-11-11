@@ -156,7 +156,7 @@
     aspect-ratio: 1 / 1 !important;
     transform: translate(-50%, -50%) !important;
     background: url("../assets/images/markaz-logo.jpg") center / contain no-repeat !important;
-    opacity: .045 !important;
+    opacity: .075 !important;
     mix-blend-mode: multiply !important;
     pointer-events: none !important;
     z-index: 3 !important;
