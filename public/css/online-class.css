@@ -889,3 +889,31 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
     opacity: .105 !important;
   }
 }
+
+
+/* Staff memorization report: match the green-and-gold Arabic school-name divider. */
+@media print {
+  body.online-workspace-page #onlineReport .school-name-ar::after {
+    content: "" !important;
+    display: block !important;
+    width: 75px !important;
+    height: 2px !important;
+    margin: 5px auto 0 !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #166534, #c99a2e, #166534) !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: .5mm !important;
+    width: 100% !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer p,
+  body.online-workspace-page #onlineReport .online-report-footer .official-results-label {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
