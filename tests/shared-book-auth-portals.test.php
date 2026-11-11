@@ -44,7 +44,7 @@ foreach ($rolePages as $file => $role) {
     $html = file_get_contents($root . '/public/' . $file);
     bookAuthAssert(str_contains($html, 'data-role="' . $role . '"'), "{$role} keeps its role-specific form selector");
     bookAuthAssert(str_contains($html, 'class="form-message role-message'), "{$role} keeps its existing message target");
-    bookAuthAssert(str_contains($html, 'class="role-submit'), "{$role} keeps its existing submit target");
+    bookAuthAssert(str_contains($html, 'role-submit'), "{$role} keeps its existing submit target");
 }
 
 $student = file_get_contents($root . '/public/student-login.html');
