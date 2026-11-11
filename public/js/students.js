@@ -990,37 +990,7 @@ if (addStudentModal) {
     bindInput(editStudentPhoto, editStudentPhotoPreview);
 })();
 
-if (studentPhoto) {
-    studentPhoto.addEventListener("change", () => {
-        const file = studentPhoto.files?.[0];
-
-        if (!file) {
-            studentPhotoPreview.style.backgroundImage = "";
-            studentPhotoPreview.innerHTML =
-                "<span>ST</span>";
-            return;
-        }
-
-        if (file.size > 3 * 1024 * 1024) {
-            alert(
-                "Student photo must not exceed 3MB."
-            );
-            studentPhoto.value = "";
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = event => {
-            studentPhotoPreview.style.backgroundImage =
-                `url("${event.target.result}")`;
-
-            studentPhotoPreview.innerHTML = "";
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
+/* Photo previews are updated only after the crop is confirmed. */
 
 if (addStudentForm) {
     addStudentForm.addEventListener(
@@ -1507,52 +1477,7 @@ if (removeStudentPhotoButton) {
     });
 }
 
-if (editStudentPhoto) {
-    editStudentPhoto.addEventListener(
-        "change",
-        () => {
-            const file =
-                editStudentPhoto.files?.[0];
-
-            if (!file) return;
-
-            removeStudentPhoto = false;
-
-            if (removeStudentPhotoButton) {
-                removeStudentPhotoButton.dataset.remove = "0";
-            }
-
-            if (
-                file.size >
-                3 * 1024 * 1024
-            ) {
-                alert(
-                    "Student photo must not exceed 3MB."
-                );
-
-                editStudentPhoto.value =
-                    "";
-
-                return;
-            }
-
-            const reader =
-                new FileReader();
-
-            reader.onload =
-                event => {
-                    editStudentPhotoPreview.style.backgroundImage = "";
-                    editStudentPhotoPreview.innerHTML =
-                        `<img
-                            src="${event.target.result}"
-                            alt="Selected student photo"
-                        >`;
-                };
-
-            reader.readAsDataURL(file);
-        }
-    );
-}
+/* Edit photo preview is likewise updated only after crop confirmation. */
 
 if (editStudentForm) {
     editStudentForm.addEventListener(
