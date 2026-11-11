@@ -49,7 +49,7 @@ onlinePortalUiAssert(
     str_contains($login, 'js/login-shared.js') && str_contains($portal, 'markaz-shared-login-footer') &&
     str_contains($portal, 'id="onlineSupportLink"') && !str_contains($login, 'online-support-footer') &&
     !str_contains($portal, 'online-support-footer') && !str_contains($login, '+234 807') &&
-    substr_count($portal, '+234 807') === 2 && !str_contains($studentLogin, 'online-portal-switch') &&
+    !str_contains($portal, '+234 807') && !str_contains($studentLogin, 'online-portal-switch') &&
     !str_contains($login, 'onlineSection'),
     'Student login must contain the four requested fields, remove cross-portal links and provide support footers'
 );
