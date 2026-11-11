@@ -520,7 +520,7 @@ form.addEventListener("submit", async event => {
             shellAvatar.replaceChildren();
             if (data.admin.profile_image) {
                 const shellImage = document.createElement("img");
-                shellImage.src = "/" + data.admin.profile_image.replace(/^\\/+/, "");
+                shellImage.src = "/" + data.admin.profile_image.replace(/^\/+/, "");
                 shellImage.alt = data.admin.name || "Staff profile";
                 shellAvatar.appendChild(shellImage);
             } else {
