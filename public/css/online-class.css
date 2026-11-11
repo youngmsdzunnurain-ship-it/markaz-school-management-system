@@ -303,3 +303,15 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
   body.online-results-page #portalReport .online-report-footer { margin-top: auto !important; }
   body.online-results-page #portalReport .online-portal-actions { display: none !important; }
 }
+
+
+/* Online Class certificate refinement: ornate frame, larger centered watermark and matching result footer. */
+@media print {
+ body.online-workspace-page #onlineReport,body.online-results-page #portalReport{border:1.5mm double #b99a48!important;outline:.45mm solid #28603a!important;outline-offset:-2.2mm!important;border-radius:1.5mm!important;background-image:radial-gradient(circle at 4mm 4mm,#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at calc(100% - 4mm) 4mm,#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at 4mm calc(100% - 4mm),#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at calc(100% - 4mm) calc(100% - 4mm),#c4a34e 0 1.15mm,transparent 1.3mm),linear-gradient(#fff,#fff)!important}
+ body.online-workspace-page #onlineReport::before,body.online-results-page #portalReport::before{width:172mm!important;height:172mm!important;opacity:.085!important}
+ body.online-workspace-page #onlineReport::after,body.online-results-page #portalReport::after{content:""!important;position:absolute!important;inset:2.6mm!important;z-index:2!important;pointer-events:none!important;border:.45mm double rgba(185,154,72,.82)!important}
+ .online-report-head .school-name-ar,.online-report-head .school-address-ar,.online-report-head .school-name-en,.online-report-head .school-address-en{display:block!important}
+ .online-report-head .school-name-ar{margin-bottom:.6mm!important}.online-report-head .school-address-ar{margin-bottom:1.2mm!important}.online-report-head .school-name-en{font-size:11pt!important;font-weight:700!important;letter-spacing:.2px!important}.online-report-head .school-address-en{font-size:9.5pt!important}.online-report-head .school-contact-line{font-size:9pt!important}
+ .online-report-programme{display:flex!important;justify-content:center!important;align-items:center!important;gap:5mm!important;margin:1mm 0 1.5mm!important;padding:1.2mm 3mm!important;border-top:.35mm solid #b99a48!important;border-bottom:.35mm solid #b99a48!important;color:#205c3b!important;font-size:10pt!important;font-weight:700!important;letter-spacing:.35px!important}.online-report-programme [lang="ar"]{font-size:12pt!important}.online-report-title{margin:1.5mm 0 2mm!important}
+ .online-report-footer{border-top:.65mm solid #28603a!important;box-shadow:0 -.35mm 0 #b99a48!important;color:#53665a!important;font-weight:600!important}.online-report-footer .official-results-label{color:#205c3b!important;font-weight:800!important;letter-spacing:.35px!important}.online-report-signature{display:inline-block!important;max-width:36mm!important;max-height:14mm!important;object-fit:contain!important;vertical-align:middle!important}
+}
