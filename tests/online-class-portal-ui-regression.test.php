@@ -262,21 +262,16 @@ onlinePortalUiAssert(
     !str_contains($portal, 'id="portalPrintReport"'),
     'Online Class student portal must use the established main student-result print structure and signature slots'
 );
-$portalPrintCss = (string) file_get_contents($root . '/public/css/student-result-portal-print.css');
 onlinePortalUiAssert(
-    str_contains($portalJs, "image.className='result-signature-image'") &&
-    str_contains($portalJs, 'function renderSavedSignature') &&
-    str_contains($onlineCss, 'width:145%') &&
-    str_contains($portalPrintCss, 'width: 145% !important;') &&
-    str_contains($portalPrintCss, 'top: 50% !important;') &&
-    str_contains($portalPrintCss, 'left: 50% !important;') &&
-    str_contains($portalPrintCss, 'transform: translate(-50%, -50%) !important;'),
-    'Student portal must render saved signature images and center the enlarged print watermark'
+    str_contains($portalJs, 'function waitForReportImages(root)') &&
+    str_contains($portalJs, 'window.MarkazOnlineClassReport.render') &&
+    !str_contains($portal, 'css/student-result-portal-print.css'),
+    'Student portal must use the shared renderer without loading the conflicting conventional-result print stylesheet'
 );
 
 
 onlinePortalUiAssert(
-    !!str_contains($portal, 'id="portalPrintReport"') &&
+    !!!str_contains($portal, 'id="portalPrintReport"') &&
     !str_contains($portal, 'css/student-result-portal-print.css') &&
     substr_count($portal, 'id="portalReport"') === 1 &&
     str_contains($portalJs, "window.MarkazOnlineClassReport.render") &&
