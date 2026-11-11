@@ -2,7 +2,7 @@ const loginForm = document.getElementById('loginForm');
 const passwordInput = document.getElementById('password');
 const togglePassword = document.getElementById('togglePassword');
 const loginMessage = document.getElementById('loginMessage');
-const loginButton = document.getElementById('loginButton');
+const loginButton = document.getElementById('loginBtn') || document.getElementById('loginButton');
 
 togglePassword.addEventListener('click', () => {
     const isPassword = passwordInput.type === 'password';
