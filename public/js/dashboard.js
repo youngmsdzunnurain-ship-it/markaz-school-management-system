@@ -446,6 +446,9 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         <div class="profile-dropdown-divider"></div>
 
+        <a href="./settings.html#profile" class="profile-dropdown-item" data-role-access="staff_profile">
+            Profile
+        </a>
         <a href="./settings.html" class="profile-dropdown-item" data-role-access="staff_profile">
             Settings
         </a>
