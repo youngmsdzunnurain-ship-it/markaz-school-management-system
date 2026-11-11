@@ -291,3 +291,12 @@ onlinePortalUiAssert(
  str_contains($onlineCss, 'official-results-label'),
  'Online Class certificates must use the corrected bilingual heading, loaded saved signatures, larger centered watermark, refined frame and official-results footer'
 );
+
+
+onlinePortalUiAssert(
+    preg_match('/html, body \\{ width: 273\\.4mm !important; height: 209\\.9mm !important;/', $onlineCss) === 1 &&
+    preg_match('/body\\.online-workspace-page #onlineReport \\{[^}]*position: absolute !important;[^}]*width: 273\\.4mm !important; height: 209\\.9mm !important;/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, 'padding: 2.5mm 7mm 4mm !important;') &&
+    !preg_match('/body\\.online-workspace-page #onlineReport \\{[^}]*position: fixed !important;/s', $onlineCss),
+    'Staff Online Class print report must occupy exactly one landscape page, avoid repeating fixed-position pages and sit slightly higher'
+);
