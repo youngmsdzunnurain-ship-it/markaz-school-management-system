@@ -98,7 +98,7 @@ managementPermissionsCheck(
     str_contains($profileApi, '$currentPassword === \'\'')
         && str_contains($profileApi, 'password_verify($currentPassword, $admin[\'password_hash\'])')
         && str_contains($profileApi, "['admin', 'exam_officer', 'management', 'teacher']"),
-    'Profile-photo-only updates do not require password re-entry, while name/email edits remain verified'
+    'Every staff profile update, including photo-only changes, requires the signed-in account password'
 );
 managementPermissionsCheck(
     str_contains($settingsProfileJs, 'maxBytes = 1.5 * 1024 * 1024')
