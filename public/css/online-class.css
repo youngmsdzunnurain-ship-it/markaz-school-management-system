@@ -174,8 +174,8 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 
 /* Online Class: Letter landscape result printing, matching the Android print paper */
 @media print {
-  @page { size: letter landscape; margin: 5mm; }
-  html, body { width: 269.4mm !important; height: 205.9mm !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important; }
+  @page { size: letter landscape; margin: 3mm; }
+  html, body { width: 273.4mm !important; height: 209.9mm !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important; }
   body.online-workspace-page * { visibility: hidden !important; }
   body.online-workspace-page #onlineReport,
   body.online-workspace-page #onlineReport * { visibility: visible !important; }
@@ -235,7 +235,7 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
     max-height: 209.9mm !important;
     min-height: 209.9mm !important;
     box-sizing: border-box !important;
-    padding: 5mm 7mm 4mm !important;
+    padding: 2.5mm 7mm 4mm !important;
     margin: 0 !important;
     overflow: hidden !important;
     border: 1.1mm double #b99a48 !important;
