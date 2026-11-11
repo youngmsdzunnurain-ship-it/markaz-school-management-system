@@ -10,7 +10,7 @@
 .page-results{--book-height:clamp(680px,92vh,760px)}
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body.mk-auth{margin:0;font-family:var(--mk-sans);font-size:16px;line-height:1.5;color:var(--mk-ink);background:radial-gradient(1200px 640px at 50% -10%,#fff 0%,#efebdd 100%);-webkit-font-smoothing:antialiased}
+body.mk-auth{margin:0;font-family:var(--mk-sans);font-size:16px;line-height:1.5;color:var(--mk-ink);background-color:#efebdd;background-image:radial-gradient(circle at center,transparent 0 48px,rgba(184,146,58,.055) 49px 50px,transparent 51px),linear-gradient(rgba(251,247,238,.945),rgba(251,247,238,.945)),url("../assets/images/markaz-logo.jpg"),radial-gradient(1200px 640px at 50% -10%,#fff 0%,#efebdd 100%);background-repeat:repeat,repeat,repeat,no-repeat;background-size:140px 140px,140px 140px,140px 140px,cover;background-position:center,center,center,center;background-attachment:fixed,fixed,fixed,scroll;-webkit-font-smoothing:antialiased}
 .mk-auth [hidden]{display:none!important}
 .mk-auth button,.mk-auth input,.mk-auth select{font-family:inherit}
 .mk-auth a:focus-visible,.mk-auth button:focus-visible,.mk-auth input:focus-visible,.mk-auth select:focus-visible{outline:2px solid var(--mk-green-700);outline-offset:2px}
@@ -114,7 +114,7 @@ body.mk-auth{margin:0;font-family:var(--mk-sans);font-size:16px;line-height:1.5;
 .mk-auth .student-portal-experience{width:100%;margin-top:20px}
 .mk-auth .page-foot .support-whatsapp{white-space:nowrap}
 @media(max-width:759px){
-body.mk-auth{background:var(--mk-paper)}
+body.mk-auth{background-color:var(--mk-paper);background-image:radial-gradient(circle at center,transparent 0 48px,rgba(184,146,58,.055) 49px 50px,transparent 51px),linear-gradient(rgba(251,247,238,.945),rgba(251,247,238,.945)),url("../assets/images/markaz-logo.jpg");background-repeat:repeat;background-size:140px 140px;background-position:center;background-attachment:fixed}
 .only-mobile{display:inline}
 .only-desktop{display:none}
 .stage{display:block;min-height:100dvh;padding:0}
