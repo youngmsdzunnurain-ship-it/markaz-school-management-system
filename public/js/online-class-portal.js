@@ -14,7 +14,7 @@ async function waitForReportImages(root){const images=Array.from(root.querySelec
 async function loadResults(){
  $('portalSelectedPeriod').textContent='Checking your selected academic session and term…';
  showMessage('Loading your released results…');
- $('portalReport').hidden=true;
+ $('portalReport').classList.add('online-hidden');
  try{
   const d=await api('./api/online-class/student-results.php');
   if(!d.student||!d.academic_session||!d.term||!Array.isArray(d.results))throw new Error('The results service returned an incomplete response. Please refresh or contact MARKAZ Support.');
@@ -22,14 +22,13 @@ async function loadResults(){
   const session=d.academic_session,term=d.term;
   $('portalSelectedPeriod').textContent='Selected: '+term+' · '+session;
   if(!d.released){$('portalReport').hidden=true;showMessage('Results have not been released for '+d.student.level_name+' · '+term+' · '+session+'. Student login is enabled, but the administrator must separately release results for this exact level, session and term.');return;}
-  const rows=d.results||[],complete=rows.filter(r=>r.total!==null),average=complete.length?complete.reduce((sum,r)=>sum+Number(r.total),0)/complete.length:0,g=grade(average);
   $('portalStudentName').textContent='Welcome, '+[d.student.first_name,d.student.middle_name,d.student.last_name].filter(Boolean).join(' ');
   $('portalStudentDetails').textContent='Admission No: '+d.student.admission_number+' · '+d.student.level_name+' · Section '+d.student.section;
   $('portalReport').innerHTML=window.MarkazOnlineClassReport.render({student:d.student,level:{name:d.student.level_name,tutor_name:d.student.tutor_name,memorization_portion:d.student.memorization_portion,first_term_resumption:d.student.first_term_resumption,second_term_resumption:d.student.second_term_resumption,third_term_resumption:d.student.third_term_resumption},rows:d.results||[],term:d.term,session:d.academic_session,signatures:{class_teacher_signature_image:d.signatures?.teacher_image||'',class_teacher_signature:d.signatures?.teacher_text||'',director_signature_image:d.signatures?.director_image||'',director_signature:d.signatures?.director_text||'',result_signature_date:d.signatures?.date||''}});
-  $('portalReport').hidden=false;
+  $('portalReport').classList.remove('online-hidden');
   await waitForReportImages($('portalReport'));
   showMessage('Your released results are ready. You can print or save the report as PDF.');
- }catch(e){$('portalSelectedPeriod').textContent='Unable to load your selected academic session and term.';showMessage(e.message||'Unable to load your results. Please try again.',true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}
+ }catch(e){$('portalReport').classList.add('online-hidden');$('portalReport').innerHTML='';$('portalSelectedPeriod').textContent='Unable to load your selected academic session and term.';showMessage(e.message||'Unable to load your results. Please try again.',true);if(e.message.toLowerCase().includes('sign in'))location.replace('online-class-login.html');}
 }
 
 configureSupportLink();
