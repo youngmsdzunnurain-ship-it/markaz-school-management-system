@@ -435,6 +435,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
     const dropdown = document.createElement("div");
     dropdown.className = "profile-dropdown";
+    dropdown.hidden = true;
 
     dropdown.innerHTML = `
         <div class="profile-dropdown-header">
@@ -444,7 +445,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         <div class="profile-dropdown-divider"></div>
 
-        <a href="./settings.html" class="profile-dropdown-item" data-role-access="admin_or_exam_officer">
+        <a href="./settings.html" class="profile-dropdown-item" data-role-access="staff_profile">
             Settings
         </a>
         <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
@@ -502,28 +503,27 @@ if (topbar && !document.querySelector(".topbar-actions")) {
         }
     }
 
+    function closeTopProfileDropdown() {
+        dropdown.classList.remove("open");
+        dropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
     profileButton.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopImmediatePropagation();
-        const isOpen = dropdown.classList.toggle("open");
-
-        profileButton.setAttribute(
-            "aria-expanded",
-            isOpen ? "true" : "false"
-        );
+        event.stopPropagation();
+        const isOpen = dropdown.hidden;
+        dropdown.hidden = !isOpen;
+        dropdown.classList.toggle("open", isOpen);
+        profileButton.setAttribute("aria-expanded", String(isOpen));
     });
 
-    document.addEventListener("click", (event) => {
-
-        if (
-            !profileWrap.contains(event.target)
-        ) {
-            dropdown.classList.remove("open");
-            profileButton.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-        }
+    dropdown.addEventListener("click", event => event.stopPropagation());
+    document.addEventListener("click", event => {
+        if (!profileWrap.contains(event.target)) closeTopProfileDropdown();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeTopProfileDropdown();
     });
 
     dropdown.querySelector("#topProfileLogoutButton")?.addEventListener("click", logout);
@@ -545,6 +545,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer";
         } else if (requiredRole === "admin_or_exam_officer_or_management") {
             allowed = role === "admin" || role === "exam_officer" || role === "management";
+        } else if (requiredRole === "staff_profile") {
+            allowed = ["admin", "exam_officer", "management", "teacher"].includes(role);
         } else if (requiredRole === "students") {
             allowed = role === "admin" || role === "exam_officer"
                 || (role === "management" && permissions.management_permissions?.students === true);
