@@ -176,12 +176,13 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     preg_match('/body\\.online-workspace-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
     preg_match('/body\\.online-results-page\\s+\\*\\s*\\{\\s*visibility:\\s*hidden\\s*!important/', $onlineCss) === 1 &&
-    str_contains($onlineCss, 'width: 269.4mm !important') &&
-    str_contains($onlineCss, 'font-size: 8.5pt !important') &&
-    !str_contains($onlineCss, 'font-size: 7pt !important') &&
-    !str_contains($onlineCss, 'display: flex !important') &&
-    !str_contains($onlineCss, '#onlineReport::before'),
-    'Printing must retain the existing report structure and styles without introducing a redesigned flex layout or watermark treatment'
+    str_contains($onlineCss, 'width: 273.4mm !important') &&
+    str_contains($onlineCss, 'height: 209.9mm !important') &&
+    str_contains($onlineCss, 'flex-direction: column !important') &&
+    str_contains($onlineCss, 'background: url("../assets/images/markaz-logo.jpg") center/contain no-repeat !important') &&
+    str_contains($onlineCss, 'border-top: .7mm solid #b99a48 !important') &&
+    !str_contains($onlineCss, 'font-size: 7pt !important'),
+    'Printable reports must fill the landscape page, use one centered logo watermark and finish with a gold footer rule'
 );
 onlinePortalUiAssert(
     str_contains($workspace, 'Enabling student login does not release results') &&
@@ -202,4 +203,15 @@ onlinePortalUiAssert(
     !str_contains($onlineCss, 'width: 287mm !important'),
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
 );
+onlinePortalUiAssert(
+    str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة، جواغوالادا، أبوجا، نيجيريا') &&
+    str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة، جواغوالادا، أبوجا، نيجيريا') &&
+    str_contains($workspaceJs, '+234 807 319 1275') &&
+    str_contains($workspaceJs, '+234 807 095 5833') &&
+    str_contains($workspaceJs, '+234 704 865 7955') &&
+    str_contains($portal, 'markazilquran@gmail.com') &&
+    str_contains($portal, 'school-contact-line'),
+    'Both printable Online Class reports must include the Arabic school location and the published school phone numbers and email'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
