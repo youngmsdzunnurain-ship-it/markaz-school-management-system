@@ -73,6 +73,7 @@ async function loadProfile() {
 
         window.markazCurrentRole = data.admin.role;
         currentProfileRole = data.admin.role;
+        if (["admin", "exam_officer"].includes(currentProfileRole)) loadMemorizationSettings();
         originalProfileName = data.admin.name || "";
         originalProfileEmail = data.admin.email || "";
         const isExamOfficer = data.admin.role === "exam_officer";
