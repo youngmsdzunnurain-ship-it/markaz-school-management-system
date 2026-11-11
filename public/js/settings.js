@@ -511,6 +511,25 @@ form.addEventListener("submit", async event => {
             profilePhoto.appendChild(initialsSpan);
         }
 
+        const shellName = document.getElementById("markazShellName");
+        const shellMenuName = document.getElementById("markazShellMenuName");
+        const shellAvatar = document.querySelector(".markaz-shell-profile .admin-profile-avatar");
+        if (shellName) shellName.textContent = data.admin.name || "Administrator";
+        if (shellMenuName) shellMenuName.textContent = data.admin.name || "Administrator";
+        if (shellAvatar) {
+            shellAvatar.replaceChildren();
+            if (data.admin.profile_image) {
+                const shellImage = document.createElement("img");
+                shellImage.src = "/" + data.admin.profile_image.replace(/^\\/+/, "");
+                shellImage.alt = data.admin.name || "Staff profile";
+                shellAvatar.appendChild(shellImage);
+            } else {
+                const shellInitials = document.createElement("span");
+                shellInitials.textContent = initials(data.admin.name);
+                shellAvatar.appendChild(shellInitials);
+            }
+        }
+
         if (removeProfileButton) {
             removeProfileButton.dataset.remove = "0";
         }
