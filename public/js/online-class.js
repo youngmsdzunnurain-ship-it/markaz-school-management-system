@@ -88,6 +88,12 @@ function updateResultCalculations(){const values=['scoreAttendance','scoreTest',
 function editResult(studentId,subjectId){const r=state.results.find(x=>String(x.student_id)===String(studentId)&&String(x.subject_id)===String(subjectId));if(!r)return;$('resultStudentName').value=String(r.student_id);$('resultSubjectName').value=String(r.subject_id);$('resultStudentId').value=r.student_id;$('resultSubjectId').value=r.subject_id;$('scoreAttendance').value=r.attendance_score??'';$('scoreTest').value=r.test_score??'';$('scoreExam').value=r.exam_score??'';updateResultCalculations();$('onlineResultForm').scrollIntoView({behavior:'smooth'});}
 $('resultLevel').addEventListener('change',()=>{loadResults();});$('resultStudentName').addEventListener('change',()=>{$('resultStudentId').value=$('resultStudentName').value;});$('resultSubjectName').addEventListener('change',()=>{$('resultSubjectId').value=$('resultSubjectName').value;});['scoreAttendance','scoreTest','scoreExam'].forEach(id=>$(id).addEventListener('input',updateResultCalculations));
 $('onlineResultForm').addEventListener('submit',async e=>{e.preventDefault();try{const d=await request(API+'?action=save_result',{method:'POST',body:JSON.stringify({student_id:$('resultStudentId').value,subject_id:$('resultSubjectId').value,academic_session:$('resultSession').value.trim(),term:$('resultTerm').value,attendance_score:$('scoreAttendance').value,test_score:$('scoreTest').value,exam_score:$('scoreExam').value,teacher_remark:'',director_remark:'Mashallah, Barakallahu fi'})});message(d.message);await loadResults();}catch(err){message(err.message,true);}});
+const originalReportDocumentTitle=document.title;
+function onlineReportPdfTitle(student,session,term){
+    const fullName=[student?.first_name,student?.middle_name,student?.last_name].filter(Boolean).join(' ').trim()||'Student';
+    const clean=value=>String(value||'').replace(/[\\\\:*?"<>|]/g,' ').replace(/\\//g,'-').replace(/\\s+/g,' ').trim();
+    return 'MARKAZ - '+clean(fullName)+' - '+clean(session)+' - '+clean(term)+' Result';
+}
 async function printResult(studentId) {
     const rows = state.results.filter(item => String(item.student_id) === String(studentId));
     if (!rows.length) return;
@@ -117,7 +123,7 @@ async function printResult(studentId) {
 }
 function tutorComment(score){if(score>=80)return'Mashallah! Your dedication and excellent effort are truly commendable. May Allah increase you in beneficial knowledge.';if(score>=70)return'Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.';if(score>=50)return'You are making promising progress. Continue with regular revision and confidence; every step matters.';if(score>=40)return'You have made a beginning. With patient practice and consistent revision, you can make stronger progress.';return'Please do not be discouraged. Learning is a journey; take it one step at a time and keep trying.';}
 function directorComment(score){if(score>=80)return'Excellent achievement. May Allah preserve your knowledge and grant you continued success.';if(score>=70)return'A very good effort. We encourage you to maintain this consistency and continue striving.';if(score>=50)return'Your progress is encouraging. More regular revision will help you reach the next level.';if(score>=30)return'We appreciate your effort. With support, patience and consistency, further improvement is within reach.';return'Every learner deserves encouragement. Let us continue supporting your learning journey with patience and care.';}
-window.addEventListener('afterprint',()=>{$('onlineReport').classList.add('online-hidden');});
+window.addEventListener('afterprint',()=>{$('onlineReport').classList.add('online-hidden');document.title=originalReportDocumentTitle;});
 loadWorkspaceGreeting();
 bootstrap();
 })();
