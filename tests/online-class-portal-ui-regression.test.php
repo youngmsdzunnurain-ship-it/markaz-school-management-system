@@ -447,11 +447,16 @@ onlinePortalUiAssert(
     str_contains($reportJs, '<b>Assessments:</b>') &&
     str_contains($onlineCss, 'grid-template-columns: repeat(2, minmax(0, 1fr))') &&
     str_contains($onlineCss, 'body.online-workspace-page #onlineReport::before {') &&
-    str_contains($onlineCss, 'width: 190mm !important;') &&
+    str_contains($onlineCss, 'width: 218mm !important;') &&
     str_contains($onlineCss, 'font-size: 9pt !important;') &&
     str_contains($onlineCss, 'line-height: 1.3 !important;') &&
     str_contains($onlineCss, 'gap: 3mm !important;') &&
     str_contains($onlineCss, 'opacity: .105 !important;') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-comments section {') &&
+    str_contains($onlineCss, 'padding: 2mm 3mm 1.5mm !important;') &&
+    str_contains($onlineCss, 'font-size: 9pt !important;') &&
+    str_contains($onlineCss, 'color: rgba(18,18,18,.62) !important;') &&
+    str_contains($onlineCss, 'font-weight: 500 !important;') &&
     !str_contains($portalJs, 'online-report-details-staff-column'),
     'Admin memorization report must stack the four student details vertically in the left column and the four report details vertically in the right column, enlarge only the staff watermark, and leave the student portal layout unchanged'
 );
