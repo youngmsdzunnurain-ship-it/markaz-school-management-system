@@ -1057,7 +1057,7 @@ body.online-results-page #portalReport .online-report-details-student-column > s
   overflow-wrap: anywhere !important;
 }
 body.online-results-page #portalReport .online-report-comments section {
-  padding: 8px 9px !important;
+  padding: 5px 6px !important;
 }
 @media print {
   body.online-results-page #portalReport .online-report-details-student {
