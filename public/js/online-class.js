@@ -5,6 +5,7 @@ const $=id=>document.getElementById(id);
 const state={levels:[],subjects:[],students:[],attendance:[],results:[],release:false,footer:{},resultStudents:[],resultOptionsRequest:0,session:'2026/2027',term:'First Term',signatures:{teacher:'',director:'',date:''}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date().toLocaleDateString('en-CA');
+function formatOnlineReportDate(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return match?match[3]+'/'+match[2]+'/'+match[1]:(value||'To be announced');}
 function populateResultSessions(){const select=$('resultSession');if(!select)return;const current=new Date().getFullYear();const first=2026;const last=Math.max(current+10,2036);const sessions=[];for(let year=first;year<=last;year++)sessions.push(year+'/'+(year+1));select.innerHTML=sessions.map(value=>'<option value="'+value+'">'+value+'</option>').join('');const startYear=Math.max(2026,new Date().getMonth()>=8?current:current-1);const preferred=startYear+'/'+(startYear+1);select.value=sessions.includes(preferred)?preferred:sessions[0];state.session=select.value;}
 function signatureMarkup(imageKey,textKey,alt){const image=state.footer[imageKey],legacy=state.footer[textKey];return image?'<img src="'+esc(String(image))+'" alt="'+esc(alt)+'" style="max-width:150px;max-height:48px;object-fit:contain">':esc(legacy||'—');}
 function message(text,error=false){const el=$('onlineMessage');el.textContent=text;el.classList.toggle('error',error);el.classList.remove('online-hidden');}
@@ -100,7 +101,7 @@ async function printResult(studentId) {
         "Second Term": "second_term_resumption",
         "Third Term": "third_term_resumption"
     })[term];
-    const resumption = level?.[dateKey] || "To be announced";
+    const resumption = formatOnlineReportDate(level?.[dateKey]);
     const totals = rows.map(item => Number(item.attendance_score) + Number(item.test_score) + Number(item.exam_score));
     const average = totals.reduce((sum, value) => sum + value, 0) / totals.length;
     const overallGrade = gradeFor(average);
