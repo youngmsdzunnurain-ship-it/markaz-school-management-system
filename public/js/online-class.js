@@ -100,7 +100,7 @@ async function printResult(studentId) {
     const student = rows[0];
     const level = state.levels.find(item => String(item.id) === String($("resultLevel").value));
     try {
-        $("onlineReport").innerHTML = window.MarkazOnlineClassReport.render({
+        $("onlineReport").innerHTML = window.MarkazOnlineClassReport.renderStaff({
             student,
             level,
             rows,

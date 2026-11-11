@@ -346,7 +346,7 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-report-alignment1') &&
+    str_contains($portal, '20261111-staff-details-2row') &&
     str_contains($portal, 'document.querySelector') &&
     str_contains($portalJs, "replace(/\\D/g,'')") &&
     !str_contains($portalJs, "digits==='2347048657955'") &&
@@ -433,6 +433,18 @@ onlinePortalUiAssert(
     str_contains($portalJs, 'term') &&
     str_contains($portalJs, 'printableReportTitle'),
     'Staff and student reports must keep the school footer visible, compact signature/date blocks, centre the programme heading, use concise tutor remarks, and name PDFs with student, session and term'
+);
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'renderStaff: data => render(data, true)') &&
+    str_contains($workspaceJs, 'window.MarkazOnlineClassReport.renderStaff({') &&
+    str_contains($portalJs, 'window.MarkazOnlineClassReport.render({') &&
+    str_contains($reportJs, 'online-report-details-staff') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Next Term Begins:</b>') &&
+    str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
+    str_contains($reportJs, '<b>Assessments:</b>'),
+    'Admin memorization report must use a staff-only two-row details layout while the student result portal keeps the original shared report'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
