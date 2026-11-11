@@ -73,7 +73,7 @@ fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", header
     const settingsLink = header.querySelector("[data-shell-settings]");
     const settingsNav = sidebar.querySelector("[data-shell-settings-link]");
     const manager = currentRole === "management";
-    const settingsAllowed = ["admin", "exam_officer", "management"].includes(currentRole);
+    const settingsAllowed = ["admin", "exam_officer", "management", "teacher"].includes(currentRole);
     if (settingsLink) settingsLink.hidden = !settingsAllowed;
     if (settingsNav) settingsNav.hidden = !settingsAllowed;
 
@@ -97,8 +97,6 @@ fetch("/api/auth/me.php", {credentials: "same-origin", cache: "no-store", header
       sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = false);
       const attendanceLink = sidebar.querySelector('[href="/attendance.html"]');
       if (attendanceLink) attendanceLink.hidden = account.can_manage_attendance !== true;
-      if (settingsLink) settingsLink.hidden = true;
-      if (settingsNav) settingsNav.hidden = true;
     } else {
       sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = false);
     }
