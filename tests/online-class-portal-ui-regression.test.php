@@ -214,10 +214,10 @@ onlinePortalUiAssert(
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
 );
 onlinePortalUiAssert(
-    str_contains($workspaceJs, 'غوالادا، أبوجا') &&
+    str_contains($workspaceJs, 'غواغوالادا، أبوجا') &&
     !str_contains($workspaceJs, 'جواغوالادا') &&
     !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
-    str_contains($portal, 'غوالادا، أبوجا') &&
+    str_contains($portal, 'غواغوالادا، أبوجا') &&
     !str_contains($portal, 'جواغوالادا') &&
     !str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة') &&
     str_contains($workspaceJs, '+234 807 319 1275') &&
@@ -290,7 +290,7 @@ onlinePortalUiAssert(
  str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
  str_contains($workspaceJs, 'Academic Report • Official School Record') &&
-  str_contains($workspaceJs, 'جواغوالادا، أبوجا') &&
+  str_contains($workspaceJs, 'جواغواغوالادا، أبوجا') &&
   !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
  str_contains($workspaceJs, 'online-report-signature-date') &&
  str_contains($onlineCss, 'width:172mm!important') &&
