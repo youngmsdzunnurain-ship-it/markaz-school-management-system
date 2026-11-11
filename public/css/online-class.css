@@ -182,7 +182,6 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
   }
   body.online-workspace-page > .app,
   body.online-workspace-page > footer,
-  body.online-results-page > main,
   body.online-results-page > footer,
   body.online-results-page > .online-results-support { display: none !important; }
   body.online-workspace-page #onlineReport,
