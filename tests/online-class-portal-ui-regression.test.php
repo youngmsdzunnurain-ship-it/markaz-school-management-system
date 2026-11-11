@@ -346,7 +346,7 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-single-shared-report1') &&
+    str_contains($portal, '20261111-report-alignment1') &&
     str_contains($portal, 'document.querySelector') &&
     str_contains($portalJs, "replace(/\\D/g,'')") &&
     !str_contains($portalJs, "digits==='2347048657955'") &&
@@ -416,6 +416,23 @@ onlinePortalUiAssert(
     str_contains($portalJs, 'd.academic_session') &&
     str_contains($portalJs, 'window.print()'),
     'Student portal must show its shared report preview before printing and use the student name plus academic session as the PDF filename'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-footer {') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-signature-date') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-comments section') &&
+    str_contains($onlineCss, '.online-report-programme {') &&
+    str_contains($onlineCss, 'justify-content: center !important;') &&
+    str_contains($onlineCss, 'max-height: 6mm !important;') &&
+    str_contains($reportJs, 'May Allah increase you in beneficial knowledge.') &&
+    str_contains($reportJs, 'May Allah guide you and increase you in knowledge.') &&
+    str_contains($workspaceJs, 'document.title=') &&
+    str_contains($workspaceJs, 'window.addEventListener(\'afterprint\'') &&
+    str_contains($portalJs, 'term') &&
+    str_contains($portalJs, 'printableReportTitle'),
+    'Staff and student reports must keep the school footer visible, compact signature/date blocks, centre the programme heading, use concise tutor remarks, and name PDFs with student, session and term'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
