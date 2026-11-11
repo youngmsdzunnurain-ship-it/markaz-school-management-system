@@ -18,6 +18,7 @@ $studentLogin = (string) file_get_contents($root . '/public/student-login.html')
 $studentAuth = (string) file_get_contents($root . '/api/online-class/student-login.php');
 $portalOptions = (string) file_get_contents($root . '/api/online-class/portal-options.php');
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
+$portalJs = (string) file_get_contents($root . '/public/js/online-class-portal.js');
 $workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php');
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
@@ -145,7 +146,8 @@ foreach (['index.php','portal-options.php','student-login.php','student-results.
 onlinePortalUiAssert(
     str_contains($workspaceApi, "if(\$action==='set_student_status')") &&
     str_contains($workspaceApi, 'UPDATE online_class_students SET is_active=? WHERE id=?') &&
-    str_contains($workspaceApi, 'Online student status updated.'),
+    str_contains($workspaceApi, 'Online student account deactivated.') &&
+    str_contains($workspaceApi, 'Online student account reactivated.'),
     'Online Class students must have a dedicated, validated deactivate/reactivate endpoint'
 );
 onlinePortalUiAssert(
@@ -170,4 +172,21 @@ onlinePortalUiAssert(
     'Staff Online Class reports must print as A4 landscape with Attendance, Test and Final Examination columns'
 );
 
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'body.online-workspace-page *{visibility:hidden!important}') &&
+    str_contains($onlineCss, '#onlineReport,#onlineReport *{visibility:visible!important}') &&
+    str_contains($onlineCss, 'body.online-results-page *{visibility:hidden!important}') &&
+    str_contains($onlineCss, '#portalReport,#portalReport *{visibility:visible!important}') &&
+    str_contains($onlineCss, 'height:200mm') &&
+    str_contains($onlineCss, 'overflow:hidden!important'),
+    'Staff and student reports must each print alone on one constrained A4 landscape page'
+);
+onlinePortalUiAssert(
+    str_contains($workspace, 'Enabling student login does not release results') &&
+    str_contains($workspaceJs, 'function formatOnlineReportDate(value)') &&
+    str_contains($workspaceJs, 'formatOnlineReportDate(resumption)') &&
+    str_contains($workspaceJs, 'Results are RELEASED to students.') &&
+    str_contains($portalJs ?? '', 'function formatOnlineReportDate(value)'),
+    'Online Class release controls and resumption dates must be explicit and consistently formatted'
+);
 echo "Online Class student portal and responsive shell regression checks passed.\n";
