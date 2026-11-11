@@ -33,7 +33,10 @@ async function loadResults(){
 
 configureSupportLink();
 $('portalLoad').addEventListener('click',loadResults);
-$('portalPrint').addEventListener('click',async()=>{if(!report?.released||!$('portalReport').innerHTML.trim())return;try{await waitForReportImages($('portalReport'));window.print();}catch(error){showMessage(error.message||'Unable to prepare your report for printing.',true);}});
+const originalDocumentTitle=document.title;
+function printableReportTitle(){const studentName=[report?.student?.first_name,report?.student?.middle_name,report?.student?.last_name].filter(Boolean).join(' ').trim()||'Student';const session=String(report?.academic_session||'').trim();const safe=value=>String(value).replace(/[\\:*?"<>|]/g,' ').replace(/\//g,' ').replace(/\s+/g,' ').trim();return 'MARKAZ Online Class Result - '+safe(studentName)+(session?' - '+safe(session):'');}
+$('portalPrint').addEventListener('click',async()=>{if(!report?.released||!$('portalReport').innerHTML.trim())return;try{await waitForReportImages($('portalReport'));document.title=printableReportTitle();window.print();}catch(error){document.title=originalDocumentTitle;showMessage(error.message||'Unable to prepare your report for printing.',true);}});
+window.addEventListener('afterprint',()=>{document.title=originalDocumentTitle;});
 
 $('portalLogout').addEventListener('click',async()=>{try{await api('./api/online-class/logout.php',{method:'POST',body:'{}'});}catch(_){}location.replace('online-class-login.html');});
 loadResults();

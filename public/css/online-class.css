@@ -340,6 +340,9 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 @media(max-width:850px){.online-workspace-page .app{grid-template-columns:minmax(0,1fr)!important}.online-workspace-page .sidebar{width:min(84vw,260px)!important;padding:12px!important}.online-workspace-page .sidebar-nav .nav-link{height:40px!important;min-height:40px!important}}
 
 
+/* The released student report is a visible on-page preview; print uses this same element. */
+.online-results-page #portalReport.online-results-report:not(.online-hidden){display:block}
+
 /* Online student portal: keep the shared result sheet design and compact preview. */
 .online-results-page #portalReport.report-card{position:relative;max-width:1100px;margin:22px auto;padding:26px 28px 150px;background:#fff;border:1px solid #dfe8e3;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(20,70,45,.07)}
 .online-results-page #portalReport.report-card::before{content:"";position:absolute;z-index:0;pointer-events:none;top:50%;left:50%;width:145%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);background:url("../assets/images/markaz-logo.jpg") center/contain no-repeat;opacity:.055}
