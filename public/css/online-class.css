@@ -816,39 +816,46 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 }
 
 
-/* Admin memorization report: exactly two compact rows, four fields per row. */
+/* Admin memorization report: two vertical information columns. */
 body.online-workspace-page #onlineReport .online-report-details-staff {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5mm;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5mm;
+  align-items: start;
 }
-body.online-workspace-page #onlineReport .online-report-details-staff .online-report-details-row {
+body.online-workspace-page #onlineReport .online-report-details-staff-column {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 2mm;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.2mm;
+  align-content: start;
 }
-body.online-workspace-page #onlineReport .online-report-details-staff .online-report-details-row > span {
+body.online-workspace-page #onlineReport .online-report-details-staff-column > span {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 @media print {
   body.online-workspace-page #onlineReport .online-report-details-staff {
     display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 1.2mm !important;
-    padding: 2mm 3mm !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 5mm !important;
+    padding: 2.5mm 4mm !important;
     margin: 0 0 1.5mm !important;
     font-size: 8.5pt !important;
-    line-height: 1.15 !important;
+    line-height: 1.2 !important;
+    align-items: start !important;
   }
-  body.online-workspace-page #onlineReport .online-report-details-staff .online-report-details-row {
+  body.online-workspace-page #onlineReport .online-report-details-staff-column {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 2mm !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 2.2mm !important;
   }
-  body.online-workspace-page #onlineReport .online-report-details-staff .online-report-details-row > span {
+  body.online-workspace-page #onlineReport .online-report-details-staff-column > span {
     min-width: 0 !important;
     overflow-wrap: anywhere !important;
+  }
+  body.online-workspace-page #onlineReport::before {
+    width: 245mm !important;
+    height: 245mm !important;
+    opacity: .105 !important;
   }
 }
