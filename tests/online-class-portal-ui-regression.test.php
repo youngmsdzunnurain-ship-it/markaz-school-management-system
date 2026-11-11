@@ -531,4 +531,28 @@ onlinePortalUiAssert(
     'Staff dashboard print and student preview/print must keep each bold detail label close to its value on the same line'
 );
 
+
+$staffSectionPosition = strpos($reportJs, '<b>Section:</b>');
+$staffNextTermPosition = strpos($reportJs, '<b>Next Term Begins:</b>');
+$staffPortionPosition = strpos($reportJs, '<b>Portion of Memorisation:</b>');
+$staffAssessmentsPosition = strpos($reportJs, '<b>Assessments:</b>');
+onlinePortalUiAssert(
+    $staffSectionPosition !== false &&
+    $staffNextTermPosition !== false &&
+    $staffPortionPosition !== false &&
+    $staffAssessmentsPosition !== false &&
+    $staffSectionPosition < $staffNextTermPosition &&
+    $staffNextTermPosition < $staffPortionPosition &&
+    $staffPortionPosition < $staffAssessmentsPosition,
+    'Both Online Class report variants must order the right column as Section, Next Term Begins, Portion of Memorisation, then Assessments'
+);
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '.online-workspace-page .app{grid-template-columns:255px minmax(0,1fr)!important}') &&
+    str_contains($onlineCss, '.online-workspace-page .sidebar{width:255px!important') &&
+    str_contains($onlineCss, '.online-workspace-page .sidebar-nav .nav-link{height:46px!important;min-height:46px!important') &&
+    str_contains($onlineCss, 'font-size:14px!important;gap:12px!important'),
+    'Online Class desktop sidebar width and navigation item sizing must match the admin dashboard'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
