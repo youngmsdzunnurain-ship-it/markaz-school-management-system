@@ -285,11 +285,15 @@ onlinePortalUiAssert(
  str_contains($portalJs, "await waitForReportImages($('portalReport'))") &&
  str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
- str_contains($workspaceJs, 'Academic Report · Official School Record') &&
+ str_contains($workspaceJs, 'MARKAZ OFFICIAL RESULT') &&
+ str_contains($workspaceJs, 'online-report-signature-date') &&
  str_contains($onlineCss, 'width:172mm!important') &&
  str_contains($onlineCss, 'border:.45mm double rgba(185,154,72,.82)') &&
+ str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-signature-date span') &&
+ str_contains($onlineCss, 'width: 195mm !important') &&
+ str_contains($onlineCss, 'padding: 5mm 7mm 4mm !important') &&
  str_contains($onlineCss, 'official-results-label'),
- 'Online Class certificates must use the corrected bilingual heading, loaded saved signatures, larger centered watermark, refined frame and official-results footer'
+ 'Staff Online Class report must retain the one-page layout with restored official footer, ruled signature dates, balanced top spacing and larger watermark'
 );
 
 
