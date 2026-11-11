@@ -75,9 +75,6 @@ if (!$admin) {
     exit;
 }
 
-$identityChanged = $name !== (string) $admin['name']
-    || $email !== (string) ($admin['email'] ?? '');
-
 if ($currentPassword === '') {
     http_response_code(422);
     echo json_encode([
