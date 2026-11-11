@@ -7,7 +7,7 @@
 
   const message = form.querySelector('.role-message');
   const submit = form.querySelector('.role-submit');
-  const admission = form.querySelector('#admissionNumber');
+  const admission = form.querySelector('#studentId');
   const classField = form.querySelector('#studentClass');
   const termField = form.querySelector('#academicTerm');
   const sessionField = form.querySelector('#academicSession');

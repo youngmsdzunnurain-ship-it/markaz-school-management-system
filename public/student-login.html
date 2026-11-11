@@ -1,105 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#176b45">
-  <title>Student Results | MARKAZ</title>
-  <link rel="icon" href="assets/images/markaz-logo.jpg">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="css/login-roles.css">
-  <link rel="stylesheet" href="css/login-shared.css">
-  <link rel="stylesheet" href="css/student-results-portal.css">
-  <script src="js/login-roles.js" defer></script>
-  <script src="js/student-results-portal.js" defer></script>
-
-    <link rel="stylesheet" href="css/website-image-polish.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f4a31">
+<title>Student Results | MARKAZ</title>
+<link rel="icon" href="assets/images/markaz-logo.jpg">
+<link rel="stylesheet" href="css/book-auth.css">
+<link rel="stylesheet" href="css/student-results-portal.css">
 </head>
-<body>
-<main class="role-login-page">
-  <div class="role-decor role-decor-one"></div><div class="role-decor role-decor-two"></div>
-  <section class="role-login-card student-login-card">
-
-    <div class="role-brand">
-      <div class="role-logo"><img src="assets/images/markaz-logo.jpg" alt="MARKAZ school logo"></div>
-      <h1>MARKAZ</h1>
-      <p>Centre for Learning and Memorization of the Glorious Qur’an</p>
-    </div>
-    <div class="role-heading">
-      <span class="role-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-      <h2>Student Results</h2>
-      <p>Enter your details to look up your examination results.</p>
-    </div>
-    <form class="preview-form" data-role="student-lookup">
-      <div class="role-field">
-        <label for="admissionNumber">Admission Number / Student ID</label>
-        <div class="role-input"><i class="fa-solid fa-id-card"></i><input id="admissionNumber" name="admissionNumber" placeholder="Enter your admission number" autocomplete="off" required></div>
-      </div>
-      <div class="role-field">
-        <label for="studentClass">Conventional Class</label>
-        <div class="role-input"><i class="fa-solid fa-school"></i>
-          <select id="studentClass" name="studentClass" required>
-<option value="">Select your class</option>
-<option value="3">Kindergarten</option>
-<option value="4">Pre Nursery 1</option>
-<option value="5">Pre Nursery 2</option>
-<option value="6">Nursery 1</option>
-<option value="7">Nursery 2</option>
-<option value="8">Basic 1</option>
-<option value="2">Basic 2</option>
-<option value="9">Basic 3</option>
-<option value="10">Basic 4</option>
-<option value="11">Basic 5</option>
-<option value="12">Jss 1</option>
-<option value="13">Jss 2</option>
-<option value="1">Jss 3</option>
-<option value="14">SSS 1</option>
-<option value="15">SSS 2</option>
-<option value="16">SSS 3</option>
-</select><i class="fa-solid fa-chevron-down select-chevron"></i>
-        </div>
-      </div>
-      <div class="role-field">
-        <label for="academicTerm">Academic Term</label>
-        <div class="role-input"><i class="fa-regular fa-calendar"></i>
-          <select id="academicTerm" name="academicTerm" required>
-            <option value="">Select Academic Term</option>
-            <option value="1">First Term</option>
-            <option value="2">Second Term</option>
-            <option value="3">Third Term</option>
-          </select><i class="fa-solid fa-chevron-down select-chevron"></i>
-        </div>
-      </div>
-      <div class="role-field">
-        <label for="academicSession">Academic Session</label>
-        <div class="role-input"><i class="fa-solid fa-calendar-days"></i>
-          <select id="academicSession" name="academicSession" required>
-<option value="">Select Academic Session</option>
-<option value="1">2026/2027</option>
-<option value="2">2027/2028</option>
-<option value="3">2028/2029</option>
-<option value="4">2029/2030</option>
-<option value="5">2030/2031</option>
-<option value="6">2031/2032</option>
-<option value="7">2032/2033</option>
-<option value="8">2033/2034</option>
-<option value="9">2034/2035</option>
-<option value="10">2035/2036</option>
-</select><i class="fa-solid fa-chevron-down select-chevron"></i>
-        </div>
-      </div>
-      <p class="preview-notice"><i class="fa-solid fa-circle-info"></i> Enter all four details exactly as registered with the school.</p>
-      <div class="role-message" aria-live="polite"></div>
-      <button class="role-submit" type="submit">Check Results <i class="fa-solid fa-arrow-right"></i></button>
-    </form>
-
-    <section id="studentPortalExperience" class="student-portal-experience" aria-live="polite" hidden></section>
-    <div class="role-footer"><i class="fa-solid fa-book-open"></i> Learning, memorization and good character</div>
-  </section>
+<body class="mk-auth page-results page-student">
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<mask id="mk-moon-mask"><rect x="-30" y="-30" width="60" height="60" fill="#fff"/><circle cx="8" cy="-3" r="15" fill="#000"/></mask>
+<symbol id="mk-moon" viewBox="-30 -30 60 60"><circle r="20" fill="#e6c56f" mask="url(#mk-moon-mask)"/><polygon fill="#e6c56f" transform="translate(13 -4) scale(1.5)" points="0,-6 1.41,-1.94 5.71,-1.85 2.28,0.74 3.53,4.85 0,2.4 -3.53,4.85 -2.28,0.74 -5.71,-1.85 -1.41,-1.94"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 5c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="m1 1 22 22"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+<symbol id="i-id" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M5 16c.5-1.5 1.8-2 3-2s2.5.5 3 2"/><path d="M14 10h5M14 14h4"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/><path d="M12 9h.01"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+</defs></svg>
+<div class="role-login-page">
+<main class="stage">
+<div class="book role-login-card" id="book">
+<section class="page-form" id="formPage" aria-labelledby="formTitle">
+<div class="page-scroll">
+<header class="mobile-head">
+<svg class="moon-corner" aria-hidden="true" focusable="false"><use href="#mk-moon"/></svg>
+<span class="logo-ring logo-ring--md"><img src="assets/images/markaz-logo.jpg" alt="" width="132" height="132" decoding="async"></span>
+<span class="brand">MARKAZ</span>
+<span class="tag">Centre for Learning and Memorization of the Glorious Qur’an</span>
+</header>
+<div class="form-card">
+<div class="card-head"><h1 id="formTitle">Student Results</h1><p>Enter your details to look up your examination results.</p></div>
+<form class="form preview-form" id="resultForm" data-role="student-lookup" data-auth-form data-required-message="Please complete all four details." action="#" method="post" novalidate>
+<div class="field"><label for="admissionNumber">Admission number / Student ID</label><div class="control"><svg class="icon icon-lead" aria-hidden="true"><use href="#i-id"/></svg><input type="text" id="studentId" name="student_id" placeholder="Enter your admission number" autocomplete="off" autocapitalize="characters" spellcheck="false" required></div></div>
+<div class="field"><label for="studentClass">Conventional class</label><div class="control"><svg class="icon icon-lead" aria-hidden="true"><use href="#i-school"/></svg><select id="studentClass" name="studentClass" required><option value="">Select your class</option>
+<option value="3">Kindergarten</option><option value="4">Pre Nursery 1</option><option value="5">Pre Nursery 2</option><option value="6">Nursery 1</option><option value="7">Nursery 2</option><option value="8">Basic 1</option><option value="2">Basic 2</option><option value="9">Basic 3</option><option value="10">Basic 4</option><option value="11">Basic 5</option><option value="12">Jss 1</option><option value="13">Jss 2</option><option value="1">Jss 3</option><option value="14">SSS 1</option><option value="15">SSS 2</option><option value="16">SSS 3</option></select><svg class="icon icon-trail" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
+<div class="field"><label for="academicTerm">Academic term</label><div class="control"><svg class="icon icon-lead" aria-hidden="true"><use href="#i-calendar"/></svg><select id="academicTerm" name="academicTerm" required><option value="">Select Academic Term</option><option value="1">First Term</option><option value="2">Second Term</option><option value="3">Third Term</option></select><svg class="icon icon-trail" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
+<div class="field"><label for="academicSession">Academic session</label><div class="control"><svg class="icon icon-lead" aria-hidden="true"><use href="#i-calendar"/></svg><select id="academicSession" name="academicSession" required><option value="">Select Academic Session</option><option value="1">2026/2027</option><option value="2">2027/2028</option><option value="3">2028/2029</option><option value="4">2029/2030</option><option value="5">2030/2031</option><option value="6">2031/2032</option><option value="7">2032/2033</option><option value="8">2033/2034</option><option value="9">2034/2035</option><option value="10">2035/2036</option></select><svg class="icon icon-trail" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
+<div class="note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>Enter all four details exactly as registered with the school.</p></div>
+<div class="form-message role-message" role="alert" aria-live="assertive"></div>
+<button type="submit" class="btn role-submit" id="resultBtn"><span>Check Results</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+</form>
+<section id="studentPortalExperience" class="student-portal-experience" aria-live="polite" hidden></section>
+<nav class="card-links" aria-label="Page links">
+<a class="link-quiet" href="home.html"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Back to Home</span></a>
+<button type="button" class="link-quiet" data-close-book><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Close book</span></button>
+</nav>
+</div>
+<footer class="page-foot">
+<p>Having issues? <a data-support-whatsapp href="#" target="_blank" rel="noopener noreferrer">Contact MARKAZ Support</a></p>
+<p>© <span id="year">2026</span> MARKAZ. All rights reserved.</p>
+</footer>
+</div>
+</section>
+<div class="leaf" id="leaf">
+<button type="button" class="leaf-face leaf-front art" id="openBook" aria-expanded="false" aria-controls="formPage" aria-label="Open the MARKAZ Student Results book">
+<span class="art-inner">
+<svg class="moon" aria-hidden="true" focusable="false"><use href="#mk-moon"/></svg>
+<span class="logo-ring logo-ring--xl"><img src="assets/images/markaz-logo.jpg" alt="" width="132" height="132" decoding="async"></span>
+<span class="brand">MARKAZ</span>
+<span class="rule"><i></i></span>
+<span class="tag">Centre for Learning and Memorization of the Glorious Qur’an</span>
+<span class="art-label">Student Results</span>
+<span class="tap-hint"><span class="only-mobile">Tap</span><span class="only-desktop">Click</span> to open</span>
+</span>
+</button>
+<div class="leaf-face leaf-back art" aria-hidden="true"><div class="art-inner">
+<svg class="moon" aria-hidden="true" focusable="false"><use href="#mk-moon"/></svg>
+<span class="logo-ring logo-ring--lg"><img src="assets/images/markaz-logo.jpg" alt="" width="132" height="132" decoding="async"></span>
+<span class="brand">MARKAZ</span><span class="rule"><i></i></span>
+<span class="tag">Centre for Learning and Memorization of the Glorious Qur’an</span>
+<span class="art-label">Student Results</span>
+</div></div>
+</div>
+</div>
 </main>
-  <script src="js/login-shared.js"></script>
-  <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="student" defer></script>
-
-<script src="js/website-image-overrides.js"></script>
+</div>
+<script src="js/book-auth.js" defer></script>
+<script src="js/student-results-portal.js" defer></script><script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="student" defer></script>
 </body>
 </html>
