@@ -407,4 +407,15 @@ onlinePortalUiAssert(
     'Student landscape print must fit the full sheet within a defined internal margin and prevent table overflow at the right edge'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '.online-results-report{display:block;') &&
+    str_contains($portal, 'id="portalReport" class="online-report online-results-report online-hidden"') &&
+    str_contains($portalJs, 'document.title=') &&
+    str_contains($portalJs, "window.addEventListener('afterprint'") &&
+    str_contains($portalJs, 'd.academic_session') &&
+    str_contains($portalJs, 'window.print()'),
+    'Student portal must show its shared report preview before printing and use the student name plus academic session as the PDF filename'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
