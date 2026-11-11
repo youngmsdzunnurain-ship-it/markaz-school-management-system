@@ -531,4 +531,31 @@ onlinePortalUiAssert(
     'Staff dashboard print and student preview/print must keep each bold detail label close to its value on the same line'
 );
 
+
+$staffDetailsMarkup = substr($reportJs, strpos($reportJs, 'online-report-details-staff'));
+$studentDetailsMarkup = substr($reportJs, strpos($reportJs, 'online-report-details-student'));
+$hasRequestedDetailOrder = static function (string $markup): bool {
+    $section = strpos($markup, '<b>Section:</b>');
+    $portion = strpos($markup, '<b>Portion of Memorisation:</b>');
+    $resumption = strpos($markup, '<b>Next Term Begins:</b>');
+    $assessments = strpos($markup, '<b>Assessments:</b>');
+
+    return $section !== false && $portion !== false && $resumption !== false &&
+        $assessments !== false && $section < $portion && $portion < $resumption &&
+        $resumption < $assessments;
+};
+onlinePortalUiAssert(
+    $hasRequestedDetailOrder($staffDetailsMarkup) &&
+    $hasRequestedDetailOrder($studentDetailsMarkup),
+    'Staff dashboard print and student preview/print must order the right column as Section, Portion of Memorisation, Next Term Begins, then Assessments'
+);
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '.online-workspace-page .app{grid-template-columns:255px minmax(0,1fr)!important}') &&
+    str_contains($onlineCss, '.online-workspace-page .sidebar{width:255px!important') &&
+    str_contains($onlineCss, '.online-workspace-page .sidebar-nav .nav-link{height:46px!important;min-height:46px!important') &&
+    str_contains($onlineCss, 'font-size:14px!important;gap:12px!important'),
+    'Online Class desktop sidebar width and navigation item sizing must match the admin dashboard'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
