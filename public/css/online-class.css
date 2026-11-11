@@ -452,3 +452,53 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
   body.online-workspace-page #onlineReport .online-report-footer { margin-top: 2.5mm !important; padding-top: 2mm !important; border-top: .65mm solid #28603a !important; box-shadow: 0 -.35mm 0 #b99a48 !important; }
   body.online-workspace-page #onlineReport .official-results-label { font-weight: 800 !important; letter-spacing: .45px !important; }
 }
+
+
+/* Final staff report alignment: compact signature block and main-result footer. */
+@media print {
+  body.online-workspace-page #onlineReport::before {
+    width: 205mm !important;
+    height: 205mm !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-table {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    margin-bottom: 1mm !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments {
+    gap: 2mm !important;
+    margin: 1mm 0 0 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments section {
+    min-height: 0 !important;
+    padding: 1.5mm 3mm 1mm !important;
+    line-height: 1.15 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-comments p {
+    margin: .6mm 0 !important;
+    line-height: 1.15 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-signature,
+  body.online-workspace-page #onlineReport .online-report-comments img {
+    max-height: 8mm !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-signature-date {
+    margin-top: .5mm !important;
+    margin-bottom: 0 !important;
+    line-height: 1.1 !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-signature-date span {
+    min-width: 27mm !important;
+    padding-bottom: .25mm !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer {
+    margin-top: auto !important;
+    padding-top: 1.5mm !important;
+    font-size: 8pt !important;
+  }
+  body.online-workspace-page #onlineReport .online-report-footer p {
+    margin: 0 !important;
+  }
+}
