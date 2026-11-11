@@ -8,7 +8,8 @@ async function api(url,options={}){const r=await fetch(url,{credentials:'same-or
 function showMessage(text,error=false){$('portalMessage').textContent=text;$('portalMessage').style.color=error?'#a33d2c':'#285b3a';}
 function configureSupportLink(){const link=$('onlineSupportLink');if(!link)return;const message='Hello MARKAZ Support, I am having trouble accessing my Online Class results. Please help me.';const setNumber=value=>{let digits=String(value||'').replace(/\D/g,'');if(digits.startsWith('0'))digits='234'+digits.slice(1);else if(digits.startsWith('2340'))digits='234'+digits.slice(4);if(digits.length<10||digits.length>15)digits='2347048657955';link.href='https://wa.me/'+digits+'?text='+encodeURIComponent(message);};setNumber('2347048657955');fetch('./api/settings/support-contact.php',{credentials:'same-origin',cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(data?.success&&data?.whatsapp_number)setNumber(data.whatsapp_number);}).catch(()=>{});}
 function grade(score){if(score>=80)return ['A','Awesome'];if(score>=70)return ['B','Phenomenal'];if(score>=50)return ['C','Impressive'];if(score>=30)return ['D','Promising'];return ['E','Poor'];}
-function sigMarkup(image,text,alt){const value=image||text||'';if(!value)return '_____________________';if(image||/^data:image\//i.test(value)||/\.(png|jpe?g|webp|svg)(\?.*)?$/i.test(value))return '<img src=\"'+esc(value)+'\" alt=\"'+esc(alt)+'\" style=\"max-width:135px;max-height:38px;object-fit:contain\">';return esc(value);}
+function sigMarkup(image,text,alt){const value=image||text||'';if(!value)return '_____________________';if(image||/^data:image\//i.test(value)||/\.(png|jpe?g|webp|svg)(\?.*)?$/i.test(value)){const raw=String(value).trim(),src=/^(?:data:image\/|https?:\/\/|\/)/i.test(raw)?raw:'./'+raw.replace(/^\.\//,'');return '<img class="online-report-signature" src="'+esc(src)+'" alt="'+esc(alt)+'">';}return esc(value);}
+async function waitForReportImages(root){const images=Array.from(root.querySelectorAll('img'));await Promise.all(images.map(img=>{if(typeof img.decode==='function')return img.decode().catch(()=>{});if(img.complete)return Promise.resolve();return new Promise(resolve=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});});}));}
 async function loadResults(){
  try{
   const d=await api('./api/online-class/student-results.php');report=d;
@@ -31,7 +32,7 @@ async function loadResults(){
 
 configureSupportLink();
 $('portalLoad').addEventListener('click',loadResults);
-$('portalPrint').addEventListener('click',()=>{if(report?.released){window.print();}});
+$('portalPrint').addEventListener('click',async()=>{if(report?.released){await waitForReportImages($('portalReport'));window.print();}});
 $('portalLogout').addEventListener('click',async()=>{try{await api('./api/online-class/logout.php',{method:'POST',body:'{}'});}catch(_){}location.replace('online-class-login.html');});
 loadResults();
 })();
