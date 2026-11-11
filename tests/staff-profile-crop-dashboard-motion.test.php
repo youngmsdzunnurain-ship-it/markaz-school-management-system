@@ -17,7 +17,7 @@ $dashboardCss = $read('public/css/dashboard-2026.css');
 staffProfileMotionAssert(str_contains($html, 'data-role-access="staff_profile"'), 'Settings page is available to signed-in staff profiles');
 staffProfileMotionAssert(str_contains($settingsJs, '"teacher"') && str_contains($navigation, '"teacher"'), 'Teacher can access the profile-only Settings view');
 staffProfileMotionAssert(str_contains($profileApi, "'teacher'") && str_contains($profileApi, 'password_verify($currentPassword'), 'profile API accepts teachers and verifies their current password');
-staffProfileMotionAssert(str_contains($profileApi, "if (\$currentPassword === '')"), 'every profile update requires current-password confirmation, including Management');
+staffProfileMotionAssert(str_contains($profileApi, '$currentPassword === \'\''), 'every profile update requires current-password confirmation, including Management');
 staffProfileMotionAssert(str_contains($html, 'staffPhotoCropModal') && str_contains($settingsJs, 'staffPhotoCropCanvas'), 'staff profile image selection uses a square crop dialog');
 staffProfileMotionAssert(str_contains($navigation, 'new Set(["profile"])') && str_contains($navigation, '"teacher"'), 'Management and Teacher receive profile-only settings, not school configuration');
 staffProfileMotionAssert(str_contains($shellJs, '"management", "teacher"') && str_contains($shellJs, 'settingsAllowed'), 'teacher profile settings link is enabled in the shared management shell');
