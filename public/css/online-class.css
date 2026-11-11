@@ -413,3 +413,9 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
  body.online-results-page #portalReport .report-card-footer{position:fixed!important;left:0!important;right:0!important;bottom:0!important;margin:0!important;padding-top:2mm!important;border-top:2px solid #1f5a3a!important;font-size:7pt!important}
  body.online-results-page .no-print,body.online-results-page .online-portal-brand,body.online-results-page .online-results-welcome,body.online-results-page .online-results-status,body.online-results-page .online-results-message,body.online-results-page .online-results-support{display:none!important}
 }
+
+
+/* The admin shell is 260px; Online Class uses a narrower 224px desktop rail. */
+.online-workspace-page .app{grid-template-columns:224px minmax(0,1fr)!important}
+.online-workspace-page .sidebar{width:224px!important}
+@media(max-width:850px){.online-workspace-page .sidebar{width:min(84vw,260px)!important}}
