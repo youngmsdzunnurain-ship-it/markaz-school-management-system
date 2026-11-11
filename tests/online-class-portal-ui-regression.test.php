@@ -198,7 +198,9 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($workspace, 'Enabling student login does not release results') &&
     str_contains($workspaceJs, 'function formatOnlineReportDate(value)') &&
-    str_contains($workspaceJs, 'formatOnlineReportDate(level?.[dateKey])') &&
+    str_contains($reportJs, 'function formatDate(value)') &&
+    str_contains($reportJs, 'const dateKey = ({') &&
+    str_contains($reportJs, 'level[dateKey] || student[dateKey]') &&
     str_contains($workspaceJs, 'Results are RELEASED to students.') &&
     str_contains($portalJs ?? '', 'function formatOnlineReportDate(value)'),
     'Online Class release controls and resumption dates must be explicit and consistently formatted'
