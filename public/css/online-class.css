@@ -172,49 +172,110 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 .online-workspace-page .online-actions .online-btn{min-height:38px}
 
 
-/* Online Class: isolated, single-sheet landscape result printing */
+/* MARKAZ Online Class result sheet — true landscape composition */
 @media print {
-  @page { size: A4 landscape; margin: 5mm; }
-  html, body { width: 287mm !important; height: 200mm !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important; }
-  body.online-workspace-page * { visibility: hidden !important; }
+  @page { size: 297mm 210mm; margin: 0; }
+  html, body {
+    display: block !important; width: 297mm !important; min-width: 297mm !important;
+    height: 210mm !important; min-height: 210mm !important; margin: 0 !important;
+    padding: 0 !important; overflow: hidden !important; background: #fff !important;
+  }
+  body.online-workspace-page > .app,
+  body.online-workspace-page > footer,
+  body.online-results-page > main,
+  body.online-results-page > footer,
+  body.online-results-page > .online-results-support { display: none !important; }
   body.online-workspace-page #onlineReport,
-  body.online-workspace-page #onlineReport * { visibility: visible !important; }
-  body.online-workspace-page #onlineReport {
-    display: block !important; position: fixed !important; inset: 0 auto auto 0 !important;
-    width: 287mm !important; height: 200mm !important; max-height: 200mm !important;
-    box-sizing: border-box !important; margin: 0 !important; padding: 0 !important;
-    overflow: hidden !important; background: #fff !important; color: #203528 !important;
-    font: 8pt/1.22 Arial, sans-serif !important; print-color-adjust: exact; -webkit-print-color-adjust: exact;
-  }
-  body.online-results-page * { visibility: hidden !important; }
-  body.online-results-page #portalReport,
-  body.online-results-page #portalReport * { visibility: visible !important; }
   body.online-results-page #portalReport {
-    display: block !important; position: fixed !important; inset: 0 auto auto 0 !important;
-    width: 287mm !important; height: 200mm !important; max-height: 200mm !important;
-    box-sizing: border-box !important; margin: 0 !important; padding: 0 !important;
-    overflow: hidden !important; border: 0 !important; border-radius: 0 !important;
-    box-shadow: none !important; background: #fff !important; color: #203528 !important;
-    font: 8pt/1.22 Arial, sans-serif !important; print-color-adjust: exact; -webkit-print-color-adjust: exact;
+    display: flex !important; position: absolute !important; inset: 0 !important;
+    flex-direction: column !important; box-sizing: border-box !important;
+    width: 281mm !important; min-width: 281mm !important; max-width: 281mm !important;
+    min-height: 194mm !important; height: 194mm !important; max-height: 194mm !important;
+    margin: 8mm !important; padding: 0 !important; overflow: hidden !important;
+    border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    background: #fff !important; color: #203528 !important;
+    font: 8.5pt/1.25 Arial, sans-serif !important;
+    transform: none !important; print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
-  .online-report-head { display: grid !important; grid-template-columns: 19mm minmax(0,1fr) 28mm !important; gap: 3mm !important; align-items: center !important; padding: 0 0 2mm !important; margin: 0 0 2mm !important; border-bottom: 1.2mm solid #78934d !important; text-align: center !important; }
-  .online-report-head img { width: 17mm !important; height: 17mm !important; object-fit: contain !important; }
-  .online-report-head h1, .online-report-head h2 { margin: 0 0 1mm !important; font: 700 11pt/1.15 Georgia, serif !important; color: #28603a !important; }
-  .online-report-head p { margin: .5mm 0 !important; font-size: 7pt !important; line-height: 1.15 !important; }
-  .online-report-stamp { font-size: 8pt !important; }
-  .online-report-title { margin: 1.5mm 0 !important; padding: 2mm !important; border-radius: 1mm !important; background: #28603a !important; color: #fff !important; text-align: center !important; font-size: 10pt !important; font-weight: 700 !important; }
-  .online-report-details { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.2mm 5mm !important; margin: 1.5mm 0 !important; padding: 2mm 3mm !important; border-radius: 1mm !important; background: #f3f7ed !important; font-size: 7.5pt !important; line-height: 1.2 !important; }
-  .online-report-table { width: 100% !important; min-width: 0 !important; margin: 1.5mm 0 !important; border-collapse: collapse !important; table-layout: fixed !important; font-size: 7pt !important; }
-  .online-report-table th { padding: 1.5mm 1mm !important; background: #28603a !important; color: #fff !important; font-size: 7pt !important; }
-  .online-report-table td { padding: 1.2mm 1mm !important; border: .25mm solid #d7e0cd !important; font-size: 7pt !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; }
-  .online-report-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
-  .online-report-comments { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 2mm !important; margin: 2mm 0 0 !important; }
-  .online-report-comments section { min-height: 0 !important; padding: 2mm !important; border: .3mm solid #8c9d69 !important; border-radius: 1mm !important; font-size: 7pt !important; line-height: 1.2 !important; overflow-wrap: anywhere !important; }
+  #onlineReport::before, #portalReport::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("../assets/images/markaz-logo.jpg");
+    background-repeat: repeat; background-size: 48mm 48mm;
+    background-position: 0 0; opacity: .045;
+  }
+  #onlineReport > *, #portalReport > * { position: relative; z-index: 1; flex-shrink: 0; }
+  .online-report-head {
+    display: grid !important; grid-template-columns: 23mm minmax(0,1fr) 30mm !important;
+    gap: 4mm !important; align-items: center !important; text-align: center !important;
+    padding: 0 0 3mm !important; margin: 0 0 2.5mm !important;
+    border-bottom: 1mm solid #8a9b55 !important;
+  }
+  .online-report-head img { width: 21mm !important; height: 21mm !important; object-fit: contain !important; }
+  .online-report-head h1, .online-report-head h2 {
+    margin: 0 0 1mm !important; color: #245b37 !important;
+    font: 700 13pt/1.15 Georgia,serif !important;
+  }
+  .online-report-head p { margin: .6mm 0 !important; font-size: 7.5pt !important; line-height: 1.15 !important; }
+  .online-report-head strong, .online-report-stamp { color: #315f36 !important; font-size: 8pt !important; }
+  .online-report-title {
+    display: block !important; margin: 0 0 2mm !important; padding: 2.3mm !important;
+    border-radius: 1mm !important; background: #28603a !important; color: #fff !important;
+    text-align: center !important; font-size: 11pt !important; font-weight: 700 !important;
+    letter-spacing: .35px !important;
+  }
+  #onlineReport > p { margin: 0 0 2mm !important; text-align: center !important; font-size: 8pt !important; }
+  .online-report-details {
+    display: grid !important; grid-template-columns: 1fr 1fr !important;
+    gap: 1.7mm 7mm !important; margin: 0 0 2.5mm !important;
+    padding: 3mm 4mm !important; border: .3mm solid #d9e2ce !important;
+    border-left: 1.2mm solid #b59a43 !important; border-radius: 1mm !important;
+    background: #f5f8ef !important; font-size: 8pt !important; line-height: 1.25 !important;
+  }
+  .online-report-table {
+    width: 100% !important; min-width: 0 !important; table-layout: fixed !important;
+    border-collapse: collapse !important; margin: 0 0 2.5mm !important;
+    font-size: 8pt !important;
+  }
+  .online-report-table th {
+    padding: 2.2mm 1.5mm !important; background: #28603a !important;
+    color: #fff !important; border: .25mm solid #d4dfcb !important;
+    text-align: center !important; font-size: 8pt !important; font-weight: 700 !important;
+  }
+  .online-report-table td {
+    padding: 2mm 1.5mm !important; border: .25mm solid #cfd9c6 !important;
+    color: #243c2c !important; font-size: 8pt !important; line-height: 1.2 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .online-report-table tbody tr:nth-child(even) { background: #f0f5e7 !important; }
+  .online-report-comments {
+    display: grid !important; grid-template-columns: 1fr 1fr !important;
+    gap: 3mm !important; margin: auto 0 0 !important; padding-top: 1mm !important;
+  }
+  .online-report-comments section {
+    min-height: 28mm !important; padding: 2.5mm 3mm !important;
+    border: .35mm solid #899b66 !important; border-top: 1mm solid #b69a43 !important;
+    border-radius: 1mm !important; background: #fbfcf7 !important;
+    color: #263d2d !important; font-size: 7.5pt !important; line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .online-report-comments section > b { display: block !important; margin-bottom: 1.5mm !important; color: #285b39 !important; font-size: 8.5pt !important; }
   .online-report-comments p { margin: 1mm 0 !important; }
-  .online-report-signature, .online-report-comments img { max-width: 25mm !important; max-height: 9mm !important; object-fit: contain !important; }
-  .online-report-footer { display: flex !important; justify-content: space-between !important; gap: 2mm !important; margin-top: 1.5mm !important; font-size: 6.5pt !important; line-height: 1.1 !important; }
+  .online-report-signature, .online-report-comments img {
+    display: inline-block !important; max-width: 30mm !important; max-height: 10mm !important;
+    object-fit: contain !important; vertical-align: middle !important;
+  }
+  .online-report-footer {
+    display: flex !important; justify-content: space-between !important; gap: 3mm !important;
+    margin-top: 2mm !important; padding-top: 1.5mm !important;
+    border-top: .25mm solid #d5dfcc !important; color: #65755e !important;
+    font-size: 7pt !important; line-height: 1.15 !important;
+  }
   .online-results-table-wrap { width: 100% !important; overflow: visible !important; }
-  .online-report-table { break-inside: auto !important; }
-  .online-portal-actions, .no-print, .online-portal-footer, .online-portal-brand, .online-results-welcome, .online-results-status, .online-results-message { display: none !important; }
+  .online-report-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .online-portal-actions, .no-print, .online-portal-footer, .online-portal-brand,
+  .online-results-welcome, .online-results-status, .online-results-message {
+    display: none !important; visibility: hidden !important;
+  }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
