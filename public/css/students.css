@@ -4486,3 +4486,45 @@ body {
         grid-column: auto;
     }
 }
+
+
+/* =========================================================
+   STUDENT PHOTO CROP DIALOG
+   Square crop matches the printed student report portrait.
+   ========================================================= */
+.student-photo-crop-modal[hidden]{display:none!important}
+.student-photo-crop-modal{
+    position:fixed;inset:0;z-index:12000;display:grid;place-items:center;
+    padding:18px;background:rgba(10,29,20,.68);overflow-y:auto;
+    -webkit-overflow-scrolling:touch;box-sizing:border-box;
+}
+.student-photo-crop-dialog{
+    width:min(100%,460px);max-height:calc(100dvh - 36px);overflow-y:auto;
+    padding:22px;border-radius:18px;background:#fbfcf6;
+    border:1px solid rgba(184,146,58,.42);box-shadow:0 22px 70px rgba(0,0,0,.28);
+    box-sizing:border-box;
+}
+.student-photo-crop-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.student-photo-crop-header h2{margin:4px 0;color:#145035;font-size:1.25rem}
+.student-photo-crop-header p{margin:0;color:#68726a;font-size:.88rem;line-height:1.45}
+.student-photo-crop-stage{
+    width:min(100%,320px);aspect-ratio:1/1;margin:0 auto 16px;overflow:hidden;
+    border:3px solid #b8923a;border-radius:14px;background:#e9eee8;
+    box-shadow:0 5px 18px rgba(8,45,30,.12);touch-action:none;
+}
+#studentPhotoCropCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#studentPhotoCropCanvas:active{cursor:grabbing}
+.student-photo-crop-zoom{display:grid;grid-template-columns:auto minmax(0,1fr) 52px;gap:12px;align-items:center;color:#145035;font-weight:650;font-size:.9rem}
+.student-photo-crop-zoom input{width:100%;accent-color:#145035}
+.student-photo-crop-zoom strong{text-align:right;font-variant-numeric:tabular-nums}
+.student-photo-crop-error{margin:12px 0 0;color:#a12626;font-size:.85rem}
+.student-photo-crop-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.student-photo-crop-actions button{min-height:42px}
+@media(max-width:480px){
+    .student-photo-crop-modal{padding:12px;align-items:center}
+    .student-photo-crop-dialog{padding:16px;border-radius:16px;max-height:calc(100dvh - 24px)}
+    .student-photo-crop-stage{width:min(100%,min(320px,calc(100vw - 64px)))}
+    .student-photo-crop-actions{display:grid;grid-template-columns:1fr 1.35fr}
+    .student-photo-crop-actions button{width:100%;padding-inline:10px}
+}
+@media(prefers-reduced-motion:reduce){.student-photo-crop-modal *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
