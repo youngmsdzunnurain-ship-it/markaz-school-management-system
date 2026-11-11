@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$currentPassword = $_POST['current_password'] ?? '';
+$currentPassword = is_string($_POST['current_password'] ?? null) ? $_POST['current_password'] : '';
 $name = trim($_POST['name'] ?? '');
 
 if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
