@@ -367,6 +367,7 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     str_contains($portalJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
     !str_contains($portalJs, 'Task 1') &&
     !str_contains($portalJs, 'Task 2') &&
     !str_contains($portalJs, 'task_one_name') &&
