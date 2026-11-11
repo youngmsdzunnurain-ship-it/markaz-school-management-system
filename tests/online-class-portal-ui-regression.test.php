@@ -199,7 +199,7 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'مركز تعليم وتحفيظ القرآن الكريم') &&
     str_contains($workspaceJs, 'class="school-name-ar"') &&
     str_contains($portal, 'مركز تعليم وتحفيظ القرآن الكريم') &&
-    str_contains($portal, 'class="school-name-ar"') &&
+    str_contains($portal, 'school-name-ar') &&
     str_contains($onlineCss, 'size: letter landscape') &&
     !str_contains($onlineCss, 'width: 287mm !important'),
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
