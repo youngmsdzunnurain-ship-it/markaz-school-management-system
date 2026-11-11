@@ -63,6 +63,10 @@ foreach (['id="onlineLoginForm"', 'id="onlineAdmission"', 'id="onlineLevel"', 'i
 bookAuthAssert(strpos($online, 'js/book-auth.js') < strpos($online, 'js/online-class-login.js'), 'Online Class loads book interactions before its existing dynamic options and login handler');
 
 $bookCss = file_get_contents($root . '/public/css/book-auth.css');
+bookAuthAssert(str_contains($bookCss, 'background-size:140px 140px'), 'Shared book pages use the established small repeating watermark tile');
+bookAuthAssert(str_contains($bookCss, 'assets/images/markaz-logo.jpg'), 'Shared book watermark uses the official MARKAZ logo image');
+bookAuthAssert(str_contains($bookCss, 'rgba(251,247,238,.945)'), 'Shared book watermark remains faint against the cream page background');
+bookAuthAssert(str_contains($bookCss, 'rgba(184,146,58,.055)'), 'Shared book watermark retains the subtle gold ring');
 $bookJs = file_get_contents($root . '/public/js/book-auth.js');
 bookAuthAssert(is_string($bookCss) && str_contains($bookCss, '.book.is-open'), 'Shared book stylesheet contains the open-book layout');
 bookAuthAssert(is_string($bookJs) && str_contains($bookJs, 'lockForm'), 'Shared book script locks the closed form from keyboard and assistive technology');
