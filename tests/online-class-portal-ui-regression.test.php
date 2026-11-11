@@ -174,7 +174,7 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     str_contains($onlineCss, 'body.online-workspace-page > .app') &&
-    str_contains($onlineCss, 'body.online-results-page > footer') &&
+    str_contains($onlineCss, '.online-results-support') &&
     str_contains($onlineCss, 'body.online-workspace-page #onlineReport') &&
     str_contains($onlineCss, 'body.online-results-page #portalReport') &&
     str_contains($onlineCss, 'overflow: hidden !important'),
