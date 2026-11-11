@@ -983,3 +983,37 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
     text-align: center !important;
   }
 }
+
+
+/* Student portal: two balanced details columns and tighter remark cards. */
+body.online-results-page #portalReport .online-report-details-student {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 2.5mm 7mm !important;
+  align-items: start !important;
+}
+body.online-results-page #portalReport .online-report-details-student-column {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 2.5mm !important;
+  align-content: start !important;
+}
+body.online-results-page #portalReport .online-report-details-student-column > span {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+body.online-results-page #portalReport .online-report-comments section {
+  padding: 8px 9px !important;
+}
+@media print {
+  body.online-results-page #portalReport .online-report-details-student {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 2mm 6mm !important;
+  }
+  body.online-results-page #portalReport .online-report-details-student-column {
+    gap: 2mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments section {
+    padding: 1mm 2.5mm .75mm !important;
+  }
+}
