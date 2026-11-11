@@ -418,10 +418,13 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 }
 
 
-/* The admin shell is 260px; Online Class uses a narrower 224px desktop rail. */
-.online-workspace-page .app{grid-template-columns:224px minmax(0,1fr)!important}
-.online-workspace-page .sidebar{width:224px!important}
-@media(max-width:850px){.online-workspace-page .sidebar{width:min(84vw,260px)!important}}
+/* Match the admin dashboard sidebar width and desktop navigation dimensions. */
+.online-workspace-page .app{grid-template-columns:255px minmax(0,1fr)!important}
+.online-workspace-page .sidebar{width:255px!important;padding:4px 0 0!important}
+.online-workspace-page .sidebar-header{height:auto!important;min-height:82px!important;padding:24px 20px!important;margin:0!important;gap:13px!important}
+.online-workspace-page .sidebar-nav{gap:0!important;padding:18px 0!important}
+.online-workspace-page .sidebar-nav .nav-link{height:auto!important;min-height:46px!important;padding:0 12px!important;margin:0!important;gap:12px!important;font-size:14px!important}
+@media(max-width:850px){.online-workspace-page .sidebar{width:min(84vw,270px)!important;padding:12px!important}.online-workspace-page .sidebar-nav .nav-link{height:40px!important;min-height:40px!important}}
 
 
 /* Keep the dashboard-generated staff report on one landscape sheet. */
