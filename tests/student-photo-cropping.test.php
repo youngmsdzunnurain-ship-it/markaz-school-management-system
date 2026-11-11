@@ -48,6 +48,7 @@ studentCropAssert(str_contains($reportCss, 'width:100px !important;') && str_con
 studentCropAssert(str_contains($js, 'bindInput(studentPhoto, studentPhotoPreview)'), 'Add Student photo selection opens the cropper');
 studentCropAssert(str_contains($js, 'bindInput(editStudentPhoto, editStudentPhotoPreview)'), 'Edit Student photo selection opens the cropper');
 studentCropAssert(str_contains($js, 'confirmedFiles'), 'cancelling a replacement crop preserves the last confirmed photo');
+studentCropAssert(str_contains($js, 'restoreConfirmedFile(input, preview)'), 'invalid replacement images preserve the last confirmed photo');
 studentCropAssert(str_contains($js, 'studentPhotoCropModal")?.hidden === false'), 'Escape in the crop dialog does not close the parent student form');
 
 echo "Student photo crop workflow regression checks passed.\n";
