@@ -49,7 +49,9 @@
       ? new Set(allCategories.map(category => category.id))
       : role === "exam_officer"
         ? new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])
-        : new Set(["profile"]);
+        : (role === "management" || role === "teacher")
+          ? new Set(["profile"])
+          : new Set();
     const categories = allCategories.filter(category => allowedIds.has(category.id));
     allCategories.forEach(category => category.elements.forEach(element => { element.hidden = true; }));
 
