@@ -659,7 +659,7 @@ document.addEventListener("click", async (event) => {
     }
 });
 
-if (["admin", "exam_officer"].includes(currentProfileRole)) loadMemorizationSettings();
+
 
 /* Keep Qur'an memorization settings permanently expanded. */
 const memorizationToggle = document.getElementById("memorizationSettingsToggle");
