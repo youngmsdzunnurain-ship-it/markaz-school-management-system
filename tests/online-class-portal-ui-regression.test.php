@@ -342,7 +342,7 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-student-loading-support4') &&
+    str_contains($portal, '20261111-student-landscape-print2') &&
     str_contains($portal, 'document.querySelector') &&
     str_contains($portalJs, "replace(/\\D/g,'')") &&
     !str_contains($portalJs, "digits==='2347048657955'") &&
@@ -362,4 +362,30 @@ onlinePortalUiAssert(
     str_contains($portal, 'href="home.html"') &&
     str_contains($portal, 'Back to MARKAZ Home'),
     'Student portal JavaScript must remain syntactically valid; login support must use the Islamic greeting and database-configured number; logged-in portal must provide a route back to the MARKAZ homepage'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'data.extraDetails') &&
+    str_contains($portalJs, "extraDetails: [") &&
+    str_contains($portalJs, "label:'Section'") &&
+    str_contains($portalJs, "label:'Task 1'") &&
+    str_contains($portalJs, "label:'Task 2'"),
+    'Student landscape print must include the same student-specific details shown in the portal preview: section and both task labels'
+);
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'class="official-results-label"') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-signature-date') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-comments section') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-footer') &&
+    str_contains($onlineCss, 'rgba(83,102,90,.72)'),
+    'Student landscape print must retain the dashboard signature/date/footer layout and use a subdued official footer'
+);
+
+onlinePortalUiAssert(
+    str_contains($reportJs, '<th>Grade</th><th>Remark</th>') &&
+    str_contains($reportJs, 'row.grade_remark || grade.remark') &&
+    str_contains($reportJs, 'rows.map(row => row.director_remark).find(Boolean)'),
+    'Student print must preserve the preview grade and remark as separate columns and print the actual director remark returned by results'
 );
