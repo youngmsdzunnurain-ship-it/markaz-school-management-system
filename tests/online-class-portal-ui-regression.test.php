@@ -177,8 +177,8 @@ onlinePortalUiAssert(
     str_contains($onlineCss, '#onlineReport,#onlineReport *{visibility:visible!important}') &&
     str_contains($onlineCss, 'body.online-results-page *{visibility:hidden!important}') &&
     str_contains($onlineCss, '#portalReport,#portalReport *{visibility:visible!important}') &&
-    str_contains($onlineCss, 'height:200mm') &&
-    str_contains($onlineCss, 'overflow:hidden!important'),
+    preg_match('/height:\\s*200mm/', $onlineCss) === 1 &&
+    preg_match('/overflow:\\s*hidden\\s*!important/', $onlineCss) === 1,
     'Staff and student reports must each print alone on one constrained A4 landscape page'
 );
 onlinePortalUiAssert(
