@@ -71,10 +71,9 @@ onlinePortalUiAssert(
     substr_count($portal, 'id="portalReport"') === 1 &&
     str_contains($portal, 'id="portalLogout"') &&
     str_contains($portal, 'css/app-watermark.css') &&
-    str_contains($portal, 'Attendance /20') &&
-    str_contains($portal, 'Test /20') &&
-    str_contains($portal, 'Final Exam /60') &&
-    str_contains($portal, 'Total /100'),
+    str_contains($reportJs, 'Attendance 20 · Test 20 · Final Examination 60') &&
+    str_contains($reportJs, '<th>Attendance</th><th>Test</th><th>Final Examination</th>') &&
+    str_contains($reportJs, 'average.toFixed(1) + ' + "' / 100'"),
     'Student report must retain the report card, watermark and 20/20/60 scoring layout'
 );
 onlinePortalUiAssert(
