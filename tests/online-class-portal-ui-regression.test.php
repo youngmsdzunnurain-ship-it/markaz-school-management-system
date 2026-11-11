@@ -321,7 +321,9 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($workspace, 'js/online-class-report.js') &&
     str_contains($portal, 'js/online-class-report.js') &&
-    str_contains($portal, 'id="portalPrintReport"') &&
+    str_contains($portal, 'id="portalReport"') &&
+    substr_count($portal, 'id="portalReport"') === 1 &&
+    !str_contains($portal, 'id="portalPrintReport"') &&
     str_contains($workspaceJs, 'window.MarkazOnlineClassReport.render') &&
     str_contains($portalJs, 'window.MarkazOnlineClassReport.render') &&
     str_contains($reportJs, 'window.MarkazOnlineClassReport') &&
