@@ -350,3 +350,15 @@ onlinePortalUiAssert(
     'Student portal must expose API loading failures, prevent indefinite loading, and use a polite WhatsApp message without the known incorrect fallback number'
 );
 
+
+
+onlinePortalUiAssert(
+    !str_contains($portalJs, '\\\\nwindow.addEventListener') &&
+    str_contains($portalJs, "window.addEventListener('afterprint'") &&
+    str_contains($loginShared, 'As-salamu alaykum MARKAZ Support.') &&
+    !str_contains($loginShared, 'const fallback = "2347048657955"') &&
+    !str_contains($loginShared, 'setSupportNumber(fallback)') &&
+    str_contains($portal, 'href="home.html"') &&
+    str_contains($portal, 'Back to MARKAZ Home'),
+    'Student portal JavaScript must remain syntactically valid; login support must use the Islamic greeting and database-configured number; logged-in portal must provide a route back to the MARKAZ homepage'
+);
