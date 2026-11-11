@@ -680,3 +680,42 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
     letter-spacing: .25px !important;
   }
 }
+
+
+/* Student landscape print: use the full physical sheet with an internal safe margin. */
+@media print {
+  @page { size: letter landscape; margin: 0; }
+  html, body.online-results-page {
+    width: 279.4mm !important;
+    height: 215.9mm !important;
+    min-height: 215.9mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  body.online-results-page #portalPrintReport {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 279.4mm !important;
+    height: 215.9mm !important;
+    min-width: 279.4mm !important;
+    max-width: 279.4mm !important;
+    min-height: 215.9mm !important;
+    max-height: 215.9mm !important;
+    box-sizing: border-box !important;
+    padding: 5mm 7mm !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-table th,
+  body.online-results-page #portalPrintReport .online-report-table td {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+}
