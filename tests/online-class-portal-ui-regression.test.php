@@ -553,8 +553,9 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($onlineCss, '.online-workspace-page .app{grid-template-columns:255px minmax(0,1fr)!important}') &&
     str_contains($onlineCss, '.online-workspace-page .sidebar{width:255px!important') &&
+    str_contains($onlineCss, '.online-workspace-page .sidebar-header{height:auto!important;min-height:82px!important;') &&
     str_contains($onlineCss, '.online-workspace-page .sidebar-nav .nav-link{height:46px!important;min-height:46px!important') &&
-    str_contains($onlineCss, 'font-size:14px!important;gap:12px!important'),
+    str_contains($onlineCss, 'gap:12px!important;font-size:14px!important'),
     'Online Class desktop sidebar width and navigation item sizing must match the admin dashboard'
 );
 
