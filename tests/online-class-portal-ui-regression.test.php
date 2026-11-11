@@ -24,6 +24,7 @@ $workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php'
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
 $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
+$footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-footer.php');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
@@ -237,6 +238,27 @@ onlinePortalUiAssert(
     str_contains($onlineCss, 'height:38px!important') &&
     str_contains($onlineCss, 'padding:12px!important'),
     'Online Class heading typography must be calligraphic and its sidebar navigation must use a tighter, narrower layout'
+);
+
+onlinePortalUiAssert(
+    str_contains($footerSettingsApi, "'class_teacher_signature_image'") &&
+    str_contains($footerSettingsApi, "'director_signature_image'"),
+    'Shared result-footer settings must return the saved signature image paths to authorized result viewers'
+);
+onlinePortalUiAssert(
+    str_contains($portal, 'css/student-result-print.css') &&
+    str_contains($portal, 'id="studentReportCard"') &&
+    str_contains($portal, 'id="classTeacherSignatureDisplay"') &&
+    str_contains($portal, 'id="directorSignatureDisplay"') &&
+    str_contains($portal, 'class="report-footer"'),
+    'Online Class student portal must use the established main student-result print structure and signature slots'
+);
+onlinePortalUiAssert(
+    str_contains($portalJs, 'class="result-signature-image"') &&
+    str_contains($portalJs, 'class_teacher_signature_image') &&
+    str_contains($portalJs, 'director_signature_image') &&
+    str_contains($onlineCss, 'width:145%'),
+    'Student portal must render the shared saved signature images and a larger centered print watermark'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
