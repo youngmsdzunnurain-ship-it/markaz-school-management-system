@@ -1,0 +1,30 @@
+name: MARKAZ Shared Book Authentication Regression
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  shared-book-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP and Node
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Check JavaScript syntax
+        run: |
+          set -e
+          node --check public/js/book-auth.js
+          node --check public/js/login.js
+          node --check public/js/login-roles.js
+          node --check public/js/student-results-portal.js
+          node --check public/js/online-class-login.js
+      - name: Check regression test syntax
+        run: php -l tests/shared-book-auth-portals.test.php
+      - name: Verify all six book login portals and security boundaries
+        run: php tests/shared-book-auth-portals.test.php
