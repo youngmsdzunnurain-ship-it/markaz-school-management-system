@@ -480,4 +480,27 @@ onlinePortalUiAssert(
     'Student portal print report must match the staff report divider, roomier remarks, medium watermark, readable details, and soft centred footer'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($reportJs, 'online-report-details-student-column') &&
+    str_contains($reportJs, '<b>Name of Student:</b>') &&
+    str_contains($reportJs, '<b>Admission No:</b>') &&
+    str_contains($reportJs, '<b>Class / Level:</b>') &&
+    str_contains($reportJs, '<b>Tutor:</b>') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
+    str_contains($reportJs, '<b>Assessments:</b>') &&
+    !str_contains($reportJs, '<b>Term:</b>') &&
+    !str_contains($reportJs, '<b>Next Term Begins:</b>') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-details-student') &&
+    str_contains($onlineCss, 'grid-template-columns: repeat(2, minmax(0, 1fr)) !important;'),
+    'Student preview and print must show exactly two deliberate detail columns, omit redundant term/resumption fields, and retain all seven requested details'
+);
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-comments section') &&
+    str_contains($onlineCss, 'padding: 1mm 2.5mm .75mm !important;'),
+    'Student preview and print remark boxes must use reduced internal spacing without shrinking their text'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
