@@ -229,6 +229,8 @@ onlinePortalUiAssert(
     'Both Online Class reports must resolve the existing saved signature image paths like the main student-result page and fall back safely only if an image is unavailable'
 );
 onlinePortalUiAssert(
+    str_contains($workspace, 'family=Amiri') &&
+    str_contains($portal, 'family=Amiri') &&
     str_contains($onlineCss, 'font-family:"Amiri"') &&
     str_contains($onlineCss, 'font-family:"Cormorant Garamond"') &&
     str_contains($onlineCss, 'grid-template-columns:248px minmax(0,1fr)') &&
