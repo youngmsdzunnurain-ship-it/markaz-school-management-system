@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#123d2a">
     <title>Students | MARKAZ</title>
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="./css/students.css?v=20261109-mobile-student-cards">
+    <link rel="stylesheet" href="./css/students.css?v=20261112-photo-picker1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
@@ -183,6 +183,12 @@
                             id="studentPhoto"
                             name="profile_image"
                             accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+                        <input
+                            type="file"
+                            id="studentPhotoCamera"
+                            accept="image/jpeg,image/png,image/webp"
                             capture="environment"
                             hidden
                         >
@@ -190,10 +196,16 @@
                         <button
                             type="button"
                             class="secondary-button"
-                            id="captureStudentPhotoButton"
-
+                            id="chooseStudentPhotoButton"
                         >
-                            Camera
+                            Upload from device
+                        </button>
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            id="captureStudentPhotoButton"
+                        >
+                            Take selfie
                         </button>
                     </div>
                 </div>
@@ -385,17 +397,24 @@
                     id="editStudentPhoto"
                     name="profile_image"
                     accept="image/jpeg,image/png,image/webp"
-                    capture="environment"
                     hidden
                 >
             </label>
+
+            <input
+                type="file"
+                id="editStudentPhotoCamera"
+                accept="image/jpeg,image/png,image/webp"
+                capture="environment"
+                hidden
+            >
 
             <button
                 type="button"
                 class="secondary-button"
                 id="captureEditStudentPhotoButton"
             >
-                Camera
+                Take selfie
             </button>
 
             <button
@@ -591,7 +610,7 @@
 
 
 
-<script src="./js/students.js?v=20261109-mobile-student-cards-v2"></script>
+<script src="./js/students.js?v=20261112-photo-picker1"></script>
 <script src="/js/markaz-global.js"></script>
 
 <script src="js/website-image-overrides.js"></script>
