@@ -409,7 +409,7 @@ onlinePortalUiAssert(
 
 
 onlinePortalUiAssert(
-    str_contains($onlineCss, '.online-results-report{display:block;') &&
+    str_contains($onlineCss, '#portalReport.online-results-report:not(.online-hidden){display:block}') &&
     str_contains($portal, 'id="portalReport" class="online-report online-results-report online-hidden"') &&
     str_contains($portalJs, 'document.title=') &&
     str_contains($portalJs, "window.addEventListener('afterprint'") &&
