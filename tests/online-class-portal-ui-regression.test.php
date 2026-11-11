@@ -25,6 +25,8 @@ $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
 $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
 $footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-footer.php');
+$studentResultsApi = (string) file_get_contents($root . '/api/online-class/student-results.php');
+$studentFooterApi = (string) file_get_contents($root . '/api/online-class/student-footer.php');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
@@ -124,12 +126,19 @@ onlinePortalUiAssert(
 
 
 onlinePortalUiAssert(
-    str_contains($workspaceApi, "if (\$action === 'subjects')") &&
-    str_contains($workspaceApi, 'WHERE level_id = ? AND is_active = 1') &&
-    str_contains($workspaceJs, "request(API+'?action=subjects'+query)") &&
-    str_contains($workspaceJs, 'Promise.allSettled') &&
-    str_contains($workspaceJs, 'resultOptionsRequest'),
-    'Result-entry subjects must load independently from results and be filtered by the selected Online Class level'
+    str_contains($workspaceApi, 'FROM markaz_app_settings') &&
+    str_contains($workspaceApi, 'result_footer_class_teacher_image') &&
+    str_contains($workspaceApi, 'result_footer_director_image') &&
+    str_contains($studentResultsApi, 'FROM markaz_app_settings') &&
+    str_contains($studentResultsApi, 'result_footer_class_teacher_image') &&
+    str_contains($studentResultsApi, 'result_footer_director_image') &&
+    str_contains($studentFooterApi, 'FROM markaz_app_settings') &&
+    str_contains($portalJs, 'function signatureImageSource(value)') &&
+    str_contains($portalJs, "const path=raw.replace(") &&
+    str_contains($workspaceJs, 'function signatureImageSource(value)') &&
+    str_contains($workspaceJs, 'data-signature-fallback') &&
+    str_contains($portalJs, 'function renderSavedSignature'),
+    'Both Online Class APIs must read the same saved signature records as the main result page and render their image paths safely'
 );
 onlinePortalUiAssert(
     str_contains($dashboardCss, '.topbar>.topbar-actions{flex:0 0 auto') &&
@@ -223,7 +232,7 @@ onlinePortalUiAssert(
     str_contains($workspaceApi, "'class_teacher_signature_image'") &&
     str_contains($workspaceApi, "'director_signature_image'") &&
     str_contains($portalJs, 'function signatureImageSource(value)') &&
-    str_contains($portalJs, "path.replace(/^\\/+/, '')") &&
+    str_contains($portalJs, "const path=raw.replace(") &&
     str_contains($workspaceJs, 'function signatureImageSource(value)') &&
     str_contains($workspaceJs, 'data-signature-fallback') &&
     str_contains($portalJs, 'function renderSavedSignature'),
