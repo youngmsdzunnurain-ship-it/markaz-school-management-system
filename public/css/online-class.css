@@ -985,6 +985,60 @@ body.online-workspace-page #onlineReport .online-report-details-staff-column > s
 }
 
 
+
+/* Student portal: balanced hierarchy for all eight report details. */
+body.online-results-page #portalReport .online-report-details-student {
+  padding: 3mm 4mm !important;
+  column-gap: 8mm !important;
+  row-gap: 3mm !important;
+  font-size: 9.25pt !important;
+  line-height: 1.35 !important;
+}
+body.online-results-page #portalReport .online-report-details-student-column {
+  gap: 2.8mm !important;
+}
+body.online-results-page #portalReport .online-report-details-student-column > span {
+  display: block !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+body.online-results-page #portalReport .online-report-details-student-column > span b {
+  display: inline-block !important;
+  min-width: 39mm !important;
+  color: #205c3b !important;
+  font-weight: 700 !important;
+}
+@media print {
+  body.online-results-page #portalReport .online-report-details-student {
+    padding: 2.8mm 4mm !important;
+    column-gap: 7mm !important;
+    row-gap: 2.8mm !important;
+    font-size: 9pt !important;
+    line-height: 1.32 !important;
+  }
+  body.online-results-page #portalReport .online-report-details-student-column {
+    gap: 2.6mm !important;
+  }
+  body.online-results-page #portalReport .online-report-details-student-column > span b {
+    min-width: 37mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments {
+    gap: 2.5mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments section {
+    padding: .8mm 1.8mm .6mm !important;
+  }
+  body.online-results-page #portalReport .online-report-comments p {
+    margin: .4mm 0 !important;
+  }
+  body.online-results-page #portalReport .online-report-signature,
+  body.online-results-page #portalReport .online-report-comments img {
+    max-width: 27mm !important;
+    max-height: 7mm !important;
+    object-fit: contain !important;
+  }
+}
+
 /* Student portal: two balanced details columns and tighter remark cards. */
 body.online-results-page #portalReport .online-report-details-student {
   display: grid !important;
@@ -1003,7 +1057,7 @@ body.online-results-page #portalReport .online-report-details-student-column > s
   overflow-wrap: anywhere !important;
 }
 body.online-results-page #portalReport .online-report-comments section {
-  padding: 8px 9px !important;
+  padding: 5px 6px !important;
 }
 @media print {
   body.online-results-page #portalReport .online-report-details-student {

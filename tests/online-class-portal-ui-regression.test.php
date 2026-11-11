@@ -491,15 +491,34 @@ onlinePortalUiAssert(
     str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
     str_contains($reportJs, '<b>Assessments:</b>') &&
     !str_contains($reportJs, '<b>Term:</b>') &&
+    str_contains($reportJs, '<b>Next Term Begins:</b>') &&
     str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-details-student') &&
     str_contains($onlineCss, 'grid-template-columns: repeat(2, minmax(0, 1fr)) !important;'),
-    'Student preview and print must show exactly two deliberate detail columns, omit redundant term/resumption fields, and retain all seven requested details'
+    'Student preview and print must show two detail columns with all eight requested fields, including Next Term Begins, without a redundant current Term field'
 );
 
 onlinePortalUiAssert(
     str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-comments section') &&
     str_contains($onlineCss, 'padding: 1mm 2.5mm .75mm !important;'),
     'Student preview and print remark boxes must use reduced internal spacing without shrinking their text'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($reportJs, '<b>Next Term Begins:</b>') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
+    str_contains($reportJs, '<b>Assessments:</b>') &&
+    str_contains($onlineCss, 'font-size: 9.25pt !important;') &&
+    str_contains($onlineCss, 'min-width: 39mm !important;') &&
+    str_contains($onlineCss, 'max-height: 7mm !important;'),
+    'Student report must retain all eight details with a clear label/value hierarchy and compact fitted remark/signature boxes'
+);
+
+onlinePortalUiAssert(
+    str_contains($portalJs, "return 'MARKAZ Online Class - '") &&
+    str_contains($workspaceJs, "return 'MARKAZ Online Class - '"),
+    'Staff and student PDF filenames must identify MARKAZ Online Class and include student, session and term'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
