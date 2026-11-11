@@ -1116,7 +1116,6 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "MARKAZ Online Class": "online-class.html",
             "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
-            "System Settings": "settings.html",
             "Settings": "settings.html"
         };
 
