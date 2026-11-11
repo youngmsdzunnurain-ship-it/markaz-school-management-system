@@ -440,3 +440,15 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
     page-break-inside: avoid !important;
   }
 }
+
+
+/* Staff Online Class report refinements — preserve the verified single landscape page. */
+@media print {
+  body.online-workspace-page #onlineReport { padding: 5mm 7mm 4mm !important; }
+  body.online-workspace-page #onlineReport .online-report-head { margin-top: 1.5mm !important; padding-top: 1mm !important; }
+  body.online-workspace-page #onlineReport::before { width: 195mm !important; height: 195mm !important; opacity: .09 !important; }
+  body.online-workspace-page #onlineReport .online-report-signature-date { display: flex !important; align-items: baseline !important; gap: 2mm !important; margin-top: 1.5mm !important; }
+  body.online-workspace-page #onlineReport .online-report-signature-date span { display: inline-block !important; min-width: 30mm !important; padding: 0 1mm .5mm !important; border-bottom: .25mm solid #64746a !important; text-align: center !important; }
+  body.online-workspace-page #onlineReport .online-report-footer { margin-top: 2.5mm !important; padding-top: 2mm !important; border-top: .65mm solid #28603a !important; box-shadow: 0 -.35mm 0 #b99a48 !important; }
+  body.online-workspace-page #onlineReport .official-results-label { font-weight: 800 !important; letter-spacing: .45px !important; }
+}
