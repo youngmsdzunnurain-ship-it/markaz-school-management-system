@@ -214,7 +214,7 @@ onlinePortalUiAssert(
     str_contains($portal, '+234 807 095 5833') &&
     !str_contains($portal, '+234 704 865 7955') &&
     str_contains($portal, 'markazilquran@gmail.com') &&
-    str_contains($portal, 'school-contact-line'),
+    str_contains($portal, 'class="school-contact"'),
     'Both printable Online Class reports must show only the two confirmed school phone numbers and the published email'
 );
 
