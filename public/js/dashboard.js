@@ -1183,3 +1183,50 @@ function initDashboardMotion() {
     }, {threshold:0.04, rootMargin:"0px 0px -4% 0px"});
     targets.forEach(element => observer.observe(element));
 }
+
+
+/* =========================================================
+   MARKAZ DASHBOARD MOTION
+   Progressive, one-time reveals; no layout measurements or
+   transforms are applied to the dashboard's grid containers.
+   ========================================================= */
+(() => {
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = document.querySelectorAll([
+        ".welcome-card",
+        ".stats-grid > .stat-card",
+        ".result-progress-section",
+        ".result-progress-grid > .progress-card",
+        ".dashboard-shortcuts > button",
+        ".dashboard-shortcuts > a",
+        ".page-content > .panel",
+        ".teacher-assignments-section",
+        ".dashboard-class-attendance-charts",
+        ".administrator-panel",
+        ".management-dashboard-profile-card"
+    ].join(","));
+
+    if (!targets.length) return;
+
+    targets.forEach((element, index) => {
+        element.setAttribute("data-mk-dashboard-reveal", "");
+        element.style.setProperty("--mk-dashboard-delay", (Math.min(index % 4, 3) * 65) + "ms");
+    });
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+        targets.forEach(element => element.classList.add("mk-dashboard-visible"));
+        return;
+    }
+
+    root.classList.add("mk-dashboard-motion-ready");
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("mk-dashboard-visible");
+            activeObserver.unobserve(entry.target);
+        });
+    }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
+
+    targets.forEach(element => observer.observe(element));
+})();
