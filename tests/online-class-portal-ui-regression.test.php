@@ -503,4 +503,22 @@ onlinePortalUiAssert(
     'Student preview and print remark boxes must use reduced internal spacing without shrinking their text'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($reportJs, '<b>Next Term Begins:</b>') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
+    str_contains($reportJs, '<b>Assessments:</b>') &&
+    str_contains($onlineCss, 'font-size: 9.25pt !important;') &&
+    str_contains($onlineCss, 'min-width: 39mm !important;') &&
+    str_contains($onlineCss, 'max-height: 7mm !important;'),
+    'Student report must retain all eight details with a clear label/value hierarchy and compact fitted remark/signature boxes'
+);
+
+onlinePortalUiAssert(
+    str_contains($portalJs, "return 'MARKAZ Online Class - '") &&
+    str_contains($workspaceJs, "return 'MARKAZ Online Class - '"),
+    'Staff and student PDF filenames must identify MARKAZ Online Class and include student, session and term'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
