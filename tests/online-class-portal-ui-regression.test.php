@@ -114,7 +114,7 @@ onlinePortalUiAssert(
     str_contains($onlineCss, '.online-workspace-page .app{grid-template-columns:260px minmax(0,1fr)') &&
     !str_contains($onlineCss, 'margin-left:280px') &&
     str_contains($onlineCss, '.online-results-report::before') &&
-    str_contains($login, 'css/login-shared.css') &&
+    str_contains($login, 'css/book-auth.css') &&
     str_contains($portal, 'css/app-watermark.css') &&
     str_contains($onlineCss, 'grid-template-columns:260px minmax(0,1fr)') &&
     str_contains($onlineCss, 'padding:18px'),
