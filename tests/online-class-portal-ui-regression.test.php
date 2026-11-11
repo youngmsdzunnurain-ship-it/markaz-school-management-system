@@ -328,6 +328,9 @@ onlinePortalUiAssert(
     str_contains($reportJs, 'online-report-head') &&
     str_contains($reportJs, 'online-report-signature-date') &&
     str_contains($onlineCss, 'body.online-results-page #portalPrintReport') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport *'),
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport *') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport { display: none !important;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport::before') &&
+    str_contains($onlineCss, '.online-results-page #portalReport.report-card{'),
     'Student portal printing must use the exact shared report renderer and print layout used by the staff dashboard'
 );
