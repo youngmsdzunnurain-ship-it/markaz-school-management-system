@@ -366,12 +366,16 @@ onlinePortalUiAssert(
 
 
 onlinePortalUiAssert(
-    str_contains($reportJs, 'data.extraDetails') &&
-    preg_match('/extraDetails\\s*:\\s*\\[/', $portalJs) === 1 &&
-    str_contains($portalJs, "label:'Section'") &&
-    str_contains($portalJs, "label:'Task 1'") &&
-    str_contains($portalJs, "label:'Task 2'"),
-    'Student landscape print must include the same student-specific details shown in the portal preview: section and both task labels'
+    str_contains($portalJs, '<b>Section:</b>') &&
+    str_contains($reportJs, '<b>Section:</b>') &&
+    !str_contains($portalJs, 'Task 1') &&
+    !str_contains($portalJs, 'Task 2') &&
+    !str_contains($portalJs, 'task_one_name') &&
+    !str_contains($portalJs, 'task_two_name') &&
+    !str_contains($reportJs, 'extraDetails') &&
+    !str_contains($reportJs, 'Task 1') &&
+    !str_contains($reportJs, 'Task 2'),
+    'Student preview and printable result must not introduce task fields that are not part of the official result format'
 );
 
 onlinePortalUiAssert(
@@ -388,4 +392,14 @@ onlinePortalUiAssert(
     str_contains($reportJs, 'row.grade_remark || grade.remark') &&
     str_contains($reportJs, 'rows.map(row => row.director_remark).find(Boolean)'),
     'Student print must preserve the preview grade and remark as separate columns and print the actual director remark returned by results'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '@page { size: letter landscape; margin: 0; }') &&
+    str_contains($onlineCss, 'width: 279.4mm !important;') &&
+    str_contains($onlineCss, 'height: 215.9mm !important;') &&
+    str_contains($onlineCss, 'padding: 5mm 7mm !important;') &&
+    str_contains($onlineCss, 'table-layout: fixed !important;'),
+    'Student landscape print must fit the full sheet within a defined internal margin and prevent table overflow at the right edge'
 );
