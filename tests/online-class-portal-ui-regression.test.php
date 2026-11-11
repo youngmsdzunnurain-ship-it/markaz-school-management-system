@@ -68,7 +68,7 @@ onlinePortalUiAssert(
 );
 onlinePortalUiAssert(
     str_contains($portal, 'id="portalReport"') &&
-    str_contains($portal, 'id="portalResultsRows"') &&
+    substr_count($portal, 'id="portalReport"') === 1 &&
     str_contains($portal, 'id="portalLogout"') &&
     str_contains($portal, 'css/app-watermark.css') &&
     str_contains($portal, 'Attendance /20') &&
@@ -257,24 +257,31 @@ onlinePortalUiAssert(
     'Shared result-footer settings must return the saved signature image paths to authorized result viewers'
 );
 onlinePortalUiAssert(
-    str_contains($portal, 'css/student-result-portal-print.css') &&
+    !str_contains($portal, 'css/student-result-portal-print.css') &&
     str_contains($portal, 'id="portalReport"') &&
-    str_contains($portal, 'class="report-footer"') &&
-    str_contains($portal, 'id="classTeacherSignatureDisplay"') &&
-    str_contains($portal, 'id="directorSignatureDisplay"') &&
-    str_contains($portal, 'class="report-footer"'),
+    !str_contains($portal, 'id="portalPrintReport"'),
     'Online Class student portal must use the established main student-result print structure and signature slots'
 );
-$portalPrintCss = (string) file_get_contents($root . '/public/css/student-result-portal-print.css');
 onlinePortalUiAssert(
-    str_contains($portalJs, "image.className='result-signature-image'") &&
-    str_contains($portalJs, 'function renderSavedSignature') &&
-    str_contains($onlineCss, 'width:145%') &&
-    str_contains($portalPrintCss, 'width: 145% !important;') &&
-    str_contains($portalPrintCss, 'top: 50% !important;') &&
-    str_contains($portalPrintCss, 'left: 50% !important;') &&
-    str_contains($portalPrintCss, 'transform: translate(-50%, -50%) !important;'),
-    'Student portal must render saved signature images and center the enlarged print watermark'
+    str_contains($portalJs, 'function waitForReportImages(root)') &&
+    str_contains($portalJs, 'window.MarkazOnlineClassReport.render') &&
+    !str_contains($portal, 'css/student-result-portal-print.css'),
+    'Student portal must use the shared renderer without loading the conflicting conventional-result print stylesheet'
+);
+
+
+onlinePortalUiAssert(
+    !!!str_contains($portal, 'id="portalPrintReport"') &&
+    !str_contains($portal, 'css/student-result-portal-print.css') &&
+    substr_count($portal, 'id="portalReport"') === 1 &&
+    str_contains($portalJs, "window.MarkazOnlineClassReport.render") &&
+    str_contains($portalJs, "waitForReportImages($('portalReport'))") &&
+    !str_contains($portalJs, 'portalPrintReport') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport::before') &&
+    str_contains($onlineCss, 'width: 205mm !important;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport {') &&
+    !str_contains($onlineCss, 'body.online-results-page #portalPrintReport'),
+    'Student preview and print must render one shared report with the same 205mm watermark and staff landscape geometry'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";
@@ -284,7 +291,7 @@ onlinePortalUiAssert(
  str_contains($workspaceJs, 'function waitForReportImages(root)') &&
  str_contains($workspaceJs, 'await waitForReportImages($("onlineReport"))') &&
  str_contains($portalJs, 'function waitForReportImages(root)') &&
- str_contains($portalJs, "await waitForReportImages($('portalPrintReport'))") &&
+ str_contains($portalJs, "await waitForReportImages($('portalReport'))") &&
  str_contains($reportJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
  str_contains($reportJs, 'Academic Report • Official School Record') &&
@@ -324,10 +331,9 @@ onlinePortalUiAssert(
     str_contains($reportJs, 'window.MarkazOnlineClassReport') &&
     str_contains($reportJs, 'online-report-head') &&
     str_contains($reportJs, 'online-report-signature-date') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport *') &&
-    str_contains($onlineCss, 'body.online-results-page #portalReport { display: none !important;') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport::before') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport *') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport::before') &&
     str_contains($onlineCss, '.online-results-page #portalReport.report-card{'),
     'Student portal printing must use the exact shared report renderer and print layout used by the staff dashboard'
 );
@@ -342,7 +348,7 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-student-landscape-fit3') &&
+    str_contains($portal, '20261111-single-shared-report1') &&
     str_contains($portal, 'document.querySelector') &&
     str_contains($portalJs, "replace(/\\D/g,'')") &&
     !str_contains($portalJs, "digits==='2347048657955'") &&
@@ -355,7 +361,7 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     !str_contains($portalJs, '\\nwindow.addEventListener') &&
-    str_contains($portalJs, "window.addEventListener('afterprint'") &&
+    !str_contains($portalJs, 'portalPrintReport') &&
     str_contains($loginShared, 'As-salamu alaykum MARKAZ Support.') &&
     !str_contains($loginShared, 'const fallback = "2347048657955"') &&
     !str_contains($loginShared, 'setSupportNumber(fallback)') &&
@@ -380,9 +386,9 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     str_contains($reportJs, 'class="official-results-label"') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-signature-date') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-comments section') &&
-    str_contains($onlineCss, 'body.online-results-page #portalPrintReport .online-report-footer') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-signature-date') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-comments section') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-footer') &&
     str_contains($onlineCss, 'rgba(83,102,90,.72)'),
     'Student landscape print must retain the dashboard signature/date/footer layout and use a subdued official footer'
 );
@@ -396,10 +402,10 @@ onlinePortalUiAssert(
 
 
 onlinePortalUiAssert(
-    str_contains($onlineCss, '@page { size: letter landscape; margin: 0; }') &&
-    str_contains($onlineCss, 'width: 279.4mm !important;') &&
-    str_contains($onlineCss, 'height: 215.9mm !important;') &&
-    str_contains($onlineCss, 'padding: 5mm 7mm !important;') &&
+    str_contains($onlineCss, '@page { size: letter landscape; margin: 3mm; }') &&
+    str_contains($onlineCss, 'width: 273.4mm !important;') &&
+    str_contains($onlineCss, 'height: 209.9mm !important;') &&
+    str_contains($onlineCss, 'padding: 2.5mm 7mm 4mm !important;') &&
     str_contains($onlineCss, 'table-layout: fixed !important;'),
     'Student landscape print must fit the full sheet within a defined internal margin and prevent table overflow at the right edge'
 );
