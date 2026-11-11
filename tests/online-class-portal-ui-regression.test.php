@@ -223,10 +223,10 @@ onlinePortalUiAssert(
     str_contains($workspaceApi, "'class_teacher_signature_image'") &&
     str_contains($workspaceApi, "'director_signature_image'") &&
     str_contains($portalJs, 'function signatureImageSource(value)') &&
-    str_contains($portalJs, "raw.replace(/^\\/+/, '')") &&
+    str_contains($portalJs, "path.replace(/^\\/+/, '')") &&
     str_contains($workspaceJs, 'function signatureImageSource(value)') &&
     str_contains($workspaceJs, 'data-signature-fallback') &&
-    str_contains($portalJs, 'data-signature-fallback'),
+    str_contains($portalJs, 'function renderSavedSignature'),
     'Both Online Class reports must resolve the existing saved signature image paths like the main student-result page and fall back safely only if an image is unavailable'
 );
 onlinePortalUiAssert(
