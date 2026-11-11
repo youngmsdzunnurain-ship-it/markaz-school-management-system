@@ -491,9 +491,10 @@ onlinePortalUiAssert(
     str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
     str_contains($reportJs, '<b>Assessments:</b>') &&
     !str_contains($reportJs, '<b>Term:</b>') &&
+    str_contains($reportJs, '<b>Next Term Begins:</b>') &&
     str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-details-student') &&
     str_contains($onlineCss, 'grid-template-columns: repeat(2, minmax(0, 1fr)) !important;'),
-    'Student preview and print must show exactly two deliberate detail columns, omit redundant term/resumption fields, and retain all seven requested details'
+    'Student preview and print must show two detail columns with all eight requested fields, including Next Term Begins, without a redundant current Term field'
 );
 
 onlinePortalUiAssert(
