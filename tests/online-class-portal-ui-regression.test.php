@@ -246,7 +246,7 @@ onlinePortalUiAssert(
     'Shared result-footer settings must return the saved signature image paths to authorized result viewers'
 );
 onlinePortalUiAssert(
-    str_contains($portal, 'css/student-result-print.css') &&
+    str_contains($portal, 'css/student-result-portal-print.css') &&
     str_contains($portal, 'id="portalReport"') &&
     str_contains($portal, 'class="report-footer"') &&
     str_contains($portal, 'id="classTeacherSignatureDisplay"') &&
@@ -257,7 +257,8 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     str_contains($portalJs, 'class="result-signature-image"') &&
     str_contains($portalJs, 'function renderSavedSignature') &&
-    str_contains($onlineCss, 'width:145%'),
+    str_contains($onlineCss, 'width:145%') &&
+    str_contains((string) file_get_contents($root . '/public/css/student-result-portal-print.css'), 'width: 145% !important;'),
     'Student portal must render the shared saved signature images and a larger centered print watermark'
 );
 
