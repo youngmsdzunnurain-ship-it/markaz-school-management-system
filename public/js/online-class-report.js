@@ -14,11 +14,11 @@ function gradeFor(score) {
 }
 
 function tutorComment(score) {
-    if (score >= 80) return "Mashallah! Your dedication and excellent effort are truly commendable. May Allah increase you in beneficial knowledge.";
-    if (score >= 70) return "Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.";
-    if (score >= 50) return "You are making promising progress. Continue with regular revision and confidence; every step matters.";
-    if (score >= 40) return "You have made a beginning. With patient practice and consistent revision, you can make stronger progress.";
-    return "Please do not be discouraged. Learning is a journey; take it one step at a time and keep trying.";
+    if (score >= 80) return "Mashallah. May Allah increase you in beneficial knowledge.";
+    if (score >= 70) return "Well done. May Allah bless your effort and increase your knowledge.";
+    if (score >= 50) return "Good effort. May Allah guide you and increase you in knowledge.";
+    if (score >= 30) return "Keep trying. May Allah make your learning easy and fruitful.";
+    return "Do not give up. May Allah guide and strengthen you.";
 }
 
 function signatureMarkup(signatures, imageKey, textKey, alt) {
