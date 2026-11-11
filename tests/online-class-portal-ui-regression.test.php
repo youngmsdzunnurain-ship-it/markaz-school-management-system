@@ -180,7 +180,7 @@ onlinePortalUiAssert(
 onlinePortalUiAssert(
     preg_match('/@page\\s*\\{[^}]*size:\\s*letter landscape/s', $onlineCss) === 1 &&
     str_contains($onlineCss, '#onlineReport') &&
-    str_contains($workspaceJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
+    str_contains($reportJs, 'Attendance</th><th>Test</th><th>Final Examination</th>'),
     'Staff Online Class reports must preserve their existing design and print in landscape orientation'
 );
 
