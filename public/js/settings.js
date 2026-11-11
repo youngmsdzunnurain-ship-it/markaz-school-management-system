@@ -364,6 +364,7 @@ removeProfileButton?.addEventListener("click", () => {
         const file = imageInput.files?.[0];
         if (file) openCropper(file);
     });
+    removeProfileButton?.addEventListener("click", () => confirmedFiles.delete(imageInput));
 
     zoomInput.addEventListener("input", () => {
         zoom = Number(zoomInput.value) || 1;
