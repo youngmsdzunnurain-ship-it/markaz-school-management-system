@@ -37,7 +37,7 @@ function formatDate(value) {
     return match ? match[3] + "/" + match[2] + "/" + match[1] : (value || "To be announced");
 }
 
-function render(data) {
+function render(data, staffLayout = false) {
     const student = data.student || {};
     const level = data.level || {};
     const rows = Array.isArray(data.rows) ? data.rows : [];
@@ -63,6 +63,9 @@ function render(data) {
     const teacherSignature = signatureMarkup(signatures, "class_teacher_signature_image", "class_teacher_signature", "Tutor signature");
     const directorSignature = signatureMarkup(signatures, "director_signature_image", "director_signature", "Director signature");
     const signatureDate = esc(signatures.result_signature_date || new Date().toLocaleDateString());
+    const detailsMarkup = staffLayout
+        ? '<div class="online-report-details online-report-details-staff"><div class="online-report-details-row"><span><b>Name:</b> ' + esc([student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ")) + '</span><span><b>Admission Number:</b> ' + esc(student.admission_number) + '</span><span><b>Class / Level:</b> ' + esc(level.name || student.level_name || "") + '</span><span><b>Tutor:</b> ' + esc(level.tutor_name || student.tutor_name || "") + '</span></div><div class="online-report-details-row"><span><b>Next Term Begins:</b> ' + esc(resumption) + '</span><span><b>Portion of Memorisation:</b> ' + esc(level.memorization_portion || student.memorization_portion || "") + '</span><span><b>Assessments:</b> Attendance 20 · Test 20 · Final Examination 60</span><span><b>Section:</b> ' + esc(student.section || "—") + '</span></div></div>'
+        : '<div class="online-report-details"><span><b>Name of Student:</b> ' + esc([student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ")) + '</span><span><b>Term:</b> ' + esc(term) + '</span><span><b>Admission No:</b> ' + esc(student.admission_number) + '</span><span><b>Next Term Begins:</b> ' + esc(resumption) + '</span><span><b>Class / Level:</b> ' + esc(level.name || student.level_name || "") + '</span><span><b>Section:</b> ' + esc(student.section || "—") + '</span><span><b>Tutor:</b> ' + esc(level.tutor_name || student.tutor_name || "") + '</span><span><b>Portion of Memorisation:</b> ' + esc(level.memorization_portion || student.memorization_portion || "") + '</span><span><b>Assessments:</b> Attendance 20 · Test 20 · Final Examination 60</span></div>';
 
     const subjectRows = rows.map((row, index) => {
         const total = totals[index];
@@ -75,12 +78,12 @@ function render(data) {
         '<div class="online-report-programme"><span lang="ar" dir="rtl">الفصل الدراسي عبر الإنترنت</span><span>ONLINE CLASS</span></div>',
         '<div class="online-report-title">' + esc(term.toUpperCase()) + ' RESULT SHEET</div>',
         '<p style="text-align:center">Academic Session: ' + esc(session) + '</p>',
-        '<div class="online-report-details"><span><b>Name of Student:</b> ' + esc([student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ")) + '</span><span><b>Term:</b> ' + esc(term) + '</span><span><b>Admission No:</b> ' + esc(student.admission_number) + '</span><span><b>Next Term Begins:</b> ' + esc(resumption) + '</span><span><b>Class / Level:</b> ' + esc(level.name || student.level_name || "") + '</span><span><b>Section:</b> ' + esc(student.section || "—") + '</span><span><b>Tutor:</b> ' + esc(level.tutor_name || student.tutor_name || "") + '</span><span><b>Portion of Memorisation:</b> ' + esc(level.memorization_portion || student.memorization_portion || "") + '</span><span><b>Assessments:</b> Attendance 20 · Test 20 · Final Examination 60</span></div>',
+        detailsMarkup,
         '<table class="online-report-table"><thead><tr><th>S/N</th><th>Subject</th><th>Attendance</th><th>Test</th><th>Final Examination</th><th>Total</th><th>Grade</th><th>Remark</th></tr></thead><tbody>' + subjectRows + '<tr><td colspan="5"><b>Overall Average</b></td><td><b>' + average.toFixed(1) + ' / 100</b></td><td><b>' + overallGrade.grade + '</b></td><td><b>' + esc(overallGrade.remark) + '</b></td></tr></tbody></table>',
         '<div class="online-report-comments"><section><b>Tutor’s Remark</b><p>' + esc(teacherRemark) + '</p><p>Signature: ' + teacherSignature + '</p><p class="online-report-signature-date">Date: <span>' + signatureDate + '</span></p></section><section><b>Coordinator’s / Director’s Remark</b><p>' + esc(directorRemark) + '</p><p>Signature: ' + directorSignature + '</p><p class="online-report-signature-date">Date: <span>' + signatureDate + '</span></p></section></div>',
         '<div class="online-report-footer"><p>MARKAZ — Centre for Learning and Memorization of the Glorious Qur’an</p><span class="official-results-label">Academic Report • Official School Record</span></div>'
     ].join("");
 }
 
-window.MarkazOnlineClassReport = Object.freeze({ render });
+window.MarkazOnlineClassReport = Object.freeze({ render, renderStaff: data => render(data, true) });
 })();
