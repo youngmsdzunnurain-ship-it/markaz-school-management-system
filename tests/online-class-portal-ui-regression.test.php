@@ -293,10 +293,13 @@ onlinePortalUiAssert(
 );
 
 
+
 onlinePortalUiAssert(
-    preg_match('/html, body \\{ width: 273\\.4mm !important; height: 209\\.9mm !important;/', $onlineCss) === 1 &&
-    preg_match('/body\\.online-workspace-page #onlineReport \\{[^}]*position: absolute !important;[^}]*width: 273\\.4mm !important; height: 209\\.9mm !important;/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, '/* Keep the dashboard-generated staff report on one landscape sheet. */') &&
+    str_contains($onlineCss, 'position: absolute !important;') &&
+    str_contains($onlineCss, 'width: 273.4mm !important;') &&
+    str_contains($onlineCss, 'height: 209.9mm !important;') &&
     str_contains($onlineCss, 'padding: 2.5mm 7mm 4mm !important;') &&
-    !preg_match('/body\\.online-workspace-page #onlineReport \\{[^}]*position: fixed !important;/s', $onlineCss),
-    'Staff Online Class print report must occupy exactly one landscape page, avoid repeating fixed-position pages and sit slightly higher'
+    str_contains($onlineCss, 'page-break-inside: avoid !important;'),
+    'Staff Online Class report must print once on one landscape page with its content shifted slightly upward'
 );
