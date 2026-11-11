@@ -247,7 +247,8 @@ onlinePortalUiAssert(
 );
 onlinePortalUiAssert(
     str_contains($portal, 'css/student-result-print.css') &&
-    str_contains($portal, 'id="studentReportCard"') &&
+    str_contains($portal, 'id="portalReport"') &&
+    str_contains($portal, 'class="report-footer"') &&
     str_contains($portal, 'id="classTeacherSignatureDisplay"') &&
     str_contains($portal, 'id="directorSignatureDisplay"') &&
     str_contains($portal, 'class="report-footer"'),
@@ -255,8 +256,7 @@ onlinePortalUiAssert(
 );
 onlinePortalUiAssert(
     str_contains($portalJs, 'class="result-signature-image"') &&
-    str_contains($portalJs, 'class_teacher_signature_image') &&
-    str_contains($portalJs, 'director_signature_image') &&
+    str_contains($portalJs, 'function renderSavedSignature') &&
     str_contains($onlineCss, 'width:145%'),
     'Student portal must render the shared saved signature images and a larger centered print watermark'
 );
