@@ -79,6 +79,10 @@ jobs:
           node --check public/js/print-results.js
           php tests/teacher-document-permissions.test.php
           php tests/management-permissions-profile-dashboard-regression.test.php
+          php -l tests/staff-profile-crop-dashboard-motion.test.php
+          php tests/staff-profile-crop-dashboard-motion.test.php
+          php tests/settings-role-first-dashboard-order.test.php
+          php tests/settings-dashboard-polish-regression.test.php
           php -l tests/teacher-portal-dashboard.test.php
           php tests/teacher-portal-dashboard.test.php
           php tests/result-print-flow-isolation.test.php
