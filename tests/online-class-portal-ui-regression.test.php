@@ -367,7 +367,7 @@ onlinePortalUiAssert(
 
 onlinePortalUiAssert(
     str_contains($reportJs, 'data.extraDetails') &&
-    str_contains($portalJs, "extraDetails: [") &&
+    preg_match('/extraDetails\\s*:\\s*\\[/', $portalJs) === 1 &&
     str_contains($portalJs, "label:'Section'") &&
     str_contains($portalJs, "label:'Task 1'") &&
     str_contains($portalJs, "label:'Task 2'"),
