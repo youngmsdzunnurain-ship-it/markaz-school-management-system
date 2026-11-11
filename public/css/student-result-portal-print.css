@@ -1029,3 +1029,20 @@
   body.online-results-page #portalReport::before { z-index: 0 !important; }
   body.online-results-page #portalReport > * { position: relative !important; z-index: 1 !important; }
 }
+
+/* Online Class portal: keep its enlarged logo watermark centered in the shared print layer. */
+@media print {
+  body.online-results-page #portalReport.report-card::before {
+    top: 50% !important;
+    left: 50% !important;
+    width: 145% !important;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 0 !important;
+  }
+  body.online-results-page #portalReport > * {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+}
