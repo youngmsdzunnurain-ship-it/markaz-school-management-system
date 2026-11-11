@@ -277,6 +277,21 @@ onlinePortalUiAssert(
     'Student portal must render saved signature images and center the enlarged print watermark'
 );
 
+
+onlinePortalUiAssert(
+    !str_contains($portal, 'id="portalPrintReport"') &&
+    !str_contains($portal, 'css/student-result-portal-print.css') &&
+    substr_count($portal, 'id="portalReport"') === 1 &&
+    str_contains($portalJs, "window.MarkazOnlineClassReport.render") &&
+    str_contains($portalJs, "waitForReportImages($('portalReport'))") &&
+    !str_contains($portalJs, 'portalPrintReport') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport::before') &&
+    str_contains($onlineCss, 'width: 205mm !important;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport {') &&
+    !str_contains($onlineCss, 'body.online-results-page #portalPrintReport'),
+    'Student preview and print must render one shared report with the same 205mm watermark and staff landscape geometry'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
 
 
