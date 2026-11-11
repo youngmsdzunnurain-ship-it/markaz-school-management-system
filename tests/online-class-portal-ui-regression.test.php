@@ -207,31 +207,24 @@ onlinePortalUiAssert(
 );
 
 onlinePortalUiAssert(
-    str_contains($js ?? '', 'مركز تعليم وتحفيظ القرآن الكريم') &&
-    str_contains($workspaceJs, 'مركز تعليم وتحفيظ القرآن الكريم') &&
-    str_contains($workspaceJs, 'class="school-name-ar"') &&
-    str_contains($portal, 'مركز تعليم وتحفيظ القرآن الكريم') &&
-    str_contains($portal, 'school-name-ar') &&
+    str_contains($reportJs, 'مركز تعليم وتحفيظ القرآن الكريم') &&
+    str_contains($reportJs, 'class="school-name-ar"') &&
+    str_contains($reportJs, 'غواغوالادا، أبوجا') &&
+    str_contains($reportJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
+    str_contains($workspace, 'js/online-class-report.js') &&
+    str_contains($portal, 'js/online-class-report.js') &&
     str_contains($onlineCss, 'size: letter landscape') &&
     !str_contains($onlineCss, 'width: 287mm !important'),
-    'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
+    'Staff and student reports must use the shared Arabic-first school heading and Letter landscape page geometry'
 );
 onlinePortalUiAssert(
-    str_contains($reportJs, 'غواغوالادا، أبوجا') &&
-    !str_contains($workspaceJs, 'جواغوالادا') &&
+    str_contains($reportJs, '+234 807 319 1275') &&
+    str_contains($reportJs, '+234 807 095 5833') &&
+    !str_contains($reportJs, '+234 704 865 7955') &&
+    str_contains($reportJs, 'markazilquran@gmail.com') &&
     !str_contains($reportJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
-    str_contains($portal, 'غواغوالادا، أبوجا') &&
-    !str_contains($portal, 'جواغوالادا') &&
-    !str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة') &&
-    str_contains($workspaceJs, '+234 807 319 1275') &&
-    str_contains($workspaceJs, '+234 807 095 5833') &&
-    !str_contains($workspaceJs, '+234 704 865 7955') &&
-    str_contains($portal, '+234 807 319 1275') &&
-    str_contains($portal, '+234 807 095 5833') &&
-    !str_contains($portal, '+234 704 865 7955') &&
-    str_contains($portal, 'markazilquran@gmail.com') &&
-    str_contains($portal, 'class="school-contact"'),
-    'Both printable Online Class reports must show only the two confirmed school phone numbers and the published email'
+    !str_contains($reportJs, 'جواغوالادا، أبوجا'),
+    'Both printable Online Class reports must use the confirmed shared school contact details and Arabic location'
 );
 
 
