@@ -346,7 +346,7 @@ onlinePortalUiAssert(
     !str_contains($portalJs, "setNumber('2347048657955')") &&
     !str_contains($portalJs, "digits='2347048657955'") &&
     !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
-    str_contains($portal, '20261111-staff-details-2row') &&
+    str_contains($portal, '20261111-staff-details-2column-watermark1') &&
     str_contains($portal, 'document.querySelector') &&
     str_contains($portalJs, "replace(/\\D/g,'')") &&
     !str_contains($portalJs, "digits==='2347048657955'") &&
@@ -446,7 +446,9 @@ onlinePortalUiAssert(
     str_contains($reportJs, '<b>Portion of Memorisation:</b>') &&
     str_contains($reportJs, '<b>Assessments:</b>') &&
     str_contains($css, 'grid-template-columns: repeat(2, minmax(0, 1fr))') &&
-    str_contains($css, 'body.online-workspace-page #onlineReport::before { width: 245mm !important;') &&
+    str_contains($css, 'body.online-workspace-page #onlineReport::before {') &&
+    str_contains($css, 'width: 245mm !important;') &&
+    str_contains($css, 'opacity: .105 !important;') &&
     !str_contains($portalJs, 'online-report-details-staff-column'),
     'Admin memorization report must stack the four student details vertically in the left column and the four report details vertically in the right column, enlarge only the staff watermark, and leave the student portal layout unchanged'
 );
