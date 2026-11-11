@@ -8,6 +8,15 @@ const accountRequest = fetch("./api/auth/me.php", {
     data: await response.json()
 }));
 window.markazSettingsAccountPromise = accountRequest;
+
+function whenStaffRole(allowedRoles, callback) {
+    return window.markazSettingsAccountPromise.then(result => {
+        const account = result.data?.admin;
+        if (result.ok && result.data?.success && account && allowedRoles.includes(account.role)) {
+            callback(account);
+        }
+    }).catch(error => console.error("Unable to resolve settings role:", error));
+}
 const form = document.getElementById("profileForm");
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
@@ -785,7 +794,7 @@ academicPeriodForm?.addEventListener("submit", async event => {
             "Academic calendar saved successfully.",
             "success"
         );
-        await loadAcademicArchive();
+        await whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
 
         setTimeout(() => {
             showAcademicPeriodMessage("", "");
@@ -798,7 +807,7 @@ academicPeriodForm?.addEventListener("submit", async event => {
     }
 });
 
-loadAcademicPeriodSettings();
+whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
 
 /* SHARED HANDWRITTEN RESULT SIGNATURES */
 (() => {
@@ -1140,7 +1149,7 @@ loadAcademicPeriodSettings();
         }
     });
 
-    loadSettings();
+    whenStaffRole(["admin", "exam_officer"], loadSettings);
 })();
 
 
@@ -1638,10 +1647,9 @@ loadAcademicPeriodSettings();
         }
     });
 
-    fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store" })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success || data.admin?.role !== "admin") {
+    window.markazSettingsAccountPromise
+        .then(result => {
+            if (!result.ok || !result.data?.success || result.data.admin?.role !== "admin") {
                 section.remove();
                 return;
             }
@@ -1791,7 +1799,7 @@ loadAcademicPeriodSettings();
         }
     }
 
-    loadPeriods();
+    whenStaffRole(["admin", "exam_officer"], loadPeriods);
 })();
 
 
