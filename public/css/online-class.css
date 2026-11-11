@@ -614,3 +614,69 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 }
 
 
+
+
+/* Student print: mirror the staff report's final spacing and understated footer. */
+@media print {
+  body.online-results-page #portalPrintReport .online-report-table {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    margin-bottom: 1mm !important;
+    table-layout: fixed !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-table th,
+  body.online-results-page #portalPrintReport .online-report-table td {
+    overflow-wrap: anywhere !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-comments {
+    gap: 2mm !important;
+    margin: 1mm 0 0 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-comments section {
+    min-height: 0 !important;
+    padding: 1.5mm 3mm 1mm !important;
+    line-height: 1.15 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-comments p {
+    margin: .6mm 0 !important;
+    line-height: 1.15 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-signature,
+  body.online-results-page #portalPrintReport .online-report-comments img {
+    max-height: 8mm !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-signature-date {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 2mm !important;
+    margin-top: .5mm !important;
+    margin-bottom: 0 !important;
+    line-height: 1.1 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-signature-date span {
+    display: inline-block !important;
+    min-width: 27mm !important;
+    padding: 0 1mm .25mm !important;
+    border-bottom: .25mm solid #64746a !important;
+    text-align: center !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-footer {
+    margin-top: auto !important;
+    padding-top: 1.5mm !important;
+    font-size: 8pt !important;
+    color: rgba(83,102,90,.72) !important;
+    font-weight: 400 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-footer p {
+    margin: 0 !important;
+    color: rgba(83,102,90,.72) !important;
+    font-weight: 400 !important;
+  }
+  body.online-results-page #portalPrintReport .online-report-footer .official-results-label {
+    color: rgba(32,92,59,.68) !important;
+    font-weight: 600 !important;
+    letter-spacing: .25px !important;
+  }
+}
