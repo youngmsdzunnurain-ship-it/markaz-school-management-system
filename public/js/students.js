@@ -1682,6 +1682,11 @@ document.addEventListener(
             return;
         }
 
+        // Let the topmost photo-crop dialog handle Escape before its parent modal.
+        if (document.getElementById("studentPhotoCropModal")?.hidden === false) {
+            return;
+        }
+
         if (
             addStudentModal &&
             !addStudentModal.hidden
