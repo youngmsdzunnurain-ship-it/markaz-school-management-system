@@ -1990,7 +1990,7 @@ async function loadAcademicArchive() {
     });
 })();
 
-loadAcademicArchive();
+whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
 
 
 /* PROTECTED ACADEMIC ENTRY RESET — password + accessible typed confirmation. */
@@ -2095,7 +2095,7 @@ loadAcademicArchive();
                 message.textContent = `Academic entries cleared: ${counts.subject_result_entries || 0} subject result rows, ${counts.behavioural_reports || 0} behavioural reports and ${counts.legacy_student_assessments || 0} legacy assessments. Student details and school setup were preserved.`;
                 message.className = "form-message success";
             }
-            await whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
+            await loadAcademicArchive();
         } catch (error) {
             showDialogMessage(error.message || "Unable to clear academic entry data. No success was reported.");
         } finally {
