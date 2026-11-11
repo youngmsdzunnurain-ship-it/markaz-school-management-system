@@ -427,7 +427,7 @@ onlinePortalUiAssert(
     str_contains($onlineCss, 'justify-content: center !important;') &&
     str_contains($onlineCss, 'max-height: 6mm !important;') &&
     str_contains($reportJs, 'May Allah increase you in beneficial knowledge.') &&
-    str_contains($reportJs, 'guide you through the blessings of the Qur’an') &&
+    str_contains($reportJs, 'May Allah guide you and increase you in knowledge.') &&
     str_contains($workspaceJs, 'document.title=') &&
     str_contains($workspaceJs, 'window.addEventListener(\'afterprint\'') &&
     str_contains($portalJs, 'term') &&
