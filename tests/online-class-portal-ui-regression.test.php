@@ -470,4 +470,14 @@ onlinePortalUiAssert(
     'Staff memorization report must show the green-and-gold divider beneath the Arabic school name and centre its footer'
 );
 
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'body.online-results-page #portalReport .school-name-ar::after') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-comments section') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-footer') &&
+    str_contains($onlineCss, 'width: 218mm !important;') &&
+    str_contains($onlineCss, 'color: rgba(18,18,18,.62) !important;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport .online-report-details {'),
+    'Student portal print report must match the staff report divider, roomier remarks, medium watermark, readable details, and soft centred footer'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
