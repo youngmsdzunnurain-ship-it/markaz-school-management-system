@@ -91,7 +91,7 @@ $('onlineResultForm').addEventListener('submit',async e=>{e.preventDefault();try
 const originalReportDocumentTitle=document.title;
 function onlineReportPdfTitle(student,session,term){
     const fullName=[student?.first_name,student?.middle_name,student?.last_name].filter(Boolean).join(' ').trim()||'Student';
-    const clean=value=>String(value||'').replace(/[\\\\:*?"<>|]/g,' ').replace(/\\//g,'-').replace(/\\s+/g,' ').trim();
+    const clean=value=>String(value||'').replace(/[\\:*?"<>|]/g,' ').replace(/\//g,'-').replace(/\s+/g,' ').trim();
     return 'MARKAZ - '+clean(fullName)+' - '+clean(session)+' - '+clean(term)+' Result';
 }
 async function printResult(studentId) {
