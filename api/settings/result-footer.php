@@ -24,7 +24,9 @@ $pdo = db();
 $allowedSettings = [
     'class_teacher_signature',
     'director_signature',
-    'result_signature_date'
+    'result_signature_date',
+    'class_teacher_signature_image',
+    'director_signature_image'
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
