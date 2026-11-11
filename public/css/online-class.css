@@ -1071,3 +1071,25 @@ body.online-results-page #portalReport .online-report-comments section {
     padding: 1mm 2.5mm .75mm !important;
   }
 }
+
+
+/* Keep report labels visually attached to their values in both print views. */
+body.online-workspace-page #onlineReport .online-report-details-staff-column > span,
+body.online-results-page #portalReport .online-report-details-student-column > span {
+  display: block !important;
+  white-space: normal !important;
+}
+body.online-workspace-page #onlineReport .online-report-details-staff-column > span b,
+body.online-results-page #portalReport .online-report-details-student-column > span b {
+  display: inline !important;
+  min-width: 0 !important;
+  margin: 0 .25em 0 0 !important;
+}
+@media print {
+  body.online-workspace-page #onlineReport .online-report-details-staff-column > span b,
+  body.online-results-page #portalReport .online-report-details-student-column > span b {
+    display: inline !important;
+    min-width: 0 !important;
+    margin-right: .25em !important;
+  }
+}
