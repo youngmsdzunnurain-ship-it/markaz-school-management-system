@@ -70,10 +70,11 @@ managementPermissionsCheck(
         && str_contains($settingsJs, '"management"')
         && str_contains($settingsProfileJs, 'profile_image')
         && str_contains($settingsProfileJs, 'compressProfileImage')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && !password_verify')
+        && str_contains($settingsProfileJs, 'staffPhotoCropCanvas')
+        && str_contains($profileApi, 'password_verify($currentPassword')
         && str_contains($profileApi, '0755')
         && str_contains($profileApi, '0644'),
-    'Management profile is password-change-free and profile images are prepared before upload'
+    'All staff roles can securely crop and update their own profile image'
 );
 managementPermissionsCheck(
     str_contains($dashboardHtml, 'management_students')
@@ -102,7 +103,7 @@ managementPermissionsCheck(
 );
 managementPermissionsCheck(
     str_contains($settingsProfileJs, 'maxBytes = 1.5 * 1024 * 1024')
-        && str_contains($settingsProfileJs, 'Photo selected. Save Changes to upload it.')
+        && str_contains($settingsProfileJs, 'Cropped photo ready. Confirm your password and save changes.')
         && str_contains($settingsProfileJs, 'response.redirected')
         && str_contains($settingsHtml, 'data-role-access="staff_profile"'),
     'Profile photos are compressed below the upload limit and Management profile settings are available'
