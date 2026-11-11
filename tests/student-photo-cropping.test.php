@@ -43,5 +43,10 @@ studentCropAssert(str_contains($js, 'editStudentPhotoCamera'), 'edit camera capt
 studentCropAssert(str_contains($css, '.student-photo-crop-viewport'), 'crop interface has responsive viewport styling');
 studentCropAssert(str_contains($css, 'prefers-reduced-motion'), 'crop interface respects reduced-motion preferences');
 studentCropAssert(str_contains($reportCss, 'object-fit:cover'), 'result sheet keeps the cropped photo fitted without distortion');
+studentCropAssert(str_contains($reportCss, 'object-position:center center'), 'result sheet displays the centre of the confirmed square crop');
+studentCropAssert(str_contains($reportCss, 'width:100px !important;') && str_contains($reportCss, 'height:100px !important;'), 'printed student photo frame remains square');
+studentCropAssert(str_contains($js, 'bindInput(studentPhoto, studentPhotoPreview)'), 'Add Student photo selection opens the cropper');
+studentCropAssert(str_contains($js, 'bindInput(editStudentPhoto, editStudentPhotoPreview)'), 'Edit Student photo selection opens the cropper');
+studentCropAssert(str_contains($js, 'confirmedFiles'), 'cancelling a replacement crop preserves the last confirmed photo');
 
 echo "Student photo crop workflow regression checks passed.\n";
