@@ -532,19 +532,22 @@ onlinePortalUiAssert(
 );
 
 
-$staffSectionPosition = strpos($reportJs, '<b>Section:</b>');
-$staffNextTermPosition = strpos($reportJs, '<b>Next Term Begins:</b>');
-$staffPortionPosition = strpos($reportJs, '<b>Portion of Memorisation:</b>');
-$staffAssessmentsPosition = strpos($reportJs, '<b>Assessments:</b>');
+$staffDetailsMarkup = substr($reportJs, strpos($reportJs, 'online-report-details-staff'));
+$studentDetailsMarkup = substr($reportJs, strpos($reportJs, 'online-report-details-student'));
+$hasRequestedDetailOrder = static function (string $markup): bool {
+    $section = strpos($markup, '<b>Section:</b>');
+    $portion = strpos($markup, '<b>Portion of Memorisation:</b>');
+    $resumption = strpos($markup, '<b>Next Term Begins:</b>');
+    $assessments = strpos($markup, '<b>Assessments:</b>');
+
+    return $section !== false && $portion !== false && $resumption !== false &&
+        $assessments !== false && $section < $portion && $portion < $resumption &&
+        $resumption < $assessments;
+};
 onlinePortalUiAssert(
-    $staffSectionPosition !== false &&
-    $staffNextTermPosition !== false &&
-    $staffPortionPosition !== false &&
-    $staffAssessmentsPosition !== false &&
-    $staffSectionPosition < $staffNextTermPosition &&
-    $staffNextTermPosition < $staffPortionPosition &&
-    $staffPortionPosition < $staffAssessmentsPosition,
-    'Both Online Class report variants must order the right column as Section, Next Term Begins, Portion of Memorisation, then Assessments'
+    $hasRequestedDetailOrder($staffDetailsMarkup) &&
+    $hasRequestedDetailOrder($studentDetailsMarkup),
+    'Staff dashboard print and student preview/print must order the right column as Section, Portion of Memorisation, Next Term Begins, then Assessments'
 );
 
 onlinePortalUiAssert(
