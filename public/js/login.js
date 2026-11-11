@@ -10,8 +10,8 @@ togglePassword.addEventListener('click', () => {
     passwordInput.type = isPassword ? 'text' : 'password';
 
     togglePassword.innerHTML = isPassword
-        ? '<i class="fa-solid fa-eye-slash"></i>'
-        : '<i class="fa-solid fa-eye"></i>';
+        ? '<svg class="icon" aria-hidden="true"><use href="#i-eye-off"></use></svg>'
+        : '<svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>';
 
     togglePassword.setAttribute(
         'aria-label',
@@ -22,15 +22,15 @@ togglePassword.addEventListener('click', () => {
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    loginMessage.className = 'login-message';
-    loginMessage.textContent = '';
+    if (window.MarkazAuthUI) window.MarkazAuthUI.clearMessage(loginForm);
+    else { loginMessage.className = 'form-message login-message'; loginMessage.textContent = ''; }
 
     const email = document.getElementById('email').value.trim();
     const password = passwordInput.value;
 
     if (!email || !password) {
-        loginMessage.className = 'login-message error';
-        loginMessage.textContent = 'Please enter your email and password.';
+        if (window.MarkazAuthUI) window.MarkazAuthUI.showMessage('Please enter your email and password.', 'error', loginForm);
+        else { loginMessage.className = 'form-message is-visible is-error login-message'; loginMessage.textContent = 'Please enter your email and password.'; }
         return;
     }
 
@@ -58,27 +58,31 @@ loginForm.addEventListener('submit', async (event) => {
             throw new Error(data.message || 'Unable to sign in.');
         }
 
-        loginMessage.className = 'login-message success';
-        loginMessage.textContent = 'Login successful. Welcome to MARKAZ.';
+        if (window.MarkazAuthUI) window.MarkazAuthUI.showMessage('Login successful. Welcome to MARKAZ.', 'success', loginForm);
+        else { loginMessage.className = 'form-message is-visible is-success login-message'; loginMessage.textContent = 'Login successful. Welcome to MARKAZ.'; }
 
         window.location.href = 'dashboard.html';
 
     } catch (error) {
-        const loginPage = document.querySelector('.login-page');
+        const loginPage = document.querySelector('.login-page, .mk-auth');
 
-        loginPage.classList.remove('login-success');
-        loginPage.classList.remove('login-failed');
+        if (loginPage) {
+            loginPage.classList.remove('login-success');
+            loginPage.classList.remove('login-failed');
+        }
 
         /*
          * Wrong login reaction:
          * the student reacts briefly instead of walking to MARKAZ.
          */
-        void loginPage.offsetWidth;
-        loginPage.classList.add('login-failed');
+        if (loginPage) {
+            void loginPage.offsetWidth;
+            loginPage.classList.add('login-failed');
+        }
 
-        loginMessage.className = 'login-message error';
-        loginMessage.textContent =
-            error.message || 'Something went wrong.';
+        const errorMessage = error.message || 'Something went wrong.';
+        if (window.MarkazAuthUI) window.MarkazAuthUI.showMessage(errorMessage, 'error', loginForm);
+        else { loginMessage.className = 'form-message is-visible is-error login-message'; loginMessage.textContent = errorMessage; }
 
         loginButton.disabled = false;
         loginButton.innerHTML =
