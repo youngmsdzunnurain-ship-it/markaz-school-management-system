@@ -191,8 +191,8 @@ onlinePortalUiAssert(
 );
 onlinePortalUiAssert(
     preg_match('/@page\\s*\\{[^}]*size:\\s*297mm\\s+210mm/s', $onlineCss) === 1 &&
-    preg_match('/#onlineReport,\\s*#portalReport\\s*\\{[^}]*width:\\s*285mm/s', $onlineCss) === 1 &&
-    str_contains($onlineCss, 'min-height: 198mm') &&
+    preg_match('/body\\.online-workspace-page #onlineReport,\\s*body\\.online-results-page #portalReport\\s*\\{[^}]*width:\\s*281mm/s', $onlineCss) === 1 &&
+    str_contains($onlineCss, 'min-height: 194mm') &&
     !str_contains($workspaceJs, 'fitOnlineReportForPrint') &&
     !str_contains($portalJs, 'fitOnlineReportForPrint'),
     'Online Class reports must use true landscape page geometry without shrinking the report to fit a portrait sheet'
