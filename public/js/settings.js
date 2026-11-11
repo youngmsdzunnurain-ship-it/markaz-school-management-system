@@ -205,6 +205,7 @@ removeProfileButton?.addEventListener("click", () => {
 
     const size = canvas.width;
     const confirmedFiles = new WeakMap();
+    removeProfileButton?.addEventListener("click", () => confirmedFiles.delete(imageInput));
     let sourceImage = null;
     let sourceUrl = null;
     let activePointer = null;
@@ -298,12 +299,12 @@ removeProfileButton?.addEventListener("click", () => {
     async function openCropper(file) {
         if (!file) return;
         if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
-            imageInput.value = "";
+            restoreFile();
             showMessage("Please choose a JPG, PNG or WEBP image.", "error");
             return;
         }
         if (file.size > 3 * 1024 * 1024) {
-            imageInput.value = "";
+            restoreFile();
             showMessage("Profile image must not exceed 3MB.", "error");
             return;
         }
