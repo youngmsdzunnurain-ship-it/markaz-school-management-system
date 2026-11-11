@@ -329,3 +329,18 @@ onlinePortalUiAssert(
     str_contains($onlineCss, '.online-results-page #portalReport.report-card{'),
     'Student portal printing must use the exact shared report renderer and print layout used by the staff dashboard'
 );
+
+
+onlinePortalUiAssert(
+    str_contains($portalJs, 'The results request timed out.') &&
+    str_contains($portalJs, 'Checking your selected academic session and term…') &&
+    str_contains($portalJs, 'Unable to load your selected academic session and term.') &&
+    str_contains($portalJs, 'Assalamualaikum. I am a student using the MARKAZ Online Class portal') &&
+    str_contains($portalJs, 'Jazakumullahu khairan.') &&
+    !str_contains($portalJs, "setNumber('2347048657955')") &&
+    !str_contains($portalJs, "digits='2347048657955'") &&
+    !str_contains($portal, 'href="https://wa.me/2347048657955"') &&
+    str_contains($portal, '20261111-student-loading-support2'),
+    'Student portal must expose API loading failures, prevent indefinite loading, and use a polite WhatsApp message without the known incorrect fallback number'
+);
+
