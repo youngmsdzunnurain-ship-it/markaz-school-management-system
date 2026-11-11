@@ -1183,12 +1183,14 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
   const status = section.querySelector("#markazSupportStatus");
   const form = section.querySelector("#markazSupportForm");
 
-  fetch("./api/settings/support-contact.php", { credentials: "same-origin" })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success && data.whatsapp_number) input.value = data.whatsapp_number;
-    })
-    .catch(() => { status.textContent = "Could not load the saved number. You can still enter one and save."; });
+  whenStaffRole(["admin"], () => {
+    fetch("./api/settings/support-contact.php", { credentials: "same-origin" })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.whatsapp_number) input.value = data.whatsapp_number;
+      })
+      .catch(() => { status.textContent = "Could not load the saved number. You can still enter one and save."; });
+  });
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1311,7 +1313,8 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
         return data;
     }
 
-    request().then(data => {
+    whenStaffRole(["admin"], () => request()).then(data => {
+        if (!data) return;
         Object.entries(inputs).forEach(([key, input]) => {
             input.checked = Boolean(data.settings?.[key]);
         });
@@ -1450,7 +1453,7 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
     }
 
     refresh.addEventListener("click", load);
-    load();
+    whenStaffRole(["admin"], load);
 })();
 
 /* MARKAZ SENIOR ADMIN — ACCOUNT DEVICES AND USAGE HISTORY */
