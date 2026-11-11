@@ -290,7 +290,7 @@ onlinePortalUiAssert(
  str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
  str_contains($workspaceJs, 'Academic Report • Official School Record') &&
-  str_contains($workspaceJs, 'جواغواغوالادا، أبوجا') &&
+  str_contains($workspaceJs, 'غواغوالادا، أبوجا') &&
   !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
  str_contains($workspaceJs, 'online-report-signature-date') &&
  str_contains($onlineCss, 'width:172mm!important') &&
