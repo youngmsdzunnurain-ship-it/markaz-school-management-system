@@ -765,22 +765,23 @@ if (addStudentModal) {
         if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + "%";
     }
 
-    function cancelCropper() {
-        if (activeInput) {
-            const previousFile = confirmedFiles.get(activeInput);
-            if (previousFile) {
-                try {
-                    const transfer = new DataTransfer();
-                    transfer.items.add(previousFile);
-                    activeInput.files = transfer.files;
-                    setPreview(activePreview, previousFile);
-                } catch (error) {
-                    activeInput.value = "";
-                }
-            } else {
-                activeInput.value = "";
-            }
+    function restoreConfirmedFile(input, preview) {
+        if (!input) return;
+        const previousFile = confirmedFiles.get(input);
+        if (!previousFile) {
+            input.value = "";
+            return;
         }
+        try {
+            setSelectedFile(input, previousFile);
+            setPreview(preview, previousFile);
+        } catch (error) {
+            input.value = "";
+        }
+    }
+
+    function cancelCropper() {
+        restoreConfirmedFile(activeInput, activePreview);
         closeCropper();
     }
 
@@ -822,7 +823,7 @@ if (addStudentModal) {
         if (!file || !input) return;
         if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
             alert("Please choose a JPG, PNG or WEBP image.");
-            input.value = "";
+            restoreConfirmedFile(input, preview);
             return;
         }
         if (file.size > 3 * 1024 * 1024) {
