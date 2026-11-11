@@ -32,10 +32,10 @@ $supportContactApi = (string) file_get_contents($root . '/public/api/settings/su
 $loginShared = (string) file_get_contents($root . '/public/js/login-shared.js');
 
 onlinePortalUiAssert(
-    str_contains($login, 'css/login-roles.css') &&
-    str_contains($login, 'css/login-shared.css') &&
-    str_contains($login, 'class="role-login-page online-login-page"') &&
-    str_contains($login, 'class="role-login-card student-login-card online-login-card"'),
+    str_contains($login, 'css/book-auth.css') &&
+    str_contains($login, 'class="mk-auth page-results page-online-class"') &&
+    str_contains($login, 'class="book"') &&
+    str_contains($login, 'id="formPage"'),
     'Online Class login must reuse the established MARKAZ login visual system'
 );
 onlinePortalUiAssert(
@@ -46,7 +46,7 @@ onlinePortalUiAssert(
     substr_count($login, 'name="academic_session"') === 1 &&
     !str_contains($login, 'online-portal-switch') &&
     !str_contains($portal, 'online-portal-home') &&
-    str_contains($login, 'js/login-shared.js') && str_contains($portal, 'markaz-shared-login-footer') &&
+    str_contains($login, 'js/book-auth.js') && str_contains($portal, 'markaz-shared-login-footer') &&
     str_contains($portal, 'id="onlineSupportLink"') && !str_contains($login, 'online-support-footer') &&
     !str_contains($portal, 'online-support-footer') && !str_contains($login, '+234 807') &&
     !str_contains($portal, '+234 807') && !str_contains($studentLogin, 'online-portal-switch') &&
