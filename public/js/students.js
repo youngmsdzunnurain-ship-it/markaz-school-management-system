@@ -1654,13 +1654,44 @@ if (editStudentForm) {
     );
 }
 
-/* Use the device's native camera picker; no live preview or AI processing. */
+/* Student photo selection:
+   - The regular file inputs open the phone's gallery/files picker.
+   - Separate capture inputs request the device camera for a new selfie.
+   - Camera selections are copied into the existing named form input so the
+     current preview, validation, and multipart upload flow remain unchanged. */
 (() => {
-    const addButton = document.getElementById("captureStudentPhotoButton");
+    const addButton = document.getElementById("chooseStudentPhotoButton");
     const addInput = document.getElementById("studentPhoto");
-    const editButton = document.getElementById("captureEditStudentPhotoButton");
+    const addCameraButton = document.getElementById("captureStudentPhotoButton");
+    const addCameraInput = document.getElementById("studentPhotoCamera");
+
+    const editCameraButton = document.getElementById("captureEditStudentPhotoButton");
     const editInput = document.getElementById("editStudentPhoto");
+    const editCameraInput = document.getElementById("editStudentPhotoCamera");
 
     addButton?.addEventListener("click", () => addInput?.click());
-    editButton?.addEventListener("click", () => editInput?.click());
+    addCameraButton?.addEventListener("click", () => addCameraInput?.click());
+    editCameraButton?.addEventListener("click", () => editCameraInput?.click());
+
+    const transferCameraPhoto = (cameraInput, uploadInput) => {
+        cameraInput?.addEventListener("change", () => {
+            const photo = cameraInput.files?.[0];
+            if (!photo || !uploadInput) return;
+
+            try {
+                const transfer = new DataTransfer();
+                transfer.items.add(photo);
+                uploadInput.files = transfer.files;
+                uploadInput.dispatchEvent(new Event("change", { bubbles: true }));
+            } catch (error) {
+                console.error("Unable to attach camera photo to student form:", error);
+                alert("Unable to use the selected camera photo. Please choose the photo using Upload from device.");
+            } finally {
+                cameraInput.value = "";
+            }
+        });
+    };
+
+    transferCameraPhoto(addCameraInput, addInput);
+    transferCameraPhoto(editCameraInput, editInput);
 })();
