@@ -44,10 +44,10 @@
 <div class="field"><label for="password">Password</label><div class="control">
 <svg class="icon icon-lead" aria-hidden="true"><use href="#i-lock"/></svg>
 <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
-<button type="button" class="toggle-pass" data-toggle-password aria-controls="password" aria-label="Show password" aria-pressed="false">
+<button type="button" class="toggle-pass" id="togglePassword" aria-label="Show password" aria-pressed="false">
 <svg class="icon icon-show" aria-hidden="true"><use href="#i-eye"/></svg><svg hidden class="icon icon-hide" aria-hidden="true"><use href="#i-eye-off"/></svg>
 </button></div></div>
-<div class="form-row"><span></span><a class="link" href="forgot-password.html">Forgot your password?</a></div>
+<div class="form-row"><label class="check" for="remember"><input type="checkbox" id="remember" name="remember"> Remember me</label><a class="link" href="forgot-password.html">Forgot your password?</a></div>
 <div class="form-message login-message" id="loginMessage" role="alert" aria-live="assertive"></div>
 <button type="submit" class="btn login-button" id="loginButton"><span>Sign In</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
 </form>
