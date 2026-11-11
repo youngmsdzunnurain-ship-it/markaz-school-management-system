@@ -354,7 +354,7 @@ onlinePortalUiAssert(
 
 
 onlinePortalUiAssert(
-    !str_contains($portalJs, '\\\\nwindow.addEventListener') &&
+    !str_contains($portalJs, '\\nwindow.addEventListener') &&
     str_contains($portalJs, "window.addEventListener('afterprint'") &&
     str_contains($loginShared, 'As-salamu alaykum MARKAZ Support.') &&
     !str_contains($loginShared, 'const fallback = "2347048657955"') &&
