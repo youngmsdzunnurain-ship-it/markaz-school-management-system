@@ -291,3 +291,15 @@ onlinePortalUiAssert(
  str_contains($onlineCss, 'official-results-label'),
  'Online Class certificates must use the corrected bilingual heading, loaded saved signatures, larger centered watermark, refined frame and official-results footer'
 );
+
+
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '/* Keep the dashboard-generated staff report on one landscape sheet. */') &&
+    str_contains($onlineCss, 'position: absolute !important;') &&
+    str_contains($onlineCss, 'width: 273.4mm !important;') &&
+    str_contains($onlineCss, 'height: 209.9mm !important;') &&
+    str_contains($onlineCss, 'padding: 2.5mm 7mm 4mm !important;') &&
+    str_contains($onlineCss, 'page-break-inside: avoid !important;'),
+    'Staff Online Class report must print once on one landscape page with its content shifted slightly upward'
+);
