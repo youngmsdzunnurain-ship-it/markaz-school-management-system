@@ -461,4 +461,13 @@ onlinePortalUiAssert(
     'Admin memorization report must stack the four student details vertically in the left column and the four report details vertically in the right column, enlarge only the staff watermark, and leave the student portal layout unchanged'
 );
 
+onlinePortalUiAssert(
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .school-name-ar::after') &&
+    str_contains($onlineCss, 'linear-gradient(90deg, #166534, #c99a2e, #166534)') &&
+    str_contains($onlineCss, 'body.online-workspace-page #onlineReport .online-report-footer') &&
+    str_contains($onlineCss, 'align-items: center !important;') &&
+    str_contains($onlineCss, 'text-align: center !important;'),
+    'Staff memorization report must show the green-and-gold divider beneath the Arabic school name and centre its footer'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
