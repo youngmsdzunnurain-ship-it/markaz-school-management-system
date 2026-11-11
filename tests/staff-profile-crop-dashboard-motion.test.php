@@ -28,4 +28,6 @@ staffProfileMotionAssert(str_contains($dashboardJs, 'data-mk-dashboard-reveal') 
 staffProfileMotionAssert(str_contains($dashboardJs, 'profileButton.setAttribute("aria-expanded", "false")') && str_contains($dashboardJs, 'dropdown.hidden = true'), 'avatar dropdown starts closed and closes accessibly');
 staffProfileMotionAssert(str_contains($settingsJs, 'window.markazSettingsAccountPromise') && str_contains($navigation, 'window.markazSettingsAccountPromise'), 'Settings and its role navigation share one authenticated account lookup');
 staffProfileMotionAssert(str_contains($navigation, 'adminModules') && !str_contains($html, 'js/account-management.js'), 'privileged settings modules load only after Admin role confirmation');
-echo "Staff profile crop and dashboard motion regression checks passed (14 checks).\\n";
+staffProfileMotionAssert(str_contains($html, 'Confirm your current password') && str_contains($html, 'Password changes are handled separately'), 'profile photo and details require current-password confirmation without changing the password');
+staffProfileMotionAssert(str_contains($dashboardJs, 'href="./settings.html#profile"') && str_contains($dashboardJs, 'Profile') && str_contains($dashboardJs, 'Settings'), 'avatar dropdown restores separate Profile and Settings actions');
+echo "Staff profile crop and dashboard motion regression checks passed (16 checks).\\n";
