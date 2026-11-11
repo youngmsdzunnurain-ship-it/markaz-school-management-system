@@ -15,7 +15,7 @@ $f=file_get_contents($root.'/api/settings/finalize-academic-period.php');
 foreach(['dashboard'=>$d,'dashboard script'=>$j,'shared settings page'=>$settings,'settings navigation'=>$navigation,'settings script'=>$settingsScript,'middleware'=>$a,'release API'=>$r,'public release API'=>$publicRelease,'progress helper'=>$progress,'archive API'=>$f] as $k=>$v)eoAssert(is_string($v),$k.' exists');
 eoAssert(str_contains($d,'href="./settings.html"')&&str_contains($d,'data-role-access="staff_profile"'),'Admin and Exam Officer use the same Settings route');
 eoAssert(!str_contains($d,'exam-officer-settings.html'),'dashboard does not link to a separate Exam Officer settings page');
-eoAssert(str_contains($d,'data-role-access="staff_profile"'),'Add Student shortcut is shared with Exam Officer');
+eoAssert(str_contains($d,'data-role-access="admin_or_exam_officer"'),'Add Student shortcut is shared with Exam Officer');
 eoAssert(str_contains($d,'data-role-access="admin" aria-label="Attendance by class"'),'attendance charts remain Admin-only');
 eoAssert(str_contains($settings,'data-role-access="staff_profile"'),'shared settings page admits Admin and Exam Officer roles');
 eoAssert(str_contains($navigation,'result-release')&&str_contains($navigation,'academic-archive')&&str_contains($navigation,'memorization'),'shared navigation contains the requested settings categories');
