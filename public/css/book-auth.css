@@ -19,7 +19,7 @@ body.mk-auth{margin:0;font-family:var(--mk-sans);font-size:16px;line-height:1.5;
 .book{position:relative;width:min(980px,100%);height:var(--book-height);perspective:2000px;transform:translateX(-25%);transition:transform var(--flip)}
 .book.is-open{transform:none}
 .book.no-anim,.book.no-anim .leaf{transition:none!important}
-.page-form{position:absolute;top:0;left:calc(50% - 1px);width:calc(50% + 1px);height:100%;background:var(--mk-cream);border-radius:0 14px 14px 0;border:1px solid var(--mk-line);border-left:0;overflow:hidden;box-shadow:1px 1px 0 #e9e1cc,2px 2px 0 var(--mk-line),3px 3px 0 #e9e1cc,4px 4px 0 var(--mk-line),0 30px 44px -20px rgba(8,45,30,.5)}
+.page-form{position:absolute;top:0;left:calc(50% - 1px);width:calc(50% + 1px);height:100%;background-color:var(--mk-cream);background-image:radial-gradient(circle at center,transparent 0 48px,rgba(184,146,58,.055) 49px 50px,transparent 51px),linear-gradient(rgba(251,247,238,.945),rgba(251,247,238,.945)),url("../assets/images/markaz-logo.jpg");background-repeat:repeat;background-size:140px 140px;background-position:center;border-radius:0 14px 14px 0;border:1px solid var(--mk-line);border-left:0;overflow:hidden;box-shadow:1px 1px 0 #e9e1cc,2px 2px 0 var(--mk-line),3px 3px 0 #e9e1cc,4px 4px 0 var(--mk-line),0 30px 44px -20px rgba(8,45,30,.5)}
 .page-form::before{content:"";position:absolute;inset:0 auto 0 0;width:28px;background:linear-gradient(90deg,rgba(0,0,0,.14),transparent);pointer-events:none;z-index:1}
 .page-form::after{content:"";position:absolute;inset:12px;border:1px solid var(--mk-line);border-radius:6px;pointer-events:none}
 .page-scroll{position:relative;z-index:2;height:100%;overflow-y:auto;display:flex;flex-direction:column;padding:clamp(30px,4vw,48px) clamp(26px,4.4vw,56px)}
@@ -119,7 +119,7 @@ body.mk-auth{background-color:var(--mk-paper);background-image:radial-gradient(c
 .only-desktop{display:none}
 .stage{display:block;min-height:100dvh;padding:0}
 .book{width:100%;height:auto;min-height:100dvh;perspective:none;transform:none;transition:none}
-.page-form{position:relative;top:auto;left:auto;width:100%;height:auto;min-height:100dvh;background:var(--mk-paper);border:0;border-radius:0;box-shadow:none;overflow:visible}
+.page-form{position:relative;top:auto;left:auto;width:100%;height:auto;min-height:100dvh;background-color:var(--mk-paper);background-image:radial-gradient(circle at center,transparent 0 48px,rgba(184,146,58,.055) 49px 50px,transparent 51px),linear-gradient(rgba(251,247,238,.945),rgba(251,247,238,.945)),url("../assets/images/markaz-logo.jpg");background-repeat:repeat;background-size:140px 140px;background-position:center;border:0;border-radius:0;box-shadow:none;overflow:visible}
 .page-form::before,.page-form::after{display:none}
 .book:not(.is-open) .page-form{height:100dvh;min-height:0;overflow:hidden}
 .page-scroll{height:auto;min-height:100dvh;overflow:visible;padding:0 0 calc(28px + env(safe-area-inset-bottom,0px))}
