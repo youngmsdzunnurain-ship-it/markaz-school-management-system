@@ -319,6 +319,7 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
 
 /* Compact dashboard navigation and refined bilingual calligraphy. */
 .online-workspace-page .app{grid-template-columns:248px minmax(0,1fr)!important}
+.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:minmax(0,1fr)!important}
 .online-workspace-page .sidebar{width:248px!important;padding:12px!important}
 .online-workspace-page .sidebar-header{height:64px!important;min-height:64px!important;margin-bottom:12px!important;padding:10px 8px!important;gap:9px!important}
 .online-workspace-page .sidebar-header .brand-logo{width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:11px!important}
