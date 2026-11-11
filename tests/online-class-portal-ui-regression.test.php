@@ -521,4 +521,14 @@ onlinePortalUiAssert(
     'Staff and student PDF filenames must identify MARKAZ Online Class and include student, session and term'
 );
 
+
+onlinePortalUiAssert(
+    str_contains($onlineCss, '.online-report-details-staff-column > span b') &&
+    str_contains($onlineCss, '.online-report-details-student-column > span b') &&
+    str_contains($onlineCss, 'display: inline !important;') &&
+    str_contains($onlineCss, 'min-width: 0 !important;') &&
+    str_contains($onlineCss, 'margin: 0 .25em 0 0 !important;'),
+    'Staff dashboard print and student preview/print must keep each bold detail label close to its value on the same line'
+);
+
 echo "Online Class student portal and responsive shell regression checks passed.\n";
