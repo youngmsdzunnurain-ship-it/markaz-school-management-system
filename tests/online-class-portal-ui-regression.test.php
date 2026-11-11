@@ -24,6 +24,7 @@ $workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php'
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
 $onlineCss = (string) file_get_contents($root . '/public/css/online-class.css');
+$footerSettingsApi = (string) file_get_contents($root . '/api/settings/result-footer.php');
 
 onlinePortalUiAssert(
     str_contains($login, 'css/login-roles.css') &&
@@ -198,7 +199,7 @@ onlinePortalUiAssert(
     str_contains($workspaceJs, 'مركز تعليم وتحفيظ القرآن الكريم') &&
     str_contains($workspaceJs, 'class="school-name-ar"') &&
     str_contains($portal, 'مركز تعليم وتحفيظ القرآن الكريم') &&
-    str_contains($portal, 'class="school-name-ar"') &&
+    str_contains($portal, 'school-name-ar') &&
     str_contains($onlineCss, 'size: letter landscape') &&
     !str_contains($onlineCss, 'width: 287mm !important'),
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
@@ -222,10 +223,10 @@ onlinePortalUiAssert(
     str_contains($workspaceApi, "'class_teacher_signature_image'") &&
     str_contains($workspaceApi, "'director_signature_image'") &&
     str_contains($portalJs, 'function signatureImageSource(value)') &&
-    str_contains($portalJs, "raw.replace(/^\\/+/, '')") &&
+    str_contains($portalJs, "path.replace(/^\\/+/, '')") &&
     str_contains($workspaceJs, 'function signatureImageSource(value)') &&
     str_contains($workspaceJs, 'data-signature-fallback') &&
-    str_contains($portalJs, 'data-signature-fallback'),
+    str_contains($portalJs, 'function renderSavedSignature'),
     'Both Online Class reports must resolve the existing saved signature image paths like the main student-result page and fall back safely only if an image is unavailable'
 );
 onlinePortalUiAssert(
@@ -237,6 +238,28 @@ onlinePortalUiAssert(
     str_contains($onlineCss, 'height:38px!important') &&
     str_contains($onlineCss, 'padding:12px!important'),
     'Online Class heading typography must be calligraphic and its sidebar navigation must use a tighter, narrower layout'
+);
+
+onlinePortalUiAssert(
+    str_contains($footerSettingsApi, "'class_teacher_signature_image'") &&
+    str_contains($footerSettingsApi, "'director_signature_image'"),
+    'Shared result-footer settings must return the saved signature image paths to authorized result viewers'
+);
+onlinePortalUiAssert(
+    str_contains($portal, 'css/student-result-portal-print.css') &&
+    str_contains($portal, 'id="portalReport"') &&
+    str_contains($portal, 'class="report-footer"') &&
+    str_contains($portal, 'id="classTeacherSignatureDisplay"') &&
+    str_contains($portal, 'id="directorSignatureDisplay"') &&
+    str_contains($portal, 'class="report-footer"'),
+    'Online Class student portal must use the established main student-result print structure and signature slots'
+);
+onlinePortalUiAssert(
+    str_contains($portalJs, 'class="result-signature-image"') &&
+    str_contains($portalJs, 'function renderSavedSignature') &&
+    str_contains($onlineCss, 'width:145%') &&
+    str_contains((string) file_get_contents($root . '/public/css/student-result-portal-print.css'), 'width: 145% !important;'),
+    'Student portal must render the shared saved signature images and a larger centered print watermark'
 );
 
 echo "Online Class student portal and responsive shell regression checks passed.\n";

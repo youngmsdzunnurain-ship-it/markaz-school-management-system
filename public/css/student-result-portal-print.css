@@ -1,0 +1,1031 @@
+/*
+ * MARKAZ - single-page student result for A4 or Letter paper (print only).
+ * Loaded with media="print" by student-result.html and student-result-print.html.
+ * Flat design: no shadows, no gradients, no blur. No CSS zoom, no vh heights.
+ * Every size = design value x --u (mm) or --p (pt). --k is the page scale: .77 on A4,
+ * .74 on Letter (page height below 283mm), smaller again for 13+ subjects.
+ * Signatures and footer are pinned to the bottom of the paper (position: fixed);
+ * the card keeps room for them with padding-bottom.
+ */
+@page { margin: 5mm; }
+
+@media print {
+  /* Never print an incomplete read-only preview. */
+  body.result-print-blocked #portalReport {
+    display: none !important;
+  }
+  body.result-print-blocked .result-print-blocked-notice {
+    display: block !important;
+    margin: 20mm 10mm !important;
+    padding: 8mm !important;
+    border: 1px solid #b7791f !important;
+    border-left: 3mm solid #b7791f !important;
+    background: #fff8e8 !important;
+    color: #704b12 !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+  :root {
+    --g: #1f5a3a;
+    --gd: #154029;
+    --pale: #f1f6f3;
+    --line: #e1e8e3;
+    --gold: #c79a3a;
+    --goldl: #fdf7e6;
+    --ink: #1c2b24;
+    --mut: #66746d;
+    --k: .79;
+    --u: calc(1mm * var(--k));
+    --p: calc(1pt * var(--k));
+  }
+
+  /* Shorter paper (Letter): slightly smaller sizes so everything still fits on one page */
+  @media (max-height: 283mm) {
+    :root { --k: .75; }
+  }
+
+  html,
+  body {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: var(--ink) !important;
+    font-family: Figtree, "Segoe UI", Arial, Helvetica, sans-serif !important;
+    font-size: calc(9 * var(--p)) !important;
+    line-height: 1.3 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html::before,
+  html::after,
+  html body::before,
+  html body::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Things that must never print */
+  html body .result-page-curve,
+  html body .result-page-header,
+  html body .header-navigation,
+  html body .header-actions,
+  html body .document-actions,
+  html body .student-edit-actions,
+  html body #editScoresButton,
+  html body #saveScoresButton,
+  html body #cancelScoresButton,
+  html body #unsavedChangesModal,
+  html body .markaz-confirm-overlay,
+  html body .global-saved-message,
+  html body .global-save-error,
+  #portalReport #studentMemorizationInput,
+  html body button,
+  html body .btn,
+  html body .no-print,
+  #portalReport .section-heading .section-eyebrow,
+  #portalReport .student-status,
+  #portalReport .section-heading p {
+    display: none !important;
+  }
+
+  /* Page and card */
+  html body main.student-result-page,
+  html body main.student-result-page.management-view {
+    display: block !important;
+    height: 100% !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  #portalReport {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    gap: calc(2.2 * var(--u)) !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 0 calc(25 * var(--u)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+    zoom: 1 !important;
+    transform: none !important;
+  }
+
+  #portalReport::after {
+    display: none !important;
+    content: none !important;
+  }
+  #portalReport::before {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 145% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    transform: translate(-50%, -50%) !important;
+    background: url("../assets/images/markaz-logo.jpg") center / contain no-repeat !important;
+    opacity: .075 !important;
+    mix-blend-mode: multiply !important;
+    pointer-events: none !important;
+    z-index: 3 !important;
+  }
+
+  /* Header: logo | school text | result statement box */
+  #portalReport .school-header {
+    display: grid !important;
+    grid-template-columns: calc(27 * var(--u)) 1fr calc(44 * var(--u)) !important;
+    gap: calc(4 * var(--u)) !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 0 calc(2 * var(--u)) !important;
+    border: 0 !important;
+    background: none !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .school-brand {
+    display: contents !important;
+  }
+  #portalReport .school-logo {
+    width: calc(25 * var(--u)) !important;
+    height: calc(25 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+  }
+  #portalReport .school-logo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+  #portalReport .school-heading {
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+  }
+  #portalReport .school-heading p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .school-arabic-name {
+    font-family: Amiri, "Traditional Arabic", serif !important;
+    font-size: calc(21 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    color: var(--gd) !important;
+  }
+  #portalReport .school-arabic-name::after {
+    content: "" !important;
+    display: block !important;
+    width: calc(30 * var(--u)) !important;
+    height: calc(1 * var(--u)) !important;
+    background: linear-gradient(90deg, #166534 0%, #c99a2e 50%, #166534 100%) !important;
+    margin: calc(2.3 * var(--u)) auto 0 !important;
+    border-radius: 999px !important;
+  }
+  #portalReport .school-arabic-address {
+    font-family: Amiri, "Traditional Arabic", serif !important;
+    font-size: calc(10 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    color: #6f5b24 !important;
+    margin-top: calc(1 * var(--u)) !important;
+  }
+  #portalReport .school-kicker {
+    font-size: calc(8.8 * var(--p)) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    color: var(--gd) !important;
+    margin-top: calc(1.2 * var(--u)) !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0 !important;
+  }
+  #portalReport .school-address {
+    font-size: calc(7 * var(--p)) !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    color: #64736b !important;
+    margin-top: calc(.5 * var(--u)) !important;
+    line-height: 1.25 !important;
+  }
+  #portalReport .school-contact {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 0 calc(4 * var(--u)) !important;
+    margin-top: calc(.8 * var(--u)) !important;
+    font-size: calc(7.4 * var(--p)) !important;
+    color: var(--ink) !important;
+    line-height: 1.25 !important;
+  }
+  #portalReport .contact-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: calc(1.2 * var(--u)) !important;
+    white-space: nowrap !important;
+  }
+  #portalReport .contact-item i {
+    font-size: calc(6.6 * var(--p)) !important;
+    color: var(--g) !important;
+  }
+  #portalReport .contact-separator {
+    margin: 0 calc(.6 * var(--u)) !important;
+  }
+  #portalReport .report-title {
+    display: block !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding: calc(3 * var(--u)) calc(2 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-left: 2.5px solid var(--gold) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
+    background: #fff !important;
+  }
+  #portalReport .report-title span {
+    display: block !important;
+    font-size: calc(6.4 * var(--p)) !important;
+    font-weight: 600 !important;
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+    color: #8a6a1f !important;
+  }
+  #portalReport .report-title strong {
+    display: block !important;
+    margin-top: calc(.8 * var(--u)) !important;
+    font-size: calc(9.8 * var(--p)) !important;
+    font-weight: 700 !important;
+    color: var(--gd) !important;
+    white-space: nowrap !important;
+  }
+
+  /* Session strip */
+  #portalReport .session-bar {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: calc(2.4 * var(--u)) !important;
+    margin: 0 !important;
+    padding: calc(2.2 * var(--u)) calc(4 * var(--u)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-top: 1.5px solid var(--gold) !important;
+    border-bottom: 1px solid #f0e2b8 !important;
+    background: var(--goldl) !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .session-bar > div {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+  }
+  #portalReport .session-bar span {
+    display: block !important;
+    font-size: calc(7 * var(--p)) !important;
+    font-weight: 600 !important;
+    letter-spacing: .5px !important;
+    text-transform: uppercase !important;
+    color: #8a6a1f !important;
+  }
+  #portalReport .session-bar strong {
+    display: block !important;
+    margin-top: calc(.4 * var(--u)) !important;
+    font-size: calc(10.5 * var(--p)) !important;
+    font-weight: 700 !important;
+    color: #6b4f12 !important;
+  }
+
+  /* Sections and titles */
+  #portalReport .report-section {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .section-heading {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    margin: 0 0 calc(1.6 * var(--u)) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+  }
+  #portalReport .section-heading > div {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .section-eyebrow {
+    display: block !important;
+    margin: 0 0 calc(.3 * var(--u)) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    font-size: calc(6.3 * var(--p)) !important;
+    font-weight: 700 !important;
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+    color: var(--g) !important;
+  }
+  #portalReport .section-heading h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    font-size: calc(11.5 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    color: var(--gd) !important;
+  }
+
+  /* Small label / value styles used inside cards */
+  #portalReport .detail-item span,
+  #portalReport .performance-card span,
+  #portalReport .summary-box span,
+  #portalReport .behaviour-summary-main .section-eyebrow,
+  #portalReport .behaviour-summary-info span,
+  #portalReport .behaviour-comment-heading .section-eyebrow,
+  #portalReport .remark-card .section-eyebrow {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: calc(6.5 * var(--p)) !important;
+    font-weight: 600 !important;
+    letter-spacing: .5px !important;
+    text-transform: uppercase !important;
+    color: var(--mut) !important;
+    line-height: 1.3 !important;
+  }
+  #portalReport .detail-item strong,
+  #portalReport .summary-box strong {
+    display: block !important;
+    margin: calc(.4 * var(--u)) 0 0 !important;
+    font-size: calc(10 * var(--p)) !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+    line-height: 1.3 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* Student information */
+  #portalReport .student-profile-grid {
+    display: grid !important;
+    grid-template-columns: calc(17 * var(--u)) 1fr !important;
+    gap: calc(2.6 * var(--u)) !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+    padding: calc(2.6 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-top: 2px solid var(--g) !important;
+    border-radius: calc(3 * var(--u)) !important;
+    background: var(--pale) !important;
+  }
+  #portalReport .student-photo {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: stretch !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #cfe0d5 !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: #fff !important;
+    overflow: hidden !important;
+  }
+  /* The script inserts the image inside #studentPhotoInitials. Make that
+     wrapper fill the photo frame so the image's 100% dimensions resolve
+     against the actual passport-photo area, not an auto-sized span. */
+  #portalReport .student-photo > span#studentPhotoInitials {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #portalReport .student-photo span {
+    font-size: calc(21 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: var(--gd) !important;
+  }
+  #portalReport .student-photo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    border-radius: 0 !important;
+  }
+  #portalReport .student-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: calc(2.4 * var(--u)) !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .student-info-row {
+    display: grid !important;
+    gap: calc(2.2 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .student-top-row {
+    grid-template-columns: 2.4fr .7fr .7fr 1.3fr !important;
+  }
+  #portalReport .student-class-row {
+    grid-template-columns: 1fr 1fr 1fr 1.9fr !important;
+    gap: calc(2.4 * var(--u)) !important;
+  }
+  #portalReport .detail-item {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    min-height: calc(10 * var(--u)) !important;
+    margin: 0 !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: #fff !important;
+  }
+  #portalReport .student-name-item strong {
+    font-weight: 700 !important;
+    color: var(--g) !important;
+  }
+  #portalReport .student-top-row .detail-item:nth-child(4) {
+    background: var(--goldl) !important;
+    border-color: #ead9a8 !important;
+    border-left: 3px solid var(--gold) !important;
+  }
+  #portalReport .student-top-row .detail-item:nth-child(4) strong {
+    color: #6b4f12 !important;
+  }
+  #portalReport .memorization-value-row {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Academic overview: 4 cards in one row */
+  #portalReport .performance-overview {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: calc(2.2 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .performance-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    gap: calc(.8 * var(--u)) !important;
+    min-height: calc(14 * var(--u)) !important;
+    margin: 0 !important;
+    padding: calc(1.3 * var(--u)) calc(3 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-left: 3px solid var(--g) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: #fff !important;
+  }
+  #portalReport .performance-card:nth-child(even) {
+    border-color: #ead9a8 !important;
+    border-left-color: var(--gold) !important;
+  }
+  #portalReport .performance-card strong {
+    display: block !important;
+    margin: 0 !important;
+    font-size: calc(16 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: var(--gd) !important;
+  }
+  #portalReport .performance-card small {
+    display: block !important;
+    margin: 0 !important;
+    font-size: calc(6.8 * var(--p)) !important;
+    line-height: 1.25 !important;
+    color: var(--mut) !important;
+  }
+  #portalReport .performance-card:nth-child(4) strong {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: calc(9 * var(--u)) !important;
+    height: calc(9 * var(--u)) !important;
+    border: 1.5px solid var(--g) !important;
+    border-radius: calc(1.4 * var(--u)) !important;
+    background: #fff !important;
+  }
+  #portalReport .performance-card:nth-child(4) small {
+    font-size: calc(9.5 * var(--p)) !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+  }
+
+  /* Panels stack in print */
+  #portalReport .result-management-grid,
+  #portalReport .management-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: calc(2.2 * var(--u)) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+  }
+
+  /* Subject results table */
+  #portalReport .results-table-container {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  #portalReport .student-results-table {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    font-size: calc(9.8 * var(--p)) !important;
+    background: none !important;
+    table-layout: auto !important;
+  }
+  #portalReport .student-results-table th {
+    padding: calc(1.8 * var(--u)) calc(1.8 * var(--u)) !important;
+    background: var(--g) !important;
+    color: #fff !important;
+    border: 0 !important;
+    font-size: calc(7.6 * var(--p)) !important;
+    font-weight: 600 !important;
+    letter-spacing: .5px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+  }
+  #portalReport .student-results-table th:first-child {
+    width: calc(7 * var(--u)) !important;
+    border-top-left-radius: calc(2.2 * var(--u)) !important;
+  }
+  #portalReport .student-results-table th:last-child {
+    border-top-right-radius: calc(2.2 * var(--u)) !important;
+  }
+  #portalReport .student-results-table th:nth-child(2),
+  #portalReport .student-results-table th:nth-child(8) {
+    text-align: left !important;
+  }
+  #portalReport .student-results-table td {
+    padding: calc(.85 * var(--u)) calc(2 * var(--u)) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    background: none !important;
+    color: var(--ink) !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    vertical-align: middle !important;
+  }
+  #portalReport .student-results-table tbody tr {
+    break-inside: avoid !important;
+  }
+  #portalReport .student-results-table tbody tr:nth-child(even) td {
+    background: #fafcfb !important;
+  }
+  #portalReport .student-results-table td:nth-child(2) {
+    text-align: left !important;
+    font-weight: 600 !important;
+  }
+  #portalReport .student-results-table td:nth-child(8),
+  #portalReport .student-results-table .result-remark {
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+  #portalReport .student-results-table td.result-total {
+    font-weight: 700 !important;
+    background: var(--pale) !important;
+  }
+  #portalReport .student-results-table .result-grade {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    color: var(--gd) !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+  }
+
+  /* Result summary */
+  #portalReport .summary-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: calc(2.4 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .summary-box {
+    display: block !important;
+    margin: 0 !important;
+    padding: calc(2.2 * var(--u)) calc(3 * var(--u)) !important;
+    min-height: 0 !important;
+    border: 1px solid var(--line) !important;
+    border-left: 3px solid var(--g) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: var(--pale) !important;
+  }
+
+  /* Behavioural report */
+  #portalReport .behaviour-grid-container {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  #portalReport .behaviour-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: calc(1.8 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .behaviour-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: calc(2 * var(--u)) !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: calc(1.6 * var(--u)) calc(3 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: #fff !important;
+    font-size: calc(9.4 * var(--p)) !important;
+    color: var(--ink) !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .behaviour-item > span {
+    font-size: calc(8.6 * var(--p)) !important;
+    font-weight: 400 !important;
+    color: var(--ink) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+  }
+  #portalReport .behaviour-rating {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    outline: 0 !important;
+    font-family: inherit !important;
+    font-size: calc(8.6 * var(--p)) !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+    color: var(--mut) !important;
+    text-align: right !important;
+    text-align-last: right !important;
+    pointer-events: none !important;
+  }
+  #portalReport .behaviour-summary-card {
+    display: grid !important;
+    grid-template-columns: 1.1fr 1fr !important;
+    gap: calc(1.8 * var(--u)) !important;
+    margin: calc(1.6 * var(--u)) 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .behaviour-summary-main {
+    position: relative !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
+    border: 1px solid #b9d0c0 !important;
+    border-left: 3px solid var(--g) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
+    background: var(--goldl) !important;
+  }
+  #portalReport .behaviour-summary-main::after {
+    content: "\2713" !important;
+    position: absolute !important;
+    right: calc(3 * var(--u)) !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: calc(5.5 * var(--u)) !important;
+    height: calc(5.5 * var(--u)) !important;
+    border-radius: 50% !important;
+    background: var(--g) !important;
+    color: #fff !important;
+    font-size: calc(8 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+  #portalReport .behaviour-summary-main strong {
+    display: block !important;
+    margin: 0 !important;
+    font-size: calc(17 * var(--p)) !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: var(--gd) !important;
+  }
+  #portalReport .behaviour-summary-main > span:last-child {
+    display: block !important;
+    font-size: calc(6.8 * var(--p)) !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    color: var(--mut) !important;
+  }
+  #portalReport .behaviour-summary-info {
+    display: block !important;
+    margin: 0 !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
+    text-align: center !important;
+    border: 1px solid var(--line) !important;
+    border-radius: calc(1.6 * var(--u)) !important;
+    background: #fff !important;
+  }
+  #portalReport .behaviour-summary-info strong {
+    display: block !important;
+    margin: 0 !important;
+    font-size: calc(12 * var(--p)) !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    color: var(--gd) !important;
+  }
+  #portalReport .behaviour-summary-info small {
+    display: block !important;
+    margin: 0 !important;
+    font-size: calc(6.8 * var(--p)) !important;
+    color: var(--mut) !important;
+  }
+  #portalReport .behaviour-comment-card {
+    display: block !important;
+    margin: calc(1.8 * var(--u)) 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .behaviour-comment-heading {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .behaviour-comment-badge {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    font-size: calc(6 * var(--p)) !important;
+    font-weight: 600 !important;
+    letter-spacing: .5px !important;
+    text-transform: uppercase !important;
+    color: var(--mut) !important;
+  }
+  #portalReport .behaviour-comment-card p {
+    margin: calc(.6 * var(--u)) 0 0 !important;
+    font-size: calc(9 * var(--p)) !important;
+    line-height: 1.3 !important;
+    color: var(--ink) !important;
+  }
+  #portalReport .affective-key {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: calc(1.4 * var(--u)) !important;
+    margin: calc(1.4 * var(--u)) 0 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .affective-key span {
+    margin: 0 !important;
+    padding: calc(.4 * var(--u)) calc(2 * var(--u)) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: calc(1.2 * var(--u)) !important;
+    background: #fff !important;
+    font-size: calc(7.2 * var(--p)) !important;
+    font-weight: 400 !important;
+    color: var(--mut) !important;
+    line-height: 1.3 !important;
+  }
+  #portalReport .affective-key span:first-child {
+    border-color: var(--g) !important;
+    color: var(--gd) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Remarks */
+  #portalReport .remarks-section {
+    break-inside: avoid !important;
+  }
+  #portalReport .remarks-grid {
+    display: grid !important;
+    grid-template-columns: 1.6fr 1fr !important;
+    gap: calc(2.4 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #portalReport .remark-card {
+    display: block !important;
+    margin: 0 !important;
+    padding: calc(2 * var(--u)) calc(3 * var(--u)) !important;
+    min-height: 0 !important;
+    border: 1px solid #ead9a8 !important;
+    border-left: 3px solid var(--gold) !important;
+    border-radius: calc(2.4 * var(--u)) !important;
+    background: var(--goldl) !important;
+  }
+  #portalReport .remark-card p {
+    margin: calc(.6 * var(--u)) 0 0 !important;
+    font-size: calc(9 * var(--p)) !important;
+    line-height: 1.3 !important;
+    color: var(--ink) !important;
+  }
+
+  /* Signatures (pushed to the bottom of the page) and footer */
+  #portalReport .report-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(7.5 * var(--u)) !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: calc(9 * var(--u)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: #fff !important;
+    break-inside: avoid !important;
+  }
+  #portalReport .signature-line {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    text-align: center !important;
+  }
+  #portalReport .signature-space {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    min-height: calc(6 * var(--u)) !important;
+    margin: 0 0 calc(1 * var(--u)) !important;
+    padding: 0 0 calc(.6 * var(--u)) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--ink) !important;
+    font-size: calc(8 * var(--p)) !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+  }
+  #portalReport .signature-space .result-signature-image {
+    display: block !important;
+    max-width: 100% !important;
+    max-height: calc(5.5 * var(--u)) !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+  }
+  #portalReport .signature-line > span {
+    display: block !important;
+    font-size: calc(7.8 * var(--p)) !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+  }
+  #portalReport .signature-line small {
+    display: block !important;
+    font-size: calc(6.8 * var(--p)) !important;
+    font-weight: 400 !important;
+    color: var(--mut) !important;
+  }
+  #portalReport .report-card-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: calc(4 * var(--u)) !important;
+    margin: 0 !important;
+    padding: calc(1.6 * var(--u)) 0 0 !important;
+    border: 0 !important;
+    border-top: 2px solid var(--g) !important;
+    background: #fff !important;
+    font-size: calc(7 * var(--p)) !important;
+    color: var(--mut) !important;
+    break-inside: avoid !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+  #portalReport .report-card-footer p {
+    margin: 0 !important;
+    font-size: calc(7 * var(--p)) !important;
+    color: var(--mut) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  #portalReport .report-card-footer span {
+    font-size: calc(7 * var(--p)) !important;
+    color: var(--mut) !important;
+    white-space: nowrap !important;
+  }
+
+  /* 13 or more subjects: slightly smaller sizes so everything still fits on one page */
+  html:has(#portalReport .student-results-table tbody tr:nth-child(13)) {
+    --k: .74;
+  }
+  @media (max-height: 283mm) {
+    html:has(#portalReport .student-results-table tbody tr:nth-child(13)) {
+    --k: .71;
+  }
+  }
+  /* 12 subjects or fewer: taller table rows to use the free space */
+  html:not(:has(#portalReport .student-results-table tbody tr:nth-child(13))) #portalReport .student-results-table td {
+    padding-top: calc(1.05 * var(--u)) !important;
+    padding-bottom: calc(1.05 * var(--u)) !important;
+  }
+}
+
+
+/* Keep report content above the enlarged watermark, as on the staff result print. */
+@media print {
+  body.online-results-page #portalReport::before { z-index: 0 !important; }
+  body.online-results-page #portalReport > * { position: relative !important; z-index: 1 !important; }
+}
