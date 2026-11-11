@@ -3946,49 +3946,38 @@ button:focus-visible {
 }
 
 
-/* MARKAZ — CONSISTENT ADMIN PROFILE AVATAR
-   Keep the dashboard card avatar square and circular at every breakpoint. */
-.admin-profile-display {
-    align-items: center !important;
-}
-
+/* MARKAZ — FINAL ADMIN PROFILE PHOTO */
 .admin-profile-display .admin-profile-photo {
-    width: 64px !important;
-    height: 64px !important;
-    min-width: 64px !important;
-    flex: 0 0 64px !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    border: 2px solid #c9a94b !important;
-    background-color: #dff3e7 !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+    width: 88px !important;
+    height: 104px !important;
+    min-width: 88px !important;
+    flex: 0 0 88px !important;
+    border-radius: 16px !important;
+    border: 2px solid rgba(201, 169, 75, 0.75) !important;
+    background-color: #123d2a !important;
     background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    color: #f1d27a !important;
+    font-size: 25px !important;
+    font-weight: 900 !important;
 }
 
-.admin-profile-display .admin-profile-photo img {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    border-radius: 50% !important;
+.admin-profile-display .admin-profile-photo span {
+    color: #f1d27a !important;
+    font-size: 25px !important;
+    font-weight: 900 !important;
 }
 
 @media (max-width: 480px) {
     .admin-profile-display .admin-profile-photo {
-        width: 58px !important;
-        height: 58px !important;
-        min-width: 58px !important;
-        flex-basis: 58px !important;
+        width: 76px !important;
+        height: 92px !important;
+        min-width: 76px !important;
+        flex-basis: 76px !important;
     }
 }
+
 
 /* MARKAZ — ADMIN INITIALS FALLBACK */
 .admin-profile-display .admin-profile-photo {
