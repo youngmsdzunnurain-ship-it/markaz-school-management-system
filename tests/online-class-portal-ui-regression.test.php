@@ -214,8 +214,12 @@ onlinePortalUiAssert(
     'Staff and student reports must use the Arabic-first school heading and Letter landscape page geometry'
 );
 onlinePortalUiAssert(
-    str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة، جواغوالادا، أبوجا، نيجيريا') &&
-    str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة، جواغوالادا، أبوجا، نيجيريا') &&
+    str_contains($workspaceJs, 'غوالادا، أبوجا') &&
+    !str_contains($workspaceJs, 'جواغوالادا') &&
+    !str_contains($workspaceJs, 'تخطيط التعويضات / كوتونكو القديمة') &&
+    str_contains($portal, 'غوالادا، أبوجا') &&
+    !str_contains($portal, 'جواغوالادا') &&
+    !str_contains($portal, 'تخطيط التعويضات / كوتونكو القديمة') &&
     str_contains($workspaceJs, '+234 807 319 1275') &&
     str_contains($workspaceJs, '+234 807 095 5833') &&
     !str_contains($workspaceJs, '+234 704 865 7955') &&
