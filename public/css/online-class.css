@@ -502,3 +502,115 @@ body.online-workspace-page.sidebar-desktop-closed .app{grid-template-columns:min
     margin: 0 !important;
   }
 }
+
+/* Student portal printing uses the exact staff report renderer; its on-screen preview remains unchanged. */
+@media print {
+  @page { size: letter landscape; margin: 3mm; }
+  body.online-results-page * { visibility: hidden !important; }
+  body.online-results-page #portalPrintReport,
+  body.online-results-page #portalPrintReport * { visibility: visible !important; }
+  body.online-results-page #portalReport { display: none !important; visibility: hidden !important; }
+  body.online-results-page #portalPrintReport {
+    display: flex !important; flex-direction: column !important; justify-content: flex-start !important;
+    width: 273.4mm !important; height: 209.9mm !important; min-height: 209.9mm !important; max-height: 209.9mm !important;
+    box-sizing: border-box !important; padding: 2.5mm 7mm 4mm !important; margin: 0 !important; overflow: hidden !important;
+    border: 1.5mm double #b99a48 !important; outline: .45mm solid #28603a !important; outline-offset: -2.2mm !important;
+    border-radius: 1.5mm !important; background: #fff !important; position: fixed !important; inset: 0 auto auto 0 !important;
+    font: 11pt/1.35 Arial, sans-serif !important; print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important;
+  }
+}
+/* Online Class certificate-style print refinement: use the whole landscape sheet. */
+@media print {
+  @page { size: letter landscape; margin: 3mm; }
+  body.online-workspace-page #onlineReport,
+  body.online-results-page #portalPrintReport {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    width: 273.4mm !important;
+    height: 209.9mm !important;
+    max-height: 209.9mm !important;
+    min-height: 209.9mm !important;
+    box-sizing: border-box !important;
+    padding: 2.5mm 7mm 4mm !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border: 1.1mm double #b99a48 !important;
+    border-radius: 2mm !important;
+    background: #fff !important;
+    position: fixed !important;
+    inset: 0 auto auto 0 !important;
+    font: 11pt/1.35 Arial, sans-serif !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  body.online-workspace-page #onlineReport::before,
+  body.online-results-page #portalPrintReport::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 50% auto auto 50% !important;
+    width: 112mm !important;
+    height: 112mm !important;
+    transform: translate(-50%,-50%) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    background: url("../assets/images/markaz-logo.jpg") center/contain no-repeat !important;
+    opacity: .075 !important;
+  }
+  body.online-workspace-page #onlineReport > *,
+  body.online-results-page #portalPrintReport > * {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  .online-report-head {
+    grid-template-columns: 25mm minmax(0,1fr) 34mm !important;
+    gap: 4mm !important;
+    padding: 0 0 3mm !important;
+    margin: 0 0 3mm !important;
+    border-bottom: 1.4mm solid #78934d !important;
+    border-image: linear-gradient(90deg,#28603a,#c4a34e,#28603a) 1 !important;
+  }
+  .online-report-head img { width: 23mm !important; height: 23mm !important; }
+  .online-report-head h1,.online-report-head h2,.online-report-head .school-name-ar {
+    font-size: 21pt !important;
+    line-height: 1.25 !important;
+    margin: 0 0 1.2mm !important;
+  }
+  .online-report-head .school-address-ar { font-size: 11pt !important; font-weight: 700 !important; color: #8b7135 !important; }
+  .online-report-head p { margin: .8mm 0 !important; font-size: 10pt !important; line-height: 1.25 !important; }
+  .online-report-head .school-name-en { font-size: 10pt !important; }
+  .online-report-head .school-contact-line { font-size: 9.5pt !important; color: #385642 !important; }
+  .online-report-head .report-motto { display: block !important; margin-top: 1mm !important; font-size: 9pt !important; letter-spacing: .5px !important; color: #8b7135 !important; }
+  .online-report-stamp { display: flex !important; flex-direction: column !important; gap: 2mm !important; align-items: center !important; justify-content: center !important; min-height: 22mm !important; border: .7mm solid #b99a48 !important; outline: .25mm solid #b99a48 !important; outline-offset: 1mm !important; padding: 2mm !important; font-size: 10pt !important; letter-spacing: .7px !important; }
+  .online-report-stamp span { font-size: 7.5pt !important; }
+  .online-report-title { margin: 2mm 0 3mm !important; padding: 3mm !important; border-radius: 1.5mm !important; font-size: 16pt !important; letter-spacing: 1px !important; }
+  .online-report-details { gap: 2.5mm 7mm !important; margin: 0 0 3mm !important; padding: 3.5mm 4mm !important; font-size: 11pt !important; line-height: 1.45 !important; border-left: 1mm solid #b99a48 !important; }
+  .online-report-table { flex: 1 1 auto !important; height: 100% !important; margin: 1mm 0 3mm !important; font-size: 10.5pt !important; }
+  .online-report-table th { padding: 3mm 2mm !important; font-size: 10.5pt !important; }
+  .online-report-table td { padding: 2.6mm 2mm !important; font-size: 10.5pt !important; line-height: 1.35 !important; }
+  .online-report-comments { gap: 4mm !important; margin: 2mm 0 3mm !important; }
+  .online-report-comments section { min-height: 34mm !important; padding: 3mm 4mm !important; font-size: 10.5pt !important; line-height: 1.4 !important; border: .4mm solid #b99a48 !important; background: rgba(250,252,247,.88) !important; }
+  .online-report-comments p { margin: 2mm 0 !important; }
+  .online-report-signature,.online-report-comments img { max-width: 34mm !important; max-height: 12mm !important; }
+  .online-report-footer { display: flex !important; justify-content: space-between !important; gap: 3mm !important; margin-top: auto !important; padding-top: 2.5mm !important; border-top: .7mm solid #b99a48 !important; font-size: 9pt !important; line-height: 1.3 !important; }
+  body.online-results-page #portalPrintReport { padding-bottom: 4mm !important; }
+  body.online-results-page #portalPrintReport .online-results-table-wrap { flex: 1 1 auto !important; min-height: 0 !important; overflow: visible !important; }
+  body.online-results-page #portalPrintReport .online-report-table { height: 100% !important; }
+  body.online-results-page #portalPrintReport .online-report-comments { margin-top: 3mm !important; }
+  body.online-results-page #portalPrintReport .online-report-footer { margin-top: auto !important; }
+  body.online-results-page #portalPrintReport .online-portal-actions { display: none !important; }
+}
+
+
+/* Online Class certificate refinement: ornate frame, larger centered watermark and matching result footer. */
+@media print {
+ body.online-workspace-page #onlineReport,body.online-results-page #portalPrintReport{border:1.5mm double #b99a48!important;outline:.45mm solid #28603a!important;outline-offset:-2.2mm!important;border-radius:1.5mm!important;background-image:radial-gradient(circle at 4mm 4mm,#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at calc(100% - 4mm) 4mm,#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at 4mm calc(100% - 4mm),#c4a34e 0 1.15mm,transparent 1.3mm),radial-gradient(circle at calc(100% - 4mm) calc(100% - 4mm),#c4a34e 0 1.15mm,transparent 1.3mm),linear-gradient(#fff,#fff)!important}
+ body.online-workspace-page #onlineReport::before,body.online-results-page #portalPrintReport::before{width:172mm!important;height:172mm!important;opacity:.085!important}
+ body.online-workspace-page #onlineReport::after,body.online-results-page #portalPrintReport::after{content:""!important;position:absolute!important;inset:2.6mm!important;z-index:2!important;pointer-events:none!important;border:.45mm double rgba(185,154,72,.82)!important}
+ .online-report-head .school-name-ar,.online-report-head .school-address-ar,.online-report-head .school-name-en,.online-report-head .school-address-en{display:block!important}
+ .online-report-head .school-name-ar{margin-bottom:.6mm!important}.online-report-head .school-address-ar{margin-bottom:1.2mm!important}.online-report-head .school-name-en{font-size:11pt!important;font-weight:700!important;letter-spacing:.2px!important}.online-report-head .school-address-en{font-size:9.5pt!important}.online-report-head .school-contact-line{font-size:9pt!important}
+ .online-report-programme{display:flex!important;justify-content:center!important;align-items:center!important;gap:5mm!important;margin:1mm 0 1.5mm!important;padding:1.2mm 3mm!important;border-top:.35mm solid #b99a48!important;border-bottom:.35mm solid #b99a48!important;color:#205c3b!important;font-size:10pt!important;font-weight:700!important;letter-spacing:.35px!important}.online-report-programme [lang="ar"]{font-size:12pt!important}.online-report-title{margin:1.5mm 0 2mm!important}
+ .online-report-footer{border-top:.65mm solid #28603a!important;box-shadow:0 -.35mm 0 #b99a48!important;color:#53665a!important;font-weight:600!important}.online-report-footer .official-results-label{color:#205c3b!important;font-weight:800!important;letter-spacing:.35px!important}.online-report-signature{display:inline-block!important;max-width:36mm!important;max-height:14mm!important;object-fit:contain!important;vertical-align:middle!important}
+}
+
+

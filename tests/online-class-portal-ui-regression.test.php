@@ -20,6 +20,7 @@ $portalOptions = (string) file_get_contents($root . '/api/online-class/portal-op
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
 $js = $workspaceJs;
 $portalJs = (string) file_get_contents($root . '/public/js/online-class-portal.js');
+$reportJs = (string) file_get_contents($root . '/public/js/online-class-report.js');
 $workspaceApi = (string) file_get_contents($root . '/api/online-class/index.php');
 $dashboard = (string) file_get_contents($root . '/public/dashboard.html');
 $dashboardCss = (string) file_get_contents($root . '/public/css/dashboard-2026.css');
@@ -286,7 +287,7 @@ onlinePortalUiAssert(
  str_contains($workspaceJs, 'function waitForReportImages(root)') &&
  str_contains($workspaceJs, 'await waitForReportImages($("onlineReport"))') &&
  str_contains($portalJs, 'function waitForReportImages(root)') &&
- str_contains($portalJs, "await waitForReportImages($('portalReport'))") &&
+ str_contains($portalJs, "await waitForReportImages($('portalPrintReport'))") &&
  str_contains($workspaceJs, 'CENTRE FOR LEARNING AND MEMORIZATION OF THE GLORIOUS QUR’AN') &&
  str_contains($portal, 'الفصل الدراسي عبر الإنترنت') &&
  str_contains($workspaceJs, 'Academic Report • Official School Record') &&
@@ -314,4 +315,22 @@ onlinePortalUiAssert(
     str_contains($onlineCss, 'padding: 2.5mm 7mm 4mm !important;') &&
     str_contains($onlineCss, 'page-break-inside: avoid !important;'),
     'Staff Online Class report must print once on one landscape page with its content shifted slightly upward'
+);
+
+
+onlinePortalUiAssert(
+    str_contains($workspace, 'js/online-class-report.js') &&
+    str_contains($portal, 'js/online-class-report.js') &&
+    str_contains($portal, 'id="portalPrintReport"') &&
+    str_contains($workspaceJs, 'window.MarkazOnlineClassReport.render') &&
+    str_contains($portalJs, 'window.MarkazOnlineClassReport.render') &&
+    str_contains($reportJs, 'window.MarkazOnlineClassReport') &&
+    str_contains($reportJs, 'online-report-head') &&
+    str_contains($reportJs, 'online-report-signature-date') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport *') &&
+    str_contains($onlineCss, 'body.online-results-page #portalReport { display: none !important;') &&
+    str_contains($onlineCss, 'body.online-results-page #portalPrintReport::before') &&
+    str_contains($onlineCss, '.online-results-page #portalReport.report-card{'),
+    'Student portal printing must use the exact shared report renderer and print layout used by the staff dashboard'
 );
