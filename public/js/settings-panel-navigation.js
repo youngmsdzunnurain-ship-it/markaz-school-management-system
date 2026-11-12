@@ -25,6 +25,7 @@
       return;
     }
 
+    let adminModulesReady = Promise.resolve();
     // Register every Admin Settings section only after its dynamic module has
     // inserted it. Otherwise those late-added sections bypass the initial
     // collapsed-category pass and appear open beside Profile Information.
@@ -33,20 +34,28 @@
         "/js/result-print-threshold-settings.js?v=20261104-threshold",
         "/js/account-management.js",
         "/js/website-image-overrides.js",
-        "/js/website-image-manager.js?v=20261112-persistence2",
+        "/js/website-image-manager.js?v=20261112-json-diagnostics1",
         "/js/social-settings.js"
       ];
-      for (const src of adminModules) {
-        await new Promise(resolve => {
-          const script = document.createElement("script");
-          script.src = src;
-          script.async = false;
-          script.onload = resolve;
-          script.onerror = resolve;
-          document.body.appendChild(script);
-        });
-      }
+      adminModulesReady = Promise.all(adminModules.map(src => new Promise(resolve => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = () => {
+          console.error("A Settings module could not be loaded:", src);
+          resolve();
+        };
+        document.body.appendChild(script);
+      })));
     }
+
+
+    function buildSettingsNavigation() {
+      const previousHeading = page.querySelector("#settingsActiveCategoryHeading")?.textContent || "";
+      page.querySelector("#settingsCategoryNav")?.remove();
+      page.querySelector("#settingsActiveCategoryHeading")?.remove();
+      page.querySelector("#settingsActiveCategoryDescription")?.remove();
 
     const profile = page.querySelector(
       ':scope > section.settings-card:not(.academic-period-settings-card):not(.result-footer-settings-card):not(.memorization-settings-card):not(.markaz-account-management-card):not(.markaz-role-permissions-card):not(.markaz-locked-accounts-card):not(.markaz-account-devices-card):not(#websiteImageManager):not(#markazSocialSettings):not(#markazSupportSettings)'
@@ -121,9 +130,14 @@
       buttons.set(category.id, button);
     });
 
-    activate("profile");
+    const preservedCategory = categories.find(category => category.label === previousHeading);
+    activate(preservedCategory?.id || "profile");
 
-    document.documentElement.classList.remove("settings-page-pending");
+      document.documentElement.classList.remove("settings-page-pending");
+    }
+
+    buildSettingsNavigation();
+    adminModulesReady.then(buildSettingsNavigation).catch(error => console.error("Settings category refresh failed:", error));
   } catch (_) {
     window.location.replace("login.html");
   }

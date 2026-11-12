@@ -23,9 +23,16 @@ jobs:
           php -l public/api/settings/website-images.php
           php -l tests/website-image-manager-fit.test.php
           php -l tests/website-image-manager-save.test.php
+          php -l tests/website-image-manager-persistence.test.php
+          php -l tests/public-navigation-performance.test.php
+          php -l tests/settings-role-first-dashboard-order.test.php
           node --check public/js/website-image-manager.js
+          node --check public/js/settings-panel-navigation.js
+          node --check public/js/home.js
+          node --check public/sw.js
           php tests/website-image-manager-fit.test.php
           php tests/website-image-manager-save.test.php
           php tests/website-image-manager-persistence.test.php
           php tests/website-image-storage.test.php
           php tests/public-navigation-performance.test.php
+          php tests/settings-role-first-dashboard-order.test.php

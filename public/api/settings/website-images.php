@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+ini_set('display_errors', '0');
+ob_start();
+
 require_once __DIR__ . '/../../../app/config/app.php';
 require_once __DIR__ . '/../../../app/middleware/auth.php';
 
@@ -13,6 +16,9 @@ $maxBytes = 8 * 1024 * 1024;
 
 function respond(array $data, int $status = 200): never
 {
+    if (ob_get_level() > 0) {
+        ob_clean();
+    }
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
@@ -148,6 +154,11 @@ try {
         return $mappings;
     };
 
+    if (!in_array($method, ['GET', 'POST'], true)) {
+        header('Allow: GET, POST');
+        respond(['success' => false, 'message' => 'Method not allowed.'], 405);
+    }
+
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
         $mappings = $loadMappings($images);
@@ -175,10 +186,8 @@ try {
         respond(['success' => true, 'images' => $images, 'count' => count($images)]);
     }
 
-    if ($method !== 'POST') {
-        header('Allow: GET, POST');
-        respond(['success' => false, 'message' => 'Method not allowed.'], 405);
-    }
+    // Only changes require the Senior Admin session. Public pages also use
+    // this read-only endpoint to apply saved replacements to visitor images.
     requireSeniorAdmin();
 
     $catalogue = discoverImages($publicRoot);

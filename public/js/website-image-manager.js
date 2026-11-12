@@ -43,6 +43,24 @@
     })[character]);
   }
 
+  async function readApiResponse(response, operation) {
+    const raw = await response.text();
+    const contentType = (response.headers.get("content-type") || "").toLowerCase();
+    let result;
+    try {
+      result = JSON.parse(raw);
+    } catch (_) {
+      const type = contentType || "missing content type";
+      throw new Error(
+        `${operation}: server returned a non-JSON response (HTTP ${response.status}; ${type}). Check the PHP error log and administrator session.`
+      );
+    }
+    if (!result || typeof result !== "object") {
+      throw new Error(`${operation}: server returned an invalid JSON response (HTTP ${response.status}).`);
+    }
+    return result;
+  }
+
   function imagePath(value) {
     if (!value) return "";
     return value.startsWith("/") ? value : `/${value}`;
@@ -132,7 +150,7 @@
       cache: "no-store",
       headers: { Accept: "application/json" }
     });
-    const result = await response.json();
+    const result = await readApiResponse(response, "Loading website images");
     if (!response.ok || !result.success || !Array.isArray(result.images)) {
       throw new Error(result.message || `Could not load website images (HTTP ${response.status}).`);
     }
@@ -161,7 +179,7 @@
         headers: { Accept: "application/json" },
         body: data
       });
-      const result = await response.json();
+      const result = await readApiResponse(response, "Saving website images");
       if (!response.ok || !result.success) {
         throw new Error(result.message || `Image save failed (HTTP ${response.status}).`);
       }
