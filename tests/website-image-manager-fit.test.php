@@ -17,14 +17,15 @@ $polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.cs
 websiteImageFitCheck(
     str_contains($manager, 'api/settings/website-images.php') &&
     str_contains($manager, 'pendingUploads') &&
-    str_contains($manager, 'pendingResets') &&
     str_contains($manager, 'batch-replace') &&
-    str_contains($manager, 'Save Changes'),
-    'website image manager must stage replacements and restorations for explicit saving'
+    str_contains($manager, 'Save Changes') &&
+    !str_contains($manager, 'Restore original') &&
+    !str_contains($manager, 'pendingResets'),
+    'website image manager must stage replacements for explicit saving without restore controls'
 );
 
 websiteImageFitCheck(
-    preg_match('/\.website-image-preview img\s*\{[^}]*object-fit:\s*contain\s*;/s', $managerCss) === 1,
+    preg_match('/\\.website-image-preview img\\s*\\{[^}]*object-fit:\\s*contain\\s*;/s', $managerCss) === 1,
     'manager previews must show the complete uploaded image without cropping'
 );
 
@@ -36,7 +37,7 @@ foreach ([
     ['.public-intro-grid .public-photo > img', $publicImageCss, 'contain'],
     ['.director-grid .public-photo > img', $polishCss, 'cover']
 ] as [$selector, $stylesheet, $fit]) {
-    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\{[^}]*object-fit:\s*' . preg_quote($fit, '/') . '\s*;/s';
+    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*' . preg_quote($fit, '/') . '\\s*;/s';
     websiteImageFitCheck(
         preg_match($pattern, $stylesheet) === 1,
         "{$selector} must use {$fit} sizing inside its display frame"

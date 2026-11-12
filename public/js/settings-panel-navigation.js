@@ -33,7 +33,7 @@
         "/js/result-print-threshold-settings.js?v=20261104-threshold",
         "/js/account-management.js",
         "/js/website-image-overrides.js",
-        "/js/website-image-manager.js?v=20261112-batch-save1",
+        "/js/website-image-manager.js?v=20261112-persistence2",
         "/js/social-settings.js"
       ];
       for (const src of adminModules) {

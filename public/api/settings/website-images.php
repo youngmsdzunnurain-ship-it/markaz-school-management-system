@@ -147,19 +147,18 @@ try {
 
     if ($action === 'batch-replace') {
         $sources = $_POST['sources'] ?? [];
-        $resetSources = $_POST['resets'] ?? [];
         $uploads = $_FILES['images'] ?? null;
-        if (!is_array($sources) || !is_array($resetSources) || count($sources) > 30 || count($resetSources) > 30) {
-            respond(['success' => false, 'message' => 'Invalid image changes. Refresh the page and try again.'], 422);
-        }
-        if (count($sources) !== ($uploads && isset($uploads['name']) ? count($uploads['name']) : 0)) {
-            respond(['success' => false, 'message' => 'One or more selected image files are missing. Please choose them again.'], 422);
+        $uploadCount = $uploads && isset($uploads['name']) && is_array($uploads['name'])
+            ? count($uploads['name'])
+            : 0;
+        if (!is_array($sources) || count($sources) < 1 || count($sources) > 30 || count($sources) !== $uploadCount) {
+            respond(['success' => false, 'message' => 'Select at least one image and choose its replacement file before saving.'], 422);
         }
 
         $prepared = [];
         $seen = [];
         $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-        foreach ($sources as $index => $source) {
+        foreach (array_values($sources) as $index => $source) {
             if (!is_string($source) || !isset($allowed[$source]) || isset($seen[$source])) {
                 respond(['success' => false, 'message' => 'An image reference is invalid or duplicated. Refresh and try again.'], 422);
             }
@@ -170,17 +169,15 @@ try {
             if ($error !== UPLOAD_ERR_OK || !is_uploaded_file($tmp)) {
                 respond(['success' => false, 'message' => 'A selected image could not be received. Please choose it again.'], 422);
             }
-            if ($size <= 0 || $size > $maxBytes) respond(['success' => false, 'message' => 'Each image must be greater than 0 bytes and no larger than 8 MB.'], 422);
+            if ($size <= 0 || $size > $maxBytes) {
+                respond(['success' => false, 'message' => 'Each image must be greater than 0 bytes and no larger than 8 MB.'], 422);
+            }
             $info = @getimagesize($tmp);
             $mime = $info['mime'] ?? '';
-            if (!isset($extensions[$mime])) respond(['success' => false, 'message' => 'Use JPG, PNG, or WebP images only.'], 422);
-            $prepared[] = ['source' => $source, 'key' => $allowed[$source], 'tmp' => $tmp, 'extension' => $extensions[$mime]];
-        }
-        foreach ($resetSources as $source) {
-            if (!is_string($source) || !isset($allowed[$source]) || isset($seen[$source])) {
-                respond(['success' => false, 'message' => 'A restore request is invalid or conflicts with an upload.'], 422);
+            if (!isset($extensions[$mime])) {
+                respond(['success' => false, 'message' => 'Use JPG, PNG, or WebP images only.'], 422);
             }
-            $seen[$source] = true;
+            $prepared[] = ['source' => $source, 'key' => $allowed[$source], 'tmp' => $tmp, 'extension' => $extensions[$mime]];
         }
 
         if (!is_dir($imageDirectory) && !mkdir($imageDirectory, 0755, true) && !is_dir($imageDirectory)) {
@@ -192,8 +189,13 @@ try {
             foreach ($prepared as &$item) {
                 $filename = bin2hex(random_bytes(16)) . '.' . $item['extension'];
                 $destination = $imageDirectory . '/' . $filename;
-                if (!move_uploaded_file($item['tmp'], $destination)) throw new RuntimeException('Could not save one of the selected images.');
+                if (!move_uploaded_file($item['tmp'], $destination)) {
+                    throw new RuntimeException('Could not save one of the selected images.');
+                }
                 @chmod($destination, 0644);
+                if (!is_file($destination) || !is_readable($destination) || filesize($destination) <= 0) {
+                    throw new RuntimeException('The uploaded image could not be verified on disk.');
+                }
                 $createdFiles[] = $destination;
                 $item['replacement'] = $imageUrlPrefix . $filename;
             }
@@ -201,16 +203,34 @@ try {
 
             $pdo->beginTransaction();
             $save = $pdo->prepare('INSERT INTO markaz_app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)');
-            foreach ($prepared as $item) $save->execute(['website_image_map_' . $item['key'], $item['replacement']]);
-            $remove = $pdo->prepare('DELETE FROM markaz_app_settings WHERE setting_key = ?');
-            foreach ($resetSources as $source) $remove->execute(['website_image_map_' . $allowed[$source]]);
+            $verify = $pdo->prepare('SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1');
+            $savedImages = [];
+            foreach ($prepared as $item) {
+                $settingKey = 'website_image_map_' . $item['key'];
+                $save->execute([$settingKey, $item['replacement']]);
+                $verify->execute([$settingKey]);
+                $stored = $verify->fetchColumn();
+                if (!is_string($stored) || $stored !== $item['replacement']) {
+                    throw new RuntimeException('The database did not confirm one of the image replacements.');
+                }
+                $savedImages[] = [
+                    'source' => $item['source'],
+                    'replacement' => $stored
+                ];
+            }
             $pdo->commit();
         } catch (Throwable $error) {
             if ($pdo->inTransaction()) $pdo->rollBack();
             foreach ($createdFiles as $createdFile) @unlink($createdFile);
             throw $error;
         }
-        respond(['success' => true, 'message' => 'All website image changes were saved successfully.', 'saved' => count($prepared), 'restored' => count($resetSources)]);
+
+        respond([
+            'success' => true,
+            'message' => 'Image replacements were saved and verified.',
+            'saved' => count($savedImages),
+            'saved_images' => $savedImages
+        ]);
     }
 
     $source = (string) ($_POST['source'] ?? '');

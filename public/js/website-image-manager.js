@@ -12,7 +12,7 @@
     <div class="settings-card-heading"><div>
       <span class="settings-label">PUBLIC WEBSITE</span>
       <h2>Website Image Manager</h2>
-      <p>Choose replacements for your website photographs, logos and backgrounds. Review all selections, then save them together. JPG, PNG and WebP are supported, up to 8 MB each.</p>
+      <p>Choose replacements for your website photographs, logos and backgrounds. Preview your selections, then save them together. JPG, PNG and WebP are supported, up to 8 MB each.</p>
     </div></div>
     <label class="website-image-search-label" for="websiteImageSearch">Find an image</label>
     <input id="websiteImageSearch" type="search" placeholder="Search by image URL or page name">
@@ -34,7 +34,6 @@
   const pendingCount = section.querySelector("#websiteImagePendingCount");
   let catalogue = [];
   const pendingUploads = new Map();
-  const pendingResets = new Set();
   const previewUrls = new Map();
   let saving = false;
 
@@ -50,17 +49,16 @@
   }
 
   function updateSaveBar() {
-    const count = pendingUploads.size + pendingResets.size;
+    const count = pendingUploads.size;
     pendingCount.textContent = count
-      ? `${count} unsaved image change${count === 1 ? "" : "s"}`
+      ? `${count} selected image change${count === 1 ? "" : "s"}`
       : "No unsaved changes";
     saveButton.disabled = saving || count === 0;
     discardButton.disabled = saving || count === 0;
   }
 
   function previewFor(item) {
-    const pending = pendingUploads.get(item.url);
-    if (pending) return previewUrls.get(item.url) || item.url;
+    if (pendingUploads.has(item.url)) return previewUrls.get(item.url) || "";
     const current = item.replacement || item.url;
     return /^https?:\/\//i.test(current) ? current : imagePath(current);
   }
@@ -77,20 +75,17 @@
 
     for (const item of filtered) {
       const pending = pendingUploads.has(item.url);
-      const reset = pendingResets.has(item.url);
       const card = document.createElement("article");
       card.className = "website-image-item";
-      const current = pending ? previewFor(item) : reset ? item.url : previewFor(item);
       card.innerHTML = `
-        <div class="website-image-preview"><img src="${escapeHTML(current)}" alt="${escapeHTML(item.label)}" loading="lazy"></div>
+        <div class="website-image-preview"><img src="${escapeHTML(previewFor(item))}" alt="${escapeHTML(item.label)}" loading="lazy"></div>
         <div class="website-image-details">
           <h3>${escapeHTML(item.label || "Website image")}</h3>
           <p class="website-image-url">${escapeHTML(item.url)}</p>
-          <p class="website-image-state">${pending ? "New image selected — not saved yet" : reset ? "Original will be restored when saved" : item.replacement ? "Custom replacement is active" : "Using original image"}</p>
+          <p class="website-image-state">${pending ? "New image selected — not saved yet" : item.replacement ? "Custom replacement is active" : "Using original image"}</p>
           <label class="website-image-file-label">Choose replacement
             <input type="file" accept="image/jpeg,image/png,image/webp">
           </label>
-          <button type="button" class="website-image-reset" ${(!item.replacement && !pending) || reset ? "disabled" : ""}>${reset ? "Restore cancelled" : "Restore original"}</button>
         </div>`;
       const image = card.querySelector("img");
       image.addEventListener("error", () => {
@@ -101,8 +96,8 @@
       fileInput.addEventListener("change", () => {
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
-        if (file.size > 8 * 1024 * 1024) {
-          status.textContent = "The image must not exceed 8 MB.";
+        if (file.size <= 0 || file.size > 8 * 1024 * 1024) {
+          status.textContent = "Each image must be greater than 0 bytes and no larger than 8 MB.";
           fileInput.value = "";
           return;
         }
@@ -114,18 +109,7 @@
         pendingUploads.set(item.url, file);
         if (previewUrls.has(item.url)) URL.revokeObjectURL(previewUrls.get(item.url));
         previewUrls.set(item.url, URL.createObjectURL(file));
-        pendingResets.delete(item.url);
-        status.textContent = "Image selected. Review your changes, then select Save Changes.";
-        render();
-      });
-      card.querySelector(".website-image-reset").addEventListener("click", () => {
-        if (pending) pendingUploads.delete(item.url);
-        if (previewUrls.has(item.url)) {
-          URL.revokeObjectURL(previewUrls.get(item.url));
-          previewUrls.delete(item.url);
-        }
-        pendingResets.add(item.url);
-        status.textContent = "Original image marked for restoration. Select Save Changes to apply it.";
+        status.textContent = "Image selected. Review the preview, then select Save Changes.";
         render();
       });
       list.appendChild(card);
@@ -138,36 +122,71 @@
     for (const url of previewUrls.values()) URL.revokeObjectURL(url);
     previewUrls.clear();
     pendingUploads.clear();
-    pendingResets.clear();
-    status.textContent = "Unsaved image changes discarded.";
+    status.textContent = "Unsaved selections discarded.";
     render();
   }
 
+  async function loadCatalogue() {
+    const response = await fetch(endpoint, {
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success || !Array.isArray(result.images)) {
+      throw new Error(result.message || `Could not load website images (HTTP ${response.status}).`);
+    }
+    catalogue = result.images;
+    render();
+    return catalogue;
+  }
+
   async function saveChanges() {
-    if (saving || (!pendingUploads.size && !pendingResets.size)) return;
+    if (saving || pendingUploads.size === 0) return;
+    const expected = new Map(pendingUploads);
     const data = new FormData();
     data.set("action", "batch-replace");
-    for (const [source, file] of pendingUploads) {
+    for (const [source, file] of expected) {
       data.append("sources[]", source);
       data.append("images[]", file, file.name);
     }
-    for (const source of pendingResets) data.append("resets[]", source);
 
     saving = true;
     updateSaveBar();
-    status.textContent = "Saving your website image changes…";
+    status.textContent = "Uploading images and verifying the saved records…";
     try {
       const response = await fetch(endpoint, {
-        method: "POST", credentials: "same-origin", body: data
+        method: "POST",
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+        body: data
       });
       const result = await response.json();
-      if (!response.ok || !result.success) throw new Error(result.message || "Could not save image changes.");
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || `Image save failed (HTTP ${response.status}).`);
+      }
+      if (!Array.isArray(result.saved_images) || result.saved_images.length !== expected.size) {
+        throw new Error("The server did not confirm every saved image. Your selections have been kept.");
+      }
+      for (const source of expected.keys()) {
+        if (!result.saved_images.some(item => item && item.source === source && typeof item.replacement === "string" && item.replacement)) {
+          throw new Error("The server did not confirm every saved image. Your selections have been kept.");
+        }
+      }
+
+      await loadCatalogue();
+      for (const saved of result.saved_images) {
+        const persisted = catalogue.find(item => item.url === saved.source);
+        if (!persisted || persisted.replacement !== saved.replacement) {
+          throw new Error("The uploaded files were received, but the saved image settings could not be verified after reload. Your selections have been kept.");
+        }
+      }
+
       for (const url of previewUrls.values()) URL.revokeObjectURL(url);
       previewUrls.clear();
       pendingUploads.clear();
-      pendingResets.clear();
-      status.textContent = result.message || "All website image changes saved.";
-      await loadCatalogue();
+      status.textContent = `${result.saved_images.length} image replacement${result.saved_images.length === 1 ? "" : "s"} saved and verified. Refresh the public page to view them.`;
+      render();
     } catch (error) {
       status.textContent = error.message || "Could not save website images. Your selected files are still available; please try again.";
     } finally {
@@ -176,23 +195,10 @@
     }
   }
 
-  async function loadCatalogue() {
-    status.textContent = "Loading website images…";
-    try {
-      const response = await fetch(endpoint, {credentials:"same-origin", cache:"no-store"});
-      const result = await response.json();
-      if (!response.ok || !result.success || !Array.isArray(result.images)) {
-        throw new Error(result.message || "Could not load the image catalogue.");
-      }
-      catalogue = result.images;
-      render();
-    } catch (error) {
-      status.textContent = `${error.message || "Could not load website images."} Check that you are logged in as an administrator and refresh the page.`;
-    }
-  }
-
   saveButton.addEventListener("click", saveChanges);
   discardButton.addEventListener("click", discardPending);
   search.addEventListener("input", render);
-  loadCatalogue();
+  loadCatalogue().catch(error => {
+    status.textContent = `${error.message || "Could not load website images."} Check that you are logged in as an administrator and refresh the page.`;
+  });
 })();
