@@ -60,7 +60,7 @@ $encryptBackup = static function (string $compressed, string $password): array {
     return ['payload'=>base64_encode($file),'sha256'=>hash('sha256',$file)];
 };
 if ($action === 'import_device_backup') {
-    if ($filePassword === '' || strlen($filePassword) > 4096) $archiveJson(['success'=>false,'message'=>'Enter the backup-file password used when this file was created.'],422);
+    if ($filePassword === '' || strlen($filePassword) > 4096 || hash_equals($password,$filePassword)) $archiveJson(['success'=>false,'message'=>'Enter the separate backup-file password used when this file was created.'],422);
     $encoded = (string) ($input['file_payload'] ?? '');
     $providedHash = strtolower(trim((string) ($input['file_sha256'] ?? '')));
     if ($encoded === '' || strlen($encoded) > 7000000 || !preg_match('/^[a-f0-9]{64}$/', $providedHash)) {
@@ -118,7 +118,7 @@ if ($action === 'import_device_backup') {
     }
 }
 if ($action === 'download') {
-    if ($filePassword === '' || strlen($filePassword) > 4096) $archiveJson(['success'=>false,'message'=>'Enter a password to encrypt the downloaded backup file.'],422);
+    if ($filePassword === '' || strlen($filePassword) > 4096 || hash_equals($password,$filePassword)) $archiveJson(['success'=>false,'message'=>'Enter a separate password to encrypt the downloaded backup file.'],422);
     $archiveId = filter_var($input['archive_id'] ?? null, FILTER_VALIDATE_INT);
     if (!$archiveId) $archiveJson(['success'=>false,'message'=>'Choose a valid online backup.'],422);
     $stmt=$pdo->prepare("SELECT payload,payload_sha256,archive_type,level_id,academic_session,term FROM online_class_archives WHERE id=? AND destination='online' LIMIT 1");
@@ -196,7 +196,7 @@ try {
         $pdo->commit();
         $archiveJson(['success'=>true,'message'=>'Protected online backup saved. It is now listed in Backup Records.','archive_id'=>$archiveId,'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])],201);
     }
-    if ($filePassword === '' || strlen($filePassword) > 4096) throw new RuntimeException('Enter a password to encrypt the device backup file.');
+    if ($filePassword === '' || strlen($filePassword) > 4096 || hash_equals($password,$filePassword)) throw new RuntimeException('Enter a separate password to encrypt the device backup file.');
     $encrypted=$encryptBackup($compressed,$filePassword);
     $pdo->commit();
     $archiveJson(['success'=>true,'message'=>'Encrypted device backup is ready to download. Keep the password safe; the file is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'-'.bin2hex(random_bytes(3)).'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','sha256'=>$encrypted['sha256'],'payload'=>$encrypted['payload'],'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
