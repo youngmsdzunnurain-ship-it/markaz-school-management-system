@@ -99,6 +99,33 @@ jobs:
           node --check public/js/public-resilience.js
           node --check public/sw.js
 
+  login-lockout-and-dashboard-motion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify login lockout and dashboard motion
+        run: |
+          set -e
+          php -l app/helpers/login-lockout.php
+          php -l api/results/student-portal.php
+          php -l api/online-class/student-login.php
+          php -l tests/login-lockout-coverage.test.php
+          node --check public/js/login.js
+          node --check public/js/student-results-portal.js
+          node --check public/js/online-class-login.js
+          node --check public/js/dashboard.js
+          php tests/login-lockout-coverage.test.php
+          php tests/student-portal-flow.test.php
+          php tests/online-class-portal-ui-regression.test.php
+          php tests/staff-profile-crop-dashboard-motion.test.php
+
   teacher-document-permissions:
     runs-on: ubuntu-latest
     steps:

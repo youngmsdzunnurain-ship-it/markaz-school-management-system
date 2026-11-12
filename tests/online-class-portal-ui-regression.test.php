@@ -16,6 +16,7 @@ $portal = (string) file_get_contents($root . '/public/online-class-portal.html')
 $workspace = (string) file_get_contents($root . '/public/online-class.html');
 $studentLogin = (string) file_get_contents($root . '/public/student-login.html');
 $studentAuth = (string) file_get_contents($root . '/api/online-class/student-login.php');
+$lockoutHelper = (string) file_get_contents($root . '/app/helpers/login-lockout.php');
 $portalOptions = (string) file_get_contents($root . '/api/online-class/portal-options.php');
 $workspaceJs = (string) file_get_contents($root . '/public/js/online-class.js');
 $js = $workspaceJs;
@@ -52,6 +53,10 @@ onlinePortalUiAssert(
     !str_contains($portal, '+234 807') && !str_contains($studentLogin, 'online-portal-switch') &&
     !str_contains($login, 'onlineSection'),
     'Student login must contain the four requested fields, remove cross-portal links and provide support footers'
+);
+onlinePortalUiAssert(
+    str_contains($studentAuth, "markazGetActiveLoginLockout(\\$pdo, 'online_class_student'") && str_contains($studentAuth, "markazRecordLoginFailure(\\$pdo, 'online_class_student'") && str_contains($studentAuth, 'locked for 3 days') && str_contains($loginJs, 'showLockoutCountdown'),
+    'Online Class student sign-in applies a three-day lockout after three invalid admission/level attempts and displays the server countdown'
 );
 onlinePortalUiAssert(
     str_contains($loginJs, 'function populateAcademicSessions()') &&

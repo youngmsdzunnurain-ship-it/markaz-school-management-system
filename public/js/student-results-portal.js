@@ -12,6 +12,7 @@
   const termField = form.querySelector('#academicTerm');
   const sessionField = form.querySelector('#academicSession');
   let resultData = null;
+  let lockoutTimer = null;
 
   const element = (tag, className, value) => {
     const node = document.createElement(tag);
@@ -81,6 +82,20 @@
     admission.focus();
   };
 
+  const showLockoutCountdown = lockout => {
+    if (lockoutTimer) clearInterval(lockoutTimer);
+    let remaining = Math.max(0, Math.floor(Number(lockout.remaining_seconds) || 0));
+    submit.disabled = true;
+    const render = () => {
+      const days = Math.floor(remaining / 86400), hours = Math.floor((remaining % 86400) / 3600);
+      const minutes = Math.floor((remaining % 3600) / 60), seconds = remaining % 60;
+      showMessage(`Student access is locked. Time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s.`);
+      if (remaining <= 0) { clearInterval(lockoutTimer); lockoutTimer = null; submit.disabled = false; showMessage('The lockout period has ended. The server will verify your next lookup.', 'success'); return; }
+      remaining -= 1;
+    };
+    render(); if (remaining > 0) lockoutTimer = setInterval(render, 1000);
+  };
+
   form.addEventListener('submit', async event => {
     event.preventDefault();
     experience.hidden = true;
@@ -109,16 +124,17 @@
       let data;
       try { data = await response.json(); }
       catch { throw new Error('The server returned an invalid response. Please try again.'); }
-      if (!response.ok || !data.success) throw new Error(data.message || 'No matching released result was found.');
+      if (!response.ok || !data.success) { const error = new Error(data.message || 'No matching released result was found.'); error.loginData = data; throw error; }
       if (!data.student?.name || !Array.isArray(data.subjects) || !data.academic_period) {
         throw new Error('The result record is incomplete. Please contact the school office.');
       }
       resultData = data;
       showWelcome();
     } catch (error) {
-      showMessage(error.message || 'Unable to check results right now. Please try again.');
+      if (error.loginData?.locked && Number(error.loginData.remaining_seconds) > 0) showLockoutCountdown(error.loginData);
+      else showMessage(error.message || 'Unable to check results right now. Please try again.');
     } finally {
-      submit.disabled = false;
+      if (!lockoutTimer) submit.disabled = false;
       submit.textContent = originalLabel;
     }
   });
