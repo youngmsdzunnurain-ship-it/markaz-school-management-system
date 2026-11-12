@@ -98,6 +98,10 @@ if ($action === 'import_device_backup') {
     }
     $released=$type==='results' && !empty($payloadData['is_released'])?1:0;
     $sha=hash('sha256',$compressed);
+    $duplicate=$pdo->prepare("SELECT id FROM online_class_archives WHERE destination='online' AND payload_sha256=? LIMIT 1");
+    $duplicate->execute([$sha]);
+    $existingArchiveId=(int)$duplicate->fetchColumn();
+    if($existingArchiveId>0)$archiveJson(['success'=>true,'message'=>'This exact backup is already stored online. No duplicate was created.','archive_id'=>$existingArchiveId,'record_count'=>count($rows),'already_exists'=>true]);
     $pdo->beginTransaction();
     try {
         $insert=$pdo->prepare("INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,coverage_start,coverage_end,is_released,payload,payload_sha256,created_by) VALUES (?,'online',?,?,?,?,?,?,?,?,?,?)");
