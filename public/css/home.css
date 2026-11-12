@@ -2987,7 +2987,7 @@ p {
     max-height: none !important;
     object-fit: cover !important;
     object-position: center 45% !important;
-    filter: brightness(.78) saturate(.92) !important;
+    filter: brightness(.70) saturate(.92) !important;
     opacity: 1 !important;
     border: 0 !important;
     border-radius: 0 !important;
