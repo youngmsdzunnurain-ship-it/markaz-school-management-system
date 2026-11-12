@@ -14,18 +14,21 @@
       <h2>Website Image Manager</h2>
       <p>Choose replacements for your website photographs, logos and backgrounds. Preview your selections, then save them together. JPG, PNG and WebP are supported, up to 8 MB each.</p>
     </div></div>
-    <label class="website-image-search-label" for="websiteImageSearch">Find an image</label>
-    <input id="websiteImageSearch" type="search" placeholder="Search by image URL or page name">
-    <p id="websiteImageStatus" role="status" aria-live="polite">Loading website images…</p>
-    <div id="websiteImageList" class="website-image-list"></div>
-    <div class="website-image-savebar">
-      <span id="websiteImagePendingCount">No unsaved changes</span>
-      <button type="button" id="saveWebsiteImagesButton" disabled>Save Changes</button>
-      <button type="button" id="discardWebsiteImagesButton" disabled>Discard Changes</button>
-    </div>
+    <form id="websiteImageSaveForm">
+      <label class="website-image-search-label" for="websiteImageSearch">Find an image</label>
+      <input id="websiteImageSearch" type="search" placeholder="Search by image URL or page name">
+      <p id="websiteImageStatus" role="status" aria-live="polite">Loading website images…</p>
+      <div id="websiteImageList" class="website-image-list"></div>
+      <div class="website-image-savebar">
+        <span id="websiteImagePendingCount">No unsaved changes</span>
+        <button type="submit" id="saveWebsiteImagesButton" disabled>Save Changes</button>
+        <button type="button" id="discardWebsiteImagesButton" disabled>Discard Changes</button>
+      </div>
+    </form>
   `;
   page.appendChild(section);
 
+  const saveForm = section.querySelector("#websiteImageSaveForm");
   const list = section.querySelector("#websiteImageList");
   const search = section.querySelector("#websiteImageSearch");
   const status = section.querySelector("#websiteImageStatus");
@@ -213,7 +216,12 @@
     }
   }
 
-  saveButton.addEventListener("click", saveChanges);
+  // Use the form submit event so mouse, touch, keyboard and assistive
+  // technology activation all enter the same save path.
+  saveForm.addEventListener("submit", event => {
+    event.preventDefault();
+    void saveChanges();
+  });
   discardButton.addEventListener("click", discardPending);
   search.addEventListener("input", render);
   loadCatalogue().catch(error => {

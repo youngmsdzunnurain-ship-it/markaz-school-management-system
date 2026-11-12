@@ -325,9 +325,9 @@ img[alt*="logo" i] {
 
 /* Explicit save bar for staged Website Image Manager changes. */
 .website-image-savebar {
-    position: sticky;
-    bottom: 12px;
-    z-index: 5;
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -357,6 +357,8 @@ img[alt*="logo" i] {
     font: inherit;
     font-weight: 800;
     cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
 }
 
 .website-image-savebar #discardWebsiteImagesButton {

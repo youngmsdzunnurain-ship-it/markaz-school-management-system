@@ -124,6 +124,7 @@ async function loadProfile() {
             profilePhoto.appendChild(profileInitials);
         }
 
+        document.documentElement.classList.remove("settings-profile-pending");
     } catch (error) {
         showMessage(
             "Unable to load account profile.",
