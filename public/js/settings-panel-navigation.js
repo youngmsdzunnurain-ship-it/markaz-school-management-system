@@ -52,6 +52,7 @@
 
 
     function buildSettingsNavigation() {
+      const previousHeading = page.querySelector("#settingsActiveCategoryHeading")?.textContent || "";
       page.querySelector("#settingsCategoryNav")?.remove();
       page.querySelector("#settingsActiveCategoryHeading")?.remove();
       page.querySelector("#settingsActiveCategoryDescription")?.remove();
@@ -129,7 +130,8 @@
       buttons.set(category.id, button);
     });
 
-    activate("profile");
+    const preservedCategory = categories.find(category => category.label === previousHeading);
+    activate(preservedCategory?.id || "profile");
 
       document.documentElement.classList.remove("settings-page-pending");
     }
