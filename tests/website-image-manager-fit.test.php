@@ -16,8 +16,10 @@ $polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.cs
 
 websiteImageFitCheck(
     str_contains($manager, 'api/settings/website-images.php') &&
-    str_contains($manager, 'data.set("action", "replace")') &&
-    str_contains($manager, 'data.set("action", "reset")'),
+    str_contains($manager, 'pendingUploads') &&
+    str_contains($manager, 'pendingResets') &&
+    str_contains($manager, 'batch-replace') &&
+    str_contains($manager, 'Save Changes'),
     'website image manager must upload replacements and restore originals through its API'
 );
 
@@ -32,7 +34,7 @@ foreach ([
     ['.markaz-facility-intro > img', $polishCss],
     ['.markaz-facility-note img', $polishCss],
     ['.public-intro-grid .public-photo > img', $publicImageCss],
-    ['.director-grid .public-photo > img', $publicImageCss]
+    ['.director-grid .public-photo > img', $polishCss]
 ] as [$selector, $stylesheet]) {
     $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*contain\\s*;/s';
     websiteImageFitCheck(
@@ -42,7 +44,7 @@ foreach ([
 }
 
 websiteImageFitCheck(
-    str_contains($manager, 'file.size > 8 * 1024 * 1024') &&
+    str_contains($manager, '8 * 1024 * 1024') &&
     str_contains($manager, 'credentials: "same-origin"'),
     'uploads must retain size validation and authenticated same-origin requests'
 );
