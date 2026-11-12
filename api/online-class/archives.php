@@ -1,0 +1,91 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/online-class.php';
+require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../attendance/_common.php';
+
+onlineClassStaffAccess();
+$pdo = db();
+$terms = ['First Term', 'Second Term', 'Third Term'];
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$action = (string) ($_GET['action'] ?? '');
+$validLevel = static function ($value) use ($pdo): int {
+    $id = filter_var($value, FILTER_VALIDATE_INT);
+    if (!$id || !$pdo->query('SELECT 1 FROM online_class_levels WHERE id=' . (int) $id . ' LIMIT 1')->fetchColumn()) {
+        onlineClassJsonError(422, 'Choose a valid Online Class level.');
+    }
+    return (int) $id;
+};
+$archiveJson = static function (array $data, int $status = 200): never {
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, private');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    exit;
+};
+if ($method === 'GET' && $action === 'list') {
+    requireSeniorAdmin();
+    $stmt = $pdo->query("SELECT a.id,a.archive_type,a.destination,a.level_id,l.name AS level_name,a.academic_session,a.term,a.record_count,a.is_released,a.payload_sha256,a.created_at,ad.name AS created_by_name FROM online_class_archives a JOIN online_class_levels l ON l.id=a.level_id JOIN admins ad ON ad.id=a.created_by WHERE a.destination='online' ORDER BY a.created_at DESC,a.id DESC");
+    $archiveJson(['success' => true, 'archives' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+}
+if ($method !== 'POST') {
+    http_response_code(405);
+    $archiveJson(['success' => false, 'message' => 'Use GET or POST.'], 405);
+}
+attendanceRequireSafePost();
+requireSeniorAdmin();
+$input = json_decode((string) file_get_contents('php://input'), true);
+if (!is_array($input)) $archiveJson(['success' => false, 'message' => 'Invalid archive request.'], 400);
+$levelId = $validLevel($input['level_id'] ?? 0);
+$adminId = (int) ($_SESSION['admin_id'] ?? 0);
+$password = (string) ($input['password'] ?? '');
+if ($password === '' || strlen($password) > 4096) $archiveJson(['success' => false, 'message' => 'Enter your administrator password to continue.'], 422);
+$verify = $pdo->prepare('SELECT password_hash FROM admins WHERE id=? AND is_active=1 AND is_frozen=0 LIMIT 1');
+$verify->execute([$adminId]);
+$hash = (string) $verify->fetchColumn();
+if ($hash === '' || !password_verify($password, $hash)) $archiveJson(['success' => false, 'message' => 'Administrator password is incorrect.'], 403);
+$type = (string) ($input['archive_type'] ?? '');
+$destination = (string) ($input['destination'] ?? 'online');
+if (!in_array($type, ['attendance', 'results'], true) || !in_array($destination, ['online', 'device'], true)) $archiveJson(['success' => false, 'message' => 'Choose a valid backup type and destination.'], 422);
+$session = trim((string) ($input['academic_session'] ?? ''));
+$term = (string) ($input['term'] ?? '');
+if ($type === 'results' && (!preg_match('/^\d{4}\/\d{4}$/', $session) || !in_array($term, $terms, true))) $archiveJson(['success' => false, 'message' => 'Choose a valid academic session and term.'], 422);
+if ($type === 'attendance') { $session = null; $term = null; }
+$pdo->beginTransaction();
+try {
+    if ($type === 'attendance') {
+        $stmt = $pdo->prepare('SELECT a.id,a.student_id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.section,a.attendance_date,a.status,a.remarks,a.marked_by,a.created_at,a.updated_at FROM online_class_attendance a JOIN online_class_students s ON s.id=a.student_id WHERE s.level_id=? ORDER BY a.attendance_date,s.last_name,s.first_name');
+        $stmt->execute([$levelId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'attendance','level_id'=>$levelId,'created_at'=>date(DATE_ATOM),'records'=>$rows];
+        $released = 0;
+    } else {
+        $students = $pdo->prepare('SELECT id,admission_number,first_name,middle_name,last_name,section,level_id FROM online_class_students WHERE level_id=? ORDER BY last_name,first_name');
+        $students->execute([$levelId]);
+        $results = $pdo->prepare('SELECT r.id,r.student_id,r.subject_id,s.admission_number,s.first_name,s.middle_name,s.last_name,sub.name AS subject_name,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark,r.created_at,r.updated_at FROM online_class_results r JOIN online_class_students s ON s.id=r.student_id JOIN online_class_subjects sub ON sub.id=r.subject_id WHERE s.level_id=? AND r.academic_session=? AND r.term=? ORDER BY s.last_name,s.first_name,sub.sort_order,sub.name');
+        $results->execute([$levelId,$session,$term]);
+        $releaseStmt = $pdo->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? LIMIT 1');
+        $releaseStmt->execute([$levelId,$session,$term]);
+        $released = (int) $releaseStmt->fetchColumn();
+        $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'results','level_id'=>$levelId,'academic_session'=>$session,'term'=>$term,'is_released'=>$released,'created_at'=>date(DATE_ATOM),'students'=>$students->fetchAll(PDO::FETCH_ASSOC),'results'=>$results->fetchAll(PDO::FETCH_ASSOC)];
+    }
+    $raw = json_encode($payloadData, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
+    $compressed = gzencode($raw, 9);
+    if ($compressed === false) throw new RuntimeException('Unable to compress the archive.');
+    $sha = hash('sha256', $compressed);
+    if ($destination === 'online') {
+        $insert = $pdo->prepare('INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,is_released,payload,payload_sha256,created_by) VALUES (?,\'online\',?,?,?,?,?,?,?,?)');
+        $insert->execute([$type,$levelId,$session,$term,count($type === 'attendance' ? $payloadData['records'] : $payloadData['results']),$released,$compressed,$sha,$adminId]);
+        $archiveId = (int) $pdo->lastInsertId();
+        $pdo->commit();
+        $archiveJson(['success'=>true,'message'=>'Protected online backup saved. It is now listed in Backup Records.','archive_id'=>$archiveId,'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])],201);
+    }
+    $pdo->commit();
+    $archiveJson(['success'=>true,'message'=>'Protected device backup is ready to download. Keep the file safe; it is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup+gzip','sha256'=>$sha,'payload'=>base64_encode($compressed),'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
+} catch (Throwable $error) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('Online Class archive failed: ' . $error->getMessage());
+    $archiveJson(['success'=>false,'message'=>'The backup could not be completed. No active records were changed.'],500);
+}
