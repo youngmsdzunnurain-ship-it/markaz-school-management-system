@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = "markaz-public-v2";
+const CACHE_VERSION = "markaz-public-v3";
 const PAGE_CACHE = CACHE_VERSION + "-pages";
 const ASSET_CACHE = CACHE_VERSION + "-assets";
 
@@ -80,13 +80,8 @@ async function fetchWithTimeout(request, timeoutMs = 12000) {
 }
 
 self.addEventListener("install", event => {
-    event.waitUntil((async () => {
-        const pages = await caches.open(PAGE_CACHE);
-        await pages.addAll(Array.from(PUBLIC_PAGES));
-        const assets = await caches.open(ASSET_CACHE);
-        await assets.addAll(CORE_ASSETS);
-        await self.skipWaiting();
-    })());
+    // Do not block activation on downloading every public page and asset.
+    event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", event => {
@@ -107,33 +102,8 @@ self.addEventListener("fetch", event => {
     const url = new URL(request.url);
     if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
 
-    if (request.mode === "navigate") {
-        if (!isApprovedPublicPage(url)) return;
-
-        // Start the network refresh now, but don't make cached navigation wait.
-        const refresh = fetch(request).then(async response => {
-            await cacheResponse(PAGE_CACHE, request, response);
-            return response;
-        }).catch(() => null);
-        event.waitUntil(refresh);
-        event.respondWith((async () => {
-            const cache = await caches.open(PAGE_CACHE);
-            const cached = await cache.match(request);
-            if (cached) return cached;
-
-            const response = await refresh;
-            if (response) return response;
-
-            const offline = await cache.match(new URL("./offline.html", self.registration.scope).href);
-            if (offline) return offline;
-            return new Response("You are offline. Please reconnect and try again.", {
-                status: 503,
-                headers: { "Content-Type": "text/plain; charset=utf-8" }
-            });
-        })());
-        return;
-    }
-
+    // Let document navigations use the browser's normal fast navigation path.
+    // The worker only caches public assets and never delays page transitions.
     /* The shared footer loader fetches home.html as a normal same-origin request. */
     if (isApprovedPublicPage(url)) {
         const refresh = fetch(request).then(response => {
