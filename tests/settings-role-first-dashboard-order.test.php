@@ -10,7 +10,7 @@ $settingsNavCss=(string)file_get_contents($root.'/public/css/settings-panel-navi
 $settingsJs=(string)file_get_contents($root.'/public/js/settings.js');
 $checks=[
  'role is fetched before Settings categories are created'=>strpos($navigation,'await fetch("./api/auth/me.php",') < strpos($navigation,'const allCategories = ['),
- 'Admin dynamic Settings modules load concurrently'=>str_contains($navigation,'Promise.all(adminModules.map(src => new Promise(resolve => {')) && !str_contains($navigation,'for (const src of adminModules)'),
+ 'Admin dynamic Settings modules load concurrently'=>str_contains($navigation,'Promise.all(adminModules.map(src => new Promise(resolve => {') && !str_contains($navigation,'for (const src of adminModules)'),
  'Management Settings are restricted to profile information'=>str_contains($navigation,'new Set(["profile"])'),
  'Exam Officer Settings have their own explicit category allow-list'=>str_contains($navigation,'new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])'),
  'Settings remain hidden until role resolution completes'=>str_contains($html,'settings-page-pending')&&str_contains($navigation,'classList.remove("settings-page-pending")'),
