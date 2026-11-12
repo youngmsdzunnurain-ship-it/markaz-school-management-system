@@ -107,21 +107,17 @@ self.addEventListener("fetch", event => {
 
     if (request.mode === "navigate") {
         if (!isApprovedPublicPage(url)) return;
+
+        // Start the network refresh now, but don't make cached navigation wait.
+        const refresh = fetch(request).then(async response => {
+            await cacheResponse(PAGE_CACHE, request, response);
+            return response;
+        }).catch(() => null);
+        event.waitUntil(refresh);
         event.respondWith((async () => {
             const cache = await caches.open(PAGE_CACHE);
             const cached = await cache.match(request);
-
-            // A previously visited page is rendered immediately. Network refresh
-            // must never hold the user's navigation behind a slow connection.
-            const refresh = fetch(request).then(async response => {
-                await cacheResponse(PAGE_CACHE, request, response);
-                return response;
-            }).catch(() => null);
-
-            if (cached) {
-                event.waitUntil(refresh);
-                return cached;
-            }
+            if (cached) return cached;
 
             const response = await refresh;
             if (response) return response;
