@@ -1631,7 +1631,7 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
     }
 
     async function loadActivity() {
-        activityStatus.textContent = "Loading staff and student activity…";
+        activityStatus.textContent = "Loading staff, conventional students and Online Class students…";
         activityRows.replaceChildren();
         try {
             const data = await requestActivity();
