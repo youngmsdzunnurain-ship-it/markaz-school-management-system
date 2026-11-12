@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS online_class_archives (
     academic_session VARCHAR(30) NULL,
     term ENUM('First Term','Second Term','Third Term') NULL,
     record_count INT UNSIGNED NOT NULL DEFAULT 0,
+    coverage_start DATE NULL,
+    coverage_end DATE NULL,
     is_released TINYINT(1) NOT NULL DEFAULT 0,
     payload LONGBLOB NOT NULL,
     payload_sha256 CHAR(64) NOT NULL,
