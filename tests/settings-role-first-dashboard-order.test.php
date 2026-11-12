@@ -14,6 +14,7 @@ $checks=[
  'Management Settings are restricted to profile information'=>str_contains($navigation,'new Set(["profile"])'),
  'Exam Officer Settings have their own explicit category allow-list'=>str_contains($navigation,'new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])'),
  'Settings remain hidden until role resolution completes'=>str_contains($html,'settings-page-pending')&&str_contains($navigation,'classList.remove("settings-page-pending")'),
+ 'Profile Information stays hidden until category navigation is ready'=>str_contains($settingsNavCss,'html.settings-page-pending .settings-page > .settings-card:first-of-type')&&preg_match('/html\\.settings-page-pending \\.settings-page > \\.settings-card:first-of-type\\s*\\{\\s*visibility:\\s*hidden;/s',$settingsNavCss)===1,
  'Settings profile is not revealed before real account details load'=>str_contains($html,'settings-profile-pending') && str_contains($settingsNavCss,'html.settings-profile-pending .settings-page > .settings-card:first-of-type') && strpos($settingsJs,'document.documentElement.classList.remove("settings-profile-pending")') > strpos($settingsJs,'async function loadProfile()'),
  'Settings category navigation is built once after authorised modules load'=>str_contains($navigation,'adminModulesReady.then(buildSettingsNavigation)') && !str_contains($navigation,'buildSettingsNavigation();'),
  'Management greeting includes explanatory dashboard copy'=>str_contains($dashboard,'Your assigned school workspaces are ready below.'),
