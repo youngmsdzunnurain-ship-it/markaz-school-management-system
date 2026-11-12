@@ -52,3 +52,4 @@ jobs:
           php tests/online-class-architecture-regression.test.php
           php tests/settings-role-first-dashboard-order.test.php
           php tests/online-class-portal-ui-regression.test.php
+          php tests/login-lockout-coverage.test.php

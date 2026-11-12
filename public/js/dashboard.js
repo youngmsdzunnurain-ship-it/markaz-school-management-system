@@ -1170,9 +1170,19 @@ function initDashboardMotion() {
     const selector = [
         ":scope > .welcome-card",
         ":scope > .stats-grid",
+        ":scope > .stats-grid > .stat-card",
         ":scope > .dashboard-exam-section",
+        ":scope > .dashboard-exam-section .result-progress-section",
+        ":scope > .dashboard-exam-section .progress-card",
+        ":scope > .dashboard-attendance-panel",
+        ":scope > .dashboard-attendance-panel .dashboard-attendance-category",
+        ":scope > .dashboard-attendance-panel .dashboard-attendance-summary",
+        ":scope > .dashboard-class-attendance-charts .dashboard-class-chart-card",
+        ":scope > .management-dashboard > article",
         ":scope > .dashboard-bottom-layout",
+        ":scope > .dashboard-bottom-layout > article",
         ":scope > .teacher-assignments-section",
+        ":scope > .teacher-assignments-section .teacher-assignment-card",
         ":scope > .panel"
     ].join(", ");
 
