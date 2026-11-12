@@ -13,11 +13,11 @@ $release->execute([$levelId,$session,$term]);
 $isReleased=(int)$release->fetchColumn()===1;
 $rowsToRender=null;
 if(!$isReleased){
- $archive=db()->prepare("SELECT payload,payload_sha256,is_released FROM online_class_archives WHERE archive_type='results' AND destination='online' AND level_id=? AND academic_session=? AND term=? ORDER BY created_at DESC,id DESC LIMIT 1");
+ $archive=db()->prepare("SELECT payload,payload_sha256,is_released FROM online_class_archives WHERE archive_type='results' AND destination='online' AND level_id=? AND academic_session=? AND term=? AND is_released=1 ORDER BY created_at DESC,id DESC LIMIT 1");
  $archive->execute([$levelId,$session,$term]);
  $saved=$archive->fetch(PDO::FETCH_ASSOC);
  if($saved && (int)$saved['is_released']===1 && hash_equals((string)$saved['payload_sha256'],hash('sha256',(string)$saved['payload']))){
-  $decoded=json_decode((string)gzdecode((string)$saved['payload']),true);
+  $decoded=json_decode((string)@gzdecode((string)$saved['payload']),true);
   if(is_array($decoded) && ($decoded['format']??'')==='markaz-online-class-archive-v1' && ($decoded['type']??'')==='results'){
    $isReleased=true;
    $rowsToRender=array_values(array_filter($decoded['results']??[],static fn($row)=>(int)($row['student_id']??0)===$studentId));
