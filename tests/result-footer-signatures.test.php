@@ -36,6 +36,9 @@ signatureCheck(
     'signature writes must not require unsupported exclusive locks on Android shared storage'
 );
 signatureCheck(str_contains($resultJs, 'result-signature-image') && str_contains($resultJs, 'class_teacher_signature_image'), 'Student results must render the shared signature images');
+signatureCheck(str_contains($resultJs, 'resultFooterSettingsPromise = loadResultFooterSettings();'), 'Student result signature settings must load alongside the report data');
+signatureCheck(str_contains($resultJs, 'await waitForResultFooterImages();') && str_contains($resultJs, 'image.decode()'), 'Printing must wait until saved signature images are loaded');
+signatureCheck(str_contains($resultJs, 'window.location.origin + "/"'), 'Signature image paths must resolve from the public application root');
 signatureCheck(str_contains($resultCss, '.signature-space .result-signature-image'), 'Screen result styling must display transparent signature images');
 signatureCheck(str_contains($printCss, '.signature-space .result-signature-image'), 'Print result styling must display transparent signature images');
 

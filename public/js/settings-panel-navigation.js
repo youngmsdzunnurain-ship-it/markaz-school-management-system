@@ -25,6 +25,29 @@
       return;
     }
 
+    // Register every Admin Settings section only after its dynamic module has
+    // inserted it. Otherwise those late-added sections bypass the initial
+    // collapsed-category pass and appear open beside Profile Information.
+    if (role === "admin") {
+      const adminModules = [
+        "/js/result-print-threshold-settings.js?v=20261104-threshold",
+        "/js/account-management.js",
+        "/js/website-image-overrides.js",
+        "/js/website-image-manager.js",
+        "/js/social-settings.js"
+      ];
+      for (const src of adminModules) {
+        await new Promise(resolve => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.async = false;
+          script.onload = resolve;
+          script.onerror = resolve;
+          document.body.appendChild(script);
+        });
+      }
+    }
+
     const profile = page.querySelector(
       ':scope > section.settings-card:not(.academic-period-settings-card):not(.result-footer-settings-card):not(.memorization-settings-card):not(.markaz-account-management-card):not(.markaz-role-permissions-card):not(.markaz-locked-accounts-card):not(.markaz-account-devices-card):not(#websiteImageManager):not(#markazSocialSettings):not(#markazSupportSettings)'
     );
@@ -99,22 +122,6 @@
     });
 
     activate("profile");
-
-    if (role === "admin") {
-      const adminModules = [
-        "/js/result-print-threshold-settings.js?v=20261104-threshold",
-        "/js/account-management.js",
-        "/js/website-image-overrides.js",
-        "/js/website-image-manager.js",
-        "/js/social-settings.js"
-      ];
-      adminModules.forEach(src => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.async = false;
-        document.body.appendChild(script);
-      });
-    }
 
     document.documentElement.classList.remove("settings-page-pending");
   } catch (_) {

@@ -15,6 +15,7 @@ if (isStudentPortalView) {
 const $ = (id) => document.getElementById(id);
 
 let studentData = null;
+let resultFooterSettingsPromise = Promise.resolve();
 let isEditMode = false;
 let originalEditState = null;
 let currentUserRole = "";
@@ -1544,6 +1545,23 @@ async function printStudentResult() {
     window.print();
 }
 
+async function waitForResultFooterImages() {
+    await resultFooterSettingsPromise;
+    const images = Array.from(
+        document.querySelectorAll(".signature-space .result-signature-image")
+    );
+    await Promise.all(images.map(image => {
+        if (image.complete) return Promise.resolve();
+        if (typeof image.decode === "function") {
+            return image.decode().catch(() => undefined);
+        }
+        return new Promise(resolve => {
+            image.addEventListener("load", resolve, { once: true });
+            image.addEventListener("error", resolve, { once: true });
+        });
+    }));
+}
+
 async function authorizeAndPrint(permission) {
     try {
         // A public student can print/export only the read-only report bound to
@@ -1566,6 +1584,7 @@ async function authorizeAndPrint(permission) {
             throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
+        await waitForResultFooterImages();
         setStudentResultDocumentTitle();
         await applyResultPrintScale();
         window.print();
@@ -2214,6 +2233,8 @@ document.addEventListener(
 
 setupBehaviourCalculation();
 
+resultFooterSettingsPromise = loadResultFooterSettings();
+
 loadStudentResult().catch(error => {
     console.error(error);
     if (isPrintMode) {
@@ -2276,8 +2297,11 @@ async function loadResultFooterSettings() {
             if (imagePath) {
                 const image = document.createElement("img");
                 image.className = "result-signature-image";
-                image.src = "./" + String(imagePath).replace(/^\/+/, "") + "?v=" + Date.now();
+                image.src = new URL(String(imagePath).replace(/^\/+/, ""), window.location.origin + "/").href + "?v=" + Date.now();
                 image.alt = alt;
+                image.addEventListener("error", () => {
+                    target.textContent = legacyText || "—";
+                }, { once: true });
                 target.appendChild(image);
             } else {
                 target.textContent = legacyText || "—";
@@ -2291,4 +2315,3 @@ async function loadResultFooterSettings() {
     }
 }
 
-loadResultFooterSettings();
