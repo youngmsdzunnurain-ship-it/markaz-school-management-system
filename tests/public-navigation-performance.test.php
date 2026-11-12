@@ -16,15 +16,15 @@ $resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.c
 $home = file_get_contents(__DIR__ . '/../public/js/home.js');
 
 publicNavigationAssert(
-    str_contains($worker, 'const cached = await cache.match(request)') &&
-    strpos($worker, 'const cached = await cache.match(request)') < strpos($worker, 'const response = await refresh'),
-    'cached public pages must be returned before waiting for the network'
+    !str_contains($worker, 'if (request.mode === "navigate")') &&
+    str_contains($worker, 'Let document navigations use the browser\'s normal fast navigation path'),
+    'public document navigation must use the browser fast path instead of service-worker interception'
 );
 
 publicNavigationAssert(
-    str_contains($worker, 'event.waitUntil(refresh)') &&
+    str_contains($worker, 'event.waitUntil(network)') &&
     str_contains($worker, 'return cached;'),
-    'public page refresh must continue in the background without blocking navigation'
+    'asset refresh must stay in the background while cached assets are returned immediately'
 );
 
 publicNavigationAssert(
