@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = "markaz-public-v1";
+const CACHE_VERSION = "markaz-public-v2";
 const PAGE_CACHE = CACHE_VERSION + "-pages";
 const ASSET_CACHE = CACHE_VERSION + "-assets";
 
@@ -19,11 +19,13 @@ const CORE_ASSETS = [
     "./css/about-card-polish.css",
     "./css/gallery-alignment.css",
     "./css/public-resilience.css",
+    "./css/public-animations.css",
     "./js/home.js",
     "./js/markaz-global.js",
     "./js/website-image-overrides.js",
     "./js/social-link-overrides.js",
     "./js/public-resilience.js",
+    "./js/public-animations.js",
     "./assets/images/markaz-logo.jpg"
 ];
 
