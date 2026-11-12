@@ -57,8 +57,9 @@ websiteImagePersistenceCheck(
 
 websiteImagePersistenceCheck(
     str_contains($api, 'requireSeniorAdmin();') &&
+    strpos($api, "if ($method === 'GET')") < strpos($api, 'requireSeniorAdmin();') &&
     str_contains($api, 'ob_start();'),
-    'image catalogue and uploads must be protected by the Admin session and keep API errors JSON-only'
+    'public image reads must remain available while replacement writes require the Admin session and JSON output stays clean'
 );
 
 echo "Website image manager persistence regression tests passed.\n";
