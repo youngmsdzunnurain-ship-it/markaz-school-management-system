@@ -216,12 +216,15 @@
     }
   }
 
-  // Delegate from the stable manager root in capture phase. The Save control
-  // stays focusable so a stale disabled attribute cannot silently block uploads.
-  section.addEventListener("click", event => {
-    const button = event.target.closest("#saveWebsiteImagesButton");
+  // Intercept at Window capture: a page/document capture listener registered
+  // earlier in the event path must not be able to swallow this upload action.
+  window.addEventListener("click", event => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const button = target.closest("#saveWebsiteImagesButton");
     if (!button || !section.contains(button)) return;
     event.preventDefault();
+    event.stopImmediatePropagation();
     if (saving) return;
     if (pendingUploads.size === 0) {
       status.textContent = "No image changes are queued. Choose an image before saving.";
