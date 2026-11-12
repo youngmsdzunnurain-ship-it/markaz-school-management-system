@@ -14,6 +14,7 @@ $css = file_get_contents(__DIR__ . '/../public/css/home.css');
 $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
 $resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.css');
 $home = file_get_contents(__DIR__ . '/../public/js/home.js');
+$animations = file_get_contents(__DIR__ . '/../public/js/public-animations.js');
 $refinement = file_get_contents(__DIR__ . '/../public/css/public-design-refinement.css');
 
 $navigationGuard = strpos($worker, 'if (request.mode === "navigate") return;');
@@ -70,6 +71,12 @@ publicNavigationAssert(
     str_contains($refinement, 'body.public-page main > :first-child') &&
     str_contains($refinement, 'margin-block-start: 0 !important'),
     'public content must begin directly below navigation without external top whitespace'
+);
+
+publicNavigationAssert(
+    str_contains($animations, "querySelectorAll(':scope > section')).slice(1)") &&
+    str_contains($animations, 'The first section is the page hero. Keep it visible immediately'),
+    'the first hero section must never be hidden by scroll-reveal animation'
 );
 
 echo "Public navigation performance regression checks passed.\n";
