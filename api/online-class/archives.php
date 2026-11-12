@@ -138,7 +138,7 @@ try {
     }
     $encrypted=$encryptBackup($compressed,$password);
     $pdo->commit();
-    $archiveJson(['success'=>true,'message'=>'Encrypted device backup is ready to download. Keep the password safe; the file is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','sha256'=>$encrypted['sha256'],'payload'=>$encrypted['payload'],'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
+    $archiveJson(['success'=>true,'message'=>'Encrypted device backup is ready to download. Keep the password safe; the file is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'-'.bin2hex(random_bytes(3)).'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','sha256'=>$encrypted['sha256'],'payload'=>$encrypted['payload'],'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
 } catch (Throwable $error) {
     if ($pdo->inTransaction()) $pdo->rollBack();
     error_log('Online Class archive failed: ' . $error->getMessage());
