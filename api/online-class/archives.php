@@ -129,7 +129,7 @@ try {
     if ($compressed === false) throw new RuntimeException('Unable to compress the archive.');
     $sha = hash('sha256', $compressed);
     if ($destination === 'online') {
-        $insert = $pdo->prepare('INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,is_released,payload,payload_sha256,created_by) VALUES (?,\'online\',?,?,?,?,?,?,?,?)');
+        $insert = $pdo->prepare('INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,coverage_start,coverage_end,is_released,payload,payload_sha256,created_by) VALUES (?,\'online\',?,?,?,?,?,?,?,?,?,?)');
         $insert->execute([$type,$levelId,$session,$term,count($type === 'attendance' ? $payloadData['records'] : $payloadData['results']),$coverageStart,$coverageEnd,$released,$compressed,$sha,$adminId]);
         $archiveId = (int) $pdo->lastInsertId();
         $pdo->commit();
