@@ -11,7 +11,7 @@ $dashHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
 settingsDashboardCheck(str_contains($nav, 'Result Footer Signatures & Date')
     && str_contains($nav, 'Website Social Media Links')
     && str_contains($nav, 'Emergency Contact & System Support')
-    && str_contains($nav, 'Arabic Class Memorization Settings'), 'Settings categories are clearly named');
+    && str_contains($nav, 'Qur’an Memorization'), 'Settings categories are clearly named');
 settingsDashboardCheck(str_contains($nav, '"profile", "result-release", "academic-archive", "academic", "results", "memorization"')
     && str_contains($nav, 'activate("profile")'), 'Exam Officer retains result footer/signature settings');
 settingsDashboardCheck(str_contains($css, '.result-footer-settings-card #saveResultFooterButton')
