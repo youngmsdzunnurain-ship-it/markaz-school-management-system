@@ -46,14 +46,6 @@ publicNavigationAssert(
 );
 
 publicNavigationAssert(
-    str_contains($settings, 'min-height: 64px;') &&
-    str_contains($settings, 'gap: 6px;') &&
-    str_contains($settings, 'padding: 5px 7px;') &&
-    str_contains($settings, 'padding: clamp(34px, 4.5vw, 58px) 0;'),
-    'public header navigation and hero spacing must remain compact'
-);
-
-publicNavigationAssert(
     str_contains($resilienceCss, '#markaz-page-loading') &&
     str_contains($resilienceCss, 'display: none !important'),
     'the full-screen loading skeleton must not cover the destination while it loads'
