@@ -58,6 +58,59 @@ $encryptBackup = static function (string $compressed, string $password): array {
     $file = "MOCBKP1" . $salt . $nonce . $tag . $cipher;
     return ['payload'=>base64_encode($file),'sha256'=>hash('sha256',$file)];
 };
+if ($action === 'import_device_backup') {
+    $encoded = (string) ($input['file_payload'] ?? '');
+    $providedHash = strtolower(trim((string) ($input['file_sha256'] ?? '')));
+    if ($encoded === '' || strlen($encoded) > 28000000 || !preg_match('/^[a-f0-9]{64}$/', $providedHash)) {
+        $archiveJson(['success'=>false,'message'=>'Choose a valid encrypted backup file (maximum 20 MB).'],422);
+    }
+    $file = base64_decode($encoded, true);
+    if (!is_string($file) || strlen($file) < 52 || !hash_equals($providedHash,hash('sha256',$file)) || substr($file,0,7)!=='MOCBKP1') {
+        $archiveJson(['success'=>false,'message'=>'The backup file is invalid or has been changed.'],422);
+    }
+    if (!function_exists('openssl_decrypt')) $archiveJson(['success'=>false,'message'=>'Server decryption support is unavailable.'],503);
+    $salt=substr($file,7,16);
+    $nonce=substr($file,23,12);
+    $tag=substr($file,35,16);
+    $cipher=substr($file,51);
+    $key=hash_pbkdf2('sha256',$password,$salt,210000,32,true);
+    $compressed=openssl_decrypt($cipher,'aes-256-gcm',$key,OPENSSL_RAW_DATA,$nonce,$tag,'MARKAZ-ONLINE-CLASS-ARCHIVE-V1');
+    if (!is_string($compressed)) $archiveJson(['success'=>false,'message'=>'The backup password is incorrect or the file is damaged.'],403);
+    $raw=@gzdecode($compressed);
+    try { $payloadData=is_string($raw)?json_decode($raw,true,512,JSON_THROW_ON_ERROR):null; }
+    catch (Throwable $error) { $payloadData=null; }
+    if (!is_array($payloadData) || ($payloadData['format']??'')!=='markaz-online-class-archive-v1' || !in_array(($payloadData['type']??''),['attendance','results'],true) || (int)($payloadData['level_id']??0)!==$levelId) {
+        $archiveJson(['success'=>false,'message'=>'The decrypted backup does not match the selected level or supported archive format.'],422);
+    }
+    $type=(string)$payloadData['type'];
+    $session=$type==='results'?trim((string)($payloadData['academic_session']??'')):null;
+    $term=$type==='results'?(string)($payloadData['term']??''):null;
+    if ($type==='results' && (!preg_match('/^\\d{4}\\/\\d{4}$/',(string)$session) || !in_array($term,$terms,true) || !is_array($payloadData['results']??null))) {
+        $archiveJson(['success'=>false,'message'=>'The results backup has invalid academic-period information.'],422);
+    }
+    if ($type==='attendance' && !is_array($payloadData['records']??null)) $archiveJson(['success'=>false,'message'=>'The attendance backup is incomplete.'],422);
+    $rows=$type==='attendance'?$payloadData['records']:$payloadData['results'];
+    $coverageStart=null;$coverageEnd=null;
+    if($type==='attendance' && $rows){
+        $dates=array_column($rows,'attendance_date');
+        foreach($dates as $date){if(!is_string($date)||!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$date))$archiveJson(['success'=>false,'message'=>'The attendance backup contains an invalid date.'],422);}
+        $coverageStart=min($dates);$coverageEnd=max($dates);
+    }
+    $released=$type==='results' && !empty($payloadData['is_released'])?1:0;
+    $sha=hash('sha256',$compressed);
+    $pdo->beginTransaction();
+    try {
+        $insert=$pdo->prepare("INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,coverage_start,coverage_end,is_released,payload,payload_sha256,created_by) VALUES (?,'online',?,?,?,?,?,?,?,?,?,?)");
+        $insert->execute([$type,$levelId,$session,$term,count($rows),$coverageStart,$coverageEnd,$released,$compressed,$sha,$adminId]);
+        $archiveId=(int)$pdo->lastInsertId();
+        $pdo->commit();
+        $archiveJson(['success'=>true,'message'=>'Encrypted device backup uploaded as a new online archive. The original device file remains unchanged.','archive_id'=>$archiveId,'record_count'=>count($rows)],201);
+    } catch (Throwable $error) {
+        if($pdo->inTransaction())$pdo->rollBack();
+        error_log('Online Class backup import failed: '.$error->getMessage());
+        $archiveJson(['success'=>false,'message'=>'The backup could not be added online. No existing archive was replaced.'],500);
+    }
+}
 if ($action === 'download') {
     $archiveId = filter_var($input['archive_id'] ?? null, FILTER_VALIDATE_INT);
     if (!$archiveId) $archiveJson(['success'=>false,'message'=>'Choose a valid online backup.'],422);
