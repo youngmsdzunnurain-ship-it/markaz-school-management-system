@@ -34,7 +34,9 @@ function readWebsiteImageManifest(string $path): array
 
 /**
  * Atomically replace the full website image mapping manifest.
- * The temporary file is created beside the target so rename remains atomic.
+ * The unique temporary file is created beside the target so rename remains
+ * atomic. Do not request LOCK_EX: Android shared storage (the app's normal
+ * Termux project location) does not implement flock for PHP streams.
  */
 function writeWebsiteImageManifest(string $path, array $mappings): void
 {
@@ -50,7 +52,8 @@ function writeWebsiteImageManifest(string $path, array $mappings): void
 
     $temporary = $path . '.' . bin2hex(random_bytes(8)) . '.tmp';
     try {
-        if (file_put_contents($temporary, $json, LOCK_EX) !== strlen($json)) {
+        $written = file_put_contents($temporary, $json);
+        if ($written !== strlen($json)) {
             throw new RuntimeException('Could not write website image settings.');
         }
         @chmod($temporary, 0640);
