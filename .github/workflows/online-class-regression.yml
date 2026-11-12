@@ -27,6 +27,8 @@ jobs:
           php -l api/online-class/archives.php
           php -l api/settings/account-device-activity.php
           php -l app/helpers/device-activity-schema.php
+          php -l app/helpers/online-class-archives.php
+          php -l tests/online-class-archive-crypto.test.php
           php -l tests/online-class-archives-device-activity.test.php
           php -l api/online-class/student-footer.php
           php -l api/online-class/footer.php
@@ -59,4 +61,5 @@ jobs:
           php tests/settings-role-first-dashboard-order.test.php
           php tests/online-class-portal-ui-regression.test.php
           php tests/online-class-archives-device-activity.test.php
+          php tests/online-class-archive-crypto.test.php
           php tests/login-lockout-coverage.test.php
