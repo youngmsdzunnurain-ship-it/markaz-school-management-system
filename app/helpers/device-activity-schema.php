@@ -46,7 +46,6 @@ function ensureDeviceActivitySchema(PDO $pdo): void
         KEY idx_device_activity_last_seen (last_activity_at),
         KEY idx_device_activity_online_student (online_student_id),
         CONSTRAINT fk_device_activity_account FOREIGN KEY (account_id) REFERENCES admins(id) ON DELETE SET NULL,
-        CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL,
-        CONSTRAINT fk_device_activity_online_student FOREIGN KEY (online_student_id) REFERENCES online_class_students(id) ON DELETE SET NULL
+        CONSTRAINT fk_device_activity_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL
     ) ENGINE=InnoDB");
 }
