@@ -15,7 +15,7 @@ $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
 
 publicNavigationAssert(
     str_contains($worker, 'const cached = await cache.match(request)') &&
-    strpos($worker, 'const cached = await cache.match(request)') < strpos($worker, 'const response = await fetchWithTimeout(request)'),
+    strpos($worker, 'const cached = await cache.match(request)') < strpos($worker, 'const response = await refresh'),
     'cached public pages must be returned before waiting for the network'
 );
 
