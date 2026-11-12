@@ -4,9 +4,11 @@
   const endpoint = "/api/settings/account-device-activity.php";
   const script = document.currentScript;
   const configuredContext = script?.dataset.activityRole || "staff";
-  const context = configuredContext === "student" ||
-    (configuredContext === "auto" && new URLSearchParams(window.location.search).get("student_portal") === "1")
-    ? "student" : "staff";
+  const context = configuredContext === "online_class_student"
+    ? "online_class_student"
+    : (configuredContext === "student" ||
+      (configuredContext === "auto" && new URLSearchParams(window.location.search).get("student_portal") === "1")
+      ? "student" : "staff");
   const storageKey = "markaz-device-activity-session";
   let sessionId = "";
 
