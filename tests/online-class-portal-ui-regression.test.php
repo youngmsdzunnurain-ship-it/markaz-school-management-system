@@ -55,7 +55,7 @@ onlinePortalUiAssert(
     'Student login must contain the four requested fields, remove cross-portal links and provide support footers'
 );
 onlinePortalUiAssert(
-    str_contains($studentAuth, "markazGetActiveLoginLockout(\\$pdo, 'online_class_student'") && str_contains($studentAuth, "markazRecordLoginFailure(\\$pdo, 'online_class_student'") && str_contains($studentAuth, 'locked for 3 days') && str_contains($loginJs, 'showLockoutCountdown'),
+    str_contains($studentAuth, "markazGetActiveLoginLockout($pdo, 'online_class_student'") && str_contains($studentAuth, "markazRecordLoginFailure($pdo, 'online_class_student'") && str_contains($studentAuth, 'locked for 3 days') && str_contains($loginJs, 'showLockoutCountdown'),
     'Online Class student sign-in applies a three-day lockout after three invalid admission/level attempts and displays the server countdown'
 );
 onlinePortalUiAssert(

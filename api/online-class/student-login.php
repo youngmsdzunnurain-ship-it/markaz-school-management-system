@@ -20,10 +20,12 @@ if($admission===''||!$levelId||!preg_match('/^(202[6-9]|203[0-5])\/(202[7-9]|203
  http_response_code(422);echo json_encode(['success'=>false,'message'=>'Enter your admission number, level, academic session and term.']);exit;
 }
 $pdo = db();
-markazEnsureLoginLockoutSchema($pdo);
+$enabled=$pdo->query("SELECT setting_value FROM settings WHERE setting_key='online_class_student_access' LIMIT 1")->fetchColumn();
+if(!in_array(strtolower(trim((string)$enabled)),['1','true','yes','on'],true)){http_response_code(403);echo json_encode(['success'=>false,'message'=>'Online Class student login is currently closed.']);exit;}
 $lockoutEnabled = markazLoginLockoutEnabled($pdo);
 $lockoutIdentifier = strtolower($admission);
 if ($lockoutEnabled) {
+ markazEnsureLoginLockoutSchema($pdo);
  $activeLock = markazGetActiveLoginLockout($pdo, 'online_class_student', $lockoutIdentifier);
  if ($activeLock !== null) {
   http_response_code(423);
@@ -31,8 +33,6 @@ if ($lockoutEnabled) {
   exit;
  }
 }
-$enabled=$pdo->query("SELECT setting_value FROM settings WHERE setting_key='online_class_student_access' LIMIT 1")->fetchColumn();
-if(!in_array(strtolower(trim((string)$enabled)),['1','true','yes','on'],true)){http_response_code(403);echo json_encode(['success'=>false,'message'=>'Online Class student login is currently closed.']);exit;}
 $stmt=$pdo->prepare('SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.level_id,s.section,l.name AS level_name,s.password_hash,s.is_active FROM online_class_students s JOIN online_class_levels l ON l.id=s.level_id WHERE s.admission_number=? AND s.level_id=? AND l.is_active=1 LIMIT 1');
 $stmt->execute([$admission,$levelId]);$student=$stmt->fetch(PDO::FETCH_ASSOC);
 if(!$student||!(int)$student['is_active']){

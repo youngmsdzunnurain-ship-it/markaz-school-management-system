@@ -100,8 +100,6 @@ try {
         }
         studentPortalError(404, 'Admission number not found. Check your details or contact the school.');
     }
-    if ($lockoutEnabled) markazClearLoginFailures($pdo, 'student_result', strtolower($admissionNumber));
-
     // A student may have moved to another class or graduated since this period.
     // Historical access is authorized against the student's saved result rows
     // for the selected class and period, not their current class assignment.
@@ -155,10 +153,15 @@ try {
     );
 
     if (!$published) {
+        if ($lockoutEnabled) {
+            $failure = markazRecordLoginFailure($pdo, 'student_result', strtolower($admissionNumber), 3);
+            if ($failure['locked']) studentPortalError(423, 'Too many unsuccessful lookups. This student account is locked for 3 days.', $failure);
+            studentPortalError(404, 'No results found for the selected class, term and session. ' . $failure['attempts_remaining'] . ' attempt(s) remaining before a 3-day lockout.', $failure);
+        }
         studentPortalError(404, 'No results have been published for this student in the selected term and session.');
     }
 
-
+    if ($lockoutEnabled) markazClearLoginFailures($pdo, 'student_result', strtolower($admissionNumber));
 
     ensureDeviceActivitySchema($pdo);
 
