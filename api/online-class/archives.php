@@ -83,7 +83,7 @@ if (in_array($action, ['clear_attendance', 'clear_results'], true)) {
         } else {
             $delete = $pdo->prepare('DELETE r FROM online_class_results r JOIN online_class_students s ON s.id=r.student_id WHERE s.level_id=? AND r.academic_session=? AND r.term=?');
             $delete->execute([$levelId,$sessionToClear,$termToClear]);
-            $pdo->prepare('DELETE FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=?')->execute([$levelId,$sessionToClear,$termToClear]);
+            $pdo->prepare('DELETE FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? AND is_released=1')->execute([$levelId,$sessionToClear,$termToClear]);
         }
         $affected = $delete->rowCount();
         $pdo->commit();
