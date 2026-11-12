@@ -136,8 +136,10 @@
       document.documentElement.classList.remove("settings-page-pending");
     }
 
-    buildSettingsNavigation();
-    adminModulesReady.then(buildSettingsNavigation).catch(error => console.error("Settings category refresh failed:", error));
+    // Build the category navigation once, after all role-authorised modules
+    // have finished inserting their panels. This avoids a visible first
+    // navigation being immediately torn down and rebuilt.
+    adminModulesReady.then(buildSettingsNavigation).catch(error => console.error("Settings category initialisation failed:", error));
   } catch (_) {
     window.location.replace("login.html");
   }
