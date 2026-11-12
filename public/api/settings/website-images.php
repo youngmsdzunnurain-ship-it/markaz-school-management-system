@@ -115,8 +115,14 @@ try {
             return $mappings;
         }
 
+        $migrationSucceeded = false;
         try {
             $pdo = db();
+            $pdo->exec("CREATE TABLE IF NOT EXISTS markaz_app_settings (
+                setting_key VARCHAR(100) NOT NULL PRIMARY KEY,
+                setting_value VARCHAR(255) NOT NULL,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             $lookup = $pdo->prepare('SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1');
             foreach ($catalogue as $image) {
                 $lookup->execute(['website_image_map_' . hash('sha256', $image['url'])]);
@@ -125,16 +131,15 @@ try {
                     $mappings[$image['url']] = $replacement;
                 }
             }
+            $migrationSucceeded = true;
         } catch (Throwable $migrationError) {
-            error_log('Website image settings legacy migration skipped: ' . $migrationError->getMessage());
+            // Do not create an empty manifest on connection failure: that would
+            // prevent a later successful one-time migration of old DB mappings.
+            error_log('Website image settings legacy migration deferred: ' . $migrationError->getMessage());
         }
 
-        // Write even an empty manifest so an unavailable database is not retried
-        // on every public page view.
-        try {
+        if ($migrationSucceeded) {
             writeWebsiteImageManifest($manifestPath, $mappings);
-        } catch (Throwable $storageError) {
-            error_log('Website image manifest initialisation failed: ' . $storageError->getMessage());
         }
         return $mappings;
     };
