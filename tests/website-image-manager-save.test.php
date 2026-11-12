@@ -77,8 +77,15 @@ websiteImageWorkflowCheck(
     'director portrait must fill its actual public-photo frame without stretching'
 );
 
+$storageExecutable = '';
+foreach (token_get_all($storageHelper) as $token) {
+    if (is_array($token) && in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true)) {
+        continue;
+    }
+    $storageExecutable .= is_array($token) ? $token[1] : $token;
+}
 websiteImageWorkflowCheck(
-    !str_contains($storageHelper, 'LOCK_EX'),
+    !str_contains($storageExecutable, 'LOCK_EX'),
     'manifest writes must not request unsupported exclusive locks on Android shared storage'
 );
 
