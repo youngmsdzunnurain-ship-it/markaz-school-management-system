@@ -29,14 +29,14 @@ websiteImageFitCheck(
 );
 
 foreach ([
-    ['.markaz-photo-card img', $polishCss],
-    ['.markaz-facility-card img', $polishCss],
-    ['.markaz-facility-intro > img', $polishCss],
-    ['.markaz-facility-note img', $polishCss],
-    ['.public-intro-grid .public-photo > img', $publicImageCss],
-    ['.director-grid .public-photo > img', $polishCss]
-] as [$selector, $stylesheet]) {
-    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*contain\\s*;/s';
+    ['.markaz-photo-card img', $polishCss, 'contain'],
+    ['.markaz-facility-card img', $polishCss, 'contain'],
+    ['.markaz-facility-intro > img', $polishCss, 'contain'],
+    ['.markaz-facility-note img', $polishCss, 'contain'],
+    ['.public-intro-grid .public-photo > img', $publicImageCss, 'contain'],
+    ['.director-grid .public-photo > img', $polishCss, 'cover']
+] as [$selector, $stylesheet, $fit]) {
+    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*' . preg_quote($fit, '/') . '\\s*;/s';
     websiteImageFitCheck(
         preg_match($pattern, $stylesheet) === 1,
         "{$selector} must preserve the full uploaded image inside its display frame"
