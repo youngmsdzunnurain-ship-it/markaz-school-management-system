@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/helpers/device-activity-schema.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/student-portal-access.php';
+require_once __DIR__ . '/../../app/helpers/online-class.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -20,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 $activityContext = (string) ($input['context'] ?? 'staff');
+$onlineStudentId = $activityContext === 'online_class_student' ? onlineClassStudentSession() : 0;
 $studentScope = $activityContext === 'student' ? studentPortalResultScope(false) : null;
 if ($activityContext === 'student' && $studentScope === null) {
     http_response_code(401);
@@ -28,12 +30,22 @@ if ($activityContext === 'student' && $studentScope === null) {
 }
 
 $identityType = 'staff';
+$onlineStudentIdentityId = null;
 $identityId = 0;
 $identityKey = '';
 $displayName = '';
 $role = '';
 
-if ($studentScope !== null) {
+if ($onlineStudentId > 0) {
+    $identityType = 'online_class_student';
+    $identityId = $onlineStudentId;
+    $identityKey = 'online_class_student:' . $onlineStudentId;
+    $studentStmt = $pdo->prepare("SELECT CONCAT_WS(' ', first_name, NULLIF(middle_name, '')) FROM online_class_students WHERE id=? AND is_active=1 LIMIT 1");
+    $studentStmt->execute([$onlineStudentId]);
+    $displayName = trim((string) $studentStmt->fetchColumn());
+    $role = 'Online Class student';
+    $onlineStudentIdentityId = $onlineStudentId;
+} elseif ($studentScope !== null) {
     $identityType = 'student';
     $identityId = (int) ($studentScope['student_id'] ?? 0);
     if ($identityId < 1) {
@@ -130,9 +142,9 @@ $accountId = $identityType === 'staff' ? $identityId : null;
 $studentId = $identityType === 'student' ? $identityId : null;
 $endedAt = $action === 'pause' ? 'NOW()' : 'NULL';
 $sql = "INSERT INTO device_activity_sessions
-    (client_session_id, identity_type, identity_key, account_id, student_id,
+    (client_session_id, identity_type, identity_key, account_id, student_id, online_student_id,
      display_name, role, device_hash, user_agent, started_at, last_activity_at, ended_at, duration_seconds)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), {$endedAt}, 0)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), {$endedAt}, 0)
     ON DUPLICATE KEY UPDATE
         duration_seconds = duration_seconds + IF(ended_at IS NULL, LEAST(45, GREATEST(0, TIMESTAMPDIFF(SECOND, last_activity_at, NOW()))), 0),
         display_name = VALUES(display_name),
@@ -148,6 +160,7 @@ $stmt->execute([
     $identityKey,
     $accountId,
     $studentId,
+    $onlineStudentIdentityId,
     $displayName,
     $role,
     $deviceHash,
