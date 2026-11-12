@@ -39,6 +39,27 @@ websiteImageWorkflowCheck(
 );
 
 websiteImageWorkflowCheck(
+    str_contains($manager, 'saveForm.addEventListener("submit"') &&
+    str_contains($manager, 'event.preventDefault();') &&
+    str_contains($manager, 'void saveChanges();') &&
+    !str_contains($manager, 'saveButton.addEventListener("click"'),
+    'Save Changes must use the native form submit path for mouse, touch and keyboard activation'
+);
+
+websiteImageWorkflowCheck(
+    str_contains($polishCss, '.website-image-savebar {') &&
+    str_contains($polishCss, 'position: relative;') &&
+    !preg_match('/\.website-image-savebar\s*\{[^}]*position:\s*sticky/s', $polishCss),
+    'the save bar must remain in normal clickable document flow without sticky overlay stacking'
+);
+
+websiteImageWorkflowCheck(
+    str_contains($api, 'empty($_POST) && empty($_FILES)') &&
+    str_contains($api, 'exceeded the server request-size limit'),
+    'oversized PHP upload requests must return a clear JSON error rather than appearing to do nothing'
+);
+
+websiteImageWorkflowCheck(
     str_contains($manager, 'saved_images') &&
     str_contains($manager, 'await loadCatalogue()') &&
     str_contains($manager, 'persisted.replacement !== saved.replacement'),
