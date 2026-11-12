@@ -27,7 +27,7 @@ $archiveJson = static function (array $data, int $status = 200): never {
 };
 if ($method === 'GET' && $action === 'list') {
     requireSeniorAdmin();
-    $stmt = $pdo->query("SELECT a.id,a.archive_type,a.destination,a.level_id,l.name AS level_name,a.academic_session,a.term,a.record_count,a.is_released,a.payload_sha256,a.created_at,ad.name AS created_by_name FROM online_class_archives a JOIN online_class_levels l ON l.id=a.level_id JOIN admins ad ON ad.id=a.created_by WHERE a.destination='online' ORDER BY a.created_at DESC,a.id DESC");
+    $stmt = $pdo->query("SELECT a.id,a.archive_type,a.destination,a.level_id,l.name AS level_name,a.academic_session,a.term,a.record_count,a.coverage_start,a.coverage_end,a.is_released,a.payload_sha256,a.created_at,ad.name AS created_by_name FROM online_class_archives a JOIN online_class_levels l ON l.id=a.level_id JOIN admins ad ON ad.id=a.created_by WHERE a.destination='online' ORDER BY a.created_at DESC,a.id DESC");
     $archiveJson(['success' => true, 'archives' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 if ($method !== 'POST') {
@@ -110,6 +110,8 @@ try {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'attendance','level_id'=>$levelId,'created_at'=>date(DATE_ATOM),'records'=>$rows];
         $released = 0;
+        $coverageStart = $rows ? min(array_column($rows, 'attendance_date')) : null;
+        $coverageEnd = $rows ? max(array_column($rows, 'attendance_date')) : null;
     } else {
         $students = $pdo->prepare('SELECT id,admission_number,first_name,middle_name,last_name,section,level_id FROM online_class_students WHERE level_id=? ORDER BY last_name,first_name');
         $students->execute([$levelId]);
@@ -118,6 +120,8 @@ try {
         $releaseStmt = $pdo->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? LIMIT 1');
         $releaseStmt->execute([$levelId,$session,$term]);
         $released = (int) $releaseStmt->fetchColumn();
+        $coverageStart = null;
+        $coverageEnd = null;
         $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'results','level_id'=>$levelId,'academic_session'=>$session,'term'=>$term,'is_released'=>$released,'created_at'=>date(DATE_ATOM),'students'=>$students->fetchAll(PDO::FETCH_ASSOC),'results'=>$results->fetchAll(PDO::FETCH_ASSOC)];
     }
     $raw = json_encode($payloadData, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
@@ -126,7 +130,7 @@ try {
     $sha = hash('sha256', $compressed);
     if ($destination === 'online') {
         $insert = $pdo->prepare('INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,is_released,payload,payload_sha256,created_by) VALUES (?,\'online\',?,?,?,?,?,?,?,?)');
-        $insert->execute([$type,$levelId,$session,$term,count($type === 'attendance' ? $payloadData['records'] : $payloadData['results']),$released,$compressed,$sha,$adminId]);
+        $insert->execute([$type,$levelId,$session,$term,count($type === 'attendance' ? $payloadData['records'] : $payloadData['results']),$coverageStart,$coverageEnd,$released,$compressed,$sha,$adminId]);
         $archiveId = (int) $pdo->lastInsertId();
         $pdo->commit();
         $archiveJson(['success'=>true,'message'=>'Protected online backup saved. It is now listed in Backup Records.','archive_id'=>$archiveId,'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])],201);
