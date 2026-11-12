@@ -2,6 +2,7 @@
    This stylesheet is loaded only by the public-facing website pages. */
 
 #markaz-page-loading {
+    display: none !important;
     position: fixed;
     z-index: 99990;
     inset: 0;
