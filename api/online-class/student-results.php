@@ -14,6 +14,7 @@ $releaseValue=$release->fetchColumn();
 $hasActiveRelease=$releaseValue!==false;
 $isReleased=(int)$releaseValue===1;
 $rowsToRender=null;
+$archivedStudent=null;$archivedLevel=null;$archivedSignatures=null;
 if(!$hasActiveRelease){
  $archive=db()->prepare("SELECT payload,payload_sha256,is_released FROM online_class_archives WHERE archive_type='results' AND destination='online' AND level_id=? AND academic_session=? AND term=? AND is_released=1 ORDER BY created_at DESC,id DESC LIMIT 1");
  $archive->execute([$levelId,$session,$term]);
@@ -21,12 +22,19 @@ if(!$hasActiveRelease){
  if($saved && (int)$saved['is_released']===1 && hash_equals((string)$saved['payload_sha256'],hash('sha256',(string)$saved['payload']))){
   $decoded=json_decode((string)@gzdecode((string)$saved['payload']),true);
   if(is_array($decoded) && ($decoded['format']??'')==='markaz-online-class-archive-v1' && ($decoded['type']??'')==='results'){
-   $isReleased=true;
-   $rowsToRender=array_values(array_filter($decoded['results']??[],static fn($row)=>(int)($row['student_id']??0)===$studentId));
+   foreach(($decoded['students']??[]) as $snapshot){if((int)($snapshot['id']??0)===$studentId){$archivedStudent=$snapshot;break;}}
+   if(is_array($archivedStudent)){
+    $isReleased=true;
+    $archivedLevel=is_array($decoded['level']??null)?$decoded['level']:null;
+    $archivedSignatures=is_array($decoded['signatures']??null)?$decoded['signatures']:null;
+    $rowsToRender=array_values(array_filter($decoded['results']??[],static fn($row)=>(int)($row['student_id']??0)===$studentId));
+   }
   }
  }
 }
 if(!$isReleased) onlineClassJson(['success'=>true,'released'=>false,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>[]]);
+if(is_array($archivedStudent))$student=array_merge($student,$archivedStudent);
+if(is_array($archivedLevel)){$student['level_name']=$archivedLevel['name']??$student['level_name'];foreach(['tutor_name','task_one_name','task_two_name','memorization_portion','first_term_resumption','second_term_resumption','third_term_resumption'] as $field){$student[$field]=$archivedLevel[$field]??null;}}
 if($rowsToRender===null){
  $stmt=db()->prepare('SELECT sub.name AS subject_name,sub.sort_order,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_subjects sub LEFT JOIN online_class_results r ON r.subject_id=sub.id AND r.student_id=? AND r.academic_session=? AND r.term=? WHERE sub.level_id=? AND sub.is_active=1 ORDER BY sub.sort_order,sub.name');
  $stmt->execute([$studentId,$session,$term,$levelId]);
@@ -59,4 +67,5 @@ $signatureRows=db()->query("SELECT CASE setting_key
  FROM markaz_app_settings
  WHERE setting_key IN ('result_footer_class_teacher_signature','result_footer_director_signature','result_footer_class_teacher_image','result_footer_director_image','result_footer_signature_date')")->fetchAll(PDO::FETCH_KEY_PAIR);
 $signatures=['teacher_image'=>$signatureRows['class_teacher_signature_image']??'','teacher_text'=>$signatureRows['class_teacher_signature']??'','director_image'=>$signatureRows['director_signature_image']??'','director_text'=>$signatureRows['director_signature']??'','date'=>$signatureRows['result_signature_date']??''];
+if(is_array($archivedSignatures))$signatures=$archivedSignatures;
 onlineClassJson(['success'=>true,'released'=>true,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>$results,'signatures'=>$signatures]);
