@@ -2641,7 +2641,7 @@ p {
     display: block;
     min-height: 680px;
     height: auto;
-    padding: clamp(42px, 6vw, 76px) 0;
+    padding: clamp(34px, 4.5vw, 58px) 0;
     overflow: hidden;
     color: #fff;
     background: #101713;
@@ -2817,7 +2817,7 @@ p {
 @media (max-width: 820px) {
     .hero {
         min-height: 0;
-        padding: 42px 0;
+        padding: 34px 0;
     }
 
     .hero-grid {
@@ -2850,7 +2850,7 @@ p {
 @media (max-width: 540px) {
     .hero {
         min-height: 0;
-        padding: 30px 0 36px;
+        padding: 24px 0 30px;
     }
 
     .hero-grid {
@@ -3033,7 +3033,7 @@ p {
 .navbar {
     box-sizing: border-box;
     min-height: 64px;
-    gap: 8px;
+    gap: 6px;
     padding-top: 6px;
     padding-bottom: 6px;
 }
@@ -3057,7 +3057,7 @@ p {
 
     .main-nav > .nav-link,
     .nav-group > summary {
-        padding: 7px 9px;
+        padding: 5px 7px;
         font-size: .84rem;
         white-space: nowrap;
     }
