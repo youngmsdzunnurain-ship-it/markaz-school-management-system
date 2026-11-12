@@ -139,7 +139,11 @@ try {
         }
 
         if ($migrationSucceeded) {
-            writeWebsiteImageManifest($manifestPath, $mappings);
+            try {
+                writeWebsiteImageManifest($manifestPath, $mappings);
+            } catch (Throwable $storageError) {
+                error_log('Website image manifest initialisation failed: ' . $storageError->getMessage());
+            }
         }
         return $mappings;
     };
