@@ -25,6 +25,7 @@
       return;
     }
 
+    let adminModulesReady = Promise.resolve();
     // Register every Admin Settings section only after its dynamic module has
     // inserted it. Otherwise those late-added sections bypass the initial
     // collapsed-category pass and appear open beside Profile Information.
@@ -36,7 +37,7 @@
         "/js/website-image-manager.js?v=20261112-persistence2",
         "/js/social-settings.js"
       ];
-      await Promise.all(adminModules.map(src => new Promise(resolve => {
+      adminModulesReady = Promise.all(adminModules.map(src => new Promise(resolve => {
         const script = document.createElement("script");
         script.src = src;
         script.async = true;
@@ -48,6 +49,12 @@
         document.body.appendChild(script);
       })));
     }
+
+
+    function buildSettingsNavigation() {
+      page.querySelector("#settingsCategoryNav")?.remove();
+      page.querySelector("#settingsActiveCategoryHeading")?.remove();
+      page.querySelector("#settingsActiveCategoryDescription")?.remove();
 
     const profile = page.querySelector(
       ':scope > section.settings-card:not(.academic-period-settings-card):not(.result-footer-settings-card):not(.memorization-settings-card):not(.markaz-account-management-card):not(.markaz-role-permissions-card):not(.markaz-locked-accounts-card):not(.markaz-account-devices-card):not(#websiteImageManager):not(#markazSocialSettings):not(#markazSupportSettings)'
@@ -124,7 +131,11 @@
 
     activate("profile");
 
-    document.documentElement.classList.remove("settings-page-pending");
+      document.documentElement.classList.remove("settings-page-pending");
+    }
+
+    buildSettingsNavigation();
+    adminModulesReady.then(buildSettingsNavigation).catch(error => console.error("Settings category refresh failed:", error));
   } catch (_) {
     window.location.replace("login.html");
   }
