@@ -14,7 +14,6 @@ $css = file_get_contents(__DIR__ . '/../public/css/home.css');
 $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
 $resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.css');
 $home = file_get_contents(__DIR__ . '/../public/js/home.js');
-$settings = file_get_contents(__DIR__ . '/../public/css/home.css');
 
 publicNavigationAssert(
     !str_contains($worker, 'if (request.mode === "navigate")') &&
