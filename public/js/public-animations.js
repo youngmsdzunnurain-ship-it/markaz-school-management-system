@@ -11,7 +11,9 @@
 
     /* Reveal whole existing sections, not their interactive cards. This keeps each
        card's established hover transform independent from the entrance animation. */
-    const revealTargets = Array.from(main.querySelectorAll(':scope > section'));
+    // The first section is the page hero. Keep it visible immediately; hiding it
+    // behind the scroll-reveal observer can leave a blank band below the header.
+    const revealTargets = Array.from(main.querySelectorAll(':scope > section')).slice(1);
     revealTargets.forEach((section, index) => {
         section.setAttribute('data-mk-reveal', '');
         section.style.setProperty('--mk-motion-delay', (index === 0 ? 0 : Math.min(index % 3, 2) * 70) + 'ms');
