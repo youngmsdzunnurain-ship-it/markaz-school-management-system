@@ -42,6 +42,7 @@ $action = (string) ($input['action'] ?? 'backup');
 $levelId = $validLevel($input['level_id'] ?? 0);
 $adminId = (int) ($_SESSION['admin_id'] ?? 0);
 $password = (string) ($input['password'] ?? '');
+$filePassword = (string) ($input['file_password'] ?? '');
 if ($password === '' || strlen($password) > 4096) $archiveJson(['success' => false, 'message' => 'Enter your administrator password to continue.'], 422);
 $verify = $pdo->prepare('SELECT password_hash FROM admins WHERE id=? AND is_active=1 AND is_frozen=0 LIMIT 1');
 $verify->execute([$adminId]);
@@ -59,6 +60,7 @@ $encryptBackup = static function (string $compressed, string $password): array {
     return ['payload'=>base64_encode($file),'sha256'=>hash('sha256',$file)];
 };
 if ($action === 'import_device_backup') {
+    if ($filePassword === '' || strlen($filePassword) > 4096) $archiveJson(['success'=>false,'message'=>'Enter the backup-file password used when this file was created.'],422);
     $encoded = (string) ($input['file_payload'] ?? '');
     $providedHash = strtolower(trim((string) ($input['file_sha256'] ?? '')));
     if ($encoded === '' || strlen($encoded) > 7000000 || !preg_match('/^[a-f0-9]{64}$/', $providedHash)) {
@@ -73,7 +75,7 @@ if ($action === 'import_device_backup') {
     $nonce=substr($file,23,12);
     $tag=substr($file,35,16);
     $cipher=substr($file,51);
-    $key=hash_pbkdf2('sha256',$password,$salt,210000,32,true);
+    $key=hash_pbkdf2('sha256',$filePassword,$salt,210000,32,true);
     $compressed=openssl_decrypt($cipher,'aes-256-gcm',$key,OPENSSL_RAW_DATA,$nonce,$tag,'MARKAZ-ONLINE-CLASS-ARCHIVE-V1');
     if (!is_string($compressed)) $archiveJson(['success'=>false,'message'=>'The backup password is incorrect or the file is damaged.'],403);
     $raw=@gzdecode($compressed);
@@ -116,13 +118,14 @@ if ($action === 'import_device_backup') {
     }
 }
 if ($action === 'download') {
+    if ($filePassword === '' || strlen($filePassword) > 4096) $archiveJson(['success'=>false,'message'=>'Enter a password to encrypt the downloaded backup file.'],422);
     $archiveId = filter_var($input['archive_id'] ?? null, FILTER_VALIDATE_INT);
     if (!$archiveId) $archiveJson(['success'=>false,'message'=>'Choose a valid online backup.'],422);
     $stmt=$pdo->prepare("SELECT payload,payload_sha256,archive_type,level_id,academic_session,term FROM online_class_archives WHERE id=? AND destination='online' LIMIT 1");
     $stmt->execute([$archiveId]);
     $saved=$stmt->fetch(PDO::FETCH_ASSOC);
     if (!$saved || (int)$saved['level_id'] !== $levelId || !hash_equals((string)$saved['payload_sha256'],hash('sha256',(string)$saved['payload']))) $archiveJson(['success'=>false,'message'=>'The selected backup is unavailable or failed its integrity check.'],404);
-    $encrypted=$encryptBackup((string)$saved['payload'],$password);
+    $encrypted=$encryptBackup((string)$saved['payload'],$filePassword);
     $archiveJson(['success'=>true,'message'=>'Encrypted backup file is ready.','filename'=>'markaz-online-'.$saved['archive_type'].'-archive-'.$archiveId.'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','payload'=>$encrypted['payload'],'sha256'=>$encrypted['sha256']]);
 }
 if (in_array($action, ['clear_attendance', 'clear_results'], true)) {
@@ -193,7 +196,8 @@ try {
         $pdo->commit();
         $archiveJson(['success'=>true,'message'=>'Protected online backup saved. It is now listed in Backup Records.','archive_id'=>$archiveId,'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])],201);
     }
-    $encrypted=$encryptBackup($compressed,$password);
+    if ($filePassword === '' || strlen($filePassword) > 4096) throw new RuntimeException('Enter a password to encrypt the device backup file.');
+    $encrypted=$encryptBackup($compressed,$filePassword);
     $pdo->commit();
     $archiveJson(['success'=>true,'message'=>'Encrypted device backup is ready to download. Keep the password safe; the file is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'-'.bin2hex(random_bytes(3)).'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','sha256'=>$encrypted['sha256'],'payload'=>$encrypted['payload'],'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
 } catch (Throwable $error) {
