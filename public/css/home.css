@@ -3318,7 +3318,17 @@ p {
 }
 
 
-/* Fast, clearly visible active-page indicator for the public navigation. */
+/* Fast active-page indicator that can travel between links on same-origin page changes. */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(markaz-active-nav),
+::view-transition-new(markaz-active-nav) {
+    animation-duration: 180ms;
+    animation-timing-function: ease-out;
+}
+
 .main-nav .nav-link {
     position: relative;
 }
@@ -3338,6 +3348,7 @@ p {
 .main-nav > .nav-link.active::after,
 .main-nav > .nav-link[aria-current="page"]::after {
     transform: scaleX(1);
+    view-transition-name: markaz-active-nav;
 }
 @media (prefers-reduced-motion: reduce) {
     .main-nav > .nav-link::after { transition: none; }
