@@ -15,7 +15,7 @@ $adminPage=$read('public/online-class.html');
 $adminScript=$read('public/js/online-class-archives.js');
 $wrapper=$read('public/api/online-class/archives.php');
 onlineArchiveAssert(str_contains($schema,'CREATE TABLE IF NOT EXISTS online_class_archives')&&str_contains($schema,'LONGBLOB')&&str_contains($schema,'payload_sha256'),'Online backups have independent persistent compressed payload storage and integrity hashes');
-onlineArchiveAssert(str_contains($api,'password_verify')&&str_contains($api,'requireSeniorAdmin')&&str_contains($api,'beginTransaction'),'Backup and destructive actions require Senior Admin password verification and transactions');
+onlineArchiveAssert(str_contains($api,'password_verify')&&str_contains($api,'requireSeniorAdmin')&&str_contains($api,'beginTransaction')&&str_contains($api,'confirm_clear'),'Backup and destructive actions require Senior Admin password verification and transactions');
 onlineArchiveAssert(str_contains($api,'gzencode')&&str_contains($api,'aes-256-gcm')&&str_contains($api,'hash_pbkdf2'),'Archives are compressed and downloadable device files are password-encrypted');
 onlineArchiveAssert(str_contains($api,'DELETE a FROM online_class_attendance')&&str_contains($api,'WHERE s.level_id=? AND r.academic_session=? AND r.term=?'),'Clear operations are scoped to a selected level and exact result period');
 onlineArchiveAssert(str_contains($api,'online_class_result_releases')&&str_contains($api,'is_released=1')&&str_contains($api,'Existing archives remain untouched'),'Clearing active results removes the active release state without deleting archives');
