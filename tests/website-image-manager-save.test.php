@@ -32,11 +32,10 @@ websiteImageWorkflowCheck(
 websiteImageWorkflowCheck(
     str_contains($api, "if (\$action === 'batch-replace')") &&
     str_contains($api, "\$_FILES['images']") &&
-    str_contains($api, "\$pdo->beginTransaction()") &&
-    str_contains($api, "\$pdo->commit()") &&
-    str_contains($api, "\$pdo->rollBack()") &&
+    str_contains($api, 'writeWebsiteImageManifest($manifestPath, $nextMappings)') &&
+    str_contains($api, 'readWebsiteImageManifest($manifestPath)') &&
     str_contains($api, 'saved_images'),
-    'API must validate, persist and read back the complete image batch transactionally'
+    'API must validate, persist and read back the complete image batch using durable file storage'
 );
 
 websiteImageWorkflowCheck(

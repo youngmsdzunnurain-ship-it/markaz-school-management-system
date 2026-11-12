@@ -11,6 +11,7 @@ function websiteImagePersistenceCheck(bool $condition, string $message): void
 
 $manager = file_get_contents(__DIR__ . '/../public/js/website-image-manager.js');
 $api = file_get_contents(__DIR__ . '/../public/api/settings/website-images.php');
+$storage = file_get_contents(__DIR__ . '/../app/helpers/website-image-storage.php');
 
 websiteImagePersistenceCheck(
     !str_contains($manager, 'Restore original') &&
@@ -27,11 +28,18 @@ websiteImagePersistenceCheck(
 );
 
 websiteImagePersistenceCheck(
-    str_contains($api, 'website_image_map_') &&
-    str_contains($api, '$pdo->commit()') &&
-    str_contains($api, 'fetchColumn()') &&
-    str_contains($api, 'saved_images'),
-    'API must read back and confirm every database mapping before reporting a successful save'
+    str_contains($api, 'writeWebsiteImageManifest($manifestPath, $nextMappings)') &&
+    str_contains($api, 'readWebsiteImageManifest($manifestPath)') &&
+    str_contains($api, 'if (is_file($manifestPath))') &&
+    str_contains($api, '$loadMappings($images)'),
+    'image mappings must be saved and read back from durable storage without requiring MariaDB'
+);
+
+websiteImagePersistenceCheck(
+    str_contains($storage, 'LOCK_EX') &&
+    str_contains($storage, 'rename($temporary, $path)') &&
+    str_contains($storage, 'json_decode'),
+    'manifest writes must be atomic and independent reads must decode the saved file'
 );
 
 websiteImagePersistenceCheck(

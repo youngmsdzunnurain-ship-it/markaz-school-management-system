@@ -19,6 +19,7 @@ jobs:
       - name: Verify image manager workflow and portrait fit
         run: |
           set -e
+          php -l app/helpers/website-image-storage.php
           php -l public/api/settings/website-images.php
           php -l tests/website-image-manager-fit.test.php
           php -l tests/website-image-manager-save.test.php
@@ -26,3 +27,5 @@ jobs:
           php tests/website-image-manager-fit.test.php
           php tests/website-image-manager-save.test.php
           php tests/website-image-manager-persistence.test.php
+          php tests/website-image-storage.test.php
+          php tests/public-navigation-performance.test.php

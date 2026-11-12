@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = "markaz-public-v1";
+const CACHE_VERSION = "markaz-public-v2";
 const PAGE_CACHE = CACHE_VERSION + "-pages";
 const ASSET_CACHE = CACHE_VERSION + "-assets";
 
@@ -19,11 +19,13 @@ const CORE_ASSETS = [
     "./css/about-card-polish.css",
     "./css/gallery-alignment.css",
     "./css/public-resilience.css",
+    "./css/public-animations.css",
     "./js/home.js",
     "./js/markaz-global.js",
     "./js/website-image-overrides.js",
     "./js/social-link-overrides.js",
     "./js/public-resilience.js",
+    "./js/public-animations.js",
     "./assets/images/markaz-logo.jpg"
 ];
 
@@ -107,22 +109,27 @@ self.addEventListener("fetch", event => {
 
     if (request.mode === "navigate") {
         if (!isApprovedPublicPage(url)) return;
+
+        // Start the network refresh now, but don't make cached navigation wait.
+        const refresh = fetch(request).then(async response => {
+            await cacheResponse(PAGE_CACHE, request, response);
+            return response;
+        }).catch(() => null);
+        event.waitUntil(refresh);
         event.respondWith((async () => {
             const cache = await caches.open(PAGE_CACHE);
-            try {
-                const response = await fetchWithTimeout(request);
-                await cacheResponse(PAGE_CACHE, request, response);
-                return response;
-            } catch (error) {
-                const cached = await cache.match(request);
-                if (cached) return cached;
-                const offline = await cache.match(new URL("./offline.html", self.registration.scope).href);
-                if (offline) return offline;
-                return new Response("You are offline. Please reconnect and try again.", {
-                    status: 503,
-                    headers: { "Content-Type": "text/plain; charset=utf-8" }
-                });
-            }
+            const cached = await cache.match(request);
+            if (cached) return cached;
+
+            const response = await refresh;
+            if (response) return response;
+
+            const offline = await cache.match(new URL("./offline.html", self.registration.scope).href);
+            if (offline) return offline;
+            return new Response("You are offline. Please reconnect and try again.", {
+                status: 503,
+                headers: { "Content-Type": "text/plain; charset=utf-8" }
+            });
         })());
         return;
     }

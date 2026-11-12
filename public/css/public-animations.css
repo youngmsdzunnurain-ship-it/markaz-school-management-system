@@ -2,7 +2,7 @@
    This layer enhances existing layouts; it does not redefine their grids or spacing. */
 :root {
     --mk-motion-ease: cubic-bezier(.2, .7, .2, 1);
-    --mk-motion-duration: 680ms;
+    --mk-motion-duration: 220ms;
 }
 
 /* The header is already sticky in the existing site. Only refine its scrolled state. */
@@ -23,7 +23,7 @@
    This means content stays visible if JavaScript is disabled or fails. */
 .mk-motion-ready [data-mk-reveal] {
     opacity: 0;
-    transform: translate3d(0, 22px, 0);
+    transform: translate3d(0, 8px, 0);
     transition:
         opacity var(--mk-motion-duration) var(--mk-motion-ease),
         transform var(--mk-motion-duration) var(--mk-motion-ease);
@@ -38,13 +38,13 @@
 /* A short, staggered entrance for the homepage hero copy only. */
 .public-home-page .hero-content.mk-hero-enter > * {
     opacity: 0;
-    animation: mk-hero-enter 720ms var(--mk-motion-ease) forwards;
+    animation: mk-hero-enter 240ms var(--mk-motion-ease) forwards;
 }
 
-.public-home-page .hero-content.mk-hero-enter > :nth-child(1) { animation-delay: 80ms; }
-.public-home-page .hero-content.mk-hero-enter > :nth-child(2) { animation-delay: 190ms; }
-.public-home-page .hero-content.mk-hero-enter > :nth-child(3) { animation-delay: 300ms; }
-.public-home-page .hero-content.mk-hero-enter > :nth-child(4) { animation-delay: 410ms; }
+.public-home-page .hero-content.mk-hero-enter > :nth-child(1) { animation-delay: 30ms; }
+.public-home-page .hero-content.mk-hero-enter > :nth-child(2) { animation-delay: 60ms; }
+.public-home-page .hero-content.mk-hero-enter > :nth-child(3) { animation-delay: 90ms; }
+.public-home-page .hero-content.mk-hero-enter > :nth-child(4) { animation-delay: 120ms; }
 
 @keyframes mk-hero-enter {
     from { opacity: 0; transform: translate3d(0, 18px, 0); }

@@ -3318,6 +3318,42 @@ p {
 }
 
 
+/* Fast active-page indicator that can travel between links on same-origin page changes. */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(markaz-active-nav),
+::view-transition-new(markaz-active-nav) {
+    animation-duration: 180ms;
+    animation-timing-function: ease-out;
+}
+
+.main-nav .nav-link {
+    position: relative;
+}
+.main-nav > .nav-link::after {
+    position: absolute;
+    right: 12px;
+    bottom: 5px;
+    left: 12px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-500);
+    content: "";
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 140ms ease;
+}
+.main-nav > .nav-link.active::after,
+.main-nav > .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+    view-transition-name: markaz-active-nav;
+}
+@media (prefers-reduced-motion: reduce) {
+    .main-nav > .nav-link::after { transition: none; }
+}
+
 /* MARKAZ PUBLIC NAVIGATION POLISH */
 .main-nav .nav-link,
 .main-nav .portal-toggle,
