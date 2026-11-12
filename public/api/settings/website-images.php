@@ -159,10 +159,6 @@ try {
         respond(['success' => false, 'message' => 'Method not allowed.'], 405);
     }
 
-    // The catalogue contains school image references and is part of the
-    // administrator-only Settings workspace, just like upload operations.
-    requireSeniorAdmin();
-
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
         $mappings = $loadMappings($images);
@@ -189,6 +185,10 @@ try {
         unset($image);
         respond(['success' => true, 'images' => $images, 'count' => count($images)]);
     }
+
+    // Only changes require the Senior Admin session. Public pages also use
+    // this read-only endpoint to apply saved replacements to visitor images.
+    requireSeniorAdmin();
 
     $catalogue = discoverImages($publicRoot);
     $allowed = [];
