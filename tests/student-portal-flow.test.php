@@ -77,7 +77,7 @@ portalAssert(str_contains($portalAccessHelper, 'empty($_COOKIE[\'MARKAZ_STUDENT_
 portalAssert(str_contains($portalAccessHelper, 'session_write_close()'), 'invalid student scopes release the session before staff authentication continues');
 portalAssert(str_contains($portalApi, 'results_released'), 'public lookup still checks school result-release status');
 portalAssert(str_contains($portalApi, "AND r.class_type = 'conventional'"), 'public lookup preserves conventional result isolation');
-portalAssert(str_contains($portalApi, 'markazGetActiveLoginLockout($pdo, \'student_result\'") && str_contains($portalApi, 'markazRecordLoginFailure($pdo, \'student_result\'") && str_contains($portalApi, 'locked for 3 days'), 'conventional student lookup locks after three invalid admission attempts for three days');
+portalAssert(str_contains($portalApi, 'markazGetActiveLoginLockout(') && str_contains($portalApi, 'markazRecordLoginFailure(') && str_contains($portalApi, "'student_result'") && str_contains($portalApi, 'locked for 3 days'), 'conventional student lookup locks after three invalid admission attempts for three days');
 portalAssert(str_contains($script, 'showLockoutCountdown') && str_contains($script, 'error.loginData'), 'student results portal displays the server-authoritative lockout countdown');
 portalAssert(str_contains($lockoutHelper, 'failed_attempts + 1 >= 3') && str_contains($lockoutHelper, 'DATE_ADD(NOW(), INTERVAL {$lockDays} DAY)'), 'shared lockout helper counts three failures and applies the configured duration');
 portalAssert(str_contains($resultApi, 'studentPortalResultScope()'), 'official result API accepts only a matching scoped student session');
