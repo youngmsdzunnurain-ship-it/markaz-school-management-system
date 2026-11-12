@@ -159,6 +159,18 @@ try {
         respond(['success' => false, 'message' => 'Method not allowed.'], 405);
     }
 
+    // PHP discards both $_POST and $_FILES when post_max_size is exceeded.
+    // Detect that case explicitly instead of silently falling through to the
+    // legacy single-image action with an empty source.
+    if ($method === 'POST' &&
+        (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0 &&
+        empty($_POST) && empty($_FILES)) {
+        respond([
+            'success' => false,
+            'message' => 'The upload request exceeded the server request-size limit. Try a smaller image or fewer images in one save.'
+        ], 413);
+    }
+
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
         $mappings = $loadMappings($images);
