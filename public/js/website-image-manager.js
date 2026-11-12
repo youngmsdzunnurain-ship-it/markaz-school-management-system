@@ -35,6 +35,7 @@
   let catalogue = [];
   const pendingUploads = new Map();
   const pendingResets = new Set();
+  const previewUrls = new Map();
   let saving = false;
 
   function escapeHTML(value) {
@@ -59,7 +60,7 @@
 
   function previewFor(item) {
     const pending = pendingUploads.get(item.url);
-    if (pending) return URL.createObjectURL(pending);
+    if (pending) return previewUrls.get(item.url) || item.url;
     const current = item.replacement || item.url;
     return /^https?:\/\//i.test(current) ? current : imagePath(current);
   }
@@ -111,12 +112,18 @@
           return;
         }
         pendingUploads.set(item.url, file);
+        if (previewUrls.has(item.url)) URL.revokeObjectURL(previewUrls.get(item.url));
+        previewUrls.set(item.url, URL.createObjectURL(file));
         pendingResets.delete(item.url);
         status.textContent = "Image selected. Review your changes, then select Save Changes.";
         render();
       });
       card.querySelector(".website-image-reset").addEventListener("click", () => {
         if (pending) pendingUploads.delete(item.url);
+        if (previewUrls.has(item.url)) {
+          URL.revokeObjectURL(previewUrls.get(item.url));
+          previewUrls.delete(item.url);
+        }
         pendingResets.add(item.url);
         status.textContent = "Original image marked for restoration. Select Save Changes to apply it.";
         render();
@@ -128,6 +135,8 @@
   }
 
   function discardPending() {
+    for (const url of previewUrls.values()) URL.revokeObjectURL(url);
+    previewUrls.clear();
     pendingUploads.clear();
     pendingResets.clear();
     status.textContent = "Unsaved image changes discarded.";
@@ -153,6 +162,8 @@
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.message || "Could not save image changes.");
+      for (const url of previewUrls.values()) URL.revokeObjectURL(url);
+      previewUrls.clear();
       pendingUploads.clear();
       pendingResets.clear();
       status.textContent = result.message || "All website image changes saved.";
