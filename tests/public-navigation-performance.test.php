@@ -26,8 +26,8 @@ publicNavigationAssert(
 );
 
 publicNavigationAssert(
-    str_contains($css, '.main-nav .nav-link[aria-current="page"]') ||
-    str_contains($css, '.main-nav .nav-link.active'),
+    str_contains($css, '.main-nav .nav-link[aria-current="page"]') &&
+    str_contains($css, 'view-transition-name: markaz-active-nav'),
     'active navigation destination must have a visible indicator'
 );
 
