@@ -90,10 +90,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Navigation links close menus before the browser navigates.
+    // Keep the selected destination highlighted without waiting for the
+    // next document to finish loading (including links inside Explore).
+    function setActiveDestination(targetUrl) {
+        if (!mainNav || targetUrl.origin !== location.origin) return;
+        const destination = targetUrl.pathname.split('/').filter(Boolean).pop() || 'home.html';
+        const links = Array.from(mainNav.querySelectorAll('a[href]'));
+        links.forEach(link => {
+            const linkUrl = new URL(link.href, location.href);
+            const active = linkUrl.origin === location.origin &&
+                (linkUrl.pathname.split('/').filter(Boolean).pop() || 'home.html') === destination;
+            link.classList.toggle('active', active);
+            if (active) link.setAttribute('aria-current', 'page');
+            else link.removeAttribute('aria-current');
+        });
+
+        const explore = mainNav.querySelector('.nav-group');
+        const exploreSummary = explore?.querySelector(':scope > summary.nav-link');
+        const isExploreDestination = Boolean(explore?.querySelector('a[href]') &&
+            Array.from(explore.querySelectorAll('a[href]')).some(link => {
+                const linkUrl = new URL(link.href, location.href);
+                return linkUrl.origin === location.origin &&
+                    (linkUrl.pathname.split('/').filter(Boolean).pop() || 'home.html') === destination;
+            }));
+        exploreSummary?.classList.toggle('active', isExploreDestination);
+        if (isExploreDestination) exploreSummary?.setAttribute('aria-current', 'page');
+        else exploreSummary?.removeAttribute('aria-current');
+    }
+
     if (mainNav) {
+        setActiveDestination(new URL(location.href));
         mainNav.querySelectorAll('a[href]').forEach(link => {
             link.addEventListener('click', () => {
+                setActiveDestination(new URL(link.href, location.href));
                 closeDropdowns();
                 closeMobileNav();
             });
