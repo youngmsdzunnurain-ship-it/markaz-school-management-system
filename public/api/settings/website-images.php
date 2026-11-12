@@ -101,34 +101,34 @@ function discoverImages(string $publicRoot): array
 }
 
 try {
-    $pdo = db();
-    $pdo->exec("CREATE TABLE IF NOT EXISTS markaz_app_settings (
-        setting_key VARCHAR(100) NOT NULL PRIMARY KEY,
-        setting_value VARCHAR(255) NOT NULL,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    require_once dirname(__DIR__, 3) . '/app/helpers/website-image-storage.php';
 
+    $manifestDirectory = dirname(__DIR__, 3) . '/app/storage';
+    $manifestPath = $manifestDirectory . '/website-image-map.json';
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
-        $stmt = $pdo->prepare('SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1');
-        $deleteStaleReplacement = $pdo->prepare('DELETE FROM markaz_app_settings WHERE setting_key = ?');
+        $mappings = readWebsiteImageManifest($manifestPath);
         foreach ($images as &$image) {
-            $settingKey = 'website_image_map_' . $image['key'];
-            $stmt->execute([$settingKey]);
-            $replacement = $stmt->fetchColumn();
-            if ($replacement !== false) {
-                $relativePath = ltrim((string) $replacement, '/');
-                $filename = str_starts_with($relativePath, $imageUrlPrefix) ? substr($relativePath, strlen($imageUrlPrefix)) : '';
-                $candidate = $filename !== '' && basename($filename) === $filename ? $imageDirectory . '/' . $filename : '';
+            $replacement = $mappings[$image['url']] ?? null;
+            if (is_string($replacement)) {
+                $relativePath = ltrim($replacement, '/');
+                $filename = str_starts_with($relativePath, $imageUrlPrefix)
+                    ? substr($relativePath, strlen($imageUrlPrefix))
+                    : '';
+                $candidate = $filename !== '' && basename($filename) === $filename
+                    ? $imageDirectory . '/' . $filename
+                    : '';
                 $resolved = $candidate !== '' ? realpath($candidate) : false;
                 $expectedDirectory = realpath($imageDirectory);
-                if ($resolved === false || $expectedDirectory === false || dirname($resolved) !== $expectedDirectory || !is_file($resolved) || !is_readable($resolved)) {
-                    $deleteStaleReplacement->execute([$settingKey]);
-                    $replacement = false;
+                if ($resolved === false || $expectedDirectory === false ||
+                    dirname($resolved) !== $expectedDirectory ||
+                    !is_file($resolved) || !is_readable($resolved)) {
+                    $replacement = null;
                 }
             }
-            $image['replacement'] = $replacement !== false ? $replacement : null;
+            $image['replacement'] = $replacement;
         }
         unset($image);
         respond(['success' => true, 'images' => $images, 'count' => count($images)]);
@@ -142,8 +142,9 @@ try {
 
     $catalogue = discoverImages($publicRoot);
     $allowed = [];
-    foreach ($catalogue as $item) $allowed[$item['url']] = $item['key'];
+    foreach ($catalogue as $item) $allowed[$item['url']] = $item['url'];
     $action = (string) ($_POST['action'] ?? 'replace');
+    $mappings = readWebsiteImageManifest($manifestPath);
 
     if ($action === 'batch-replace') {
         $sources = $_POST['sources'] ?? [];
@@ -177,7 +178,7 @@ try {
             if (!isset($extensions[$mime])) {
                 respond(['success' => false, 'message' => 'Use JPG, PNG, or WebP images only.'], 422);
             }
-            $prepared[] = ['source' => $source, 'key' => $allowed[$source], 'tmp' => $tmp, 'extension' => $extensions[$mime]];
+            $prepared[] = ['source' => $source, 'tmp' => $tmp, 'extension' => $extensions[$mime]];
         }
 
         if (!is_dir($imageDirectory) && !mkdir($imageDirectory, 0755, true) && !is_dir($imageDirectory)) {
@@ -185,6 +186,7 @@ try {
         }
         @chmod($imageDirectory, 0755);
         $createdFiles = [];
+        $nextMappings = $mappings;
         try {
             foreach ($prepared as &$item) {
                 $filename = bin2hex(random_bytes(16)) . '.' . $item['extension'];
@@ -198,29 +200,20 @@ try {
                 }
                 $createdFiles[] = $destination;
                 $item['replacement'] = $imageUrlPrefix . $filename;
+                $nextMappings[$item['source']] = $item['replacement'];
             }
             unset($item);
 
-            $pdo->beginTransaction();
-            $save = $pdo->prepare('INSERT INTO markaz_app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)');
-            $verify = $pdo->prepare('SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1');
+            writeWebsiteImageManifest($manifestPath, $nextMappings);
+            $verifiedMappings = readWebsiteImageManifest($manifestPath);
             $savedImages = [];
             foreach ($prepared as $item) {
-                $settingKey = 'website_image_map_' . $item['key'];
-                $save->execute([$settingKey, $item['replacement']]);
-                $verify->execute([$settingKey]);
-                $stored = $verify->fetchColumn();
-                if (!is_string($stored) || $stored !== $item['replacement']) {
-                    throw new RuntimeException('The database did not confirm one of the image replacements.');
+                if (($verifiedMappings[$item['source']] ?? null) !== $item['replacement']) {
+                    throw new RuntimeException('The saved image mapping could not be verified after writing.');
                 }
-                $savedImages[] = [
-                    'source' => $item['source'],
-                    'replacement' => $stored
-                ];
+                $savedImages[] = ['source' => $item['source'], 'replacement' => $item['replacement']];
             }
-            $pdo->commit();
         } catch (Throwable $error) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
             foreach ($createdFiles as $createdFile) @unlink($createdFile);
             throw $error;
         }
@@ -234,31 +227,48 @@ try {
     }
 
     $source = (string) ($_POST['source'] ?? '');
-    if (!isset($allowed[$source])) respond(['success' => false, 'message' => 'That image is not in the active website catalogue. Refresh and try again.'], 422);
-    $settingKey = 'website_image_map_' . $allowed[$source];
+    if (!isset($allowed[$source])) {
+        respond(['success' => false, 'message' => 'That image is not in the active website catalogue. Refresh and try again.'], 422);
+    }
+
     if ($action === 'reset') {
-        $stmt = $pdo->prepare('DELETE FROM markaz_app_settings WHERE setting_key = ?');
-        $stmt->execute([$settingKey]);
+        unset($mappings[$source]);
+        writeWebsiteImageManifest($manifestPath, $mappings);
         respond(['success' => true, 'message' => 'Original image restored.']);
     }
-    if ($action !== 'replace') respond(['success' => false, 'message' => 'Unknown action.'], 422);
-    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) respond(['success' => false, 'message' => 'Choose an image to upload.'], 422);
+
+    if ($action !== 'replace') {
+        respond(['success' => false, 'message' => 'Unknown action.'], 422);
+    }
+    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+        respond(['success' => false, 'message' => 'Choose an image to upload.'], 422);
+    }
 
     $file = $_FILES['image'];
-    if (($file['size'] ?? 0) > $maxBytes) respond(['success' => false, 'message' => 'The image must not exceed 8 MB.'], 422);
+    if (($file['size'] ?? 0) <= 0 || ($file['size'] ?? 0) > $maxBytes) {
+        respond(['success' => false, 'message' => 'The image must be greater than 0 bytes and no larger than 8 MB.'], 422);
+    }
     $imageInfo = @getimagesize($file['tmp_name']);
     $mime = $imageInfo['mime'] ?? '';
     $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
     if (!isset($extensions[$mime])) respond(['success' => false, 'message' => 'Use a JPG, PNG, or WebP image.'], 422);
-    if (!is_dir($imageDirectory) && !mkdir($imageDirectory, 0755, true) && !is_dir($imageDirectory)) respond(['success' => false, 'message' => 'Could not create the managed image folder.'], 500);
-    @chmod($imageDirectory, 0755);
+    if (!is_dir($imageDirectory) && !mkdir($imageDirectory, 0755, true) && !is_dir($imageDirectory)) {
+        respond(['success' => false, 'message' => 'Could not create the managed image folder.'], 500);
+    }
     $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
     $destination = $imageDirectory . '/' . $filename;
-    if (!move_uploaded_file($file['tmp_name'], $destination)) respond(['success' => false, 'message' => 'Could not save the uploaded image.'], 500);
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        respond(['success' => false, 'message' => 'Could not save the uploaded image.'], 500);
+    }
     @chmod($destination, 0644);
     $replacementUrl = $imageUrlPrefix . $filename;
-    $stmt = $pdo->prepare('INSERT INTO markaz_app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)');
-    $stmt->execute([$settingKey, $replacementUrl]);
+    $mappings[$source] = $replacementUrl;
+    writeWebsiteImageManifest($manifestPath, $mappings);
+    $verified = readWebsiteImageManifest($manifestPath);
+    if (($verified[$source] ?? null) !== $replacementUrl) {
+        @unlink($destination);
+        throw new RuntimeException('The saved image mapping could not be verified after writing.');
+    }
     respond(['success' => true, 'message' => 'Image replacement saved.', 'source' => $source, 'replacement' => $replacementUrl]);
 } catch (Throwable $error) {
     error_log('Website image settings: ' . $error->getMessage());
