@@ -25,3 +25,4 @@ jobs:
           node --check public/js/website-image-manager.js
           php tests/website-image-manager-fit.test.php
           php tests/website-image-manager-save.test.php
+          php tests/website-image-manager-persistence.test.php
