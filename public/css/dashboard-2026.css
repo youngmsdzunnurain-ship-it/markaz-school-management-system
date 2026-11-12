@@ -740,3 +740,13 @@ body.role-teacher .teacher-assignment-card .teacher-open-class { min-height:46px
     transform:translateY(-3px);box-shadow:0 12px 26px rgba(8,45,30,.10);border-color:rgba(184,146,58,.58);
   }
 }
+
+
+/* Keep dashboard content stable on page entry; preserve normal hover feedback. */
+html.mk-dashboard-motion-ready [data-mk-dashboard-reveal],
+html.mk-dashboard-motion-ready [data-mk-dashboard-reveal].mk-dashboard-visible {
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
+    transition-delay: 0ms !important;
+}
