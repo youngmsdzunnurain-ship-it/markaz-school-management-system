@@ -253,19 +253,7 @@ img[alt*="logo" i] {
     background: #104b2f;
 }
 
-.website-image-reset {
-    margin-top: 9px;
-    border-color: #e6d9b9;
-    background: #fff8e9;
-    color: #72531a;
-}
-
-.website-image-reset:hover {
-    background: #f7edda;
-}
-
 .website-image-upload button:focus-visible,
-.website-image-reset:focus-visible,
 #websiteImageSearch:focus-visible {
     outline: 3px solid rgba(36, 132, 80, .28);
     outline-offset: 2px;
@@ -399,10 +387,6 @@ img[alt*="logo" i] {
     background: #f9fbf9;
 }
 
-.website-image-reset:disabled {
-    opacity: .45;
-    cursor: not-allowed;
-}
 
 @media (max-width: 600px) {
     .website-image-savebar {
