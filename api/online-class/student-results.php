@@ -10,9 +10,11 @@ if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,['First Term','Seco
 $levelId=(int)$student['level_id'];
 $release=db()->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? LIMIT 1');
 $release->execute([$levelId,$session,$term]);
-$isReleased=(int)$release->fetchColumn()===1;
+$releaseValue=$release->fetchColumn();
+$hasActiveRelease=$releaseValue!==false;
+$isReleased=(int)$releaseValue===1;
 $rowsToRender=null;
-if(!$isReleased){
+if(!$hasActiveRelease){
  $archive=db()->prepare("SELECT payload,payload_sha256,is_released FROM online_class_archives WHERE archive_type='results' AND destination='online' AND level_id=? AND academic_session=? AND term=? AND is_released=1 ORDER BY created_at DESC,id DESC LIMIT 1");
  $archive->execute([$levelId,$session,$term]);
  $saved=$archive->fetch(PDO::FETCH_ASSOC);
