@@ -38,6 +38,7 @@ attendanceRequireSafePost();
 requireSeniorAdmin();
 $input = json_decode((string) file_get_contents('php://input'), true);
 if (!is_array($input)) $archiveJson(['success' => false, 'message' => 'Invalid archive request.'], 400);
+$action = (string) ($input['action'] ?? 'backup');
 $levelId = $validLevel($input['level_id'] ?? 0);
 $adminId = (int) ($_SESSION['admin_id'] ?? 0);
 $password = (string) ($input['password'] ?? '');
@@ -46,6 +47,33 @@ $verify = $pdo->prepare('SELECT password_hash FROM admins WHERE id=? AND is_acti
 $verify->execute([$adminId]);
 $hash = (string) $verify->fetchColumn();
 if ($hash === '' || !password_verify($password, $hash)) $archiveJson(['success' => false, 'message' => 'Administrator password is incorrect.'], 403);
+if (in_array($action, ['clear_attendance', 'clear_results'], true)) {
+    $typeToClear = $action === 'clear_attendance' ? 'attendance' : 'results';
+    $sessionToClear = trim((string) ($input['academic_session'] ?? ''));
+    $termToClear = (string) ($input['term'] ?? '');
+    if ($typeToClear === 'results' && (!preg_match('/^\\d{4}\\/\\d{4}$/', $sessionToClear) || !in_array($termToClear, $terms, true))) {
+        $archiveJson(['success'=>false,'message'=>'Choose the exact academic session and term to clear.'],422);
+    }
+    $pdo->beginTransaction();
+    try {
+        if ($typeToClear === 'attendance') {
+            $delete = $pdo->prepare('DELETE a FROM online_class_attendance a JOIN online_class_students s ON s.id=a.student_id WHERE s.level_id=?');
+            $delete->execute([$levelId]);
+        } else {
+            $delete = $pdo->prepare('DELETE r FROM online_class_results r JOIN online_class_students s ON s.id=r.student_id WHERE s.level_id=? AND r.academic_session=? AND r.term=?');
+            $delete->execute([$levelId,$sessionToClear,$termToClear]);
+            $pdo->prepare('DELETE FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=?')->execute([$levelId,$sessionToClear,$termToClear]);
+        }
+        $affected = $delete->rowCount();
+        $pdo->commit();
+        $archiveJson(['success'=>true,'message'=>$typeToClear === 'attendance' ? 'Attendance records for the selected level have been cleared. Existing backups remain untouched.' : 'Only the selected level, academic session and term results have been cleared. Existing archives remain available.','deleted_count'=>$affected]);
+    } catch (Throwable $error) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        error_log('Online Class clear failed: '.$error->getMessage());
+        $archiveJson(['success'=>false,'message'=>'The clear operation failed. No partial changes were kept.'],500);
+    }
+}
+if ($action !== 'backup') $archiveJson(['success'=>false,'message'=>'Unknown archive action.'],422);
 $type = (string) ($input['archive_type'] ?? '');
 $destination = (string) ($input['destination'] ?? 'online');
 if (!in_array($type, ['attendance', 'results'], true) || !in_array($destination, ['online', 'device'], true)) $archiveJson(['success' => false, 'message' => 'Choose a valid backup type and destination.'], 422);
