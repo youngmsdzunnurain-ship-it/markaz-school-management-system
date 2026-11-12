@@ -70,10 +70,11 @@ managementPermissionsCheck(
         && str_contains($settingsJs, '"management"')
         && str_contains($settingsProfileJs, 'profile_image')
         && str_contains($settingsProfileJs, 'compressProfileImage')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && !password_verify')
+        && str_contains($settingsProfileJs, 'staffPhotoCropCanvas')
+        && str_contains($profileApi, 'password_verify($currentPassword')
         && str_contains($profileApi, '0755')
         && str_contains($profileApi, '0644'),
-    'Management profile is password-change-free and profile images are prepared before upload'
+    'All staff roles can securely crop and update their own profile image'
 );
 managementPermissionsCheck(
     str_contains($dashboardHtml, 'management_students')
@@ -95,16 +96,16 @@ managementPermissionsCheck(
     'Management dashboard does not load unrestricted examination statistics'
 );
 managementPermissionsCheck(
-    str_contains($profileApi, '$identityChanged')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && $currentPassword === \'\'')
-        && str_contains($profileApi, '$profileRole !== \'management\' && $identityChanged && !password_verify'),
-    'Profile-photo-only updates do not require password re-entry, while name/email edits remain verified'
+    str_contains($profileApi, '$currentPassword === \'\'')
+        && str_contains($profileApi, 'password_verify($currentPassword, $admin[\'password_hash\'])')
+        && str_contains($profileApi, "['admin', 'exam_officer', 'management', 'teacher']"),
+    'Every staff profile update, including photo-only changes, requires the signed-in account password'
 );
 managementPermissionsCheck(
     str_contains($settingsProfileJs, 'maxBytes = 1.5 * 1024 * 1024')
-        && str_contains($settingsProfileJs, 'Photo selected. Save Changes to upload it.')
+        && str_contains($settingsProfileJs, 'Cropped photo ready. Confirm your password and save changes.')
         && str_contains($settingsProfileJs, 'response.redirected')
-        && str_contains($settingsHtml, 'data-role-access="admin_or_exam_officer_or_management"'),
+        && str_contains($settingsHtml, 'data-role-access="staff_profile"'),
     'Profile photos are compressed below the upload limit and Management profile settings are available'
 );
 echo "Management permissions/profile/dashboard regression tests passed (12 checks).\n";

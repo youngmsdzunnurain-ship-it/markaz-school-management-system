@@ -1,3 +1,22 @@
+const accountRequest = fetch("./api/auth/me.php", {
+    credentials: "same-origin",
+    cache: "no-store",
+    headers: { Accept: "application/json" }
+}).then(async response => ({
+    ok: response.ok,
+    status: response.status,
+    data: await response.json()
+}));
+window.markazSettingsAccountPromise = accountRequest;
+
+function whenStaffRole(allowedRoles, callback) {
+    return window.markazSettingsAccountPromise.then(result => {
+        const account = result.data?.admin;
+        if (result.ok && result.data?.success && account && allowedRoles.includes(account.role)) {
+            return callback(account);
+        }
+    }).catch(error => console.error("Unable to resolve settings role:", error));
+}
 const form = document.getElementById("profileForm");
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
@@ -35,12 +54,11 @@ function showMessage(text, type) {
 }
 
 function updateProfilePasswordRequirement() {
-    if (!passwordInput || currentProfileRole === "management") return;
-    const identityChanged = nameInput.value.trim() !== originalProfileName
-        || emailInput.value.trim() !== originalProfileEmail;
-    passwordInput.required = identityChanged;
+    if (!passwordInput) return;
+    passwordInput.required = true;
+    passwordInput.disabled = false;
     const securitySection = document.querySelector(".password-section");
-    if (securitySection) securitySection.hidden = !identityChanged;
+    if (securitySection) securitySection.hidden = false;
 }
 
 nameInput.addEventListener("input", updateProfilePasswordRequirement);
@@ -48,42 +66,37 @@ emailInput.addEventListener("input", updateProfilePasswordRequirement);
 
 async function loadProfile() {
     try {
-        const response = await fetch("./api/auth/me.php", {
-            credentials: "same-origin",
-            cache: "no-store"
-        });
-
-        const data = await response.json();
+        const accountResult = await window.markazSettingsAccountPromise;
+        const response = { ok: accountResult.ok, status: accountResult.status };
+        const data = accountResult.data;
 
         if (!response.ok || !data.success || !data.admin) {
             window.location.href = "login.html";
             return;
         }
 
-        if (!["admin", "exam_officer", "management"].includes(data.admin.role)) {
+        if (!["admin", "exam_officer", "management", "teacher"].includes(data.admin.role)) {
             window.location.replace("dashboard.html");
             return;
         }
 
         window.markazCurrentRole = data.admin.role;
         currentProfileRole = data.admin.role;
+        if (["admin", "exam_officer"].includes(currentProfileRole)) loadMemorizationSettings();
         originalProfileName = data.admin.name || "";
         originalProfileEmail = data.admin.email || "";
         const isExamOfficer = data.admin.role === "exam_officer";
         const isManagement = data.admin.role === "management";
+        const isTeacher = data.admin.role === "teacher";
         const roleLabel = document.getElementById("profileRoleLabel");
         const pageDescription = document.getElementById("settingsPageDescription");
-        if (roleLabel) roleLabel.textContent = isManagement ? "MANAGEMENT" : (isExamOfficer ? "EXAM OFFICER" : "ADMINISTRATOR");
-        const securitySection = document.querySelector(".password-section");
-        if (securitySection && isManagement) {
-            securitySection.hidden = true;
-            passwordInput.required = false;
-            passwordInput.disabled = true;
-        }
+        if (roleLabel) roleLabel.textContent = isManagement ? "MANAGEMENT" : (isExamOfficer ? "EXAM OFFICER" : (isTeacher ? "TEACHER" : "ADMINISTRATOR"));
         if (pageDescription && isExamOfficer) {
             pageDescription.textContent = "Manage your profile and shared academic settings.";
         } else if (pageDescription && isManagement) {
             pageDescription.textContent = "View and update your management account profile.";
+        } else if (pageDescription && isTeacher) {
+            pageDescription.textContent = "View and update your teacher account profile.";
         }
 
         nameInput.value = data.admin.name || "";
@@ -186,33 +199,243 @@ removeProfileButton?.addEventListener("click", () => {
     showMessage("Photo removal selected. Save Changes to apply it.", "success");
 });
 
-imageInput.addEventListener("change", () => {
+/* Local square cropper shared by Admin, Exam Officer, Management and Teacher. */
+(() => {
+    const modal = document.getElementById("staffPhotoCropModal");
+    const canvas = document.getElementById("staffPhotoCropCanvas");
+    const zoomInput = document.getElementById("staffPhotoCropZoom");
+    const zoomLabel = document.getElementById("staffPhotoCropZoomValue");
+    const confirmButton = document.getElementById("confirmStaffPhotoCrop");
+    const closeButton = document.getElementById("cancelStaffPhotoCrop");
+    const cancelButton = document.getElementById("cancelStaffPhotoCropBottom");
+    const errorNode = document.getElementById("staffPhotoCropError");
+    const ctx = canvas?.getContext("2d");
+    if (!modal || !canvas || !ctx || !zoomInput || !confirmButton) return;
 
-    const file = imageInput.files[0];
+    const size = canvas.width;
+    const confirmedFiles = new WeakMap();
+    removeProfileButton?.addEventListener("click", () => confirmedFiles.delete(imageInput));
+    let sourceImage = null;
+    let sourceUrl = null;
+    let activePointer = null;
+    let drag = null;
+    let activeFile = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let baseScale = 1;
+    let zoom = 1;
+    let preparing = false;
 
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = event => {
-
-        profilePhoto.innerHTML = "";
-
-        const image = document.createElement("img");
-
-        image.src = event.target.result;
-        image.alt = "Profile picture";
-
-        profilePhoto.appendChild(image);
-    };
-
-    reader.readAsDataURL(file);
-    showMessage("Photo selected. Save Changes to upload it.", "success");
-
-    if (removeProfileButton) {
-        removeProfileButton.dataset.remove = "0";
+    function setError(message = "") {
+        errorNode.textContent = message;
+        errorNode.hidden = !message;
     }
-});
+
+    function releaseSource() {
+        if (sourceImage && typeof sourceImage.close === "function") sourceImage.close();
+        sourceImage = null;
+        if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+        sourceUrl = null;
+    }
+
+    function setFile(input, file) {
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        input.files = transfer.files;
+    }
+
+    function restoreFile() {
+        const previous = confirmedFiles.get(imageInput);
+        if (previous) {
+            try { setFile(imageInput, previous); }
+            catch (_) { imageInput.value = ""; }
+        } else {
+            imageInput.value = "";
+        }
+    }
+
+    function clamp() {
+        if (!sourceImage) return;
+        const scale = baseScale * zoom;
+        const maxX = Math.max(0, (sourceImage.width * scale - size) / 2);
+        const maxY = Math.max(0, (sourceImage.height * scale - size) / 2);
+        offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+        offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
+    }
+
+    function draw() {
+        if (!sourceImage) return;
+        clamp();
+        const scale = baseScale * zoom;
+        const width = sourceImage.width * scale;
+        const height = sourceImage.height * scale;
+        ctx.clearRect(0, 0, size, size);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(sourceImage, (size - width) / 2 + offsetX, (size - height) / 2 + offsetY, width, height);
+    }
+
+    function closeCropper(cancelled = false) {
+        if (cancelled) restoreFile();
+        modal.hidden = true;
+        activeFile = null;
+        activePointer = null;
+        drag = null;
+        preparing = false;
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Use This Photo";
+        setError();
+        releaseSource();
+        ctx.clearRect(0, 0, size, size);
+    }
+
+    async function loadSource(file) {
+        if ("createImageBitmap" in window) {
+            try { return await createImageBitmap(file, { imageOrientation: "from-image" }); }
+            catch (_) { return await createImageBitmap(file); }
+        }
+        sourceUrl = URL.createObjectURL(file);
+        return await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => reject(new Error("This photo could not be opened."));
+            image.src = sourceUrl;
+        });
+    }
+
+    async function openCropper(file) {
+        if (!file) return;
+        if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
+            restoreFile();
+            showMessage("Please choose a JPG, PNG or WEBP image.", "error");
+            return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+            restoreFile();
+            showMessage("Profile image must not exceed 3MB.", "error");
+            return;
+        }
+
+        preparing = true;
+        activeFile = file;
+        modal.hidden = false;
+        confirmButton.disabled = true;
+        confirmButton.textContent = "Preparing...";
+        setError();
+        try {
+            releaseSource();
+            sourceImage = await loadSource(file);
+            baseScale = Math.max(size / sourceImage.width, size / sourceImage.height);
+            zoom = 1;
+            offsetX = 0;
+            offsetY = 0;
+            zoomInput.value = "1";
+            zoomLabel.textContent = "100%";
+            draw();
+            preparing = false;
+            confirmButton.disabled = false;
+            confirmButton.textContent = "Use This Photo";
+        } catch (error) {
+            console.error("Staff profile crop preparation failed:", error);
+            setError("Unable to open this image. Please choose another photo.");
+            confirmButton.textContent = "Photo unavailable";
+        }
+    }
+
+    function previewCroppedFile(file) {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+            profilePhoto.replaceChildren(image);
+            image.alt = "Cropped profile photo";
+            image.style.width = "100%";
+            image.style.height = "100%";
+            image.style.objectFit = "cover";
+            image.style.objectPosition = "center";
+            URL.revokeObjectURL(url);
+        };
+        image.onerror = () => URL.revokeObjectURL(url);
+        image.src = url;
+    }
+
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files?.[0];
+        if (file) openCropper(file);
+    });
+    removeProfileButton?.addEventListener("click", () => confirmedFiles.delete(imageInput));
+
+    zoomInput.addEventListener("input", () => {
+        zoom = Number(zoomInput.value) || 1;
+        zoomLabel.textContent = Math.round(zoom * 100) + "%";
+        draw();
+    });
+
+    canvas.addEventListener("pointerdown", event => {
+        if (!sourceImage || preparing) return;
+        activePointer = event.pointerId;
+        canvas.setPointerCapture(event.pointerId);
+        drag = { x:event.clientX, y:event.clientY, offsetX, offsetY };
+    });
+    canvas.addEventListener("pointermove", event => {
+        if (!drag || event.pointerId !== activePointer) return;
+        const rect = canvas.getBoundingClientRect();
+        const factor = size / rect.width;
+        offsetX = drag.offsetX + (event.clientX - drag.x) * factor;
+        offsetY = drag.offsetY + (event.clientY - drag.y) * factor;
+        draw();
+    });
+    const endDrag = event => {
+        if (event.pointerId !== activePointer) return;
+        activePointer = null;
+        drag = null;
+    };
+    canvas.addEventListener("pointerup", endDrag);
+    canvas.addEventListener("pointercancel", endDrag);
+
+    confirmButton.addEventListener("click", async () => {
+        if (!sourceImage || preparing || !activeFile) return;
+        confirmButton.disabled = true;
+        confirmButton.textContent = "Preparing photo...";
+        try {
+            const output = document.createElement("canvas");
+            output.width = 600;
+            output.height = 600;
+            const outputContext = output.getContext("2d");
+            if (!outputContext) throw new Error("Photo editing is unavailable.");
+            const scale = baseScale * zoom;
+            const width = sourceImage.width * scale;
+            const height = sourceImage.height * scale;
+            outputContext.fillStyle = "#ffffff";
+            outputContext.fillRect(0, 0, 600, 600);
+            outputContext.imageSmoothingEnabled = true;
+            outputContext.imageSmoothingQuality = "high";
+            outputContext.drawImage(sourceImage, (600 - width) / 2 + offsetX, (600 - height) / 2 + offsetY, width, height);
+            const blob = await new Promise((resolve, reject) => output.toBlob(result => result ? resolve(result) : reject(new Error("Unable to create the cropped photo.")), "image/jpeg", .9));
+            const safeName = (activeFile.name || "profile-photo").replace(/\.[^.]+$/, "").replace(/[^a-z0-9_-]/gi, "-").slice(0, 50) || "profile-photo";
+            const cropped = new File([blob], safeName + "-cropped.jpg", {type:"image/jpeg", lastModified:Date.now()});
+            if (cropped.size > 3 * 1024 * 1024) throw new Error("The cropped photo exceeds the 3MB upload limit.");
+            setFile(imageInput, cropped);
+            confirmedFiles.set(imageInput, cropped);
+            previewCroppedFile(cropped);
+            if (removeProfileButton) removeProfileButton.dataset.remove = "0";
+            showMessage("Cropped photo ready. Confirm your password and save changes.", "success");
+            closeCropper(false);
+        } catch (error) {
+            setError(error.message || "Unable to crop this photo.");
+            confirmButton.disabled = false;
+            confirmButton.textContent = "Try Again";
+        }
+    });
+
+    [closeButton, cancelButton].forEach(button => button?.addEventListener("click", () => closeCropper(true)));
+    modal.addEventListener("click", event => { if (event.target === modal) closeCropper(true); });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !modal.hidden) closeCropper(true);
+    });
+})();
+
 
 form.addEventListener("submit", async event => {
 
@@ -287,6 +510,25 @@ form.addEventListener("submit", async event => {
             initialsSpan.id = "profileInitials";
             initialsSpan.textContent = initials(data.admin.name);
             profilePhoto.appendChild(initialsSpan);
+        }
+
+        const shellName = document.getElementById("markazShellName");
+        const shellMenuName = document.getElementById("markazShellMenuName");
+        const shellAvatar = document.querySelector(".markaz-shell-profile .admin-profile-avatar");
+        if (shellName) shellName.textContent = data.admin.name || "Administrator";
+        if (shellMenuName) shellMenuName.textContent = data.admin.name || "Administrator";
+        if (shellAvatar) {
+            shellAvatar.replaceChildren();
+            if (data.admin.profile_image) {
+                const shellImage = document.createElement("img");
+                shellImage.src = "/" + data.admin.profile_image.replace(/^\/+/, "");
+                shellImage.alt = data.admin.name || "Staff profile";
+                shellAvatar.appendChild(shellImage);
+            } else {
+                const shellInitials = document.createElement("span");
+                shellInitials.textContent = initials(data.admin.name);
+                shellAvatar.appendChild(shellInitials);
+            }
         }
 
         if (removeProfileButton) {
@@ -447,7 +689,7 @@ document.addEventListener("click", async (event) => {
     }
 });
 
-loadMemorizationSettings();
+
 
 /* Keep Qur'an memorization settings permanently expanded. */
 const memorizationToggle = document.getElementById("memorizationSettingsToggle");
@@ -585,7 +827,7 @@ academicPeriodForm?.addEventListener("submit", async event => {
     }
 });
 
-loadAcademicPeriodSettings();
+whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
 
 /* SHARED HANDWRITTEN RESULT SIGNATURES */
 (() => {
@@ -927,7 +1169,7 @@ loadAcademicPeriodSettings();
         }
     });
 
-    loadSettings();
+    whenStaffRole(["admin", "exam_officer"], loadSettings);
 })();
 
 
@@ -961,12 +1203,14 @@ loadAcademicPeriodSettings();
   const status = section.querySelector("#markazSupportStatus");
   const form = section.querySelector("#markazSupportForm");
 
-  fetch("./api/settings/support-contact.php", { credentials: "same-origin" })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success && data.whatsapp_number) input.value = data.whatsapp_number;
-    })
-    .catch(() => { status.textContent = "Could not load the saved number. You can still enter one and save."; });
+  whenStaffRole(["admin"], () => {
+    fetch("./api/settings/support-contact.php", { credentials: "same-origin" })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.whatsapp_number) input.value = data.whatsapp_number;
+      })
+      .catch(() => { status.textContent = "Could not load the saved number. You can still enter one and save."; });
+  });
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1089,7 +1333,8 @@ loadAcademicPeriodSettings();
         return data;
     }
 
-    request().then(data => {
+    whenStaffRole(["admin"], () => request()).then(data => {
+        if (!data) return;
         Object.entries(inputs).forEach(([key, input]) => {
             input.checked = Boolean(data.settings?.[key]);
         });
@@ -1228,7 +1473,7 @@ loadAcademicPeriodSettings();
     }
 
     refresh.addEventListener("click", load);
-    load();
+    whenStaffRole(["admin"], load);
 })();
 
 /* MARKAZ SENIOR ADMIN — ACCOUNT DEVICES AND USAGE HISTORY */
@@ -1425,10 +1670,9 @@ loadAcademicPeriodSettings();
         }
     });
 
-    fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store" })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success || data.admin?.role !== "admin") {
+    window.markazSettingsAccountPromise
+        .then(result => {
+            if (!result.ok || !result.data?.success || result.data.admin?.role !== "admin") {
                 section.remove();
                 return;
             }
@@ -1578,7 +1822,7 @@ loadAcademicPeriodSettings();
         }
     }
 
-    loadPeriods();
+    whenStaffRole(["admin", "exam_officer"], loadPeriods);
 })();
 
 
@@ -1769,7 +2013,7 @@ async function loadAcademicArchive() {
     });
 })();
 
-loadAcademicArchive();
+whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
 
 
 /* PROTECTED ACADEMIC ENTRY RESET — password + accessible typed confirmation. */

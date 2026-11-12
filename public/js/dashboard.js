@@ -165,6 +165,7 @@ async function loadAdmin() {
         });
 
         applyDashboardRoleAccess(role, data.admin);
+        initDashboardMotion();
         if (role !== "management") loadDashboardStats();
 
         if (adminName) adminName.textContent = name;
@@ -435,6 +436,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
     const dropdown = document.createElement("div");
     dropdown.className = "profile-dropdown";
+    dropdown.hidden = true;
 
     dropdown.innerHTML = `
         <div class="profile-dropdown-header">
@@ -444,7 +446,10 @@ if (topbar && !document.querySelector(".topbar-actions")) {
 
         <div class="profile-dropdown-divider"></div>
 
-        <a href="./settings.html" class="profile-dropdown-item" data-role-access="admin_or_exam_officer">
+        <a href="./settings.html#profile" class="profile-dropdown-item" data-role-access="staff_profile">
+            Profile
+        </a>
+        <a href="./settings.html" class="profile-dropdown-item" data-role-access="staff_profile">
             Settings
         </a>
         <button type="button" class="profile-dropdown-item logout" id="topProfileLogoutButton">
@@ -502,28 +507,27 @@ if (topbar && !document.querySelector(".topbar-actions")) {
         }
     }
 
+    function closeTopProfileDropdown() {
+        dropdown.classList.remove("open");
+        dropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
     profileButton.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopImmediatePropagation();
-        const isOpen = dropdown.classList.toggle("open");
-
-        profileButton.setAttribute(
-            "aria-expanded",
-            isOpen ? "true" : "false"
-        );
+        event.stopPropagation();
+        const isOpen = dropdown.hidden;
+        dropdown.hidden = !isOpen;
+        dropdown.classList.toggle("open", isOpen);
+        profileButton.setAttribute("aria-expanded", String(isOpen));
     });
 
-    document.addEventListener("click", (event) => {
-
-        if (
-            !profileWrap.contains(event.target)
-        ) {
-            dropdown.classList.remove("open");
-            profileButton.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-        }
+    dropdown.addEventListener("click", event => event.stopPropagation());
+    document.addEventListener("click", event => {
+        if (!profileWrap.contains(event.target)) closeTopProfileDropdown();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeTopProfileDropdown();
     });
 
     dropdown.querySelector("#topProfileLogoutButton")?.addEventListener("click", logout);
@@ -545,6 +549,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer";
         } else if (requiredRole === "admin_or_exam_officer_or_management") {
             allowed = role === "admin" || role === "exam_officer" || role === "management";
+        } else if (requiredRole === "staff_profile") {
+            allowed = ["admin", "exam_officer", "management", "teacher"].includes(role);
         } else if (requiredRole === "students") {
             allowed = role === "admin" || role === "exam_officer"
                 || (role === "management" && permissions.management_permissions?.students === true);
@@ -1110,7 +1116,6 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "MARKAZ Online Class": "online-class.html",
             "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
-            "System Settings": "settings.html",
             "Settings": "settings.html"
         };
 
@@ -1149,3 +1154,66 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
         timer = window.setTimeout(clean, 50);
     }).observe(sidebar, { childList: true, subtree: true });
 })();
+
+
+/* Reveal existing dashboard sections after role filtering. Interactive cards keep
+   their own hover transforms; this observer only animates their containing sections. */
+function initDashboardMotion() {
+    const root = document.documentElement;
+    const page = document.querySelector(".page-content");
+    if (!page) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const selector = [
+        ":scope > .welcome-card",
+        ":scope > .stats-grid",
+        ":scope > .dashboard-exam-section",
+        ":scope > .dashboard-bottom-layout",
+        ":scope > .teacher-assignments-section",
+        ":scope > .panel"
+    ].join(", ");
+
+    let observer = window.markazDashboardRevealObserver;
+    if (!reduceMotion && "IntersectionObserver" in window && !observer) {
+        observer = new IntersectionObserver((entries, activeObserver) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("mk-dashboard-visible");
+                activeObserver.unobserve(entry.target);
+            });
+        }, {threshold:0.04, rootMargin:"0px 0px -4% 0px"});
+        window.markazDashboardRevealObserver = observer;
+    }
+
+    function registerTargets() {
+        page.querySelectorAll(selector).forEach((element, index) => {
+            if (element.hidden || getComputedStyle(element).display === "none") return;
+            if (element.dataset.mkDashboardObserved === "1") return;
+
+            element.dataset.mkDashboardObserved = "1";
+            element.setAttribute("data-mk-dashboard-reveal", "");
+            element.style.setProperty("--mk-dashboard-delay", Math.min(index % 3, 2) * 75 + "ms");
+
+            if (reduceMotion || !observer) {
+                element.classList.add("mk-dashboard-visible");
+                return;
+            }
+
+            root.classList.add("mk-dashboard-motion-ready");
+            observer.observe(element);
+        });
+    }
+
+    registerTargets();
+
+    if (!page.dataset.mkDashboardMotionWatching && "MutationObserver" in window) {
+        page.dataset.mkDashboardMotionWatching = "1";
+        const mutations = new MutationObserver(registerTargets);
+        mutations.observe(page, {
+            childList:true,
+            subtree:true,
+            attributes:true,
+            attributeFilter:["hidden", "style"]
+        });
+    }
+}

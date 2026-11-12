@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-admin-avatar-center1">
+    <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-staff-motion1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
@@ -69,7 +69,7 @@
                 <a href="./school-fees.html" class="nav-link" data-role-access="management_school_fees"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></a>
                 <div class="nav-section-label" data-role-access="admin">System</div>
                 <div class="nav-section-label" data-role-access="exam_officer_settings">System</div>
-                <a href="./settings.html" class="nav-link" data-role-access="admin_or_exam_officer_or_management"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Settings</span></a>
+                <a href="./settings.html" class="nav-link" data-role-access="staff_profile"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Settings</span></a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
@@ -107,6 +107,7 @@
             <section class="page-content">
 
                 <div class="welcome-card">
+                    <span class="welcome-cap" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span>
                     <div class="welcome-content">
                         <span class="eyebrow" id="welcomeRoleLabel">School administration</span>
                         <h2><span id="welcomeGreeting">Good evening</span>, <span id="adminName">Mas’ud Adebiyi</span></h2>
@@ -291,8 +292,7 @@
                             <button type="button" data-role-access="attendance"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Attendance</span></button>
                             <button type="button" data-role-access="online_class"><i class="fa-solid fa-laptop" aria-hidden="true"></i><span>MARKAZ Online Class</span></button>
                             <button type="button" data-role-access="management_school_fees"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>School Fees</span></button>
-                            <button type="button" data-role-access="admin"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>System Settings</span></button>
-                            <button type="button" data-role-access="admin_or_exam_officer_or_management"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>Settings</span></button>
+                            <button type="button" data-role-access="staff_profile"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>Settings</span></button>
                         </div>
                     </article>
 
@@ -346,7 +346,7 @@
 
     </div>
 
-    <script src="js/dashboard.js?v=20261110-online-class-access"></script>
+    <script src="js/dashboard.js?v=20261112-staff-motion3"></script>
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
 
     <script src="/js/markaz-global.js"></script>
