@@ -14,6 +14,7 @@ $css = file_get_contents(__DIR__ . '/../public/css/home.css');
 $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
 $resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.css');
 $home = file_get_contents(__DIR__ . '/../public/js/home.js');
+$settings = file_get_contents(__DIR__ . '/../public/css/home.css');
 
 publicNavigationAssert(
     !str_contains($worker, 'if (request.mode === "navigate")') &&
@@ -43,6 +44,14 @@ publicNavigationAssert(
         str_contains($home, "link.setAttribute(\"aria-current\", \"page\")")
     ),
     'the active navigation indicator must move to the clicked destination immediately'
+);
+
+publicNavigationAssert(
+    str_contains($settings, 'min-height: 64px;') &&
+    str_contains($settings, 'gap: 6px;') &&
+    str_contains($settings, 'padding: 5px 7px;') &&
+    str_contains($settings, 'padding: clamp(34px, 4.5vw, 58px) 0;'),
+    'public header navigation and hero spacing must remain compact'
 );
 
 publicNavigationAssert(
