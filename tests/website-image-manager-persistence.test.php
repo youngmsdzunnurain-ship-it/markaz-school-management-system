@@ -48,4 +48,17 @@ websiteImagePersistenceCheck(
     'browser must verify saved replacements are returned by the server before clearing pending selections'
 );
 
+websiteImagePersistenceCheck(
+    str_contains($manager, 'response.text()') &&
+    str_contains($manager, 'JSON.parse(raw)') &&
+    str_contains($manager, 'content-type'),
+    'manager must diagnose non-JSON API responses instead of leaking a JSON parser exception'
+);
+
+websiteImagePersistenceCheck(
+    str_contains($api, 'requireSeniorAdmin();') &&
+    str_contains($api, 'ob_start();'),
+    'image catalogue and uploads must be protected by the Admin session and keep API errors JSON-only'
+);
+
 echo "Website image manager persistence regression tests passed.\n";
