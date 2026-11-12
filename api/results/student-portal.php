@@ -3,17 +3,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/helpers/device-activity-schema.php';
+require_once __DIR__ . '/../../app/helpers/login-lockout.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-function studentPortalError(int $status, string $message): never
+function studentPortalError(int $status, string $message, array $extra = []): never
 {
     http_response_code($status);
-    echo json_encode([
-        'success' => false,
-        'message' => $message
-    ]);
+    echo json_encode(array_merge(['success' => false, 'message' => $message], $extra));
     exit;
 }
 
@@ -61,6 +59,15 @@ try {
         studentPortalError(403, 'The Student Portal is currently closed by the Admin.');
     }
 
+    $lockoutEnabled = markazLoginLockoutEnabled($pdo);
+    if ($lockoutEnabled) {
+        markazEnsureLoginLockoutSchema($pdo);
+        $activeLock = markazGetActiveLoginLockout($pdo, 'student_result', strtolower($admissionNumber));
+        if ($activeLock !== null) {
+            studentPortalError(423, 'Too many unsuccessful lookups. This student account is locked for 3 days.', $activeLock);
+        }
+    }
+
     $classStmt = $pdo->prepare(
         "SELECT id, name
          FROM classes
@@ -86,8 +93,14 @@ try {
     $student = $studentStmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$student) {
+        if ($lockoutEnabled) {
+            $failure = markazRecordLoginFailure($pdo, 'student_result', strtolower($admissionNumber), 3);
+            if ($failure['locked']) studentPortalError(423, 'Too many unsuccessful lookups. This student account is locked for 3 days.', $failure);
+            studentPortalError(404, 'Admission number not found. Check your details or contact the school. ' . $failure['attempts_remaining'] . ' attempt(s) remaining before a 3-day lockout.', $failure);
+        }
         studentPortalError(404, 'Admission number not found. Check your details or contact the school.');
     }
+    if ($lockoutEnabled) markazClearLoginFailures($pdo, 'student_result', strtolower($admissionNumber));
 
     // A student may have moved to another class or graduated since this period.
     // Historical access is authorized against the student's saved result rows
