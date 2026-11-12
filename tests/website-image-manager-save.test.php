@@ -12,6 +12,8 @@ function websiteImageWorkflowCheck(bool $condition, string $message): void
 $manager = file_get_contents(__DIR__ . '/../public/js/website-image-manager.js');
 $api = file_get_contents(__DIR__ . '/../public/api/settings/website-images.php');
 $polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.css');
+$storageHelperPath = __DIR__ . '/../app/helpers/website-image-storage.php';
+$storageHelper = file_get_contents($storageHelperPath);
 
 websiteImageWorkflowCheck(
     str_contains($manager, 'pendingUploads') &&
@@ -74,5 +76,29 @@ websiteImageWorkflowCheck(
     preg_match('/\\.director-grid \\.public-photo\\s*>\\s*img\\s*\\{[^}]*object-fit:\\s*cover\\s*;/s', $polishCss) === 1,
     'director portrait must fill its actual public-photo frame without stretching'
 );
+
+websiteImageWorkflowCheck(
+    !str_contains($storageHelper, 'LOCK_EX'),
+    'manifest writes must not request unsupported exclusive locks on Android shared storage'
+);
+
+require_once $storageHelperPath;
+$testDirectory = sys_get_temp_dir() . '/markaz-website-image-storage-' . bin2hex(random_bytes(6));
+$testManifest = $testDirectory . '/website-image-map.json';
+$testMappings = ['/assets/example.jpg' => 'assets/images/website-managed/example.jpg'];
+try {
+    writeWebsiteImageManifest($testManifest, $testMappings);
+    websiteImageWorkflowCheck(
+        readWebsiteImageManifest($testManifest) === $testMappings,
+        'manifest writer must atomically save mappings that can be read back'
+    );
+} finally {
+    if (is_file($testManifest)) {
+        unlink($testManifest);
+    }
+    if (is_dir($testDirectory)) {
+        rmdir($testDirectory);
+    }
+}
 
 echo "Website image manager save workflow regression tests passed.\n";
