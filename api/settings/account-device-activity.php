@@ -40,7 +40,7 @@ if ($onlineStudentId > 0) {
     $identityType = 'online_class_student';
     $identityId = $onlineStudentId;
     $identityKey = 'online_class_student:' . $onlineStudentId;
-    $studentStmt = $pdo->prepare("SELECT CONCAT_WS(' ', first_name, NULLIF(middle_name, '')) FROM online_class_students WHERE id=? AND is_active=1 LIMIT 1");
+    $studentStmt = $pdo->prepare("SELECT CONCAT_WS(' ', first_name, NULLIF(middle_name, ''), last_name) FROM online_class_students WHERE id=? AND is_active=1 LIMIT 1");
     $studentStmt->execute([$onlineStudentId]);
     $displayName = trim((string) $studentStmt->fetchColumn());
     $role = 'Online Class student';
