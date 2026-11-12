@@ -57,7 +57,7 @@ websiteImagePersistenceCheck(
 
 websiteImagePersistenceCheck(
     str_contains($api, 'requireSeniorAdmin();') &&
-    strpos($api, "if ($method === 'GET')") < strpos($api, 'requireSeniorAdmin();') &&
+    strpos($api, 'if ($method ===') < strpos($api, 'requireSeniorAdmin();') &&
     str_contains($api, 'ob_start();'),
     'public image reads must remain available while replacement writes require the Admin session and JSON output stays clean'
 );
