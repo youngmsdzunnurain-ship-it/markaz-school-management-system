@@ -36,16 +36,17 @@
         "/js/website-image-manager.js?v=20261112-persistence2",
         "/js/social-settings.js"
       ];
-      for (const src of adminModules) {
-        await new Promise(resolve => {
-          const script = document.createElement("script");
-          script.src = src;
-          script.async = false;
-          script.onload = resolve;
-          script.onerror = resolve;
-          document.body.appendChild(script);
-        });
-      }
+      await Promise.all(adminModules.map(src => new Promise(resolve => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = () => {
+          console.error("A Settings module could not be loaded:", src);
+          resolve();
+        };
+        document.body.appendChild(script);
+      })));
     }
 
     const profile = page.querySelector(
