@@ -30,7 +30,8 @@ websiteImagePersistenceCheck(
 websiteImagePersistenceCheck(
     str_contains($api, 'writeWebsiteImageManifest($manifestPath, $nextMappings)') &&
     str_contains($api, 'readWebsiteImageManifest($manifestPath)') &&
-    !str_contains($api, '$pdo = db()'),
+    str_contains($api, 'if (is_file($manifestPath))') &&
+    str_contains($api, '$loadMappings($images)'),
     'image mappings must be saved and read back from durable storage without requiring MariaDB'
 );
 
