@@ -7,8 +7,9 @@
     form.addEventListener("submit", async event => {
         event.preventDefault();
         button.disabled = true;
-        button.textContent = "Sending...";
-        message.className = "login-message";
+        button.setAttribute("aria-busy", "true");
+        button.querySelector("span").textContent = "Sending...";
+        message.className = "form-message";
         message.textContent = "";
         try {
             const response = await fetch("api/auth/forgot-password.php", {
@@ -19,14 +20,15 @@
             });
             const data = await response.json();
             if (!response.ok || !data.success) throw new Error(data.message || "Unable to request a password reset.");
-            message.className = "login-message success";
+            message.className = "form-message is-visible is-success";
             message.textContent = data.message;
         } catch (error) {
-            message.className = "login-message error";
+            message.className = "form-message is-visible is-error";
             message.textContent = error.message || "Unable to connect to the server.";
         } finally {
             button.disabled = false;
-            button.textContent = "Send Reset Link";
+            button.removeAttribute("aria-busy");
+            button.querySelector("span").textContent = "Send Reset Link";
         }
     });
 })();
