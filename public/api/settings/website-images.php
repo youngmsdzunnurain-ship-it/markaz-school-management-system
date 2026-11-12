@@ -107,9 +107,41 @@ try {
     $manifestPath = $manifestDirectory . '/website-image-map.json';
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+    // One-time migration keeps replacements saved by the earlier database-backed
+    // manager. After this manifest exists, public image requests never need MariaDB.
+    $loadMappings = static function (array $catalogue) use ($manifestPath): array {
+        $mappings = readWebsiteImageManifest($manifestPath);
+        if (is_file($manifestPath)) {
+            return $mappings;
+        }
+
+        try {
+            $pdo = db();
+            $lookup = $pdo->prepare('SELECT setting_value FROM markaz_app_settings WHERE setting_key = ? LIMIT 1');
+            foreach ($catalogue as $image) {
+                $lookup->execute(['website_image_map_' . hash('sha256', $image['url'])]);
+                $replacement = $lookup->fetchColumn();
+                if (is_string($replacement) && $replacement !== '') {
+                    $mappings[$image['url']] = $replacement;
+                }
+            }
+        } catch (Throwable $migrationError) {
+            error_log('Website image settings legacy migration skipped: ' . $migrationError->getMessage());
+        }
+
+        // Write even an empty manifest so an unavailable database is not retried
+        // on every public page view.
+        try {
+            writeWebsiteImageManifest($manifestPath, $mappings);
+        } catch (Throwable $storageError) {
+            error_log('Website image manifest initialisation failed: ' . $storageError->getMessage());
+        }
+        return $mappings;
+    };
+
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
-        $mappings = readWebsiteImageManifest($manifestPath);
+        $mappings = $loadMappings($images);
         foreach ($images as &$image) {
             $replacement = $mappings[$image['url']] ?? null;
             if (is_string($replacement)) {
@@ -144,7 +176,7 @@ try {
     $allowed = [];
     foreach ($catalogue as $item) $allowed[$item['url']] = $item['url'];
     $action = (string) ($_POST['action'] ?? 'replace');
-    $mappings = readWebsiteImageManifest($manifestPath);
+    $mappings = $loadMappings($catalogue);
 
     if ($action === 'batch-replace') {
         $sources = $_POST['sources'] ?? [];
