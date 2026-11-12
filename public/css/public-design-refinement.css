@@ -287,3 +287,15 @@ body.public-home-page .programmes-section .section-heading > p {
     margin-inline: auto;
     text-align: center;
 }
+
+
+/* Public pages start immediately below the sticky navigation. */
+body.public-page main,
+body.public-home-page main {
+    margin-block-start: 0 !important;
+    padding-block-start: 0 !important;
+}
+body.public-page main > :first-child,
+body.public-home-page main > :first-child {
+    margin-block-start: 0 !important;
+}
