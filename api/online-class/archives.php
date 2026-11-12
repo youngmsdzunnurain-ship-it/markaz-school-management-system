@@ -164,9 +164,22 @@ try {
         $releaseStmt = $pdo->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? LIMIT 1');
         $releaseStmt->execute([$levelId,$session,$term]);
         $released = (int) $releaseStmt->fetchColumn();
+        $levelSnapshotStmt=$pdo->prepare('SELECT id,name,tutor_name,task_one_name,task_two_name,memorization_portion,first_term_resumption,second_term_resumption,third_term_resumption FROM online_class_levels WHERE id=? LIMIT 1');
+        $levelSnapshotStmt->execute([$levelId]);
+        $levelSnapshot=$levelSnapshotStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        $signatureRows=$pdo->query("SELECT CASE setting_key
+            WHEN 'result_footer_class_teacher_signature' THEN 'teacher_text'
+            WHEN 'result_footer_director_signature' THEN 'director_text'
+            WHEN 'result_footer_class_teacher_image' THEN 'teacher_image'
+            WHEN 'result_footer_director_image' THEN 'director_image'
+            WHEN 'result_footer_signature_date' THEN 'date'
+            END AS setting_key,setting_value
+            FROM markaz_app_settings
+            WHERE setting_key IN ('result_footer_class_teacher_signature','result_footer_director_signature','result_footer_class_teacher_image','result_footer_director_image','result_footer_signature_date')")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $signatureSnapshot=['teacher_image'=>$signatureRows['teacher_image']??'','teacher_text'=>$signatureRows['teacher_text']??'','director_image'=>$signatureRows['director_image']??'','director_text'=>$signatureRows['director_text']??'','date'=>$signatureRows['date']??''];
         $coverageStart = null;
         $coverageEnd = null;
-        $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'results','level_id'=>$levelId,'academic_session'=>$session,'term'=>$term,'is_released'=>$released,'created_at'=>date(DATE_ATOM),'students'=>$students->fetchAll(PDO::FETCH_ASSOC),'results'=>$results->fetchAll(PDO::FETCH_ASSOC)];
+        $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'results','level_id'=>$levelId,'academic_session'=>$session,'term'=>$term,'is_released'=>$released,'created_at'=>date(DATE_ATOM),'level'=>$levelSnapshot,'signatures'=>$signatureSnapshot,'students'=>$students->fetchAll(PDO::FETCH_ASSOC),'results'=>$results->fetchAll(PDO::FETCH_ASSOC)];
     }
     $compressed = onlineClassArchiveCompress($payloadData);
     $sha = hash('sha256', $compressed);
