@@ -1,0 +1,27 @@
+name: Website Image Manager Regression
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  website-image-manager:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify image manager workflow and portrait fit
+        run: |
+          set -e
+          php -l public/api/settings/website-images.php
+          php -l tests/website-image-manager-fit.test.php
+          php -l tests/website-image-manager-save.test.php
+          node --check public/js/website-image-manager.js
+          php tests/website-image-manager-fit.test.php
+          php tests/website-image-manager-save.test.php
