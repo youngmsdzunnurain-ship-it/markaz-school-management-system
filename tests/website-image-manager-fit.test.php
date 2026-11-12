@@ -4,7 +4,7 @@ declare(strict_types=1);
 function websiteImageFitCheck(bool $condition, string $message): void
 {
     if (!$condition) {
-        fwrite(STDERR, "FAIL: {$message}\\n");
+        fwrite(STDERR, "FAIL: {$message}\n");
         exit(1);
     }
 }
@@ -50,4 +50,4 @@ websiteImageFitCheck(
     'uploads must retain the 8 MB limit and authenticated same-origin requests'
 );
 
-echo "Website image manager fit regression tests passed.\\n";
+echo "Website image manager fit regression tests passed.\n";
