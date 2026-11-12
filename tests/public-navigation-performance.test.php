@@ -14,11 +14,15 @@ $css = file_get_contents(__DIR__ . '/../public/css/home.css');
 $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
 $resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.css');
 $home = file_get_contents(__DIR__ . '/../public/js/home.js');
+$refinement = file_get_contents(__DIR__ . '/../public/css/public-design-refinement.css');
 
+$navigationGuard = strpos($worker, 'if (request.mode === "navigate") return;');
+$pageCacheHandler = strpos($worker, 'if (isApprovedPublicPage(url))');
 publicNavigationAssert(
-    !str_contains($worker, 'if (request.mode === "navigate")') &&
-    str_contains($worker, 'Let document navigations use the browser\'s normal fast navigation path'),
-    'public document navigation must use the browser fast path instead of service-worker interception'
+    $navigationGuard !== false &&
+    $pageCacheHandler !== false &&
+    $navigationGuard < $pageCacheHandler,
+    'service worker must bypass browser document navigations before cached-page handling'
 );
 
 publicNavigationAssert(
@@ -60,6 +64,12 @@ publicNavigationAssert(
 publicNavigationAssert(
     str_contains($resilience, 'finishPageSkeleton();'),
     'page loading overlay cleanup must remain safe when legacy skeleton markup exists'
+);
+
+publicNavigationAssert(
+    str_contains($refinement, 'body.public-page main > :first-child') &&
+    str_contains($refinement, 'margin-block-start: 0 !important'),
+    'public content must begin directly below navigation without external top whitespace'
 );
 
 echo "Public navigation performance regression checks passed.\n";

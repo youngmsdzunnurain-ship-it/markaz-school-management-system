@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = "markaz-public-v3";
+const CACHE_VERSION = "markaz-public-v4";
 const PAGE_CACHE = CACHE_VERSION + "-pages";
 const ASSET_CACHE = CACHE_VERSION + "-assets";
 
@@ -90,8 +90,11 @@ self.addEventListener("fetch", event => {
     const url = new URL(request.url);
     if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
 
-    // Let document navigations use the browser's normal fast navigation path.
-    // The worker only caches public assets and never delays page transitions.
+    // Never serve cached HTML for browser navigation; stale page markup can
+    // otherwise restore old spacing and old stylesheet/script references.
+    if (request.mode === "navigate") return;
+
+    // Cache explicit same-origin page fetches and static assets only.
     /* The shared footer loader fetches home.html as a normal same-origin request. */
     if (isApprovedPublicPage(url)) {
         const refresh = fetch(request).then(response => {
