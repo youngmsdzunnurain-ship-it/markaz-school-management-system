@@ -85,6 +85,22 @@ managementPermissionsCheck(
     'Management dashboard, attendance summaries, profile and shared navigation use individual permissions'
 );
 managementPermissionsCheck(
+    str_contains($dashboardHtml, 'data-role-access="attendance_dashboard"')
+        && str_contains($dashboardJs, 'requiredRole === "attendance_dashboard"')
+        && str_contains($dashboardJs, 'role === "management" && permissions.management_permissions?.attendance === true')
+        && str_contains($dashboardJs, 'window.markazManagementPermissions?.attendance === true'),
+    'Management attendance permission reveals the dashboard combo charts without exposing them to other roles'
+);
+managementPermissionsCheck(
+    str_contains($dashboardHtml, 'id="managementDashboardName"')
+        && str_contains($dashboardHtml, 'id="managementDashboardEmail"')
+        && str_contains($dashboardHtml, 'Active</small>')
+        && str_contains($chartCss, '.management-dashboard-profile-body')
+        && str_contains($chartCss, '.management-dashboard-profile-copy small')
+        && str_contains($chartCss, '.management-dashboard-profile-link:hover'),
+    'Management dashboard profile is presented as a styled staff identity card with active status and profile action'
+);
+managementPermissionsCheck(
     str_contains($accountsApi, 'saveAccountPermission($pdo, $targetId, \'management_\' . $managementPermission, $allowed)')
         && str_contains($accountJs, 'management_permissions: role.value === \'management\''),
     'Each Management account stores its own independently selected workspace permissions'
@@ -108,4 +124,4 @@ managementPermissionsCheck(
         && str_contains($settingsHtml, 'data-role-access="staff_profile"'),
     'Profile photos are compressed below the upload limit and Management profile settings are available'
 );
-echo "Management permissions/profile/dashboard regression tests passed (12 checks).\n";
+echo "Management permissions/profile/dashboard regression tests passed (14 checks).\n";

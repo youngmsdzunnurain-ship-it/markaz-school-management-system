@@ -3,6 +3,7 @@ declare(strict_types=1);
 $root=dirname(__DIR__);
 $navigation=(string)file_get_contents($root.'/public/js/settings-panel-navigation.js');
 $html=(string)file_get_contents($root.'/public/settings.html');
+$dashboardHtml=(string)file_get_contents($root.'/public/dashboard.html');
 $dashboard=(string)file_get_contents($root.'/public/js/dashboard.js');
 $css=(string)file_get_contents($root.'/public/css/dashboard-2026.css');
 $checks=[
@@ -13,7 +14,7 @@ $checks=[
  'Settings remain hidden until role resolution completes'=>str_contains($html,'settings-page-pending')&&str_contains($navigation,'classList.remove("settings-page-pending")'),
  'Management greeting includes explanatory dashboard copy'=>str_contains($dashboard,'Your assigned school workspaces are ready below.'),
  'Management profile card has dedicated visual styling'=>str_contains($css,'.management-dashboard-profile-body')&&str_contains($css,'.management-dashboard-profile-link'),
- 'Admin greeting is moved below the dashboard data'=>str_contains($dashboard,'pageContent.insertBefore(welcomeCard, shortcutsSection)')
+ 'Welcome banner appears before dashboard metrics'=>strpos($dashboardHtml,'class="welcome-card"') < strpos($dashboardHtml,'class="stats-grid"') && str_contains($dashboard,'Your assigned school workspaces are ready below.')
 ];
 foreach($checks as $label=>$ok){echo ($ok?'PASS ':'FAIL ').$label.PHP_EOL;if(!$ok)exit(1);}
 echo 'Settings and dashboard role regression checks passed ('.count($checks).').'.PHP_EOL;
