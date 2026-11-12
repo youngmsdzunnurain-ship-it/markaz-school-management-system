@@ -15,10 +15,11 @@ $polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.cs
 
 websiteImageWorkflowCheck(
     str_contains($manager, 'pendingUploads') &&
-    str_contains($manager, 'pendingResets') &&
     str_contains($manager, 'Save Changes') &&
-    str_contains($manager, 'batch-replace'),
-    'website image manager must stage multiple replacements and resets until one explicit save'
+    str_contains($manager, 'batch-replace') &&
+    !str_contains($manager, 'Restore original') &&
+    !str_contains($manager, 'pendingResets'),
+    'manager must stage multiple replacements for one explicit save and must not show restore controls'
 );
 
 websiteImageWorkflowCheck(
@@ -33,8 +34,16 @@ websiteImageWorkflowCheck(
     str_contains($api, "\$_FILES['images']") &&
     str_contains($api, "\$pdo->beginTransaction()") &&
     str_contains($api, "\$pdo->commit()") &&
-    str_contains($api, "\$pdo->rollBack()"),
-    'API must validate and persist the complete image batch transactionally'
+    str_contains($api, "\$pdo->rollBack()") &&
+    str_contains($api, 'saved_images'),
+    'API must validate, persist and read back the complete image batch transactionally'
+);
+
+websiteImageWorkflowCheck(
+    str_contains($manager, 'saved_images') &&
+    str_contains($manager, 'await loadCatalogue()') &&
+    str_contains($manager, 'persisted.replacement !== saved.replacement'),
+    'manager must verify the replacement survives a fresh catalogue read before reporting success'
 );
 
 websiteImageWorkflowCheck(
@@ -43,4 +52,4 @@ websiteImageWorkflowCheck(
     'director portrait must fill its actual public-photo frame without stretching'
 );
 
-echo "Website image manager save workflow regression tests passed.\n";
+echo "Website image manager save workflow regression tests passed.\\n";
