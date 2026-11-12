@@ -7,12 +7,32 @@ $studentStmt->execute([$studentId]);$student=$studentStmt->fetch(PDO::FETCH_ASSO
 if(!$student) onlineClassJsonError(401,'This Online Class account is no longer active.');
 $session=trim((string)($_SESSION['online_student_academic_session']??''));$term=(string)($_SESSION['online_student_term']??'');
 if(!preg_match('/^\d{4}\/\d{4}$/',$session)||!in_array($term,['First Term','Second Term','Third Term'],true)) onlineClassJsonError(422,'Choose a valid academic session and term.');
-$release=db()->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=(SELECT level_id FROM online_class_students WHERE id=?) AND academic_session=? AND term=? LIMIT 1');
-$release->execute([$studentId,$session,$term]);
-if((int)$release->fetchColumn()!==1) onlineClassJson(['success'=>true,'released'=>false,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>[]]);
-$stmt=db()->prepare('SELECT sub.name AS subject_name,sub.sort_order,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_subjects sub LEFT JOIN online_class_results r ON r.subject_id=sub.id AND r.student_id=? AND r.academic_session=? AND r.term=? WHERE sub.level_id=(SELECT level_id FROM online_class_students WHERE id=?) AND sub.is_active=1 ORDER BY sub.sort_order,sub.name');
-$stmt->execute([$studentId,$session,$term,$studentId]);$results=[];
-foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row){
+$levelId=(int)$student['level_id'];
+$release=db()->prepare('SELECT is_released FROM online_class_result_releases WHERE level_id=? AND academic_session=? AND term=? LIMIT 1');
+$release->execute([$levelId,$session,$term]);
+$isReleased=(int)$release->fetchColumn()===1;
+$rowsToRender=null;
+if(!$isReleased){
+ $archive=db()->prepare("SELECT payload,payload_sha256,is_released FROM online_class_archives WHERE archive_type='results' AND destination='online' AND level_id=? AND academic_session=? AND term=? ORDER BY created_at DESC,id DESC LIMIT 1");
+ $archive->execute([$levelId,$session,$term]);
+ $saved=$archive->fetch(PDO::FETCH_ASSOC);
+ if($saved && (int)$saved['is_released']===1 && hash_equals((string)$saved['payload_sha256'],hash('sha256',(string)$saved['payload']))){
+  $decoded=json_decode((string)gzdecode((string)$saved['payload']),true);
+  if(is_array($decoded) && ($decoded['format']??'')==='markaz-online-class-archive-v1' && ($decoded['type']??'')==='results'){
+   $isReleased=true;
+   $rowsToRender=array_values(array_filter($decoded['results']??[],static fn($row)=>(int)($row['student_id']??0)===$studentId));
+  }
+ }
+}
+if(!$isReleased) onlineClassJson(['success'=>true,'released'=>false,'student'=>$student,'academic_session'=>$session,'term'=>$term,'results'=>[]]);
+if($rowsToRender===null){
+ $stmt=db()->prepare('SELECT sub.name AS subject_name,sub.sort_order,r.attendance_score,r.test_score,r.exam_score,r.teacher_remark,r.director_remark FROM online_class_subjects sub LEFT JOIN online_class_results r ON r.subject_id=sub.id AND r.student_id=? AND r.academic_session=? AND r.term=? WHERE sub.level_id=? AND sub.is_active=1 ORDER BY sub.sort_order,sub.name');
+ $stmt->execute([$studentId,$session,$term,$levelId]);
+ $rowsToRender=$stmt->fetchAll(PDO::FETCH_ASSOC);
+}else{
+ $rowsToRender=array_map(static fn($row)=>['subject_name'=>$row['subject_name']??'','sort_order'=>0,'attendance_score'=>$row['attendance_score']??null,'test_score'=>$row['test_score']??null,'exam_score'=>$row['exam_score']??null,'teacher_remark'=>$row['teacher_remark']??null,'director_remark'=>$row['director_remark']??null],$rowsToRender);
+}
+$results=[];foreach($rowsToRender as $row){
  $scores=[$row['attendance_score'],$row['test_score'],$row['exam_score']];
  $complete=!in_array(null,$scores,true);
  $total=$complete?array_sum(array_map('floatval',$scores)):null;
