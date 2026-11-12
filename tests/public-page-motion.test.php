@@ -59,4 +59,10 @@ publicMotionAssert(
     'scroll reveals respect reduced-motion preferences and have an observer-based implementation'
 );
 
+$homeCss = file_get_contents($root . '/public/css/home.css');
+publicMotionAssert(
+    is_string($homeCss) && str_contains($homeCss, 'filter: brightness(.70) saturate(.92) !important;'),
+    'homepage building photograph has the requested subtle dark tint'
+);
+
 echo "Public page motion regression checks passed.\n";
