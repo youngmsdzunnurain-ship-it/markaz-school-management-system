@@ -109,20 +109,29 @@ self.addEventListener("fetch", event => {
         if (!isApprovedPublicPage(url)) return;
         event.respondWith((async () => {
             const cache = await caches.open(PAGE_CACHE);
-            try {
-                const response = await fetchWithTimeout(request);
+            const cached = await cache.match(request);
+
+            // A previously visited page is rendered immediately. Network refresh
+            // must never hold the user's navigation behind a slow connection.
+            const refresh = fetch(request).then(async response => {
                 await cacheResponse(PAGE_CACHE, request, response);
                 return response;
-            } catch (error) {
-                const cached = await cache.match(request);
-                if (cached) return cached;
-                const offline = await cache.match(new URL("./offline.html", self.registration.scope).href);
-                if (offline) return offline;
-                return new Response("You are offline. Please reconnect and try again.", {
-                    status: 503,
-                    headers: { "Content-Type": "text/plain; charset=utf-8" }
-                });
+            }).catch(() => null);
+
+            if (cached) {
+                event.waitUntil(refresh);
+                return cached;
             }
+
+            const response = await refresh;
+            if (response) return response;
+
+            const offline = await cache.match(new URL("./offline.html", self.registration.scope).href);
+            if (offline) return offline;
+            return new Response("You are offline. Please reconnect and try again.", {
+                status: 503,
+                headers: { "Content-Type": "text/plain; charset=utf-8" }
+            });
         })());
         return;
     }
