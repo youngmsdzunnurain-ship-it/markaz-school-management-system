@@ -1096,3 +1096,228 @@ body.online-results-page #portalReport .online-report-details-student-column > s
     margin-right: .25em !important;
   }
 }
+
+
+/* Online Class level settings — paired cards, compact expand controls and consistent actions. */
+.online-workspace-page #onlineLevelSettings{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:16px;
+ align-items:start;
+}
+.online-workspace-page .online-level-form{
+ min-width:0;
+ margin:0;
+ padding:0;
+ overflow:hidden;
+ border:1px solid #dce8dc;
+ border-radius:17px;
+ background:linear-gradient(155deg,#fff 0%,#fbfdf9 100%);
+ box-shadow:0 7px 20px rgba(24,74,48,.065);
+ transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+.online-workspace-page .online-level-form:hover{
+ border-color:#c4d8c4;
+ box-shadow:0 10px 25px rgba(24,74,48,.09);
+}
+.online-workspace-page .online-level-card-head{
+ display:flex;
+ align-items:center;
+ gap:13px;
+ min-height:100px;
+ padding:17px 18px;
+}
+.online-workspace-page .online-level-mark{
+ display:grid;
+ place-items:center;
+ flex:0 0 48px;
+ width:48px;
+ height:48px;
+ border:1px solid #d8c58c;
+ border-radius:50%;
+ background:linear-gradient(145deg,#f8f4e6,#fffdf7);
+ color:#1e6842;
+ font-size:18px;
+ box-shadow:inset 0 0 0 4px rgba(196,163,78,.10);
+}
+.online-workspace-page .online-level-heading{min-width:0;flex:1}
+.online-workspace-page .online-level-kicker{
+ display:block;
+ margin-bottom:3px;
+ color:#9a7b32;
+ font-size:9px;
+ font-weight:800;
+ letter-spacing:1.25px;
+}
+.online-workspace-page .online-level-heading h3{
+ margin:0;
+ color:#174d32;
+ font:700 20px/1.2 Georgia,serif;
+ overflow-wrap:anywhere;
+}
+.online-workspace-page .online-level-heading p{
+ margin:5px 0 0;
+ color:#718075;
+ font-size:11px;
+ line-height:1.4;
+}
+.online-workspace-page .online-level-toggle{
+ display:grid;
+ place-items:center;
+ flex:0 0 40px;
+ width:40px;
+ height:40px;
+ padding:0;
+ border:1px solid #d9e5d9;
+ border-radius:50%;
+ background:#f5f8f1;
+ color:#205c3b;
+ font-size:14px;
+ cursor:pointer;
+ transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease;
+}
+.online-workspace-page .online-level-toggle:hover,
+.online-workspace-page .online-level-toggle[aria-expanded="true"]{
+ border-color:#1d6742;
+ background:#1d6742;
+ color:#fff;
+}
+.online-workspace-page .online-level-toggle[aria-expanded="true"]{transform:rotate(0)}
+.online-workspace-page .online-level-settings-fields{
+ padding:0 18px 18px;
+ border-top:1px solid #edf1e9;
+ animation:onlineLevelReveal .2s ease both;
+}
+.online-workspace-page .online-level-settings-fields[hidden]{display:none!important}
+.online-workspace-page .online-level-settings-fields .online-form-grid{
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px;
+ padding-top:16px;
+}
+.online-workspace-page .online-level-settings-fields .online-field{min-width:0}
+.online-workspace-page .online-level-settings-fields .online-field label{
+ color:#496451;
+ font-size:11px;
+ letter-spacing:.1px;
+}
+.online-workspace-page .online-level-settings-fields input{
+ min-height:42px;
+ border-color:#d8e3d7;
+ background:#fbfcf9;
+}
+.online-workspace-page .online-level-form-actions{
+ display:flex;
+ justify-content:flex-end;
+ margin-top:15px;
+}
+.online-workspace-page .online-btn{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ min-height:40px;
+ padding:9px 15px;
+ border:1px solid #d6e2d6;
+ border-radius:10px;
+ background:#fff;
+ color:#24583a;
+ font:700 12px/1.2 Inter,Arial,sans-serif;
+ text-align:center;
+ transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.online-workspace-page .online-btn:hover{
+ border-color:#9ebda4;
+ background:#f2f7ef;
+ color:#174d32;
+ box-shadow:0 3px 9px rgba(24,74,48,.08);
+}
+.online-workspace-page .online-btn:active{transform:translateY(1px)}
+.online-workspace-page .online-btn.primary{
+ border-color:#1d6742;
+ background:linear-gradient(135deg,#1d6742,#28794d);
+ color:#fff;
+ box-shadow:0 4px 10px rgba(29,103,66,.14);
+}
+.online-workspace-page .online-btn.primary:hover{
+ border-color:#145332;
+ background:linear-gradient(135deg,#145332,#1d6742);
+ color:#fff;
+}
+.online-workspace-page .online-btn.danger{
+ border-color:#e7c4bf;
+ background:#fff5f3;
+ color:#a33d32;
+}
+.online-workspace-page .online-btn.danger:hover{border-color:#d98e83;background:#ffebe8;color:#8e2d25}
+.online-workspace-page .online-btn.success{
+ border-color:#c5ddc8;
+ background:#eff8f0;
+ color:#21643b;
+}
+.online-workspace-page .online-btn:disabled,
+.online-workspace-page .online-btn[aria-disabled="true"]{
+ opacity:.55;
+ cursor:not-allowed;
+ box-shadow:none;
+}
+.online-workspace-page .online-btn:focus-visible,
+.online-workspace-page .online-level-toggle:focus-visible,
+.online-workspace-page .attendance-status:focus-visible{
+ outline:3px solid rgba(196,163,78,.65);
+ outline-offset:3px;
+}
+.online-workspace-page .attendance-status{
+ min-height:40px;
+ padding:9px 34px 9px 12px;
+ border-radius:10px;
+ font:700 12px/1.25 Inter,Arial,sans-serif;
+ transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;
+}
+.online-workspace-page .attendance-status[data-status="present"]{background-color:#eaf6ed;border-color:#a6d1af;color:#176b3a}
+.online-workspace-page .attendance-status[data-status="absent"]{background-color:#fff1ef;border-color:#e8b5ad;color:#a52e27}
+.online-workspace-page .attendance-status[data-status="late"]{background-color:#fff7e7;border-color:#e9cd87;color:#865900}
+.online-workspace-page #attendanceSummary{
+ display:inline-flex;
+ align-items:center;
+ min-height:36px;
+ padding:7px 12px;
+ border:1px solid #e0e9dc;
+ border-radius:999px;
+ background:#f5f8f1;
+ color:#47634e;
+ font-size:11px;
+ font-weight:700;
+ line-height:1.5;
+}
+.online-workspace-page #tab-attendance .online-actions{align-items:center;gap:9px;margin:12px 0 15px}
+.online-workspace-page #tab-attendance .online-panel>p{color:#6b7a6e;font-size:12px;line-height:1.6}
+.online-workspace-page #tab-attendance .online-table td{vertical-align:middle}
+.online-workspace-page #tab-attendance .attendance-remark{
+ min-width:150px;
+ min-height:38px;
+ padding:8px 10px;
+ border:1px solid #dce5d9;
+ border-radius:9px;
+ background:#fbfcfa;
+ color:#26382d;
+ font:12px Inter,Arial,sans-serif;
+}
+.online-workspace-page #tab-attendance .online-table tbody tr:hover{background:#f3f8ef}
+@keyframes onlineLevelReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){
+ .online-workspace-page #onlineLevelSettings{gap:12px}
+ .online-workspace-page .online-level-card-head{padding:15px}
+ .online-workspace-page .online-level-settings-fields{padding:0 15px 15px}
+}
+@media(max-width:720px){
+ .online-workspace-page #onlineLevelSettings{grid-template-columns:minmax(0,1fr)}
+ .online-workspace-page .online-level-card-head{min-height:88px}
+ .online-workspace-page .online-level-settings-fields .online-form-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+ .online-workspace-page .online-level-form,
+ .online-workspace-page .online-level-toggle,
+ .online-workspace-page .online-btn,
+ .online-workspace-page .attendance-status{transition:none}
+ .online-workspace-page .online-level-settings-fields{animation:none}
+}
