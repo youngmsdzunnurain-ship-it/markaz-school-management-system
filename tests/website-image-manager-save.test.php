@@ -52,4 +52,4 @@ websiteImageWorkflowCheck(
     'director portrait must fill its actual public-photo frame without stretching'
 );
 
-echo "Website image manager save workflow regression tests passed.\\n";
+echo "Website image manager save workflow regression tests passed.\n";
