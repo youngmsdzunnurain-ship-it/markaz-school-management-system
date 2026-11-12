@@ -67,18 +67,6 @@ async function cacheResponse(cacheName, request, response) {
     }
 }
 
-async function fetchWithTimeout(request, timeoutMs = 12000) {
-    let timeoutId;
-    const timeout = new Promise((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error("Public request timed out")), timeoutMs);
-    });
-    try {
-        return await Promise.race([fetch(request), timeout]);
-    } finally {
-        clearTimeout(timeoutId);
-    }
-}
-
 self.addEventListener("install", event => {
     // Do not block activation on downloading every public page and asset.
     event.waitUntil(self.skipWaiting());
