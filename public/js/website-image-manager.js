@@ -21,7 +21,7 @@
       <div id="websiteImageList" class="website-image-list"></div>
       <div class="website-image-savebar">
         <span id="websiteImagePendingCount">No unsaved changes</span>
-        <button type="button" id="saveWebsiteImagesButton" disabled>Save Changes</button>
+        <button type="button" id="saveWebsiteImagesButton" aria-disabled="true">Save Changes</button>
         <button type="button" id="discardWebsiteImagesButton" disabled>Discard Changes</button>
       </div>
     </div>
@@ -73,7 +73,8 @@
     pendingCount.textContent = count
       ? `${count} selected image change${count === 1 ? "" : "s"}`
       : "No unsaved changes";
-    saveButton.disabled = saving || count === 0;
+    saveButton.disabled = false;
+    saveButton.setAttribute("aria-disabled", String(saving || count === 0));
     discardButton.disabled = saving || count === 0;
   }
 
@@ -215,11 +216,20 @@
     }
   }
 
-  // Bind directly to the visible button; do not rely on implicit form submission.
-  saveButton.addEventListener("click", event => {
+  // Delegate from the stable manager root in capture phase. The Save control
+  // stays focusable so a stale disabled attribute cannot silently block uploads.
+  section.addEventListener("click", event => {
+    const button = event.target.closest("#saveWebsiteImagesButton");
+    if (!button || !section.contains(button)) return;
     event.preventDefault();
+    if (saving) return;
+    if (pendingUploads.size === 0) {
+      status.textContent = "No image changes are queued. Choose an image before saving.";
+      updateSaveBar();
+      return;
+    }
     void saveChanges();
-  });
+  }, true);
   discardButton.addEventListener("click", discardPending);
   search.addEventListener("input", render);
   loadCatalogue().catch(error => {

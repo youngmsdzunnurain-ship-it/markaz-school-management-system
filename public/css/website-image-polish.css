@@ -367,7 +367,7 @@ img[alt*="logo" i] {
     color: #52665a;
 }
 
-.website-image-savebar button:disabled {
+.website-image-savebar #saveWebsiteImagesButton[aria-disabled="true"] {
     opacity: .48;
     cursor: not-allowed;
 }
