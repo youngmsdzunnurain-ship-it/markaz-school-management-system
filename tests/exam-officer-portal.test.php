@@ -16,7 +16,7 @@ foreach(['dashboard'=>$d,'dashboard script'=>$j,'shared settings page'=>$setting
 eoAssert(str_contains($d,'href="./settings.html"')&&str_contains($d,'data-role-access="staff_profile"'),'Admin and Exam Officer use the same Settings route');
 eoAssert(!str_contains($d,'exam-officer-settings.html'),'dashboard does not link to a separate Exam Officer settings page');
 eoAssert(str_contains($d,'data-role-access="admin_or_exam_officer"'),'Add Student shortcut is shared with Exam Officer');
-eoAssert(str_contains($d,'data-role-access="admin" aria-label="Attendance by class"'),'attendance charts remain Admin-only');
+eoAssert(str_contains($d,'data-role-access="attendance_dashboard" aria-label="Attendance by class"')&&str_contains($j,'requiredRole === "attendance_dashboard"')&&str_contains($j,'role === "management" && permissions.management_permissions?.attendance === true'),'attendance charts are available to Admin and only Management accounts assigned Attendance');
 eoAssert(str_contains($settings,'data-role-access="staff_profile"'),'shared settings page admits Admin and Exam Officer roles');
 eoAssert(str_contains($navigation,'result-release')&&str_contains($navigation,'academic-archive')&&str_contains($navigation,'memorization'),'shared navigation contains the requested settings categories');
 eoAssert(str_contains($navigation,'exam_officer'),'shared settings navigation has an Exam Officer category view');

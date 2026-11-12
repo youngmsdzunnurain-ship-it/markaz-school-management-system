@@ -568,6 +568,9 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = permissions.can_export_results === true;
         } else if (requiredRole === "online_class") {
             allowed = role === "admin" || permissions.can_access_online_class === true;
+        } else if (requiredRole === "attendance_dashboard") {
+            allowed = role === "admin"
+                || (role === "management" && permissions.management_permissions?.attendance === true);
         } else if (requiredRole === "attendance") {
             allowed = role === "admin"
                 || (role === "teacher" && permissions.can_manage_attendance === true)
