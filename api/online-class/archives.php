@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/helpers/online-class.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/online-class-archives.php';
 require_once __DIR__ . '/../attendance/_common.php';
 
 onlineClassStaffAccess();
@@ -48,17 +49,6 @@ $verify = $pdo->prepare('SELECT password_hash FROM admins WHERE id=? AND is_acti
 $verify->execute([$adminId]);
 $hash = (string) $verify->fetchColumn();
 if ($hash === '' || !password_verify($password, $hash)) $archiveJson(['success' => false, 'message' => 'Administrator password is incorrect.'], 403);
-$encryptBackup = static function (string $compressed, string $password): array {
-    if (!function_exists('openssl_encrypt')) throw new RuntimeException('Server encryption support is unavailable.');
-    $salt = random_bytes(16);
-    $nonce = random_bytes(12);
-    $key = hash_pbkdf2('sha256', $password, $salt, 210000, 32, true);
-    $tag = '';
-    $cipher = openssl_encrypt($compressed, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $nonce, $tag, 'MARKAZ-ONLINE-CLASS-ARCHIVE-V1');
-    if ($cipher === false || strlen($tag) !== 16) throw new RuntimeException('Unable to encrypt the backup file.');
-    $file = "MOCBKP1" . $salt . $nonce . $tag . $cipher;
-    return ['payload'=>base64_encode($file),'sha256'=>hash('sha256',$file)];
-};
 if ($action === 'import_device_backup') {
     if ($filePassword === '' || strlen($filePassword) > 4096 || hash_equals($password,$filePassword)) $archiveJson(['success'=>false,'message'=>'Enter the separate backup-file password used when this file was created.'],422);
     $encoded = (string) ($input['file_payload'] ?? '');
@@ -71,16 +61,9 @@ if ($action === 'import_device_backup') {
         $archiveJson(['success'=>false,'message'=>'The backup file is invalid or has been changed.'],422);
     }
     if (!function_exists('openssl_decrypt')) $archiveJson(['success'=>false,'message'=>'Server decryption support is unavailable.'],503);
-    $salt=substr($file,7,16);
-    $nonce=substr($file,23,12);
-    $tag=substr($file,35,16);
-    $cipher=substr($file,51);
-    $key=hash_pbkdf2('sha256',$filePassword,$salt,210000,32,true);
-    $compressed=openssl_decrypt($cipher,'aes-256-gcm',$key,OPENSSL_RAW_DATA,$nonce,$tag,'MARKAZ-ONLINE-CLASS-ARCHIVE-V1');
+    $compressed=onlineClassArchiveDecrypt($file,$filePassword);
     if (!is_string($compressed)) $archiveJson(['success'=>false,'message'=>'The backup password is incorrect or the file is damaged.'],403);
-    $raw=@gzdecode($compressed);
-    try { $payloadData=is_string($raw)?json_decode($raw,true,512,JSON_THROW_ON_ERROR):null; }
-    catch (Throwable $error) { $payloadData=null; }
+    $payloadData=onlineClassArchiveDecode($compressed);
     if (!is_array($payloadData) || ($payloadData['format']??'')!=='markaz-online-class-archive-v1' || !in_array(($payloadData['type']??''),['attendance','results'],true) || (int)($payloadData['level_id']??0)!==$levelId) {
         $archiveJson(['success'=>false,'message'=>'The decrypted backup does not match the selected level or supported archive format.'],422);
     }
@@ -125,7 +108,7 @@ if ($action === 'download') {
     $stmt->execute([$archiveId]);
     $saved=$stmt->fetch(PDO::FETCH_ASSOC);
     if (!$saved || (int)$saved['level_id'] !== $levelId || !hash_equals((string)$saved['payload_sha256'],hash('sha256',(string)$saved['payload']))) $archiveJson(['success'=>false,'message'=>'The selected backup is unavailable or failed its integrity check.'],404);
-    $encrypted=$encryptBackup((string)$saved['payload'],$filePassword);
+    $encrypted=onlineClassArchiveEncrypt((string)$saved['payload'],$filePassword);
     $archiveJson(['success'=>true,'message'=>'Encrypted backup file is ready.','filename'=>'markaz-online-'.$saved['archive_type'].'-archive-'.$archiveId.'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','payload'=>$encrypted['payload'],'sha256'=>$encrypted['sha256']]);
 }
 if (in_array($action, ['clear_attendance', 'clear_results'], true)) {
@@ -185,9 +168,7 @@ try {
         $coverageEnd = null;
         $payloadData = ['format'=>'markaz-online-class-archive-v1','type'=>'results','level_id'=>$levelId,'academic_session'=>$session,'term'=>$term,'is_released'=>$released,'created_at'=>date(DATE_ATOM),'students'=>$students->fetchAll(PDO::FETCH_ASSOC),'results'=>$results->fetchAll(PDO::FETCH_ASSOC)];
     }
-    $raw = json_encode($payloadData, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
-    $compressed = gzencode($raw, 9);
-    if ($compressed === false) throw new RuntimeException('Unable to compress the archive.');
+    $compressed = onlineClassArchiveCompress($payloadData);
     $sha = hash('sha256', $compressed);
     if ($destination === 'online') {
         $insert = $pdo->prepare('INSERT INTO online_class_archives (archive_type,destination,level_id,academic_session,term,record_count,coverage_start,coverage_end,is_released,payload,payload_sha256,created_by) VALUES (?,\'online\',?,?,?,?,?,?,?,?,?,?)');
@@ -197,7 +178,7 @@ try {
         $archiveJson(['success'=>true,'message'=>'Protected online backup saved. It is now listed in Backup Records.','archive_id'=>$archiveId,'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])],201);
     }
     if ($filePassword === '' || strlen($filePassword) > 4096 || hash_equals($password,$filePassword)) throw new RuntimeException('Enter a separate password to encrypt the device backup file.');
-    $encrypted=$encryptBackup($compressed,$filePassword);
+    $encrypted=onlineClassArchiveEncrypt($compressed,$filePassword);
     $pdo->commit();
     $archiveJson(['success'=>true,'message'=>'Encrypted device backup is ready to download. Keep the password safe; the file is not stored online.','filename'=>'markaz-online-'.$type.'-level-'.$levelId.'-'.date('Ymd-His').'-'.bin2hex(random_bytes(3)).'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','sha256'=>$encrypted['sha256'],'payload'=>$encrypted['payload'],'record_count'=>count($type === 'attendance' ? $payloadData['records'] : $payloadData['results'])]);
 } catch (Throwable $error) {
