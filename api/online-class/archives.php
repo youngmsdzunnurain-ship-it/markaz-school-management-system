@@ -61,8 +61,8 @@ $encryptBackup = static function (string $compressed, string $password): array {
 if ($action === 'import_device_backup') {
     $encoded = (string) ($input['file_payload'] ?? '');
     $providedHash = strtolower(trim((string) ($input['file_sha256'] ?? '')));
-    if ($encoded === '' || strlen($encoded) > 28000000 || !preg_match('/^[a-f0-9]{64}$/', $providedHash)) {
-        $archiveJson(['success'=>false,'message'=>'Choose a valid encrypted backup file (maximum 20 MB).'],422);
+    if ($encoded === '' || strlen($encoded) > 7000000 || !preg_match('/^[a-f0-9]{64}$/', $providedHash)) {
+        $archiveJson(['success'=>false,'message'=>'Choose a valid encrypted backup file (maximum 5 MB).'],422);
     }
     $file = base64_decode($encoded, true);
     if (!is_string($file) || strlen($file) < 52 || !hash_equals($providedHash,hash('sha256',$file)) || substr($file,0,7)!=='MOCBKP1') {
