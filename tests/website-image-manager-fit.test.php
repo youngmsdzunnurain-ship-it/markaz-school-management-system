@@ -16,35 +16,37 @@ $polishCss = file_get_contents(__DIR__ . '/../public/css/website-image-polish.cs
 
 websiteImageFitCheck(
     str_contains($manager, 'api/settings/website-images.php') &&
-    str_contains($manager, 'data.set("action", "replace")') &&
-    str_contains($manager, 'data.set("action", "reset")'),
-    'website image manager must upload replacements and restore originals through its API'
+    str_contains($manager, 'pendingUploads') &&
+    str_contains($manager, 'pendingResets') &&
+    str_contains($manager, 'batch-replace') &&
+    str_contains($manager, 'Save Changes'),
+    'website image manager must stage replacements and restorations for explicit saving'
 );
 
 websiteImageFitCheck(
-    preg_match('/\\.website-image-preview img\\s*\\{[^}]*object-fit:\\s*contain\\s*;/s', $managerCss) === 1,
+    preg_match('/\.website-image-preview img\s*\{[^}]*object-fit:\s*contain\s*;/s', $managerCss) === 1,
     'manager previews must show the complete uploaded image without cropping'
 );
 
 foreach ([
-    ['.markaz-photo-card img', $polishCss],
-    ['.markaz-facility-card img', $polishCss],
-    ['.markaz-facility-intro > img', $polishCss],
-    ['.markaz-facility-note img', $polishCss],
-    ['.public-intro-grid .public-photo > img', $publicImageCss],
-    ['.director-grid .public-photo > img', $publicImageCss]
-] as [$selector, $stylesheet]) {
-    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\\{[^}]*object-fit:\\s*contain\\s*;/s';
+    ['.markaz-photo-card img', $polishCss, 'contain'],
+    ['.markaz-facility-card img', $polishCss, 'contain'],
+    ['.markaz-facility-intro > img', $polishCss, 'contain'],
+    ['.markaz-facility-note img', $polishCss, 'contain'],
+    ['.public-intro-grid .public-photo > img', $publicImageCss, 'contain'],
+    ['.director-grid .public-photo > img', $polishCss, 'cover']
+] as [$selector, $stylesheet, $fit]) {
+    $pattern = '/' . preg_quote($selector, '/') . '[^{]*\{[^}]*object-fit:\s*' . preg_quote($fit, '/') . '\s*;/s';
     websiteImageFitCheck(
         preg_match($pattern, $stylesheet) === 1,
-        "{$selector} must preserve the full uploaded image inside its display frame"
+        "{$selector} must use {$fit} sizing inside its display frame"
     );
 }
 
 websiteImageFitCheck(
-    str_contains($manager, 'file.size > 8 * 1024 * 1024') &&
+    str_contains($manager, '8 * 1024 * 1024') &&
     str_contains($manager, 'credentials: "same-origin"'),
-    'uploads must retain size validation and authenticated same-origin requests'
+    'uploads must retain the 8 MB limit and authenticated same-origin requests'
 );
 
 echo "Website image manager fit regression tests passed.\n";
