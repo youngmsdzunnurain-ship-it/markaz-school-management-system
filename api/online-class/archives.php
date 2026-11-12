@@ -69,6 +69,7 @@ if ($action === 'download') {
     $archiveJson(['success'=>true,'message'=>'Encrypted backup file is ready.','filename'=>'markaz-online-'.$saved['archive_type'].'-archive-'.$archiveId.'.mocbackup','mime'=>'application/vnd.markaz.online-class-backup','payload'=>$encrypted['payload'],'sha256'=>$encrypted['sha256']]);
 }
 if (in_array($action, ['clear_attendance', 'clear_results'], true)) {
+    if (($input['confirm_clear'] ?? false) !== true) $archiveJson(['success'=>false,'message'=>'Explicit clear confirmation is required.'],422);
     $typeToClear = $action === 'clear_attendance' ? 'attendance' : 'results';
     $sessionToClear = trim((string) ($input['academic_session'] ?? ''));
     $termToClear = (string) ($input['term'] ?? '');
