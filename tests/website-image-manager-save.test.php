@@ -39,13 +39,14 @@ websiteImageWorkflowCheck(
 );
 
 websiteImageWorkflowCheck(
-    str_contains($manager, 'section.addEventListener("click"') &&
+    str_contains($manager, 'window.addEventListener("click"') &&
     str_contains($manager, 'event.preventDefault();') &&
+    str_contains($manager, 'event.stopImmediatePropagation();') &&
     str_contains($manager, 'void saveChanges();') &&
     str_contains($manager, 'saveButton.disabled = false;') &&
     str_contains($manager, 'id="saveWebsiteImagesButton" aria-disabled="true"') &&
-    !str_contains($manager, 'saveButton.disabled = saving || count === 0'),
-    'Save Changes must remain clickable and use delegated capture handling to invoke the upload workflow'
+    !str_contains($manager, 'section.addEventListener("click"'),
+    'Save Changes must be intercepted at window capture before page-level handlers can swallow the tap'
 );
 
 websiteImageWorkflowCheck(
