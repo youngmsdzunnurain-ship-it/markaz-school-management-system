@@ -34,8 +34,14 @@ publicNavigationAssert(
 );
 
 publicNavigationAssert(
-    preg_match('/link\\.classList\\.toggle\\([\\'"]active[\\'"],\\s*active\\)/', $home) === 1 &&
-    preg_match('/link\\.setAttribute\\([\\'"]aria-current[\\'"],\\s*[\\'"]page[\\'"]\\)/', $home) === 1,
+    (
+        str_contains($home, "link.classList.toggle('active', active)") ||
+        str_contains($home, "link.classList.toggle(\"active\", active)")
+    ) &&
+    (
+        str_contains($home, "link.setAttribute('aria-current', 'page')") ||
+        str_contains($home, "link.setAttribute(\"aria-current\", \"page\")")
+    ),
     'the active navigation indicator must move to the clicked destination immediately'
 );
 
