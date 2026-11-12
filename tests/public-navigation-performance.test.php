@@ -12,6 +12,8 @@ function publicNavigationAssert(bool $condition, string $message): void
 $worker = file_get_contents(__DIR__ . '/../public/sw.js');
 $css = file_get_contents(__DIR__ . '/../public/css/home.css');
 $resilience = file_get_contents(__DIR__ . '/../public/js/public-resilience.js');
+$resilienceCss = file_get_contents(__DIR__ . '/../public/css/public-resilience.css');
+$home = file_get_contents(__DIR__ . '/../public/js/home.js');
 
 publicNavigationAssert(
     str_contains($worker, 'const cached = await cache.match(request)') &&
@@ -26,14 +28,32 @@ publicNavigationAssert(
 );
 
 publicNavigationAssert(
-    str_contains($css, '.main-nav .nav-link[aria-current="page"]') &&
-    str_contains($css, 'view-transition-name: markaz-active-nav'),
-    'active navigation destination must have a visible indicator'
+    !str_contains($css, '@view-transition') &&
+    !str_contains($css, 'view-transition-name: markaz-active-nav'),
+    'cross-document view transitions must not delay public page navigation'
+);
+
+publicNavigationAssert(
+    str_contains($home, 'link.classList.add("active")') &&
+    str_contains($home, 'link.setAttribute("aria-current", "page")'),
+    'the active navigation indicator must move to the clicked destination immediately'
+);
+
+publicNavigationAssert(
+    str_contains($resilienceCss, '#markaz-page-loading') &&
+    str_contains($resilienceCss, 'display: none !important'),
+    'the full-screen loading skeleton must not cover the destination while it loads'
+);
+
+publicNavigationAssert(
+    !str_contains($worker, 'await pages.addAll(Array.from(PUBLIC_PAGES))') &&
+    !str_contains($worker, 'await assets.addAll(CORE_ASSETS)'),
+    'service worker activation must not wait for a full-site cache download'
 );
 
 publicNavigationAssert(
     str_contains($resilience, 'finishPageSkeleton();'),
-    'page loading overlay must be dismissed as soon as the parsed page initializes'
+    'page loading overlay cleanup must remain safe when legacy skeleton markup exists'
 );
 
 echo "Public navigation performance regression checks passed.\n";
