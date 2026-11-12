@@ -70,12 +70,13 @@ if ($action === 'import_device_backup') {
     $type=(string)$payloadData['type'];
     $session=$type==='results'?trim((string)($payloadData['academic_session']??'')):null;
     $term=$type==='results'?(string)($payloadData['term']??''):null;
-    if ($type==='results' && (!preg_match('/^\\d{4}\\/\\d{4}$/',(string)$session) || !in_array($term,$terms,true) || !is_array($payloadData['results']??null))) {
+    if ($type==='results' && (!preg_match('/^\\d{4}\\/\\d{4}$/',(string)$session) || !in_array($term,$terms,true) || !is_array($payloadData['students']??null) || !is_array($payloadData['results']??null))) {
         $archiveJson(['success'=>false,'message'=>'The results backup has invalid academic-period information.'],422);
     }
     if ($type==='attendance' && !is_array($payloadData['records']??null)) $archiveJson(['success'=>false,'message'=>'The attendance backup is incomplete.'],422);
     $rows=$type==='attendance'?$payloadData['records']:$payloadData['results'];
     $coverageStart=null;$coverageEnd=null;
+    foreach($rows as $row){if(!is_array($row))$archiveJson(['success'=>false,'message'=>'The backup contains an invalid record.'],422);if($type==='results'&&!isset($row['student_id']))$archiveJson(['success'=>false,'message'=>'A results backup record is missing its student reference.'],422);}
     if($type==='attendance' && $rows){
         $dates=array_column($rows,'attendance_date');
         foreach($dates as $date){if(!is_string($date)||!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$date))$archiveJson(['success'=>false,'message'=>'The attendance backup contains an invalid date.'],422);}
