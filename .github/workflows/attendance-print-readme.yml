@@ -1,0 +1,42 @@
+name: Attendance print and README checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "public/attendance.html"
+      - "public/css/attendance.css"
+      - "public/js/attendance.js"
+      - "README.md"
+      - "tests/attendance-one-page-print-readme.test.php"
+      - ".github/workflows/attendance-print-readme.yml"
+  push:
+    branches: [main]
+    paths:
+      - "public/attendance.html"
+      - "public/css/attendance.css"
+      - "public/js/attendance.js"
+      - "README.md"
+      - "tests/attendance-one-page-print-readme.test.php"
+      - ".github/workflows/attendance-print-readme.yml"
+
+jobs:
+  attendance-print-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate attendance and README changes
+        run: |
+          set -e
+          php -l tests/attendance-one-page-print-readme.test.php
+          php tests/attendance-validation.test.php
+          php tests/attendance-academic-history.test.php
+          php tests/attendance-one-page-print-readme.test.php
+          node --check public/js/attendance.js
