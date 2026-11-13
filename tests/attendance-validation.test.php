@@ -55,6 +55,7 @@ check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi
 check(str_contains($reportsApi, 'student_count_sql') && str_contains($reportsApi, 'AS student_count'), 'attendance reports provide the active class roster denominator for present-rate charts');
 check(str_contains($reportsApi, 'ar.class_type = ?') && str_contains($reportsApi, 'ar.class_id = c.id'), 'school reports include same-named conventional and Arabic classes independently');
 check(str_contains($reportsApi, '$classParams = [$type, $type, $from, $to];'), 'school-wide attendance report binds exactly the four parameters used by its base SQL query');
+check(str_contains($reportsApi, '$classParams = [$type, $type, $from, $to];'), 'school-wide attendance report binds exactly the four parameters used by its base SQL query');
 check(str_contains($attendanceJs, 'item.class_type === type'), 'attendance class dropdown filters strictly by selected class category');
 check(str_contains($attendanceJs, 'hasSingleAssignedClass') && str_contains($attendanceJs, 'attendanceClassField.hidden = hasSingleAssignedClass'), 'hides the class dropdown when a teacher has exactly one assigned class');
 check(str_contains($attendanceJs, 'Promise.all([periodsReady, loadClasses()])') && str_contains($attendanceJs, 'if (state.role === "teacher" && state.classId)'), 'waits for periods and assignments, then auto-loads the sole teacher class');
