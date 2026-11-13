@@ -10,6 +10,9 @@ function resultPerformanceCheck(bool $condition, string $message): void
 }
 
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
+$saveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
+$classJs = file_get_contents(__DIR__ . '/../public/js/class.js');
+$resultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
 
 resultPerformanceCheck(
     str_contains($studentApi, 'SUM(')
@@ -23,6 +26,21 @@ resultPerformanceCheck(
     str_contains($studentApi, 'COUNT(r.id) AS completed_subjects')
         && str_contains($studentApi, '/ $completedSubjects'),
     'class averages divide the same per-student subject total by that student’s saved subject-row count'
+);
+
+resultPerformanceCheck(
+    str_contains($studentApi, "$studentTotalScore +=")
+        && str_contains($studentApi, "$studentCompletedSubjects++")
+        && str_contains($saveApi, "($ca1 ?? 0)")
+        && str_contains($saveApi, "($ca2 ?? 0)")
+        && str_contains($saveApi, "($exam ?? 0)"),
+    'student average and saved subject total both use the same blank-component-as-zero rule'
+);
+
+resultPerformanceCheck(
+    str_contains($classJs, '(ca1 + ca2 + exam).toFixed(2)')
+        && str_contains($resultJs, 'ca1 + ca2 + exam'),
+    'live class-entry totals and the student result page both add CA1, CA2 and exam'
 );
 
 // Reference cases: these are the same NULL-as-zero semantics used by the
