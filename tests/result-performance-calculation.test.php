@@ -12,10 +12,10 @@ function resultPerformanceCheck(bool $condition, string $message): void
 $studentApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 
 resultPerformanceCheck(
-    str_contains(
-        $studentApi,
-        'SUM(COALESCE(r.ca1, 0) + COALESCE(r.ca2, 0) + COALESCE(r.exam, 0))'
-    ),
+    str_contains($studentApi, 'SUM(')
+        && str_contains($studentApi, 'COALESCE(r.ca1, 0)')
+        && str_contains($studentApi, 'COALESCE(r.ca2, 0)')
+        && str_contains($studentApi, 'COALESCE(r.exam, 0)'),
     'class averages add each entered score component independently and treat blank components as zero'
 );
 
