@@ -564,13 +564,10 @@
             students.map((student) => {
                 const index = state.students.indexOf(student) + 1;
                 const status = student.attendance_status || "";
-                const note = student.remarks
-                    ? '<small class="attendance-print-note">Note: ' + escapeHtml(student.remarks) + '</small>'
-                    : "";
                 return '<article class="attendance-print-entry">' +
                     '<span class="attendance-print-number">' + index + '</span>' +
                     '<span class="attendance-print-student"><strong>' + escapeHtml(fullName(student)) + '</strong>' +
-                    '<small>' + escapeHtml(student.admission_number || "No admission number") + '</small>' + note + '</span>' +
+                    '<small>' + escapeHtml(student.admission_number || "No admission number") + '</small></span>' +
                     '<span class="attendance-print-status status-' + (status || "unmarked") + '">' +
                     statusLabels[status] + '</span>' +
                     '</article>';
