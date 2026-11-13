@@ -29,11 +29,11 @@ resultPerformanceCheck(
 );
 
 resultPerformanceCheck(
-    str_contains($studentApi, "$studentTotalScore +=")
-        && str_contains($studentApi, "$studentCompletedSubjects++")
-        && str_contains($saveApi, "($ca1 ?? 0)")
-        && str_contains($saveApi, "($ca2 ?? 0)")
-        && str_contains($saveApi, "($exam ?? 0)"),
+    str_contains($studentApi, '$studentTotalScore +=')
+        && str_contains($studentApi, '$studentCompletedSubjects++')
+        && str_contains($saveApi, '($ca1 ?? 0)')
+        && str_contains($saveApi, '($ca2 ?? 0)')
+        && str_contains($saveApi, '($exam ?? 0)'),
     'student average and saved subject total both use the same blank-component-as-zero rule'
 );
 
@@ -88,4 +88,4 @@ resultPerformanceCheck(
     'highest and lowest class averages are selected from the complete per-student average set'
 );
 
-echo "Result performance calculation tests passed (5 checks).\\n";
+echo "Result performance calculation tests passed (7 checks).\n";
