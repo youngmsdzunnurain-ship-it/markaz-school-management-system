@@ -69,12 +69,7 @@ foreach ($classDefinitions as $definition) {
               ON ar.class_type = ?
              AND ar.class_id = c.id
              AND ar.attendance_date BETWEEN ? AND ?
-            WHERE c.is_active = 1
-              AND ( ? <> 'conventional' OR NOT EXISTS (
-                  SELECT 1 FROM arabic_classes ac
-                  WHERE ac.is_active = 1
-                    AND LOWER(TRIM(ac.name)) = LOWER(TRIM(c.name))
-              ) )";
+            WHERE c.is_active = 1";
 
     $classParams = [$type, $type, $from, $to, $type];
 
