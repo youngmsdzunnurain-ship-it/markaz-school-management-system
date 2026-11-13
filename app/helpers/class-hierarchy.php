@@ -17,6 +17,8 @@ function markazClassHierarchyRank(array $class): int
             'preschool 1', 'preschool1', 'pre nursery 1', 'prinosgy 1', 'prenursery 1',
             'preschool 2', 'preschool2', 'pre nursery 2', 'prinosgy 2', 'prenursery 2',
             'nursery 1', 'nursery1', 'nursery 2', 'nursery2',
+            'primary 1', 'primary1', 'primary 2', 'primary2', 'primary 3', 'primary3',
+            'primary 4', 'primary4', 'primary 5', 'primary5', 'primary 6', 'primary6',
             'basic 1', 'basic1', 'basic 2', 'basic2', 'basic 3', 'basic3',
             'basic 4', 'basic4', 'basic 5', 'basic5',
             'jss 1', 'jss1', 'js 1', 'js1', 'junior secondary 1',
