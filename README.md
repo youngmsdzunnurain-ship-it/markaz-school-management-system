@@ -106,7 +106,15 @@ The public image manager and website image-storage helper handle managed website
 
 ### Dashboard and operational settings
 
-The management dashboard provides role-aware statistics and progress views. Settings APIs cover areas such as academic periods, result completion/release, account permissions, admin profile, memorization, result footer/signatures, social links, account devices, account freezes and login lockouts.
+The management dashboard provides role-aware statistics and progress views, including:
+
+- School-wide student, class and subject totals, plus academic result-entry completion/progress by class and student.
+- A daily attendance overview for authorised Admin and Management users, showing the selected day's date and a donut breakdown of Present, Absent, Late and Excused records.
+- Separate Conventional and Arabic attendance chart panels, each showing class-level attendance counts and present-rate visualization; the category panels remain visible when there are no saved marks yet.
+- Automatic attendance refresh every 60 seconds and a refresh when the dashboard becomes visible again; chart layout is redrawn when the viewport changes.
+- Role-aware dashboard content: teachers see their permitted workspace, Management sees assigned shortcuts and attendance only when its attendance permission is enabled, and administrative statistics are restricted by role.
+
+The daily dashboard attendance figures come from the school-wide date-range report in `api/attendance/reports.php`; they are not a separate attendance data store. Settings APIs cover areas such as academic periods, result completion/release, account permissions, admin profile, memorization, result footer/signatures, social links, account devices, account freezes and login lockouts.
 
 The dashboard and settings UI are separate from the public website and from the Online Class student portal.
 
@@ -213,7 +221,7 @@ Enter the database password at the prompt. Omit `-p` only when the local databas
 
 ### Database connection
 
-Database connection settings are currently defined in `app/config/database.php`. Review and set the host, port, database name, username and password for the target environment before deployment. Keep production credentials out of Git and out of chat.
+The current repository version defines the database host, port, database name, username and password directly in `app/config/database.php`; the `.env` loader currently supplies application and SMTP settings, not the database connection. Treat these checked-in database values as local-development configuration only. **Before production deployment, move database credentials to private environment configuration (or an equivalent secret store), update the connection helper to read them, and use a dedicated least-privilege database account rather than the MariaDB/MySQL root account.** Never commit production credentials or paste them into chat.
 
 ## Local development setup
 
@@ -377,14 +385,25 @@ Do not expose `.env`, database backups, logs, `vendor/`, or private storage thro
 
 ## Security and data-handling notes
 
-- Use HTTPS in production.
-- Keep database and SMTP credentials private.
-- Use Gmail App Passwords or another supported SMTP credential; never use a normal account password for SMTP.
-- Preserve the application's PHP authorization checks; do not rely on front-end visibility alone.
-- Back up the database before migrations, period finalization or bulk academic-data clearing.
-- Do not manually edit attendance or result rows to bypass application validation.
-- Keep student records and uploaded photographs private and restrict file permissions.
-- Avoid committing local `.env`, database dumps, credentials, student data, or generated backup files.
+The codebase includes server-side role/permission checks, password-hash verification, persistent failed-login lockouts, account-freeze checks, device-block checks, prepared database statements in the documented attendance paths, and protected staff session cookies. These controls are useful safeguards, but they do not replace production hardening and a full security review.
+
+Before production:
+
+- Move database credentials out of `app/config/database.php`; use a dedicated database user with only the privileges the application needs.
+- Serve the application over HTTPS and configure the staff and student session cookies with `Secure`, `HttpOnly` and an appropriate `SameSite` policy. The current session helper sets `HttpOnly` and `SameSite=Lax`, but hard-codes `secure=false`; correct this before HTTPS deployment.
+- Review CSRF protection for every state-changing authenticated API, not only the attendance write flow. Validate same-origin requests or use per-session CSRF tokens where appropriate.
+- Audit every API endpoint for server-side authentication, role, record ownership and class/subject assignment checks. Hiding a link or page in JavaScript is not authorization.
+- Confirm password-reset flows, SMTP credentials, account recovery and administrator access are configured securely; use strong unique passwords and multi-factor authentication for the hosting, database, email and source-control accounts where available.
+- Configure web-server rules to deny access to `.env`, source/configuration files, logs, session storage, backups, SQL dumps and other non-public directories.
+- Validate uploaded file size, actual MIME type, extension, generated filename and storage location; prevent executable uploads and direct public access to private student files.
+- Add and verify suitable security headers (for example, content-type sniffing protection, clickjacking protection and a carefully tested Content Security Policy).
+- Keep PHP, MariaDB/MySQL, Composer dependencies and the hosting operating system patched; review dependency advisories and remove unused packages.
+- Enable reliable off-server database and file backups, restrict backup access, and test restoration periodically.
+- Keep audit trails for sensitive administrative actions and monitor authentication failures, unexpected server errors and privileged account changes.
+- Back up the database before migrations, period finalization or bulk academic-data clearing; test migrations and recovery before production changes.
+- Never commit `.env`, database dumps, credentials, student data, generated backup files or private uploads.
+
+The current staff session helper uses `HttpOnly` and `SameSite=Lax`, but sets the session cookie `secure` flag to `false`. The production deployment must correct this rather than assuming HTTPS alone changes the cookie setting. The general CSRF coverage, security headers, web-server deny rules, upload hardening and production secret handling still require explicit verification; do not treat them as complete based only on this README.
 
 ## Operational documentation
 
