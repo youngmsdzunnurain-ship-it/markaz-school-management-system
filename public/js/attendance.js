@@ -530,6 +530,87 @@
         URL.revokeObjectURL(url);
     }
 
+
+    function renderAttendancePrintSheet() {
+        const sheet = $("attendancePrintSheet");
+        if (!sheet || !state.students.length || !state.classId || !state.date) return;
+
+        const selectedClass = state.classes.find((item) =>
+            item.class_type === state.classType && String(item.id) === String(state.classId)
+        );
+        const selectedPeriod = state.periods.find((item) =>
+            String(item.academic_period_id) === String(state.periodId)
+        );
+        if (!selectedClass || !selectedPeriod) return;
+
+        const summary = { total: state.students.length, present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 };
+        state.students.forEach((student) => {
+            const status = student.attendance_status || "";
+            if (Object.prototype.hasOwnProperty.call(summary, status) && status !== "total") summary[status]++;
+            else summary.unmarked++;
+        });
+
+        const statusLabels = {
+            present: "Present",
+            absent: "Absent",
+            late: "Late",
+            excused: "Excused",
+            "": "Unmarked",
+        };
+        const midpoint = Math.ceil(state.students.length / 2);
+        const columns = [state.students.slice(0, midpoint), state.students.slice(midpoint)];
+        const columnMarkup = columns.map((students, columnIndex) =>
+            '<div class="attendance-print-column" data-print-column="' + (columnIndex + 1) + '">' +
+            students.map((student) => {
+                const index = state.students.indexOf(student) + 1;
+                const status = student.attendance_status || "";
+                return '<article class="attendance-print-entry">' +
+                    '<span class="attendance-print-number">' + index + '</span>' +
+                    '<span class="attendance-print-student"><strong>' + escapeHtml(fullName(student)) + '</strong>' +
+                    '<small>' + escapeHtml(student.admission_number || "No admission number") + '</small></span>' +
+                    '<span class="attendance-print-status status-' + (status || "unmarked") + '">' +
+                    statusLabels[status] + '</span>' +
+                    '</article>';
+            }).join("") +
+            '</div>'
+        ).join("");
+
+        sheet.innerHTML =
+            '<header class="attendance-print-heading">' +
+                '<div><span class="attendance-print-brand">MARKAZ</span>' +
+                '<h1>Daily Attendance Register</h1>' +
+                '<p>Centre for Learning and Memorization of the Glorious Qur’an</p></div>' +
+                '<div class="attendance-print-date"><span>Attendance date</span><strong>' + escapeHtml(formatDate(state.date)) + '</strong></div>' +
+            '</header>' +
+            '<section class="attendance-print-meta">' +
+                '<div><span>Class</span><strong>' + escapeHtml(selectedClass.name) + '</strong></div>' +
+                '<div><span>Category</span><strong>' + (state.classType === "arabic" ? "Arabic" : "Conventional") + '</strong></div>' +
+                '<div><span>Academic period</span><strong>' + escapeHtml(selectedPeriod.label) + '</strong></div>' +
+            '</section>' +
+            '<section class="attendance-print-summary" aria-label="Attendance totals">' +
+                '<span><strong>' + summary.total + '</strong> Total</span>' +
+                '<span><strong>' + summary.present + '</strong> Present</span>' +
+                '<span><strong>' + summary.absent + '</strong> Absent</span>' +
+                '<span><strong>' + summary.late + '</strong> Late</span>' +
+                '<span><strong>' + summary.excused + '</strong> Excused</span>' +
+                '<span><strong>' + summary.unmarked + '</strong> Unmarked</span>' +
+            '</section>' +
+            '<section class="attendance-print-columns" aria-label="Student attendance list">' + columnMarkup + '</section>' +
+            '<footer class="attendance-print-footer">MARKAZ · Daily Attendance · ' + escapeHtml(state.date) + '</footer>';
+    }
+
+    function prepareAttendancePrint() {
+        renderAttendancePrintSheet();
+        const rowsPerColumn = Math.ceil(state.students.length / 2);
+        const estimatedHeight = 145 + (rowsPerColumn * 22);
+        const zoom = state.students.length ? Math.min(1, 1010 / estimatedHeight) : 1;
+        document.documentElement.style.setProperty("--attendance-print-zoom", zoom.toFixed(3));
+    }
+
+    function restoreAttendancePrint() {
+        document.documentElement.style.removeProperty("--attendance-print-zoom");
+    }
+
     function updateDateLabel() {
         els.today.textContent = formatDate(localDateValue());
         els.date.max = localDateValue();
@@ -720,7 +801,13 @@
     els.markAll.addEventListener("click", markAllPresent);
     els.clear.addEventListener("click", clearMarks);
     els.save.addEventListener("click", saveAttendance);
-    els.print.addEventListener("click", () => window.print());
+    els.print.addEventListener("click", () => {
+        if (!state.students.length) return;
+        prepareAttendancePrint();
+        window.print();
+    });
+    window.addEventListener("beforeprint", prepareAttendancePrint);
+    window.addEventListener("afterprint", restoreAttendancePrint);
     els.export.addEventListener("click", exportCsv);
 
     window.addEventListener("beforeunload", (event) => {
