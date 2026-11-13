@@ -17,7 +17,7 @@ The application has two related but distinct areas:
 
 The Online Class module is not the same thing as the school's daily attendance register. The daily attendance feature documented below is the conventional/Arabic school attendance module at `public/attendance.html`.
 
-## Main capabilities
+## Features
 
 ### School and academic administration
 
@@ -125,7 +125,7 @@ The dashboard and settings UI are separate from the public website and from the 
 
 The repository's Composer manifest declares PHP `^8.1` and `phpmailer/phpmailer` `^7.0`. Use a MariaDB/MySQL version compatible with the SQL features and InnoDB constraints used by the schema and migrations.
 
-## Repository layout
+## Architecture and repository layout
 
 ```text
 .
