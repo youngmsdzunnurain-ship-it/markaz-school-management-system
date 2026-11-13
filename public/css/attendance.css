@@ -254,8 +254,8 @@
         grid-template-columns:6mm minmax(0,1fr) 17mm;
         align-items:center;
         gap:1.5mm;
-        min-height:6.2mm;
-        padding:1mm .7mm;
+        min-height:5mm;
+        padding:.25mm .7mm;
         border-bottom:.2mm solid #e5ebe6;
         break-inside:avoid;
         page-break-inside:avoid;
