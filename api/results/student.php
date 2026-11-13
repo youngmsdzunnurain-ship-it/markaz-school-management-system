@@ -494,7 +494,11 @@ try {
         "SELECT
             st.id AS student_id,
             COALESCE(
-                SUM(r.ca1 + r.ca2 + r.exam),
+                SUM(
+                    COALESCE(r.ca1, 0)
+                    + COALESCE(r.ca2, 0)
+                    + COALESCE(r.exam, 0)
+                ),
                 0
             ) AS total_score,
             COUNT(r.id) AS completed_subjects
