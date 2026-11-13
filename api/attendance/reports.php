@@ -71,7 +71,7 @@ foreach ($classDefinitions as $definition) {
              AND ar.attendance_date BETWEEN ? AND ?
             WHERE c.is_active = 1";
 
-    $classParams = [$type, $type, $from, $to, $type];
+    $classParams = [$type, $type, $from, $to];
 
     if ($classType !== '') {
         if ($classType !== $type) {
