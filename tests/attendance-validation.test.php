@@ -41,6 +41,8 @@ check(str_contains($classesApi, 'markazSortAndDeduplicateClasses') && str_contai
 $attendanceJs = file_get_contents(__DIR__ . '/../public/js/attendance.js');
 $ordered = markazSortAndDeduplicateClasses([['id'=>1,'class_type'=>'conventional','name'=>'SS 1','sort_order'=>15],['id'=>2,'class_type'=>'conventional','name'=>'Basic 2','sort_order'=>7],['id'=>3,'class_type'=>'conventional','name'=>'Nursery 1','sort_order'=>4],['id'=>4,'class_type'=>'conventional','name'=>'Primary 1','sort_order'=>3]]);
 check(array_column($ordered, 'name') === ['Nursery 1','Primary 1','Basic 2','SS 1'], 'sorts conventional classes from the lowest to highest level');
+$primaryOrdered = markazSortAndDeduplicateClasses([['id'=>1,'class_type'=>'conventional','name'=>'Basic 1'],['id'=>2,'class_type'=>'conventional','name'=>'Primary 6'],['id'=>3,'class_type'=>'conventional','name'=>'Nursery 2'],['id'=>4,'class_type'=>'conventional','name'=>'Primary 1']]);
+check(array_column($primaryOrdered, 'name') === ['Nursery 2','Primary 1','Primary 6','Basic 1'], 'places the full Primary 1–6 range between Nursery and Basic');
 $arabicOrdered = markazSortAndDeduplicateClasses([['id'=>1,'class_type'=>'arabic','name'=>'Faslu Salis'],['id'=>2,'class_type'=>'arabic','name'=>'Roudoh Awwal'],['id'=>3,'class_type'=>'arabic','name'=>'Faslu Ula']]);
 check(array_column($arabicOrdered, 'name') === ['Roudoh Awwal','Faslu Ula','Faslu Salis'], 'sorts Arabic classes from the lowest to highest level');
 $deduped = markazSortAndDeduplicateClasses([['id'=>8,'class_type'=>'conventional','name'=>'Basic 1'],['id'=>8,'class_type'=>'conventional','name'=>'Basic 1'],['id'=>8,'class_type'=>'arabic','name'=>'Basic 1']]);
