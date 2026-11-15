@@ -58,12 +58,10 @@ function discoverImages(string $publicRoot): array
 
         $key = hash('sha256', $url);
         $filename = strtolower(pathinfo((string) (parse_url($url, PHP_URL_PATH) ?? ''), PATHINFO_FILENAME));
-        // The director has requested that his portrait not appear on the public site or in admin image management.
-        if ($filename === 'director-portrait') return;
         $labels = [
             'markaz-logo' => 'School logo', 'main-building' => 'Main school building',
             'main-building-1920x1080' => 'Main school building', 'second-building' => 'Second school building',
-            'gallery-young-learners' => 'Young learners gallery photo',
+            'director-portrait' => 'Director portrait', 'gallery-young-learners' => 'Young learners gallery photo',
             'gallery-event' => 'School event gallery photo', 'gallery-graduation' => 'Graduation gallery photo'
         ];
         $label = $labels[$filename] ?? (str_starts_with($filename, 'photo-') ? 'School / facility photograph' : 'Website image');
