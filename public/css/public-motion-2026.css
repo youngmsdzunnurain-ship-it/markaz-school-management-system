@@ -246,3 +246,8 @@ html.mk26 img.mk26-img.mk26-img-in {
         text-wrap: balance;
     }
 }
+
+/* Keep inner-page hero headings readable on their dark-green banner. */
+body.public-page .public-page-hero h1 {
+    color: #fff;
+}

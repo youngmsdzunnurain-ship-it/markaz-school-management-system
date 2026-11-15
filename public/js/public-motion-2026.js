@@ -70,7 +70,8 @@
     const imagesInProgress = [];
     Array.from(document.querySelectorAll('main img')).forEach(img => {
         if (img.closest('.building-frame, .header, .footer, .brand')) return;
-        if (img.complete && img.naturalWidth > 0) return;
+        /* Already finished (loaded OR failed): nothing left to wait for. */
+        if (img.complete) return;
         if (window.getComputedStyle(img).filter !== 'none') return; // keep images that already use a filter untouched
 
         img.classList.add('mk26-img');
@@ -82,6 +83,8 @@
         };
         img.addEventListener('load', finish, { once: true });
         img.addEventListener('error', finish, { once: true });
+        /* Safety net: never leave an image blurred if the browser never reports back. */
+        window.setTimeout(() => img.classList.remove('mk26-img', 'mk26-img-in'), 12000);
     });
 
     if (!targets.length && !imagesInProgress.length) return;
