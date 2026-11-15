@@ -246,3 +246,13 @@ html.mk26 img.mk26-img.mk26-img-in {
         text-wrap: balance;
     }
 }
+
+/* --------------------------------------------------------------------------
+   8. Existing bug found during inspection: the title (h1) in the green banner
+      of About, Gallery, FAQ, Facilities and Contact had no colour of its own
+      and fell back to dark green, so it was almost invisible on the dark
+      green banner. (Academics and Admissions already set their own white.)
+   -------------------------------------------------------------------------- */
+body.public-page .public-page-hero h1 {
+    color: #fff;
+}
