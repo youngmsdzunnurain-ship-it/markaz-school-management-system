@@ -1,0 +1,248 @@
+/* ==========================================================================
+   MARKAZ public website — Motion 2026
+   --------------------------------------------------------------------------
+   An ADDITIVE layer. It is loaded last on the public pages and removes
+   nothing from the existing CSS or JS. Delete the <link> and <script> lines
+   that point at public-motion-2026.* and the site returns to exactly how it
+   was before.
+
+   How it stays safe:
+   - Uses the individual `translate` and `scale` properties, so it never
+     fights the `transform` used by the existing card/button hover effects.
+   - Only animates opacity, translate, scale and (briefly) filter, all of
+     which are GPU friendly. Nothing here changes layout.
+   - Scroll reveals only start once public-motion-2026.js has run, so content
+     is always visible if JavaScript fails.
+   - Everything is switched off for visitors who ask for reduced motion.
+   ========================================================================== */
+
+:root {
+    --mk26-ease: cubic-bezier(.22, 1, .36, 1);   /* soft, long settle */
+}
+
+@keyframes mk26-rise {
+    from { opacity: 0; translate: 0 34px; filter: blur(8px); }
+    to   { opacity: 1; translate: 0 0;    filter: blur(0); }
+}
+
+@keyframes mk26-float-in {
+    from { opacity: 0; translate: 0 24px; }
+    to   { opacity: 1; translate: 0 0; }
+}
+
+@keyframes mk26-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes mk26-hero-zoom {
+    from { opacity: 0; scale: 1.12; }
+    to   { opacity: 1; scale: 1; }
+}
+
+@keyframes mk26-menu {
+    from { opacity: 0; translate: 0 -10px; }
+    to   { opacity: 1; translate: 0 0; }
+}
+
+@keyframes mk26-faq {
+    from { opacity: 0; translate: 0 -8px; }
+    to   { opacity: 1; translate: 0 0; }
+}
+
+/* --------------------------------------------------------------------------
+   1. Page-load entrances (pure CSS, so nothing flashes before they run)
+   `backwards` fill: the "from" state shows during the delay and the element
+   returns to its normal styles afterwards, so nothing stays blurred/moved.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+
+    /* Home hero text. The selector is deliberately specific so it also wins
+       over the older 240ms entrance in public-animations.css, and it restates
+       opacity so that older rule cannot hide the text once ours finishes. */
+    html .public-home-page .hero-grid .hero-content > * {
+        opacity: 1;
+        animation: mk26-rise 1100ms var(--mk26-ease) backwards;
+    }
+    html .public-home-page .hero-grid .hero-content > :nth-child(1) { animation-delay: 120ms; }
+    html .public-home-page .hero-grid .hero-content > :nth-child(2) { animation-delay: 260ms; }
+    html .public-home-page .hero-grid .hero-content > :nth-child(3) { animation-delay: 400ms; }
+    html .public-home-page .hero-grid .hero-content > :nth-child(4) { animation-delay: 540ms; }
+    html .public-home-page .hero-grid .hero-content > :nth-child(5) { animation-delay: 680ms; }
+
+    html .public-home-page .hero-established {
+        animation: mk26-fade 1200ms ease 60ms backwards;
+    }
+
+    /* The building photograph settles in slowly. !important is needed only
+       because public-resilience.css forces `animation: none` on loaded images. */
+    html .public-home-page .hero .building-frame img {
+        animation: mk26-hero-zoom 2200ms var(--mk26-ease) backwards !important;
+    }
+
+    html .public-home-page .hero .building-caption {
+        animation: mk26-float-in 1000ms var(--mk26-ease) 800ms backwards;
+    }
+
+    /* Inner-page heroes: About, Academics, Gallery, FAQ, Facilities, Contact, Admissions. */
+    body .public-page-hero .container > *,
+    body .academics-hero-content > * {
+        animation: mk26-rise 1000ms var(--mk26-ease) backwards;
+    }
+    body .public-page-hero .container > :nth-child(1),
+    body .academics-hero-content > :nth-child(1) { animation-delay: 80ms; }
+    body .public-page-hero .container > :nth-child(2),
+    body .academics-hero-content > :nth-child(2) { animation-delay: 200ms; }
+    body .public-page-hero .container > :nth-child(3),
+    body .academics-hero-content > :nth-child(3) { animation-delay: 320ms; }
+    body .public-page-hero .container > :nth-child(4),
+    body .academics-hero-content > :nth-child(4) { animation-delay: 440ms; }
+
+    /* ----------------------------------------------------------------------
+       2. Menus open softly (translate/opacity only, so any existing
+          `transform` positioning on these menus is left alone).
+       ---------------------------------------------------------------------- */
+    .nav-group[open] > .nav-dropdown,
+    .portal-menu.open .portal-dropdown,
+    .portal-menu:focus-within .portal-dropdown {
+        animation: mk26-menu 320ms var(--mk26-ease) backwards;
+    }
+
+    .main-nav.open {
+        animation: mk26-menu 380ms var(--mk26-ease) backwards;
+    }
+
+    /* ----------------------------------------------------------------------
+       3. FAQ answers glide open.
+       ---------------------------------------------------------------------- */
+    html .public-faq-item[open] > :not(summary) {
+        animation: mk26-faq 480ms var(--mk26-ease) backwards;
+    }
+}
+
+/* Newer browsers can also animate the height of the answer itself. Browsers
+   that do not support this simply keep the fade above. */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+    @media (prefers-reduced-motion: no-preference) {
+        :root { interpolate-size: allow-keywords; }
+
+        .public-faq-item::details-content {
+            block-size: 0;
+            overflow: clip;
+            transition: block-size 480ms var(--mk26-ease), content-visibility 480ms allow-discrete;
+        }
+
+        .public-faq-item[open]::details-content {
+            block-size: auto;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. Scroll reveals. The JS adds `mk26` to <html> and `data-mk-r` to the
+      elements, and `mk-in` when each one scrolls into view.
+   -------------------------------------------------------------------------- */
+
+/* Hidden starting state. */
+html.mk26 [data-mk-r] {
+    opacity: 0;
+    translate: 0 38px;
+}
+
+html.mk26 [data-mk-r="zoom"] {
+    translate: 0 24px;
+    scale: .965;
+}
+
+/* Transitions are switched on one frame later (mk26-live) so that tagging an
+   element never animates it "out" first. The hover transitions are repeated
+   here because this rule replaces the shorthand used by the existing cards. */
+html.mk26-live [data-mk-r] {
+    transition:
+        opacity 1000ms var(--mk26-ease) var(--mk-d, 0ms),
+        translate 1000ms var(--mk26-ease) var(--mk-d, 0ms),
+        scale 1100ms var(--mk26-ease) var(--mk-d, 0ms),
+        transform 520ms var(--mk26-ease),
+        box-shadow 520ms var(--mk26-ease),
+        border-color 520ms var(--mk26-ease),
+        background-color 300ms ease;
+}
+
+html.mk26 [data-mk-r].mk-in {
+    opacity: 1;
+    translate: none;
+    scale: none;
+}
+
+/* The older section-level reveal (public-animations.js) would double up with
+   ours, so while the new layer is active it steps aside. If the new script
+   ever fails to load, the older reveal continues to work unchanged. */
+html.mk26.mk-motion-ready [data-mk-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. Images focus in as they finish loading (lazy-loaded ones included).
+      The JS adds `mk26-img` only to images that are still loading, and
+      removes both classes again once the effect is finished.
+   -------------------------------------------------------------------------- */
+html.mk26 img.mk26-img {
+    filter: blur(16px);
+    scale: 1.05;
+    transition:
+        filter 1100ms var(--mk26-ease),
+        scale 1400ms var(--mk26-ease),
+        transform 600ms var(--mk26-ease);
+}
+
+html.mk26 img.mk26-img.mk26-img-in {
+    filter: blur(0);
+    scale: 1;
+}
+
+/* --------------------------------------------------------------------------
+   6. Safety nets.
+   -------------------------------------------------------------------------- */
+@media print {
+    [data-mk-r] {
+        opacity: 1 !important;
+        translate: none !important;
+        scale: none !important;
+        transition: none !important;
+    }
+
+    img.mk26-img {
+        filter: none !important;
+        scale: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-mk-r] {
+        opacity: 1 !important;
+        translate: none !important;
+        scale: none !important;
+        transition: none !important;
+    }
+
+    img.mk26-img {
+        filter: none !important;
+        scale: none !important;
+        transition: none !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   7. Existing bug found during inspection: on phones the About page's
+      "Academic milestones" title is forced onto one line (white-space: nowrap
+      in about-card-polish.css) and pushes the whole page wider than the
+      screen, so the page scrolls sideways. On small screens let it wrap.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .public-about-page .academic-milestones-heading > h2 {
+        white-space: normal;
+        text-wrap: balance;
+    }
+}

@@ -4,16 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#124b32">
-    <meta name="description" content="Learn about MARKAZ, Centre for Learning and Memorization of the Glorious Qur'an, Gwagwalada, Abuja.">
-    <title>About MARKAZ | Knowledge, Faith &amp; Excellence</title>
+    <meta name="description" content="Learn about Markazu Ta’lim Wa Tahfizil Qur’anil Kareem, a Qur’an memorisation and academic learning centre in Gwagwalada, Abuja.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MARKAZ">
+    <meta property="og:title" content="About MARKAZ | Qur’an &amp; Academic Learning in Gwagwalada">
+    <meta property="og:description" content="Learn about Markazu Ta’lim Wa Tahfizil Qur’anil Kareem, a Qur’an memorisation and academic learning centre in Gwagwalada, Abuja.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="About MARKAZ | Qur’an &amp; Academic Learning in Gwagwalada">
+    <meta name="twitter:description" content="Learn about Markazu Ta’lim Wa Tahfizil Qur’anil Kareem, a Qur’an memorisation and academic learning centre in Gwagwalada, Abuja.">
+    <title>About MARKAZ | Qur’an &amp; Academic Learning in Gwagwalada</title>
     <link rel="icon" href="assets/images/markaz-logo.jpg">
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/home.css?v=20261112-fast-navigation2">
     <link rel="stylesheet" href="css/public-pages.css">
-    <script src="js/home.js" defer></script>
+    <script src="js/home.js?v=20261112-fast-navigation1" defer></script>
     <script src="js/markaz-global.js" defer></script>
-    <link rel="stylesheet" href="css/website-image-polish.css">
+    <script src="js/public-animations.js" defer></script>
+    <link rel="stylesheet" href="css/public-interactions.css">
+    <link rel="stylesheet" href="css/public-animations.css">
+    <link rel="stylesheet" href="css/website-image-polish.css?v=20261112-director-frame1">
+    <link rel="stylesheet" href="css/public-design-refinement.css?v=20261112-no-header-gap1">
+    <link rel="stylesheet" href="css/about-card-polish.css">
+    <style>
+        #markaz-page-loading { position: fixed; z-index: 99990; inset: 0; display: grid; align-content: start; gap: 22px; padding: 22px max(20px, calc((100vw - 1120px) / 2)); background: #fff; }
+        html.markaz-page-ready #markaz-page-loading { display: none !important; }
+        .markaz-skeleton { position: relative; overflow: hidden; border-radius: 9px; background: #edf2ee; }
+        .markaz-skeleton::after { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.78) 48%, transparent 76%); content: ""; transform: translateX(-100%); animation: markaz-skeleton-shimmer 1.35s ease-in-out infinite; }
+        @keyframes markaz-skeleton-shimmer { to { transform: translateX(100%); } }
+        @media (prefers-reduced-motion: reduce) { .markaz-skeleton::after { animation: none; } }
+        @media (max-width: 680px) { #markaz-page-loading { gap: 16px; padding: 16px; } }
+    </style>
+    <noscript><style>#markaz-page-loading { display: none !important; }</style></noscript>
+    <script>window.setTimeout(function () { document.documentElement.classList.add("markaz-page-ready"); }, 15000);</script>
+    <link rel="stylesheet" href="css/public-resilience.css?v=20261112-fast-navigation1">
+    <script src="js/public-resilience.js" defer></script>
+    <link rel="stylesheet" href="css/public-motion-2026.css?v=20261115-motion2026">
+    <script src="js/public-motion-2026.js?v=20261115-motion2026" defer></script>
 </head>
-<body class="public-page">
+<body class="public-page public-about-page">
+<div id="markaz-page-loading" role="presentation" aria-hidden="true">
+    <div class="markaz-skeleton-header">
+        <span class="markaz-skeleton markaz-skeleton-logo"></span>
+        <span class="markaz-skeleton markaz-skeleton-brand"></span>
+        <span class="markaz-skeleton markaz-skeleton-nav"></span>
+    </div>
+    <div class="markaz-skeleton-hero">
+        <div class="markaz-skeleton-copy">
+            <span class="markaz-skeleton markaz-skeleton-line short"></span>
+            <span class="markaz-skeleton markaz-skeleton-line title"></span>
+            <span class="markaz-skeleton markaz-skeleton-line"></span>
+            <span class="markaz-skeleton markaz-skeleton-line"></span>
+            <span class="markaz-skeleton markaz-skeleton-line short"></span>
+        </div>
+        <span class="markaz-skeleton markaz-skeleton-image"></span>
+    </div>
+    <div class="markaz-skeleton-cards">
+        <div class="markaz-skeleton-card"><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line short"></span></div>
+        <div class="markaz-skeleton-card"><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line short"></span></div>
+        <div class="markaz-skeleton-card"><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line"></span><span class="markaz-skeleton markaz-skeleton-line short"></span></div>
+    </div>
+</div>
 
 <header class="header">
     <div class="container navbar">
@@ -99,7 +148,7 @@
             </div>
 
             <div class="public-photo" role="img" aria-label="MARKAZ school building photograph">
-                <img src="assets/images/main-building-1920x1080.jpg" alt="MARKAZ school building">
+                <img src="assets/images/main-building-1920x1080.jpg" alt="MARKAZ school building" loading="lazy" decoding="async">
             </div>
         </div>
     </section>
@@ -151,7 +200,7 @@
     <section class="public-section">
         <div class="container director-grid">
             <div class="public-photo" role="img" aria-label="Director’s portrait">
-                <img src="assets/images/director-portrait.jpg" alt="Director of MARKAZ">
+                <img src="assets/images/director-portrait.jpg" alt="Director of MARKAZ" loading="lazy" decoding="async">
             </div>
 
             <div class="public-copy">
@@ -188,7 +237,7 @@
 
     <section class="public-section public-section-soft">
         <div class="container">
-            <div class="public-section-heading">
+            <div class="public-section-heading academic-milestones-heading">
                 <p class="public-eyebrow">Academic milestones</p>
                 <h2>Preparing Learners for Their Next Step</h2>
                 <p>We support learners as they progress through their academic journey while strengthening their Qur'anic learning and Islamic values.</p>
