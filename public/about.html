@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="css/website-image-polish.css?v=20261112-director-frame1">
     <link rel="stylesheet" href="css/public-design-refinement.css?v=20261112-no-header-gap1">
     <link rel="stylesheet" href="css/about-card-polish.css">
+    <link rel="stylesheet" href="css/director-message-polish.css?v=20261115-director-message1">
     <style>
         #markaz-page-loading { position: fixed; z-index: 99990; inset: 0; display: grid; align-content: start; gap: 22px; padding: 22px max(20px, calc((100vw - 1120px) / 2)); background: #fff; }
         html.markaz-page-ready #markaz-page-loading { display: none !important; }
@@ -197,38 +198,49 @@
         </div>
     </section>
 
-    <section class="public-section">
-        <div class="container director-grid">
-            <div class="public-photo" role="img" aria-label="Director’s portrait">
-                <img src="assets/images/director-portrait.jpg" alt="Director of MARKAZ" loading="lazy" decoding="async">
-            </div>
+    <section class="public-section director-message-section" aria-labelledby="director-message-title">
+        <div class="container">
+            <article class="director-message-card">
+                <div class="director-message-heading">
+                    <span class="director-message-emblem" aria-hidden="true">
+                        <svg viewBox="0 0 48 48" focusable="false">
+                            <path d="M8 15.5c6.1-2.1 11.4-1.4 16 2.1 4.6-3.5 9.9-4.2 16-2.1v20c-6.1-2.1-11.4-1.4-16 2.1-4.6-3.5-9.9-4.2-16-2.1z"/>
+                            <path d="M24 17.6v20"/>
+                            <path d="M14 21c2.6-.4 5 .1 7.2 1.3M34 21c-2.6-.4-5 .1-7.2 1.3"/>
+                        </svg>
+                    </span>
+                    <p class="public-eyebrow">Leadership &amp; vision</p>
+                    <h2 id="director-message-title">A Message from Our Director</h2>
+                    <p class="director-message-intro">A warm welcome from the leadership of MARKAZ.</p>
+                </div>
 
-            <div class="public-copy">
-                <p class="public-eyebrow">A message from our director</p>
-                <h2>Welcome to MARKAZ</h2>
-                <blockquote class="public-quote">
-                    Assalamu Alaikum Warahmatullahi Wabarakatuh.
-                    <br><br>
-                    Welcome to MARKAZ, where we are committed to nurturing
-                    learners through the teachings of the Noble Qur’an, sound
-                    Islamic values and quality academic education.
-                    <br><br>
-                    We aim to develop individuals with strong faith, good
-                    character, discipline and respect for others. We value
-                    the partnership of parents and guardians and believe that
-                    working together is essential to every learner’s success.
-                    <br><br>
-                    May Allah bless our efforts, grant our learners beneficial
-                    knowledge, and make the Glorious Qur’an the light of their
-                    hearts. Amin.
-                    <br><br>
-                    Jazakumullahu Khairan.
+                <blockquote class="public-quote director-message-quote">
+                    <p>Assalamu Alaikum Warahmatullahi Wabarakatuh.</p>
+                    <p>
+                        Welcome to MARKAZ, where we are committed to nurturing
+                        learners through the teachings of the Noble Qur’an, sound
+                        Islamic values and quality academic education.
+                    </p>
+                    <p>
+                        We aim to develop individuals with strong faith, good
+                        character, discipline and respect for others. We value
+                        the partnership of parents and guardians and believe that
+                        working together is essential to every learner’s success.
+                    </p>
+                    <p>
+                        May Allah bless our efforts, grant our learners beneficial
+                        knowledge, and make the Glorious Qur’an the light of their
+                        hearts. Amin.
+                    </p>
+                    <p>Jazakumullahu Khairan.</p>
                 </blockquote>
-                <div class="public-signature">
+
+                <div class="public-signature director-message-signature">
+                    <span class="director-signature-rule" aria-hidden="true"></span>
                     <strong>Ustaz Aminullah Adebiyi</strong>
                     <span>Director, MARKAZ</span>
                 </div>
-            </div>
+            </article>
         </div>
     </section>
 
