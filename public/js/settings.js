@@ -2146,7 +2146,7 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
 
     const normalizePhrase = value => String(value || "")
         .trim()
-        .replace(/\\s+/g, " ")
+        .replace(/\s+/g, " ")
         .toUpperCase();
 
     const showDialogMessage = (text, type = "error") => {
