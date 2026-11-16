@@ -557,17 +557,18 @@
             excused: "Excused",
             "": "Unmarked",
         };
-        const midpoint = Math.ceil(state.students.length / 2);
-        const columns = [state.students.slice(0, midpoint), state.students.slice(midpoint)];
-        const columnMarkup = columns.map((students, columnIndex) =>
+        const printLayout = balanceAttendancePrintColumns(state.students);
+        const columnMarkup = printLayout.columns.map((students, columnIndex) =>
             '<div class="attendance-print-column" data-print-column="' + (columnIndex + 1) + '">' +
-            students.map((student) => {
-                const index = state.students.indexOf(student) + 1;
+            students.map(({ student, index }) => {
                 const status = student.attendance_status || "";
+                const note = String(student.remarks || "").trim();
                 return '<article class="attendance-print-entry">' +
-                    '<span class="attendance-print-number">' + index + '</span>' +
+                    '<span class="attendance-print-number">' + (index + 1) + '</span>' +
                     '<span class="attendance-print-student"><strong>' + escapeHtml(fullName(student)) + '</strong>' +
-                    '<small>' + escapeHtml(student.admission_number || "No admission number") + '</small></span>' +
+                    '<small>' + escapeHtml(student.admission_number || "No admission number") + '</small>' +
+                    (note ? '<small class="attendance-print-note">Note: ' + escapeHtml(note) + '</small>' : '') +
+                    '</span>' +
                     '<span class="attendance-print-status status-' + (status || "unmarked") + '">' +
                     statusLabels[status] + '</span>' +
                     '</article>';
@@ -599,11 +600,47 @@
             '<footer class="attendance-print-footer">MARKAZ · Daily Attendance · ' + escapeHtml(state.date) + '</footer>';
     }
 
+    function estimateAttendancePrintHeight(student) {
+        const nameLength = fullName(student).length;
+        const admissionLength = String(student.admission_number || "No admission number").length;
+        const noteLength = String(student.remarks || "").trim().length;
+        const nameLines = Math.max(1, Math.ceil(nameLength / 36));
+        const admissionLines = Math.max(1, Math.ceil(admissionLength / 26));
+        const noteLines = noteLength ? Math.max(1, Math.ceil(noteLength / 60)) : 0;
+        return 22 + (Math.max(nameLines, admissionLines) - 1) * 8 + noteLines * 8;
+    }
+
+    function balanceAttendancePrintColumns(students) {
+        const entryHeights = students.map(estimateAttendancePrintHeight);
+        const totalHeight = entryHeights.reduce((total, height) => total + height, 0);
+        let split = Math.ceil(students.length / 2);
+        let leftHeight = entryHeights.slice(0, split).reduce((total, height) => total + height, 0);
+        let bestDifference = Math.abs(leftHeight - (totalHeight - leftHeight));
+
+        for (let index = 1; index < students.length; index++) {
+            const candidateLeftHeight = entryHeights.slice(0, index).reduce((total, height) => total + height, 0);
+            const candidateRightHeight = totalHeight - candidateLeftHeight;
+            const difference = Math.abs(candidateLeftHeight - candidateRightHeight);
+            if (difference < bestDifference) {
+                split = index;
+                leftHeight = candidateLeftHeight;
+                bestDifference = difference;
+            }
+        }
+
+        const columnHeights = [leftHeight, totalHeight - leftHeight];
+        return {
+            columns: [students.slice(0, split).map((student, index) => ({ student, index })),
+                students.slice(split).map((student, index) => ({ student, index: split + index }))],
+            columnHeights,
+        };
+    }
+
     function prepareAttendancePrint() {
         renderAttendancePrintSheet();
-        const rowsPerColumn = Math.ceil(state.students.length / 2);
-        const estimatedHeight = 145 + (rowsPerColumn * 22);
-        const zoom = state.students.length ? Math.min(1, 1010 / estimatedHeight) : 1;
+        const printLayout = balanceAttendancePrintColumns(state.students);
+        const estimatedHeight = 145 + Math.max(...printLayout.columnHeights);
+        const zoom = state.students.length ? Math.min(1, 1000 / estimatedHeight) : 1;
         document.documentElement.style.setProperty("--attendance-print-zoom", zoom.toFixed(3));
     }
 
