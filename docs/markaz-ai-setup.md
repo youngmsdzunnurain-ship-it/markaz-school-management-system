@@ -31,7 +31,9 @@ MARKAZ_AI_TRANSCRIPTION_MODEL=your_enabled_transcription_model_id
 MARKAZ_AI_BASE_URL=https://api.openai.com/v1
 ```
 
-Voice input is transcribed through the provider's audio-transcription endpoint. Audio is held only in the request and is not written to MARKAZ storage; the transcript is placed in the compose box for the user to review before sending. Microphone access requires browser support and a secure context (HTTPS or localhost).\n\nThe Responses request sets `store: false`. This disables Responses application-state storage for the request; it does not mean the provider has zero abuse-monitoring retention. Review the provider's current data controls and your school's lawful basis/consent before sending identifiable student records to an external AI provider.
+Voice input is transcribed through the provider's audio-transcription endpoint. Audio is held only in the request and is not written to MARKAZ storage; the transcript is placed in the compose box for the user to review before sending. Microphone access requires browser support and a secure context (HTTPS or localhost).
+
+The Responses request sets `store: false`. This disables Responses application-state storage for the request; it does not mean the provider has zero abuse-monitoring retention. Review the provider's current data controls and your school's lawful basis/consent before sending identifiable student records to an external AI provider.
 
 ## Security boundaries
 
