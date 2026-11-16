@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
+require_once __DIR__ . '/../../app/helpers/markaz-ai.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -217,6 +218,26 @@ try {
     }
 
     $pdo->commit();
+
+    try {
+        markazRecordActivity(
+            $pdo,
+            $markedBy,
+            currentAdminRole(),
+            'attendance_register_saved',
+            'class',
+            (int) $classId,
+            [
+                'class_type' => $classType,
+                'attendance_date' => $date,
+                'academic_period_id' => (int) $periodId,
+                'saved_count' => $savedCount,
+                'cleared_count' => $clearedCount
+            ]
+        );
+    } catch (Throwable $auditError) {
+        error_log('MARKAZ attendance activity audit failed: ' . $auditError->getMessage());
+    }
 } catch (Throwable $error) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
