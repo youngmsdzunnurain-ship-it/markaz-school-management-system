@@ -1,6 +1,7 @@
 (() => {
 "use strict";
 const path = location.pathname;
+const isStudentPortal = new URLSearchParams(location.search).get("student_portal") === "1";
 let currentRole = "";
 const loginPathForRole = role => ({
   teacher: "/teacher-login.html",
@@ -60,6 +61,12 @@ const shellAccountPromise = window.markazSettingsAccountPromise
 shellAccountPromise
   .then(({ok, data}) => {
     if (!ok || !data?.success || !data.admin) {
+      if (isStudentPortal) {
+        header.remove();
+        overlay.remove();
+        sidebar.remove();
+        return;
+      }
       location.replace(loginPathForRole(currentRole));
       return;
     }
@@ -143,5 +150,9 @@ activityScript.src = "/js/device-activity.js?v=20261109-device-activity";
 activityScript.dataset.activityRole = "auto";
 activityScript.defer = true;
 document.head.appendChild(activityScript);
+const aiScript = document.createElement("script");
+aiScript.src = "/js/markaz-ai.js?v=20261116-ai1";
+aiScript.defer = true;
+document.head.appendChild(aiScript);
 document.body.classList.add("markaz-management-shell-active");
 })();

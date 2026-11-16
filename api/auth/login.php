@@ -121,7 +121,7 @@ if ($isUsernameLogin) {
 }
 $admin = $accountStmt->fetch(PDO::FETCH_ASSOC);
 
-$roleKey = $admin ? (string) $admin['role'] : ($isUsernameLogin ? 'teacher' : 'staff');
+$roleKey = $admin ? (string) $admin['role'] : $requestedRole;
 $identifier = strtolower($loginIdentifier);
 
 if ($lockoutEnabled) {

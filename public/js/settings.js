@@ -2129,6 +2129,7 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
     });
 })();
 
+
 /* PROTECTED SCHOOL-WIDE ATTENDANCE RESET — Conventional + Arabic daily register only. */
 (() => {
     const button = document.getElementById("clearSchoolAttendanceButton");
