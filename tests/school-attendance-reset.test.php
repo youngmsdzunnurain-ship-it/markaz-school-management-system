@@ -48,7 +48,7 @@ attendanceResetCheck(
     'the Settings UI must call the protected attendance reset endpoint'
 );
 attendanceResetCheck(
-    str_contains($page, 'attendance_records') &&
+    str_contains($page, 'daily attendance') &&
     str_contains($page, 'Conventional and Arabic'),
     'the warning must clearly identify the daily Conventional and Arabic attendance records being removed'
 );
