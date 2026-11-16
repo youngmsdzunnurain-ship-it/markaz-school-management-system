@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/config/app.php';
+require_once __DIR__ . '/../../app/helpers/markaz-ai.php';
 
 requireResultStaff();
 
@@ -339,6 +340,26 @@ try {
     }
 
     $pdo->commit();
+
+    // Log the actor and affected record, but never store score values in the activity feed.
+    try {
+        markazRecordActivity(
+            $pdo,
+            (int) ($_SESSION['admin_id'] ?? 0),
+            currentAdminRole(),
+            $existing ? 'result_updated' : 'result_created',
+            'student',
+            $studentId,
+            [
+                'class_type' => $classType,
+                'class_id' => $classId,
+                'subject_id' => $subjectId,
+                'academic_period_id' => (int) $period['id']
+            ]
+        );
+    } catch (Throwable $auditError) {
+        error_log('MARKAZ activity audit write failed: ' . $auditError->getMessage());
+    }
 
     $total = round(
         ($ca1 ?? 0)

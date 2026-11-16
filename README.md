@@ -422,3 +422,8 @@ The current staff session helper uses `HttpOnly` and `SameSite=Lax`, but sets th
 ## License and ownership
 
 This repository is maintained for the MARKAZ school management project. No open-source license is declared in the repository at the time this README was written; obtain project-owner approval before redistributing or reusing the software.
+
+
+## MARKAZ AI assistant
+
+The role-aware MARKAZ AI foundation, private conversations, review-only result-sheet scanner and Admin activity feed are documented in [docs/markaz-ai-setup.md](docs/markaz-ai-setup.md). The feature requires the database migration and private server-side AI environment settings described there. Do not enable it before applying the migration and configuring the provider key. The assistant is enabled for authenticated Admin, Exam Officer, Teacher and Management staff workspaces. A separate Student Learning Assistant is available only after a student opens their own published result; it is isolated to that verified Student Portal session. Voice dictation is available in both assistants and is transcribed without storing audio files in MARKAZ. Persistent voice-note attachments and cross-role messaging remain separate follow-up work.
