@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/theme-init.js"></script>
+    <link rel="stylesheet" href="css/dark-mode-extras.css?v=20261115-dark1">
+    <script src="js/theme-toggle.js?v=20261115-dark1" defer></script>
     <meta name="theme-color" content="#123d2a">
     <title>Settings | MARKAZ</title>
     <link rel="stylesheet" href="css/global.css">
@@ -310,6 +313,36 @@
                 </dialog>
             </div>
 
+                <div class="academic-reset-notice">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                    <div>
+                        <strong>Permanent attendance data removal</strong>
+                        <p>This clears every record in the school attendance register only. Online Class attendance, student and staff records, classes, results, behavioural assessments, academic sessions, terms and school settings remain untouched.</p>
+                    </div>
+                </div>
+                <button type="button" id="clearSchoolAttendanceButton" class="academic-reset-open-button">
+                    <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+                    Clear All School Attendance
+                </button>
+                <p id="clearSchoolAttendanceMessage" class="form-message" role="status" aria-live="polite"></p>
+
+                <dialog class="academic-finalize-dialog academic-reset-dialog" id="clearSchoolAttendanceDialog" aria-labelledby="clearSchoolAttendanceTitle">
+                    <form id="clearSchoolAttendanceForm">
+                        <span class="settings-label">DANGEROUS ACTION · SENIOR ADMIN ONLY</span>
+                        <h3 id="clearSchoolAttendanceTitle">Clear all school attendance?</h3>
+                        <p>This permanently deletes all daily attendance records across Conventional and Arabic classes, all dates and all academic periods. Online Class attendance and all other school data will remain.</p>
+                        <label for="clearSchoolAttendancePassword">Administrator password</label>
+                        <input type="password" id="clearSchoolAttendancePassword" autocomplete="current-password" required>
+                        <label for="clearSchoolAttendanceConfirmation">Type <strong>CLEAR ALL SCHOOL ATTENDANCE</strong> to confirm</label>
+                        <input type="text" id="clearSchoolAttendanceConfirmation" autocomplete="off" spellcheck="false" required>
+                        <p id="clearSchoolAttendanceDialogMessage" class="form-message" role="status" aria-live="assertive" hidden></p>
+                        <div class="academic-finalize-dialog-actions">
+                            <button type="button" id="cancelClearSchoolAttendance">Cancel</button>
+                            <button type="submit" class="academic-reset-confirm-button">Permanently Clear Attendance</button>
+                        </div>
+                    </form>
+                </dialog>
+
     </section>
 
     <section class="settings-card result-footer-settings-card">
@@ -484,7 +517,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261112-staff-profile-crop4"></script>
+    <script src="js/settings.js?v=20261116-attendance-reset1"></script>
 
     <script src="/js/markaz-global.js"></script>
 

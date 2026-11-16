@@ -2128,3 +2128,113 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicArchive);
         }
     });
 })();
+
+/* PROTECTED SCHOOL-WIDE ATTENDANCE RESET — Conventional + Arabic daily register only. */
+(() => {
+    const button = document.getElementById("clearSchoolAttendanceButton");
+    const dialog = document.getElementById("clearSchoolAttendanceDialog");
+    const form = document.getElementById("clearSchoolAttendanceForm");
+    const password = document.getElementById("clearSchoolAttendancePassword");
+    const confirmation = document.getElementById("clearSchoolAttendanceConfirmation");
+    const cancel = document.getElementById("cancelClearSchoolAttendance");
+    const message = document.getElementById("clearSchoolAttendanceMessage");
+    const dialogMessage = document.getElementById("clearSchoolAttendanceDialogMessage");
+    const submit = form?.querySelector('[type="submit"]');
+
+    if (!button || !dialog || !form || !password || !confirmation || !dialogMessage) return;
+
+    const normalizePhrase = value => String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toUpperCase();
+
+    const showDialogMessage = (text, type = "error") => {
+        dialogMessage.textContent = text;
+        dialogMessage.className = "form-message " + type;
+        dialogMessage.hidden = !text;
+    };
+
+    const closeDialog = () => {
+        if (typeof dialog.close === "function") dialog.close();
+        else dialog.removeAttribute("open");
+        password.value = "";
+        confirmation.value = "";
+        showDialogMessage("");
+        if (submit) submit.disabled = false;
+    };
+
+    button.addEventListener("click", () => {
+        password.value = "";
+        confirmation.value = "";
+        showDialogMessage("");
+        if (message) {
+            message.textContent = "";
+            message.className = "form-message";
+        }
+        if (typeof dialog.showModal === "function") dialog.showModal();
+        else dialog.setAttribute("open", "");
+        password.focus();
+    });
+
+    cancel?.addEventListener("click", closeDialog);
+    confirmation.addEventListener("input", () => showDialogMessage(""));
+    password.addEventListener("input", () => showDialogMessage(""));
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const enteredPassword = password.value;
+        const enteredPhrase = normalizePhrase(confirmation.value);
+
+        if (!enteredPassword) {
+            showDialogMessage("Enter your Senior Admin password to continue.");
+            password.focus();
+            return;
+        }
+        if (enteredPhrase !== "CLEAR ALL SCHOOL ATTENDANCE") {
+            showDialogMessage("The confirmation phrase must read: CLEAR ALL SCHOOL ATTENDANCE. Letter case and extra spaces do not matter.");
+            confirmation.focus();
+            return;
+        }
+
+        if (!window.confirm("FINAL WARNING: Every Conventional and Arabic daily attendance record across all dates and academic periods will be permanently deleted. Online Class attendance and all other school data will remain. Continue?")) return;
+
+        button.disabled = true;
+        if (submit) submit.disabled = true;
+        showDialogMessage("Verifying your password and clearing school attendance…", "info");
+
+        try {
+            const response = await fetch("./api/settings/clear-attendance-data.php", {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({
+                    confirm: true,
+                    password: enteredPassword,
+                    confirmation: enteredPhrase
+                })
+            });
+            const raw = await response.text();
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch {
+                throw new Error(`School attendance reset API returned a non-JSON response (HTTP ${response.status}).`);
+            }
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || `School attendance reset failed (HTTP ${response.status}). No data was cleared unless success is confirmed.`);
+            }
+
+            closeDialog();
+            if (message) {
+                message.textContent = `School attendance cleared: ${Number(data.deleted_count || 0)} daily records removed. Online Class attendance and all other school data were preserved.`;
+                message.className = "form-message success";
+            }
+        } catch (error) {
+            showDialogMessage(error.message || "Unable to clear school attendance. No success was reported.");
+        } finally {
+            button.disabled = false;
+            if (submit) submit.disabled = false;
+        }
+    });
+})();
