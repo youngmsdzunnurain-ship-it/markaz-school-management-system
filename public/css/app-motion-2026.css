@@ -1,0 +1,365 @@
+/* ==========================================================================
+   MARKAZ dashboards and sign-in pages — Motion 2026
+   --------------------------------------------------------------------------
+   ADDITIVE layer, loaded last. It changes nothing in the existing CSS/JS.
+   To switch it off completely, remove the <link> and <script> lines that
+   point at app-motion-2026.* in the HTML pages.
+
+   Rules this file follows (because the dashboards were shaking before):
+   - NO fade or blur on dashboard content that JavaScript fills or re-renders.
+     Content only glides up with `translate`, so it can never flash or vanish.
+   - Only the individual `translate` / `scale` properties are used, so the
+     existing `transform` hover effects are never overridden.
+   - Nothing here changes layout (no width/height/margin/padding changes).
+   - Everything is switched off for reduced-motion visitors and for printing.
+   ========================================================================== */
+
+:root {
+    --mkapp-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes mkapp-rise   { from { translate: 0 16px; }                         to { translate: 0 0; } }
+@keyframes mkapp-slide  { from { translate: -14px 0; }                        to { translate: 0 0; } }
+@keyframes mkapp-pop    { from { translate: 0 12px; scale: .965; }            to { translate: 0 0; scale: 1; } }
+@keyframes mkapp-fade   { from { opacity: 0; }                                to { opacity: 1; } }
+@keyframes mkapp-dialog { from { opacity: 0; translate: 0 18px; scale: .96; } to { opacity: 1; translate: 0 0; scale: 1; } }
+@keyframes mkapp-menu   { from { opacity: 0; translate: 0 -8px; }             to { opacity: 1; translate: 0 0; } }
+@keyframes mkapp-field  { from { opacity: 0; translate: 0 14px; }             to { opacity: 1; translate: 0 0; } }
+@keyframes mkapp-float  { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+@keyframes mkapp-shake  {
+    0%, 100% { translate: 0 0; }
+    18% { translate: -7px 0; } 36% { translate: 6px 0; }
+    54% { translate: -4px 0; } 72% { translate: 3px 0; }
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+
+    /* ----------------------------------------------------------------------
+       1. Dashboards and app pages: content glides up on arrival.
+          (translate only: no fading, so nothing can flash or shake)
+       ---------------------------------------------------------------------- */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :not([hidden]) {
+        animation: mkapp-rise 800ms var(--mkapp-ease) backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(1) { animation-delay: 0ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(2) { animation-delay: 70ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(3) { animation-delay: 140ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(4) { animation-delay: 210ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(5) { animation-delay: 280ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > :nth-child(n+6) { animation-delay: 340ms; }
+
+    /* The four numbers at the top of the dashboard pop in one after another. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card {
+        animation: mkapp-pop 800ms var(--mkapp-ease) backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(1) { animation-delay: 120ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(2) { animation-delay: 220ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(3) { animation-delay: 320ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(4) { animation-delay: 420ms; }
+
+    /* Sidebar links slide in. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :not([hidden]) {
+        animation: mkapp-slide 700ms var(--mkapp-ease) backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(1)  { animation-delay: 40ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(2)  { animation-delay: 80ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(3)  { animation-delay: 120ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(4)  { animation-delay: 160ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(5)  { animation-delay: 200ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(6)  { animation-delay: 240ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(7)  { animation-delay: 280ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(8)  { animation-delay: 320ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar-nav > :nth-child(n+9) { animation-delay: 360ms; }
+
+    /* ----------------------------------------------------------------------
+       2. Interaction feel.
+       ---------------------------------------------------------------------- */
+
+    /* ----------------------------------------------------------------------
+       1b. Dashboard only: the page used to jump while the role was being
+           worked out (sections shown, then hidden for teachers/management).
+           Now the content waits, invisible and in place, until the role is
+           known, then fades up once, already settled. A CSS-only watchdog
+           shows the page after 3.5s even if the role check never finishes.
+       ---------------------------------------------------------------------- */
+    body[data-role-check-pending]:not(.role-access-ready) .page-content,
+    body[data-role-check-pending]:not(.role-access-ready) .sidebar-nav {
+        opacity: 0;
+        animation: mkapp-fade 500ms ease 3500ms both;
+    }
+    body[data-role-check-pending].role-access-ready .page-content,
+    body[data-role-check-pending].role-access-ready .sidebar-nav {
+        animation: mkapp-fade 650ms ease both;
+    }
+
+    /* Teacher class cards arrive after the data loads. */
+    .teacher-assignment-card {
+        animation: mkapp-pop 700ms var(--mkapp-ease) backwards;
+    }
+
+    /* Icons in the sidebar glide when you hover a link. */
+    .sidebar-nav .nav-link > i,
+    .markaz-shell-sidebar nav a > i {
+        transition: translate 320ms var(--mkapp-ease), scale 320ms var(--mkapp-ease);
+    }
+
+    /* Press feedback on buttons and cards that act as buttons. */
+    button:not(:disabled):active,
+    .btn:active,
+    a[class*="button"]:active,
+    .teacher-open-class:active {
+        scale: .97;
+    }
+
+    /* Pop-ups and dialogs open softly (they are shown by removing `hidden`). */
+    .modal-overlay:not([hidden]) {
+        animation: mkapp-fade 240ms ease both;
+    }
+    .modal-overlay:not([hidden]) > * {
+        animation: mkapp-dialog 380ms var(--mkapp-ease) both;
+    }
+
+    /* The profile menu in the top bar opens softly. */
+    .markaz-shell-profile-menu:not([hidden]) {
+        animation: mkapp-menu 260ms var(--mkapp-ease) backwards;
+    }
+
+    /* ----------------------------------------------------------------------
+       4. Sign-in pages (the MARKAZ "book" login). The book itself is not
+          touched; only what happens inside it once it opens.
+       ---------------------------------------------------------------------- */
+    .mk-auth .book.is-open .form-card .card-head,
+    .mk-auth .book.is-open .form-card .field,
+    .mk-auth .book.is-open .form-card .form-row,
+    .mk-auth .book.is-open .form-card .btn,
+    .mk-auth .book.is-open .form-card .card-links {
+        animation: mkapp-field 700ms var(--mkapp-ease) backwards;
+    }
+    .mk-auth .book.is-open .form-card .card-head { animation-delay: 380ms; }
+    .mk-auth .book.is-open .form-card .field:nth-of-type(1) { animation-delay: 460ms; }
+    .mk-auth .book.is-open .form-card .field:nth-of-type(2) { animation-delay: 540ms; }
+    .mk-auth .book.is-open .form-card .field:nth-of-type(3) { animation-delay: 620ms; }
+    .mk-auth .book.is-open .form-card .form-row   { animation-delay: 640ms; }
+    .mk-auth .book.is-open .form-card .btn        { animation-delay: 720ms; }
+    .mk-auth .book.is-open .form-card .card-links { animation-delay: 800ms; }
+
+    /* The emblem on the closed book breathes gently. */
+    .mk-auth .leaf-front .logo-ring {
+        animation: mkapp-float 6s ease-in-out infinite;
+    }
+
+    /* A wrong password gently shakes the message. */
+    .mk-auth .form-message.is-visible.is-error {
+        animation: mkapp-shake 480ms ease-in-out;
+    }
+
+    /* The arrow on the sign-in button nudges forward. */
+    .mk-auth .btn .icon {
+        transition: translate 300ms var(--mkapp-ease);
+    }
+    .mk-auth .btn:hover .icon {
+        translate: 5px 0;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .sidebar-nav .nav-link:hover > i,
+    .markaz-shell-sidebar nav a:hover > i {
+        translate: 3px 0;
+        scale: 1.12;
+    }
+}
+
+/* Numbers that count up keep a steady width so nothing wobbles. */
+.stat-card .stat-main > strong,
+#completeStudents, #incompleteStudents, #noResultStudents, #resultCompletionPercentage,
+.classes-stat-card strong, .summary-card-value, .attendance-summary-card strong,
+.class-summary-card strong, .result-summary-card strong {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   BOOST (v2): much more visible motion, still shake-proof.
+   Only static elements are animated, and only after the dashboard has
+   settled (role known), so nothing can jump. Still translate/scale/rotate/
+   opacity/clip-path only: no layout changes.
+   ========================================================================== */
+@keyframes mkapp-wipe   { from { clip-path: inset(-12px 100% -12px -12px); } to { clip-path: inset(-12px -12px -12px -12px); } }
+@keyframes mkapp-icon   { 0% { rotate: -35deg; scale: .35; } 60% { rotate: 8deg; scale: 1.18; } 100% { rotate: 0deg; scale: 1; } }
+@keyframes mkapp-glow   { 0% { box-shadow: 0 0 0 0 rgba(212,175,55,.55); } 100% { box-shadow: 0 0 0 16px rgba(212,175,55,0); } }
+@keyframes mkapp-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); } 50% { box-shadow: 0 0 0 6px rgba(212,175,55,.16); } }
+@keyframes mkapp-spin-in { from { rotate: -200deg; scale: .4; } to { rotate: 0deg; scale: 1; } }
+@keyframes mkapp-row    { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+@keyframes mkapp-sway   { 0%, 100% { rotate: -4deg; } 50% { rotate: 4deg; } }
+
+@media screen and (prefers-reduced-motion: no-preference) {
+
+    /* Welcome banner: the greeting is wiped in like a signature. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .welcome-content h2 {
+        animation: mkapp-wipe 1100ms var(--mkapp-ease) 250ms backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .welcome-content .eyebrow,
+    body:is(:not([data-role-check-pending]), .role-access-ready) .welcome-content > p {
+        animation: mkapp-rise 900ms var(--mkapp-ease) 450ms backwards;
+    }
+
+    /* Icons spin and bounce into place, then idle very gently. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .stat-icon,
+    body:is(:not([data-role-check-pending]), .role-access-ready) .progress-card-icon {
+        animation: mkapp-icon 900ms cubic-bezier(.34, 1.56, .64, 1) 420ms backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .stats-grid > .stat-card:nth-child(2) .stat-icon { animation-delay: 520ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .stats-grid > .stat-card:nth-child(3) .stat-icon { animation-delay: 620ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .stats-grid > .stat-card:nth-child(4) .stat-icon { animation-delay: 720ms; }
+
+    /* A soft gold ring flashes out of each stat card as it lands. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card {
+        animation: mkapp-pop 800ms var(--mkapp-ease) backwards, mkapp-glow 1200ms ease-out 700ms backwards;
+    }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(1) { animation-delay: 120ms, 800ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(2) { animation-delay: 220ms, 900ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(3) { animation-delay: 320ms, 1000ms; }
+    body:is(:not([data-role-check-pending]), .role-access-ready) .page-content > .stats-grid > .stat-card:nth-child(4) { animation-delay: 420ms, 1100ms; }
+
+    /* Sidebar: the logo spins in, the current page softly breathes. */
+    body:is(:not([data-role-check-pending]), .role-access-ready) .sidebar .brand-logo {
+        animation: mkapp-spin-in 1000ms cubic-bezier(.34, 1.3, .64, 1) 100ms backwards;
+    }
+    .sidebar-nav .nav-link.active {
+        animation: mkapp-breathe 3.6s ease-in-out 1.4s infinite;
+    }
+
+    /* Lists: the first rows of a student table cascade in. */
+    .students-table tbody tr:nth-child(-n+14) {
+        animation: mkapp-row 520ms var(--mkapp-ease) backwards;
+    }
+    .students-table tbody tr:nth-child(2)  { animation-delay: 40ms; }
+    .students-table tbody tr:nth-child(3)  { animation-delay: 80ms; }
+    .students-table tbody tr:nth-child(4)  { animation-delay: 120ms; }
+    .students-table tbody tr:nth-child(5)  { animation-delay: 160ms; }
+    .students-table tbody tr:nth-child(6)  { animation-delay: 200ms; }
+    .students-table tbody tr:nth-child(7)  { animation-delay: 240ms; }
+    .students-table tbody tr:nth-child(8)  { animation-delay: 280ms; }
+    .students-table tbody tr:nth-child(n+9) { animation-delay: 320ms; }
+
+    /* Hover: icons wiggle, cards respond. */
+    .stat-icon, .progress-card-icon {
+        transition: rotate 450ms var(--mkapp-ease), scale 450ms var(--mkapp-ease);
+    }
+
+    /* Sections further down the page glide up as you scroll to them.
+       (translate and scale only, so they are always visible: no flashing.) */
+    html.mkapp .page-content > [data-mkapp-r] {
+        transition: translate 950ms var(--mkapp-ease), scale 950ms var(--mkapp-ease);
+    }
+    html.mkapp .page-content > [data-mkapp-r]:not(.mkapp-in) {
+        translate: 0 46px;
+        scale: .965;
+    }
+
+    /* Sign-in: the moon on the cover rocks gently. */
+    .mk-auth .leaf-front .moon {
+        animation: mkapp-sway 7s ease-in-out infinite;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .stat-card:hover .stat-icon,
+    .progress-card:hover .progress-card-icon {
+        rotate: -9deg;
+        scale: 1.14;
+    }
+}
+
+/* ==========================================================================
+   EVERYWHERE (v3): the same motion on every other page of the system:
+   Classes, Subjects, Class Subjects, Class results, Students, Attendance,
+   Settings, School Fees and the MARKAZ Online workspace.
+   Only fixed page parts animate. The result-entry tables and the attendance
+   register are deliberately left still, because staff type into them and
+   they redraw as you type.
+   ========================================================================== */
+@media screen and (prefers-reduced-motion: no-preference) {
+
+    /* Titles are wiped in. */
+    main h1 { animation: mkapp-wipe 1000ms var(--mkapp-ease) 120ms backwards; }
+
+    /* Page headers and toolbars glide up first. */
+    .classes-toolbar, .students-toolbar, .results-toolbar, .attendance-header, .page-header, .settings-header, .online-toolbar {
+        animation: mkapp-rise 800ms var(--mkapp-ease) 60ms backwards;
+    }
+
+    /* Summary cards pop in one after another. */
+    .classes-stat-card, .class-summary-card, .result-summary-card, .completion-chart-card, .completion-students-card, .attendance-summary-card, .summary-card, .fees-placeholder-card, .online-welcome-card, .management-panel {
+        animation: mkapp-pop 850ms var(--mkapp-ease) backwards;
+    }
+    .classes-stat-card:nth-child(1), .class-summary-card:nth-child(1), .result-summary-card:nth-child(1), .completion-chart-card:nth-child(1), .completion-students-card:nth-child(1), .attendance-summary-card:nth-child(1), .summary-card:nth-child(1), .fees-placeholder-card:nth-child(1), .online-welcome-card:nth-child(1), .management-panel:nth-child(1) { animation-delay: 140ms; }
+    .classes-stat-card:nth-child(2), .class-summary-card:nth-child(2), .result-summary-card:nth-child(2), .completion-chart-card:nth-child(2), .completion-students-card:nth-child(2), .attendance-summary-card:nth-child(2), .summary-card:nth-child(2), .fees-placeholder-card:nth-child(2), .online-welcome-card:nth-child(2), .management-panel:nth-child(2) { animation-delay: 230ms; }
+    .classes-stat-card:nth-child(3), .class-summary-card:nth-child(3), .result-summary-card:nth-child(3), .completion-chart-card:nth-child(3), .completion-students-card:nth-child(3), .attendance-summary-card:nth-child(3), .summary-card:nth-child(3), .fees-placeholder-card:nth-child(3), .online-welcome-card:nth-child(3), .management-panel:nth-child(3) { animation-delay: 320ms; }
+    .classes-stat-card:nth-child(4), .class-summary-card:nth-child(4), .result-summary-card:nth-child(4), .completion-chart-card:nth-child(4), .completion-students-card:nth-child(4), .attendance-summary-card:nth-child(4), .summary-card:nth-child(4), .fees-placeholder-card:nth-child(4), .online-welcome-card:nth-child(4), .management-panel:nth-child(4) { animation-delay: 410ms; }
+    .classes-stat-card:nth-child(5), .class-summary-card:nth-child(5), .result-summary-card:nth-child(5), .completion-chart-card:nth-child(5), .completion-students-card:nth-child(5), .attendance-summary-card:nth-child(5), .summary-card:nth-child(5), .fees-placeholder-card:nth-child(5), .online-welcome-card:nth-child(5), .management-panel:nth-child(5) { animation-delay: 500ms; }
+    .classes-stat-card:nth-child(6), .class-summary-card:nth-child(6), .result-summary-card:nth-child(6), .completion-chart-card:nth-child(6), .completion-students-card:nth-child(6), .attendance-summary-card:nth-child(6), .summary-card:nth-child(6), .fees-placeholder-card:nth-child(6), .online-welcome-card:nth-child(6), .management-panel:nth-child(6) { animation-delay: 590ms; }
+
+    /* Main panels (lists, forms, settings sections) rise in behind the cards. */
+    .classes-panel, .students-panel, .class-panel, .attendance-filter-panel, .attendance-chart-panel, .attendance-register-panel, .subjects-panel, .settings-card, .online-panel {
+        animation: mkapp-rise 900ms var(--mkapp-ease) 260ms backwards;
+    }
+    .classes-panel:nth-child(1), .students-panel:nth-child(1), .class-panel:nth-child(1), .attendance-filter-panel:nth-child(1), .attendance-chart-panel:nth-child(1), .attendance-register-panel:nth-child(1), .subjects-panel:nth-child(1), .settings-card:nth-child(1), .online-panel:nth-child(1) { animation-delay: 260ms; }
+    .classes-panel:nth-child(2), .students-panel:nth-child(2), .class-panel:nth-child(2), .attendance-filter-panel:nth-child(2), .attendance-chart-panel:nth-child(2), .attendance-register-panel:nth-child(2), .subjects-panel:nth-child(2), .settings-card:nth-child(2), .online-panel:nth-child(2) { animation-delay: 370ms; }
+    .classes-panel:nth-child(3), .students-panel:nth-child(3), .class-panel:nth-child(3), .attendance-filter-panel:nth-child(3), .attendance-chart-panel:nth-child(3), .attendance-register-panel:nth-child(3), .subjects-panel:nth-child(3), .settings-card:nth-child(3), .online-panel:nth-child(3) { animation-delay: 480ms; }
+    .classes-panel:nth-child(4), .students-panel:nth-child(4), .class-panel:nth-child(4), .attendance-filter-panel:nth-child(4), .attendance-chart-panel:nth-child(4), .attendance-register-panel:nth-child(4), .subjects-panel:nth-child(4), .settings-card:nth-child(4), .online-panel:nth-child(4) { animation-delay: 590ms; }
+    .classes-panel:nth-child(5), .students-panel:nth-child(5), .class-panel:nth-child(5), .attendance-filter-panel:nth-child(5), .attendance-chart-panel:nth-child(5), .attendance-register-panel:nth-child(5), .subjects-panel:nth-child(5), .settings-card:nth-child(5), .online-panel:nth-child(5) { animation-delay: 700ms; }
+    .classes-panel:nth-child(6), .students-panel:nth-child(6), .class-panel:nth-child(6), .attendance-filter-panel:nth-child(6), .attendance-chart-panel:nth-child(6), .attendance-register-panel:nth-child(6), .subjects-panel:nth-child(6), .settings-card:nth-child(6), .online-panel:nth-child(6) { animation-delay: 810ms; }
+    .classes-panel:nth-child(7), .students-panel:nth-child(7), .class-panel:nth-child(7), .attendance-filter-panel:nth-child(7), .attendance-chart-panel:nth-child(7), .attendance-register-panel:nth-child(7), .subjects-panel:nth-child(7), .settings-card:nth-child(7), .online-panel:nth-child(7) { animation-delay: 920ms; }
+    .classes-panel:nth-child(8), .students-panel:nth-child(8), .class-panel:nth-child(8), .attendance-filter-panel:nth-child(8), .attendance-chart-panel:nth-child(8), .attendance-register-panel:nth-child(8), .subjects-panel:nth-child(8), .settings-card:nth-child(8), .online-panel:nth-child(8) { animation-delay: 1030ms; }
+
+    /* Classes and Subjects lists: rows cascade in. */
+    .classes-table tbody tr:nth-child(-n+14),
+    .table-wrapper tbody tr:nth-child(-n+14) {
+        animation: mkapp-row 520ms var(--mkapp-ease) backwards;
+    }
+    .classes-table tbody tr:nth-child(2), .table-wrapper tbody tr:nth-child(2) { animation-delay: 40ms; }
+    .classes-table tbody tr:nth-child(3), .table-wrapper tbody tr:nth-child(3) { animation-delay: 80ms; }
+    .classes-table tbody tr:nth-child(4), .table-wrapper tbody tr:nth-child(4) { animation-delay: 120ms; }
+    .classes-table tbody tr:nth-child(5), .table-wrapper tbody tr:nth-child(5) { animation-delay: 160ms; }
+    .classes-table tbody tr:nth-child(6), .table-wrapper tbody tr:nth-child(6) { animation-delay: 200ms; }
+    .classes-table tbody tr:nth-child(n+7), .table-wrapper tbody tr:nth-child(n+7) { animation-delay: 240ms; }
+
+    /* Icons on those cards bounce in, then wiggle on hover. */
+    .classes-stat-icon, .summary-icon, .panel-icon {
+        animation: mkapp-icon 900ms cubic-bezier(.34, 1.56, .64, 1) 380ms backwards;
+        transition: rotate 450ms var(--mkapp-ease), scale 450ms var(--mkapp-ease);
+    }
+
+    /* The side menu (phones and every page using the shared header): links slide in each time it opens. */
+    .markaz-shell-sidebar.open nav a {
+        animation: mkapp-slide 520ms var(--mkapp-ease) backwards;
+    }
+    .markaz-shell-sidebar.open nav a:nth-child(1) { animation-delay: 60ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(2) { animation-delay: 100ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(3) { animation-delay: 140ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(4) { animation-delay: 180ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(5) { animation-delay: 220ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(6) { animation-delay: 260ms; }
+    .markaz-shell-sidebar.open nav a:nth-child(n+7) { animation-delay: 300ms; }
+
+    /* Tabs and settings sections that appear when selected glide in. */
+    .online-tab-panel:not([hidden]) {
+        animation: mkapp-rise 520ms var(--mkapp-ease) backwards;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .classes-stat-card:hover .classes-stat-icon,
+    .attendance-summary-card:hover .summary-icon,
+    .summary-card:hover .panel-icon {
+        rotate: -9deg;
+        scale: 1.14;
+    }
+}
+
+@media print {
+    *, *::before, *::after {
+        animation: none !important;
+    }
+}
