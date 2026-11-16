@@ -22,4 +22,8 @@ attendancePrintCheck(str_contains($style, 'grid-template-columns:repeat(2,minmax
 attendancePrintCheck(str_contains($readme, '## Overview') && str_contains($readme, '## Features') && str_contains($readme, '## Architecture') && str_contains($readme, '## Database and migrations') && str_contains($readme, '## Testing') && str_contains($readme, '## Deployment'), 'README documents system purpose, modules, architecture, database, tests and deployment');
 attendancePrintCheck(str_contains($readme, 'Online Class') && str_contains($readme, 'Conventional') && str_contains($readme, 'Arabic') && str_contains($readme, 'attendance') && str_contains($readme, 'result'), 'README covers the core academic, attendance and Online Class workflows');
 
+attendancePrintCheck(str_contains($script, 'function estimateAttendancePrintHeight') && str_contains($script, 'remarks'), 'print scaling accounts for real student-name and note lengths instead of only the roster count');
+attendancePrintCheck(str_contains($script, 'attendance-print-note') && str_contains($script, 'escapeHtml(student.remarks'), 'saved attendance notes are included safely in the printable register');
+attendancePrintCheck(str_contains($script, 'Math.abs(leftHeight - rightHeight)') && str_contains($script, 'Math.max(...columnHeights)'), 'two print columns are split by estimated content height and the tallest column controls page fitting');
+
 echo "Attendance one-page print and README coverage checks passed.\n";
