@@ -58,12 +58,14 @@ $onlineStudentPortal = file_get_contents(__DIR__ . '/../public/online-class-port
 $studentContextApi = file_get_contents(__DIR__ . '/../api/ai/student-context.php');
 $studentConversationsApi = file_get_contents(__DIR__ . '/../api/ai/student-conversations.php');
 $studentTranscribeApi = file_get_contents(__DIR__ . '/../api/ai/student-transcribe.php');
+$studentHistoryApi = file_get_contents(__DIR__ . '/../api/ai/student-history.php');
+$studentDeleteApi = file_get_contents(__DIR__ . '/../api/ai/student-delete-conversation.php');
 $deleteConversation = file_get_contents(__DIR__ . '/../api/ai/delete-conversation.php');
 markazAiCheck(str_contains($helper, 'function markazAiIsStaffRole') && str_contains($helper, "['admin', 'exam_officer', 'teacher', 'management']"), 'Only Admin, Exam Officer, Teacher and Management are permitted staff roles');
 markazAiCheck(str_contains($helper, 'if (!markazAiIsStaffRole($role))'), 'Server-side scope resolver denies all non-staff roles');
 markazAiCheck(!str_contains($widget, 'student-context.php') && !str_contains($widget, 'student-chat.php') && str_contains($widget, '["admin","exam_officer","teacher","management"]'), 'Browser assistant mounts only after a verified staff role response');
 markazAiCheck(!str_contains($onlineStudentPortal, 'markaz-ai.js'), 'Online Class student portal does not load the AI widget');
-foreach ([$studentChat, $studentContextApi, $studentConversationsApi, $studentTranscribeApi] as $studentAiEndpoint) {
+foreach ([$studentChat, $studentContextApi, $studentConversationsApi, $studentTranscribeApi, $studentHistoryApi, $studentDeleteApi] as $studentAiEndpoint) {
     markazAiCheck(str_contains($studentAiEndpoint, 'STUDENT_AI_DISABLED') && str_contains($studentAiEndpoint, 'http_response_code(403)'), 'Every direct student AI endpoint rejects access with HTTP 403');
 }
 markazAiCheck(str_contains($deleteConversation, 'markazAiResolveScope(db()'), 'Conversation deletion also enforces the authorised staff role');
