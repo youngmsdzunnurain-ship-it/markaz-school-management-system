@@ -41,21 +41,21 @@ function mount(account) {
       </button>
       <section class="markaz-ai-panel markaz-ai-chat" role="dialog" aria-modal="false" aria-label="MARKAZ AI assistant" hidden>
         <header class="markaz-ai-header">
-          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>${Verified school data · no-cost mode}</small></div></div>
+          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>Verified school data · no-cost mode</small></div></div>
           <div class="markaz-ai-header-actions"><button type="button" data-ai-new title="New conversation" aria-label="New conversation">＋</button><button type="button" data-ai-close title="Close assistant" aria-label="Close assistant">×</button></div>
         </header>
         <div class="markaz-ai-tabs" role="tablist">
           <button type="button" class="active" data-ai-tab="chat" role="tab" aria-selected="true">Assistant</button>
           <button type="button" data-ai-tab="history" role="tab" aria-selected="false">History</button>
-          <button type="button" data-ai-tab="scan" role="tab" aria-selected="false" ${}>Scan result</button>
+          <button type="button" data-ai-tab="scan" role="tab" aria-selected="false" hidden>Scan result</button>
           <button type="button" data-ai-tab="activity" role="tab" aria-selected="false" hidden>School activity</button>
         </div>
         <div class="markaz-ai-view" data-ai-view="chat">
-          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">${YOUR MARKAZ WORKSPACE}</span><h2>${Your no-cost school assistant}</h2><p>${Ask about the current academic period, your assigned classes, or school information permitted for your account. I use verified MARKAZ records and will tell you when I cannot answer.}</p><div class="markaz-ai-suggestions"><button type="button">${What is the current academic period?}</button><button type="button">${What can you do?}</button></div></div>
+          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">YOUR MARKAZ WORKSPACE</span><h2>Your no-cost school assistant</h2><p>Ask about the current academic period, your assigned classes, or school information permitted for your account. I use verified MARKAZ records and will tell you when I cannot answer.</p><div class="markaz-ai-suggestions"><button type="button">What is the current academic period?</button><button type="button">What can you do?</button></div></div>
           <div class="markaz-ai-messages" aria-live="polite"></div>
           <form class="markaz-ai-compose"><textarea name="message" rows="2" maxlength="4000" placeholder="Message MARKAZ AI…" aria-label="Message MARKAZ AI" required></textarea><button type="button" class="markaz-ai-voice" data-ai-voice aria-label="Voice input unavailable in no-cost mode" title="Voice input unavailable in no-cost mode" hidden>🎙</button><button type="submit" aria-label="Send message">↑</button><small>AI can make mistakes. Verify important school records.</small></form>
         </div>
-        <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>${Only visible to your account}</span></div><div class="markaz-ai-history-list"></div></div>
+        <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>Only visible to your account</span></div><div class="markaz-ai-history-list"></div></div>
         <div class="markaz-ai-view" data-ai-view="scan" hidden>
           <div class="markaz-ai-view-heading"><strong>Result-sheet scanner</strong><span>Draft extraction · review required</span></div>
           <p class="markaz-ai-scan-copy">Upload a clear photo of a result sheet. MARKAZ AI will transcribe visible values and flag unclear cells. Nothing is saved to student results.</p>
