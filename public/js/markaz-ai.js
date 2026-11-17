@@ -1,6 +1,6 @@
 (() => {
 "use strict";
-if (window.markazAiMounted || new URLSearchParams(location.search).get("print") === "1") return;
+if (window.markazAiMounted || new URLSearchParams(location.search).get("print") === "1" || new URLSearchParams(location.search).get("student_portal") === "1") return;
 window.markazAiMounted = true;
 
 const api = async (url, options = {}) => {
