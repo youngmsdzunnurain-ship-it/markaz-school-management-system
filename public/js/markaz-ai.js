@@ -56,7 +56,7 @@ function mount(account, studentMode = false, studentQuery = "") {
       </button>
       <section class="markaz-ai-panel markaz-ai-chat" role="dialog" aria-modal="false" aria-label="MARKAZ AI assistant" hidden>
         <header class="markaz-ai-header">
-          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>${studentMode ? "Your published results · private session" : "School workspace assistant"}</small></div></div>
+          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>${studentMode ? "Published results · private session · no-cost mode" : "Verified school data · no-cost mode"}</small></div></div>
           <div class="markaz-ai-header-actions"><button type="button" data-ai-new title="New conversation" aria-label="New conversation">＋</button><button type="button" data-ai-close title="Close assistant" aria-label="Close assistant">×</button></div>
         </header>
         <div class="markaz-ai-tabs" role="tablist">
@@ -66,9 +66,9 @@ function mount(account, studentMode = false, studentQuery = "") {
           <button type="button" data-ai-tab="activity" role="tab" aria-selected="false" hidden>School activity</button>
         </div>
         <div class="markaz-ai-view" data-ai-view="chat">
-          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">${studentMode ? "YOUR PUBLISHED RESULT" : "YOUR MARKAZ WORKSPACE"}</span><h2>${studentMode ? "Let’s understand your results." : "How can I help?"}</h2><p>${studentMode ? "Ask me to explain your subjects, marks and ways to improve. I can only see the result released to your Student Portal session." : "Ask about your permitted school workflows, results, attendance or next steps."}</p><div class="markaz-ai-suggestions"><button type="button">${studentMode ? "Explain my result and total" : "How do I complete my current task?"}</button><button type="button">${studentMode ? "Which subjects should I practise more?" : "Explain the result-entry process"}</button></div></div>
+          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">${studentMode ? "YOUR PUBLISHED RESULT" : "YOUR MARKAZ WORKSPACE"}</span><h2>${studentMode ? "Let’s understand your results." : "How can I help?"}</h2><p>${studentMode ? "Ask me to explain your published subject results, totals and areas to practise. I can only see the result released to your Student Portal session." : "Ask about the current academic period, your assigned classes, or school information permitted for your account. Answers use verified MARKAZ records; unsupported questions are clearly identified."}</p><div class="markaz-ai-suggestions"><button type="button">${studentMode ? "Explain my result and total" : "How do I complete my current task?"}</button><button type="button">${studentMode ? "Which subjects should I practise more?" : "Explain the result-entry process"}</button></div></div>
           <div class="markaz-ai-messages" aria-live="polite"></div>
-          <form class="markaz-ai-compose"><textarea name="message" rows="2" maxlength="4000" placeholder="Message MARKAZ AI…" aria-label="Message MARKAZ AI" required></textarea><button type="button" class="markaz-ai-voice" data-ai-voice aria-label="Record voice input" title="Record voice input">🎙</button><button type="submit" aria-label="Send message">↑</button><small>AI can make mistakes. Verify important school records.</small></form>
+          <form class="markaz-ai-compose"><textarea name="message" rows="2" maxlength="4000" placeholder="Message MARKAZ AI…" aria-label="Message MARKAZ AI" required></textarea><button type="button" class="markaz-ai-voice" data-ai-voice aria-label="Voice input unavailable in no-cost mode" title="Voice input unavailable in no-cost mode" hidden>🎙</button><button type="submit" aria-label="Send message">↑</button><small>AI can make mistakes. Verify important school records.</small></form>
         </div>
         <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>${studentMode ? "Private to this Student Portal session" : "Only visible to your account"}</span></div><div class="markaz-ai-history-list"></div></div>
         <div class="markaz-ai-view" data-ai-view="scan" hidden>
@@ -108,7 +108,7 @@ function mount(account, studentMode = false, studentQuery = "") {
             scopeSelect.appendChild(option);
         });
     }
-    const launcher = root.querySelector(".markaz-ai-launcher");
+    root.querySelector("[data-ai-tab=scan]").hidden = true;\n    root.querySelector("[data-ai-voice]").hidden = true;\n    const launcher = root.querySelector(".markaz-ai-launcher");
     const panel = root.querySelector(".markaz-ai-panel");
     const status = root.querySelector(".markaz-ai-status");
     const messages = root.querySelector(".markaz-ai-messages");
