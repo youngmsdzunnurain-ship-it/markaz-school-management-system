@@ -4,7 +4,7 @@
 
 MARKAZ AI currently runs in a no-cost, server-side deterministic mode. It does not require an API key, paid model credits, an external AI subscription, or a model installed on the school’s phone.
 
-The staff assistant answers a limited set of questions using live MARKAZ data already filtered by the authenticated account’s role and permissions. The Student Learning Assistant can explain only the published results belonging to the verified Student Portal session. Conversation ownership, rate limits, same-origin checks and audit records remain enforced.
+The assistant is available only to authenticated Admin, Exam Officer, Teacher and Management accounts. Both the conventional Student Portal and Online Class Student Portal are excluded. Student-facing AI endpoints return HTTP 403 even if called directly. Staff answers use live MARKAZ data filtered by the authenticated account’s role and permissions. Conversation ownership, rate limits, same-origin checks and audit records remain enforced.
 
 This mode is intentionally transparent: it does not generate unrestricted answers like a large language model. If a question is outside its supported topics or the required data is unavailable, it says so rather than inventing an answer. It does not edit school records or claim to perform actions.
 
@@ -15,7 +15,7 @@ This mode is intentionally transparent: it does not generate unrestricted answer
 - A teacher’s own server-verified assigned classes, subjects, active-student counts and current-period result-row counts.
 - Attendance figures only where the authenticated role and stored permissions allow them.
 - Current-period result-row counts for roles permitted to analyse results.
-- Student explanations of that student's own published subject marks, totals, average and subjects to practise.
+- Admin summaries of a named teacher’s recorded MARKAZ activity for today, with explicit caveats for unlogged actions and the 500-event safety cap.
 
 The exact answer depends on the current account role and the live data available to that role.
 
@@ -40,10 +40,10 @@ It provides private conversation history and separate staff/student audit tables
 - Teachers receive only their own active assignments and permitted workspace figures.
 - Management receives only the summaries allowed by its individual permissions.
 - Only Admin receives school-wide oversight capabilities.
-- Student answers use only the verified student's own published result context. Another student's information, unpublished results and staff-only data are not included.
+- Student-facing AI is disabled. Its legacy tables remain unused; student endpoints reject access with HTTP 403.
 - Conversation history is isolated to the account or verified Student Portal session.
 - Unsupported questions are not answered with invented records or scores.
-- The assistant cannot write results, change attendance, send messages or perform administrative actions.
+- The assistant cannot write results, change attendance, send messages or perform administrative actions. Image scanning and voice transcription remain disabled until a genuinely no-cost, self-hostable processor can be verified.
 
 ## Future portability
 

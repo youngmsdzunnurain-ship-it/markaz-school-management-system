@@ -6,8 +6,16 @@ declare(strict_types=1);
  * Resolve AI capabilities exclusively from the authenticated account and
  * persisted MARKAZ permissions. Never accept role or scope from the browser.
  */
+function markazAiIsStaffRole(string $role): bool
+{
+    return in_array($role, ['admin', 'exam_officer', 'teacher', 'management'], true);
+}
+
 function markazAiResolveScope(PDO $pdo, int $accountId, string $role): array
 {
+    if (!markazAiIsStaffRole($role)) {
+        throw new RuntimeException('The MARKAZ AI assistant is available to authorised staff accounts only.');
+    }
     $scope = [
         'role' => $role,
         'capabilities' => ['help', 'workspace_guidance'],
@@ -203,6 +211,21 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
                  ORDER BY e.created_at DESC, e.id DESC LIMIT 100'
             );
             $context['school_activity_today'] = $activityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $teacherActivityStmt = $pdo->query(
+                "SELECT e.event_type, e.entity_type, e.created_at,
+                        COALESCE(a.name, e.account_name_snapshot) AS account_name,
+                        e.account_id
+                 FROM markaz_activity_events e
+                 LEFT JOIN admins a ON a.id = e.account_id
+                 WHERE DATE(e.created_at) = CURDATE() AND e.role_snapshot = 'teacher'
+                 ORDER BY e.created_at DESC, e.id DESC LIMIT 500"
+            );
+            $teacherAccountsStmt = $pdo->query(
+                "SELECT id, name FROM admins WHERE role = 'teacher' ORDER BY name"
+            );
+            $context['teacher_accounts_today'] = $teacherAccountsStmt->fetchAll(PDO::FETCH_ASSOC);
+            $context['teacher_activity_today'] = $teacherActivityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $context['teacher_activity_truncated'] = count($context['teacher_activity_today']) >= 500;
             $aiActivityStmt = $pdo->query(
                 'SELECT e.event_type, e.metadata, e.created_at,
                         a.name AS account_name, a.role AS account_role
@@ -424,46 +447,65 @@ function markazAiResolveStudentPortalContext(PDO $pdo): ?array
  * Answer a deliberately limited set of questions from verified MARKAZ data.
  * This is a no-provider, deterministic assistant, not a generative language model.
  */
-function markazAiBuildFreeAnswer(string $message, array $scope, array $context, bool $studentMode = false): string
+function markazAiBuildFreeAnswer(string $message, array $scope, array $context): string
 {
+    $role = (string) ($scope['role'] ?? '');
+    if (!markazAiIsStaffRole($role)) {
+        return 'The MARKAZ AI assistant is available to authorised staff accounts only.';
+    }
+    $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
     $question = strtolower(trim(preg_replace('/\\s+/', ' ', $message) ?? ''));
     $question = preg_replace('/[^a-z0-9 ]/', '', $question) ?? '';
     $has = static fn(array $terms): bool => (bool) array_filter($terms, static fn(string $term): bool => str_contains($question, $term));
 
-    if ($studentMode) {
-        $results = is_array($context['published_results'] ?? null) ? $context['published_results'] : [];
-        if ($has(['hello', 'hi ', 'salam', 'assalamu'])) {
-            return 'Wa alaikum assalam! I can help explain the results published to your Student Portal, identify subjects to practise and explain your scores.';
-        }
-        if (!$results) {
-            return 'I cannot see any published subject results in this Student Portal session yet. Please check with your class teacher or the school office.';
-        }
-        if ($has(['result', 'total', 'score', 'mark', 'subject', 'perform', 'strong', 'weak', 'improve', 'practise', 'practice'])) {
-            $sum = 0.0;
-            $lines = [];
-            $lowest = null;
-            $highest = null;
-            foreach ($results as $row) {
-                $subject = (string) ($row['subject'] ?? 'Subject');
-                $total = (float) ($row['total'] ?? ((float) ($row['ca1'] ?? 0) + (float) ($row['ca2'] ?? 0) + (float) ($row['exam'] ?? 0)));
-                $sum += $total;
-                $lines[] = $subject . ': ' . rtrim(rtrim(number_format($total, 2, '.', ''), '0'), '.') . '/100';
-                if ($lowest === null || $total < $lowest['total']) $lowest = ['subject' => $subject, 'total' => $total];
-                if ($highest === null || $total > $highest['total']) $highest = ['subject' => $subject, 'total' => $total];
-            }
-            $average = $sum / count($results);
-            $answer = 'Here is the result information published for ' . (string) ($context['term'] ?? 'your term') . ' (' . (string) ($context['academic_session'] ?? 'your academic session') . '):' . "\n"
-                . implode("\n", $lines) . "\n"
-                . 'Total across ' . count($results) . ' subjects: ' . rtrim(rtrim(number_format($sum, 2, '.', ''), '0'), '.') . '. Average: ' . number_format($average, 1) . '/100.';
-            if ($highest !== null) $answer .= "\nYour highest subject here is " . $highest['subject'] . ' (' . number_format($highest['total'], 1) . ').';
-            if ($lowest !== null) $answer .= "\nA useful subject to give extra practice time is " . $lowest['subject'] . ' (' . number_format($lowest['total'], 1) . ').';
-            return $answer . "\nKeep practising steadily. If a published mark looks incorrect, speak with your class teacher; I cannot change school results.";
-        }
-        return 'I can explain your published result, subject totals, strongest subject and areas to practise. Ask, for example: “Explain my result” or “Which subject should I practise more?”';
-    }
-
     if ($has(['hello', 'hi ', 'salam', 'assalamu', 'good morning', 'good afternoon'])) {
         return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
+    }
+
+    if ($role === 'admin' && $has(['today']) && $has(['did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
+        $teacherEvents = is_array($context['teacher_activity_today'] ?? null) ? $context['teacher_activity_today'] : [];
+        $teacherAccounts = is_array($context['teacher_accounts_today'] ?? null) ? $context['teacher_accounts_today'] : [];
+        $matchedTeacher = null;
+        foreach ($teacherAccounts as $teacherAccount) {
+            $name = trim((string) ($teacherAccount['name'] ?? ''));
+            if ($name !== '' && stripos($message, $name) !== false) {
+                $matchedTeacher = ['id' => (int) ($teacherAccount['id'] ?? 0), 'name' => $name];
+                break;
+            }
+        }
+        if ($matchedTeacher === null) {
+            return 'I can summarise a teacher’s recorded MARKAZ activity for today. Please include the teacher’s exact staff account name in your question. I will report only actions recorded by MARKAZ, not assume or invent work that was not logged.';
+        }
+        $matchedName = $matchedTeacher['name'];
+        $events = array_values(array_filter($teacherEvents, static function (array $event) use ($matchedTeacher, $matchedName): bool {
+            if ((int) ($event['account_id'] ?? 0) > 0 && $matchedTeacher['id'] > 0) {
+                return (int) $event['account_id'] === $matchedTeacher['id'];
+            }
+            return strcasecmp(trim((string) ($event['account_name'] ?? '')), $matchedName) === 0;
+        }));
+        if (!$events) {
+            return 'I found the staff account for ' . $matchedName . ', but there are no recorded MARKAZ activity events for that teacher today. This does not prove that no work was done; some workflows may not yet record activity.';
+        }
+        $counts = [];
+        $latest = null;
+        foreach ($events as $event) {
+            $type = (string) ($event['event_type'] ?? 'recorded_activity');
+            $counts[$type] = ($counts[$type] ?? 0) + 1;
+            if ($latest === null || (string) ($event['created_at'] ?? '') > (string) ($latest['created_at'] ?? '')) $latest = $event;
+        }
+        arsort($counts);
+        $parts = [];
+        foreach ($counts as $type => $count) {
+            $label = ucwords(str_replace('_', ' ', $type));
+            $parts[] = $label . ' (' . $count . ')';
+        }
+        $answer = 'Recorded MARKAZ activity for ' . $matchedName . ' today: ' . count($events) . ' logged event(s). ' . implode('; ', $parts) . '.';
+        if ($latest && !empty($latest['created_at'])) {
+            $answer .= ' Most recent recorded event: ' . (string) $latest['event_type'] . ' at ' . (string) $latest['created_at'] . '.';
+        }
+        $answer .= ' This summary covers recorded MARKAZ activity only; it is not a complete measure of all work performed.';
+        if (!empty($context['teacher_activity_truncated'])) $answer .= ' The activity feed reached its 500-event safety limit, so older events may be omitted.';
+        return $answer;
     }
 
     if ($has(['help', 'what can you do', 'what do you do'])) {
@@ -478,8 +520,6 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
         return 'The current academic period is ' . $period['term'] . ' of ' . $period['session'] . '. Results are ' . (!empty($period['results_released']) ? 'released' : 'not yet released') . ', and the period is ' . (!empty($period['finalized']) ? 'finalized' : 'not finalized') . '.';
     }
 
-    $role = (string) ($scope['role'] ?? '');
-    $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
     if ($role === 'teacher' && $has(['how many students', 'student count', 'number of students', 'class size', 'how many learners'])) {
         $workspaces = $context['assigned_workspaces'] ?? [];
         if (!$workspaces) return 'No active assigned class workspace is available for your account.';

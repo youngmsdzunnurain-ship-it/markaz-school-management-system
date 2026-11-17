@@ -42,16 +42,30 @@ $managementScope = ['role' => 'management', 'capabilities' => ['help'], 'assignm
 $managementAnswer = markazAiBuildFreeAnswer('How many active students?', $managementScope, $adminContext);
 markazAiFreeCheck(str_contains($managementAnswer, 'not available') || str_contains($managementAnswer, 'not permitted'), 'Management cannot receive Admin-only school overview');
 
-$studentContext = [
-    'student_name' => 'Test Student', 'class_name' => 'JSS 1',
-    'academic_session' => '2026/2027', 'term' => 'First Term',
-    'published_results' => [
-        ['subject' => 'English', 'ca1' => 15, 'ca2' => 16, 'exam' => 50, 'total' => 81],
-        ['subject' => 'Mathematics', 'ca1' => 10, 'ca2' => 12, 'exam' => 30, 'total' => 52]
-    ]
+$teacherActivityContext = [
+    'teacher_accounts_today' => [['id' => 21, 'name' => 'Amina Yusuf'], ['id' => 22, 'name' => 'Other Teacher']],
+    'teacher_activity_today' => [
+        ['account_name' => 'Amina Yusuf', 'event_type' => 'result_updated', 'created_at' => date('Y-m-d') . ' 10:15:00', 'entity_type' => 'result'],
+        ['account_name' => 'Amina Yusuf', 'event_type' => 'attendance_register_saved', 'created_at' => date('Y-m-d') . ' 11:30:00', 'entity_type' => 'attendance'],
+        ['account_name' => 'Other Teacher', 'event_type' => 'result_updated', 'created_at' => date('Y-m-d') . ' 12:00:00', 'entity_type' => 'result']
+    ],
+    'teacher_activity_truncated' => false
 ];
-$studentAnswer = markazAiBuildFreeAnswer('Explain my result', ['role' => 'student', 'capabilities' => [], 'assignments' => [], 'permissions' => []], $studentContext, true);
-markazAiFreeCheck(str_contains($studentAnswer, 'English') && str_contains($studentAnswer, '81') && str_contains($studentAnswer, 'Mathematics') && str_contains($studentAnswer, '52'), 'student result explanation uses only the published personal result context');
+$teacherActivityAnswer = markazAiBuildFreeAnswer('Summarize what Amina Yusuf did today', $adminScope, $teacherActivityContext);
+markazAiFreeCheck(str_contains($teacherActivityAnswer, 'Amina Yusuf') && str_contains($teacherActivityAnswer, 'Result Updated (1)') && str_contains($teacherActivityAnswer, 'Attendance Register Saved (1)'), 'Admin receives a summary of only the named teacher recorded activity');
+$noActivityContext = [
+    'teacher_accounts_today' => [['id' => 21, 'name' => 'Amina Yusuf']],
+    'teacher_activity_today' => [],
+    'teacher_activity_truncated' => false
+];
+$noActivityAnswer = markazAiBuildFreeAnswer('What did Amina Yusuf do today?', $adminScope, $noActivityContext);
+markazAiFreeCheck(str_contains($noActivityAnswer, 'no recorded MARKAZ activity events'), 'Admin can distinguish a known teacher with no logged events from an unknown teacher');
+
+$missingTeacherAnswer = markazAiBuildFreeAnswer('Summarize what an unknown teacher did today', $adminScope, $teacherActivityContext);
+markazAiFreeCheck(str_contains($missingTeacherAnswer, 'exact staff account name'), 'Admin is asked for exact teacher identity when no recorded teacher matches');
+
+$studentAnswer = markazAiBuildFreeAnswer('Explain my result', ['role' => 'student', 'capabilities' => [], 'assignments' => [], 'permissions' => []], []);
+markazAiFreeCheck(str_contains($studentAnswer, 'staff accounts only'), 'student role is rejected by the assistant answer engine');
 
 $adminAttendance = markazAiBuildFreeAnswer('How many students were present today?', $adminScope, [
     'current_academic_period' => $adminContext['current_academic_period'],
