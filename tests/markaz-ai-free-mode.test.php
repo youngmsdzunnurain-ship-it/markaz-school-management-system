@@ -60,6 +60,9 @@ $adminAttendance = markazAiBuildFreeAnswer('How many students were present today
 ]);
 markazAiFreeCheck(str_contains($adminAttendance, 'present 90') && str_contains($adminAttendance, 'absent 10'), 'Admin attendance answers use the recorded daily attendance summary');
 
+$studentWorkflowAnswer = markazAiBuildFreeAnswer('How do I add a student?', $adminScope, $adminContext);
+markazAiFreeCheck(!str_contains($studentWorkflowAnswer, '120'), 'student workflow questions are not misclassified as school headcount requests');
+
 $unknownAnswer = markazAiBuildFreeAnswer('Write a poem about the moon', $adminScope, $adminContext);
 markazAiFreeCheck(str_contains($unknownAnswer, 'cannot answer that reliably'), 'unsupported questions receive an honest limitation instead of invented content');
 
