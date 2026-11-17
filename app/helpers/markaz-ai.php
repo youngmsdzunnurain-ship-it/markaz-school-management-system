@@ -452,7 +452,7 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
         return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
     }
 
-    if ($role === 'admin' && $has(['teacher', 'staff']) && $has(['today', 'did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
+    if ($role === 'admin' && $has(['today']) && $has(['did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
         $teacherEvents = is_array($context['teacher_activity_today'] ?? null) ? $context['teacher_activity_today'] : [];
         $matchedName = null;
         foreach ($teacherEvents as $event) {
