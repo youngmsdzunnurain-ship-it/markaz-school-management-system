@@ -6,8 +6,16 @@ declare(strict_types=1);
  * Resolve AI capabilities exclusively from the authenticated account and
  * persisted MARKAZ permissions. Never accept role or scope from the browser.
  */
+function markazAiIsStaffRole(string $role): bool
+{
+    return in_array($role, ['admin', 'exam_officer', 'teacher', 'management'], true);
+}
+
 function markazAiResolveScope(PDO $pdo, int $accountId, string $role): array
 {
+    if (!markazAiIsStaffRole($role)) {
+        throw new RuntimeException('The MARKAZ AI assistant is available to authorised staff accounts only.');
+    }
     $scope = [
         'role' => $role,
         'capabilities' => ['help', 'workspace_guidance'],
@@ -188,6 +196,12 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
             $context['workspace_summary']['result_rows_in_current_period'] = (int) $resultStmt->fetchColumn();
         }
         if ($role === 'admin') {
+            $attendanceStmt = $pdo->query(
+                'SELECT COUNT(*) AS marked, SUM(status = "present") AS present_count,
+                        SUM(status = "absent") AS absent_count, SUM(status = "late") AS late_count
+                 FROM attendance_records WHERE attendance_date = CURDATE()'
+            );
+            $context['workspace_summary']['today_attendance'] = $attendanceStmt->fetch(PDO::FETCH_ASSOC) ?: [];
             $activityStmt = $pdo->query(
                 'SELECT e.event_type, e.entity_type, e.entity_id, e.metadata, e.created_at,
                         COALESCE(a.name, e.account_name_snapshot) AS account_name, e.role_snapshot AS account_role
@@ -197,6 +211,21 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
                  ORDER BY e.created_at DESC, e.id DESC LIMIT 100'
             );
             $context['school_activity_today'] = $activityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $teacherActivityStmt = $pdo->query(
+                "SELECT e.event_type, e.entity_type, e.created_at,
+                        COALESCE(a.name, e.account_name_snapshot) AS account_name,
+                        e.account_id
+                 FROM markaz_activity_events e
+                 LEFT JOIN admins a ON a.id = e.account_id
+                 WHERE DATE(e.created_at) = CURDATE() AND e.role_snapshot = 'teacher'
+                 ORDER BY e.created_at DESC, e.id DESC LIMIT 500"
+            );
+            $teacherAccountsStmt = $pdo->query(
+                "SELECT id, name FROM admins WHERE role = 'teacher' ORDER BY name"
+            );
+            $context['teacher_accounts_today'] = $teacherAccountsStmt->fetchAll(PDO::FETCH_ASSOC);
+            $context['teacher_activity_today'] = $teacherActivityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $context['teacher_activity_truncated'] = count($context['teacher_activity_today']) >= 500;
             $aiActivityStmt = $pdo->query(
                 'SELECT e.event_type, e.metadata, e.created_at,
                         a.name AS account_name, a.role AS account_role
@@ -411,4 +440,154 @@ function markazAiResolveStudentPortalContext(PDO $pdo): ?array
             'published_results' => $resultsStmt->fetchAll(PDO::FETCH_ASSOC)
         ]
     ];
+}
+
+
+/**
+ * Answer a deliberately limited set of questions from verified MARKAZ data.
+ * This is a no-provider, deterministic assistant, not a generative language model.
+ */
+function markazAiBuildFreeAnswer(string $message, array $scope, array $context): string
+{
+    $role = (string) ($scope['role'] ?? '');
+    if (!markazAiIsStaffRole($role)) {
+        return 'The MARKAZ AI assistant is available to authorised staff accounts only.';
+    }
+    $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
+    $question = strtolower(trim(preg_replace('/\\s+/', ' ', $message) ?? ''));
+    $question = preg_replace('/[^a-z0-9 ]/', '', $question) ?? '';
+    $has = static fn(array $terms): bool => (bool) array_filter($terms, static fn(string $term): bool => str_contains($question, $term));
+
+    if ($has(['hello', 'hi ', 'salam', 'assalamu', 'good morning', 'good afternoon'])) {
+        return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
+    }
+
+    if ($role === 'admin' && $has(['today']) && $has(['did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
+        $teacherEvents = is_array($context['teacher_activity_today'] ?? null) ? $context['teacher_activity_today'] : [];
+        $teacherAccounts = is_array($context['teacher_accounts_today'] ?? null) ? $context['teacher_accounts_today'] : [];
+        $matchedTeacher = null;
+        foreach ($teacherAccounts as $teacherAccount) {
+            $name = trim((string) ($teacherAccount['name'] ?? ''));
+            if ($name !== '' && stripos($message, $name) !== false) {
+                $matchedTeacher = ['id' => (int) ($teacherAccount['id'] ?? 0), 'name' => $name];
+                break;
+            }
+        }
+        if ($matchedTeacher === null) {
+            return 'I can summarise a teacher’s recorded MARKAZ activity for today. Please include the teacher’s exact staff account name in your question. I will report only actions recorded by MARKAZ, not assume or invent work that was not logged.';
+        }
+        $matchedName = $matchedTeacher['name'];
+        $events = array_values(array_filter($teacherEvents, static function (array $event) use ($matchedTeacher, $matchedName): bool {
+            if ((int) ($event['account_id'] ?? 0) > 0 && $matchedTeacher['id'] > 0) {
+                return (int) $event['account_id'] === $matchedTeacher['id'];
+            }
+            return strcasecmp(trim((string) ($event['account_name'] ?? '')), $matchedName) === 0;
+        }));
+        if (!$events) {
+            return 'I found the staff account for ' . $matchedName . ', but there are no recorded MARKAZ activity events for that teacher today. This does not prove that no work was done; some workflows may not yet record activity.';
+        }
+        $counts = [];
+        $latest = null;
+        foreach ($events as $event) {
+            $type = (string) ($event['event_type'] ?? 'recorded_activity');
+            $counts[$type] = ($counts[$type] ?? 0) + 1;
+            if ($latest === null || (string) ($event['created_at'] ?? '') > (string) ($latest['created_at'] ?? '')) $latest = $event;
+        }
+        arsort($counts);
+        $parts = [];
+        foreach ($counts as $type => $count) {
+            $label = ucwords(str_replace('_', ' ', $type));
+            $parts[] = $label . ' (' . $count . ')';
+        }
+        $answer = 'Recorded MARKAZ activity for ' . $matchedName . ' today: ' . count($events) . ' logged event(s). ' . implode('; ', $parts) . '.';
+        if ($latest && !empty($latest['created_at'])) {
+            $answer .= ' Most recent recorded event: ' . (string) $latest['event_type'] . ' at ' . (string) $latest['created_at'] . '.';
+        }
+        $answer .= ' This summary covers recorded MARKAZ activity only; it is not a complete measure of all work performed.';
+        if (!empty($context['teacher_activity_truncated'])) $answer .= ' The activity feed reached its 500-event safety limit, so older events may be omitted.';
+        return $answer;
+    }
+
+    if ($has(['help', 'what can you do', 'what do you do'])) {
+        return 'I can explain MARKAZ workflows and answer selected questions from verified information available to your role. Examples include the current academic period, assigned teacher workspaces, and permitted school or attendance summaries. I cannot edit records, send messages, scan documents or answer general open-ended questions in this no-cost mode.';
+    }
+
+    if ($has(['term', 'academic period', 'school session', 'current session', 'current period'])) {
+        $period = $context['current_academic_period'] ?? null;
+        if (!is_array($period) || empty($period['session']) || empty($period['term'])) {
+            return 'MARKAZ does not currently have a complete academic period marked as current. Please ask an authorised Admin to check Academic Period settings.';
+        }
+        return 'The current academic period is ' . $period['term'] . ' of ' . $period['session'] . '. Results are ' . (!empty($period['results_released']) ? 'released' : 'not yet released') . ', and the period is ' . (!empty($period['finalized']) ? 'finalized' : 'not finalized') . '.';
+    }
+
+    if ($role === 'teacher' && $has(['how many students', 'student count', 'number of students', 'class size', 'how many learners'])) {
+        $workspaces = $context['assigned_workspaces'] ?? [];
+        if (!$workspaces) return 'No active assigned class workspace is available for your account.';
+        $lines = [];
+        foreach ($workspaces as $workspace) {
+            $lines[] = (string) ($workspace['class_name'] ?? 'Assigned class') . ': ' . (int) ($workspace['active_student_count'] ?? 0) . ' active students.';
+        }
+        return "Active student counts in your assigned classes only:\n" . implode("\n", $lines);
+    }
+
+    if (!$has(['attendance', 'present', 'absent', 'late']) && $has(['enrolment count', 'enrollment count', 'school overview', 'how many students', 'active students', 'number of students', 'school population', 'class count', 'how many classes'])) {
+        if (!in_array('school_overview', $capabilities, true)) {
+            return 'That school-wide overview is not available to your account role. I can only provide information permitted for your MARKAZ account.';
+        }
+        $summary = $context['workspace_summary'] ?? [];
+        $students = $summary['active_students'] ?? null;
+        if ($students === null) return 'The active-student count is not available in the current school context.';
+        return 'MARKAZ currently has ' . (int) $students . ' active students. There are ' . (int) ($summary['active_conventional_classes'] ?? 0) . ' active Conventional classes and ' . (int) ($summary['active_arabic_classes'] ?? 0) . ' active Arabic classes.';
+    }
+
+    if ($has(['assigned class', 'my class', 'my classes', 'assignment', 'assigned subject', 'my subject'])) {
+        if ($role !== 'teacher') return 'Assigned teacher class details are only available in the Teacher workspace.';
+        $workspaces = $context['assigned_workspaces'] ?? [];
+        if (!$workspaces) return 'No active class workspaces were found for your current teacher assignments. Please ask the Admin to review your assignments.';
+        $lines = [];
+        foreach ($workspaces as $workspace) {
+            $subjects = implode(', ', array_map('strval', $workspace['subjects'] ?? []));
+            $lines[] = (string) ($workspace['class_name'] ?? 'Assigned class') . ' (' . (string) ($workspace['class_type'] ?? 'class') . ') — subjects: ' . ($subjects !== '' ? $subjects : 'not listed') . '; active students: ' . (int) ($workspace['active_student_count'] ?? 0) . '; current-period result rows: ' . (int) ($workspace['result_rows_current_period'] ?? 0);
+        }
+        return "Your server-verified assigned workspaces:\n" . implode("\n", $lines);
+    }
+
+    if ($has(['attendance', 'present', 'absent', 'late'])) {
+        if ($role === 'teacher') {
+            if (!in_array('assigned_attendance_guidance', $capabilities, true)) {
+                return 'Attendance figures are not available because your account does not currently have the attendance-record permission.';
+            }
+            $lines = [];
+            foreach (($context['assigned_workspaces'] ?? []) as $workspace) {
+                if (!isset($workspace['today_attendance'])) continue;
+                $counts = $workspace['today_attendance'];
+                $lines[] = (string) $workspace['class_name'] . ': marked ' . (int) ($counts['marked'] ?? 0) . ', present ' . (int) ($counts['present_count'] ?? 0) . ', absent ' . (int) ($counts['absent_count'] ?? 0) . ', late ' . (int) ($counts['late_count'] ?? 0) . '.';
+            }
+            return $lines ? "Today's attendance in your assigned classes:\n" . implode("\n", $lines) : 'No attendance figures for today are available in your assigned workspaces.';
+        }
+        if ($role === 'admin' || in_array('attendance_workspace_guidance', $capabilities, true)) {
+            $counts = $context['workspace_summary']['today_attendance'] ?? null;
+            if (!is_array($counts)) return 'Today’s attendance summary is not available in the current workspace context.';
+            return 'Today’s recorded attendance: ' . (int) ($counts['marked'] ?? 0) . ' records; present ' . (int) ($counts['present_count'] ?? 0) . ', absent ' . (int) ($counts['absent_count'] ?? 0) . ', late ' . (int) ($counts['late_count'] ?? 0) . '.';
+        }
+        return 'Attendance information is not permitted for your current account scope.';
+    }
+
+    if ($has(['result', 'marks', 'score', 'exam', 'ca1', 'ca2'])) {
+        if (!in_array('result_analysis', $capabilities, true) && !in_array('assigned_class_result_guidance', $capabilities, true)) {
+            return 'Result analysis is not available to your account role. I can still explain general MARKAZ result-entry steps.';
+        }
+        $summary = $context['workspace_summary'] ?? [];
+        if (isset($summary['result_rows_in_current_period'])) {
+            return 'There are ' . (int) $summary['result_rows_in_current_period'] . ' result rows recorded in the current academic period. This is a row count, not a count of completed student report cards.';
+        }
+        $workspaces = $context['assigned_workspaces'] ?? [];
+        if ($workspaces) {
+            $count = array_sum(array_map(static fn(array $item): int => (int) ($item['result_rows_current_period'] ?? 0), $workspaces));
+            return 'Your assigned workspaces contain ' . $count . ' result rows in the current academic period. This count reflects only the classes and subjects in your verified assignments.';
+        }
+        return 'I can explain the result-entry workflow, but no current-period result count is available in your workspace context.';
+    }
+
+    return 'I cannot answer that reliably in the current no-cost assistant mode. I only answer supported MARKAZ questions using verified information available to your account. Try asking about the current term, your assigned classes, permitted attendance figures or result-entry guidance.';
 }

@@ -1,0 +1,77 @@
+/* ==========================================================================
+   MARKAZ right-to-left layout for class-subjects/index.html: GENERATED FILE. Do not edit by hand.
+   Built by tools/i18n/build-rtl.mjs from the stylesheets this page loads.
+   Applies only when <html dir="rtl"> (Arabic). Hand-written details: rtl-extras.css.
+   ========================================================================== */
+/* ---- css/global.css ---- */
+html[dir="rtl"] .markaz-global-footer::before {
+    background: linear-gradient(
+        -90deg,
+        #17643a,
+        #c8a43a
+    )
+}
+/* ---- css/app-watermark.css ---- */
+html[dir="rtl"] .sidebar {
+    background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important
+}
+html[dir="rtl"] body > .sidebar {
+    background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important
+}
+/* ---- css/standard-page-heading.css ---- */
+html[dir="rtl"] .classes-topbar,
+html[dir="rtl"] .class-topbar,
+html[dir="rtl"] .students-topbar,
+html[dir="rtl"] .class-subjects-page > .page-header,
+html[dir="rtl"] .class-subjects-page .page-header,
+html[dir="rtl"] .subjects-page > .page-header,
+html[dir="rtl"] .subjects-page .page-header,
+html[dir="rtl"] .result-page-header,
+html[dir="rtl"] .settings-header {
+    background: linear-gradient(-125deg, var(--markaz-green-dark), var(--markaz-green) 65%, #246744)
+}
+html[dir="rtl"] .classes-table th,
+html[dir="rtl"] .classes-table td,
+html[dir="rtl"] .students-table th,
+html[dir="rtl"] .students-table td,
+html[dir="rtl"] .student-results-table th,
+html[dir="rtl"] .student-results-table td,
+html[dir="rtl"] .class-page table th,
+html[dir="rtl"] .class-page table td,
+html[dir="rtl"] .subjects-page table th,
+html[dir="rtl"] .subjects-page table td,
+html[dir="rtl"] .class-subjects-page table th,
+html[dir="rtl"] .class-subjects-page table td,
+html[dir="rtl"] .settings-page table th,
+html[dir="rtl"] .settings-page table td {
+    text-align: right
+}
+/* ---- css/management-shell.css ---- */
+html[dir="rtl"] .markaz-shell-profile {
+    padding-left: 11px;
+    padding-right: 5px
+}
+html[dir="rtl"] .markaz-shell-profile-copy {
+    text-align: right
+}
+html[dir="rtl"] .markaz-shell-profile-menu {
+    left: clamp(12px,2.5vw,30px);
+    right: auto
+}
+html[dir="rtl"] .markaz-shell-profile-menu a,
+html[dir="rtl"] .markaz-shell-profile-menu button {
+    text-align: right
+}
+html[dir="rtl"] .markaz-shell-sidebar {
+    background: linear-gradient(-180deg,#123d2a,#0d2b1c);
+    box-shadow: -12px 0 36px rgba(0,0,0,.18);
+    transform: translateX(110%);
+    left: auto;
+    right: 0
+}
+@media (max-width:480px) {
+    html[dir="rtl"] .markaz-shell-profile {
+        padding-left: 8px;
+        padding-right: 5px
+    }
+}

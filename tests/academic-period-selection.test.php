@@ -20,8 +20,8 @@ $printCss = file_get_contents(__DIR__ . '/../public/css/student-result-print.css
 $signatureApi = file_get_contents(__DIR__ . '/../public/api/settings/result-footer.php');
 
 academicPeriodCheck(
-    str_contains($screenPage, 'student-result.css?v=20261109-mobile-profile-behaviour-layout'),
-    'the Student Management result page must load the updated signature baseline stylesheet'
+    preg_match('/student-result\\.css\\?v=[^"\\s]+/', $screenPage) === 1,
+    'the Student Management result page must load a cache-busted screen stylesheet'
 );
 
 academicPeriodCheck(

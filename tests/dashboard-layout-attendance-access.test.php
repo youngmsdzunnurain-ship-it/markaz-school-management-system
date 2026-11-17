@@ -64,21 +64,26 @@ dashboardAssert(
     'Four examination status figures must remain on one row at dashboard widths'
 );
 dashboardAssert(
-    str_contains($html, 'href="./school-fees.html" class="nav-link" data-role-access="admin"') &&
+    str_contains($html, 'href="./school-fees.html" class="nav-link" data-role-access="management_school_fees"') &&
     str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="attendance"') &&
     str_contains($js, 'requiredRole === "attendance"') &&
-    str_contains($js, 'allowed = role === "admin"'),
-    'School Fees and Attendance navigation must be restricted to Senior Admin'
+    str_contains($js, 'requiredRole === "management_school_fees"') &&
+    str_contains($js, 'permissions.can_manage_attendance === true') &&
+    str_contains($js, 'permissions.management_permissions?.attendance === true') &&
+    str_contains($js, 'permissions.management_permissions?.school_fees === true'),
+    'Attendance and School Fees navigation must follow administrator, assigned teacher and Management permissions'
 );
 dashboardAssert(
-    preg_match('/<button type="button" data-role-access="admin"><i class="fa-solid fa-calendar-check"[^>]*><\/i><span>Attendance<\/span><\/button>/', $html) === 1 &&
-    preg_match('/<button type="button" data-role-access="admin"><i class="fa-solid fa-wallet"[^>]*><\/i><span>School Fees<\/span><\/button>/', $html) === 1,
-    'Quick links for Attendance and School Fees must be restricted to Senior Admin'
+    preg_match('/<button type="button" data-role-access="attendance"><i class="fa-solid fa-calendar-check"[^>]*><\/i><span>Attendance<\/span><\/button>/', $html) === 1 &&
+    preg_match('/<button type="button" data-role-access="management_school_fees"><i class="fa-solid fa-wallet"[^>]*><\/i><span>School Fees<\/span><\/button>/', $html) === 1,
+    'Attendance and School Fees quick links must use their matching permission rules'
 );
 dashboardAssert(
-    str_contains($js, 'if ((window.markazCurrentRole || "") !== "admin")') &&
+    str_contains($js, 'const attendanceAllowed = role === "admin"') &&
+    str_contains($js, '(role === "management" && window.markazManagementPermissions?.attendance === true)') &&
+    str_contains($js, 'if (!attendanceAllowed)') &&
     str_contains($js, 'panel.hidden = true;'),
-    'Dashboard attendance overview must not load for Exam Officer or Teacher'
+    'Dashboard attendance overview must remain limited to administrators and Management accounts with attendance permission'
 );
 dashboardAssert(
     str_contains($shellCss, 'background:#dff3e7!important;color:#145c38!important') &&

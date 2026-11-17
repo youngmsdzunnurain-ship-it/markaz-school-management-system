@@ -47,7 +47,10 @@
     function withDarkCss(done) {
         if (document.getElementById('mk-dark-css')) { done(); return; }
         const script = document.querySelector('script[src*="theme-toggle.js"]');
-        const href = (script ? script.src : '').replace(/js\/theme-toggle\.js.*$/, 'css/dark-mode.css?v=20261115-dark1');
+        const path = window.location.pathname.replace(/\.html$/, '').replace(/\/+$/, '').split('/');
+        let key = path.pop() || 'index';
+        if (key === 'index' && path.length > 1) key = path.pop();
+        const href = (script ? script.src : '').replace(/js\/theme-toggle\.js.*$/, 'css/theme/' + key + '.dark.css?v=20261116-dark2');
         if (!href) { done(); return; }
         const link = document.createElement('link');
         link.rel = 'stylesheet';

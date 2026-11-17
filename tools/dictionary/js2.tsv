@@ -1,0 +1,200 @@
+Academic reset API returned a non-JSON response (HTTP {}).	أعادت واجهة إعادة الضبط الأكاديمي استجابة غير صالحة (HTTP {0}).
+Dashboard search:	بحث لوحة التحكم:
+FINAL WARNING: All CA, examination and behavioural entries across every term will be permanently deleted. Student records and school settings will remain.	تحذير أخير: سيتم حذف جميع مدخلات CA والاختبارات والسلوك في كل فصل دراسي نهائياً. وستبقى سجلات الطلاب وإعدادات المدرسة.
+FINAL WARNING: This permanently locks the current term against score and behavioural edits. Have all results been checked?	تحذير أخير: سيؤدي هذا إلى إقفال الفصل الدراسي الحالي نهائياً أمام تعديل الدرجات والسلوك. هل تمت مراجعة جميع النتائج؟
+Faslu Awal	الفصل الأول
+Faslu Thani	الفصل الثاني
+Faslu Thalith	الفصل الثالث
+Faslu Rabia	الفصل الرابع
+Faslu Khamis	الفصل الخامس
+Faslu Sadis	الفصل السادس
+Faslu Salis	الفصل السادس
+Faslu Sani	الفصل الثاني
+Faslu Ula	الفصل الأول
+Roudoh Ula	الروضة الأولى
+Roudoh Thani	الروضة الثانية
+Roudoh Sani	الروضة الثانية
+Preschool 1	ما قبل المدرسة 1
+Preschool 2	ما قبل المدرسة 2
+No active	لا يوجد نشط
+Permanently clear	مسح نهائي
+Phenomenal	استثنائي
+Saved ✓	تم الحفظ ✓
+Secure file verification is unavailable in this browser.	التحقق الآمن من الملفات غير متاح في هذا المتصفح.
+Select Load register to view students.	اختر «تحميل السجل» لعرض الطلاب.
+Select a class…	اختر فصلاً…
+Select a student…	اختر طالباً…
+Select one of your assigned classes before viewing its report.	اختر أحد فصولك المسندة قبل عرض تقريره.
+Select the level that belongs to this backup.	اختر المرحلة التي تخص هذه النسخة الاحتياطية.
+Sending...	جارٍ الإرسال...
+Server response: {}	استجابة الخادم: {0}
+Set memorization portion defaults for each Arabic class.	حدّد القيم الافتراضية لمقدار الحفظ لكل فصل عربي.
+Set the minimum result-entry completion required before a student's result can be printed.	حدّد الحد الأدنى لاكتمال إدخال النتائج المطلوب قبل طباعة نتيجة الطالب.
+Settings categories	فئات الإعدادات
+Settings category initialisation failed:	فشلت تهيئة فئة الإعدادات:
+Shared result date saved successfully.	تم حفظ تاريخ النتيجة المشترك بنجاح.
+Signature API request failed (HTTP {}).	فشل طلب واجهة التوقيع (HTTP {0}).
+Signature removed from all student results.	تمت إزالة التوقيع من جميع نتائج الطلاب.
+Signature saved and applied to all student results.	تم حفظ التوقيع وتطبيقه على جميع نتائج الطلاب.
+Signing in...	جارٍ تسجيل الدخول...
+Something went wrong while loading this class.	حدث خطأ أثناء تحميل هذا الفصل.
+Something went wrong.	حدث خطأ ما.
+Staff profile	الملف الشخصي للموظف
+Staff profile crop preparation failed:	فشل تجهيز اقتصاص صورة الموظف:
+Student access is locked. Time remaining: {}d {}h {}m {}s.	دخول الطالب مقفل. الوقت المتبقي: {0} يوم {1} ساعة {2} دقيقة {3} ثانية.
+Student added successfully.	تمت إضافة الطالب بنجاح.
+Student creation error:	خطأ في إنشاء الطالب:
+Student loading error:	خطأ في تحميل الطالب:
+Student photo crop failed:	فشل اقتصاص صورة الطالب:
+Student photo crop preparation failed:	فشل تجهيز اقتصاص صورة الطالب:
+Student photo must not exceed 3MB.	يجب ألا تتجاوز صورة الطالب 3 ميجابايت.
+Student portal	بوابة الطالب
+Student profile photo:	صورة الطالب الشخصية:
+Student status error:	خطأ في حالة الطالب:
+Student update error:	خطأ في تحديث الطالب:
+Student updated successfully.	تم تحديث الطالب بنجاح.
+Subjects Scored: {}	المواد المقيَّمة: {0}
+Support WhatsApp number saved.	تم حفظ رقم واتساب للدعم.
+Switch a term ON to release results, or OFF to hide them.	فعّل الفصل الدراسي لإتاحة النتائج، أو أوقفه لإخفائها.
+Task 1	المهمة 1
+Task 2	المهمة 2
+Task One	المهمة الأولى
+Task Two	المهمة الثانية
+Teacher	المعلم
+Teacher portal	بوابة المعلم
+Teacher workspace	مساحة عمل المعلم
+Test —	الاختبار —
+The attendance request could not be completed.	تعذّر إكمال طلب الحضور.
+The backup file exceeds the 5 MB upload limit.	يتجاوز ملف النسخة الاحتياطية حد الرفع وهو 5 ميجابايت.
+The backup request could not be completed.	تعذّر إكمال طلب النسخ الاحتياطي.
+The confirmation phrase must read: CLEAR ACADEMIC ENTRY DATA. Letter case and extra spaces do not matter.	يجب أن تكون عبارة التأكيد: CLEAR ACADEMIC ENTRY DATA. لا يُعتدّ بحالة الأحرف ولا بالمسافات الزائدة.
+The cropped image could not be created.	تعذّر إنشاء الصورة المقتصّة.
+The cropped photo exceeds the 3MB upload limit.	تتجاوز الصورة المقتصّة حد الرفع وهو 3 ميجابايت.
+The cropped photo is still larger than 3MB. Please zoom in and try again.	ما زالت الصورة المقتصّة أكبر من 3 ميجابايت. يرجى التكبير والمحاولة مرة أخرى.
+The displayed lockout period has ended. You can try signing in again.	انتهت مدة القفل المعروضة. يمكنك محاولة تسجيل الدخول مرة أخرى.
+The image could not be reduced below the 1.5MB upload limit.	تعذّر تصغير الصورة إلى ما دون حد الرفع وهو 1.5 ميجابايت.
+The learner will lose Online Class portal access and be excluded from attendance and active results.	سيفقد الطالب الدخول إلى بوابة الفصل الإلكتروني ويُستثنى من الحضور والنتائج النشطة.
+The learner will regain portal access.	سيستعيد الطالب الدخول إلى البوابة.
+The locked-accounts endpoint returned a non-JSON response. Check the API route and server error log.	أعادت واجهة الحسابات المقفلة استجابة غير صالحة. تحقق من مسار الواجهة وسجل أخطاء الخادم.
+The lockout period has ended. The server will verify your next lookup.	انتهت مدة القفل. سيتحقق الخادم من محاولتك القادمة.
+The lockout period has ended. The server will verify your next sign-in.	انتهت مدة القفل. سيتحقق الخادم من محاولة تسجيل دخولك القادمة.
+The password confirmation does not match.	تأكيد كلمة المرور غير مطابق.
+The profile request was redirected to sign-in. Please sign in again; the photo was not saved.	تمت إعادة توجيه طلب الملف الشخصي إلى تسجيل الدخول. يرجى تسجيل الدخول مجدداً؛ لم تُحفظ الصورة.
+The request could not be completed.	تعذّر إكمال الطلب.
+The result record is incomplete. Please contact the school office.	سجل النتيجة غير مكتمل. يرجى التواصل مع مكتب المدرسة.
+The selected image could not be prepared. Please choose another image.	تعذّر تجهيز الصورة المحددة. يرجى اختيار صورة أخرى.
+The selected image format could not be opened.	تعذّر فتح صيغة الصورة المحددة.
+The server did not confirm logout.	لم يؤكد الخادم تسجيل الخروج.
+The server returned an empty response.	أعاد الخادم استجابة فارغة.
+The server returned an invalid response. Check your login session and the result-release API.	أعاد الخادم استجابة غير صالحة. تحقق من جلسة تسجيل الدخول وواجهة إتاحة النتائج.
+The server returned an invalid response. Please try again.	أعاد الخادم استجابة غير صالحة. يرجى المحاولة مرة أخرى.
+The server returned an unexpected response. Please sign in again or contact the administrator.	أعاد الخادم استجابة غير متوقعة. يرجى تسجيل الدخول مجدداً أو التواصل مع المدير.
+There are no currently locked accounts.	لا توجد حسابات مقفلة حالياً.
+There are no students to save.	لا يوجد طلاب للحفظ.
+There are no unsaved changes.	لا توجد تغييرات غير محفوظة.
+This account is not authorized for the Exam Officer portal. Please use the correct login page.	هذا الحساب غير مخوّل لبوابة مسؤول الاختبارات. يرجى استخدام صفحة الدخول الصحيحة.
+This account is not authorized for the Management portal. Please use the correct login page.	هذا الحساب غير مخوّل لبوابة الإدارة. يرجى استخدام صفحة الدخول الصحيحة.
+This account is not authorized for the Teacher portal.	هذا الحساب غير مخوّل لبوابة المعلم.
+This class has no active students to mark.	لا يوجد في هذا الفصل طلاب نشطون لتسجيل حضورهم.
+This image could not be opened.	تعذّر فتح هذه الصورة.
+This image could not be opened. Please choose another JPG, PNG or WEBP photo.	تعذّر فتح هذه الصورة. يرجى اختيار صورة JPG أو PNG أو WEBP أخرى.
+This password reset link is invalid or has expired.	رابط إعادة تعيين كلمة المرور هذا غير صالح أو منتهي الصلاحية.
+This photo could not be opened.	تعذّر فتح هذه الصورة.
+This term is active and still accepts authorized result and behavioural entries.	هذا الفصل الدراسي نشط وما زال يقبل مدخلات النتائج والسلوك من المخولين.
+To be announced	سيُعلن لاحقاً
+Total	الإجمالي
+Total Score: {}	المجموع الكلي: {0}
+Try Again	حاول مرة أخرى
+Unable to attach camera photo to student form:	تعذّر إرفاق صورة الكاميرا بنموذج الطالب:
+Unable to change class status.	تعذّر تغيير حالة الفصل.
+Unable to change student status.	تعذّر تغيير حالة الطالب.
+Unable to change subject status.	تعذّر تغيير حالة المادة.
+Unable to check results right now. Please try again.	تعذّر عرض النتائج الآن. يرجى المحاولة مرة أخرى.
+Unable to check student portal access right now.	تعذّر التحقق من صلاحية الدخول إلى بوابة الطالب الآن.
+Unable to check your results. Confirm your details and try again.	تعذّر عرض نتائجك. تأكّد من بياناتك وحاول مرة أخرى.
+Unable to clear academic entry data. No success was reported.	تعذّر مسح بيانات الإدخال الأكاديمي. لم يتم الإبلاغ عن نجاح العملية.
+Unable to clear activity history.	تعذّر مسح سجل النشاط.
+Unable to connect to the server.	تعذّر الاتصال بالخادم.
+Unable to create the cropped photo.	تعذّر إنشاء الصورة المقتصّة.
+Unable to crop this photo.	تعذّر اقتصاص هذه الصورة.
+Unable to crop this photo. Please try another image.	تعذّر اقتصاص هذه الصورة. يرجى تجربة صورة أخرى.
+Unable to finalize this academic term.	تعذّر اعتماد هذا الفصل الدراسي.
+Unable to load Arabic classes.	تعذّر تحميل الفصول العربية.
+Unable to load Online Class levels.	تعذّر تحميل مراحل الفصل الإلكتروني.
+Unable to load academic history.	تعذّر تحميل السجل الأكاديمي.
+Unable to load academic period settings.	تعذّر تحميل إعدادات الفترة الأكاديمية.
+Unable to load account profile.	تعذّر تحميل ملف الحساب.
+Unable to load administrator:	تعذّر تحميل بيانات المدير:
+Unable to load assigned subjects.	تعذّر تحميل المواد المسندة.
+Unable to load class	تعذّر تحميل الفصل
+Unable to load class results.	تعذّر تحميل نتائج الفصل.
+Unable to load class.	تعذّر تحميل الفصل.
+Unable to load classes.	تعذّر تحميل الفصول.
+Unable to load completion details.	تعذّر تحميل تفاصيل الاكتمال.
+Unable to load dashboard statistics:	تعذّر تحميل إحصاءات لوحة التحكم:
+Unable to load device activity.	تعذّر تحميل نشاط الأجهزة.
+Unable to load locked accounts.	تعذّر تحميل الحسابات المقفلة.
+Unable to load memorization settings.	تعذّر تحميل إعدادات الحفظ.
+Unable to load recognised devices.	تعذّر تحميل الأجهزة المعروفة.
+Unable to load students for this level.	تعذّر تحميل طلاب هذه المرحلة.
+Unable to load students.	تعذّر تحميل الطلاب.
+Unable to load subjects for this level.	تعذّر تحميل مواد هذه المرحلة.
+Unable to load subjects.	تعذّر تحميل المواد.
+Unable to load the assigned class.	تعذّر تحميل الفصل المسند.
+Unable to log out.	تعذّر تسجيل الخروج.
+Unable to open this image. Please choose another photo.	تعذّر فتح هذه الصورة. يرجى اختيار صورة أخرى.
+Unable to prepare this report for printing.	تعذّر تجهيز هذا التقرير للطباعة.
+Unable to request a password reset.	تعذّر طلب إعادة تعيين كلمة المرور.
+Unable to reset password.	تعذّر إعادة تعيين كلمة المرور.
+Unable to resolve settings role:	تعذّر تحديد دور الإعدادات:
+Unable to save academic calendar.	تعذّر حفظ التقويم الأكاديمي.
+Unable to save changes.	تعذّر حفظ التغييرات.
+Unable to save class.	تعذّر حفظ الفصل.
+Unable to save release settings (HTTP {}).	تعذّر حفظ إعدادات الإتاحة (HTTP {0}).
+Unable to save result.	تعذّر حفظ النتيجة.
+Unable to save setting.	تعذّر حفظ الإعداد.
+Unable to save signature.	تعذّر حفظ التوقيع.
+Unable to save student.	تعذّر حفظ الطالب.
+Unable to save subject.	تعذّر حفظ المادة.
+Unable to save subjects.	تعذّر حفظ المواد.
+Unable to sign in.	تعذّر تسجيل الدخول.
+Unable to sign in. Please try again.	تعذّر تسجيل الدخول. يرجى المحاولة مرة أخرى.
+Unable to update device access.	تعذّر تحديث صلاحية الجهاز.
+Unable to update permissions.	تعذّر تحديث الصلاحيات.
+Unable to update student.	تعذّر تحديث الطالب.
+Unable to use the selected camera photo. Please choose the photo using Upload from device.	تعذّر استخدام صورة الكاميرا المحددة. يرجى اختيار الصورة عبر «رفع من الجهاز».
+Unfreeze	إلغاء التجميد
+Unknown class	فصل غير معروف
+Unknown error	خطأ غير معروف
+Unlock	فتح القفل
+Unlock {}?	هل تريد فتح قفل {0}؟
+Unmarked	غير مسجَّل
+Unsaved changes. Save attendance to keep your updates.	تغييرات غير محفوظة. احفظ الحضور للاحتفاظ بتحديثاتك.
+Update Online Student	تحديث الطالب الإلكتروني
+Update Subject	تحديث المادة
+Update the class information.	تحديث معلومات الفصل.
+Update the official social-media profile links displayed on the public website.	حدّث روابط حسابات التواصل الاجتماعي الرسمية المعروضة على الموقع العام.
+Updating...	جارٍ التحديث...
+Use a separate password for the encrypted backup file.	استخدم كلمة مرور منفصلة لملف النسخة الاحتياطية المشفّر.
+Verifying administrator password and clearing selected records…	جارٍ التحقق من كلمة مرور المدير ومسح السجلات المحددة…
+Verifying password and finalizing term…	جارٍ التحقق من كلمة المرور واعتماد الفصل الدراسي…
+Verifying password and preparing encrypted archive…	جارٍ التحقق من كلمة المرور وتجهيز الأرشيف المشفّر…
+Verifying your password and clearing academic entry data…	جارٍ التحقق من كلمة مرورك ومسح بيانات الإدخال الأكاديمي…
+View and update your management account profile.	اطّلع على ملف حساب الإدارة الخاص بك وحدّثه.
+View and update your teacher account profile.	اطّلع على ملف حساب المعلم الخاص بك وحدّثه.
+We appreciate your effort. With support, patience and consistency, further improvement is within reach.	نقدّر جهدك. بالدعم والصبر والانتظام يصبح التحسّن الأكبر في متناول يدك.
+We couldn't confirm logout with the server. Please try again.	تعذّر تأكيد تسجيل الخروج مع الخادم. يرجى المحاولة مرة أخرى.
+Website Image Manager	مدير صور الموقع
+Website Social Media Links	روابط التواصل الاجتماعي للموقع
+Well done. Your steady effort is showing beautiful progress. Keep revising and moving forward.	أحسنت. جهدك المتواصل يُظهر تقدماً جميلاً. واصل المراجعة وتقدّم إلى الأمام.
+You are making progress. Keep practising regularly and seek guidance when needed.	أنت تحرز تقدماً. واصل التدرّب بانتظام واطلب التوجيه عند الحاجة.
+You are making promising progress. Continue with regular revision and confidence; every step matters.	تحرز تقدماً واعداً. واصل المراجعة المنتظمة بثقة؛ فكل خطوة مهمة.
+You have made a beginning. With patient practice and consistent revision, you can make stronger progress.	لقد بدأت. بالتدرّب الصبور والمراجعة المنتظمة يمكنك تحقيق تقدّم أقوى.
+You have unsaved attendance changes. Discard them and load another register?	لديك تغييرات حضور غير محفوظة. هل تريد تجاهلها وتحميل سجل آخر؟
+Your Results	نتائجك
+Your assigned classes and subjects are ready below. Open a class to enter or update your assigned scores.	فصولك ومواد التدريس المسندة إليك جاهزة أدناه. افتح فصلاً لإدخال درجاتك المسندة أو تحديثها.
+Your assigned school workspaces are ready below. Open a section to manage your responsibilities.	مساحات عمل المدرسة المسندة إليك جاهزة أدناه. افتح قسماً لإدارة مسؤولياتك.
+Your assigned school workspaces are ready. Open the areas selected for your account.	مساحات عمل المدرسة المسندة إليك جاهزة. افتح الأقسام المحددة لحسابك.
+Your progress is encouraging. More regular revision will help you reach the next level.	تقدّمك مشجّع. وستساعدك المراجعة الأكثر انتظاماً على بلوغ المستوى التالي.
+Your session has expired. Return to the dashboard and sign in again.	انتهت جلستك. عد إلى لوحة التحكم وسجّل الدخول مجدداً.
+Your session has expired. Sign in again before saving.	انتهت جلستك. سجّل الدخول مجدداً قبل الحفظ.

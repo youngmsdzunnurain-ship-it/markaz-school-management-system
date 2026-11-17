@@ -13,7 +13,10 @@
         /* The dark stylesheet is only downloaded for people who use dark mode.
            document.write keeps it render-blocking, so the first paint is already dark. */
         if (dark && document.currentScript && document.currentScript.src) {
-            var href = document.currentScript.src.replace(/js\/theme-init\.js.*$/, 'css/dark-mode.css?v=20261115-dark1');
+            var path = window.location.pathname.replace(/\.html$/, '').replace(/\/+$/, '').split('/');
+            var key = path.pop() || 'index';
+            if (key === 'index' && path.length > 1) key = path.pop();
+            var href = document.currentScript.src.replace(/js\/theme-init\.js.*$/, 'css/theme/' + key + '.dark.css?v=20261116-dark2');
             document.write('<link rel="stylesheet" id="mk-dark-css" href="' + href + '">');
         }
     } catch (error) { /* storage blocked: stay on the light theme */ }
