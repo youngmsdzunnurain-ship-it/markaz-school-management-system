@@ -1,0 +1,120 @@
+Clear All School Attendance	مسح جميع سجلات حضور المدرسة
+Clear all school attendance?	هل تريد مسح جميع سجلات حضور المدرسة؟
+Clear School Attendance	مسح حضور المدرسة
+Permanent attendance data removal	الحذف النهائي لبيانات الحضور
+Permanently Clear Attendance	مسح الحضور نهائياً
+Permanently remove all daily attendance marks for every student, every date and every academic period in both Conventional and Arabic school registers	احذف نهائياً جميع علامات الحضور اليومية لكل طالب ولكل تاريخ ولكل فترة أكاديمية في سجلات الفصول النظامية والعربية
+This clears every record in the school attendance register only. Online Class attendance, student and staff records, classes, results, behavioural assessments and school settings are not deleted.	سيؤدي هذا إلى مسح كل سجل في سجل حضور المدرسة فقط. ولا يُحذف حضور الفصل الإلكتروني ولا سجلات الطلاب والموظفين ولا الفصول ولا النتائج ولا تقييمات السلوك ولا إعدادات المدرسة.
+This permanently deletes all daily attendance records across Conventional and Arabic classes, all dates and all academic periods. Online Class attendance and all other school data remain.	سيؤدي هذا إلى حذف جميع سجلات الحضور اليومي نهائياً في الفصول النظامية والعربية ولكل التواريخ والفترات الأكاديمية. ويبقى حضور الفصل الإلكتروني وكل بيانات المدرسة الأخرى.
+MARKAZ · School Management	MARKAZ · إدارة المدرسة
+Delete	حذف
+Delete conversation	حذف المحادثة
+Delete this conversation and its messages?	هل تريد حذف هذه المحادثة ورسائلها؟
+Choose one of your assigned classes and subjects before scanning.	اختر أحد فصولك ومواد التدريس المسندة إليك قبل المسح الضوئي.
+Complete Attendance, Test and Final Examination scores for every subject before printing this report.	أكمل درجات الحضور والاختبار والاختبار النهائي لكل مادة قبل طباعة هذا التقرير.
+Completed result-sheet scan	اكتمل مسح كشف النتائج
+Conversation #{}	المحادثة رقم {0}
+Could not start microphone recording on this device.	تعذّر بدء تسجيل الميكروفون على هذا الجهاز.
+Do not give up. May Allah guide and strengthen you.	لا تستسلم. وفّقك الله وقوّاك.
+Edited a result	عدّل نتيجة
+Entered a result	أدخل نتيجة
+Good effort. May Allah guide you and increase you in knowledge.	جهد جيد. هداك الله وزادك علماً.
+Keep trying. May Allah make your learning easy and fruitful.	واصل المحاولة. يسّر الله لك التعلّم وجعله مثمراً.
+Well done. May Allah bless your effort and increase your knowledge.	أحسنت. بارك الله في جهدك وزادك علماً.
+MARKAZ AI	MARKAZ للذكاء الاصطناعي
+MARKAZ AI could not complete that request.	تعذّر على MARKAZ للذكاء الاصطناعي إكمال هذا الطلب.
+MARKAZ AI is thinking…	MARKAZ للذكاء الاصطناعي يفكّر…
+Microphone permission was denied. Allow microphone access and try again.	تم رفض إذن الميكروفون. اسمح بالوصول إلى الميكروفون وحاول مرة أخرى.
+New conversation	محادثة جديدة
+No active class/subject assignment	لا يوجد إسناد نشط لفصل/مادة
+No audio was captured. Please try again.	لم يتم التقاط أي صوت. يرجى المحاولة مرة أخرى.
+No recorded activity for this date and filter.	لا يوجد نشاط مسجّل لهذا التاريخ وهذا المرشّح.
+Preparing your voice input…	جارٍ تجهيز إدخالك الصوتي…
+Recording… tap the microphone again to stop.	جارٍ التسجيل… اضغط على الميكروفون مرة أخرى للإيقاف.
+Register date	تاريخ السجل
+Saved an attendance register	حفظ سجل حضور
+Scanning image…	جارٍ مسح الصورة ضوئياً…
+School attendance cleared: {} daily records removed. Online Class attendance and all other school data were preserved.	تم مسح حضور المدرسة: تمت إزالة {0} من سجلات الحضور اليومية. تم الاحتفاظ بحضور الفصل الإلكتروني وكل بيانات المدرسة الأخرى.
+School attendance reset API returned a non-JSON response (HTTP {}).	أعادت واجهة إعادة ضبط حضور المدرسة استجابة غير صالحة (HTTP {0}).
+School attendance reset failed (HTTP {}). No data was cleared unless success is confirmed.	فشلت إعادة ضبط حضور المدرسة (HTTP {0}). لم تُمسح أي بيانات ما لم يتأكد النجاح.
+Started an AI conversation	بدأ محادثة بالذكاء الاصطناعي
+Started result-sheet scan	بدأ مسح كشف النتائج
+Started using MARKAZ AI	بدأ استخدام MARKAZ للذكاء الاصطناعي
+Started voice transcription	بدأ تفريغ الصوت
+Student AI	مساعد الطالب الذكي
+Student Learning Assistant unavailable:	مساعد التعلّم للطالب غير متاح:
+The confirmation phrase must read: CLEAR ALL SCHOOL ATTENDANCE. Letter case and extra spaces do not matter.	يجب أن تكون عبارة التأكيد: CLEAR ALL SCHOOL ATTENDANCE. لا يُعتدّ بحالة الأحرف ولا بالمسافات الزائدة.
+There are no released results to print.	لا توجد نتائج متاحة للطباعة.
+Transcribed voice input	إدخال صوتي مفرَّغ
+Transcribing your voice…	جارٍ تفريغ صوتك…
+Unable to clear school attendance. No success was reported.	تعذّر مسح حضور المدرسة. لم يتم الإبلاغ عن نجاح العملية.
+Used MARKAZ AI	استخدم MARKAZ للذكاء الاصطناعي
+Verifying your password and clearing school attendance…	جارٍ التحقق من كلمة مرورك ومسح حضور المدرسة…
+Voice input added. Review it, then send when ready.	تمت إضافة الإدخال الصوتي. راجعه ثم أرسله عند الجاهزية.
+Voice input is not supported by this browser. You can type your message instead.	الإدخال الصوتي غير مدعوم في هذا المتصفح. يمكنك كتابة رسالتك بدلاً من ذلك.
+Why are you freezing this device for	لماذا تجمّد هذا الجهاز لمدة
+You	أنت
+Your conversations will appear here.	ستظهر محادثاتك هنا.
+{} locked account(s).	{0} من الحسابات المقفلة.
+{} yrs	{0} سنة
+· Current	· الحالي
+· Finalised	· المعتمد
+✓ Complete Nigerian mobile number.	✓ رقم الجوال النيجيري مكتمل.
+Awesome	رائع
+A valid conversation is required.	مطلوبة محادثة صالحة.
+All Conventional and Arabic daily attendance records have been cleared. Students and school setup were preserved.	تم مسح جميع سجلات الحضور اليومي للفصول النظامية والعربية. تم الاحتفاظ بالطلاب وإعدادات المدرسة.
+Choose a result-sheet image to scan.	اختر صورة كشف نتائج لمسحها ضوئياً.
+Cross-site requests are not allowed.	الطلبات عبر المواقع غير مسموح بها.
+Enter a message of up to 2,000 characters.	أدخل رسالة لا تتجاوز 2,000 حرف.
+Enter a message of up to 4,000 characters.	أدخل رسالة لا تتجاوز 4,000 حرف.
+Enter your administrator password and type CLEAR ALL SCHOOL ATTENDANCE to confirm.	أدخل كلمة مرور المدير واكتب CLEAR ALL SCHOOL ATTENDANCE للتأكيد.
+MARKAZ AI has not been configured by the Admin yet.	لم يقم المدير بإعداد MARKAZ للذكاء الاصطناعي بعد.
+MARKAZ AI is not connected yet. An administrator must configure the AI service in the private server environment.	MARKAZ للذكاء الاصطناعي غير متصل بعد. يجب على المدير إعداد خدمة الذكاء الاصطناعي في بيئة الخادم الخاصة.
+No readable result data was detected. Try a clearer, well-lit image.	لم يتم اكتشاف بيانات نتائج مقروءة. جرّب صورة أوضح وذات إضاءة جيدة.
+No speech was detected. Try again.	لم يتم اكتشاف كلام. حاول مرة أخرى.
+No speech was detected. Try speaking a little closer to the microphone.	لم يتم اكتشاف كلام. حاول التحدث أقرب قليلاً من الميكروفون.
+Open your published result first to use the Student Learning Assistant.	افتح نتيجتك المنشورة أولاً لاستخدام مساعد التعلّم للطالب.
+Open your published result first to use voice input.	افتح نتيجتك المنشورة أولاً لاستخدام الإدخال الصوتي.
+Record or choose a voice note first.	سجّل ملاحظة صوتية أو اخترها أولاً.
+Request origin could not be verified.	تعذّر التحقق من مصدر الطلب.
+Result-sheet scanning is not enabled for this workspace.	مسح كشوف النتائج غير مفعّل لمساحة العمل هذه.
+Scan complete. Review every value before entering it through the normal MARKAZ result page.	اكتمل المسح. راجع كل قيمة قبل إدخالها عبر صفحة نتائج MARKAZ المعتادة.
+School-wide activity is available to the Admin only.	النشاط على مستوى المدرسة متاح للمدير فقط.
+Select your assigned class and subject before scanning.	اختر فصلك ومادتك المسندين إليك قبل المسح الضوئي.
+The administrator password is incorrect. No attendance records were cleared.	كلمة مرور المدير غير صحيحة. لم يتم مسح أي سجلات حضور.
+The AI service is temporarily unavailable. Your message was not saved; please try again.	خدمة الذكاء الاصطناعي غير متاحة مؤقتاً. لم تُحفظ رسالتك؛ يرجى المحاولة مرة أخرى.
+The AI service returned an empty answer. Please try again.	أعادت خدمة الذكاء الاصطناعي إجابة فارغة. يرجى المحاولة مرة أخرى.
+The assistant returned an empty answer. Please try again.	أعاد المساعد إجابة فارغة. يرجى المحاولة مرة أخرى.
+The image could not be scanned right now. Please try again.	تعذّر مسح الصورة ضوئياً الآن. يرجى المحاولة مرة أخرى.
+The image must be no larger than 5 MB.	يجب ألا يتجاوز حجم الصورة 5 ميجابايت.
+The learning assistant is temporarily unavailable. Please try again.	مساعد التعلّم غير متاح مؤقتاً. يرجى المحاولة مرة أخرى.
+The Student Learning Assistant is not connected yet. Please contact the school.	مساعد التعلّم للطالب غير متصل بعد. يرجى التواصل مع المدرسة.
+This conversation is not available in your Student Portal session.	هذه المحادثة غير متاحة في جلسة بوابة الطالب الخاصة بك.
+This conversation is not available to your account.	هذه المحادثة غير متاحة لحسابك.
+This conversation is not available.	هذه المحادثة غير متاحة.
+Unable to clear school attendance. The database transaction was rolled back.	تعذّر مسح حضور المدرسة. تم التراجع عن عملية قاعدة البيانات.
+Use a JPEG, PNG or WebP image.	استخدم صورة بصيغة JPEG أو PNG أو WebP.
+Use a supported browser audio recording (WebM, OGG, MP4, MP3 or WAV).	استخدم تسجيلاً صوتياً مدعوماً من المتصفح (WebM أو OGG أو MP4 أو MP3 أو WAV).
+Voice input is not configured by the Admin yet.	لم يقم المدير بإعداد الإدخال الصوتي بعد.
+Voice input is not connected yet. Please contact the school.	الإدخال الصوتي غير متصل بعد. يرجى التواصل مع المدرسة.
+Voice input must be no larger than 5 MB.	يجب ألا يتجاوز حجم الإدخال الصوتي 5 ميجابايت.
+Voice transcription is temporarily unavailable.	تفريغ الصوت غير متاح مؤقتاً.
+You have reached the hourly AI message limit. Please try again later.	لقد بلغت الحد الساعي لرسائل الذكاء الاصطناعي. يرجى المحاولة لاحقاً.
+You have reached the hourly assistant limit. Please try again later.	لقد بلغت الحد الساعي للمساعد. يرجى المحاولة لاحقاً.
+You have reached the hourly result-scan limit. Please try again later.	لقد بلغت الحد الساعي لمسح كشوف النتائج. يرجى المحاولة لاحقاً.
+You have reached the hourly voice-input limit.	لقد بلغت الحد الساعي للإدخال الصوتي.
+Your answer could not be saved securely. Please try again.	تعذّر حفظ إجابتك بأمان. يرجى المحاولة مرة أخرى.
+Your answer could not be saved. Please try again.	تعذّر حفظ إجابتك. يرجى المحاولة مرة أخرى.
+No classes found.	لم يتم العثور على فصول.
+No students found.	لم يتم العثور على طلاب.
+No subjects found.	لم يتم العثور على مواد.
+No student records are available for this class.	لا توجد سجلات طلاب متاحة لهذا الفصل.
+No students have been added to this class yet.	لم تتم إضافة طلاب إلى هذا الفصل بعد.
+No students to display yet.	لا يوجد طلاب لعرضهم بعد.
+No attendance entered for this category	لم يتم إدخال حضور لهذه الفئة
+Saved attendance for today will appear here.	سيظهر هنا الحضور المحفوظ لليوم.
+{} students are awaiting required subject assignments	{0} طالب بانتظار إسناد المواد المطلوبة
+No records found.	لم يتم العثور على سجلات.
+No results found.	لم يتم العثور على نتائج.
+No data available.	لا توجد بيانات متاحة.
+Nothing to show yet.	لا يوجد ما يُعرض بعد.

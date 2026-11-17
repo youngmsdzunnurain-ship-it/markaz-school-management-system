@@ -1,0 +1,59 @@
+/* MARKAZ Arabic (right-to-left): the hand-written details that cannot be
+   generated from the English stylesheets. Loaded only when Arabic is selected. */
+
+/* no flash of English while the page is being translated (with a 1.6s safety net) */
+@keyframes mk-i18n-show { to { visibility: visible; } }
+html.mk-i18n-pending body { visibility: hidden; animation: mk-i18n-show 0s 1.6s forwards; }
+
+/* ---- Arabic typography ---- */
+html[lang="ar"] body,
+html[lang="ar"] button,
+html[lang="ar"] input,
+html[lang="ar"] select,
+html[lang="ar"] textarea {
+    font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+html[lang="ar"] :is(h1, h2, h3, h4, h5, h6, p, span, div, a, li, td, th, label, small, strong, em, b, legend, summary, button, option):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab):not(i) {
+    font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif !important;
+}
+/* letter-spacing breaks Arabic joining; capital letters do not exist in Arabic */
+html[lang="ar"] *,
+html[lang="ar"] *::before,
+html[lang="ar"] *::after { letter-spacing: 0 !important; text-transform: none !important; }
+html[lang="ar"] body { line-height: 1.75; }
+html[lang="ar"] :is(h1, h2, h3, h4) { line-height: 1.45; font-weight: 800; }
+html[lang="ar"] :is(.eyebrow, [class*="eyebrow"], [class*="kicker"], [class*="label"]) { font-weight: 700; }
+
+/* ---- direction-sensitive content ---- */
+html[dir="rtl"] input[type="email"],
+html[dir="rtl"] input[type="tel"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] input[type="number"],
+html[dir="rtl"] input[inputmode="numeric"],
+html[dir="rtl"] input[inputmode="tel"] { direction: ltr; text-align: right; }
+html[dir="rtl"] input[type="password"] { direction: ltr; text-align: right; }
+html[dir="rtl"] input::placeholder, html[dir="rtl"] textarea::placeholder { text-align: right; }
+
+/* charts keep their left-to-right reading order (time, axes, legends of numbers) */
+html[dir="rtl"] canvas,
+html[dir="rtl"] .attendance-donut-svg,
+html[dir="rtl"] [class*="chart"] svg { direction: ltr; }
+
+/* arrows and chevrons point the other way */
+html[dir="rtl"] :is(.fa-arrow-left, .fa-arrow-right, .fa-arrow-right-long, .fa-arrow-left-long,
+                    .fa-chevron-left, .fa-chevron-right, .fa-angle-left, .fa-angle-right,
+                    .fa-angles-left, .fa-angles-right, .fa-caret-left, .fa-caret-right,
+                    .fa-circle-arrow-left, .fa-circle-arrow-right, .fa-right-from-bracket,
+                    .fa-right-to-bracket, .fa-sign-out-alt, .fa-sign-in-alt, .fa-reply, .fa-share) {
+    scale: -1 1;
+}
+
+/* slide-in animations come from the right in Arabic */
+@keyframes mkapp-slide { from { translate: 14px 0; } to { translate: 0 0; } }
+
+/* tables and long numbers */
+html[dir="rtl"] table { direction: rtl; }
+html[dir="rtl"] td[class*="num"], html[dir="rtl"] th[class*="num"] { text-align: center; }
+
+/* the language switch itself always reads English | العربية */
+html[dir="rtl"] .mk-lang-seg { direction: ltr; }

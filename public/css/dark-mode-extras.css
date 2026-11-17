@@ -1,0 +1,112 @@
+/* MARKAZ staff pages: the Light/Dark switch design, plus the few dark-mode
+   details that cannot be generated from the light stylesheets. */
+
+/* ---- the switch inside the avatar menu --------------------------------- */
+.mk-theme-toggle.mk-theme-toggle {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.mk-theme-toggle.mk-theme-toggle:hover { background: rgba(20, 92, 56, .09); }
+.mk-theme-toggle:focus-visible { outline: 2px solid #c9a24a; outline-offset: 2px; }
+.mk-theme-icon { display: inline-flex; color: #b8902b; }
+.mk-theme-label { flex: 1; }
+.mk-theme-switch {
+    position: relative;
+    flex: none;
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background: #c9d3cd;
+    transition: background-color .25s ease;
+}
+.mk-theme-switch i {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: translate .28s cubic-bezier(.22, 1, .36, 1);
+}
+.mk-theme-toggle[aria-checked="true"] .mk-theme-switch { background: #2a8f58; }
+.mk-theme-toggle[aria-checked="true"] .mk-theme-switch i { translate: 16px 0; }
+
+/* pages with no avatar menu: a round icon button floating in the corner */
+.mk-theme-toggle.mk-theme-toggle-compact {
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(20, 92, 56, .2);
+}
+.mk-theme-toggle.mk-theme-toggle-floating {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 60;
+    width: 46px;
+    background: #fff;
+    color: #145c38;
+    box-shadow: 0 6px 20px rgba(8, 45, 30, .22);
+}
+@media print { .mk-theme-toggle-floating { display: none !important; } }
+.mk-theme-toggle-compact .mk-theme-label,
+.mk-theme-toggle-compact .mk-theme-switch { display: none; }
+
+/* ---- smooth colour fade, only while the switch is flipped -------------- */
+@media screen and (prefers-reduced-motion: no-preference) {
+    html.mk-theme-switching,
+    html.mk-theme-switching *,
+    html.mk-theme-switching *::before,
+    html.mk-theme-switching *::after {
+        transition: background-color .35s ease, color .35s ease, border-color .35s ease,
+                    box-shadow .35s ease, fill .35s ease, stroke .35s ease !important;
+    }
+}
+
+/* ---- dark-only details -------------------------------------------------- */
+@media screen {
+    html[data-theme="dark"] { scrollbar-color: #3b4a41 #121915; }
+    html[data-theme="dark"] ::selection { background: rgba(201, 162, 74, .38); color: #fff; }
+    html[data-theme="dark"] ::placeholder { color: #7f8c85; opacity: 1; }
+    html[data-theme="dark"] input:-webkit-autofill,
+    html[data-theme="dark"] textarea:-webkit-autofill,
+    html[data-theme="dark"] select:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px #1b2520 inset !important;
+        -webkit-text-fill-color: #e6efe9 !important;
+        caret-color: #e6efe9;
+    }
+    html[data-theme="dark"] select option,
+    html[data-theme="dark"] select optgroup { background: #1b2520; color: #e6efe9; }
+    html[data-theme="dark"] hr { border-color: #34403a; }
+    html[data-theme="dark"] .mk-theme-toggle.mk-theme-toggle:hover { background: rgba(255, 255, 255, .07); }
+    html[data-theme="dark"] .mk-theme-icon { color: #e6c26a; }
+    html[data-theme="dark"] .mk-theme-switch { background: #3b4a41; }
+    html[data-theme="dark"] .mk-theme-toggle[aria-checked="true"] .mk-theme-switch { background: #2a8f58; }
+    html[data-theme="dark"] .mk-theme-toggle.mk-theme-toggle-compact { border-color: rgba(255, 255, 255, .16); }
+    html[data-theme="dark"] .mk-theme-toggle.mk-theme-toggle-floating { background: #24302a; color: #e6efe9; box-shadow: 0 6px 20px rgba(0, 0, 0, .5); }
+    /* attendance rings are drawn by dashboard.js with a fixed light track colour */
+    html[data-theme="dark"] circle[stroke="#e6eadf"] { stroke: #33403a; }
+    /* the avatar circle is styled inline by dashboard.js */
+    html[data-theme="dark"] .admin-profile-avatar[style] {
+        background: #1f3b2c !important;
+        color: #c7ecd5 !important;
+        -webkit-text-fill-color: #c7ecd5 !important;
+    }
+}
