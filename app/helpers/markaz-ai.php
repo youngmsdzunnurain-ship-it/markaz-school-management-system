@@ -6,6 +6,11 @@ declare(strict_types=1);
  * Resolve AI capabilities exclusively from the authenticated account and
  * persisted MARKAZ permissions. Never accept role or scope from the browser.
  */
+function markazAiIsStaffRole(string $role): bool
+{
+    return in_array($role, ['admin', 'exam_officer', 'teacher', 'management'], true);
+}
+
 function markazAiResolveScope(PDO $pdo, int $accountId, string $role): array
 {
     $scope = [
@@ -203,6 +208,17 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
                  ORDER BY e.created_at DESC, e.id DESC LIMIT 100'
             );
             $context['school_activity_today'] = $activityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $teacherActivityStmt = $pdo->query(
+                "SELECT e.event_type, e.entity_type, e.created_at,
+                        COALESCE(a.name, e.account_name_snapshot) AS account_name,
+                        e.account_id
+                 FROM markaz_activity_events e
+                 LEFT JOIN admins a ON a.id = e.account_id
+                 WHERE DATE(e.created_at) = CURDATE() AND e.role_snapshot = 'teacher'
+                 ORDER BY e.created_at DESC, e.id DESC LIMIT 500"
+            );
+            $context['teacher_activity_today'] = $teacherActivityStmt->fetchAll(PDO::FETCH_ASSOC);
+            $context['teacher_activity_truncated'] = count($context['teacher_activity_today']) >= 500;
             $aiActivityStmt = $pdo->query(
                 'SELECT e.event_type, e.metadata, e.created_at,
                         a.name AS account_name, a.role AS account_role
@@ -464,6 +480,45 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
 
     if ($has(['hello', 'hi ', 'salam', 'assalamu', 'good morning', 'good afternoon'])) {
         return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
+    }
+
+    if ($role === 'admin' && $has(['teacher', 'staff']) && $has(['today', 'did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
+        $teacherEvents = is_array($context['teacher_activity_today'] ?? null) ? $context['teacher_activity_today'] : [];
+        $matchedName = null;
+        foreach ($teacherEvents as $event) {
+            $name = trim((string) ($event['account_name'] ?? ''));
+            if ($name !== '' && stripos($message, $name) !== false) {
+                $matchedName = $name;
+                break;
+            }
+        }
+        if ($matchedName === null) {
+            return 'I can summarise a teacher’s recorded MARKAZ activity for today. Please include the teacher’s exact staff account name in your question. I will report only actions recorded by MARKAZ, not assume or invent work that was not logged.';
+        }
+        $events = array_values(array_filter($teacherEvents, static fn(array $event): bool => strcasecmp(trim((string) ($event['account_name'] ?? '')), $matchedName) === 0));
+        if (!$events) {
+            return 'I found the staff account for ' . $matchedName . ', but there are no recorded MARKAZ activity events for that teacher today. This does not prove that no work was done; some workflows may not yet record activity.';
+        }
+        $counts = [];
+        $latest = null;
+        foreach ($events as $event) {
+            $type = (string) ($event['event_type'] ?? 'recorded_activity');
+            $counts[$type] = ($counts[$type] ?? 0) + 1;
+            if ($latest === null || (string) ($event['created_at'] ?? '') > (string) ($latest['created_at'] ?? '')) $latest = $event;
+        }
+        arsort($counts);
+        $parts = [];
+        foreach ($counts as $type => $count) {
+            $label = ucwords(str_replace('_', ' ', $type));
+            $parts[] = $label . ' (' . $count . ')';
+        }
+        $answer = 'Recorded MARKAZ activity for ' . $matchedName . ' today: ' . count($events) . ' logged event(s). ' . implode('; ', $parts) . '.';
+        if ($latest && !empty($latest['created_at'])) {
+            $answer .= ' Most recent recorded event: ' . (string) $latest['event_type'] . ' at ' . (string) $latest['created_at'] . '.';
+        }
+        $answer .= ' This summary covers recorded MARKAZ activity only; it is not a complete measure of all work performed.';
+        if (!empty($context['teacher_activity_truncated'])) $answer .= ' The activity feed reached its 500-event safety limit, so older events may be omitted.';
+        return $answer;
     }
 
     if ($has(['help', 'what can you do', 'what do you do'])) {
