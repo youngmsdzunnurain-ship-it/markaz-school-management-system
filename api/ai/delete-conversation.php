@@ -8,6 +8,13 @@ require_once __DIR__ . '/../../app/middleware/auth.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
 requireLogin();
+try {
+    markazAiResolveScope(db(), (int) $_SESSION['admin_id'], currentAdminRole());
+} catch (Throwable $error) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => $error->getMessage()]);
+    exit;
+}
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: POST');
