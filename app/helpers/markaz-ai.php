@@ -188,6 +188,12 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
             $context['workspace_summary']['result_rows_in_current_period'] = (int) $resultStmt->fetchColumn();
         }
         if ($role === 'admin') {
+            $attendanceStmt = $pdo->query(
+                'SELECT COUNT(*) AS marked, SUM(status = "present") AS present_count,
+                        SUM(status = "absent") AS absent_count, SUM(status = "late") AS late_count
+                 FROM attendance_records WHERE attendance_date = CURDATE()'
+            );
+            $context['workspace_summary']['today_attendance'] = $attendanceStmt->fetch(PDO::FETCH_ASSOC) ?: [];
             $activityStmt = $pdo->query(
                 'SELECT e.event_type, e.entity_type, e.entity_id, e.metadata, e.created_at,
                         COALESCE(a.name, e.account_name_snapshot) AS account_name, e.role_snapshot AS account_role
@@ -474,6 +480,16 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
 
     $role = (string) ($scope['role'] ?? '');
     $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
+    if ($role === 'teacher' && $has(['how many students', 'student count', 'number of students', 'class size', 'how many learners'])) {
+        $workspaces = $context['assigned_workspaces'] ?? [];
+        if (!$workspaces) return 'No active assigned class workspace is available for your account.';
+        $lines = [];
+        foreach ($workspaces as $workspace) {
+            $lines[] = (string) ($workspace['class_name'] ?? 'Assigned class') . ': ' . (int) ($workspace['active_student_count'] ?? 0) . ' active students.';
+        }
+        return "Active student counts in your assigned classes only:\\n" . implode("\\n", $lines);
+    }
+
     if ($has(['student', 'enrolment', 'enrollment', 'school overview', 'how many students', 'active students', 'number of students', 'school population', 'class count', 'how many classes'])) {
         if (!in_array('school_overview', $capabilities, true)) {
             return 'That school-wide overview is not available to your account role. I can only provide information permitted for your MARKAZ account.';
