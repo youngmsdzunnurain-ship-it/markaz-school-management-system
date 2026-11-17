@@ -1,0 +1,89 @@
+/* MARKAZ language switch (English / العربية) and the tidy "Preferences" group
+   inside the avatar menu. Loaded on every page that has the switch. */
+
+/* ---- grouped preferences: Light/Dark + Language, between the profile links and Logout ---- */
+.mk-prefs {
+    display: grid;
+    gap: 2px;
+    margin: 6px 0;
+    padding: 6px 0;
+    border-block: 1px solid rgba(20, 92, 56, .13);
+}
+
+.mk-prefs, .mk-prefs * { box-sizing: border-box; }
+
+.mk-lang-row {
+    display: grid;
+    gap: 8px;
+    padding: 8px 14px 10px;
+    color: inherit;
+}
+
+.mk-lang-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.mk-lang-icon { display: inline-flex; color: #b8902b; }
+
+.mk-lang-seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(20, 92, 56, .1);
+}
+
+.mk-lang-seg button {
+    min-width: 0;
+    margin: 0;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.mk-lang-seg button[aria-pressed="true"] {
+    background: #145c38;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(8, 45, 30, .28);
+}
+
+.mk-lang-seg button:focus-visible { outline: 2px solid #c9a24a; outline-offset: 2px; }
+
+/* pages with no avatar menu: a small floating pill */
+.mk-lang-floating {
+    position: fixed;
+    inset-block-end: 16px;
+    inset-inline-start: 16px;
+    z-index: 70;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    color: #145c38;
+    box-shadow: 0 6px 20px rgba(8, 45, 30, .22);
+}
+.mk-lang-floating .mk-lang-seg { display: inline-flex; background: rgba(20, 92, 56, .08); }
+.mk-lang-floating { display: block; padding: 4px; }
+.mk-lang-floating .mk-lang-seg button { min-width: 56px; padding: 5px 10px; }
+.mk-auth .mk-lang-floating { inset-block-start: 14px; inset-block-end: auto; inset-inline-start: auto; inset-inline-end: 14px; }
+
+@media print { .mk-lang-floating, .mk-prefs { display: none !important; } }
+
+/* ---- dark mode ---- */
+@media screen {
+    html[data-theme="dark"] .mk-prefs { border-color: rgba(255, 255, 255, .1); }
+    html[data-theme="dark"] .mk-lang-icon { color: #e6c26a; }
+    html[data-theme="dark"] .mk-lang-seg { background: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .mk-lang-seg button[aria-pressed="true"] { background: #2a8f58; }
+    html[data-theme="dark"] .mk-lang-floating { background: #24302a; color: #e6efe9; box-shadow: 0 6px 20px rgba(0, 0, 0, .5); }
+}

@@ -1,0 +1,188 @@
+/* ==========================================================================
+   MARKAZ right-to-left layout for dashboard.html: GENERATED FILE. Do not edit by hand.
+   Built by tools/i18n/build-rtl.mjs from the stylesheets this page loads.
+   Applies only when <html dir="rtl"> (Arabic). Hand-written details: rtl-extras.css.
+   ========================================================================== */
+/* ---- css/dashboard-2026.css ---- */
+html[dir="rtl"] .skip-link {
+    left: auto;
+    right: -9999px
+}
+html[dir="rtl"] .skip-link:focus {
+    left: auto;
+    right: 8px
+}
+html[dir="rtl"] .sidebar {
+    background: linear-gradient(-180deg,#145035,#0e3724)
+}
+html[dir="rtl"] .nav-link.active::before {
+    left: auto;
+    right: 0
+}
+html[dir="rtl"] .topbar {
+    background: linear-gradient(-90deg,#a9cbb4,#e6d9a4 70%,#efe9d2)
+}
+html[dir="rtl"] .topbar-actions {
+    margin-left: 0;
+    margin-right: auto
+}
+html[dir="rtl"] .admin-profile-button {
+    padding-left: 14px;
+    padding-right: 6px
+}
+html[dir="rtl"] .admin-profile-button[aria-expanded="true"] .admin-profile-arrow {
+    transform: rotate(-180deg)
+}
+html[dir="rtl"] .profile-dropdown {
+    left: 0;
+    right: auto
+}
+html[dir="rtl"] .profile-dropdown-item {
+    text-align: right
+}
+html[dir="rtl"] .dashboard-footer::before {
+    background: linear-gradient(-90deg,#17643a,#c8a43a)
+}
+html[dir="rtl"] .welcome-card {
+    background: linear-gradient(-90deg,#14472f,#1d6b45)
+}
+html[dir="rtl"] .welcome-card::before {
+    left: auto;
+    right: 0
+}
+html[dir="rtl"] .welcome-card::after {
+    left: -30px;
+    right: auto
+}
+html[dir="rtl"] .dashboard-attendance-empty {
+    border-left: 0;
+    border-right: 4px solid var(--gold)
+}
+html[dir="rtl"] .dashboard-attendance-empty a {
+    margin-left: 0;
+    margin-right: auto
+}
+html[dir="rtl"] .dashboard-attendance-donut-wrap {
+    padding-left: 0;
+    padding-right: 24px
+}
+html[dir="rtl"] .dashboard-attendance-stats {
+    padding-left: 24px;
+    padding-right: 20px
+}
+html[dir="rtl"] .dashboard-attendance-rate-key i::after {
+    margin-left: 0;
+    margin-right: -5px;
+    left: auto;
+    right: 50%
+}
+html[dir="rtl"] .dashboard-attendance-footnote {
+    border-left: 0;
+    border-right: 4px solid var(--gold)
+}
+html[dir="rtl"] .quick-actions button {
+    text-align: right
+}
+@media (max-width:850px) {
+    html[dir="rtl"] .sidebar {
+        transform: translateX(100%);
+        left: auto;
+        right: 0
+    }
+}
+html[dir="rtl"] .sidebar-user .logout-button {
+    margin-left: 0;
+    margin-right: auto
+}
+html[dir="rtl"] .management-dashboard-profile-copy small i {
+    margin-left: 4px;
+    margin-right: 0
+}
+html[dir="rtl"] .management-dashboard-profile {
+    background: linear-gradient(-145deg, #ffffff 0%, #f7fbf6 100%)
+}
+html[dir="rtl"] .management-dashboard-profile::before {
+    background: linear-gradient(-90deg, #1d6039, #c5a45d)
+}
+html[dir="rtl"] .topbar>.topbar-actions {
+    margin-left: 0;
+    margin-right: auto
+}
+html[dir="rtl"] .welcome-cap {
+    left: 58px;
+    right: auto
+}
+@media (max-width:850px) {
+    html[dir="rtl"] .welcome-cap {
+        left: 22px;
+        right: auto
+    }
+    html[dir="rtl"] .welcome-card {
+        padding-left: 90px;
+        padding-right: 20px
+    }
+}
+@media (max-width:480px) {
+    html[dir="rtl"] .welcome-cap {
+        left: 14px;
+        right: auto
+    }
+    html[dir="rtl"] .welcome-card {
+        padding-left: 68px;
+        padding-right: 20px
+    }
+}
+@media (hover:hover) {
+    html[dir="rtl"] .stat-card:hover .stat-icon {
+        transform: rotate(6deg) scale(1.06)
+    }
+}
+html[dir="rtl"] .management-dashboard-profile {
+    background: linear-gradient(-150deg, #ffffff 0%, #f4f8f1 100%)
+}
+html[dir="rtl"] .management-dashboard-profile-body {
+    background: linear-gradient(-120deg, #ffffff 0%, #f8faf5 100%)
+}
+/* ---- css/app-watermark.css ---- */
+html[dir="rtl"] .sidebar {
+    background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important
+}
+html[dir="rtl"] body > .sidebar {
+    background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important
+}
+/* ---- css/website-image-polish.css ---- */
+html[dir="rtl"] .website-image-preview {
+    background: linear-gradient(-145deg, #f5f8f5, #eaf1eb)
+}
+/* ---- css/markaz-ai.css ---- */
+html[dir="rtl"] #markazAiRoot {
+    left: 22px;
+    right: auto
+}
+html[dir="rtl"] .markaz-ai-launcher {
+    background: linear-gradient(-135deg,#14563a,#0b3827)
+}
+html[dir="rtl"] .markaz-ai-launcher-mark,
+html[dir="rtl"] .markaz-ai-logo {
+    background: linear-gradient(-135deg,#f3d987,#c69a39)
+}
+html[dir="rtl"] .markaz-ai-panel {
+    left: 0;
+    right: auto
+}
+html[dir="rtl"] .markaz-ai-header {
+    background: linear-gradient(-110deg,#124d34,#1e6545)
+}
+html[dir="rtl"] .markaz-ai-history-open {
+    text-align: right
+}
+@media (max-width:600px) {
+    html[dir="rtl"] #markazAiRoot {
+        left: 12px;
+        right: auto
+    }
+    html[dir="rtl"] .markaz-ai-panel {
+        left: 8px;
+        right: auto
+    }
+}

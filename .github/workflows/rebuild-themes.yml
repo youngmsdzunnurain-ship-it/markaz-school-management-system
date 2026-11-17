@@ -1,0 +1,46 @@
+name: Rebuild dark mode, Arabic layout and dictionary
+
+# Keeps the generated theme files in step with the stylesheets and translations.
+# Whenever CSS, a page, or a translation file changes on main, the generated files are rebuilt
+# and committed back automatically. (See tools/THEMES-README.md.)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/css/**/*.css'
+      - '!public/css/theme/**'
+      - 'public/**/*.html'
+      - 'public/subjects/*.css'
+      - 'public/class-subjects/*.css'
+      - 'tools/i18n/dictionary/*.tsv'
+      - 'tools/themes/pages.mjs'
+      - 'tools/dark-theme/build.mjs'
+      - 'tools/i18n/build-rtl.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install builders
+        run: npm i --no-save postcss culori rtlcss
+      - name: Rebuild generated files
+        run: sh tools/build-themes.sh
+      - name: Commit changes (if any)
+        run: |
+          git config user.name "markaz-theme-bot"
+          git config user.email "markaz-theme-bot@users.noreply.github.com"
+          git add public/css/theme public/js/i18n-ar.js
+          if git diff --cached --quiet; then
+            echo "Generated files already up to date."
+          else
+            git commit -m "Rebuild dark mode, Arabic layout and dictionary [skip ci]"
+            git push
+          fi
