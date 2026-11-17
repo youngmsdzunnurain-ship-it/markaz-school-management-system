@@ -442,41 +442,11 @@ function markazAiResolveStudentPortalContext(PDO $pdo): ?array
  */
 function markazAiBuildFreeAnswer(string $message, array $scope, array $context, bool $studentMode = false): string
 {
-    $question = strtolower(trim(preg_replace('/\\s+/', ' ', $message) ?? ''));
-    $question = preg_replace('/[^a-z0-9 ]/', '', $question) ?? '';
-    $has = static fn(array $terms): bool => (bool) array_filter($terms, static fn(string $term): bool => str_contains($question, $term));
-
-    if ($studentMode) {
-        $results = is_array($context['published_results'] ?? null) ? $context['published_results'] : [];
-        if ($has(['hello', 'hi ', 'salam', 'assalamu'])) {
-            return 'Wa alaikum assalam! I can help explain the results published to your Student Portal, identify subjects to practise and explain your scores.';
-        }
-        if (!$results) {
-            return 'I cannot see any published subject results in this Student Portal session yet. Please check with your class teacher or the school office.';
-        }
-        if ($has(['result', 'total', 'score', 'mark', 'subject', 'perform', 'strong', 'weak', 'improve', 'practise', 'practice'])) {
-            $sum = 0.0;
-            $lines = [];
-            $lowest = null;
-            $highest = null;
-            foreach ($results as $row) {
-                $subject = (string) ($row['subject'] ?? 'Subject');
-                $total = (float) ($row['total'] ?? ((float) ($row['ca1'] ?? 0) + (float) ($row['ca2'] ?? 0) + (float) ($row['exam'] ?? 0)));
-                $sum += $total;
-                $lines[] = $subject . ': ' . rtrim(rtrim(number_format($total, 2, '.', ''), '0'), '.') . '/100';
-                if ($lowest === null || $total < $lowest['total']) $lowest = ['subject' => $subject, 'total' => $total];
-                if ($highest === null || $total > $highest['total']) $highest = ['subject' => $subject, 'total' => $total];
-            }
-            $average = $sum / count($results);
-            $answer = 'Here is the result information published for ' . (string) ($context['term'] ?? 'your term') . ' (' . (string) ($context['academic_session'] ?? 'your academic session') . '):' . "\n"
-                . implode("\n", $lines) . "\n"
-                . 'Total across ' . count($results) . ' subjects: ' . rtrim(rtrim(number_format($sum, 2, '.', ''), '0'), '.') . '. Average: ' . number_format($average, 1) . '/100.';
-            if ($highest !== null) $answer .= "\nYour highest subject here is " . $highest['subject'] . ' (' . number_format($highest['total'], 1) . ').';
-            if ($lowest !== null) $answer .= "\nA useful subject to give extra practice time is " . $lowest['subject'] . ' (' . number_format($lowest['total'], 1) . ').';
-            return $answer . "\nKeep practising steadily. If a published mark looks incorrect, speak with your class teacher; I cannot change school results.";
-        }
-        return 'I can explain your published result, subject totals, strongest subject and areas to practise. Ask, for example: “Explain my result” or “Which subject should I practise more?”';
+    $role = (string) ($scope['role'] ?? '');
+    if (!markazAiIsStaffRole($role)) {
+        return 'The MARKAZ AI assistant is available to authorised staff accounts only.';
     }
+    $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
 
     if ($has(['hello', 'hi ', 'salam', 'assalamu', 'good morning', 'good afternoon'])) {
         return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
@@ -533,8 +503,6 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
         return 'The current academic period is ' . $period['term'] . ' of ' . $period['session'] . '. Results are ' . (!empty($period['results_released']) ? 'released' : 'not yet released') . ', and the period is ' . (!empty($period['finalized']) ? 'finalized' : 'not finalized') . '.';
     }
 
-    $role = (string) ($scope['role'] ?? '');
-    $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
     if ($role === 'teacher' && $has(['how many students', 'student count', 'number of students', 'class size', 'how many learners'])) {
         $workspaces = $context['assigned_workspaces'] ?? [];
         if (!$workspaces) return 'No active assigned class workspace is available for your account.';
