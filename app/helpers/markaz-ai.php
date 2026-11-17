@@ -13,6 +13,9 @@ function markazAiIsStaffRole(string $role): bool
 
 function markazAiResolveScope(PDO $pdo, int $accountId, string $role): array
 {
+    if (!markazAiIsStaffRole($role)) {
+        throw new RuntimeException('The MARKAZ AI assistant is available to authorised staff accounts only.');
+    }
     $scope = [
         'role' => $role,
         'capabilities' => ['help', 'workspace_guidance'],
@@ -440,13 +443,16 @@ function markazAiResolveStudentPortalContext(PDO $pdo): ?array
  * Answer a deliberately limited set of questions from verified MARKAZ data.
  * This is a no-provider, deterministic assistant, not a generative language model.
  */
-function markazAiBuildFreeAnswer(string $message, array $scope, array $context, bool $studentMode = false): string
+function markazAiBuildFreeAnswer(string $message, array $scope, array $context): string
 {
     $role = (string) ($scope['role'] ?? '');
     if (!markazAiIsStaffRole($role)) {
         return 'The MARKAZ AI assistant is available to authorised staff accounts only.';
     }
     $capabilities = is_array($scope['capabilities'] ?? null) ? $scope['capabilities'] : [];
+    $question = strtolower(trim(preg_replace('/\\s+/', ' ', $message) ?? ''));
+    $question = preg_replace('/[^a-z0-9 ]/', '', $question) ?? '';
+    $has = static fn(array $terms): bool => (bool) array_filter($terms, static fn(string $term): bool => str_contains($question, $term));
 
     if ($has(['hello', 'hi ', 'salam', 'assalamu', 'good morning', 'good afternoon'])) {
         return 'Assalamu alaikum! I am the MARKAZ no-cost school assistant. I can answer selected questions using the school information available to your account. Ask about your current academic period, your assigned classes, or a permitted workspace summary.';
