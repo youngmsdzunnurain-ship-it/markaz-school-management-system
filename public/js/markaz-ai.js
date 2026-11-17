@@ -15,26 +15,11 @@ const api = async (url, options = {}) => {
     return data;
 };
 
-const studentMode = new URLSearchParams(location.search).get("student_portal") === "1";
-const studentQuery = new URLSearchParams(location.search);
-if (studentMode) {
-    awaitAccount().then(({ok, data}) => {
-        // A signed-in staff account always takes precedence over a leftover Student Portal cookie.
-        if (ok && data?.success && data.admin && ["admin","exam_officer","teacher","management"].includes(data.admin.role)) {
-            mount(data.admin, false, "");
-            return;
-        }
-        api("/api/ai/student-context.php?" + studentQuery.toString()).then(data => {
-            mount({role:"student", name:data.student_name || "Student"}, true, studentQuery.toString());
-        }).catch(error => console.warn("Student Learning Assistant unavailable:", error.message));
-    });
-} else {
-    const accountResult = awaitAccount();
-    accountResult.then(({ok, data}) => {
-        if (!ok || !data?.success || !data.admin || !["admin","exam_officer","teacher","management"].includes(data.admin.role)) return;
-        mount(data.admin, false, "");
-    });
-}
+const accountResult = awaitAccount();
+accountResult.then(({ok, data}) => {
+    if (!ok || !data?.success || !data.admin || !["admin","exam_officer","teacher","management"].includes(data.admin.role)) return;
+    mount(data.admin);
+});
 
 function awaitAccount() {
     return fetch("/api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: {Accept:"application/json"} })
@@ -42,8 +27,8 @@ function awaitAccount() {
         .catch(() => ({ok:false, data:{}}));
 }
 
-function mount(account, studentMode = false, studentQuery = "") {
-    const endpoint = name => studentMode ? "/api/ai/student-" + name + ".php" : "/api/ai/" + name + ".php";
+function mount(account) {\n    const studentMode = false;
+    const endpoint = name => "/api/ai/" + name + ".php";
     if (document.getElementById("markazAiRoot")) return;
     if (!document.querySelector('link[data-markaz-ai-css]')) {
         const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "/css/markaz-ai.css?v=20261116-ai1"; css.dataset.markazAiCss = "1"; document.head.appendChild(css);
@@ -177,7 +162,7 @@ function mount(account, studentMode = false, studentQuery = "") {
     }));
 
     async function startConversation() {
-        const data = await api(endpoint("conversations") + (studentMode ? "?" + studentQuery : ""), {
+        const data = await api(endpoint("conversations") + (studentMode ? "?" + "" : ""), {
             method: "POST", headers: {"Content-Type":"application/json"},
             body: JSON.stringify({title:"New conversation"})
         });
