@@ -15,26 +15,11 @@ const api = async (url, options = {}) => {
     return data;
 };
 
-const studentMode = new URLSearchParams(location.search).get("student_portal") === "1";
-const studentQuery = new URLSearchParams(location.search);
-if (studentMode) {
-    awaitAccount().then(({ok, data}) => {
-        // A signed-in staff account always takes precedence over a leftover Student Portal cookie.
-        if (ok && data?.success && data.admin && ["admin","exam_officer","teacher","management"].includes(data.admin.role)) {
-            mount(data.admin, false, "");
-            return;
-        }
-        api("/api/ai/student-context.php?" + studentQuery.toString()).then(data => {
-            mount({role:"student", name:data.student_name || "Student"}, true, studentQuery.toString());
-        }).catch(error => console.warn("Student Learning Assistant unavailable:", error.message));
-    });
-} else {
-    const accountResult = awaitAccount();
-    accountResult.then(({ok, data}) => {
-        if (!ok || !data?.success || !data.admin || !["admin","exam_officer","teacher","management"].includes(data.admin.role)) return;
-        mount(data.admin, false, "");
-    });
-}
+const accountResult = awaitAccount();
+accountResult.then(({ok, data}) => {
+    if (!ok || !data?.success || !data.admin || !["admin","exam_officer","teacher","management"].includes(data.admin.role)) return;
+    mount(data.admin);
+});
 
 function awaitAccount() {
     return fetch("/api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: {Accept:"application/json"} })
@@ -42,8 +27,8 @@ function awaitAccount() {
         .catch(() => ({ok:false, data:{}}));
 }
 
-function mount(account, studentMode = false, studentQuery = "") {
-    const endpoint = name => studentMode ? "/api/ai/student-" + name + ".php" : "/api/ai/" + name + ".php";
+function mount(account) {
+    const endpoint = name => "/api/ai/" + name + ".php";
     if (document.getElementById("markazAiRoot")) return;
     if (!document.querySelector('link[data-markaz-ai-css]')) {
         const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "/css/markaz-ai.css?v=20261116-ai1"; css.dataset.markazAiCss = "1"; document.head.appendChild(css);
@@ -56,21 +41,21 @@ function mount(account, studentMode = false, studentQuery = "") {
       </button>
       <section class="markaz-ai-panel markaz-ai-chat" role="dialog" aria-modal="false" aria-label="MARKAZ AI assistant" hidden>
         <header class="markaz-ai-header">
-          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>${studentMode ? "Published results · private session · no-cost mode" : "Verified school data · no-cost mode"}</small></div></div>
+          <div class="markaz-ai-brand"><span class="markaz-ai-logo">✦</span><div><strong>MARKAZ AI</strong><small>${Verified school data · no-cost mode}</small></div></div>
           <div class="markaz-ai-header-actions"><button type="button" data-ai-new title="New conversation" aria-label="New conversation">＋</button><button type="button" data-ai-close title="Close assistant" aria-label="Close assistant">×</button></div>
         </header>
         <div class="markaz-ai-tabs" role="tablist">
           <button type="button" class="active" data-ai-tab="chat" role="tab" aria-selected="true">Assistant</button>
           <button type="button" data-ai-tab="history" role="tab" aria-selected="false">History</button>
-          <button type="button" data-ai-tab="scan" role="tab" aria-selected="false" ${studentMode ? "hidden" : ""}>Scan result</button>
+          <button type="button" data-ai-tab="scan" role="tab" aria-selected="false" ${}>Scan result</button>
           <button type="button" data-ai-tab="activity" role="tab" aria-selected="false" hidden>School activity</button>
         </div>
         <div class="markaz-ai-view" data-ai-view="chat">
-          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">${studentMode ? "YOUR PUBLISHED RESULT" : "YOUR MARKAZ WORKSPACE"}</span><h2>${studentMode ? "Let’s understand your results." : "Your no-cost school assistant"}</h2><p>${studentMode ? "Ask me to explain your published subject results, totals and areas to practise. I can only see the result released to your Student Portal session." : "Ask about the current academic period, your assigned classes, or school information permitted for your account. I use verified MARKAZ records and will tell you when I cannot answer."}</p><div class="markaz-ai-suggestions"><button type="button">${studentMode ? "Explain my result and total" : "What is the current academic period?"}</button><button type="button">${studentMode ? "Which subjects should I practise more?" : "What can you do?"}</button></div></div>
+          <div class="markaz-ai-welcome"><span class="markaz-ai-eyebrow">${YOUR MARKAZ WORKSPACE}</span><h2>${Your no-cost school assistant}</h2><p>${Ask about the current academic period, your assigned classes, or school information permitted for your account. I use verified MARKAZ records and will tell you when I cannot answer.}</p><div class="markaz-ai-suggestions"><button type="button">${What is the current academic period?}</button><button type="button">${What can you do?}</button></div></div>
           <div class="markaz-ai-messages" aria-live="polite"></div>
           <form class="markaz-ai-compose"><textarea name="message" rows="2" maxlength="4000" placeholder="Message MARKAZ AI…" aria-label="Message MARKAZ AI" required></textarea><button type="button" class="markaz-ai-voice" data-ai-voice aria-label="Voice input unavailable in no-cost mode" title="Voice input unavailable in no-cost mode" hidden>🎙</button><button type="submit" aria-label="Send message">↑</button><small>AI can make mistakes. Verify important school records.</small></form>
         </div>
-        <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>${studentMode ? "Private to this Student Portal session" : "Only visible to your account"}</span></div><div class="markaz-ai-history-list"></div></div>
+        <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>${Only visible to your account}</span></div><div class="markaz-ai-history-list"></div></div>
         <div class="markaz-ai-view" data-ai-view="scan" hidden>
           <div class="markaz-ai-view-heading"><strong>Result-sheet scanner</strong><span>Draft extraction · review required</span></div>
           <p class="markaz-ai-scan-copy">Upload a clear photo of a result sheet. MARKAZ AI will transcribe visible values and flag unclear cells. Nothing is saved to student results.</p>
@@ -177,7 +162,7 @@ function mount(account, studentMode = false, studentQuery = "") {
     }));
 
     async function startConversation() {
-        const data = await api(endpoint("conversations") + (studentMode ? "?" + studentQuery : ""), {
+        const data = await api(endpoint("conversations") + ( ""), {
             method: "POST", headers: {"Content-Type":"application/json"},
             body: JSON.stringify({title:"New conversation"})
         });
@@ -190,7 +175,7 @@ function mount(account, studentMode = false, studentQuery = "") {
         const list = root.querySelector(".markaz-ai-history-list");
         list.replaceChildren();
         try {
-            const data = await api(endpoint("conversations") + (studentMode ? "?" + studentQuery : ""));
+            const data = await api(endpoint("conversations") + ( ""));
             if (!data.conversations.length) {
                 const empty = document.createElement("p"); empty.className = "markaz-ai-empty"; empty.textContent = "Your conversations will appear here."; list.appendChild(empty); return;
             }
@@ -199,7 +184,7 @@ function mount(account, studentMode = false, studentQuery = "") {
                 const openButton = document.createElement("button"); openButton.type = "button"; openButton.className = "markaz-ai-history-open"; openButton.textContent = item.title;
                 openButton.addEventListener("click", async () => {
                     try {
-                        const history = await api(endpoint("history") + "?conversation_id=" + encodeURIComponent(item.id) + (studentMode ? "&" + studentQuery : ""));
+                        const history = await api(endpoint("history") + "?conversation_id=" + encodeURIComponent(item.id) + ( ""));
                         conversationId = Number(item.id); messages.replaceChildren();
                         history.messages.forEach(message => addMessage(message.role, message.content));
                         switchTab("chat");
@@ -209,7 +194,7 @@ function mount(account, studentMode = false, studentQuery = "") {
                 remove.addEventListener("click", async () => {
                     if (!confirm("Delete this conversation and its messages?")) return;
                     try {
-                        await api(endpoint("delete-conversation") + (studentMode ? "?" + studentQuery : ""), {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({conversation_id:item.id})});
+                        await api(endpoint("delete-conversation") + ( ""), {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({conversation_id:item.id})});
                         if (conversationId === Number(item.id)) { conversationId = 0; messages.replaceChildren(); }
                         loadHistory();
                     } catch (error) { sayStatus(error.message); }
@@ -256,7 +241,7 @@ function mount(account, studentMode = false, studentQuery = "") {
                 form.append("voice_note", blob, "markaz-voice-note." + extension);
                 setBusy(true); sayStatus("Transcribing your voice…");
                 try {
-                    const data = await api(endpoint("transcribe") + (studentMode ? "?" + studentQuery : ""), {method:"POST",body:form});
+                    const data = await api(endpoint("transcribe") + ( ""), {method:"POST",body:form});
                     const textarea = root.querySelector(".markaz-ai-compose textarea");
                     textarea.value = [textarea.value.trim(), data.transcript].filter(Boolean).join(" ");
                     textarea.focus();
@@ -283,7 +268,7 @@ function mount(account, studentMode = false, studentQuery = "") {
         addMessage("user", message);
         setBusy(true); sayStatus("MARKAZ AI is thinking…");
         try {
-            const data = await api(endpoint("chat") + (studentMode ? "?" + studentQuery : ""), {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,conversation_id:conversationId || undefined,page:location.pathname.split("/").pop()})});
+            const data = await api(endpoint("chat") + ( ""), {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,conversation_id:conversationId || undefined,page:location.pathname.split("/").pop()})});
             conversationId = Number(data.conversation_id);
             addMessage("assistant", data.answer); sayStatus("");
         } catch (error) { addMessage("assistant", error.message); sayStatus(""); }
