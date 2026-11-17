@@ -220,6 +220,10 @@ function markazAiLoadWorkspaceContext(PDO $pdo, int $accountId, array $scope): a
                  WHERE DATE(e.created_at) = CURDATE() AND e.role_snapshot = 'teacher'
                  ORDER BY e.created_at DESC, e.id DESC LIMIT 500"
             );
+            $teacherAccountsStmt = $pdo->query(
+                "SELECT id, name FROM admins WHERE role = 'teacher' ORDER BY name"
+            );
+            $context['teacher_accounts_today'] = $teacherAccountsStmt->fetchAll(PDO::FETCH_ASSOC);
             $context['teacher_activity_today'] = $teacherActivityStmt->fetchAll(PDO::FETCH_ASSOC);
             $context['teacher_activity_truncated'] = count($context['teacher_activity_today']) >= 500;
             $aiActivityStmt = $pdo->query(
@@ -460,18 +464,25 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context):
 
     if ($role === 'admin' && $has(['today']) && $has(['did', 'activity', 'activities', 'work', 'worked', 'summary', 'summarise', 'summarize'])) {
         $teacherEvents = is_array($context['teacher_activity_today'] ?? null) ? $context['teacher_activity_today'] : [];
-        $matchedName = null;
-        foreach ($teacherEvents as $event) {
-            $name = trim((string) ($event['account_name'] ?? ''));
+        $teacherAccounts = is_array($context['teacher_accounts_today'] ?? null) ? $context['teacher_accounts_today'] : [];
+        $matchedTeacher = null;
+        foreach ($teacherAccounts as $teacherAccount) {
+            $name = trim((string) ($teacherAccount['name'] ?? ''));
             if ($name !== '' && stripos($message, $name) !== false) {
-                $matchedName = $name;
+                $matchedTeacher = ['id' => (int) ($teacherAccount['id'] ?? 0), 'name' => $name];
                 break;
             }
         }
-        if ($matchedName === null) {
+        if ($matchedTeacher === null) {
             return 'I can summarise a teacher’s recorded MARKAZ activity for today. Please include the teacher’s exact staff account name in your question. I will report only actions recorded by MARKAZ, not assume or invent work that was not logged.';
         }
-        $events = array_values(array_filter($teacherEvents, static fn(array $event): bool => strcasecmp(trim((string) ($event['account_name'] ?? '')), $matchedName) === 0));
+        $matchedName = $matchedTeacher['name'];
+        $events = array_values(array_filter($teacherEvents, static function (array $event) use ($matchedTeacher, $matchedName): bool {
+            if ((int) ($event['account_id'] ?? 0) > 0 && $matchedTeacher['id'] > 0) {
+                return (int) $event['account_id'] === $matchedTeacher['id'];
+            }
+            return strcasecmp(trim((string) ($event['account_name'] ?? '')), $matchedName) === 0;
+        }));
         if (!$events) {
             return 'I found the staff account for ' . $matchedName . ', but there are no recorded MARKAZ activity events for that teacher today. This does not prove that no work was done; some workflows may not yet record activity.';
         }
