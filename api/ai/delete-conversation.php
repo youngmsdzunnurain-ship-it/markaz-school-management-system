@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
+require_once __DIR__ . '/../../app/helpers/markaz-ai.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -21,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
     exit;
 }
-require_once __DIR__ . '/../../app/helpers/markaz-ai.php';
 markazAiRequireSameOrigin();
 $input = json_decode(file_get_contents('php://input'), true);
 $id = filter_var($input['conversation_id'] ?? null, FILTER_VALIDATE_INT);
