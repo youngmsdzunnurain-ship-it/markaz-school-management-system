@@ -490,7 +490,7 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
         return "Active student counts in your assigned classes only:\n" . implode("\n", $lines);
     }
 
-    if ($has(['student', 'enrolment', 'enrollment', 'school overview', 'how many students', 'active students', 'number of students', 'school population', 'class count', 'how many classes'])) {
+    if ($has(['enrolment count', 'enrollment count', 'school overview', 'how many students', 'active students', 'number of students', 'school population', 'class count', 'how many classes'])) {
         if (!in_array('school_overview', $capabilities, true)) {
             return 'That school-wide overview is not available to your account role. I can only provide information permitted for your MARKAZ account.';
         }
