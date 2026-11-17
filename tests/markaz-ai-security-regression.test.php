@@ -33,7 +33,7 @@ markazAiCheck(str_contains($helper, 'markazAiLoadWorkspaceContext') && str_conta
 markazAiCheck(str_contains($context, 'scan_assignments') && str_contains($helper, 'teacher_assignments'), 'Teacher scanner choices are generated from persisted assignments');
 markazAiCheck(str_contains($helper, "role === 'admin'") && str_contains($helper, 'school_wide_audit'), 'Only Admin receives school-wide audit capability');
 markazAiCheck(str_contains($chat, 'markazAiBuildFreeAnswer') && !str_contains($chat, 'api.openai.com') && !str_contains($chat, 'OPENAI_API_KEY'), 'Staff chat uses the no-cost local answer engine without a paid provider');
-markazAiCheck(!str_contains($studentChat, 'OPENAI_API_KEY') && str_contains($studentChat, 'markazAiBuildFreeAnswer'), 'Student chat uses the no-cost answer engine without provider credentials');
+markazAiCheck(str_contains($studentChat, 'STUDENT_AI_DISABLED') && str_contains($studentChat, 'http_response_code(403)'), 'Student chat endpoint rejects all student requests server-side');
 markazAiCheck(str_contains($history, 'account_id = ?'), 'Conversation history is isolated to the authenticated account');
 markazAiCheck(str_contains($audit, "currentAdminRole() !== 'admin'"), 'School-wide AI activity endpoint is Admin-only');
 markazAiCheck(str_contains($migration, 'markaz_ai_conversations') && str_contains($migration, 'markaz_ai_messages') && str_contains($migration, 'markaz_ai_audit_events'), 'Staff AI conversations, messages and audit events have dedicated tables');
@@ -52,5 +52,22 @@ markazAiCheck(str_contains($audit, 'markaz_activity_events') && str_contains($au
 markazAiCheck(str_contains($migration, 'account_name_snapshot') && str_contains($migration, 'student_name_snapshot') && str_contains($migration, 'ON DELETE SET NULL'), 'Audit actor identity is retained when a staff or student account is deleted');
 markazAiCheck(str_contains($attendanceSave, 'attendance_register_saved') && str_contains($attendanceSave, 'markazRecordActivity'), 'Attendance register saves are recorded for Admin school-wide oversight');
 markazAiCheck(str_contains($styles, '@media') && str_contains($styles, 'prefers-reduced-motion'), 'AI assistant UI is responsive and respects reduced motion');
+
+
+$onlineStudentPortal = file_get_contents(__DIR__ . '/../public/online-class-portal.html');
+$studentContextApi = file_get_contents(__DIR__ . '/../api/ai/student-context.php');
+$studentConversationsApi = file_get_contents(__DIR__ . '/../api/ai/student-conversations.php');
+$studentTranscribeApi = file_get_contents(__DIR__ . '/../api/ai/student-transcribe.php');
+$deleteConversation = file_get_contents(__DIR__ . '/../api/ai/delete-conversation.php');
+markazAiCheck(str_contains($helper, 'function markazAiIsStaffRole') && str_contains($helper, "['admin', 'exam_officer', 'teacher', 'management']"), 'Only Admin, Exam Officer, Teacher and Management are permitted staff roles');
+markazAiCheck(str_contains($helper, 'if (!markazAiIsStaffRole($role))'), 'Server-side scope resolver denies all non-staff roles');
+markazAiCheck(!str_contains($widget, 'student-context.php') && !str_contains($widget, 'student-chat.php') && str_contains($widget, '["admin","exam_officer","teacher","management"]'), 'Browser assistant mounts only after a verified staff role response');
+markazAiCheck(!str_contains($onlineStudentPortal, 'markaz-ai.js'), 'Online Class student portal does not load the AI widget');
+foreach ([$studentChat, $studentContextApi, $studentConversationsApi, $studentTranscribeApi] as $studentAiEndpoint) {
+    markazAiCheck(str_contains($studentAiEndpoint, 'STUDENT_AI_DISABLED') && str_contains($studentAiEndpoint, 'http_response_code(403)'), 'Every direct student AI endpoint rejects access with HTTP 403');
+}
+markazAiCheck(str_contains($deleteConversation, 'markazAiResolveScope(db()'), 'Conversation deletion also enforces the authorised staff role');
+markazAiCheck(str_contains($helper, 'teacher_activity_today') && str_contains($helper, 'teacher_activity_truncated'), 'Admin teacher summaries are sourced from bounded, recorded daily activity');
+markazAiCheck(str_contains($helper, 'Recorded MARKAZ activity for') && str_contains($helper, 'This summary covers recorded MARKAZ activity only'), 'Teacher activity summaries clearly distinguish recorded actions from unlogged work');
 
 echo "MARKAZ AI security regression checks passed.\n";
