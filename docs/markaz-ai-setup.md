@@ -1,50 +1,52 @@
-# MARKAZ AI foundation
+# MARKAZ AI — no-cost mode
 
-## What this branch introduces
+## Current behaviour
 
-- A shared assistant entry point on the staff dashboard and authenticated management workspaces.
-- Server-derived role scopes for Admin, Exam Officer, Teacher and Management.
-- Account-private conversations, owner-checked history and conversation deletion.
-- A Responses API adapter configured only through private server environment values.
-- Review-only result-sheet image transcription. The scanner does not write to the results table.
-- Admin-only activity feed for instrumented school actions and AI usage.
-- Result-created/result-updated audit events that record actor, class, subject, period and student reference, but never score values.
+MARKAZ AI currently runs in a no-cost, server-side deterministic mode. It does not require an API key, paid model credits, an external AI subscription, or a model installed on the school’s phone.
+
+The staff assistant answers a limited set of questions using live MARKAZ data already filtered by the authenticated account’s role and permissions. The Student Learning Assistant can explain only the published results belonging to the verified Student Portal session. Conversation ownership, rate limits, same-origin checks and audit records remain enforced.
+
+This mode is intentionally transparent: it does not generate unrestricted answers like a large language model. If a question is outside its supported topics or the required data is unavailable, it says so rather than inventing an answer. It does not edit school records or claim to perform actions.
+
+## Supported no-cost questions
+
+- Current academic session and term, including finalization and result-release status.
+- Admin school overview counts that are already available in the Admin scope.
+- A teacher’s own server-verified assigned classes, subjects, active-student counts and current-period result-row counts.
+- Attendance figures only where the authenticated role and stored permissions allow them.
+- Current-period result-row counts for roles permitted to analyse results.
+- Student explanations of that student's own published subject marks, totals, average and subjects to practise.
+
+The exact answer depends on the current account role and the live data available to that role.
+
+## Features deliberately disabled in no-cost mode
+
+- AI voice transcription for staff and students.
+- AI result-sheet image scanning.
+
+These features previously depended on a paid external model provider. Their endpoints now return an explicit no-cost-mode response and do not upload audio or images to an external provider. Normal manual result entry remains available through the existing authorised MARKAZ workflow.
 
 ## Database setup
 
-Back up the database first, then apply this migration once:
+The AI foundation migration is:
 
-```sh
-mariadb -u root markaz_result_system < database/migrations/20261116_markaz_ai_foundation.sql
-```
+`database/migrations/20261116_markaz_ai_foundation.sql`
 
-Use the password option required by the local MariaDB account. Do not re-run a migration blindly.
-
-## Private AI configuration
-
-Add these values to the server-side `.env` file. Never put the API key in HTML, JavaScript, Git, or a browser setting.
-
-```dotenv
-OPENAI_API_KEY=your_private_api_key
-MARKAZ_AI_MODEL=your_enabled_model_id
-MARKAZ_AI_TRANSCRIPTION_MODEL=your_enabled_transcription_model_id
-MARKAZ_AI_BASE_URL=https://api.openai.com/v1
-```
-
-Voice input is transcribed through the provider's audio-transcription endpoint. Audio is held only in the request and is not written to MARKAZ storage; the transcript is placed in the compose box for the user to review before sending. Microphone access requires browser support and a secure context (HTTPS or localhost).
-
-The Responses request sets `store: false`. This disables Responses application-state storage for the request; it does not mean the provider has zero abuse-monitoring retention. Review the provider's current data controls and your school's lawful basis/consent before sending identifiable student records to an external AI provider.
+It provides private conversation history and separate staff/student audit tables. Back up the database before applying migrations on a new deployment, and check whether each migration has already been applied before running it.
 
 ## Security boundaries
 
-- The browser never chooses its role or permissions. The API reads the authenticated session and current MARKAZ assignments.
-- Teacher scanning requires a server-verified assigned class and subject.
-- Management capabilities are derived from individual Management permissions.
-- Only Admin can read the school-wide activity feed.
-- Conversations and messages are filtered by the signed-in account and role snapshot. Other teachers cannot open another account's conversation. Student conversations are additionally tied to the verified student, class, academic period and Student Portal session. Users can delete their own conversations. Conversation content remains in the database until deleted; the school should approve a retention schedule before production. Audit events are separate and retained for accountability.
-- The scanner stores no uploaded image and does not save extracted marks. Staff must verify every value and use the existing result-entry API, which retains its score validation, teacher assignment and academic-period finalization checks.
-- The activity feed is prospective: it contains events recorded after the migration and only from instrumented workflows. It is not a retroactive audit of every action in the school system.
+- The browser never chooses a role or permission. The server derives these from the authenticated MARKAZ session and persisted permissions.
+- Teachers receive only their own active assignments and permitted workspace figures.
+- Management receives only the summaries allowed by its individual permissions.
+- Only Admin receives school-wide oversight capabilities.
+- Student answers use only the verified student's own published result context. Another student's information, unpublished results and staff-only data are not included.
+- Conversation history is isolated to the account or verified Student Portal session.
+- Unsupported questions are not answered with invented records or scores.
+- The assistant cannot write results, change attendance, send messages or perform administrative actions.
 
-## Current scope and follow-up
+## Future portability
 
-The staff assistant and a session-isolated Student Learning Assistant are included. Persistent voice-note attachments, cross-role messaging and push notifications remain separate follow-up work requiring dedicated privacy, retention, delivery and authorization designs. Automated result writes are intentionally excluded; scanned marks remain review-only. The scanner is deliberately review-only until a verified correction-and-approval workflow exists.
+The assistant is ordinary PHP and database logic. It can run wherever MARKAZ itself is hosted; the development phone is not the production server. The school can later choose online hosting or a school-owned server without tying the application to this phone.
+
+A future self-hosted language model could be added behind a separate adapter if suitable hardware and operational resources are available. Self-hosting avoids per-request API billing but is not automatically cost-free: server hardware, hosting, electricity, maintenance and backups may still cost money. No such model is required or installed by this no-cost implementation.
