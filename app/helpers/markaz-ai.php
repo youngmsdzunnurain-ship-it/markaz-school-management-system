@@ -452,12 +452,12 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
                 if ($highest === null || $total > $highest['total']) $highest = ['subject' => $subject, 'total' => $total];
             }
             $average = $sum / count($results);
-            $answer = 'Here is the result information published for ' . (string) ($context['term'] ?? 'your term') . ' (' . (string) ($context['academic_session'] ?? 'your academic session') . '):' . "\\n"
-                . implode("\\n", $lines) . "\\n"
+            $answer = 'Here is the result information published for ' . (string) ($context['term'] ?? 'your term') . ' (' . (string) ($context['academic_session'] ?? 'your academic session') . '):' . "\n"
+                . implode("\n", $lines) . "\n"
                 . 'Total across ' . count($results) . ' subjects: ' . rtrim(rtrim(number_format($sum, 2, '.', ''), '0'), '.') . '. Average: ' . number_format($average, 1) . '/100.';
-            if ($highest !== null) $answer .= "\\nYour highest subject here is " . $highest['subject'] . ' (' . number_format($highest['total'], 1) . ').';
-            if ($lowest !== null) $answer .= "\\nA useful subject to give extra practice time is " . $lowest['subject'] . ' (' . number_format($lowest['total'], 1) . ').';
-            return $answer . "\\nKeep practising steadily. If a published mark looks incorrect, speak with your class teacher; I cannot change school results.";
+            if ($highest !== null) $answer .= "\nYour highest subject here is " . $highest['subject'] . ' (' . number_format($highest['total'], 1) . ').';
+            if ($lowest !== null) $answer .= "\nA useful subject to give extra practice time is " . $lowest['subject'] . ' (' . number_format($lowest['total'], 1) . ').';
+            return $answer . "\nKeep practising steadily. If a published mark looks incorrect, speak with your class teacher; I cannot change school results.";
         }
         return 'I can explain your published result, subject totals, strongest subject and areas to practise. Ask, for example: “Explain my result” or “Which subject should I practise more?”';
     }
@@ -487,7 +487,7 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
         foreach ($workspaces as $workspace) {
             $lines[] = (string) ($workspace['class_name'] ?? 'Assigned class') . ': ' . (int) ($workspace['active_student_count'] ?? 0) . ' active students.';
         }
-        return "Active student counts in your assigned classes only:\\n" . implode("\\n", $lines);
+        return "Active student counts in your assigned classes only:\n" . implode("\n", $lines);
     }
 
     if ($has(['student', 'enrolment', 'enrollment', 'school overview', 'how many students', 'active students', 'number of students', 'school population', 'class count', 'how many classes'])) {
@@ -509,7 +509,7 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
             $subjects = implode(', ', array_map('strval', $workspace['subjects'] ?? []));
             $lines[] = (string) ($workspace['class_name'] ?? 'Assigned class') . ' (' . (string) ($workspace['class_type'] ?? 'class') . ') — subjects: ' . ($subjects !== '' ? $subjects : 'not listed') . '; active students: ' . (int) ($workspace['active_student_count'] ?? 0) . '; current-period result rows: ' . (int) ($workspace['result_rows_current_period'] ?? 0);
         }
-        return "Your server-verified assigned workspaces:\\n" . implode("\\n", $lines);
+        return "Your server-verified assigned workspaces:\n" . implode("\n", $lines);
     }
 
     if ($has(['attendance', 'present', 'absent', 'late'])) {
@@ -523,7 +523,7 @@ function markazAiBuildFreeAnswer(string $message, array $scope, array $context, 
                 $counts = $workspace['today_attendance'];
                 $lines[] = (string) $workspace['class_name'] . ': marked ' . (int) ($counts['marked'] ?? 0) . ', present ' . (int) ($counts['present_count'] ?? 0) . ', absent ' . (int) ($counts['absent_count'] ?? 0) . ', late ' . (int) ($counts['late_count'] ?? 0) . '.';
             }
-            return $lines ? "Today's attendance in your assigned classes:\\n" . implode("\\n", $lines) : 'No attendance figures for today are available in your assigned workspaces.';
+            return $lines ? "Today's attendance in your assigned classes:\n" . implode("\n", $lines) : 'No attendance figures for today are available in your assigned workspaces.';
         }
         if ($role === 'admin' || in_array('attendance_workspace_guidance', $capabilities, true)) {
             $counts = $context['workspace_summary']['today_attendance'] ?? null;
