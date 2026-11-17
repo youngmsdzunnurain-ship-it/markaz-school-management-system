@@ -109,7 +109,8 @@ function mount(account, studentMode = false, studentQuery = "") {
         });
     }
     root.querySelector("[data-ai-tab=scan]").hidden = true;
-    root.querySelector("[data-ai-voice]").hidden = true;\n    const launcher = root.querySelector(".markaz-ai-launcher");
+    root.querySelector("[data-ai-voice]").hidden = true;
+    const launcher = root.querySelector(".markaz-ai-launcher");
     const panel = root.querySelector(".markaz-ai-panel");
     const status = root.querySelector(".markaz-ai-status");
     const messages = root.querySelector(".markaz-ai-messages");
