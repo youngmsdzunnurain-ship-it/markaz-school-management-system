@@ -12,6 +12,7 @@ on:
       - 'public/css/markaz-ai.css'
       - 'api/results/save.php'
       - 'tests/markaz-ai-security-regression.test.php'
+      - 'tests/markaz-ai-free-mode.test.php'
       - '.github/workflows/markaz-ai.yml'
 
 jobs:
@@ -69,9 +70,12 @@ jobs:
           php -l api/results/save.php
           php -l api/attendance/register.php
           php -l tests/markaz-ai-security-regression.test.php
+          php -l tests/markaz-ai-free-mode.test.php
       - name: Check JavaScript syntax
         run: |
           node --check public/js/markaz-ai.js
           node --check public/js/management-shell.js
       - name: Run MARKAZ AI security regression checks
-        run: php tests/markaz-ai-security-regression.test.php
+        run: |
+          php tests/markaz-ai-security-regression.test.php
+          php tests/markaz-ai-free-mode.test.php

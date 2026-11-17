@@ -39,16 +39,6 @@ try {
     markazAiRespond(['success' => false, 'message' => $error->getMessage()], 403);
 }
 
-$apiKey = trim((string) ($_ENV['OPENAI_API_KEY'] ?? getenv('OPENAI_API_KEY') ?: ''));
-$model = trim((string) ($_ENV['MARKAZ_AI_MODEL'] ?? getenv('MARKAZ_AI_MODEL') ?: ''));
-if ($apiKey === '' || $model === '') {
-    markazAiRespond([
-        'success' => false,
-        'code' => 'AI_NOT_CONFIGURED',
-        'message' => 'MARKAZ AI is not connected yet. An administrator must configure the AI service in the private server environment.'
-    ], 503);
-}
-
 $rate = $pdo->prepare(
     "SELECT COUNT(*) FROM markaz_ai_audit_events
      WHERE account_id = ? AND event_type = 'message_started' AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
@@ -76,63 +66,9 @@ if ($conversationId > 0) {
     $conversationId = (int) $pdo->lastInsertId();
 }
 
-$history = $pdo->prepare(
-    "SELECT role, content FROM markaz_ai_messages
-     WHERE conversation_id = ? AND account_id = ?
-     ORDER BY id DESC LIMIT 12"
-);
-$history->execute([$conversationId, $accountId]);
-$messages = array_reverse($history->fetchAll(PDO::FETCH_ASSOC));
-$inputItems = [];
-foreach ($messages as $item) {
-    $inputItems[] = ['role' => $item['role'], 'content' => $item['content']];
-}
-$inputItems[] = ['role' => 'user', 'content' => $message];
-
 markazAiRecordEvent($pdo, $accountId, $role, 'message_started', ['conversation_id' => $conversationId]);
 $workspaceContext = markazAiLoadWorkspaceContext($pdo, $accountId, $scope);
-$instructions = markazAiBuildInstructions($scope, (string) ($input['page'] ?? ''), $workspaceContext);
-$requestBody = json_encode([
-    'model' => $model,
-    'instructions' => $instructions,
-    'input' => $inputItems,
-    'store' => false,
-    'max_output_tokens' => 1200
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
-$context = stream_context_create([
-    'http' => [
-        'method' => 'POST',
-        'header' => "Content-Type: application/json\r\nAuthorization: Bearer {$apiKey}\r\n",
-        'content' => $requestBody,
-        'timeout' => 35,
-        'ignore_errors' => true
-    ],
-    'ssl' => ['verify_peer' => true, 'verify_peer_name' => true]
-]);
-$responseBody = @file_get_contents(rtrim((string) ($_ENV['MARKAZ_AI_BASE_URL'] ?? getenv('MARKAZ_AI_BASE_URL') ?: 'https://api.openai.com/v1'), '/') . '/responses', false, $context);
-$statusLine = $http_response_header[0] ?? '';
-preg_match('/\\s(\\d{3})\\s/', $statusLine, $statusMatch);
-$providerStatus = (int) ($statusMatch[1] ?? 0);
-if ($responseBody === false || $providerStatus < 200 || $providerStatus >= 300) {
-    markazAiRecordEvent($pdo, $accountId, $role, 'provider_error', ['http_status' => $providerStatus]);
-    markazAiRespond(['success' => false, 'message' => 'The AI service is temporarily unavailable. Your message was not saved; please try again.'], 502);
-}
-
-$provider = json_decode($responseBody, true);
-$answer = trim((string) ($provider['output_text'] ?? ''));
-if ($answer === '' && is_array($provider['output'] ?? null)) {
-    foreach ($provider['output'] as $output) {
-        foreach (($output['content'] ?? []) as $part) {
-            if (($part['type'] ?? '') === 'output_text') $answer .= (string) ($part['text'] ?? '');
-        }
-    }
-    $answer = trim($answer);
-}
-if ($answer === '') {
-    markazAiRecordEvent($pdo, $accountId, $role, 'empty_provider_response');
-    markazAiRespond(['success' => false, 'message' => 'The AI service returned an empty answer. Please try again.'], 502);
-}
+$answer = markazAiBuildFreeAnswer($message, $scope, $workspaceContext);
 
 $pdo->beginTransaction();
 try {
