@@ -73,4 +73,8 @@ markazAiCheck(str_contains($deleteConversation, 'markazAiResolveScope(db()'), 'C
 markazAiCheck(str_contains($helper, 'teacher_activity_today') && str_contains($helper, 'teacher_activity_truncated'), 'Admin teacher summaries are sourced from bounded, recorded daily activity');
 markazAiCheck(str_contains($helper, 'Recorded MARKAZ activity for') && str_contains($helper, 'This summary covers recorded MARKAZ activity only'), 'Teacher activity summaries clearly distinguish recorded actions from unlogged work');
 
+markazAiCheck(str_contains($widget, 'tesseract.js@5/dist/tesseract.min.js') && str_contains($widget, 'Tesseract.createWorker("eng"'), 'Result-sheet OCR runs in a browser worker without a paid AI provider');
+markazAiCheck(str_contains($widget, 'worker.recognize(file)') && str_contains($widget, 'Image processed in this browser. It was not uploaded to MARKAZ.'), 'OCR processes the selected image locally and reports that no result data was saved');
+markazAiCheck(str_contains($widget, 'Nothing has been saved') && str_contains($widget, 'manual step'), 'OCR output is explicitly review-only and cannot silently save result marks');
+
 echo "MARKAZ AI security regression checks passed.\n";
