@@ -1,36 +1,50 @@
-# MARKAZ AI — no-cost mode
+# MARKAZ AI — hosted intelligence with a no-provider fallback
 
-## Current behaviour
+## How chat works
 
-MARKAZ AI currently runs in a no-cost, server-side deterministic mode. It does not require an API key, paid model credits, an external AI subscription, or a model installed on the school’s phone.
+MARKAZ AI can use Cloudflare Workers AI as a hosted language-model provider. The PHP application calls the provider from the server; neither the user's phone nor a laptop is used as an inference host. The selected model is `@cf/google/gemma-4-26b-a4b-it`.
 
-The assistant is available only to authenticated Admin, Exam Officer, Teacher and Management accounts. Both the conventional Student Portal and Online Class Student Portal are excluded. Student-facing AI endpoints return HTTP 403 even if called directly. Staff answers use live MARKAZ data filtered by the authenticated account’s role and permissions. Conversation ownership, rate limits, same-origin checks and audit records remain enforced.
+When the provider is not configured, unavailable, times out or returns an unusable response, MARKAZ falls back to its deterministic, verified-data answer engine. Conversation history is loaded from the database for the authenticated account and included in the hosted request, so short follow-ups can be understood in context. The no-provider fallback also resolves a teacher's name when it directly answers the assistant's request for the exact staff account name.
 
-This mode is intentionally transparent: it does not generate unrestricted answers like a large language model. If a question is outside its supported topics or the required data is unavailable, it says so rather than inventing an answer. It does not edit school records or claim to perform actions.
+## Free-plan requirement
 
-## Supported no-cost questions
+This integration is optional and does not require paid model credits. To use hosted answers, configure a Cloudflare account that remains on the Workers Free plan and Workers AI free allocation. Cloudflare documents a daily free allocation (currently 10,000 Neurons/day); availability and model eligibility can change. When the free allocation is exhausted, hosted requests may fail and MARKAZ will use its local fallback. Do not upgrade to Workers Paid, enable paid add-ons, or add prepaid credits for this setup. Free allocation is limited, not unlimited, and Cloudflare account usage must be monitored.
 
-- Current academic session and term, including finalization and result-release status.
-- Admin school overview counts that are already available in the Admin scope.
-- A teacher’s own server-verified assigned classes, subjects, active-student counts and current-period result-row counts.
-- Attendance figures only where the authenticated role and stored permissions allow them.
-- Current-period result-row counts for roles permitted to analyse results.
-- Admin summaries of a named teacher’s recorded MARKAZ activity for today, with explicit caveats for unlogged actions and the 500-event safety cap.
+If no Cloudflare credentials are configured, no provider request is made. The app continues using its local answer engine.
 
-The exact answer depends on the current account role and the live data available to that role.
+## Server environment configuration
 
-## Result-sheet OCR (no-cost, browser-side)
+Set these values in the deployment server's private environment or untracked server-side `.env` file. Never commit real values to GitHub, place them in browser JavaScript, or paste them into chat:
 
-The staff scanner uses Tesseract.js in the browser to extract printed text from JPEG, PNG or WebP images up to 5 MB. The image is passed directly to the browser OCR worker; it is not posted to MARKAZ's PHP API or sent to an AI model provider. The OCR library, WebAssembly core and English language data are downloaded from their configured CDN locations when first needed and may be cached by the browser.
+- `MARKAZ_AI_CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID.
+- `MARKAZ_AI_CLOUDFLARE_API_TOKEN` — a scoped Workers AI API token with the permissions required to run inference.
 
-The scanner returns raw extracted text for manual review only. It does not reliably understand table columns, match student identities, validate score fields or create result records. Staff must compare every extracted value with the original sheet and enter confirmed marks through the existing authorised result-entry workflow. OCR errors are possible, especially with handwriting, skewed images, poor lighting and decimal marks.
+The API token is sent only from PHP to Cloudflare over HTTPS. It is not returned to the browser or written to application logs. Keep the token private and rotate it if exposed. Do not configure these variables until the Cloudflare account is confirmed to be on the Free plan.
 
-## Features deliberately disabled in no-cost mode
+## Conversation and data handling
 
-- AI voice transcription for staff and students.
-- Generative language-model answers beyond the deterministic, verified school-data question set.
+Each request uses the authenticated staff role, permissions, server-verified workspace context and at most the ten most recent stored conversation turns. Only user and assistant turns are forwarded; stored system-role messages are discarded. Conversation retrieval is filtered by both conversation ID and authenticated account ID.
 
-Voice transcription previously depended on a paid external model provider. It remains disabled rather than silently sending staff or student audio to an online speech service. Normal manual result entry and typed assistant questions remain available.
+The model is instructed to answer from the supplied MARKAZ context, respect role boundaries, avoid fabricated school records and distinguish recorded activity from unlogged work. The model is not allowed to execute SQL or perform write actions. All existing same-origin checks, account ownership checks, staff role checks, hourly rate limits and audit events remain in place.
+
+Only authenticated Admin, Exam Officer, Teacher and Management accounts can use the staff assistant. Student-facing AI remains disabled and student endpoints continue to reject direct requests. Teachers and Management remain limited to their server-confirmed assignments and permissions; only Admin receives school-wide oversight context.
+
+## Supported verified information
+
+The current server context includes the active academic period, permitted school/attendance summaries, assigned teacher workspaces and Admin's bounded recorded school activity. Admin can ask for a named teacher's recorded activity for today. Activity summaries are based on events actually recorded by MARKAZ and are not a complete measure of all work performed.
+
+The language model improves natural conversation and follow-up handling; it does not create missing database facts. If a requested detail is not in the permitted context, it must say so rather than invent it.
+
+## Result-sheet OCR
+
+The staff scanner uses Tesseract.js in the browser to extract printed text from JPEG, PNG or WebP images. The image is processed by the browser OCR worker and is not posted to MARKAZ's PHP API or sent to the language model. OCR output is for manual review only: it does not match student identities, validate marks or save result records. Staff must verify every value against the original sheet.
+
+## Deliberately disabled features
+
+- Student-facing generative AI.
+- AI voice transcription.
+- Automatic result entry or record editing by the model.
+- Arbitrary SQL execution or unrestricted database tools.
 
 ## Database setup
 
@@ -38,21 +52,4 @@ The AI foundation migration is:
 
 `database/migrations/20261116_markaz_ai_foundation.sql`
 
-It provides private conversation history and separate staff/student audit tables. Back up the database before applying migrations on a new deployment, and check whether each migration has already been applied before running it.
-
-## Security boundaries
-
-- The browser never chooses a role or permission. The server derives these from the authenticated MARKAZ session and persisted permissions.
-- Teachers receive only their own active assignments and permitted workspace figures.
-- Management receives only the summaries allowed by its individual permissions.
-- Only Admin receives school-wide oversight capabilities.
-- Student-facing AI is disabled. Its legacy tables remain unused; student endpoints reject access with HTTP 403.
-- Conversation history is isolated to the account or verified Student Portal session.
-- Unsupported questions are not answered with invented records or scores.
-- The assistant cannot write results, change attendance, send messages or perform administrative actions. Image scanning and voice transcription remain disabled until a genuinely no-cost, self-hostable processor can be verified.
-
-## Future portability
-
-The assistant is ordinary PHP and database logic. It can run wherever MARKAZ itself is hosted; the development phone is not the production server. The school can later choose online hosting or a school-owned server without tying the application to this phone.
-
-A future self-hosted language model could be added behind a separate adapter if suitable hardware and operational resources are available. Self-hosting avoids per-request API billing but is not automatically cost-free: server hardware, hosting, electricity, maintenance and backups may still cost money. No such model is required or installed by this no-cost implementation.
+It creates private conversation history and separate staff/student audit tables. Back up the database before applying migrations on a new deployment, and check whether each migration has already been applied before running it.
