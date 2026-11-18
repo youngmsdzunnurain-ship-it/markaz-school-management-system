@@ -12,6 +12,7 @@ function markazAiCheck(bool $condition, string $message): void
 $helper = file_get_contents(__DIR__ . '/../app/helpers/markaz-ai.php');
 $context = file_get_contents(__DIR__ . '/../api/ai/context.php');
 $chat = file_get_contents(__DIR__ . '/../api/ai/chat.php');
+$hosted = file_get_contents(__DIR__ . '/../app/helpers/markaz-ai-hosted.php');
 $scanner = file_get_contents(__DIR__ . '/../api/ai/scan-result.php');
 $resultSave = file_get_contents(__DIR__ . '/../api/results/save.php');
 $history = file_get_contents(__DIR__ . '/../api/ai/conversations.php');
@@ -32,7 +33,11 @@ markazAiCheck(str_contains($helper, 'managementPermissionAllowed'), 'Management 
 markazAiCheck(str_contains($helper, 'markazAiLoadWorkspaceContext') && str_contains($chat, 'markazAiLoadWorkspaceContext'), 'AI answers are grounded in live role-scoped workspace state');
 markazAiCheck(str_contains($context, 'scan_assignments') && str_contains($helper, 'teacher_assignments'), 'Teacher scanner choices are generated from persisted assignments');
 markazAiCheck(str_contains($helper, "role === 'admin'") && str_contains($helper, 'school_wide_audit'), 'Only Admin receives school-wide audit capability');
-markazAiCheck(str_contains($chat, 'markazAiBuildFreeAnswer') && !str_contains($chat, 'api.openai.com') && !str_contains($chat, 'OPENAI_API_KEY'), 'Staff chat uses the no-cost local answer engine without a paid provider');
+markazAiCheck(str_contains($chat, 'markazAiGenerateHostedAnswer') && str_contains($chat, 'markazAiBuildFreeAnswer') && !str_contains($chat, 'api.openai.com') && !str_contains($chat, 'OPENAI_API_KEY'), 'Staff chat uses the optional hosted adapter with a no-provider fallback');
+markazAiCheck(str_contains($chat, 'WHERE conversation_id = ? AND account_id = ?') && str_contains($chat, 'ORDER BY id DESC LIMIT 10'), 'Recent chat history is loaded only for the authenticated conversation owner');
+markazAiCheck(str_contains($hosted, 'MARKAZ_AI_CLOUDFLARE_ACCOUNT_ID') && str_contains($hosted, 'MARKAZ_AI_CLOUDFLARE_API_TOKEN') && str_contains($hosted, 'https://api.cloudflare.com/'), 'Hosted provider credentials are read server-side and requests use HTTPS');
+markazAiCheck(str_contains($hosted, 'in_array($role, [\'user\', \'assistant\'], true)') && str_contains($hosted, 'markazAiBuildInstructions'), 'Hosted messages preserve server system policy and reject injected system turns');
+markazAiCheck(str_contains($chat, 'markazAiResolveFollowUpMessage'), 'Short teacher-name clarification replies are resolved in local fallback mode');
 markazAiCheck(str_contains($studentChat, 'STUDENT_AI_DISABLED') && str_contains($studentChat, 'http_response_code(403)'), 'Student chat endpoint rejects all student requests server-side');
 markazAiCheck(str_contains($history, 'account_id = ?'), 'Conversation history is isolated to the authenticated account');
 markazAiCheck(str_contains($audit, "currentAdminRole() !== 'admin'"), 'School-wide AI activity endpoint is Admin-only');
