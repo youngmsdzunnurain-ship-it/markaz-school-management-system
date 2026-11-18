@@ -19,12 +19,18 @@ This mode is intentionally transparent: it does not generate unrestricted answer
 
 The exact answer depends on the current account role and the live data available to that role.
 
+## Result-sheet OCR (no-cost, browser-side)
+
+The staff scanner uses Tesseract.js in the browser to extract printed text from JPEG, PNG or WebP images up to 5 MB. The image is passed directly to the browser OCR worker; it is not posted to MARKAZ's PHP API or sent to an AI model provider. The OCR library, WebAssembly core and English language data are downloaded from their configured CDN locations when first needed and may be cached by the browser.
+
+The scanner returns raw extracted text for manual review only. It does not reliably understand table columns, match student identities, validate score fields or create result records. Staff must compare every extracted value with the original sheet and enter confirmed marks through the existing authorised result-entry workflow. OCR errors are possible, especially with handwriting, skewed images, poor lighting and decimal marks.
+
 ## Features deliberately disabled in no-cost mode
 
 - AI voice transcription for staff and students.
-- AI result-sheet image scanning.
+- Generative language-model answers beyond the deterministic, verified school-data question set.
 
-These features previously depended on a paid external model provider. Their endpoints now return an explicit no-cost-mode response and do not upload audio or images to an external provider. Normal manual result entry remains available through the existing authorised MARKAZ workflow.
+Voice transcription previously depended on a paid external model provider. It remains disabled rather than silently sending staff or student audio to an online speech service. Normal manual result entry and typed assistant questions remain available.
 
 ## Database setup
 
