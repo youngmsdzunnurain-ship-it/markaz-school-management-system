@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/../../app/helpers/markaz-ai.php';
+require_once __DIR__ . '/../../app/helpers/markaz-ai-hosted.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -68,7 +69,26 @@ if ($conversationId > 0) {
 
 markazAiRecordEvent($pdo, $accountId, $role, 'message_started', ['conversation_id' => $conversationId]);
 $workspaceContext = markazAiLoadWorkspaceContext($pdo, $accountId, $scope);
-$answer = markazAiBuildFreeAnswer($message, $scope, $workspaceContext);
+$historyStmt = $pdo->prepare(
+    'SELECT role, content FROM markaz_ai_messages
+     WHERE conversation_id = ? AND account_id = ?
+     ORDER BY id DESC LIMIT 10'
+);
+$historyStmt->execute([$conversationId, $accountId]);
+$history = array_reverse($historyStmt->fetchAll(PDO::FETCH_ASSOC));
+$hostedMessages = markazAiBuildHostedMessages($message, $scope, $workspaceContext, $history);
+$answer = markazAiGenerateHostedAnswer($hostedMessages);
+if ($answer === null) {
+    $fallbackQuestion = $message;
+    $lastTurn = $history ? $history[count($history) - 1] : null;
+    if ($lastTurn && ($lastTurn['role'] ?? '') === 'assistant'
+        && (str_contains(strtolower((string) $lastTurn['content']), 'exact staff account name')
+            || str_contains(strtolower((string) $lastTurn['content']), 'which teacher'))
+        && mb_strlen($message) <= 120) {
+        $fallbackQuestion = 'Summarize what ' . $message . ' did today';
+    }
+    $answer = markazAiBuildFreeAnswer($fallbackQuestion, $scope, $workspaceContext);
+}
 
 $pdo->beginTransaction();
 try {
