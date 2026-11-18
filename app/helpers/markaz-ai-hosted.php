@@ -88,3 +88,19 @@ function markazAiGenerateHostedAnswer(array $messages, ?callable $transport = nu
     if ($answer === '' || mb_strlen($answer) > 12000) return null;
     return $answer;
 }
+
+/**
+ * Preserve the deterministic fallback's ability to answer a short name when
+ * the preceding assistant turn explicitly requested a teacher identity.
+ */
+function markazAiResolveFollowUpMessage(string $message, array $history): string
+{
+    $lastTurn = $history ? $history[count($history) - 1] : null;
+    if (!$lastTurn || ($lastTurn['role'] ?? '') !== 'assistant') return $message;
+    $clarification = strtolower((string) ($lastTurn['content'] ?? ''));
+    if (!str_contains($clarification, 'exact staff account name')
+        && !str_contains($clarification, 'which teacher')) return $message;
+    $name = trim($message);
+    if ($name === '' || mb_strlen($name) > 120 || preg_match('/[<>\r\n]/', $name)) return $message;
+    return 'Summarize what ' . $name . ' did today';
+}
