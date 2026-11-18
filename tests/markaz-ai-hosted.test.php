@@ -19,6 +19,8 @@ $history = [
     ['role' => 'assistant', 'content' => 'Which teacher?'],
     ['role' => 'user', 'content' => 'Habiba Mahmoud'],
 ];
+$followUp = markazAiResolveFollowUpMessage('Habiba Mahmoud', $history);
+markazAiHostedCheck($followUp === 'Summarize what Habiba Mahmoud did today', 'a teacher name resolves the previous assistant clarification in free fallback mode');
 $messages = markazAiBuildHostedMessages('Give me the summary', $scope, $context, $history);
 markazAiHostedCheck($messages[0]['role'] === 'system', 'hosted request starts with server-built system instructions');
 markazAiHostedCheck($messages[1]['content'] === 'Summarize teacher activity'
