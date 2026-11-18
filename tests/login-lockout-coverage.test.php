@@ -13,7 +13,7 @@ $studentJs = $read('public/js/student-results-portal.js');
 $onlineApi = $read('api/online-class/student-login.php');
 $onlineJs = $read('public/js/online-class-login.js');
 $assert(str_contains($staffApi, "'admin', 'exam_officer', 'teacher', 'management'"), 'Admin, Exam Officer, Teacher and Management all use the protected staff login endpoint');
-$assert(str_contains($staffApi, '$roleKey = $admin ? (string) $admin[\'role\'] : ($isUsernameLogin ? \'teacher\' : $requestedRole);'), 'failed logins use the requested portal role when no matching account exists, without hardcoded identities');
+$assert(str_contains($staffApi, '$roleKey = $admin ? (string) $admin[\'role\'] : $requestedRole;') && str_contains($staffApi, '!in_array($requestedRole, $allowedLoginRoles, true)'), 'failed logins use the validated requested portal role when no matching account exists');
 $assert(str_contains($staffApi, 'DATE_ADD(NOW(), INTERVAL 7 DAY)') && str_contains($staffApi, 'if ($attempts >= 3)'), 'staff accounts including Admin lock after three failed password attempts for seven days');
 $assert(str_contains($adminJs, 'error.loginData') && str_contains($adminJs, 'remaining_seconds') && str_contains($adminJs, 'adminLockoutTimer'), 'Admin login displays the server-authoritative seven-day lockout countdown');
 $assert(str_contains($studentApi, 'markazRecordLoginFailure(') && str_contains($studentApi, "'student_result'") && str_contains($studentApi, ', 3)'), 'conventional Student Results lookup applies a three-day lockout');
