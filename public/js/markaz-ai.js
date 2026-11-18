@@ -58,7 +58,7 @@ function mount(account) {
         <div class="markaz-ai-view" data-ai-view="history" hidden><div class="markaz-ai-view-heading"><strong>Your conversations</strong><span>Only visible to your account</span></div><div class="markaz-ai-history-list"></div></div>
         <div class="markaz-ai-view" data-ai-view="scan" hidden>
           <div class="markaz-ai-view-heading"><strong>Result-sheet scanner</strong><span>Draft extraction · review required</span></div>
-          <p class="markaz-ai-scan-copy">Upload a clear photo of a result sheet. MARKAZ AI will transcribe visible values and flag unclear cells. Nothing is saved to student results.</p>
+          <p class="markaz-ai-scan-copy">Extract text from a clear result-sheet photo in this browser. The image is not uploaded to MARKAZ or an AI provider. OCR text is for manual review only; it does not identify students or save marks.</p>
           <label class="markaz-ai-scan-scope" data-ai-scan-scope hidden><span>Assigned class and subject</span><select id="markazAiScanAssignment" aria-label="Choose an assigned class and subject"><option value="">Loading your assignments…</option></select></label>
           <form class="markaz-ai-scan-form"><label class="markaz-ai-upload"><span>＋</span><strong>Choose result-sheet image</strong><small>JPEG, PNG or WebP · up to 5 MB</small><input type="file" name="result_sheet" accept="image/jpeg,image/png,image/webp" required></label><button type="submit" class="markaz-ai-primary">Scan image</button></form>
           <div class="markaz-ai-scan-result" aria-live="polite"></div>
@@ -93,7 +93,7 @@ function mount(account) {
             scopeSelect.appendChild(option);
         });
     }
-    root.querySelector("[data-ai-tab=scan]").hidden = true;
+    root.querySelector("[data-ai-tab=scan]").hidden = false;
     root.querySelector("[data-ai-voice]").hidden = true;
     const launcher = root.querySelector(".markaz-ai-launcher");
     const panel = root.querySelector(".markaz-ai-panel");
@@ -274,6 +274,21 @@ function mount(account) {
         } catch (error) { addMessage("assistant", error.message); sayStatus(""); }
         finally { setBusy(false); textarea.focus(); }
     });
+    async function loadLocalOcrEngine() {
+        if (window.Tesseract) return window.Tesseract;
+        if (window.markazAiOcrLoading) return window.markazAiOcrLoading;
+        window.markazAiOcrLoading = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+            script.async = true;
+            script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("The OCR engine did not initialise."));
+            script.onerror = () => reject(new Error("Could not load the OCR engine. Check your internet connection and try again."));
+            document.head.appendChild(script);
+        });
+        try { return await window.markazAiOcrLoading; }
+        catch (error) { window.markazAiOcrLoading = null; throw error; }
+    }
+
     root.querySelector(".markaz-ai-scan-form").addEventListener("submit", async event => {
         event.preventDefault();
         if (busy) return;
@@ -281,24 +296,43 @@ function mount(account) {
         if (!file) return;
         const result = root.querySelector(".markaz-ai-scan-result");
         result.textContent = "";
-        const form = new FormData(); form.append("result_sheet", file);
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+            result.textContent = "Choose a JPEG, PNG or WebP image no larger than 5 MB.";
+            return;
+        }
         if (account.role === "teacher") {
             const selectedScope = String(root.querySelector("#markazAiScanAssignment").value || "").split("|");
             if (selectedScope.length !== 3 || !selectedScope[0] || !selectedScope[1] || !selectedScope[2]) {
                 result.textContent = "Choose one of your assigned classes and subjects before scanning.";
                 return;
             }
-            form.append("class_type", selectedScope[0]);
-            form.append("class_id", selectedScope[1]);
-            form.append("subject_id", selectedScope[2]);
         }
-        setBusy(true); sayStatus("Scanning image…");
+        setBusy(true); sayStatus("Loading private, in-browser OCR…");
+        let worker = null;
         try {
-            const data = await api("/api/ai/scan-result.php", {method:"POST",body:form});
-            result.textContent = data.message + "\n\n" + data.draft;
+            const Tesseract = await loadLocalOcrEngine();
+            worker = await Tesseract.createWorker("eng", 1, {
+                logger: message => {
+                    if (message.status === "recognizing text") {
+                        sayStatus("Reading image… " + Math.round((message.progress || 0) * 100) + "%");
+                    } else if (message.status) {
+                        sayStatus("Preparing OCR: " + message.status);
+                    }
+                }
+            });
+            const recognised = await worker.recognize(file);
+            const text = String(recognised?.data?.text || "").trim();
+            result.textContent = text
+                ? "TEXT EXTRACTED FOR REVIEW — NOTHING HAS BEEN SAVED\n\n" + text + "\n\nCheck every name and mark against the original sheet. OCR can misread handwriting, decimals and table columns. Copying or saving marks remains a separate, manual step."
+                : "No readable text was found. Try a sharper, well-lit image with the whole sheet visible.";
+            sayStatus("Image processed in this browser. It was not uploaded to MARKAZ.");
+        } catch (error) {
+            result.textContent = error.message || "The image could not be read.";
             sayStatus("");
-        } catch (error) { result.textContent = error.message; sayStatus(""); }
-        finally { setBusy(false); }
+        } finally {
+            if (worker) await worker.terminate().catch(() => {});
+            setBusy(false);
+        }
     });
     async function loadActivity() {
         const list = root.querySelector(".markaz-ai-activity-list");
