@@ -6,6 +6,8 @@ on:
     paths:
       - 'api/ai/**'
       - 'app/helpers/markaz-ai.php'
+      - 'app/helpers/markaz-ai-hosted.php'
+      - 'docs/markaz-ai-setup.md'
       - 'database/migrations/20261116_markaz_ai_foundation.sql'
       - 'public/api/ai/**'
       - 'public/js/markaz-ai.js'
@@ -13,6 +15,7 @@ on:
       - 'api/results/save.php'
       - 'tests/markaz-ai-security-regression.test.php'
       - 'tests/markaz-ai-free-mode.test.php'
+      - 'tests/markaz-ai-hosted.test.php'
       - '.github/workflows/markaz-ai.yml'
 
 jobs:
@@ -39,6 +42,7 @@ jobs:
         run: |
           set -e
           php -l app/helpers/markaz-ai.php
+          php -l app/helpers/markaz-ai-hosted.php
           php -l api/ai/chat.php
           php -l api/ai/context.php
           php -l api/ai/conversations.php
@@ -71,6 +75,7 @@ jobs:
           php -l api/attendance/register.php
           php -l tests/markaz-ai-security-regression.test.php
           php -l tests/markaz-ai-free-mode.test.php
+          php -l tests/markaz-ai-hosted.test.php
       - name: Check JavaScript syntax
         run: |
           node --check public/js/markaz-ai.js
@@ -79,3 +84,4 @@ jobs:
         run: |
           php tests/markaz-ai-security-regression.test.php
           php tests/markaz-ai-free-mode.test.php
+          php tests/markaz-ai-hosted.test.php
