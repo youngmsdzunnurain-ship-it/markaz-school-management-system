@@ -79,14 +79,7 @@ $history = array_reverse($historyStmt->fetchAll(PDO::FETCH_ASSOC));
 $hostedMessages = markazAiBuildHostedMessages($message, $scope, $workspaceContext, $history);
 $answer = markazAiGenerateHostedAnswer($hostedMessages);
 if ($answer === null) {
-    $fallbackQuestion = $message;
-    $lastTurn = $history ? $history[count($history) - 1] : null;
-    if ($lastTurn && ($lastTurn['role'] ?? '') === 'assistant'
-        && (str_contains(strtolower((string) $lastTurn['content']), 'exact staff account name')
-            || str_contains(strtolower((string) $lastTurn['content']), 'which teacher'))
-        && mb_strlen($message) <= 120) {
-        $fallbackQuestion = 'Summarize what ' . $message . ' did today';
-    }
+    $fallbackQuestion = markazAiResolveFollowUpMessage($message, $history);
     $answer = markazAiBuildFreeAnswer($fallbackQuestion, $scope, $workspaceContext);
 }
 
