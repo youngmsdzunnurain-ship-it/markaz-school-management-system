@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#145035">
 <title>Staff Chat | MARKAZ</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="css/staff-chat.css?v=20261119-3">
-<script src="js/staff-chat.js?v=20261119-2" defer></script>
+<link rel="stylesheet" href="css/staff-chat.css?v=20261119-nav3">
+<script src="js/staff-chat.js?v=20261119-nav3" defer></script>
 </head>
 <body>
 <header class="chat-topbar">
@@ -24,7 +24,7 @@
 <section class="thread-panel" aria-label="Conversation">
 <div id="threadWelcome" class="thread-welcome"><div class="welcome-icon"><i class="fa-regular fa-comments"></i></div><h2>Your staff conversations</h2><p>Chat privately with colleagues or start a group conversation for school work.</p><button id="welcomeNewChat" class="primary-button" type="button"><i class="fa-solid fa-plus"></i> Let's Chat</button></div>
 <div id="activeThread" class="active-thread" hidden>
-<div class="thread-heading"><div class="person-avatar" id="threadAvatar">M</div><div class="thread-title"><h2 id="threadTitle">Conversation</h2><p id="threadSubtitle">MARKAZ staff</p></div><span class="secure-label"><i class="fa-solid fa-lock"></i> Private</span></div>
+<div class="thread-heading"><button type="button" id="backToInbox" class="mobile-back" aria-label="Back to staff list"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button><div class="person-avatar" id="threadAvatar">M</div><div class="thread-title"><h2 id="threadTitle">Conversation</h2><p id="threadSubtitle">MARKAZ staff</p></div><span class="secure-label"><i class="fa-solid fa-lock"></i> Private</span></div>
 <div id="messageList" class="message-list" aria-live="polite"></div>
 <form id="messageForm" class="composer"><textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message…" required></textarea><button id="sendButton" type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button></form>
 <p class="composer-hint">Messages are visible only to members of this conversation.</p>
