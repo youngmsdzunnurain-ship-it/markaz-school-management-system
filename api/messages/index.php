@@ -43,10 +43,43 @@ $membership = static function (PDO $pdo, int $conversationId, int $accountId): b
     return (bool) $stmt->fetchColumn();
 };
 
+$avatarUrl = static function (?string $image): ?string {
+    $image = trim((string) $image);
+    if ($image === '' || str_contains($image, "\\0") || preg_match('~^(?:https?:|//|data:)~i', $image)) return null;
+    $image = ltrim(str_replace('\\\\', '/', $image), '/');
+    if (!str_starts_with($image, 'uploads/admins/')) return null;
+    return '/' . $image;
+};
+
+if ($method === 'POST' && $action === 'heartbeat') {
+    $pdo->prepare('INSERT INTO staff_presence (account_id, last_seen_at) VALUES (?, NOW()) ON DUPLICATE KEY UPDATE last_seen_at = NOW()')->execute([$accountId]);
+    $pdo->prepare(
+        'UPDATE staff_conversation_participants p
+         INNER JOIN (SELECT conversation_id, MAX(id) AS last_id FROM staff_messages GROUP BY conversation_id) latest
+           ON latest.conversation_id = p.conversation_id
+         SET p.last_delivered_message_id = GREATEST(p.last_delivered_message_id, latest.last_id)
+         WHERE p.account_id = ?'
+    )->execute([$accountId]);
+    staffChatRespond(['success' => true]);
+}
+
 if ($method === 'GET' && $action === 'directory') {
-    $stmt = $pdo->prepare("SELECT id, name, role FROM admins WHERE is_active = 1 AND is_frozen = 0 AND id <> ? AND role IN ('admin','exam_officer','teacher','management') ORDER BY name");
+    $stmt = $pdo->prepare(
+        "SELECT a.id, a.name, a.role, a.profile_image,
+                (pr.last_seen_at >= NOW() - INTERVAL 45 SECOND) AS is_online
+         FROM admins a LEFT JOIN staff_presence pr ON pr.account_id = a.id
+         WHERE a.is_active = 1 AND a.is_frozen = 0 AND a.id <> ?
+           AND a.role IN ('admin','exam_officer','teacher','management') ORDER BY a.name"
+    );
     $stmt->execute([$accountId]);
-    staffChatRespond(['success' => true, 'staff' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    $staff = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($staff as &$person) {
+        $person['avatar_url'] = $avatarUrl($person['profile_image']);
+        $person['is_online'] = (bool) $person['is_online'];
+        unset($person['profile_image']);
+    }
+    unset($person);
+    staffChatRespond(['success' => true, 'staff' => $staff]);
 }
 
 if ($method === 'GET' && $action === 'conversations') {
@@ -64,9 +97,22 @@ if ($method === 'GET' && $action === 'conversations') {
     $stmt->execute([$accountId, $accountId]);
     $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($conversations as &$conversation) {
-        $people = $pdo->prepare('SELECT a.id, a.name, a.role FROM staff_conversation_participants p INNER JOIN admins a ON a.id = p.account_id WHERE p.conversation_id = ? ORDER BY a.name');
+        $people = $pdo->prepare(
+            'SELECT a.id, a.name, a.role, a.profile_image,
+                    (pr.last_seen_at >= NOW() - INTERVAL 45 SECOND) AS is_online
+             FROM staff_conversation_participants p
+             INNER JOIN admins a ON a.id = p.account_id
+             LEFT JOIN staff_presence pr ON pr.account_id = a.id
+             WHERE p.conversation_id = ? ORDER BY a.name'
+        );
         $people->execute([(int) $conversation['id']]);
         $conversation['participants'] = $people->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($conversation['participants'] as &$person) {
+            $person['avatar_url'] = $avatarUrl($person['profile_image']);
+            $person['is_online'] = (bool) $person['is_online'];
+            unset($person['profile_image']);
+        }
+        unset($person);
         $conversation['unread_count'] = (int) $conversation['unread_count'];
     }
     unset($conversation);
@@ -79,7 +125,16 @@ if ($method === 'GET' && $action === 'messages') {
         staffChatRespond(['success' => false, 'message' => 'Conversation not found.'], 404);
     }
     $stmt = $pdo->prepare(
-        'SELECT m.id, m.sender_id, a.name AS sender_name, a.role AS sender_role, m.body, m.created_at
+        'SELECT m.id, m.sender_id, a.name AS sender_name, a.role AS sender_role,
+                a.profile_image AS sender_profile_image, m.body, m.created_at,
+                (SELECT COUNT(*) FROM staff_conversation_participants rp
+                 WHERE rp.conversation_id = m.conversation_id AND rp.account_id <> m.sender_id) AS recipient_count,
+                (SELECT COUNT(*) FROM staff_conversation_participants dp
+                 WHERE dp.conversation_id = m.conversation_id AND dp.account_id <> m.sender_id
+                   AND dp.last_delivered_message_id >= m.id) AS delivered_count,
+                (SELECT COUNT(*) FROM staff_conversation_participants rp
+                 WHERE rp.conversation_id = m.conversation_id AND rp.account_id <> m.sender_id
+                   AND rp.last_read_message_id >= m.id) AS read_count
          FROM staff_messages m INNER JOIN admins a ON a.id = m.sender_id
          WHERE m.conversation_id = ? ORDER BY m.id DESC LIMIT 100'
     );
@@ -90,6 +145,14 @@ if ($method === 'GET' && $action === 'messages') {
         $read = $pdo->prepare('UPDATE staff_conversation_participants SET last_read_message_id = GREATEST(last_read_message_id, ?) WHERE conversation_id = ? AND account_id = ?');
         $read->execute([$lastId, (int) $conversationId, $accountId]);
     }
+    foreach ($messages as &$message) {
+        $message['sender_avatar_url'] = $avatarUrl($message['sender_profile_image']);
+        $message['recipient_count'] = (int) $message['recipient_count'];
+        $message['delivered_count'] = (int) $message['delivered_count'];
+        $message['read_count'] = (int) $message['read_count'];
+        unset($message['sender_profile_image']);
+    }
+    unset($message);
     staffChatRespond(['success' => true, 'messages' => $messages]);
 }
 
