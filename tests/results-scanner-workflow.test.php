@@ -26,7 +26,7 @@ resultsScannerCheck(
 );
 resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
-    str_contains($classJs, 'selectedSubjectId'),
+    str_contains($classJs, 'selectedSubjectId') &&\n    str_contains($classJs, 'results: classResults'),
     'Scanner is connected to the selected class, subject and roster'
 );
 resultsScannerCheck(
