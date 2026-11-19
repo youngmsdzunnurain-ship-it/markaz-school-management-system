@@ -11,6 +11,9 @@ $api = file_get_contents(__DIR__ . '/../api/messages/index.php');
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261119_staff_messaging.sql');
 $page = file_get_contents(__DIR__ . '/../public/staff-chat.html');
 $js = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
+$dashboard = file_get_contents(__DIR__ . '/../public/dashboard.html');
+$dashboardJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
+$chatCss = file_get_contents(__DIR__ . '/../public/css/staff-chat.css');
 
 staffMessagingCheck(str_contains($api, "['admin', 'exam_officer', 'teacher', 'management']"), 'only authenticated staff roles can use messaging');
 staffMessagingCheck(str_contains($api, 'staff_conversation_participants') && str_contains($api, '$membership($pdo'), 'every conversation read and send is restricted to its participants');
