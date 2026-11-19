@@ -174,7 +174,9 @@ try {
     $subjectStmt->execute($subjectParams);
     $subjects = $subjectStmt->fetchAll();
 
-    $studentStmt = $pdo->prepare(
+    // The class roster includes inactive students too, so the visible
+    // roster does not lose names when a student's status changes.
+    $rosterStmt = $pdo->prepare(
         "SELECT
             st.id,
             st.admission_number,
@@ -190,18 +192,22 @@ try {
          LEFT JOIN arabic_classes ac
             ON ac.id = COALESCE(NULLIF(st.arabic_class_id, 0), st.arabia_class_id)
          WHERE {$studentClassExpression} = ?
-           AND st.is_active = 1
          ORDER BY st.first_name, st.middle_name, st.last_name, st.admission_number"
     );
+    $rosterStmt->execute([$classId]);
+    $rosterStudents = $rosterStmt->fetchAll();
 
-    $studentStmt->execute([$classId]);
-    $students = $studentStmt->fetchAll();
+    // Only active students are eligible for result entry.
     if ($classType === 'arabic') {
-        foreach ($students as &$student) {
+        foreach ($rosterStudents as &$student) {
             $student['arabic_class_name'] = markazCanonicalArabicClassName((string) ($student['arabic_class_name'] ?? ''));
         }
         unset($student);
     }
+    $students = array_values(array_filter(
+        $rosterStudents,
+        static fn(array $student): bool => (int) $student['is_active'] === 1
+    ));
 
     $resultSql = "
         SELECT
@@ -304,6 +310,25 @@ try {
                 ];
             },
             $subjects
+        ),
+        'roster' => array_map(
+            static function (array $student): array {
+                return [
+                    'id' => (int) $student['id'],
+                    'admission_number' => $student['admission_number'],
+                    'first_name' => $student['first_name'],
+                    'middle_name' => $student['middle_name'],
+                    'last_name' => $student['last_name'],
+                    'gender' => $student['gender'],
+                    'date_of_birth' => $student['date_of_birth'],
+                    'is_active' => (bool) $student['is_active'],
+                    'arabic_class_id' => $student['arabic_class_id'] !== null
+                        ? (int) $student['arabic_class_id']
+                        : null,
+                    'arabic_class_name' => $student['arabic_class_name']
+                ];
+            },
+            $rosterStudents
         ),
         'students' => array_map(
             static function (array $student): array {
