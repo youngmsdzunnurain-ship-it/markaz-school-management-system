@@ -28,6 +28,8 @@ resultsScannerCheck(
 );
 resultsScannerCheck(
     str_contains($scannerJs, 'Tesseract.createWorker') &&
+    str_contains($scannerJs, 'ara+eng') &&
+    str_contains($scannerJs, '\\p{L}') &&
     str_contains($scannerJs, 'worker.recognize') &&
     str_contains($scannerJs, 'credentials: "same-origin"'),
     'OCR runs locally in the browser and saves only through the authenticated same-origin results API'
