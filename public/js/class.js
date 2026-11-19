@@ -261,6 +261,7 @@
 
         populateSubjectSelect();
         await calculateCompletion();
+        configureResultsScanner();
     }
 
     function populateSubjectSelect() {
@@ -344,6 +345,21 @@
         return resultSubjects.find(
             subject => String(subject.id) === String(selectedSubjectId)
         ) || null;
+    }
+
+    function configureResultsScanner() {
+        if (!window.MarkazResultsScanner) return;
+        window.MarkazResultsScanner.configure({
+            classId,
+            classType,
+            role: currentRole,
+            subject: getSelectedSubject(),
+            students: classStudents,
+            onSaved: async () => {
+                await loadResults();
+                renderResultsTable();
+            }
+        });
     }
 
     function getStudentResult(studentId, subjectId) {
@@ -673,6 +689,7 @@
     resultSubjectSelect?.addEventListener("change", () => {
         selectedSubjectId = resultSubjectSelect.value;
         renderResultsTable();
+        configureResultsScanner();
     });
 
     resultStudentSearch?.addEventListener("input", () => {
