@@ -22,7 +22,7 @@
 <div id="conversationList" class="conversation-list"><p class="empty-note">Loading your conversations…</p></div>
 </aside>
 <section class="thread-panel" aria-label="Conversation">
-<div id="threadWelcome" class="thread-welcome"><div class="welcome-icon"><i class="fa-regular fa-comments"></i></div><h2>Your staff conversations</h2><p>Chat privately with colleagues or start a group conversation for school work.</p><button id="welcomeNewChat" class="primary-button" type="button"><i class="fa-solid fa-plus"></i> Start a conversation</button></div>
+<div id="threadWelcome" class="thread-welcome"><div class="welcome-icon"><i class="fa-regular fa-comments"></i></div><h2>Your staff conversations</h2><p>Chat privately with colleagues or start a group conversation for school work.</p><button id="welcomeNewChat" class="primary-button" type="button"><i class="fa-solid fa-plus"></i> Let's Chat</button></div>
 <div id="activeThread" class="active-thread" hidden>
 <div class="thread-heading"><div class="person-avatar" id="threadAvatar">M</div><div class="thread-title"><h2 id="threadTitle">Conversation</h2><p id="threadSubtitle">MARKAZ staff</p></div><span class="secure-label"><i class="fa-solid fa-lock"></i> Private</span></div>
 <div id="messageList" class="message-list" aria-live="polite"></div>
@@ -33,12 +33,12 @@
 </main>
 <dialog id="newChatDialog" class="new-chat-dialog">
 <form id="newChatForm" method="dialog">
-<div class="dialog-heading"><div><span class="eyebrow">NEW MESSAGE</span><h2>Start a conversation</h2></div><button type="button" id="closeDialog" class="close-dialog" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+<div class="dialog-heading"><div><span class="eyebrow">NEW MESSAGE</span><h2>Let's Chat</h2></div><button type="button" id="closeDialog" class="close-dialog" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
 <label class="field-label" for="staffSearch">Find staff</label><input id="staffSearch" class="dialog-search" type="search" placeholder="Search by name or role">
 <div id="staffDirectory" class="staff-directory"><p class="empty-note">Loading staff directory…</p></div>
 <label class="field-label" for="groupTitle">Group name <span>(required for 2 or more people)</span></label><input id="groupTitle" class="dialog-search" type="text" maxlength="120" placeholder="e.g. Examination planning team">
 <p id="dialogError" class="dialog-error" role="alert"></p>
-<div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary-button">Cancel</button><button id="createChatButton" type="submit" class="primary-button">Start chat</button></div>
+<div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary-button">Cancel</button><button id="createChatButton" type="submit" class="primary-button">Let's Chat</button></div>
 </form>
 </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
