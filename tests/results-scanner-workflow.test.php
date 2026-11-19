@@ -25,6 +25,12 @@ resultsScannerCheck(
     'Results workspace exposes camera capture and image upload controls'
 );
 resultsScannerCheck(
+    str_contains($classJs, 'resultsLoadSequence') &&
+    str_contains($classJs, 'requestSequence !== resultsLoadSequence') &&
+    str_contains($classJs, 'incomingStudents.length > 0 || classStudents.length === 0'),
+    'Overlapping refreshes cannot replace a populated class roster with an empty or stale response'
+);
+resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
     str_contains($classJs, 'selectedSubjectId') &&
     str_contains($classJs, 'results: classResults'),
