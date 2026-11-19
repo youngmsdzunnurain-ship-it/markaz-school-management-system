@@ -26,13 +26,16 @@ resultsScannerCheck(
 );
 resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
-    str_contains($classJs, 'selectedSubjectId') &&\n    str_contains($classJs, 'results: classResults'),
+    str_contains($classJs, 'selectedSubjectId') &&
+    str_contains($classJs, 'results: classResults'),
     'Scanner is connected to the selected class, subject and roster'
 );
 resultsScannerCheck(
     str_contains($scannerJs, 'Tesseract.createWorker') &&
     str_contains($scannerJs, 'worker.recognize') &&
-    str_contains($scannerJs, 'ara+eng') &&\n    str_contains($scannerJs, 'admissionMatches.length === 1') &&\n    str_contains($scannerJs, 'partialNameMatches.length === 1') &&
+    str_contains($scannerJs, 'ara+eng') &&
+    str_contains($scannerJs, 'admissionMatches.length === 1') &&
+    str_contains($scannerJs, 'partialNameMatches.length === 1') &&
     str_contains($scannerJs, '\\p{L}') &&
     str_contains($scannerJs, 'credentials: "same-origin"'),
     'OCR is local, supports Arabic and English, and saves through the authenticated results endpoint'
