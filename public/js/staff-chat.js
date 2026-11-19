@@ -33,7 +33,7 @@ function renderConversations() {
  const q=$("conversationSearch").value.trim().toLowerCase();
  const list=$("conversationList"); list.replaceChildren();
  const rows=state.conversations.filter(c => (conversationName(c)+" "+(c.last_message||"")).toLowerCase().includes(q));
- if (!rows.length) { const p=document.createElement("p"); p.className="empty-note"; p.textContent=q?"No matching conversations.":"No conversations yet. Start a chat with a staff member."; list.append(p); return; }
+ if (!rows.length) { const p=document.createElement("p"); p.className="empty-note"; p.textContent=q?"No matching conversations.":"No conversations yet. Let's chat with a staff member."; list.append(p); return; }
  rows.forEach(c=>{
   const button=document.createElement("button"); button.type="button"; button.className="conversation-item"+(Number(c.id)===state.activeId?" active":"");
   const person=c.conversation_type==="direct"?otherParticipant(c):null; const avatarEl=avatar(person||{name:conversationName(c)});
