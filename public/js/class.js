@@ -28,6 +28,7 @@
     let selectedClass = null;
     let currentRole = "";
     let classStudents = [];
+    let classRoster = [];
     let resultSubjects = [];
     let classResults = [];
     let selectedSubjectId = "";
@@ -140,7 +141,7 @@
     }
 
     function renderStudents() {
-        if (!classStudents.length) {
+        if (!classRoster.length) {
             classStudentsContainer.innerHTML = `
                 <div class="empty-state">
                     No students have been added to this class yet.
@@ -164,7 +165,7 @@
                     </thead>
 
                     <tbody>
-                        ${classStudents.map(student => {
+                        ${classRoster.map(student => {
                             const fullName = [
                                 student.first_name,
                                 student.last_name
@@ -245,19 +246,19 @@
         resultSubjects = data.subjects || [];
         classResults = data.results || [];
 
-        if (Array.isArray(data.students)) {
-            const incomingStudents = data.students;
-
-            // A transient empty response must not erase a roster already shown.
-            if (incomingStudents.length > 0 || classStudents.length === 0) {
-                classStudents = incomingStudents;
-                studentCount.textContent = classStudents.length;
-
-                if (resultsStudentCount) {
-                    resultsStudentCount.textContent = classStudents.length;
-                }
-
+        if (Array.isArray(data.roster)) {
+            const incomingRoster = data.roster;
+            // Preserve the last populated roster if a refresh briefly returns no rows.
+            if (incomingRoster.length > 0 || classRoster.length === 0) {
+                classRoster = incomingRoster;
+                studentCount.textContent = classRoster.length;
                 renderStudents();
+            }
+        }
+        if (Array.isArray(data.students)) {
+            classStudents = data.students;
+            if (resultsStudentCount) {
+                resultsStudentCount.textContent = classStudents.length;
             }
         }
 
@@ -422,6 +423,7 @@
         if (!term) {
             box.hidden = true;
             box.innerHTML = "";
+            resultStudentSearch?.setAttribute("aria-expanded", "false");
             return;
         }
 
@@ -449,6 +451,7 @@
             }).join("");
         }
         box.hidden = false;
+        resultStudentSearch?.setAttribute("aria-expanded", "true");
     }
 
     function renderResultsTable() {

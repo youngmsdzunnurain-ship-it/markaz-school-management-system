@@ -31,3 +31,4 @@
  .staff-option{gap:8px}
  .staff-direct-chat{padding:8px 7px}
 }
+@media(max-width:760px){.chat-layout.thread-open .thread-panel{min-height:0}.chat-layout.thread-open .active-thread{min-height:0}.chat-layout.thread-open .message-list{min-height:0}}
