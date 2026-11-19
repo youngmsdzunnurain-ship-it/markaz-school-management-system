@@ -47,4 +47,9 @@ jobs:
           node --check public/js/staff-chat.js
           node --check public/js/management-shell.js
       - name: Run results scanner regression checks
-        run: php tests/results-scanner-workflow.test.php
+        run: |
+          php tests/results-scanner-workflow.test.php
+          php tests/results-class-type-validation.test.php
+          php tests/teacher-portal-dashboard.test.php
+          php tests/staff-messaging-regression.test.php
+          php tests/staff-chat-presence-receipts.test.php
