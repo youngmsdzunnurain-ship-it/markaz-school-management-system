@@ -31,6 +31,7 @@
     let resultSubjects = [];
     let classResults = [];
     let selectedSubjectId = "";
+    let resultsLoadSequence = 0;
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -220,6 +221,7 @@
     }
 
     async function loadResults() {
+        const requestSequence = ++resultsLoadSequence;
         const response = await fetch(
             `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
             {
@@ -229,6 +231,10 @@
         );
 
         const data = await response.json();
+
+        if (requestSequence !== resultsLoadSequence) {
+            return;
+        }
 
         if (!response.ok || !data.success) {
             throw new Error(
@@ -240,14 +246,19 @@
         classResults = data.results || [];
 
         if (Array.isArray(data.students)) {
-            classStudents = data.students;
-            studentCount.textContent = classStudents.length;
+            const incomingStudents = data.students;
 
-            if (resultsStudentCount) {
-                resultsStudentCount.textContent = classStudents.length;
+            // A transient empty response must not erase a roster already shown.
+            if (incomingStudents.length > 0 || classStudents.length === 0) {
+                classStudents = incomingStudents;
+                studentCount.textContent = classStudents.length;
+
+                if (resultsStudentCount) {
+                    resultsStudentCount.textContent = classStudents.length;
+                }
+
+                renderStudents();
             }
-
-            renderStudents();
         }
 
         if (resultsSubjectCount) {
