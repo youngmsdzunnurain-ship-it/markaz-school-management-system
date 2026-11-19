@@ -32,6 +32,6 @@ staffMessagingCheck(str_contains($dashboardJs, 'requiredRole === "staff_messagin
 staffMessagingCheck(str_contains($dashboard, 'data-role-access="staff_messaging"') && str_contains($dashboardJs, '"Let\'s Chat": "staff-chat.html"'), 'Let's Chat is available from dashboard quick shortcuts for authorised staff');
 staffMessagingCheck(str_contains($dashboardJs, 'item[0] === "staff_messaging"'), 'management dashboard also includes the staff chat shortcut');
 staffMessagingCheck(str_contains($page, 'markaz-chat-watermark') && str_contains($chatCss, '.markaz-chat-watermark'), 'staff chat renders a branded school watermark');
-staffMessagingCheck(str_contains($page, '20261119-2'), 'staff chat assets use a refreshed cache version');
+staffMessagingCheck(str_contains($page, '20261119-nav3'), 'staff chat assets use a refreshed cache version');
 staffMessagingCheck(str_contains($dashboard, 'href="./staff-chat.html" class="nav-link"') && !str_contains($dashboard, 'href="./staff-chat.html" class="nav-link" data-role-access'), 'staff chat navigation is not hidden behind delayed dashboard role initialization');
 echo "MARKAZ staff messaging regression checks passed.\n";
