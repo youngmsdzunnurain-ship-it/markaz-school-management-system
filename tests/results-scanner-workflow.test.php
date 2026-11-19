@@ -19,6 +19,10 @@ $staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
+    str_contains($classHtml, '20261119-roster-refresh2'),
+    'Class workspace forces browsers to load the current roster refresh implementation'
+);
+resultsScannerCheck(
     str_contains($classHtml, 'id="resultsScanner"') &&
     str_contains($classHtml, 'capture="environment"') &&
     str_contains($classHtml, 'accept="image/'),
