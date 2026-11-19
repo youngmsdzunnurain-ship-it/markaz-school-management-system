@@ -82,13 +82,15 @@ async function loadMessages(silent=false) {
  state.messages=data.messages||[];renderMessages();
  if(!silent || (state.messages.length && Number(state.messages[state.messages.length-1].id)!==oldLast)) await loadConversations();
 }
-async function openConversation(id) {
- const c=state.conversations.find(x=>Number(x.id)===id); if(!c)return;
+async function openConversation(id, selectedPerson=null) {
+ let c=state.conversations.find(x=>Number(x.id)===id);
+ if(!c && selectedPerson){c={id,conversation_type:"direct",participants:[{id:state.currentUserId,name:state.currentName,role:"staff"},selectedPerson]};}
+ if(!c)return;
  state.activeId=id;state.messages=[];state.messageLoadSequence++;
  $("threadTitle").textContent=conversationName(c);
  const directPerson=c.conversation_type==="direct"?otherParticipant(c):null;
  $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name+" · "+formatRole(p.role)).join(" · "):(formatRole(directPerson?.role)+" · "+(directPerson?.is_online?"Online":"Offline"));
- $("threadAvatar").replaceWith(avatar(directPerson||{name:conversationName(c)},"person-avatar"));$("threadAvatar").id="threadAvatar";
+ const previousAvatar=$("threadAvatar");const nextAvatar=avatar(directPerson||{name:conversationName(c)},"person-avatar");nextAvatar.id="threadAvatar";previousAvatar.replaceWith(nextAvatar);
  $("threadWelcome").hidden=true;$("activeThread").hidden=false;layout.classList.add("thread-open");
  $("messageList").innerHTML='<p class="empty-note">Opening conversation…</p>';
  renderConversations();
@@ -108,8 +110,8 @@ function renderDirectory() {
   const input=document.createElement("input");input.type="checkbox";input.value=String(s.id);input.name="recipients";input.setAttribute("aria-label","Select "+s.name+" for a group chat");
   const text=document.createElement("span");text.className="staff-option-copy";text.textContent=s.name;
   const role=document.createElement("small");role.textContent=formatRole(s.role);text.append(role);
-  const chat=document.createElement("button");chat.type="button";chat.className="staff-direct-chat";chat.textContent="Start chat";chat.addEventListener("click",event=>{event.stopPropagation();startDirectConversation(Number(s.id),chat);});
-  row.addEventListener("click",event=>{if(event.target!==input)startDirectConversation(Number(s.id),chat);});
+  const chat=document.createElement("button");chat.type="button";chat.className="staff-direct-chat";chat.textContent="Start chat";chat.addEventListener("click",event=>{event.stopPropagation();startDirectConversation(s,chat);});
+  row.addEventListener("click",event=>{if(event.target!==input)startDirectConversation(s,chat);});
   row.append(avatar(s,"directory-avatar"),text,input,chat);list.append(row);
  });
 }
@@ -124,12 +126,14 @@ async function startConversation(event) {
   $("newChatDialog").close();await loadConversations();await openConversation(Number(data.conversation_id));toast(data.existing?"Opened existing conversation.":"Conversation created.");
  }catch(e){$("dialogError").textContent=e.message;}finally{button.disabled=false;}
 }
-async function startDirectConversation(recipientId, button) {
- if(!recipientId)return;
+async function startDirectConversation(person, button) {
+ const recipientId=Number(person && person.id);if(!recipientId)return;
  if(button){button.disabled=true;button.textContent="Opening…";}
  try{
   const data=await request(api,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"create_conversation",recipient_ids:[recipientId]})});
-  $("newChatDialog").close();await loadConversations();await openConversation(Number(data.conversation_id));
+  $("newChatDialog").close();
+  await openConversation(Number(data.conversation_id),person);
+  loadConversations().catch(error=>toast(error.message));
  }catch(e){$("dialogError").textContent=e.message;toast(e.message);}
  finally{if(button){button.disabled=false;button.textContent="Start chat";}}
 }
