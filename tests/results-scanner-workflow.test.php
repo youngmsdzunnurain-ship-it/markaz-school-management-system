@@ -41,7 +41,7 @@ resultsScannerCheck(
     str_contains($scannerJs, 'Review every detected mark') &&
     str_contains($scannerJs, 'Blank marks are never saved') &&
     str_contains($scannerJs, 'Save reviewed results') &&
-    str_contains($scannerJs, 'data-student-id') &&
+    str_contains($scannerJs, 'dataset.studentId') &&
     str_contains($resultSaveApi, 'requireResultStaff()') &&
     str_contains($resultSaveApi, 'requireTeacherAssignment('),
     'Recognised marks require review and the existing server-side result permissions'
