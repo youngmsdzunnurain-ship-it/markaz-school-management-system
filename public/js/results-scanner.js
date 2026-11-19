@@ -22,12 +22,28 @@
     function rosterMatch(line, students) {
         const candidate = normalise(line);
         if (!candidate) return null;
-        return students.find(student => {
+
+        const admissionMatches = students.filter(student => {
             const admission = normalise(student.admission_number);
+            return admission.length >= 3 && candidate.includes(admission);
+        });
+        if (admissionMatches.length === 1) return admissionMatches[0];
+        if (admissionMatches.length > 1) return null;
+
+        const exactNameMatches = students.filter(student => {
             const name = normalise([student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" "));
-            return (admission.length >= 3 && candidate.includes(admission)) ||
-                (name.length >= 6 && candidate.includes(name));
-        }) || null;
+            return name.length >= 6 && candidate.includes(name);
+        });
+        if (exactNameMatches.length === 1) return exactNameMatches[0];
+        if (exactNameMatches.length > 1) return null;
+
+        const partialNameMatches = students.filter(student => {
+            const first = normalise(student.first_name);
+            const last = normalise(student.last_name);
+            return first.length >= 2 && last.length >= 2 &&
+                candidate.includes(first) && candidate.includes(last);
+        });
+        return partialNameMatches.length === 1 ? partialNameMatches[0] : null;
     }
 
     function extractRows(lines, students, subject) {
