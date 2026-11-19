@@ -261,6 +261,7 @@
 
         populateSubjectSelect();
         await calculateCompletion();
+        configureResultsScanner();
     }
 
     function populateSubjectSelect() {
@@ -274,6 +275,7 @@
             return;
         }
 
+        const previousSubjectId = selectedSubjectId;
         resultSubjectSelect.innerHTML = `
             <option value="">Select a subject</option>
             ${resultSubjects.map(subject => `
@@ -282,6 +284,10 @@
                 </option>
             `).join("")}
         `;
+        if (resultSubjects.some(subject => String(subject.id) === String(previousSubjectId))) {
+            resultSubjectSelect.value = previousSubjectId;
+        }
+        selectedSubjectId = resultSubjectSelect.value;
     }
 
     async function calculateCompletion() {
@@ -344,6 +350,22 @@
         return resultSubjects.find(
             subject => String(subject.id) === String(selectedSubjectId)
         ) || null;
+    }
+
+    function configureResultsScanner() {
+        if (!window.MarkazResultsScanner) return;
+        window.MarkazResultsScanner.configure({
+            classId,
+            classType,
+            role: currentRole,
+            subject: getSelectedSubject(),
+            students: classStudents,
+            results: classResults,
+            onSaved: async () => {
+                await loadResults();
+                renderResultsTable();
+            }
+        });
     }
 
     function getStudentResult(studentId, subjectId) {
@@ -673,6 +695,7 @@
     resultSubjectSelect?.addEventListener("change", () => {
         selectedSubjectId = resultSubjectSelect.value;
         renderResultsTable();
+        configureResultsScanner();
     });
 
     resultStudentSearch?.addEventListener("input", () => {
