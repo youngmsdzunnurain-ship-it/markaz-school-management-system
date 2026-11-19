@@ -177,6 +177,8 @@
             status("Choose a JPEG, PNG or WebP image up to 8 MB.", "error");
             return;
         }
+        const scanScope = state.scopeKey;
+        const scanConfig = state.config;
         state.busy = true;
         status("Preparing the free on-device OCR engine…");
         const progress = $("[data-scanner-progress]");
@@ -189,7 +191,7 @@
             preview.hidden = false;
             const Tesseract = await loadOcr();
             const ocrImage = await prepareImage(file);
-            const ocrLanguage = state.config.classType === "arabic" ? "ara+eng" : "eng";
+            const ocrLanguage = scanConfig.classType === "arabic" ? "ara+eng" : "eng";
             state.worker = await Tesseract.createWorker(ocrLanguage, 1, {
                 logger: message => {
                     if (message.status === "recognizing text") {
@@ -200,8 +202,9 @@
                 }
             });
             const recognised = await state.worker.recognize(ocrImage);
+            if (state.scopeKey !== scanScope) return;
             const lines = recognised?.data?.lines || [];
-            state.rows = extractRows(lines, state.config.students, state.config.subject);
+            state.rows = extractRows(lines, scanConfig.students, scanConfig.subject);
             if (!state.rows.length) {
                 const raw = String(recognised?.data?.text || "").trim();
                 status(raw
@@ -275,6 +278,7 @@
                 });
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok || !data.success) throw new Error(data.message || "A result could not be saved.");
+                row.querySelector('input[type="checkbox"]').checked = false;
                 saved++;
             }
             status(saved + " reviewed result(s) saved successfully. Refreshing the class results…", "success");
@@ -320,6 +324,8 @@
                 $("[data-scanner-review]").replaceChildren();
                 $("[data-scanner-review]").hidden = true;
                 $("[data-scanner-preview]").hidden = true;
+                if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
+                state.imageUrl = "";
                 panel.hidden = true;
                 status("The class or subject changed. Start a new scan for the selected subject.");
             }
