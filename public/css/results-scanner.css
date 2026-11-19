@@ -1,3 +1,4 @@
+.results-scanner-launcher[hidden]{display:none!important}
 .results-scanner-launcher{display:flex;align-items:center;gap:10px;margin:0 0 16px;padding:13px 18px;border:1px solid #d9c58a;border-radius:13px;background:linear-gradient(110deg,#123d2a,#1c6545);color:#fff;font:inherit;font-weight:750;cursor:pointer;box-shadow:0 8px 20px rgba(18,61,42,.12)}
 .results-scanner-launcher:hover{background:linear-gradient(110deg,#0d3021,#15543a)}
 .results-scanner-panel{margin:0 0 18px;padding:20px;border:1px solid #dfe8e1;border-radius:16px;background:#fbfdfb;box-shadow:0 8px 24px rgba(18,61,42,.06)}
