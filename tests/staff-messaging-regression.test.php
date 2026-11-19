@@ -19,5 +19,8 @@ staffMessagingCheck(str_contains($api, 'mb_strlen($body) > 4000'), 'message leng
 staffMessagingCheck(str_contains($migration, 'FOREIGN KEY (conversation_id)'), 'conversation records have database-enforced ownership relationships');
 staffMessagingCheck(str_contains($migration, 'FOREIGN KEY (account_id)'), 'participant records are linked to valid staff accounts');
 staffMessagingCheck(str_contains($page, 'staff-chat.js') && str_contains($js, 'create_conversation'), 'staff chat page supports conversation creation');
+staffMessagingCheck(str_contains($js, 'startDirectConversation') && str_contains($js, 'Start chat'), 'staff directory offers immediate direct-chat actions');
+staffMessagingCheck(str_contains($js, 'formatRole') && str_contains($js, 'messageLoadSequence'), 'staff roles are labelled and fast conversation switching ignores stale message responses');
+staffMessagingCheck(str_contains($page, 'id="backToInbox"') && str_contains($js, 'backToInbox'), 'mobile thread view has an explicit back-to-staff-list control');
 staffMessagingCheck(str_contains($js, 'textContent'), 'message content is rendered as text rather than executable HTML');
 echo "MARKAZ staff messaging regression checks passed.\n";

@@ -110,12 +110,13 @@ async function loadAdmin() {
                 ["students", "Students", "./students.html", "fa-users"],
                 ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
                 ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"],
-                ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"]
+                ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"],
+                ["staff_messaging", "Let\u0027s Chat", "./staff-chat.html", "fa-comments"]
             ];
             const shortcutList = document.getElementById("managementDashboardShortcuts");
             if (shortcutList) {
                 shortcutList.replaceChildren();
-                managerLinks.filter(item => item[0] === "online_class_access" ? data.admin.can_access_online_class === true : managerPermissions[item[0]] === true).forEach(item => {
+                managerLinks.filter(item => item[0] === "staff_messaging" ? true : (item[0] === "online_class_access" ? data.admin.can_access_online_class === true : managerPermissions[item[0]] === true)).forEach(item => {
                     const link = document.createElement("a");
                     link.className = "management-dashboard-shortcut";
                     link.href = item[2];
@@ -1119,7 +1120,8 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "MARKAZ Online Class": "online-class.html",
             "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
-            "Settings": "settings.html"
+            "Settings": "settings.html",
+            "Let's Chat": "staff-chat.html"
         };
 
         const destination = destinations[button.textContent.trim()];
