@@ -275,6 +275,7 @@
             return;
         }
 
+        const previousSubjectId = selectedSubjectId;
         resultSubjectSelect.innerHTML = `
             <option value="">Select a subject</option>
             ${resultSubjects.map(subject => `
@@ -283,6 +284,9 @@
                 </option>
             `).join("")}
         `;
+        if (resultSubjects.some(subject => String(subject.id) === String(previousSubjectId))) {
+            resultSubjectSelect.value = previousSubjectId;
+        }
         selectedSubjectId = resultSubjectSelect.value;
     }
 
