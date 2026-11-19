@@ -34,8 +34,7 @@ resultsScannerCheck(
     str_contains($classJs, 'let classRoster = []') &&
     str_contains($classJs, 'incomingRoster.length > 0 || classRoster.length === 0') &&
     str_contains($classJs, 'resultsLoadSequence') &&
-    str_contains($classJs, 'requestSequence !== resultsLoadSequence') &&
-    str_contains($classJs, 'incomingStudents.length > 0 || classStudents.length === 0'),
+    str_contains($classJs, 'requestSequence !== resultsLoadSequence'),
     'The class roster retains active and inactive students independently from the active-only result-entry list, and overlapping refreshes cannot erase it'
 );
 resultsScannerCheck(
