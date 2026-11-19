@@ -20,8 +20,8 @@ $staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
-    str_contains($classHtml, '20261119-roster-refresh2') && str_contains($classApi, "header('Cache-Control: no-store, private')"),
-    'Class workspace and roster API both prevent stale cached roster responses'
+    str_contains($classHtml, '20261120-roster-dropdown1') && str_contains($classApi, "header('Cache-Control: no-store, no-cache, must-revalidate, private')") && !str_contains($classHtml, 'list="resultStudentSuggestions"'),
+    'Results roster API disables intermediary caching and student search uses its custom accessible dropdown instead of a broken datalist reference'
 );
 resultsScannerCheck(
     str_contains($classHtml, 'id="resultsScanner"') &&
