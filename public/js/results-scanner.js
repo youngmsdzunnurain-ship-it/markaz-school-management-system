@@ -36,7 +36,6 @@
             const student = rosterMatch(text, students);
             if (!student || found.has(String(student.id))) continue;
             const name = [student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ");
-            const withoutIdentity = normalise(text).replace(normalise(name), "").replace(normalise(student.admission_number), "");
             const tokens = text.match(/(?:^|\s)(\d{1,3}(?:\.\d{1,2})?)(?=\s|$)/g) || [];
             const scores = tokens.map(token => Number(token.trim())).filter(Number.isFinite);
             const max = [Number(subject.max_ca1), Number(subject.max_ca2), Number(subject.max_exam)];
@@ -199,7 +198,11 @@
                 return raw === "" ? null : Number(raw);
             });
             const maxes = [state.config.subject.max_ca1, state.config.subject.max_ca2, state.config.subject.max_exam].map(Number);
-            if (values.some((value, index) => value !== null && (!Number.isFinite(value) || value < 0 || value > maxes[index]))) {
+            if (values.some(value => value === null)) {
+                status("Enter CA1, CA2 and Exam for every selected student. Blank marks are never saved.", "error");
+                return;
+            }
+            if (values.some((value, index) => !Number.isFinite(value) || value < 0 || value > maxes[index])) {
                 status("A selected row contains a mark outside the subject's allowed range. Correct it before saving.", "error");
                 return;
             }
