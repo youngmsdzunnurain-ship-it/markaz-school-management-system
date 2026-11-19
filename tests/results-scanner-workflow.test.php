@@ -22,7 +22,7 @@ resultsScannerCheck(
     'Results workspace exposes camera capture and image upload controls'
 );
 resultsScannerCheck(
-    str_contains($classJs, 'ResultsScanner.mount') &&
+    str_contains($classJs, 'MarkazResultsScanner.configure') &&
     str_contains($classJs, 'selectedSubjectId'),
     'Scanner is mounted with the active class, subject, roster and result-save workflow'
 );
@@ -34,6 +34,7 @@ resultsScannerCheck(
 );
 resultsScannerCheck(
     str_contains($scannerJs, 'Review every detected mark') &&
+    str_contains($scannerJs, 'Blank marks are never saved') &&
     str_contains($scannerJs, 'Save reviewed results') &&
     str_contains($scannerJs, 'data-student-id'),
     'Recognised marks are editable and require explicit staff review before saving'
