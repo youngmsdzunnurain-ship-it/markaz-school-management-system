@@ -135,6 +135,23 @@
         catch (error) { window.markazResultsOcrLoading = null; throw error; }
     }
 
+    async function prepareImage(file) {
+        if (typeof createImageBitmap !== "function") return file;
+        const bitmap = await createImageBitmap(file);
+        try {
+            const scale = Math.min(1, 2200 / Math.max(bitmap.width, bitmap.height));
+            if (scale === 1) return file;
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+            const context = canvas.getContext("2d", {alpha:false});
+            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+            return await new Promise(resolve => canvas.toBlob(blob => resolve(blob || file), "image/jpeg", 0.88));
+        } finally {
+            bitmap.close();
+        }
+    }
+
     async function scan(file) {
         if (!state.config || !state.config.subject) {
             status("Select a subject in the Results section first.", "error");
@@ -155,6 +172,7 @@
             preview.src = state.imageUrl;
             preview.hidden = false;
             const Tesseract = await loadOcr();
+            const ocrImage = await prepareImage(file);
             const ocrLanguage = state.config.classType === "arabic" ? "ara+eng" : "eng";
             state.worker = await Tesseract.createWorker(ocrLanguage, 1, {
                 logger: message => {
@@ -165,7 +183,7 @@
                     }
                 }
             });
-            const recognised = await state.worker.recognize(file);
+            const recognised = await state.worker.recognize(ocrImage);
             const lines = recognised?.data?.lines || [];
             state.rows = extractRows(lines, state.config.students, state.config.subject);
             if (!state.rows.length) {
