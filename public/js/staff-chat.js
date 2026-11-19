@@ -5,7 +5,7 @@ const $ = id => document.getElementById(id);
 const layout = document.querySelector(".chat-layout");
 const state = { staff: [], conversations: [], activeId: 0, messages: [], currentUserId: 0, currentName: "", poll: null, busy: false };
 const escDate = value => { const d = new Date(String(value || "").replace(" ", "T")); return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}); };
-const initials = value => String(value || "M").trim().split(/\\s+/).slice(0,2).map(x => x[0] || "").join("").toUpperCase();
+const initials = value => String(value || "M").trim().split(/\s+/).slice(0,2).map(x => x[0] || "").join("").toUpperCase();
 function avatar(person, className="person-avatar") {
  const el=document.createElement("span");el.className=className;
  if(person && person.avatar_url){
