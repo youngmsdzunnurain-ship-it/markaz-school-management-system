@@ -234,11 +234,18 @@
         let saved = 0;
         try {
             for (const row of selected) {
+                const studentId = Number(row.dataset.studentId);
+                const existingResult = (state.config.results || []).find(result =>
+                    Number(result.student_id) === studentId &&
+                    Number(result.subject_id) === Number(state.config.subject.id)
+                );
                 const payload = {
                     class_type: state.config.classType,
                     class_id: Number(state.config.classId),
-                    student_id: Number(row.dataset.studentId),
+                    student_id: studentId,
                     subject_id: Number(state.config.subject.id),
+                    teacher_remark: existingResult?.teacher_remark ?? null,
+                    result_remark: existingResult?.result_remark ?? null,
                     ca1: row.querySelector('[data-field="ca1"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca1"]').value),
                     ca2: row.querySelector('[data-field="ca2"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca2"]').value),
                     exam: row.querySelector('[data-field="exam"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="exam"]').value)
