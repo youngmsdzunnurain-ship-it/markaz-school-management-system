@@ -360,6 +360,7 @@
             role: currentRole,
             subject: getSelectedSubject(),
             students: classStudents,
+            results: classResults,
             onSaved: async () => {
                 await loadResults();
                 renderResultsTable();
