@@ -10,7 +10,9 @@ require_once __DIR__ . '/../../app/helpers/ss-curriculum.php';
 requireResultStaff();
 
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store, private');
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $classType = (string) ($_GET['class_type'] ?? '');
 
