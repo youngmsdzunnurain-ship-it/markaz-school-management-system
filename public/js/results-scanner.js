@@ -15,7 +15,8 @@
 
     function normalise(value) {
         return String(value || "").toLowerCase().normalize("NFKD")
-            .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+            .replace(/[\u0300-\u036f\u064b-\u065f\u0670]/g, "")
+            .replace(/[^\p{L}\p{N}]/gu, "");
     }
 
     function rosterMatch(line, students) {
@@ -32,7 +33,9 @@
     function extractRows(lines, students, subject) {
         const found = new Map();
         for (const line of lines) {
-            const text = String(line.text || "").trim();
+            const text = String(line.text || "")
+                .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+                .trim();
             const student = rosterMatch(text, students);
             if (!student || found.has(String(student.id))) continue;
             const name = [student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ");
@@ -152,7 +155,8 @@
             preview.src = state.imageUrl;
             preview.hidden = false;
             const Tesseract = await loadOcr();
-            state.worker = await Tesseract.createWorker("eng", 1, {
+            const ocrLanguage = state.config.classType === "arabic" ? "ara+eng" : "eng";
+            state.worker = await Tesseract.createWorker(ocrLanguage, 1, {
                 logger: message => {
                     if (message.status === "recognizing text") {
                         const percent = Math.round((message.progress || 0) * 100);
