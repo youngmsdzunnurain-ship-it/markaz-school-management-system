@@ -5,7 +5,18 @@ const $ = id => document.getElementById(id);
 const layout = document.querySelector(".chat-layout");
 const state = { staff: [], conversations: [], activeId: 0, messages: [], currentUserId: 0, currentName: "", poll: null, busy: false };
 const escDate = value => { const d = new Date(String(value || "").replace(" ", "T")); return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}); };
-const initials = value => String(value || "M").trim().split(/\s+/).slice(0,2).map(x => x[0] || "").join("").toUpperCase();
+const initials = value => String(value || "M").trim().split(/\\s+/).slice(0,2).map(x => x[0] || "").join("").toUpperCase();
+function avatar(person, className="person-avatar") {
+ const el=document.createElement("span");el.className=className;
+ if(person && person.avatar_url){
+  const img=document.createElement("img");img.src=person.avatar_url;img.alt="";img.loading="lazy";
+  img.addEventListener("error",()=>{el.textContent=initials(person.name);},{once:true});el.append(img);
+ }else el.textContent=initials(person && person.name);
+ if(person && person.is_online){const dot=document.createElement("i");dot.className="online-dot";dot.setAttribute("aria-label","Online");el.append(dot);}
+ return el;
+}
+function otherParticipant(conversation){return (conversation.participants||[]).find(p=>Number(p.id)!==state.currentUserId);}
+async function heartbeat(){try{await request(api,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"heartbeat"})});}catch(_){} }
 async function request(url, options = {}) {
  const response = await fetch(url, {credentials:"same-origin",cache:"no-store",...options,headers:{"Accept":"application/json",...(options.headers || {})}});
  const data = await response.json().catch(() => ({}));
@@ -25,7 +36,7 @@ function renderConversations() {
  if (!rows.length) { const p=document.createElement("p"); p.className="empty-note"; p.textContent=q?"No matching conversations.":"No conversations yet. Start a chat with a staff member."; list.append(p); return; }
  rows.forEach(c=>{
   const button=document.createElement("button"); button.type="button"; button.className="conversation-item"+(Number(c.id)===state.activeId?" active":"");
-  const avatar=document.createElement("span"); avatar.className="person-avatar"; avatar.textContent=initials(conversationName(c));
+  const person=c.conversation_type==="direct"?otherParticipant(c):null; const avatarEl=avatar(person||{name:conversationName(c)});
   const copy=document.createElement("span"); copy.className="conversation-copy";
   const name=document.createElement("strong"); name.textContent=conversationName(c);
   const preview=document.createElement("p"); preview.textContent=c.last_message || (c.conversation_type==="group"?"Group conversation":"Start your conversation");
@@ -34,7 +45,7 @@ function renderConversations() {
   const time=document.createElement("time"); time.textContent=escDate(c.last_message_at || c.updated_at);
   meta.append(time);
   if(Number(c.unread_count)>0){const unread=document.createElement("span");unread.className="unread";unread.textContent=String(c.unread_count);meta.append(unread);}
-  button.append(avatar,copy,meta); button.addEventListener("click",()=>openConversation(Number(c.id))); list.append(button);
+  button.append(avatarEl,copy,meta); button.addEventListener("click",()=>openConversation(Number(c.id))); list.append(button);
  });
 }
 async function loadConversations() { const data=await request(api+"?action=conversations"); state.conversations=data.conversations||[]; renderConversations(); }
@@ -45,8 +56,17 @@ function renderMessages() {
   const bubble=document.createElement("article");bubble.className="message"+(Number(m.sender_id)===state.currentUserId?" mine":"");
   if(Number(m.sender_id)!==state.currentUserId){const author=document.createElement("div");author.className="message-author";author.textContent=m.sender_name; bubble.append(author);}
   const body=document.createElement("div");body.className="message-body";body.textContent=m.body;
-  const time=document.createElement("time");time.textContent=escDate(m.created_at);
-  bubble.append(body,time);list.append(bubble);
+  const footer=document.createElement("div");footer.className="message-footer";
+  const time=document.createElement("time");time.textContent=escDate(m.created_at);footer.append(time);
+  if(Number(m.sender_id)===state.currentUserId){
+   const ticks=document.createElement("span");ticks.className="message-ticks";
+   const recipients=Number(m.recipient_count),delivered=Number(m.delivered_count),read=Number(m.read_count);
+   const status=recipients>0&&read===recipients?"read":recipients>0&&delivered===recipients?"delivered":"sent";
+   ticks.classList.add(status);ticks.textContent=status==="sent"?"✓": "✓✓";
+   ticks.title=status==="read"?"Read by all recipients":status==="delivered"?"Delivered to all recipients":"Sent";
+   ticks.setAttribute("aria-label",ticks.title);footer.append(ticks);
+  }
+  bubble.append(body,footer);list.append(bubble);
  });
  list.scrollTop=list.scrollHeight;
 }
@@ -61,7 +81,10 @@ async function openConversation(id) {
  state.activeId=id; const c=state.conversations.find(x=>Number(x.id)===id); if(!c)return;
  $("threadTitle").textContent=conversationName(c);
  $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name).join(" · "):"Private staff conversation";
- $("threadAvatar").textContent=initials(conversationName(c));
+ const directPerson=c.conversation_type==="direct"?otherParticipant(c):null;
+ $("threadAvatar").replaceWith(avatar(directPerson||{name:conversationName(c)},"person-avatar"));$("threadAvatar").id="threadAvatar";
+ const presence=directPerson?(directPerson.is_online?"Online":"Offline"):"Group conversation";
+ $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name).join(" · "):presence;
  $("threadWelcome").hidden=true;$("activeThread").hidden=false;layout.classList.add("thread-open");
  renderConversations();
  try{await loadMessages();}catch(e){toast(e.message);}
@@ -79,6 +102,7 @@ function renderDirectory() {
   const label=document.createElement("label");label.className="staff-option";
   const input=document.createElement("input");input.type="checkbox";input.value=String(s.id);input.name="recipients";
   const text=document.createElement("span");text.textContent=s.name;
+  const personAvatar=avatar(s,"directory-avatar");label.append(personAvatar);
   const role=document.createElement("small");role.textContent=String(s.role).replaceAll("_"," ");
   text.append(role);label.append(input,text);list.append(label);
  });
@@ -107,7 +131,7 @@ async function init() {
  try {
   const me=await request("api/auth/me.php");state.currentUserId=Number(me.admin.id);state.currentName=me.admin.name||"Staff";
   $("currentStaff").textContent=state.currentName+" · "+String(me.admin.role).replaceAll("_"," ");
-  const directory=await request(api+"?action=directory");state.staff=directory.staff||[];renderDirectory();
+  await heartbeat();const directory=await request(api+"?action=directory");state.staff=directory.staff||[];renderDirectory();
   await loadConversations();
   $("newChatButton").addEventListener("click",openDialog);$("welcomeNewChat").addEventListener("click",openDialog);
   $("closeDialog").addEventListener("click",()=>$("newChatDialog").close());$("cancelDialog").addEventListener("click",()=>$("newChatDialog").close());
@@ -115,7 +139,7 @@ async function init() {
   $("conversationSearch").addEventListener("input",renderConversations);$("messageForm").addEventListener("submit",sendMessage);
   $("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("messageForm").requestSubmit();}});
   const back=document.createElement("button");back.type="button";back.className="mobile-back";back.textContent="Back";back.addEventListener("click",()=>{layout.classList.remove("thread-open");state.activeId=0;});document.querySelector(".thread-heading").prepend(back);
-  state.poll=setInterval(async()=>{try{await loadConversations();if(state.activeId)await loadMessages(true);}catch(_){}},10000);
+  state.poll=setInterval(async()=>{await heartbeat();try{await loadConversations();if(state.activeId)await loadMessages(true);}catch(_){}},10000);
  }catch(e){$("conversationList").textContent=e.message;toast(e.message);}
 }
 document.addEventListener("DOMContentLoaded",init);
