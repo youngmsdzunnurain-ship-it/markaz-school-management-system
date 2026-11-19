@@ -1,25 +1,23 @@
-name: MARKAZ AI Security and UI Checks
+name: MARKAZ Results Scanner and Staff Chat Checks
 
 on:
   pull_request:
     branches: [main]
     paths:
-      - 'api/ai/**'
-      - 'app/helpers/markaz-ai.php'
-      - 'app/helpers/markaz-ai-hosted.php'
-      - 'docs/markaz-ai-setup.md'
-      - 'database/migrations/20261116_markaz_ai_foundation.sql'
-      - 'public/api/ai/**'
-      - 'public/js/markaz-ai.js'
-      - 'public/css/markaz-ai.css'
       - 'api/results/save.php'
-      - 'tests/markaz-ai-security-regression.test.php'
-      - 'tests/markaz-ai-free-mode.test.php'
-      - 'tests/markaz-ai-hosted.test.php'
+      - 'public/class.html'
+      - 'public/js/class.js'
+      - 'public/js/results-scanner.js'
+      - 'public/css/results-scanner.css'
+      - 'public/dashboard.html'
+      - 'public/js/management-shell.js'
+      - 'public/staff-chat.html'
+      - 'public/js/staff-chat.js'
+      - 'tests/results-scanner-workflow.test.php'
       - '.github/workflows/markaz-ai.yml'
 
 jobs:
-  markaz-ai:
+  results-scanner:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -40,48 +38,13 @@ jobs:
           node-version: '20'
       - name: Check PHP syntax
         run: |
-          set -e
-          php -l app/helpers/markaz-ai.php
-          php -l app/helpers/markaz-ai-hosted.php
-          php -l api/ai/chat.php
-          php -l api/ai/context.php
-          php -l api/ai/conversations.php
-          php -l api/ai/history.php
-          php -l api/ai/delete-conversation.php
-          php -l api/ai/scan-result.php
-          php -l api/ai/admin-activity.php
-          php -l api/ai/student-context.php
-          php -l api/ai/student-chat.php
-          php -l api/ai/student-conversations.php
-          php -l api/ai/student-history.php
-          php -l api/ai/student-delete-conversation.php
-          php -l api/ai/transcribe.php
-          php -l api/ai/student-transcribe.php
-          php -l public/api/ai/chat.php
-          php -l public/api/ai/context.php
-          php -l public/api/ai/conversations.php
-          php -l public/api/ai/history.php
-          php -l public/api/ai/delete-conversation.php
-          php -l public/api/ai/scan-result.php
-          php -l public/api/ai/admin-activity.php
-          php -l public/api/ai/student-context.php
-          php -l public/api/ai/student-chat.php
-          php -l public/api/ai/student-conversations.php
-          php -l public/api/ai/student-history.php
-          php -l public/api/ai/student-delete-conversation.php
-          php -l public/api/ai/transcribe.php
-          php -l public/api/ai/student-transcribe.php
           php -l api/results/save.php
-          php -l api/attendance/register.php
-          php -l tests/markaz-ai-security-regression.test.php
-          php -l tests/markaz-ai-free-mode.test.php
-          php -l tests/markaz-ai-hosted.test.php
+          php -l tests/results-scanner-workflow.test.php
       - name: Check JavaScript syntax
         run: |
-          node --check public/js/markaz-ai.js
+          node --check public/js/class.js
+          node --check public/js/results-scanner.js
+          node --check public/js/staff-chat.js
           node --check public/js/management-shell.js
-      - name: Run MARKAZ AI security regression checks
-        run: |
-          php tests/markaz-ai-security-regression.test.php
-          php tests/markaz-ai-free-mode.test.php
-          php tests/markaz-ai-hosted.test.php
+      - name: Run results scanner regression checks
+        run: php tests/results-scanner-workflow.test.php
