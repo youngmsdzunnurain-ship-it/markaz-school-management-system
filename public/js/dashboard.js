@@ -1123,7 +1123,7 @@ document.querySelectorAll(".quick-actions button").forEach((button) => {
             "Online Class": "online-class.html",
             "School Fees": "school-fees.html",
             "Settings": "settings.html",
-            "Let\u0027s Chat": "staff-chat.html"
+            "Let's Chat": "staff-chat.html"
         };
 
         const destination = destinations[button.textContent.trim()];
