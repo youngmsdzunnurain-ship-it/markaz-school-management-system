@@ -422,6 +422,7 @@
         if (!term) {
             box.hidden = true;
             box.innerHTML = "";
+            resultStudentSearch?.setAttribute("aria-expanded", "false");
             return;
         }
 
@@ -449,6 +450,7 @@
             }).join("");
         }
         box.hidden = false;
+        resultStudentSearch?.setAttribute("aria-expanded", "true");
     }
 
     function renderResultsTable() {
