@@ -543,9 +543,7 @@ function applyDashboardRoleAccess(role, permissions = {}) {
         const requiredRole = element.dataset.roleAccess;
         let allowed = true;
 
-        if (requiredRole === "staff_messaging") {
-            allowed = ["admin", "exam_officer", "teacher", "management"].includes(role);
-        } else if (requiredRole === "admin") {
+        if (requiredRole === "admin") {
             allowed = role === "admin";
         } else if (requiredRole === "admin_or_exam_officer") {
             allowed = role === "admin" || role === "exam_officer";
