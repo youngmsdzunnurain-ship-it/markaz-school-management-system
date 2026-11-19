@@ -108,7 +108,8 @@ function renderDirectory() {
   const input=document.createElement("input");input.type="checkbox";input.value=String(s.id);input.name="recipients";input.setAttribute("aria-label","Select "+s.name+" for a group chat");
   const text=document.createElement("span");text.className="staff-option-copy";text.textContent=s.name;
   const role=document.createElement("small");role.textContent=formatRole(s.role);text.append(role);
-  const chat=document.createElement("button");chat.type="button";chat.className="staff-direct-chat";chat.textContent="Start chat";chat.addEventListener("click",()=>startDirectConversation(Number(s.id),chat));
+  const chat=document.createElement("button");chat.type="button";chat.className="staff-direct-chat";chat.textContent="Start chat";chat.addEventListener("click",event=>{event.stopPropagation();startDirectConversation(Number(s.id),chat);});
+  row.addEventListener("click",event=>{if(event.target!==input)startDirectConversation(Number(s.id),chat);});
   row.append(avatar(s,"directory-avatar"),text,input,chat);list.append(row);
  });
 }
