@@ -62,6 +62,10 @@ jobs:
           php -l api/students/toggle-status.php
           php -l api/arabic-classes/list.php
           php -l app/middleware/auth.php
+          php -l api/messages/index.php
+          php -l public/api/messages/index.php
+          php -l tests/staff-messaging-regression.test.php
+          php tests/staff-messaging-regression.test.php
           php -l api/auth/me.php
           php -l api/classes/list.php
           php -l api/students/list.php
