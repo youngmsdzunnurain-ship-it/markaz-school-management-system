@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#145035">
+<title>Staff Chat | MARKAZ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="css/staff-chat.css?v=20261119-1">
+<script src="js/staff-chat.js?v=20261119-1" defer></script>
+</head>
+<body>
+<header class="chat-topbar">
+<a class="brand" href="dashboard.html"><span class="brand-mark">M</span><span>MARKAZ<small>STAFF MESSAGING</small></span></a>
+<div class="top-actions"><span id="currentStaff" class="current-staff">Staff workspace</span><a href="dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div>
+</header>
+<main class="chat-layout">
+<aside class="inbox-panel">
+<div class="inbox-heading"><div><span class="eyebrow">COMMUNICATION</span><h1>Messages</h1></div><button id="newChatButton" class="new-chat" type="button" aria-label="Start a new chat" title="New chat"><i class="fa-solid fa-pen-to-square"></i></button></div>
+<label class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input id="conversationSearch" type="search" placeholder="Search conversations"></label>
+<div id="conversationList" class="conversation-list"><p class="empty-note">Loading your conversations…</p></div>
+</aside>
+<section class="thread-panel" aria-label="Conversation">
+<div id="threadWelcome" class="thread-welcome"><div class="welcome-icon"><i class="fa-regular fa-comments"></i></div><h2>Your staff conversations</h2><p>Chat privately with colleagues or start a group conversation for school work.</p><button id="welcomeNewChat" class="primary-button" type="button"><i class="fa-solid fa-plus"></i> Start a conversation</button></div>
+<div id="activeThread" class="active-thread" hidden>
+<div class="thread-heading"><div class="person-avatar" id="threadAvatar">M</div><div class="thread-title"><h2 id="threadTitle">Conversation</h2><p id="threadSubtitle">MARKAZ staff</p></div><span class="secure-label"><i class="fa-solid fa-lock"></i> Private</span></div>
+<div id="messageList" class="message-list" aria-live="polite"></div>
+<form id="messageForm" class="composer"><textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message…" required></textarea><button id="sendButton" type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button></form>
+<p class="composer-hint">Messages are visible only to members of this conversation.</p>
+</div>
+</section>
+</main>
+<dialog id="newChatDialog" class="new-chat-dialog">
+<form id="newChatForm" method="dialog">
+<div class="dialog-heading"><div><span class="eyebrow">NEW MESSAGE</span><h2>Start a conversation</h2></div><button type="button" id="closeDialog" class="close-dialog" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+<label class="field-label" for="staffSearch">Find staff</label><input id="staffSearch" class="dialog-search" type="search" placeholder="Search by name or role">
+<div id="staffDirectory" class="staff-directory"><p class="empty-note">Loading staff directory…</p></div>
+<label class="field-label" for="groupTitle">Group name <span>(required for 2 or more people)</span></label><input id="groupTitle" class="dialog-search" type="text" maxlength="120" placeholder="e.g. Examination planning team">
+<p id="dialogError" class="dialog-error" role="alert"></p>
+<div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary-button">Cancel</button><button id="createChatButton" type="submit" class="primary-button">Start chat</button></div>
+</form>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
