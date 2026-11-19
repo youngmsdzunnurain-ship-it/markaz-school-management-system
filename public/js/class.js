@@ -283,6 +283,7 @@
                 </option>
             `).join("")}
         `;
+        selectedSubjectId = resultSubjectSelect.value;
     }
 
     async function calculateCompletion() {
