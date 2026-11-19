@@ -14,6 +14,9 @@ $classJs = file_get_contents(__DIR__ . '/../public/js/class.js');
 $dashboardHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $managementShell = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
 $scannerJs = file_get_contents(__DIR__ . '/../public/js/results-scanner.js');
+$staffChatHtml = file_get_contents(__DIR__ . '/../public/staff-chat.html');
+$staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
+$resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
     str_contains($classHtml, 'id="resultsScanner"') &&
@@ -24,22 +27,30 @@ resultsScannerCheck(
 resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
     str_contains($classJs, 'selectedSubjectId'),
-    'Scanner is mounted with the active class, subject, roster and result-save workflow'
+    'Scanner is connected to the selected class, subject and roster'
 );
 resultsScannerCheck(
     str_contains($scannerJs, 'Tesseract.createWorker') &&
+    str_contains($scannerJs, 'worker.recognize') &&
     str_contains($scannerJs, 'ara+eng') &&
     str_contains($scannerJs, '\\p{L}') &&
-    str_contains($scannerJs, 'worker.recognize') &&
     str_contains($scannerJs, 'credentials: "same-origin"'),
-    'OCR runs locally in the browser and saves only through the authenticated same-origin results API'
+    'OCR is local, supports Arabic and English, and saves through the authenticated results endpoint'
 );
 resultsScannerCheck(
     str_contains($scannerJs, 'Review every detected mark') &&
     str_contains($scannerJs, 'Blank marks are never saved') &&
     str_contains($scannerJs, 'Save reviewed results') &&
-    str_contains($scannerJs, 'data-student-id'),
-    'Recognised marks are editable and require explicit staff review before saving'
+    str_contains($scannerJs, 'data-student-id') &&
+    str_contains($resultSaveApi, 'requireResultStaff()') &&
+    str_contains($resultSaveApi, 'requireTeacherAssignment('),
+    'Recognised marks require review and the existing server-side result permissions'
+);
+resultsScannerCheck(
+    str_contains($dashboardHtml, "Let's Chat") &&
+    str_contains($staffChatHtml, "Let's Chat") &&
+    str_contains($staffChatJs, "Let's chat with a staff member."),
+    'Staff chat navigation and conversation actions use the clearer wording'
 );
 resultsScannerCheck(
     !str_contains($dashboardHtml, 'js/markaz-ai.js') &&
