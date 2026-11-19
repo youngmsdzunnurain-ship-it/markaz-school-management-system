@@ -23,3 +23,20 @@
 .message-ticks{font-size:12px;letter-spacing:-3px;padding-right:3px;color:#87958b;font-weight:800}
 .message-ticks.delivered{color:#87958b}
 .message-ticks.read{color:#42a9e8}
+
+/* Staff roles, direct-chat action and explicit mobile inbox navigation. */
+.staff-role-label{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:700}
+.staff-option{display:flex;align-items:center;gap:10px;padding:9px;border-radius:8px}
+.staff-option-copy{flex:1;min-width:0;font-size:12px}
+.staff-option-copy small{display:block;color:var(--muted);font-size:10px}
+.staff-direct-chat{border:0;border-radius:8px;padding:7px 9px;background:#eaf3ec;color:var(--green);font:700 10px/1.2 Manrope,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.staff-direct-chat:disabled{opacity:.6;cursor:wait}
+.thread-heading .mobile-back{flex:none;font-size:18px;padding:8px;border-radius:8px;background:#edf5ef}
+.thread-heading .mobile-back:focus-visible,.staff-direct-chat:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:760px){
+ .thread-heading:before{display:none}
+ .thread-heading{gap:9px;padding:12px}
+ .thread-heading .mobile-back{display:grid;place-items:center;width:36px;height:36px}
+ .staff-option{gap:8px}
+ .staff-direct-chat{padding:8px 7px}
+}
