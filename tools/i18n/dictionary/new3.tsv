@@ -1,0 +1,20 @@
+This clears every record in the school attendance register only. Online Class attendance, student and staff records, classes, results, behavioural assessments, academic sessions, terms and school settings remain untouched.	سيؤدي هذا إلى مسح كل سجل في سجل حضور المدرسة فقط. ويبقى حضور الفصل الإلكتروني وسجلات الطلاب والموظفين والفصول والنتائج وتقييمات السلوك والأعوام الدراسية والفصول الدراسية وإعدادات المدرسة دون مساس.
+This permanently deletes all daily attendance records across Conventional and Arabic classes, all dates and all academic periods. Online Class attendance and all other school data will remain.	سيؤدي هذا إلى حذف جميع سجلات الحضور اليومي نهائياً في الفصول النظامية والعربية ولكل التواريخ والفترات الأكاديمية. ويبقى حضور الفصل الإلكتروني وكل بيانات المدرسة الأخرى.
+FINAL WARNING: Every Conventional and Arabic daily attendance record across all dates and academic periods will be permanently deleted. Online Class attendance and all other school data will remain. Continue?	تحذير أخير: سيتم حذف كل سجل حضور يومي للفصول النظامية والعربية نهائياً في جميع التواريخ والفترات الأكاديمية. ويبقى حضور الفصل الإلكتروني وكل بيانات المدرسة الأخرى. هل تريد المتابعة؟
+FINAL WARNING: All CA, examination and behavioural entries across every term will be permanently deleted. Student records and school settings will remain. Continue?	تحذير أخير: سيتم حذف جميع مدخلات CA والاختبارات والسلوك في كل فصل دراسي نهائياً. وستبقى سجلات الطلاب وإعدادات المدرسة. هل تريد المتابعة؟
+{} student is unmarked. You can save a partially completed register.	{0} طالب غير مسجَّل. يمكنك حفظ سجل غير مكتمل.
+{} students are unmarked. You can save a partially completed register.	{0} طلاب غير مسجَّلين. يمكنك حفظ سجل غير مكتمل.
+Register loaded. All {} students have an attendance status.	تم تحميل السجل. لجميع الطلاب ({0}) حالة حضور.
+All {} students marked present. Review the register before saving.	تم تسجيل جميع الطلاب ({0}) حاضرين. راجع السجل قبل الحفظ.
+Register saved. All attendance marks are currently clear for {}.	تم حفظ السجل. جميع علامات الحضور خالية حالياً بتاريخ {0}.
+Director signature	توقيع المدير
+Tutor signature	توقيع المعلّم
+Your examination result for	نتيجة اختبارك لـ
+· Ask the learner to use their admission number, level, section, academic session and term on the Online Class results portal.	· اطلب من الطالب استخدام رقم القبول والمرحلة والشعبة والعام الدراسي والفصل الدراسي في بوابة نتائج الفصل الإلكتروني.
+AI image scanning is disabled in the no-cost MARKAZ assistant. You can still enter and verify results through the normal authorised result-entry workflow.	مسح الصور بالذكاء الاصطناعي معطّل في مساعد MARKAZ المجاني. ما زال بإمكانك إدخال النتائج والتحقق منها عبر مسار إدخال النتائج المعتمد المعتاد.
+The MARKAZ AI assistant is available to authorised staff accounts only.	مساعد MARKAZ بالذكاء الاصطناعي متاح لحسابات الموظفين المخولين فقط.
+Use GET to list accounts or POST to create/update an account.	استخدم GET لعرض الحسابات أو POST لإنشاء حساب أو تحديثه.
+Voice transcription is disabled in the no-cost MARKAZ assistant. Please type your message instead.	تفريغ الصوت معطّل في مساعد MARKAZ المجاني. يرجى كتابة رسالتك بدلاً من ذلك.
+Light mode	الوضع الفاتح
+Dark mode	الوضع الداكن
+Language	اللغة
