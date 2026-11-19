@@ -10,6 +10,7 @@ function resultsScannerCheck(bool $condition, string $message): void
 }
 
 $classHtml = file_get_contents(__DIR__ . '/../public/class.html');
+$classApi = file_get_contents(__DIR__ . '/../api/results/class.php');
 $classJs = file_get_contents(__DIR__ . '/../public/js/class.js');
 $dashboardHtml = file_get_contents(__DIR__ . '/../public/dashboard.html');
 $managementShell = file_get_contents(__DIR__ . '/../public/js/management-shell.js');
@@ -19,8 +20,8 @@ $staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
-    str_contains($classHtml, '20261119-roster-refresh2'),
-    'Class workspace forces browsers to load the current roster refresh implementation'
+    str_contains($classHtml, '20261119-roster-refresh2') && str_contains($classApi, "header('Cache-Control: no-store, private')"),
+    'Class workspace and roster API both prevent stale cached roster responses'
 );
 resultsScannerCheck(
     str_contains($classHtml, 'id="resultsScanner"') &&
