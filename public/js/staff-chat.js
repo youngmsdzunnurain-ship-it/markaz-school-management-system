@@ -3,8 +3,9 @@
 const api = "api/messages/index.php";
 const $ = id => document.getElementById(id);
 const layout = document.querySelector(".chat-layout");
-const state = { staff: [], conversations: [], activeId: 0, messages: [], currentUserId: 0, currentName: "", poll: null, busy: false };
+const state = { staff: [], conversations: [], activeId: 0, messages: [], messageLoadSequence: 0, currentUserId: 0, currentName: "", poll: null, busy: false };
 const escDate = value => { const d = new Date(String(value || "").replace(" ", "T")); return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}); };
+const formatRole = value => ({admin:"Admin",exam_officer:"Exam Officer",teacher:"Teacher",management:"Manager"})[String(value || "").toLowerCase()] || "Staff";
 const initials = value => String(value || "M").trim().split(/\s+/).slice(0,2).map(x => x[0] || "").join("").toUpperCase();
 function avatar(person, className="person-avatar") {
  const el=document.createElement("span");el.className=className;
@@ -39,8 +40,9 @@ function renderConversations() {
   const person=c.conversation_type==="direct"?otherParticipant(c):null; const avatarEl=avatar(person||{name:conversationName(c)});
   const copy=document.createElement("span"); copy.className="conversation-copy";
   const name=document.createElement("strong"); name.textContent=conversationName(c);
+  const personRole=document.createElement("small"); personRole.className="staff-role-label"; personRole.textContent=person ? formatRole(person.role) : "Staff group";
   const preview=document.createElement("p"); preview.textContent=c.last_message || (c.conversation_type==="group"?"Group conversation":"Start your conversation");
-  copy.append(name,preview);
+  copy.append(name,personRole,preview);
   const meta=document.createElement("span"); meta.className="conversation-meta";
   const time=document.createElement("time"); time.textContent=escDate(c.last_message_at || c.updated_at);
   meta.append(time);
@@ -54,7 +56,7 @@ function renderMessages() {
  if(!state.messages.length){const p=document.createElement("p");p.className="empty-note";p.textContent="This is the beginning of your conversation.";list.append(p);return;}
  state.messages.forEach(m=>{
   const bubble=document.createElement("article");bubble.className="message"+(Number(m.sender_id)===state.currentUserId?" mine":"");
-  if(Number(m.sender_id)!==state.currentUserId){const author=document.createElement("div");author.className="message-author";author.textContent=m.sender_name; bubble.append(author);}
+  if(Number(m.sender_id)!==state.currentUserId){const author=document.createElement("div");author.className="message-author";author.textContent=m.sender_name+(m.sender_role?" · "+formatRole(m.sender_role):""); bubble.append(author);}
   const body=document.createElement("div");body.className="message-body";body.textContent=m.body;
   const footer=document.createElement("div");footer.className="message-footer";
   const time=document.createElement("time");time.textContent=escDate(m.created_at);footer.append(time);
@@ -71,23 +73,26 @@ function renderMessages() {
  list.scrollTop=list.scrollHeight;
 }
 async function loadMessages(silent=false) {
- if(!state.activeId)return;
- const data=await request(api+"?action=messages&conversation_id="+encodeURIComponent(state.activeId));
+ const conversationId=state.activeId;
+ if(!conversationId)return;
+ const requestSequence=++state.messageLoadSequence;
+ const data=await request(api+"?action=messages&conversation_id="+encodeURIComponent(conversationId));
+ if(requestSequence!==state.messageLoadSequence || conversationId!==state.activeId)return;
  const oldLast=state.messages.length?Number(state.messages[state.messages.length-1].id):0;
  state.messages=data.messages||[];renderMessages();
  if(!silent || (state.messages.length && Number(state.messages[state.messages.length-1].id)!==oldLast)) await loadConversations();
 }
 async function openConversation(id) {
- state.activeId=id; const c=state.conversations.find(x=>Number(x.id)===id); if(!c)return;
+ const c=state.conversations.find(x=>Number(x.id)===id); if(!c)return;
+ state.activeId=id;state.messages=[];state.messageLoadSequence++;
  $("threadTitle").textContent=conversationName(c);
- $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name).join(" · "):"Private staff conversation";
  const directPerson=c.conversation_type==="direct"?otherParticipant(c):null;
+ $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name+" · "+formatRole(p.role)).join(" · "):(formatRole(directPerson?.role)+" · "+(directPerson?.is_online?"Online":"Offline"));
  $("threadAvatar").replaceWith(avatar(directPerson||{name:conversationName(c)},"person-avatar"));$("threadAvatar").id="threadAvatar";
- const presence=directPerson?(directPerson.is_online?"Online":"Offline"):"Group conversation";
- $("threadSubtitle").textContent=c.conversation_type==="group"?(c.participants||[]).map(p=>p.name).join(" · "):presence;
  $("threadWelcome").hidden=true;$("activeThread").hidden=false;layout.classList.add("thread-open");
+ $("messageList").innerHTML='<p class="empty-note">Opening conversation…</p>';
  renderConversations();
- try{await loadMessages();}catch(e){toast(e.message);}
+ try{await loadMessages();}catch(e){if(state.activeId===id)toast(e.message);}
 }
 function openDialog() {
  $("dialogError").textContent="";$("staffSearch").value="";$("groupTitle").value="";
