@@ -5,7 +5,7 @@
     if (!root || window.MarkazResultsScanner) return;
 
     const $ = selector => root.querySelector(selector);
-    const state = { config: null, worker: null, rows: [], imageUrl: "", busy: false };
+    const state = { config: null, worker: null, rows: [], imageUrl: "", scopeKey: "", busy: false };
 
     function status(message, kind = "") {
         const node = $("[data-scanner-status]");
@@ -281,12 +281,27 @@
         $("[data-scanner-review]").replaceChildren();
         $("[data-scanner-review]").hidden = true;
         $("[data-scanner-preview]").hidden = true;
+        if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
+        state.imageUrl = "";
+        $("[data-scanner-upload]").value = "";
+        $("[data-scanner-camera]").value = "";
         status("");
     });
 
     window.MarkazResultsScanner = {
         configure(config) {
-            state.config = config && config.subject ? config : null;
+            const nextConfig = config && config.subject ? config : null;
+            const nextKey = nextConfig ? [nextConfig.classType, nextConfig.classId, nextConfig.subject.id].join("|") : "";
+            if (state.scopeKey && nextKey !== state.scopeKey) {
+                state.rows = [];
+                $("[data-scanner-review]").replaceChildren();
+                $("[data-scanner-review]").hidden = true;
+                $("[data-scanner-preview]").hidden = true;
+                panel.hidden = true;
+                status("The class or subject changed. Start a new scan for the selected subject.");
+            }
+            state.scopeKey = nextKey;
+            state.config = nextConfig;
             if (button) button.hidden = !state.config || !["admin", "exam_officer", "teacher"].includes(state.config.role);
             if (!state.config) {
                 panel.hidden = true;
