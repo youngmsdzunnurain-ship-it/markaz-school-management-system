@@ -104,12 +104,12 @@ function renderDirectory() {
  const rows=state.staff.filter(s=>(s.name+" "+s.role).toLowerCase().includes(q));
  if(!rows.length){const p=document.createElement("p");p.className="empty-note";p.textContent="No staff members found.";list.append(p);return;}
  rows.forEach(s=>{
-  const label=document.createElement("label");label.className="staff-option";
-  const input=document.createElement("input");input.type="checkbox";input.value=String(s.id);input.name="recipients";
-  const text=document.createElement("span");text.textContent=s.name;
-  const personAvatar=avatar(s,"directory-avatar");label.append(personAvatar);
-  const role=document.createElement("small");role.textContent=String(s.role).replaceAll("_"," ");
-  text.append(role);label.append(input,text);list.append(label);
+  const row=document.createElement("div");row.className="staff-option";
+  const input=document.createElement("input");input.type="checkbox";input.value=String(s.id);input.name="recipients";input.setAttribute("aria-label","Select "+s.name+" for a group chat");
+  const text=document.createElement("span");text.className="staff-option-copy";text.textContent=s.name;
+  const role=document.createElement("small");role.textContent=formatRole(s.role);text.append(role);
+  const chat=document.createElement("button");chat.type="button";chat.className="staff-direct-chat";chat.textContent="Start chat";chat.addEventListener("click",()=>startDirectConversation(Number(s.id),chat));
+  row.append(avatar(s,"directory-avatar"),text,input,chat);list.append(row);
  });
 }
 async function startConversation(event) {
@@ -122,6 +122,15 @@ async function startConversation(event) {
   const data=await request(api,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"create_conversation",recipient_ids:ids,title})});
   $("newChatDialog").close();await loadConversations();await openConversation(Number(data.conversation_id));toast(data.existing?"Opened existing conversation.":"Conversation created.");
  }catch(e){$("dialogError").textContent=e.message;}finally{button.disabled=false;}
+}
+async function startDirectConversation(recipientId, button) {
+ if(!recipientId)return;
+ if(button){button.disabled=true;button.textContent="Opening…";}
+ try{
+  const data=await request(api,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"create_conversation",recipient_ids:[recipientId]})});
+  $("newChatDialog").close();await loadConversations();await openConversation(Number(data.conversation_id));
+ }catch(e){$("dialogError").textContent=e.message;toast(e.message);}
+ finally{if(button){button.disabled=false;button.textContent="Start chat";}}
 }
 async function sendMessage(event) {
  event.preventDefault();if(state.busy||!state.activeId)return;
@@ -143,7 +152,7 @@ async function init() {
   $("newChatForm").addEventListener("submit",startConversation);$("staffSearch").addEventListener("input",renderDirectory);
   $("conversationSearch").addEventListener("input",renderConversations);$("messageForm").addEventListener("submit",sendMessage);
   $("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("messageForm").requestSubmit();}});
-  const back=document.createElement("button");back.type="button";back.className="mobile-back";back.textContent="Back";back.addEventListener("click",()=>{layout.classList.remove("thread-open");state.activeId=0;});document.querySelector(".thread-heading").prepend(back);
+  $("backToInbox").addEventListener("click",()=>{layout.classList.remove("thread-open");state.activeId=0;state.messageLoadSequence++;state.messages=[];});
   state.poll=setInterval(async()=>{await heartbeat();try{await loadConversations();if(state.activeId)await loadMessages(true);}catch(_){}},10000);
  }catch(e){$("conversationList").textContent=e.message;toast(e.message);}
 }
