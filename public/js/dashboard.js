@@ -552,6 +552,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer" || role === "management";
         } else if (requiredRole === "staff_profile") {
             allowed = ["admin", "exam_officer", "management", "teacher"].includes(role);
+        } else if (requiredRole === "staff_messaging") {
+            allowed = ["admin", "exam_officer", "teacher", "management"].includes(role);
         } else if (requiredRole === "students") {
             allowed = role === "admin" || role === "exam_officer"
                 || (role === "management" && permissions.management_permissions?.students === true);
