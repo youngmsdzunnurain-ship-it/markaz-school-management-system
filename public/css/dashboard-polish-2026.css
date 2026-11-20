@@ -1,0 +1,150 @@
+/* ==========================================================================
+   MARKAZ dashboards: chart and card polish (Admin, Teacher, Management, Exam Officer,
+   and the MARKAZ Online Class workspace). Additive and visual only: no numbers, no logic,
+   no layout widths are changed on the Dashboard. Remove the <link>/<script> lines to undo.
+   ========================================================================== */
+
+:root { --mkp-ease: cubic-bezier(.22, 1, .36, 1); }
+
+/* ------------------------------------------------------------------ 1. cards */
+html[lang] body:not(#mkp) :is(.result-progress-section, .dashboard-class-chart-card, .dashboard-attendance-panel, .dashboard-exam-section > section, #teacherAssignmentsSection) {
+    border-radius: 20px;
+    border: 1px solid rgba(20, 92, 56, .10);
+    background:
+        radial-gradient(120% 80% at 100% 0%, rgba(230, 194, 106, .10), transparent 55%),
+        linear-gradient(180deg, #ffffff 0%, #f7fbf8 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .9) inset, 0 14px 34px rgba(16, 70, 44, .09);
+}
+html[lang] body:not(#mkp) :is(.dashboard-class-chart-card, .dashboard-attendance-category) {
+    transition: translate .45s var(--mkp-ease), box-shadow .45s var(--mkp-ease);
+}
+@media (hover: hover) {
+    html[lang] body:not(#mkp) .dashboard-class-chart-card:hover { translate: 0 -4px; box-shadow: 0 22px 46px rgba(16, 70, 44, .15); }
+}
+
+/* section headings: one refined serif, a gold eyebrow */
+html[lang] body:not(#mkp) :is(.panel-header h2, .panel-header h3, .dashboard-class-chart-card h3, .dashboard-class-chart-card h2) {
+    font-family: "Playfair Display", Fraunces, Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -.005em;
+    color: #123d2a;
+}
+html[lang] body:not(#mkp) :is(.panel-header .eyebrow, .panel-header span:first-child:not(.completion-badge)) { letter-spacing: .2em; }
+
+/* ------------------------------------------------------- 2. result progress */
+html[lang] body:not(#mkp) .dashboard-completion-pie {
+    background: conic-gradient(from 0deg, #1b7646 0, #3fc079 var(--completion, 0%), rgba(20, 92, 56, .10) 0) !important;
+    box-shadow: 0 14px 30px rgba(27, 118, 70, .28), 0 0 0 6px rgba(63, 192, 121, .10);
+    filter: saturate(1.08);
+}
+html[lang] body:not(#mkp) .completion-badge {
+    border: 1px solid rgba(201, 162, 74, .7);
+    background: linear-gradient(180deg, #fff8df, #f6e7b4);
+    color: #7a5a12;
+    box-shadow: 0 6px 16px rgba(201, 162, 74, .25);
+}
+/* the four summary tiles */
+html[lang] body:not(#mkp) .dashboard-exam-overview :is([class*="stat"], [class*="tile"], [class*="metric"]):not(.dashboard-completion-pie) {
+    border-radius: 16px;
+    transition: translate .35s var(--mkp-ease), box-shadow .35s var(--mkp-ease);
+}
+@media (hover: hover) {
+    html[lang] body:not(#mkp) .dashboard-exam-overview :is([class*="stat"], [class*="tile"], [class*="metric"]):not(.dashboard-completion-pie):hover {
+        translate: 0 -3px; box-shadow: 0 14px 28px rgba(16, 70, 44, .14);
+    }
+}
+html[lang] body:not(#mkp) .dashboard-exam-overview :is(strong, b) { font-family: "Playfair Display", Fraunces, Georgia, serif; }
+
+/* ------------------------------------------------------- 3. attendance rings */
+html[lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#e6eadf"] { stroke: rgba(20, 92, 56, .09); }
+html[lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#2a8f58"] { stroke: url(#mkg-present-d); filter: drop-shadow(0 5px 8px rgba(27, 118, 70, .38)); }
+html[lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#e05a5a"] { stroke: url(#mkg-absent-d); filter: drop-shadow(0 4px 8px rgba(194, 59, 59, .35)); }
+html[lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#d9a62e"] { stroke: url(#mkg-late-d); filter: drop-shadow(0 4px 8px rgba(197, 138, 14, .35)); }
+html[lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#8a94a6"] { stroke: url(#mkg-excused-d); }
+html[lang] body:not(#mkp) .dashboard-attendance-donut strong,
+html[lang] body:not(#mkp) .dashboard-category-attendance-donut strong { font-family: "Playfair Display", Georgia, serif; font-weight: 700; color: #123d2a; }
+
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes mkp-ring { from { opacity: 0; rotate: -25deg; scale: .86; } to { opacity: 1; rotate: 0deg; scale: 1; } }
+    html[lang] body:not(#mkp) .attendance-donut-svg { transform-origin: 50% 50%; animation: mkp-ring 1100ms var(--mkp-ease) backwards; }
+    @keyframes mkp-bar { from { scale: 1 0; } to { scale: 1 1; } }
+    html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect:not([fill="none"]) {
+        transform-box: fill-box; transform-origin: 50% 100%; animation: mkp-bar 900ms var(--mkp-ease) backwards;
+    }
+}
+
+/* legend: soft pills with glowing dots */
+html[lang] body:not(#mkp) .dashboard-attendance-legend > * { font-weight: 600; }
+html[lang] body:not(#mkp) :is(.dashboard-attendance-legend, .dashboard-class-chart-card) i,
+html[lang] body:not(#mkp) :is(.dashboard-attendance-legend, .dashboard-class-chart-card) [class*="dot"] { box-shadow: 0 0 0 3px rgba(255, 255, 255, .9), 0 3px 8px rgba(0, 0, 0, .18); }
+
+/* ------------------------------------------------------- 4. bar + line charts */
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect[fill="#2a8f58"] { fill: url(#mkg-present); filter: drop-shadow(0 3px 5px rgba(27, 118, 70, .30)); }
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect[fill="#e05a5a"] { fill: url(#mkg-absent); }
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect[fill="#d9a62e"] { fill: url(#mkg-late); }
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect[fill="#8a94a6"] { fill: url(#mkg-excused); }
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect { rx: 4px; ry: 4px; transition: filter .25s ease, opacity .25s ease; cursor: pointer; }
+html[lang] body:not(#mkp) .dashboard-attendance-combo-chart rect:hover { filter: brightness(1.12) drop-shadow(0 6px 10px rgba(16, 70, 44, .35)); }
+html[lang] body:not(#mkp) .combo-gridline { stroke: rgba(20, 92, 56, .13); stroke-dasharray: 3 6; }
+html[lang] body:not(#mkp) .combo-baseline { stroke: rgba(20, 92, 56, .35); stroke-width: 1.5; }
+html[lang] body:not(#mkp) :is(.combo-axis-label, .combo-rate-axis-label) { fill: #75867c; font-size: 10.5px; font-weight: 600; }
+html[lang] body:not(#mkp) .combo-class-label { fill: #2c4a3c; font-size: 10.5px; font-weight: 700; }
+html[lang] body:not(#mkp) .combo-rate-line { stroke: #c9a24a; stroke-width: 3.2; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 5px 6px rgba(201, 162, 74, .55)); }
+html[lang] body:not(#mkp) .combo-rate-point { fill: #fff; stroke: #c9a24a; stroke-width: 2.6; r: 4.4px; transition: r .2s ease; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25)); }
+html[lang] body:not(#mkp) .combo-rate-point:hover { r: 6.6px; }
+/* a soft fade where the chart scrolls sideways */
+html[lang] body:not(#mkp) .dashboard-attendance-combo-scroll { scrollbar-width: thin; scrollbar-color: rgba(20, 92, 56, .35) transparent; }
+
+/* ------------------------------------------------------- 5. teacher cards */
+html[lang] body:not(#mkp) .teacher-assignment-card {
+    border-radius: 18px;
+    border: 1px solid rgba(20, 92, 56, .12);
+    background: linear-gradient(180deg, #fff, #f7fbf8);
+    box-shadow: 0 10px 26px rgba(16, 70, 44, .08);
+    transition: translate .4s var(--mkp-ease), box-shadow .4s var(--mkp-ease);
+}
+@media (hover: hover) {
+    html[lang] body:not(#mkp) .teacher-assignment-card:hover { translate: 0 -4px; box-shadow: 0 20px 40px rgba(16, 70, 44, .16); }
+}
+html[lang] body:not(#mkp) .teacher-assignment-card h3 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; color: #123d2a; }
+
+/* ------------------------------------------------------- 6. dark mode */
+@media screen {
+    html[data-theme="dark"] body:not(#mkp) :is(.result-progress-section, .dashboard-class-chart-card, .dashboard-attendance-panel, .dashboard-exam-section > section, #teacherAssignmentsSection, .teacher-assignment-card) {
+        border-color: rgba(255, 255, 255, .08);
+        background: radial-gradient(120% 80% at 100% 0%, rgba(230, 194, 106, .07), transparent 55%), linear-gradient(180deg, #1f2b25, #1a241f);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
+    }
+    html[data-theme="dark"] body:not(#mkp) .attendance-donut-svg circle[stroke="#e6eadf"] { stroke: rgba(255, 255, 255, .09); }
+    html[data-theme="dark"] body:not(#mkp) :is(.panel-header h2, .panel-header h3, .dashboard-class-chart-card h3, .dashboard-class-chart-card h2, .teacher-assignment-card h3, .dashboard-attendance-donut strong, .dashboard-category-attendance-donut strong) { color: #eaf3ee; }
+    html[data-theme="dark"] body:not(#mkp) .combo-gridline { stroke: rgba(255, 255, 255, .10); }
+    html[data-theme="dark"] body:not(#mkp) .combo-baseline { stroke: rgba(255, 255, 255, .3); }
+    html[data-theme="dark"] body:not(#mkp) :is(.combo-axis-label, .combo-rate-axis-label) { fill: #93a69b; }
+    html[data-theme="dark"] body:not(#mkp) .combo-class-label { fill: #d5e5db; }
+    html[data-theme="dark"] body:not(#mkp) .combo-rate-point { fill: #1a241f; }
+    html[data-theme="dark"] body:not(#mkp) .dashboard-completion-pie { background: conic-gradient(from 0deg, #1b7646 0, #3fc079 var(--completion, 0%), rgba(255, 255, 255, .10) 0) !important; }
+}
+
+/* ------------------------------------------------------- 7. MARKAZ Online Class workspace */
+/* now scaled like the Dashboard (page-fit.js), so its height must follow the same rule */
+.online-workspace-page .app { min-height: calc(100dvh / var(--page-zoom, 1)); }
+.online-workspace-page .main-content { min-height: calc(100dvh / var(--page-zoom, 1)); }
+.online-workspace-page .sidebar { height: calc(100dvh / var(--page-zoom, 1)); }
+
+/* tidier forms, tables and buttons (the old ones were oversized next to the Dashboard) */
+html[lang] body.online-workspace-page:not(#mkp) :is(input, select, textarea) { padding: 9px 12px; font-size: 13.5px; border-radius: 12px; }
+html[lang] body.online-workspace-page:not(#mkp) label { font-size: 12.5px; font-weight: 700; }
+html[lang] body.online-workspace-page:not(#mkp) table :is(th, td) { padding: 10px 14px; }
+html[lang] body.online-workspace-page:not(#mkp) td :is(button, .btn, a.btn) { min-height: 34px; padding: 6px 14px; font-size: 12.5px; border-radius: 10px; }
+html[lang] body.online-workspace-page:not(#mkp) :is(.panel, .online-panel, section[class*="panel"]) { border-radius: 18px; }
+
+/* the "active learners" tiles on the Online overview */
+html[lang] body.online-workspace-page:not(#mkp) .online-stat-grid > * {
+    border-radius: 16px;
+    border: 1px solid rgba(20, 92, 56, .10);
+    background: linear-gradient(180deg, #fff, #f7fbf8);
+    box-shadow: 0 8px 22px rgba(16, 70, 44, .07);
+}
+html[lang] body.online-workspace-page:not(#mkp) .online-stat-grid strong,
+html[lang] body.online-workspace-page:not(#mkp) .online-stat-grid b { font-family: "Playfair Display", Georgia, serif; font-weight: 700; color: #123d2a; }
+@media screen { html[data-theme="dark"] body.online-workspace-page:not(#mkp) .online-stat-grid > * { border-color: rgba(255,255,255,.08); background: linear-gradient(180deg, #1f2b25, #1a241f); box-shadow: 0 8px 22px rgba(0,0,0,.3); } }
