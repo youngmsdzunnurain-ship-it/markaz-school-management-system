@@ -605,6 +605,160 @@ html[data-theme="dark"] .website-image-file-label input {
     border: 1px solid #39423b;
     background: #181f1c
 }
+/* ---- css/page-header-2026.css ---- */
+html[data-theme="dark"][lang] body:not(#mkhdr) .students-topbar,
+html[data-theme="dark"][lang] body:not(#mkhdr) .classes-topbar,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-topbar,
+html[data-theme="dark"][lang] body:not(#mkhdr) .settings-header,
+html[data-theme="dark"][lang] body:not(#mkhdr) .attendance-header,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-subjects-page .page-header,
+html[data-theme="dark"][lang] body:not(#mkhdr) .welcome-card,
+html[data-theme="dark"][lang] body:not(#mkhdr) .online-welcome-card,
+html[data-theme="dark"][lang] body:not(#mkhdr) .fees-placeholder-top {
+    box-shadow: inset 0 -3px 0 rgba(230, 194, 106, .9), 0 16px 36px rgba(0,0,0,0.472) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) .students-topbar::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .classes-topbar::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-topbar::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .settings-header::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .attendance-header::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-subjects-page .page-header::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .welcome-card::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .online-welcome-card::before,
+html[data-theme="dark"][lang] body:not(#mkhdr) .fees-placeholder-top::before {
+    background: radial-gradient(1.4px 1.4px at 8% 24%, #0f1612 99%, transparent),
+        radial-gradient(1px 1px at 17% 66%, #0f1612 99%, transparent),
+        radial-gradient(1.2px 1.2px at 27% 16%, #0f1612 99%, transparent),
+        radial-gradient(1px 1px at 38% 74%, #0f1612 99%, transparent),
+        radial-gradient(1.3px 1.3px at 46% 30%, #0f1612 99%, transparent),
+        radial-gradient(1px 1px at 58% 12%, #0f1612 99%, transparent),
+        radial-gradient(1.2px 1.2px at 66% 56%, #0f1612 99%, transparent),
+        radial-gradient(1px 1px at 76% 20%, #0f1612 99%, transparent),
+        radial-gradient(1.3px 1.3px at 90% 40%, #0f1612 99%, transparent),
+        radial-gradient(1px 1px at 95% 12%, #0f1612 99%, transparent) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) :is(.students-topbar, .classes-topbar, .class-topbar, .settings-header, .attendance-header, .class-subjects-page .page-header, .welcome-card, .online-welcome-card, .fees-placeholder-top) :is(h1, .welcome-content h2) {
+    text-shadow: 0 2px 14px rgba(0,0,0,0.67)
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) .students-back-link,
+html[data-theme="dark"][lang] body:not(#mkhdr) .classes-back-link,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-back-link,
+html[data-theme="dark"][lang] body:not(#mkhdr) .settings-header .back-link,
+html[data-theme="dark"][lang] body:not(#mkhdr) .attendance-back,
+html[data-theme="dark"][lang] body:not(#mkhdr) .class-subjects-page .page-header .back-link {
+    background: rgba(15, 22, 18, 0.09) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) :is(.topbar, .markaz-management-shell) {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.58) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) .topbar .menu-button {
+    background: rgba(15, 22, 18, 0.1) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) :is(.admin-profile-button, .markaz-shell-profile) {
+    background: rgba(15, 22, 18, 0.08) !important
+}
+html[data-theme="dark"][lang] body:not(#mkhdr) .admin-profile-avatar {
+    background: #04130b;
+    color: #9ed7b2
+}
+/* ---- css/dashboard-polish-2026.css ---- */
+html[data-theme="dark"][lang] body:not(#mkp) :is(.result-progress-section, .dashboard-class-chart-card, .dashboard-attendance-panel, .dashboard-exam-section > section, #teacherAssignmentsSection) {
+    background: radial-gradient(120% 80% at 100% 0%, rgba(230, 194, 106, .10), transparent 55%),
+        linear-gradient(180deg, #0f1612 0%, #0c120f 100%);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.054) inset, 0 14px 34px rgba(0,0,0,0.202)
+}
+@media (hover: hover) {
+    html[data-theme="dark"][lang] body:not(#mkp) .dashboard-class-chart-card:hover {
+        box-shadow: 0 22px 46px rgba(0,0,0,0.31)
+    }
+}
+html[data-theme="dark"][lang] body:not(#mkp) :is(.panel-header h2, .panel-header h3, .dashboard-class-chart-card h3, .dashboard-class-chart-card h2) {
+    color: #bce2cd
+}
+html[data-theme="dark"][lang] body:not(#mkp) .dashboard-completion-pie {
+    background: conic-gradient(from 0deg, #1b7646 0, #3fc079 0%, rgba(20, 92, 56, .10) 0) !important;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.544), 0 0 0 6px rgba(0,0,0,0.22)
+}
+html[data-theme="dark"][lang] body:not(#mkp) .completion-badge {
+    background: linear-gradient(180deg, #151002, #171203);
+    color: #d6b881;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.49)
+}
+@media (hover: hover) {
+    html[data-theme="dark"][lang] body:not(#mkp) .dashboard-exam-overview :is([class*="stat"], [class*="tile"], [class*="metric"]):not(.dashboard-completion-pie):hover {
+        box-shadow: 0 14px 28px rgba(0,0,0,0.292)
+    }
+}
+html[data-theme="dark"][lang] body:not(#mkp) .attendance-donut-svg circle[stroke="#e6eadf"] {
+    stroke: rgba(158, 215, 178, 0.09)
+}
+html[data-theme="dark"][lang] body:not(#mkp) .dashboard-attendance-donut strong,
+html[data-theme="dark"][lang] body:not(#mkp) .dashboard-category-attendance-donut strong {
+    color: #bce2cd
+}
+html[data-theme="dark"][lang] body:not(#mkp) :is(.dashboard-attendance-legend, .dashboard-class-chart-card) i,
+html[data-theme="dark"][lang] body:not(#mkp) :is(.dashboard-attendance-legend, .dashboard-class-chart-card) [class*="dot"] {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.054), 0 3px 8px rgba(0,0,0,0.364)
+}
+html[data-theme="dark"][lang] body:not(#mkp) .combo-gridline {
+    stroke: rgba(158, 215, 178, 0.13)
+}
+html[data-theme="dark"][lang] body:not(#mkp) .combo-baseline {
+    stroke: rgba(158, 215, 178, 0.35)
+}
+html[data-theme="dark"][lang] body:not(#mkp) :is(.combo-axis-label, .combo-rate-axis-label) {
+    fill: #a0afa6
+}
+html[data-theme="dark"][lang] body:not(#mkp) .combo-class-label {
+    fill: #b9d6c7
+}
+html[data-theme="dark"][lang] body:not(#mkp) .combo-rate-line {
+    stroke: #d1af68
+}
+html[data-theme="dark"][lang] body:not(#mkp) .combo-rate-point {
+    stroke: #d1af68
+}
+html[data-theme="dark"][lang] body:not(#mkp) .teacher-assignment-card {
+    background: linear-gradient(180deg, #0f1612, #0c120f);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.184)
+}
+@media (hover: hover) {
+    html[data-theme="dark"][lang] body:not(#mkp) .teacher-assignment-card:hover {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.328)
+    }
+}
+html[data-theme="dark"][lang] body:not(#mkp) .teacher-assignment-card h3 {
+    color: #bce2cd
+}
+@media screen {
+    html[data-theme="dark"][data-theme="dark"] body:not(#mkp) :is(.result-progress-section, .dashboard-class-chart-card, .dashboard-attendance-panel, .dashboard-exam-section > section, #teacherAssignmentsSection, .teacher-assignment-card) {
+        border-color: rgba(58, 66, 62, 0.08);
+        box-shadow: 0 14px 34px rgba(0,0,0,0.67)
+    }
+    html[data-theme="dark"][data-theme="dark"] body:not(#mkp) :is(.combo-axis-label, .combo-rate-axis-label) {
+        fill: #a7b7ad
+    }
+    html[data-theme="dark"][data-theme="dark"] body:not(#mkp) .combo-rate-point {
+        fill: #dde8e2
+    }
+    html[data-theme="dark"][data-theme="dark"] body:not(#mkp) .dashboard-completion-pie {
+        background: conic-gradient(from 0deg, #1b7646 0, #3fc079 0%, rgba(15, 22, 18, 0.1) 0) !important
+    }
+}
+html[data-theme="dark"][lang] body.online-workspace-page:not(#mkp) .online-stat-grid > * {
+    background: linear-gradient(180deg, #0f1612, #0c120f);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.166)
+}
+html[data-theme="dark"][lang] body.online-workspace-page:not(#mkp) .online-stat-grid strong,
+html[data-theme="dark"][lang] body.online-workspace-page:not(#mkp) .online-stat-grid b {
+    color: #bce2cd
+}
+@media screen {
+    html[data-theme="dark"][data-theme="dark"] body.online-workspace-page:not(#mkp) .online-stat-grid > * {
+        border-color: rgba(58, 66, 62, 0.08);
+        box-shadow: 0 8px 22px rgba(0,0,0,0.58)
+    }
+}
 /* ---- css/markaz-ai.css ---- */
 html[data-theme="dark"] #markazAiRoot {
     color: #c0e2d0

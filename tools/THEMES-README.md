@@ -35,3 +35,8 @@ the page has shown so far. Add them to the dictionary.
 ## Deliberately left out
 Report cards, printed results and the student result pages stay in their official form (light, English) so a printed
 document is always the same. Printing is always light, whatever theme is on screen.
+
+## Dashboard chart and card polish
+`public/css/dashboard-polish-2026.css` (with `js/chart-defs-2026.js`, which only adds colour gradients) styles the attendance and
+result charts and cards on every dashboard role. The MARKAZ Online Class workspace uses `js/page-fit.js`, the same fit-to-screen
+scaling as the Dashboard, so both have the same proportions. It is hand-written CSS: edit it directly.
