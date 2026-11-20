@@ -1322,5 +1322,17 @@ body.online-results-page #portalReport .online-report-details-student-column > s
  .online-workspace-page .online-level-settings-fields{animation:none}
 }
 
-/* Keep a definite visual gap between the Online Class welcome banner and overview cards. */
-.online-workspace-page #tab-overview{padding-top:24px}
+/* Online Class overview: balanced spacing and the shared dashboard gold card accent. */
+.online-workspace-page #tab-overview{padding:24px 0}
+.online-workspace-page #onlineLevelStats{margin-bottom:24px}
+.online-workspace-page .online-stat{position:relative;overflow:hidden}
+.online-workspace-page .online-stat::before{
+ content:"";
+ position:absolute;
+ top:0;
+ left:18px;
+ right:18px;
+ height:3px;
+ border-radius:2px;
+ background:var(--gold,#c8a43a);
+}
