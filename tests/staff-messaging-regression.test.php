@@ -31,7 +31,7 @@ staffMessagingCheck(str_contains($page, 'id="backToInbox"') && str_contains($js,
 staffMessagingCheck(str_contains($js, 'textContent'), 'message content is rendered as text rather than executable HTML');
 staffMessagingCheck(str_contains($dashboard, 'href="./staff-chat.html" class="nav-link"') && !str_contains($dashboard, 'href="./staff-chat.html" class="nav-link" data-role-access'), 'staff chat navigation is visible independently of delayed dashboard role initialization');
 staffMessagingCheck(str_contains($dashboardJs, 'requiredRole === "staff_messaging"') && str_contains($dashboardJs, '["admin", "exam_officer", "teacher", "management"]'), 'all supported staff roles are explicitly granted chat navigation');
-staffMessagingCheck(str_contains($dashboard, 'data-role-access="staff_messaging"') && str_contains($dashboardJs, '"Let\'s Chat": "staff-chat.html"'), 'Let's Chat is available from dashboard quick shortcuts for authorised staff');
+staffMessagingCheck(str_contains($dashboard, 'data-role-access="staff_messaging"') && str_contains($dashboardJs, '"Let\'s Chat": "staff-chat.html"'), 'Let\'s Chat is available from dashboard quick shortcuts for authorised staff');
 staffMessagingCheck(str_contains($dashboardJs, 'item[0] === "staff_messaging"'), 'management dashboard also includes the staff chat shortcut');
 staffMessagingCheck(str_contains($page, 'markaz-chat-watermark') && str_contains($chatCss, '.markaz-chat-watermark'), 'staff chat renders a branded school watermark');
 staffMessagingCheck(str_contains($page, '20261120-chatflow1'), 'staff chat assets use a refreshed cache version');
