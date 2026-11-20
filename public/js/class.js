@@ -29,6 +29,7 @@
     let currentRole = "";
     let classStudents = [];
     let classRoster = [];
+    let classRosterLoaded = false;
     let resultSubjects = [];
     let classResults = [];
     let selectedSubjectId = "";
@@ -248,11 +249,18 @@
 
         if (Array.isArray(data.roster)) {
             const incomingRoster = data.roster;
-            // Preserve the last populated roster if a refresh briefly returns no rows.
-            if (incomingRoster.length > 0 || classRoster.length === 0) {
+            // Accept the first response even when the class is empty, then ignore
+            // transient empty refreshes so the visible roster does not flash away.
+            if (incomingRoster.length > 0 || !classRosterLoaded) {
+                const rosterChanged =
+                    !classRosterLoaded ||
+                    JSON.stringify(incomingRoster) !== JSON.stringify(classRoster);
                 classRoster = incomingRoster;
+                classRosterLoaded = true;
                 studentCount.textContent = classRoster.length;
-                renderStudents();
+                if (rosterChanged) {
+                    renderStudents();
+                }
             }
         }
         if (Array.isArray(data.students)) {
@@ -877,16 +885,6 @@
     addStudentButton?.addEventListener("click", openAddStudent);
 
     panelAddStudentButton?.addEventListener("click", openAddStudent);
-
-    classStudentsContainer?.addEventListener("click", event => {
-        const button = event.target.closest(".class-student-button");
-
-        if (!button) {
-            return;
-        }
-
-        openStudent(button.dataset.studentId);
-    });
 
     enterResultsButton?.addEventListener("click", () => {
         const resultsSection = document.querySelector(".results-entry-table")?.closest("section, .panel, .card");

@@ -38,6 +38,14 @@ resultsScannerCheck(
     'The class roster retains active and inactive students independently from the active-only result-entry list, and overlapping refreshes cannot erase it'
 );
 resultsScannerCheck(
+    str_contains($classHtml, '20261120-roster-stable1') &&
+    str_contains($classJs, 'let classRosterLoaded = false') &&
+    str_contains($classJs, 'JSON.stringify(incomingRoster) !== JSON.stringify(classRoster)') &&
+    str_contains($classJs, 'if (rosterChanged)') &&
+    substr_count($classJs, 'classStudentsContainer.addEventListener("click"') === 1,
+    'Class roster only re-renders when its data changes, first empty responses settle correctly, and student actions have one delegated handler'
+);
+resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
     str_contains($classJs, 'selectedSubjectId') &&
     str_contains($classJs, 'results: classResults'),
