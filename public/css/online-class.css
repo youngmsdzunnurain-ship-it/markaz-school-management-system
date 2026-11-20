@@ -129,7 +129,7 @@
 .online-workspace-page .topbar{min-height:78px;padding:0 28px;background:linear-gradient(90deg,#a9cbb4,#e6d9a4 70%,#efe9d2);border:0;backdrop-filter:none;box-shadow:none}
 .online-workspace-page .topbar h1{font-family:var(--serif,Georgia,serif);font-weight:600}
 .online-workspace-page .online-class-page{max-width:none;padding:22px 28px 28px;gap:20px}
-.online-workspace-page .online-welcome-card{min-height:92px;padding:20px 30px;margin-bottom:0;border-radius:16px}
+.online-workspace-page .online-welcome-card{min-height:92px;padding:20px 30px;margin-bottom:20px;border-radius:16px}
 .online-workspace-page .online-panel{padding:18px;border-radius:16px;margin-bottom:14px;box-shadow:0 4px 14px rgba(20,71,47,.05)}
 .online-workspace-page .online-panel h2{font-size:17px;margin-bottom:12px}
 .online-workspace-page .online-toolbar{gap:10px;margin-bottom:12px}
