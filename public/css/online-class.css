@@ -1321,3 +1321,6 @@ body.online-results-page #portalReport .online-report-details-student-column > s
  .online-workspace-page .attendance-status{transition:none}
  .online-workspace-page .online-level-settings-fields{animation:none}
 }
+
+/* Keep a definite visual gap between the Online Class welcome banner and overview cards. */
+.online-workspace-page #tab-overview{padding-top:24px}
