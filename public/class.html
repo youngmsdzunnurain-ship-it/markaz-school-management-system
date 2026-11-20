@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="./css/class.css?v=20261109-mobile-class-roster">
+    <link rel="stylesheet" href="./css/results-scanner.css?v=20261119-scanner1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="css/website-image-polish.css">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
@@ -168,8 +169,33 @@
                 Loading current academic period...
             </p>
         </div>
-
+        <button type="button" id="openResultsScanner" class="results-scanner-launcher" hidden>
+            <i class="fa-solid fa-camera" aria-hidden="true"></i> Results Scanner
+        </button>
     </div>
+
+    <section id="resultsScanner" class="results-scanner-panel" data-scanner-panel hidden aria-labelledby="resultsScannerTitle">
+        <div class="results-scanner-panel-head">
+            <div>
+                <h3 id="resultsScannerTitle">Scan a result sheet</h3>
+                <p>Capture a photo or upload an image. OCR runs on this device; no paid AI service is used.</p>
+            </div>
+            <button type="button" class="secondary-button" data-scanner-close>Close</button>
+        </div>
+        <div class="results-scanner-actions">
+            <label><i class="fa-solid fa-camera" aria-hidden="true"></i> Take photo
+                <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" data-scanner-camera>
+            </label>
+            <label><i class="fa-solid fa-upload" aria-hidden="true"></i> Upload image
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-scanner-upload>
+            </label>
+            <button type="button" class="secondary-button" data-scanner-reset>Clear scan</button>
+        </div>
+        <progress data-scanner-progress max="100" value="0" hidden></progress>
+        <p class="results-scanner-status" data-scanner-status role="status" aria-live="polite">Select a subject first, then take a clear photo or upload a result sheet.</p>
+        <img class="results-scanner-preview" data-scanner-preview alt="Preview of the selected result sheet" hidden>
+        <div class="results-scanner-review" data-scanner-review hidden></div>
+    </section>
 
     <div class="results-summary-grid">
         <article class="result-summary-card">
@@ -246,7 +272,8 @@
 </div>
 
 
-<script src="./js/class.js?v=20261109-mobile-class-roster-v2"></script>
+<script src="./js/results-scanner.js?v=20261119-scanner1"></script>
+<script src="./js/class.js?v=20261120-roster-dropdown1"></script>
 
     <script src="/js/markaz-global.js"></script>
 
