@@ -12,6 +12,17 @@ function financeRegressionCheck(bool $condition, string $message): void
     echo "PASS: {$message}\n";
 }
 
+$feeSelection = financeSelectApplicableFeePlans([
+    ['id'=>1,'fee_code'=>'tuition','scope'=>'school','amount'=>'30000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
+    ['id'=>2,'fee_code'=>'tuition','scope'=>'student','student_id'=>77,'amount'=>'20000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
+    ['id'=>3,'fee_code'=>'feeding','scope'=>'school','amount'=>'5000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
+], ['id'=>77,'class_id'=>4,'arabic_class_id'=>8], '2026-11-01');
+financeRegressionCheck(count($feeSelection) === 2 && $feeSelection[0]['id'] === 2 && $feeSelection[1]['id'] === 3, 'student-specific fee overrides the school fee only for that student while unrelated fee categories remain');
+$otherStudentFees = financeSelectApplicableFeePlans([
+    ['id'=>1,'fee_code'=>'tuition','scope'=>'school','amount'=>'30000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
+    ['id'=>2,'fee_code'=>'tuition','scope'=>'student','student_id'=>77,'amount'=>'20000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
+], ['id'=>78,'class_id'=>4,'arabic_class_id'=>8], '2026-11-01');
+financeRegressionCheck(count($otherStudentFees) === 1 && $otherStudentFees[0]['amount'] === '30000.00', 'a student-specific negotiated fee never changes another student amount');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:30') === 0, 'arrival exactly on schedule has no lateness');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:35') === 5, 'five minutes late is counted exactly');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:40') === 10, 'ten minutes late is counted exactly');
