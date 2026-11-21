@@ -78,8 +78,8 @@ fi
 
 echo "Target database: $DB_NAME"
 echo "Finance tables will be added; existing student, class, attendance and result records will not be deleted or rewritten."
-read -r -p "Type INSTALL FINANCE to continue (anything else cancels): " confirmation
-[[ "$confirmation" == "INSTALL FINANCE" ]] || { echo "Cancelled. No database changes made."; exit 0; }
+read -r -p "Type INSTALL FINANCE ON TEST DATABASE to continue (anything else cancels): " confirmation
+[[ "$confirmation" == "INSTALL FINANCE ON TEST DATABASE" ]] || { echo "Cancelled. No database changes made."; exit 0; }
 
 backup="$HOME/markaz-before-finance-$(date +%Y%m%d-%H%M%S).sql"
 echo "Creating database backup: $backup"
