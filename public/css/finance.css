@@ -218,7 +218,7 @@
 /* MARKAZ Finance: compact 2026 workspace refinements. */
 @media(min-width:851px){
   .app{grid-template-columns:240px minmax(0,1fr)}
-  .sidebar{padding:13px 12px}
+  .sidebar{width:240px;padding:13px 12px}
   #tab-reports .report-metrics{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
   #tab-reports .report-metrics .metric{padding:13px 12px;border-radius:13px}
   #tab-reports .report-metrics .metric span{font-size:10px;min-height:28px}
