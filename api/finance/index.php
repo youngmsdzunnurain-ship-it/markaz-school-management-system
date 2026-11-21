@@ -33,7 +33,31 @@ try {
                  FROM finance_fee_payments p INNER JOIN students s ON s.id=p.student_id
                  ORDER BY p.created_at DESC LIMIT 8"
             )->fetchAll(PDO::FETCH_ASSOC);
-            financeJson(['success'=>true,'summary'=>$today,'fees_this_month'=>(string)$month,'recent_payments'=>$recent]);
+
+            // Six-month trend from confirmed receipts and paid expenses only.
+            $trendStart = date('Y-m-01', strtotime('-5 months'));
+            $trend = [];
+            for ($offset = 5; $offset >= 0; $offset--) {
+                $key = date('Y-m', strtotime("-{$offset} months"));
+                $trend[$key] = ['month' => $key, 'fees' => 0.0, 'other_income' => 0.0, 'expenses' => 0.0];
+            }
+            $trendQueries = [
+                'fees' => ["SELECT DATE_FORMAT(paid_at,'%Y-%m') period,SUM(amount) total FROM finance_fee_payments WHERE status='confirmed' AND paid_at>=? GROUP BY period", $trendStart],
+                'other_income' => ["SELECT DATE_FORMAT(received_date,'%Y-%m') period,SUM(amount) total FROM finance_other_income WHERE status='confirmed' AND received_date>=? GROUP BY period", $trendStart],
+                'expenses' => ["SELECT DATE_FORMAT(expense_date,'%Y-%m') period,SUM(amount) total FROM finance_expenses WHERE status='paid' AND expense_date>=? GROUP BY period", $trendStart],
+            ];
+            foreach ($trendQueries as $key => [$sql, $start]) {
+                $statement = $pdo->prepare($sql);
+                $statement->execute([$start]);
+                foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                    if (isset($trend[$row['period']])) $trend[$row['period']][$key] = (float)$row['total'];
+                }
+            }
+            $incomeMix = [
+                'fees' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND paid_at>=DATE_SUB(CURDATE(),INTERVAL 6 MONTH)")->fetchColumn(),
+                'other_income' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date>=DATE_SUB(CURDATE(),INTERVAL 6 MONTH)")->fetchColumn(),
+            ];
+            financeJson(['success'=>true,'summary'=>$today,'fees_this_month'=>(string)$month,'recent_payments'=>$recent,'monthly_trend'=>array_values($trend),'income_mix'=>$incomeMix]);
         }
         if ($action === 'payments') {
             $rows=$pdo->query(
