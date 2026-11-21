@@ -74,6 +74,8 @@ financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness cal
 
 financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_contains($financePage, 'id="incomeMixChart"'), 'finance overview provides dedicated cash-flow and income-mix chart regions');
 financeRegressionCheck(str_contains($financeJs, 'renderCashflowChart') && str_contains($financeJs, 'renderIncomeMixChart'), 'finance overview renders responsive visual analytics from returned data');
+financeRegressionCheck(str_contains($financeApi, 'financeSelectApplicableFeePlans') && str_contains($financeApi, 'fee_code'), 'invoice generation applies one winning plan per fee category');
+financeRegressionCheck(str_contains($migration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
 financeRegressionCheck(str_contains($financeApi, 'monthly_trend') && str_contains($financeApi, 'income_mix'), 'finance dashboard returns database-backed monthly trend and income composition');
 financeRegressionCheck(str_contains($financeStyles, '.finance-chart-grid') && str_contains($financeStyles, '.chart-legend'), 'finance analytics charts receive responsive and accessible styling');
 financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repeat(5,minmax(0,1fr))') && str_contains($financeStyles, '@media(max-width:850px)'), 'five finance overview metrics share one desktop row and adapt on mobile');
