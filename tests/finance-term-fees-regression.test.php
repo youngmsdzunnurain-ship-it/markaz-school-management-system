@@ -29,4 +29,7 @@ termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading c
 termFeeCheck(str_contains($js,'data-approve-term-adjustment')&&str_contains($js,'approve_student_adjustment'),'the approval queue submits a distinct independent approval action');
 termFeeCheck(str_contains($js,'financeStaffLoaded')&&str_contains($js,'Teachers could not load'),'teacher dropdowns handle delayed or failed staff loading');
 termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.app{gap:0!important;column-gap:0!important;row-gap:0!important')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.main-content>.topbar{width:100%;max-width:none;margin:0!important'),'Finance sidebar and topbar share a zero-gap aligned shell');
+termFeeCheck(!str_contains($js,'DEMO_')&&!str_contains($js,'demoResponse')&&!str_contains($js,'Teacher Demo'),'finance JavaScript contains no fabricated demo students, receipts, expenses or payroll');
+termFeeCheck(!str_contains($html,'finance-demo-shortcut')&&!str_contains($html,'?demo='),'finance page exposes no demo shortcut or demo URL');
+termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-demo-'),'finance stylesheet contains no demo-only styling');
 echo "MARKAZ academic term fee regression checks passed.\n";
