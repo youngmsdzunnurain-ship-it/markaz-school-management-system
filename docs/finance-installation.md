@@ -13,18 +13,20 @@ The third migration references finance_fee_payments, which is created by the fir
 From the repository root, run:
 
 ```sh
-bash scripts/install-finance.sh
+DB_NAME=markaz_result_system_finance_test bash scripts/install-finance.sh
 ```
 
 The installer checks the database and required school-table prerequisites, detects complete and partial Finance schemas, refuses to guess when a partial migration is found, asks for the exact confirmation phrase INSTALL FINANCE ON TEST DATABASE, creates and verifies a timestamped SQL backup, applies only missing stages in dependency order, and verifies the expected tables and columns.
 
-The installer connects over TCP to 127.0.0.1 as root on port 3306 by default, matching the MARKAZ local database connection. Override with DB_HOST, DB_PORT and DB_USER when needed. For password-protected databases, configure credentials in the user's MariaDB option file (for example ~/.my.cnf with restrictive permissions); do not put passwords in the script, command line or repository.
+The installer requires DB_NAME to be set explicitly and refuses to guess a target. It blocks the live database name `markaz_result_system` unless `ALLOW_PRODUCTION_INSTALL=YES` is explicitly supplied. For a production install, both the environment override and the distinct production confirmation phrase are required. The installer connects over TCP to 127.0.0.1 as root on port 3306 by default. Override with DB_HOST, DB_PORT and DB_USER when needed. For password-protected databases, configure credentials in the user's MariaDB option file (for example ~/.my.cnf with restrictive permissions); do not put passwords in the script, command line or repository.
 
-To target another database, set DB_NAME explicitly:
+To target a disposable test clone, set its database name explicitly:
 
 ```sh
-DB_NAME=markaz_result_system bash scripts/install-finance.sh
+DB_NAME=markaz_result_system_finance_test bash scripts/install-finance.sh
 ```
+
+Do not point this at the live database during testing. Create and verify the test clone first; the installer only creates the finance schema inside the named target.
 
 ## Safety notes
 
