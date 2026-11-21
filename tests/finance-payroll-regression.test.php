@@ -65,5 +65,10 @@ financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_c
 financeRegressionCheck(str_contains($financeJs, 'renderCashflowChart') && str_contains($financeJs, 'renderIncomeMixChart'), 'finance overview renders responsive visual analytics from returned data');
 financeRegressionCheck(str_contains($financeApi, 'monthly_trend') && str_contains($financeApi, 'income_mix'), 'finance dashboard returns database-backed monthly trend and income composition');
 financeRegressionCheck(str_contains($financeStyles, '.finance-chart-grid') && str_contains($financeStyles, '.chart-legend'), 'finance analytics charts receive responsive and accessible styling');
+financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repeat(5,minmax(0,1fr))') && str_contains($financeStyles, '@media(max-width:850px)'), 'five finance overview metrics share one desktop row and adapt on mobile');
+financeRegressionCheck(str_contains($financePage, 'finance-demo-shortcut') && str_contains($financePage, '?demo=overview'), 'finance overview exposes a visible demo entry point');
+financeRegressionCheck(str_contains($financeJs, 'Dashboard data could not be loaded:') && str_contains($financeJs, 'role="alert"'), 'dashboard API failures replace indefinite chart loading placeholders with visible errors');
+financeRegressionCheck(str_contains($financeJs, 'fees_today:25000') && str_contains($financeJs, 'net_movement:21500'), 'demo financial totals exclude the pending payment from confirmed income');
+financeRegressionCheck(str_contains($financeApi, 'exact same six calendar-month window'), 'income composition and cash-flow charts share the same reporting window');
 
 echo "MARKAZ finance and payroll regression checks passed.\n";
