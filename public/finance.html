@@ -87,11 +87,12 @@
       <p id="dashboardWelcomeDescription">Your school finance workspace is ready. Review collections, expenses and outstanding fees below.</p>
     </div>
   </div>
-  <div class="metric-grid">
-    <article class="metric"><span>Fees collected today</span><strong id="feesToday">₦0.00</strong><small>Confirmed student payments</small></article>
-    <article class="metric"><span>Other income today</span><strong id="otherIncomeToday">₦0.00</strong><small>Verified non-fee income</small></article><article class="metric"><span>Expenses recorded today</span><strong id="expensesToday">₦0.00</strong><small>Approved and posted expenses</small></article>
-    <article class="metric"><span>Net movement today</span><strong id="netToday">₦0.00</strong><small>Daily income less expenses</small></article>
-    <article class="metric"><span>Outstanding fees</span><strong id="outstanding">₦0.00</strong><small><span id="openInvoices">0</span> unpaid or partial invoices</small></article>
+  <div class="metric-grid finance-overview-metrics">
+    <article class="metric"><div class="metric-topline"><span class="metric-label">Fees collected today</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-wallet"></i></span></div><strong id="feesToday">₦0.00</strong><small>Confirmed student payments</small></article>
+    <article class="metric"><div class="metric-topline"><span class="metric-label">Other income today</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-arrow-trend-up"></i></span></div><strong id="otherIncomeToday">₦0.00</strong><small>Verified non-fee income</small></article>
+    <article class="metric"><div class="metric-topline"><span class="metric-label">Expenses recorded today</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-receipt"></i></span></div><strong id="expensesToday">₦0.00</strong><small>Approved and posted expenses</small></article>
+    <article class="metric"><div class="metric-topline"><span class="metric-label">Net movement today</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-scale-balanced"></i></span></div><strong id="netToday">₦0.00</strong><small>Daily income less expenses</small></article>
+    <article class="metric"><div class="metric-topline"><span class="metric-label">Outstanding fees</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-hourglass-half"></i></span></div><strong id="outstanding">₦0.00</strong><small><span id="openInvoices">0</span> unpaid or partial invoices</small></article>
   </div>
   <div class="finance-chart-grid">
     <section class="panel finance-chart-panel" aria-labelledby="cashflowHeading">

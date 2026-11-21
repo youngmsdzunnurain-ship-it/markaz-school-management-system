@@ -460,3 +460,24 @@ body.finance-workspace-page .dashboard-footer{margin-top:auto}
 @media(prefers-reduced-motion:reduce){
   body.finance-workspace-page .sidebar{transition:none}
 }
+
+
+/* Finance workspace shell: keep the shared dashboard's full-height frame intact. */
+body.finance-workspace-page .app{min-height:calc(100dvh / var(--page-zoom,1));align-items:stretch}
+body.finance-workspace-page .main-content{min-height:calc(100dvh / var(--page-zoom,1));display:flex;flex-direction:column;min-width:0}
+body.finance-workspace-page .page-content{flex:1 0 auto;min-height:0;display:flex;flex-direction:column;gap:18px}
+body.finance-workspace-page .dashboard-footer{flex:0 0 auto;margin-top:auto;position:relative}
+body.finance-workspace-page .sidebar{height:calc(100dvh / var(--page-zoom,1));min-height:0;align-self:stretch}
+body.finance-workspace-page .sidebar-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+
+/* Five balanced overview cards with a visible, consistent icon system. */
+.finance-overview-metrics{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:stretch}
+.finance-overview-metrics .metric{min-width:0;min-height:118px;padding:15px 14px;display:flex;flex-direction:column;justify-content:flex-start;border-radius:15px}
+.finance-overview-metrics .metric-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}
+.finance-overview-metrics .metric-label{display:block;min-width:0;font-size:11px;line-height:1.4;font-weight:700;color:var(--mut)}
+.finance-overview-metrics .metric-icon{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;border-radius:10px;background:#eaf3eb;color:var(--mg);font-size:14px}
+.finance-overview-metrics .metric strong{display:block;margin:9px 0 4px;font:700 clamp(17px,1.5vw,23px)/1.15 var(--serif);color:var(--dg);white-space:nowrap}
+.finance-overview-metrics .metric small{display:block;font-size:10px;line-height:1.4;color:var(--mut)}
+@media(max-width:1100px){.finance-overview-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:850px){body.finance-workspace-page .sidebar{height:100dvh}.finance-overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.finance-overview-metrics{gap:9px}.finance-overview-metrics .metric{min-height:112px;padding:12px}.finance-overview-metrics .metric-icon{width:29px;height:29px;flex-basis:29px}.finance-overview-metrics .metric strong{font-size:clamp(16px,4.5vw,20px)}}
