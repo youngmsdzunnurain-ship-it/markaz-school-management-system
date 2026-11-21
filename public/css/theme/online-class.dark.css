@@ -968,6 +968,9 @@ html[data-theme="dark"] .online-workspace-page #tab-attendance .attendance-remar
 html[data-theme="dark"] .online-workspace-page #tab-attendance .online-table tbody tr:hover {
     background: #2b2f28
 }
+html[data-theme="dark"] .online-workspace-page .online-stat::before {
+    background: #c9a24a
+}
 /* ---- css/page-header-2026.css ---- */
 html[data-theme="dark"][lang] body:not(#mkhdr) .students-topbar,
 html[data-theme="dark"][lang] body:not(#mkhdr) .classes-topbar,

@@ -577,6 +577,17 @@ html[dir="rtl"] .completion-bar-track span {
 html[dir="rtl"] .completion-bar-row strong {
     text-align: left
 }
+/* ---- css/results-scanner.css ---- */
+html[dir="rtl"] .results-scanner-launcher {
+    background: linear-gradient(-110deg,#123d2a,#1c6545)
+}
+html[dir="rtl"] .results-scanner-launcher:hover {
+    background: linear-gradient(-110deg,#0d3021,#15543a)
+}
+html[dir="rtl"] .results-scanner-table th,
+html[dir="rtl"] .results-scanner-table td {
+    text-align: right
+}
 /* ---- css/app-watermark.css ---- */
 html[dir="rtl"] .sidebar {
     background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important

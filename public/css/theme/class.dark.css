@@ -1490,6 +1490,59 @@ html[data-theme="dark"] .completion-bar-row strong {
         border-bottom: 1px solid #3a423e
     }
 }
+/* ---- css/results-scanner.css ---- */
+html[data-theme="dark"] .results-scanner-launcher {
+    border: 1px solid #453f2e;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.256)
+}
+html[data-theme="dark"] .results-scanner-panel {
+    border: 1px solid #3b423c;
+    background: #19201d;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.148)
+}
+html[data-theme="dark"] .results-scanner-panel-head h3 {
+    color: #bce2cd
+}
+html[data-theme="dark"] .results-scanner-panel-head p {
+    color: #aab8b0
+}
+html[data-theme="dark"] .results-scanner-actions label {
+    border: 1px solid #39423c;
+    background: #1a211e;
+    color: #afdcc3
+}
+html[data-theme="dark"] .results-scanner-status {
+    color: #b1c1b8
+}
+html[data-theme="dark"] .results-scanner-status[data-kind=error] {
+    color: #ffa299
+}
+html[data-theme="dark"] .results-scanner-status[data-kind=success] {
+    color: #90d1ab
+}
+html[data-theme="dark"] .results-scanner-preview {
+    background: #141815
+}
+html[data-theme="dark"] .results-scanner-review-note {
+    color: #d5b882
+}
+html[data-theme="dark"] .results-scanner-table-wrap {
+    border: 1px solid #3b423c
+}
+html[data-theme="dark"] .results-scanner-table th,
+html[data-theme="dark"] .results-scanner-table td {
+    border-bottom: 1px solid #3c413d
+}
+html[data-theme="dark"] .results-scanner-table th {
+    background: #141915;
+    color: #b6d9c5
+}
+html[data-theme="dark"] .results-scanner-table td small {
+    color: #a4b1a8
+}
+html[data-theme="dark"] .results-scanner-table input[type=number] {
+    border: 1px solid #38433b
+}
 /* ---- css/app-watermark.css ---- */
 html[data-theme="dark"] {
     background: #0d1411
