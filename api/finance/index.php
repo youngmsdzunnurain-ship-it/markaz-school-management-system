@@ -181,6 +181,7 @@ try {
 
     if($action==='create_fee_plan'){
         $name=trim((string)($input['name']??''));
+        $feeCode=strtolower(trim((string)($input['fee_code']??'general')));
         $scope=(string)($input['scope']??'');
         $amount=financeMoney($input['amount']??'');
         $frequency=(string)($input['frequency']??'monthly');
@@ -190,7 +191,7 @@ try {
         $classType=$input['class_type']??null;
         $classId=(int)($input['class_id']??0);
         $studentId=(int)($input['student_id']??0);
-        if($name===''||!in_array($scope,['school','class','student'],true)||$frequency!=='monthly'||!$dueDay||$dueDay<1||$dueDay>31||!financeValidDate($from)||($until!==null&&(!financeValidDate($until)||$until<$from))){
+        if($name===''||!preg_match('/^[a-z0-9][a-z0-9_-]{0,59}$/',$feeCode)||!in_array($scope,['school','class','student'],true)||$frequency!=='monthly'||!$dueDay||$dueDay<1||$dueDay>31||!financeValidDate($from)||($until!==null&&(!financeValidDate($until)||$until<$from))){
             financeJson(['success'=>false,'message'=>'Complete the fee plan fields with valid values.'],422);
         }
         if(($scope==='class'&&!in_array($classType,['conventional','arabic'],true))||($scope==='class'&&$classId<1)||($scope==='student'&&$studentId<1)){
@@ -206,10 +207,10 @@ try {
             if(!$st->fetchColumn()) financeJson(['success'=>false,'message'=>'Selected student was not found.'],422);
         }
         $stmt=$pdo->prepare(
-            'INSERT INTO finance_fee_plans (name,description,scope,class_type,class_id,student_id,amount,frequency,due_day,effective_from,effective_until,created_by)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+            'INSERT INTO finance_fee_plans (name,fee_code,description,scope,class_type,class_id,student_id,amount,frequency,due_day,effective_from,effective_until,created_by)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
         );
-        $stmt->execute([$name,trim((string)($input['description']??''))?:null,$scope,$scope==='class'?$classType:null,$scope==='class'?$classId:null,$scope==='student'?$studentId:null,$amount,$frequency,$dueDay,$from,$until,(int)$_SESSION['admin_id']]);
+        $stmt->execute([$name,$feeCode,trim((string)($input['description']??''))?:null,$scope,$scope==='class'?$classType:null,$scope==='class'?$classId:null,$scope==='student'?$studentId:null,$amount,$frequency,$dueDay,$from,$until,(int)$_SESSION['admin_id']]);
         $id=(int)$pdo->lastInsertId();financeAudit($pdo,'fee_plan_created','fee_plan',$id,['scope'=>$scope,'amount'=>$amount]);
         financeJson(['success'=>true,'id'=>$id,'message'=>'Monthly fee plan created.'],201);
     }
@@ -228,12 +229,9 @@ try {
                  VALUES (?,?,?,?,?,?,?,?,?)"
             );
             foreach($students as $student){
-                foreach($plans as $plan){
-                    $applies=$plan['scope']==='school'
-                        ||($plan['scope']==='student'&&(int)$plan['student_id']===(int)$student['id'])
-                        ||($plan['scope']==='class'&&$plan['class_type']==='conventional'&&(int)$plan['class_id']===(int)$student['class_id'])
-                        ||($plan['scope']==='class'&&$plan['class_type']==='arabic'&&(int)$plan['class_id']===(int)$student['arabic_class_id']);
-                    if(!$applies)continue;
+                // Exactly one plan per fee category: student override > class > school.
+                $applicablePlans=financeSelectApplicableFeePlans($plans,$student,$period);
+                foreach($applicablePlans as $plan){
                     $dueDay=min((int)$plan['due_day'],(int)date('t',strtotime($period)));
                     $due=sprintf('%04d-%02d-%02d',$year,$month,$dueDay);
                     $insert->execute([financeNextNumber('INV'),(int)$student['id'],(int)$plan['id'],$year,$month,$period,$due,$plan['amount'],(int)$_SESSION['admin_id']]);
