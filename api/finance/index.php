@@ -54,8 +54,9 @@ try {
                 }
             }
             $incomeMix = [
-                'fees' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND paid_at>=DATE_SUB(CURDATE(),INTERVAL 6 MONTH)")->fetchColumn(),
-                'other_income' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date>=DATE_SUB(CURDATE(),INTERVAL 6 MONTH)")->fetchColumn(),
+                // Use the exact same six calendar-month window as the bar chart.
+                'fees' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND paid_at>='{$trendStart}'")->fetchColumn(),
+                'other_income' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date>='{$trendStart}'")->fetchColumn(),
             ];
             financeJson(['success'=>true,'summary'=>$today,'fees_this_month'=>(string)$month,'recent_payments'=>$recent,'monthly_trend'=>array_values($trend),'income_mix'=>$incomeMix]);
         }
