@@ -113,6 +113,63 @@ function financeCalculateLateMinutes(string $expectedArrival, string $actualArri
     return (int) floor(max(0, $actual->getTimestamp() - $expected->getTimestamp()) / 60);
 }
 
+
+/**
+ * Resolve the single applicable plan per fee category for one student and
+ * billing period. A student plan overrides a class plan, which overrides a
+ * school plan. Different fee categories remain separately billable.
+ */
+function financeSelectApplicableFeePlans(array $plans, array $student, string $period): array
+{
+    $studentId = (int) ($student['id'] ?? 0);
+    $classId = (int) ($student['class_id'] ?? 0);
+    $arabicClassId = (int) ($student['arabic_class_id'] ?? 0);
+    if ($studentId < 1 || !preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $period)) {
+        throw new InvalidArgumentException('A valid student and billing period are required.');
+    }
+
+    $selected = [];
+    foreach ($plans as $plan) {
+        if (empty($plan['is_active'])) continue;
+        $from = (string) ($plan['effective_from'] ?? '');
+        $until = $plan['effective_until'] ?? null;
+        if ($from === '' || $from > $period || ($until !== null && $until !== '' && (string) $until < $period)) continue;
+
+        $scope = (string) ($plan['scope'] ?? '');
+        $applies = $scope === 'school'
+            || ($scope === 'student' && (int) ($plan['student_id'] ?? 0) === $studentId)
+            || ($scope === 'class' && ($plan['class_type'] ?? '') === 'conventional' && (int) ($plan['class_id'] ?? 0) === $classId)
+            || ($scope === 'class' && ($plan['class_type'] ?? '') === 'arabic' && (int) ($plan['class_id'] ?? 0) === $arabicClassId);
+        if (!$applies) continue;
+
+        $code = strtolower(trim((string) ($plan['fee_code'] ?? 'general')));
+        if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,59}$/', $code)) {
+            throw new DomainException('A fee plan contains an invalid fee category code.');
+        }
+        $priority = $scope === 'student' ? 3 : ($scope === 'class' ? 2 : 1);
+        $candidate = $plan;
+        $candidate['_priority'] = $priority;
+        $candidate['_effective_from'] = $from;
+
+        if (!isset($selected[$code])) {
+            $selected[$code] = $candidate;
+            continue;
+        }
+        $current = $selected[$code];
+        if ($priority > $current['_priority']
+            || ($priority === $current['_priority'] && $from > $current['_effective_from'])
+            || ($priority === $current['_priority'] && $from === $current['_effective_from'] && (int) ($plan['id'] ?? 0) > (int) ($current['id'] ?? 0))) {
+            $selected[$code] = $candidate;
+        }
+    }
+
+    foreach ($selected as &$plan) {
+        unset($plan['_priority'], $plan['_effective_from']);
+    }
+    unset($plan);
+    return array_values($selected);
+}
+
 function financeNextNumber(string $prefix): string
 {
     return $prefix . '-' . date('YmdHis') . '-' . strtoupper(bin2hex(random_bytes(3)));
