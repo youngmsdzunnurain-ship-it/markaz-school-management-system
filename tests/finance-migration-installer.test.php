@@ -22,6 +22,8 @@ financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'
 financeInstallerCheck(strpos($installer, '20261121_markaz_finance_payroll.sql') < strpos($installer, '20261122_markaz_finance_fee_categories.sql')
     && strpos($installer, '20261122_markaz_finance_fee_categories.sql') < strpos($installer, '20261123_markaz_academic_term_fees.sql'), 'installer applies migrations in dependency order');
 financeInstallerCheck(str_contains($installer, 'mariadb-dump') && str_contains($installer, '[[ -s "$backup" ]]'), 'installer verifies a database backup before running migrations');
+financeInstallerCheck(str_contains($installer, 'DB_HOST="${DB_HOST:-127.0.0.1}"') && str_contains($installer, 'DB_USER="${DB_USER:-root}"'), 'installer uses MARKAZ TCP database host and root defaults instead of the Termux shell account');
+financeInstallerCheck(str_contains($installer, '--protocol=TCP') && str_contains($installer, 'mariadb-dump'), 'installer applies the same explicit TCP connection settings to database operations');
 financeInstallerCheck(str_contains($installer, 'INSTALL FINANCE ON TEST DATABASE'), 'installer requires explicit confirmation before database changes');
 financeInstallerCheck(str_contains($installer, 'Partial finance foundation detected')
     && str_contains($installer, 'Partial academic term-fee schema detected'), 'installer refuses to continue with partially applied schemas');
