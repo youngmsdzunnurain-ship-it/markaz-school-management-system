@@ -306,6 +306,68 @@
 
 
 /* Dedicated School Fees workspace — mirrors the Online Class application shell. */
+body.finance-workspace-page{
+  font-family:"Manrope","Segoe UI",sans-serif;
+  font-feature-settings:"ss01" on;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body.finance-workspace-page .app{
+  min-height:100vh;
+}
+body.finance-workspace-page .sidebar{
+  display:flex;
+  flex-direction:column;
+  align-self:stretch;
+  min-height:100vh;
+  height:100vh;
+  overflow:hidden;
+}
+body.finance-workspace-page .sidebar-header{
+  flex:0 0 auto;
+}
+body.finance-workspace-page .finance-sidebar-nav{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(230,217,164,.55) transparent;
+  padding:0 5px 12px 0;
+}
+body.finance-workspace-page .finance-sidebar-nav::-webkit-scrollbar{width:5px}
+body.finance-workspace-page .finance-sidebar-nav::-webkit-scrollbar-thumb{border-radius:99px;background:rgba(230,217,164,.45)}
+body.finance-workspace-page .main-content{
+  min-height:100vh;
+}
+body.finance-workspace-page .page-content{
+  flex:1 0 auto;
+}
+body.finance-workspace-page .dashboard-footer{
+  flex:0 0 auto;
+  margin-top:auto;
+}
+body.finance-workspace-page .welcome-card{
+  margin:0 0 22px;
+}
+body.finance-workspace-page .welcome-content h2{
+  font-family:"Fraunces",Georgia,serif;
+  letter-spacing:-.025em;
+}
+body.finance-workspace-page .page-content h2,
+body.finance-workspace-page .page-content h3{
+  font-family:"Fraunces",Georgia,serif;
+  letter-spacing:-.015em;
+}
+body.finance-workspace-page .page-content,
+body.finance-workspace-page .page-content button,
+body.finance-workspace-page .page-content input,
+body.finance-workspace-page .page-content select,
+body.finance-workspace-page .page-content textarea{
+  font-family:"Manrope","Segoe UI",sans-serif;
+}
+
 body.finance-workspace-page .app{
   display:grid;
   grid-template-columns:260px minmax(0,1fr);
