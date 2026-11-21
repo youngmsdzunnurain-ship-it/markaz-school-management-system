@@ -22,12 +22,13 @@ financeRegressionCheck(financeToCents('10.00') * 10 === 10000, 'ten late minutes
 financeRegressionCheck(financeFromCents(19400) === '194.00', 'integer-cent arithmetic formats exact naira amounts');
 financeRegressionCheck(financeProrateMonthlySalary('20000.00', 30, 30) === '20000.00', 'full-month salary is not changed by proration');
 financeRegressionCheck(financeProrateMonthlySalary('20000.00', 15, 30) === '10000.00', 'mid-month salary changes are prorated by calendar days');
-financeRegressionCheck(str_contains($payrollApi, 'financeProrateMonthlySalary'), 'payroll uses the salary proration rule for mid-month profile changes');
 financeRegressionCheck(financeMoney('1250.5') === '1250.50', 'money input is normalised to two decimal places');
 
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261121_markaz_finance_payroll.sql');
 $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
+
+financeRegressionCheck(str_contains($payrollApi, 'financeProrateMonthlySalary'), 'payroll uses the salary proration rule for mid-month profile changes');
 $financePage = file_get_contents(__DIR__ . '/../public/finance.html');
 $financeHelper = file_get_contents(__DIR__ . '/../app/helpers/finance.php');
 
