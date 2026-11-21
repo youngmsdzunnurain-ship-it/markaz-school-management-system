@@ -38,7 +38,7 @@ termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css
 
 termFeeCheck(str_contains($dashboardHtml,'href="./finance.html" class="nav-link" data-role-access="management_school_fees"'),'the Admin Dashboard School Fees navigation opens the integrated Finance workspace');
 termFeeCheck(str_contains($html,'<nav class="sidebar-nav finance-sidebar-nav" aria-label="School Fees navigation">')&&!str_contains($html,'id="logoutButton"')&&!str_contains($html,'class="sidebar-bottom"'),'School Fees sidebar has no duplicate profile or logout footer');
-termFeeCheck(str_contains($html,'id="welcomeGreeting"')&&str_contains($html,'id="adminName"')&&str_contains($html,'class="welcome-card"'),'Finance Overview reuses the shared dashboard greeting and welcome card');
+termFeeCheck(str_contains($html,'id="welcomeGreeting"')&&str_contains($html,'id="adminName"')&&str_contains($html,'class="welcome-card finance-welcome-card"'),'Finance Overview reuses the shared dashboard greeting and welcome card');
 termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'overflow-y:auto')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'min-height:0'),'Finance sidebar navigation can scroll fully to its final item');
 termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'flex:1 0 auto')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'margin-top:auto'),'Finance content and footer use a bottom-anchored flex layout');
 termFeeCheck(str_contains($html,'fa-solid fa-')&&str_contains($html,'fonts.googleapis.com/css2?family=Manrope'),'Finance uses consistent icons and the shared Manrope typography');
