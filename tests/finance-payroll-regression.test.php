@@ -29,6 +29,7 @@ $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
 
 financeRegressionCheck(str_contains($payrollApi, 'financeProrateMonthlySalary'), 'payroll uses the salary proration rule for mid-month profile changes');
+
 $financePage = file_get_contents(__DIR__ . '/../public/finance.html');
 $financeHelper = file_get_contents(__DIR__ . '/../app/helpers/finance.php');
 
