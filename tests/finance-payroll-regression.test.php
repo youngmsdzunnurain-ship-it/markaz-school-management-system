@@ -53,9 +53,11 @@ financeRegressionCheck(str_contains($dashboardStyles, 'grid-template-columns:260
 financeRegressionCheck(str_contains($financeStyles, 'width:min(220px,68vw)') || str_contains($financeStyles, 'width: min(220px, 68vw)'), 'mobile finance drawer is constrained to a compact responsive width');
 financeRegressionCheck(str_contains($financeJs, "classList.toggle('open'") && str_contains($financeJs, "classList.toggle('visible'"), 'mobile drawer and overlay use the same open-state classes as MARKAZ dashboard CSS');
 financeRegressionCheck(str_contains($financeJs, 'sidebar-desktop-closed') && str_contains($financeJs, 'desktop-closed'), 'desktop menu button can collapse and restore the sidebar');
-financeRegressionCheck(str_contains($financeJs, 'closeFinanceSidebar') && str_contains($financeJs, 'window.innerWidth <= 850'), 'selecting a finance section closes the mobile drawer');
+financeRegressionCheck(str_contains($financeJs, 'closeFinanceSidebar') && str_contains($financeJs, 'window.innerWidth<=850'), 'selecting a finance section closes the mobile drawer');
 financeRegressionCheck(str_contains($financeStyles, '.report-filters') && str_contains($financeStyles, '.report-metrics'), 'financial report filters and summary metrics receive dedicated layout styling');
 financeRegressionCheck(str_contains($financeJs, "DEMO_MODE==='fees'") && str_contains($financeJs, "DEMO_MODE==='payroll'"), 'fee and payroll demo views are directly accessible and use read-only sample data');
+financeRegressionCheck(str_contains($financeJs, 'finance-demo-nav') && str_contains($financeJs, "['overview','Overview'],['fees','Student fees'],['payroll','Teacher payroll']"), 'demo mode provides three clearly labelled finance walkthroughs');
+financeRegressionCheck(str_contains($financeStyles, '.finance-demo-nav a[aria-current=page]'), 'active finance demo view is visibly highlighted');
 financeRegressionCheck(str_contains($payrollApi, 'financeCalculateLateMinutes'), 'payroll uses the shared lateness calculation');
 financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness calculation does not apply a grace period');
 
