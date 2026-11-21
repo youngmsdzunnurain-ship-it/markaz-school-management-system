@@ -83,7 +83,7 @@ read -r -p "Type INSTALL FINANCE ON TEST DATABASE to continue (anything else can
 
 backup="$HOME/markaz-before-finance-$(date +%Y%m%d-%H%M%S).sql"
 echo "Creating database backup: $backup"
-mariadb-dump "$DB_NAME" > "$backup"
+mariadb-dump --single-transaction --routines --triggers --events "$DB_NAME" > "$backup"
 [[ -s "$backup" ]] || { echo "ERROR: Backup is empty. No migrations were run." >&2; exit 4; }
 echo "Backup verified ($(wc -c < "$backup") bytes)."
 
