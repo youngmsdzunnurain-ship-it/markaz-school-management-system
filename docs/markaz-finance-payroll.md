@@ -32,7 +32,7 @@ This workspace is separate from the production dashboard. It is not linked in th
 - Student daily attendance remains untouched. Staff arrival records live in `staff_attendance`.
 - Management access reuses the existing `management_school_fees` permission key in `account_permissions`.
 
-## Isolated local preview — port 884
+## Isolated local preview — port 8884
 
 Do not point this branch at the live/working database.
 
@@ -42,12 +42,12 @@ Do not point this branch at the live/working database.
 4. From the feature branch root, start the PHP server with an explicit database override:
 
 ```sh
-DB_NAME=markaz_finance_dev php -S 127.0.0.1:884 -t public
+DB_NAME=markaz_finance_dev php -S 127.0.0.1:8884 -t public
 ```
 
 The connection helper accepts `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` and `DB_PASSWORD` environment overrides. Existing local defaults are retained when overrides are absent. Keep credentials out of Git.
 
-Open `http://127.0.0.1:884/login.html`, sign in with an account from the development database, then open `http://127.0.0.1:884/finance.html`.
+Open `http://127.0.0.1:8884/login.html`, sign in with an account from the development database, then open `http://127.0.0.1:8884/finance.html`.
 
 ## Not yet production-enabled / remaining work
 - No automatic bank feed is connected. Incoming bank transfers must be verified manually against the bank statement.
