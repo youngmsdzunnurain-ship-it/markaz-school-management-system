@@ -394,7 +394,7 @@ body.finance-workspace-page .dashboard-footer{margin-top:auto}
     transform:translateX(-105%);
     transition:transform .22s ease;
   }
-  body.finance-workspace-page .sidebar.mobile-open{transform:translateX(0)}
+  body.finance-workspace-page .sidebar.open{transform:translateX(0)}
   body.finance-workspace-page .main-content{width:100%;min-height:100vh}
   body.finance-workspace-page .topbar{min-height:70px;padding:0 14px}
   body.finance-workspace-page .page-content{padding:12px 11px 16px}
