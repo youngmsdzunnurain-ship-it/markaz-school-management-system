@@ -31,6 +31,9 @@ $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
 financeRegressionCheck(str_contains($payrollApi, 'financeProrateMonthlySalary'), 'payroll uses the salary proration rule for mid-month profile changes');
 
 $financePage = file_get_contents(__DIR__ . '/../public/finance.html');
+$financeStyles = file_get_contents(__DIR__ . '/../public/css/finance.css');
+$dashboardStyles = file_get_contents(__DIR__ . '/../public/css/dashboard-2026.css');
+$financeJs = file_get_contents(__DIR__ . '/../public/js/finance.js');
 $financeHelper = file_get_contents(__DIR__ . '/../app/helpers/finance.php');
 
 financeRegressionCheck(str_contains($migration, "frequency ENUM('monthly')"), 'fee plans use monthly billing periods');
@@ -44,7 +47,15 @@ financeRegressionCheck(str_contains($financeApi, 'financeRequireAccess();'), 'fi
 financeRegressionCheck(str_contains($financeHelper, "requireManagementPermission('school_fees')") && str_contains($financeHelper, '$role ==='), 'finance access is restricted to Admin and individually authorised Management');
 financeRegressionCheck(!preg_match('/\\bbc(add|sub|comp)\\s*\\(/', $financeHelper), 'financial arithmetic does not depend on optional BCMath');
 financeRegressionCheck(str_contains($financeApi, 'verify_payment'), 'bank transfer payments require an explicit verification action');
-financeRegressionCheck(str_contains($financePage, 'Development workspace'), 'finance UI is explicitly labelled as a separate development workspace');
+financeRegressionCheck(!str_contains($financePage, 'Development workspace'), 'development-only labels do not leak into the standard MARKAZ finance footer');
+financeRegressionCheck(str_contains($financePage, '<span class="footer-brand">MARKAZ</span>') && str_contains($financePage, '© 2026 MARKAZ. All Rights Reserved.'), 'finance footer uses the exact standard MARKAZ footer structure');
+financeRegressionCheck(str_contains($dashboardStyles, 'grid-template-columns:260px minmax(0,1fr)'), 'desktop finance sidebar inherits the exact 260px MARKAZ dashboard width');
+financeRegressionCheck(str_contains($financeStyles, 'width:min(220px,68vw)') || str_contains($financeStyles, 'width: min(220px, 68vw)'), 'mobile finance drawer is constrained to a compact responsive width');
+financeRegressionCheck(str_contains($financeJs, "classList.toggle('open'") && str_contains($financeJs, "classList.toggle('visible'"), 'mobile drawer and overlay use the same open-state classes as MARKAZ dashboard CSS');
+financeRegressionCheck(str_contains($financeJs, 'sidebar-desktop-closed') && str_contains($financeJs, 'desktop-closed'), 'desktop menu button can collapse and restore the sidebar');
+financeRegressionCheck(str_contains($financeJs, 'closeFinanceSidebar') && str_contains($financeJs, 'window.innerWidth <= 850'), 'selecting a finance section closes the mobile drawer');
+financeRegressionCheck(str_contains($financeStyles, '.report-filters') && str_contains($financeStyles, '.report-metrics'), 'financial report filters and summary metrics receive dedicated layout styling');
+financeRegressionCheck(str_contains($financeJs, "DEMO_MODE==='fees'") && str_contains($financeJs, "DEMO_MODE==='payroll'"), 'fee and payroll demo views are directly accessible and use read-only sample data');
 financeRegressionCheck(str_contains($payrollApi, 'financeCalculateLateMinutes'), 'payroll uses the shared lateness calculation');
 financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness calculation does not apply a grace period');
 
