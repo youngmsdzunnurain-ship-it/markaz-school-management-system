@@ -46,6 +46,17 @@ resultsScannerCheck(
     'Class roster only re-renders when its data changes, first empty responses settle correctly, and student actions have one delegated handler'
 );
 resultsScannerCheck(
+    str_contains($classJs, 'if (updateRoster && Array.isArray(data.roster))') &&
+    str_contains($classJs, 'loadResults({ updateRoster: false })'),
+    'Automatic focus refreshes update result data without replacing the already loaded class roster'
+);
+resultsScannerCheck(
+    str_contains($classJs, 'student.middle_name') &&
+    str_contains($classJs, 'student.first_name') &&
+    str_contains($classJs, 'student.last_name'),
+    'Class roster displays each student full name, including the middle name'
+);
+resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
     str_contains($classJs, 'selectedSubjectId') &&
     str_contains($classJs, 'results: classResults'),
