@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123d2a"><title>Finance & Accounts | MARKAZ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="./css/finance.css?v=20261121-finance1">
+</head>
+<body>
+<div class="finance-shell">
+<aside class="finance-sidebar">
+  <a class="brand" href="./dashboard.html"><span class="brand-mark">M</span><span><b>MARKAZ</b><small>Finance & Accounts</small></span></a>
+  <nav aria-label="Finance navigation">
+    <button class="nav active" data-tab="overview"><i class="fa-solid fa-chart-pie"></i> Overview</button>
+    <button class="nav" data-tab="fees"><i class="fa-solid fa-graduation-cap"></i> Student Fees</button>
+    <button class="nav" data-tab="payments"><i class="fa-solid fa-receipt"></i> Payments & Receipts</button>
+    <button class="nav" data-tab="expenses"><i class="fa-solid fa-money-bill-transfer"></i> Income & Expenses</button>
+    <button class="nav" data-tab="payroll"><i class="fa-solid fa-users-gear"></i> Teacher Payroll</button>
+    <button class="nav" data-tab="reports"><i class="fa-solid fa-file-invoice-dollar"></i> Reports</button>
+  </nav>
+  <div class="sidebar-bottom"><span>Private staff workspace</span><a href="./dashboard.html"><i class="fa-solid fa-arrow-left"></i> Back to MARKAZ</a></div>
+</aside>
+<main class="main">
+<header class="topbar"><div><span class="eyebrow">MARKAZ · FINANCE OFFICE</span><h1 id="pageTitle">Finance overview</h1><p>Student fees, school cashflow and staff payroll</p></div><div class="top-actions"><span class="today" id="todayLabel"></span><button id="refreshButton" class="btn btn-light"><i class="fa-solid fa-rotate"></i> Refresh</button></div></header>
+<div id="notice" class="notice" role="status" hidden></div>
+<section class="tab-panel active" id="tab-overview">
+  <div class="metric-grid">
+    <article class="metric"><span>Fees collected today</span><strong id="feesToday">₦0.00</strong><small>Confirmed student payments</small></article>
+    <article class="metric"><span>Other income today</span><strong id="otherIncomeToday">₦0.00</strong><small>Verified non-fee income</small></article><article class="metric"><span>Expenses recorded today</span><strong id="expensesToday">₦0.00</strong><small>Approved and posted expenses</small></article>
+    <article class="metric"><span>Net movement today</span><strong id="netToday">₦0.00</strong><small>Daily income less expenses</small></article>
+    <article class="metric"><span>Outstanding fees</span><strong id="outstanding">₦0.00</strong><small><span id="openInvoices">0</span> unpaid or partial invoices</small></article>
+  </div>
+  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">LATEST ACTIVITY</span><h2>Recent student payments</h2></div><button class="btn btn-primary" data-open-tab="payments"><i class="fa-solid fa-plus"></i> Record payment</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Student</th><th>Method</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentPayments"><tr><td colspan="6" class="empty">Loading financial activity…</td></tr></tbody></table></div></div>
+  <div class="info-note"><i class="fa-solid fa-shield-halved"></i><div><b>Financial integrity</b><p>Only confirmed payments count as collected income. Pending bank transfers do not change a student's balance until verified. All posted financial entries are retained in the audit trail.</p></div></div>
+</section>
+<section class="tab-panel" id="tab-fees">
+ <div class="two-col">
+  <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
+   <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
+   <label>Description<textarea name="description" rows="2" placeholder="Optional explanation"></textarea></label>
+   <label>Apply to<select name="scope" id="feeScope"><option value="school">Entire school</option><option value="class">Specific class</option><option value="student">Individual student</option></select></label>
+   <div id="classFields" class="inline-fields" hidden><label>Class category<select name="class_type"><option value="conventional">Conventional</option><option value="arabic">Arabic</option></select></label><label>Class<select name="class_id" id="feeClassSelect" required><option value="">Loading classes…</option></select></label></div>
+   <label id="studentField" hidden>Student search<input id="feeStudentSearch" list="feeStudentOptions" autocomplete="off" placeholder="Admission number or student name"><datalist id="feeStudentOptions"></datalist><input type="hidden" name="student_id" id="feeStudentId"></label>
+   <label>Monthly amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="Set by administrator"></label>
+   <label>Due day of each month<input name="due_day" type="number" min="1" max="31" required></label>
+   <div class="inline-fields"><label>Effective from<input name="effective_from" type="date" required></label><label>Effective until<input name="effective_until" type="date"></label></div>
+   <button class="btn btn-primary" type="submit">Save fee plan</button>
+  </form>
+  <div class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">MONTHLY BILLING RUN</span><h2>Generate student invoices</h2></div></div>
+   <p class="muted">Generate invoices for all active monthly fee plans. Existing invoices for the same student, plan and month are protected against duplication.</p>
+   <div class="inline-fields"><label>Year<input id="invoiceYear" type="number" min="2020" max="2100"></label><label>Month<select id="invoiceMonth"></select></label></div>
+   <button class="btn btn-primary" id="generateInvoices">Generate invoices</button>
+   <div class="info-note compact"><i class="fa-solid fa-circle-info"></i><p>Review fee plans before running a billing month. Fee plan changes do not rewrite previously issued invoices.</p></div>
+  </div>
+ </div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FEE CONFIGURATION</span><h2>Active and previous fee plans</h2></div><button class="btn btn-light" id="loadPlans">Reload plans</button></div><div class="table-wrap"><table><thead><tr><th>Fee</th><th>Applies to</th><th>Amount / month</th><th>Due day</th><th>Effective</th><th>Status</th></tr></thead><tbody id="feePlans"><tr><td colspan="6" class="empty">Loading fee plans…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STUDENT LEDGERS</span><h2>Monthly fee accounts</h2></div><div class="search-box"><i class="fa-solid fa-search"></i><input id="invoiceSearch" placeholder="Admission number or student name"></div></div><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student / Admission no.</th><th>Billing month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="invoices"><tr><td colspan="7" class="empty">Loading student accounts…</td></tr></tbody></table></div></div>
+</section>
+<section class="tab-panel" id="tab-payments">
+ <div class="two-col">
+  <form class="panel form-panel" id="paymentForm"><div class="panel-heading"><div><span class="eyebrow">FEE COLLECTION</span><h2>Record student payment</h2></div></div>
+   <label>Student search<input id="paymentStudentSearch" list="paymentStudentOptions" autocomplete="off" required placeholder="Admission number or student name"><datalist id="paymentStudentOptions"></datalist><input type="hidden" name="student_id" id="paymentStudentId"></label>
+   <label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Payment date and time<input name="paid_at" id="paymentPaidAt" type="datetime-local" required></label>
+   <label>Payment method<select name="method"><option value="bank_transfer">Bank transfer / deposit</option><option value="cash">Cash received</option><option value="pos">POS</option><option value="online">Online payment (manual record pending verification)</option><option value="other">Other</option></select></label>
+   <label>Payer name<input name="payer_name" placeholder="Parent / guardian name"></label><label>Bank or payment reference<input name="reference" placeholder="Transaction reference"></label><label>Notes<textarea name="notes" rows="2"></textarea></label>
+   <button class="btn btn-primary" type="submit">Save payment record</button>
+   <p class="muted small">Cash is recorded as received. Bank transfers and other non-cash entries remain pending verification.</p>
+  </form>
+  <div class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">VERIFICATION QUEUE</span><h2>Payment control</h2></div></div><p class="muted">Verify the bank transaction against the school's actual bank statement before confirming it. A transfer screenshot alone is not proof of settlement.</p><button class="btn btn-light" id="reloadPayments">Refresh payment history</button><div id="paymentHistory" class="stack-list"></div></div>
+ </div>
+</section>
+<section class="tab-panel" id="tab-expenses">
+ <div class="two-col">
+  <form class="panel form-panel" id="expenseForm"><div class="panel-heading"><div><span class="eyebrow">SCHOOL SPENDING</span><h2>Record school expense</h2></div></div>
+   <label>Expense category<input name="category" required placeholder="Utilities, repairs, learning materials…"></label><label>Description<textarea name="description" rows="3" required placeholder="What was purchased or paid for?"></textarea></label>
+   <label>Vendor / recipient<input name="vendor_name"></label><label>Amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
+   <div class="inline-fields"><label>Date<input name="expense_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
+   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Submit expense for approval</button>
+  </form>
+  <form class="panel form-panel" id="incomeForm"><div class="panel-heading"><div><span class="eyebrow">OTHER SCHOOL INCOME</span><h2>Record non-fee income</h2></div></div>
+   <label>Income category<input name="category" required placeholder="Donation, grant, contribution…"></label><label>Description<textarea name="description" rows="3" required></textarea></label>
+   <label>Payer / source<input name="payer_name"></label><label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
+   <div class="inline-fields"><label>Date received<input name="received_date" type="date" required></label><label>Method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
+   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Save other income</button>
+  </form>
+ </div>
+ <div class="two-col">
+  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">EXPENSE APPROVALS</span><h2>Pending expenses</h2></div><button class="btn btn-light" id="reloadExpenses">Refresh</button></div><div id="expenseQueue" class="stack-list"></div></div>
+  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">INCOME VERIFICATION</span><h2>Pending other income</h2></div><button class="btn btn-light" id="reloadIncome">Refresh</button></div><div id="incomeQueue" class="stack-list"></div></div>
+ </div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">OTHER INCOME REGISTER</span><h2>Verified and pending income</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Source</th><th>Amount</th><th>Status</th></tr></thead><tbody id="incomeRows"><tr><td colspan="5" class="empty">Loading other income…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">AUDITABLE RECORDS</span><h2>Expense register</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="expenses"><tr><td colspan="6" class="empty">Loading expenses…</td></tr></tbody></table></div></div>
+</section>
+<section class="tab-panel" id="tab-payroll">
+ <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Separate teacher timekeeping</b><p>MARKAZ's existing daily register is for students. Teacher arrival and departure records are stored separately and linked to existing staff accounts. No grace period is applied. Payroll only uses approved time records.</p></div></div>
+ <div class="two-col">
+  <form class="panel form-panel" id="salaryForm"><div class="panel-heading"><div><span class="eyebrow">STAFF COMPENSATION</span><h2>Set teacher salary profile</h2></div></div>
+   <label>Teacher<select name="account_id" id="salaryTeacherSelect" required><option value="">Loading teachers…</option></select></label>
+   <label>Monthly basic salary (₦)<input name="base_salary" type="number" min="0" step="0.01" required></label>
+   <div class="inline-fields"><label>Expected arrival time<input name="expected_arrival" type="time" required></label><label>Late deduction per minute (₦)<input name="lateness_rate_per_minute" type="number" min="0" step="0.01" value="10" required></label></div>
+   <label>Effective from<input name="effective_from" type="date" required></label><button class="btn btn-primary" type="submit">Save salary profile</button>
+  </form>
+  <form class="panel form-panel" id="staffAttendanceForm"><div class="panel-heading"><div><span class="eyebrow">TIME & ATTENDANCE</span><h2>Record teacher attendance</h2></div></div>
+   <label>Teacher<select name="account_id" id="attendanceTeacherSelect" required><option value="">Loading teachers…</option></select></label><div class="inline-fields"><label>Attendance date<input name="attendance_date" type="date" required></label><label>Actual arrival<input name="actual_arrival" id="staffActualArrival" type="time" required></label></div>
+   <label>Status<select name="status" id="staffAttendanceStatus"><option value="present">Present</option><option value="approved_leave">Approved leave</option><option value="excused">Excused</option><option value="absent">Absent</option></select></label><label>Notes<input name="notes"></label><button class="btn btn-primary" type="submit">Save attendance record</button>
+  </form>
+ </div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">MONTH-END PAYROLL</span><h2>Calculate and approve payroll</h2></div></div>
+  <div class="inline-fields payroll-controls"><label>Payroll year<input id="payrollYear" type="number" min="2020" max="2100"></label><label>Payroll month<select id="payrollMonth"></select></label><label>Scheduled release date & time<input id="payrollSchedule" type="datetime-local"></label></div>
+  <div class="button-row"><button class="btn btn-light" id="calculatePayroll">Calculate payroll</button><button class="btn btn-primary" id="approvePayroll" disabled>Approve payroll</button></div>
+  <p class="muted small">Approval freezes the reviewed payroll figures. The scheduled transfer worker will remain disabled until a payout provider, verified teacher bank recipients, server scheduler and credentials have been configured and tested.</p>
+  <div class="table-wrap"><table><thead><tr><th>Teacher</th><th>Basic salary</th><th>Late minutes</th><th>Late deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollRows"><tr><td colspan="6" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
+ </div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STAFF REGISTER</span><h2>Teacher salary profiles</h2></div><button class="btn btn-light" id="reloadStaff">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Teacher</th><th>Account</th><th>Monthly salary</th><th>Arrival</th><th>Deduction / min</th></tr></thead><tbody id="staffRows"><tr><td colspan="5" class="empty">Loading staff profiles…</td></tr></tbody></table></div></div>
+</section>
+<section class="tab-panel" id="tab-reports">
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FINANCIAL REPORTING</span><h2>Income and expense report</h2></div></div>
+  <div class="inline-fields report-filters"><label>From date<input id="reportFrom" type="date"></label><label>To date<input id="reportTo" type="date"></label><button class="btn btn-primary" id="runReport">Run report</button></div>
+  <div class="metric-grid report-metrics"><article class="metric"><span>Confirmed fees collected</span><strong id="reportFees">₦0.00</strong></article><article class="metric"><span>Other income</span><strong id="reportOtherIncome">₦0.00</strong></article><article class="metric"><span>Approved expenses</span><strong id="reportExpenses">₦0.00</strong></article><article class="metric"><span>Net movement</span><strong id="reportNet">₦0.00</strong></article><article class="metric"><span>Pending payments</span><strong id="reportPending">₦0.00</strong><small id="reportPendingCount">0 awaiting verification</small></article></div>
+ </div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">SPENDING BREAKDOWN</span><h2>Expenses by category</h2></div></div><div class="table-wrap"><table><thead><tr><th>Category</th><th>Transactions</th><th>Total amount</th></tr></thead><tbody id="reportCategories"><tr><td colspan="3" class="empty">Choose a date range to run a report.</td></tr></tbody></table></div></div>
+ <div class="info-note"><i class="fa-solid fa-circle-info"></i><p>This report reflects confirmed fee receipts and approved expense records. It is not a bank statement or a full audited trial balance. Bank reconciliation and other income sources remain separate integration work.</p></div>
+</section>
+<footer class="footer">MARKAZ Finance & Accounts · Development workspace · Not connected to live banking</footer>
+</main></div>
+<script src="./js/finance.js?v=20261121-finance1" defer></script>
+</body></html>
