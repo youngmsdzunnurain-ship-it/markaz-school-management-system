@@ -23,6 +23,10 @@ $otherStudentFees = financeSelectApplicableFeePlans([
     ['id'=>2,'fee_code'=>'tuition','scope'=>'student','student_id'=>77,'amount'=>'20000.00','is_active'=>1,'effective_from'=>'2026-01-01','effective_until'=>null],
 ], ['id'=>78,'class_id'=>4,'arabic_class_id'=>8], '2026-11-01');
 financeRegressionCheck(count($otherStudentFees) === 1 && $otherStudentFees[0]['amount'] === '30000.00', 'a student-specific negotiated fee never changes another student amount');
+$midMonthPlan = financeSelectApplicableFeePlans([
+    ['id'=>4,'fee_code'=>'tuition','scope'=>'school','amount'=>'30000.00','is_active'=>1,'effective_from'=>'2026-11-15','effective_until'=>null],
+], ['id'=>79,'class_id'=>4,'arabic_class_id'=>8], '2026-11-01');
+financeRegressionCheck(count($midMonthPlan) === 1, 'a fee plan beginning during the billing month is eligible for that month');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:30') === 0, 'arrival exactly on schedule has no lateness');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:35') === 5, 'five minutes late is counted exactly');
 financeRegressionCheck(financeCalculateLateMinutes('15:30', '15:40') === 10, 'ten minutes late is counted exactly');
