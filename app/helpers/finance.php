@@ -133,7 +133,7 @@ function financeSelectApplicableFeePlans(array $plans, array $student, string $p
         if (empty($plan['is_active'])) continue;
         $from = (string) ($plan['effective_from'] ?? '');
         $until = $plan['effective_until'] ?? null;
-        if ($from === '' || $from > $period || ($until !== null && $until !== '' && (string) $until < $period)) continue;
+        if ($from === '' || $from > date('Y-m-t', strtotime($period)) || ($until !== null && $until !== '' && (string) $until < $period)) continue;
 
         $scope = (string) ($plan['scope'] ?? '');
         $applies = $scope === 'school'
