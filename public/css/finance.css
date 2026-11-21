@@ -137,3 +137,42 @@
 .finance-demo-nav a:hover{background:#edf3e9;color:#14472f}
 .finance-demo-nav a[aria-current=page]{background:#14472f;color:#fff;box-shadow:0 3px 9px rgba(20,71,47,.15)}
 @media(max-width:560px){.finance-demo-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.finance-demo-nav a{padding:8px 5px;font-size:11px}}
+
+
+/* 2026 finance analytics: responsive chart cards and consistent control states. */
+.finance-chart-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);gap:18px;margin:0 0 20px;align-items:stretch}
+.finance-chart-panel{min-width:0;margin:0;padding:20px 20px 16px;overflow:hidden}
+.finance-chart-panel .panel-heading{align-items:flex-start;margin-bottom:10px}
+.finance-chart-panel .panel-heading h2{margin:3px 0 4px}
+.finance-chart-panel .panel-heading .muted{margin:0;font-size:11px}
+.chart-period{flex:0 0 auto;padding:7px 10px;border:1px solid #e4eadf;border-radius:999px;background:#f7f9f4;color:#63766a;font-size:10px;font-weight:700}
+.chart-canvas{width:100%;min-width:0;min-height:230px;display:flex;align-items:center}
+.finance-svg-chart{display:block;width:100%;height:auto;max-height:260px;overflow:visible}
+.chart-empty{width:100%;min-height:170px;display:grid;place-items:center;padding:20px;text-align:center;color:#78877e;font-size:12px;line-height:1.65}
+.chart-legend{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:4px 0 0 58px;color:#66766d;font-size:11px;font-weight:600}
+.chart-legend>span,.legend-dot{display:inline-flex;align-items:center;gap:7px}
+.legend-dot{width:9px;height:9px;display:inline-block;flex:0 0 9px;border-radius:50%;background:#1f6b45}
+.legend-dot.expense{background:#d7ad54}.legend-dot.other{background:#d7ad54}
+.income-mix-chart{min-height:230px;display:grid;align-items:center}
+.income-mix-layout{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;padding:12px 0}
+.income-donut{width:164px;height:164px;flex:0 0 164px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(#1f6b45 0 var(--fee-share),#d7ad54 var(--fee-share) 100%);position:relative}
+.income-donut::before{content:"";position:absolute;inset:17px;border-radius:50%;background:#fff}
+.income-donut>span{z-index:1;display:grid;gap:3px;text-align:center}
+.income-donut b{font:700 25px/1.1 var(--serif);color:var(--dg)}
+.income-donut small{font-size:10px;color:#78877e}
+.income-mix-legend{display:grid;gap:15px;min-width:135px}
+.income-mix-legend>div{display:flex;align-items:flex-start;gap:8px}
+.income-mix-legend span{display:grid;gap:4px;color:#6d7c73;font-size:11px}
+.income-mix-legend strong{color:var(--dg);font-size:13px}
+@media(max-width:1050px){.finance-chart-grid{grid-template-columns:minmax(0,1fr)}.finance-chart-panel{min-height:0}}
+@media(max-width:560px){.finance-chart-panel{padding:16px 12px}.chart-period{font-size:9px;padding:6px 8px}.chart-legend{margin-left:8px}.income-mix-layout{gap:16px}.income-donut{width:142px;height:142px;flex-basis:142px}}
+@media(prefers-reduced-motion:reduce){.btn,.finance-demo-nav a{transition:none!important}.btn-primary:hover{transform:none}}
+
+/* Uniform interaction treatment for every finance action and form control. */
+.page-content button:not(.nav-link){font:inherit}
+.page-content button:focus-visible,.topbar button:focus-visible,.sidebar-user a:focus-visible{outline:3px solid rgba(201,162,74,.72);outline-offset:3px}
+.page-content input,.page-content select,.page-content textarea{accent-color:var(--mg)}
+.page-content button:disabled{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none}
+.page-content .btn-light{border:1px solid #dce5d9;background:#f7f9f5;color:#315744}
+.page-content .btn-light:hover:not(:disabled){border-color:#bfd0bf;background:#edf3e9}
+.page-content .btn-primary:hover:not(:disabled){filter:brightness(.96)}
