@@ -20,7 +20,7 @@ $staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
-    str_contains($classHtml, '20261121-roster-stable2') && str_contains($classApi, "header('Cache-Control: no-store, no-cache, must-revalidate, private')") && !str_contains($classHtml, 'list="resultStudentSuggestions"'),
+    str_contains($classHtml, '20261121-roster-stable3') && str_contains($classApi, "header('Cache-Control: no-store, no-cache, must-revalidate, private')") && !str_contains($classHtml, 'list="resultStudentSuggestions"'),
     'Results roster API disables intermediary caching and student search uses its custom accessible dropdown instead of a broken datalist reference'
 );
 resultsScannerCheck(
@@ -38,7 +38,7 @@ resultsScannerCheck(
     'The class roster retains active and inactive students independently from the active-only result-entry list, and overlapping refreshes cannot erase it'
 );
 resultsScannerCheck(
-    str_contains($classHtml, '20261121-roster-stable2') &&
+    str_contains($classHtml, '20261121-roster-stable3') &&
     str_contains($classJs, 'let classRosterLoaded = false') &&
     str_contains($classJs, 'JSON.stringify(incomingRoster) !== JSON.stringify(classRoster)') &&
     str_contains($classJs, 'if (rosterChanged)') &&
@@ -46,9 +46,17 @@ resultsScannerCheck(
     'Class roster only re-renders when its data changes, first empty responses settle correctly, and student actions have one delegated handler'
 );
 resultsScannerCheck(
-    str_contains($classJs, 'if (updateRoster && Array.isArray(data.roster))') &&
+    str_contains($classJs, 'if (updateRoster && rosterRequestSequence === rosterLoadSequence && Array.isArray(data.roster))') &&
     str_contains($classJs, 'loadResults({ updateRoster: false })'),
     'Automatic focus refreshes update result data without replacing the already loaded class roster'
+);
+
+resultsScannerCheck(
+    str_contains($classJs, 'let rosterLoadSequence = 0') &&
+    str_contains($classJs, 'const rosterRequestSequence = updateRoster ? ++rosterLoadSequence : null') &&
+    strpos($classJs, 'if (updateRoster && rosterRequestSequence === rosterLoadSequence') <
+        strpos($classJs, 'if (requestSequence !== resultsLoadSequence)'),
+    'A result-only focus refresh cannot invalidate the initial independent roster response'
 );
 resultsScannerCheck(
     str_contains($classJs, 'student.middle_name') &&
