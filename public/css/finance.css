@@ -293,12 +293,6 @@
 }
 
 
-/* Finance shell: remove the unintended white seam between the fixed sidebar and top navigation. */
-.app{gap:0!important;column-gap:0!important;row-gap:0!important;align-items:stretch}
-.app>.sidebar{grid-column:1;grid-row:1;margin:0!important;border:0!important;border-radius:0!important}
-.app>.main-content{grid-column:2;grid-row:1;min-width:0;width:100%;margin:0!important;padding:0!important;border:0!important;left:auto;right:auto}
-.main-content>.topbar{width:100%;max-width:none;margin:0!important;border:0;border-radius:0;left:auto;right:auto}
-@media(max-width:850px){.app{display:block!important;gap:0!important}.app>.sidebar{grid-column:auto;grid-row:auto}.app>.main-content{grid-column:auto;grid-row:auto;width:100%}.main-content>.topbar{width:100%}}
 /* Native selects remain usable and visibly indicate that their options are loading. */
 .page-content select{appearance:auto;-webkit-appearance:menulist;cursor:pointer;color:var(--dg);background-color:#fff}
 .page-content select:disabled{cursor:wait;opacity:.72}
