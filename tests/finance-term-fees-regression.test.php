@@ -24,8 +24,8 @@ termFeeCheck(str_contains($js,'loadTermFeeReport')&&str_contains($js,'generate_t
 termFeeCheck(str_contains($migration,"status ENUM('pending','approved','rejected')")&&str_contains($migration,'approved_by BIGINT UNSIGNED NULL'),'scholarship adjustments require a separate approval state and nullable approver');
 termFeeCheck(str_contains($api,'different authorised staff member must approve')&&str_contains($api,"status='approved' AND effective_from<=CURDATE()"),'the creator cannot approve their own adjustment and only approved adjustments affect invoices');
 termFeeCheck(str_contains($api,'SELECT id FROM finance_academic_sessions WHERE session_name=? LIMIT 1'),'session audit uses the persisted session ID after insert or update');
-termFeeCheck(str_contains($html,'id="termAdjustmentQueue"')&&str_contains($html,'data-approve-term-adjustment'),'Finance UI exposes a separate scholarship approval queue');
-termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading classes')&&str_contains($js,'No active classes found'),'class dropdowns expose loading, available options and empty states');
+termFeeCheck(str_contains($html,'id="termAdjustmentQueue"')&&str_contains($html,'id="reloadTermAdjustments"'),'Finance UI exposes a separate scholarship approval queue');
+termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading classes')&&str_contains($js,'No active classes found')&&str_contains($js,'data-approve-term-adjustment'),'class dropdowns expose loading, available options and empty states');
 termFeeCheck(str_contains($js,'financeStaffLoaded')&&str_contains($js,'Teachers could not load'),'teacher dropdowns handle delayed or failed staff loading');
 termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.app{gap:0!important;column-gap:0!important;row-gap:0!important')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.main-content>.topbar{width:100%;max-width:none;margin:0!important'),'Finance sidebar and topbar share a zero-gap aligned shell');
 echo "MARKAZ academic term fee regression checks passed.\n";
