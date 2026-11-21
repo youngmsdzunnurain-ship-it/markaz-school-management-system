@@ -303,3 +303,102 @@
 .finance-tabs .nav:hover{background:rgba(31,107,69,.07)}
 .finance-tabs .nav.active{background:var(--dg);color:#fff;border-color:var(--dg);box-shadow:0 4px 10px rgba(20,71,47,.12)}
 @media(max-width:640px){.finance-tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:9px;scrollbar-width:thin}.finance-tabs .nav{flex:0 0 auto}}
+
+
+/* Dedicated School Fees workspace — mirrors the Online Class application shell. */
+body.finance-workspace-page .app{
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr);
+  gap:0;
+  min-height:100vh;
+  align-items:stretch;
+}
+body.finance-workspace-page .sidebar{
+  position:sticky;
+  top:0;
+  align-self:start;
+  width:auto;
+  min-width:0;
+  height:100vh;
+  margin:0;
+}
+body.finance-workspace-page .finance-sidebar-nav{display:flex;flex-direction:column;gap:0}
+body.finance-workspace-page .finance-nav-link{
+  width:100%;
+  min-height:42px;
+  height:42px;
+  margin:0 0 4px;
+  padding:0 12px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  font:500 14px/1.2 var(--sans);
+  cursor:pointer;
+  box-shadow:none;
+}
+body.finance-workspace-page .finance-nav-link i{
+  width:20px;
+  flex:0 0 20px;
+  color:#a9cdb6;
+  text-align:center;
+}
+body.finance-workspace-page .finance-nav-link:hover{background:rgba(255,255,255,.07);color:#fff}
+body.finance-workspace-page .finance-nav-link.active{
+  background:var(--mg);
+  color:#fff;
+  font-weight:600;
+  box-shadow:none;
+}
+body.finance-workspace-page .finance-nav-link.active i{color:#e6d9a4}
+body.finance-workspace-page .main-content{
+  min-width:0;
+  min-height:100vh;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+}
+body.finance-workspace-page .topbar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  width:100%;
+  min-height:78px;
+  height:auto;
+  margin:0;
+  padding:0 28px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:linear-gradient(90deg,#a9cbb4,#e6d9a4 70%,#efe9d2);
+}
+body.finance-workspace-page .page-content{
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:22px 28px 28px;
+  flex:1 0 auto;
+}
+body.finance-workspace-page .finance-tabs{display:none}
+body.finance-workspace-page .dashboard-footer{margin-top:auto}
+@media(max-width:850px){
+  body.finance-workspace-page .app{grid-template-columns:minmax(0,1fr)}
+  body.finance-workspace-page .sidebar{
+    position:fixed;
+    inset:0 auto 0 0;
+    width:min(300px,86vw);
+    height:100dvh;
+    z-index:60;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+  }
+  body.finance-workspace-page .sidebar.open{transform:translateX(0)}
+  body.finance-workspace-page .main-content{width:100%;min-height:100vh}
+  body.finance-workspace-page .topbar{min-height:70px;padding:0 14px}
+  body.finance-workspace-page .page-content{padding:12px 11px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.finance-workspace-page .sidebar{transition:none}
+}
