@@ -22,7 +22,7 @@ financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'
 financeInstallerCheck(strpos($installer, '20261121_markaz_finance_payroll.sql') < strpos($installer, '20261122_markaz_finance_fee_categories.sql')
     && strpos($installer, '20261122_markaz_finance_fee_categories.sql') < strpos($installer, '20261123_markaz_academic_term_fees.sql'), 'installer applies migrations in dependency order');
 financeInstallerCheck(str_contains($installer, 'mariadb-dump') && str_contains($installer, '[[ -s "$backup" ]]'), 'installer verifies a database backup before running migrations');
-financeInstallerCheck(str_contains($installer, 'INSTALL FINANCE'), 'installer requires explicit confirmation before database changes');
+financeInstallerCheck(str_contains($installer, 'INSTALL FINANCE ON TEST DATABASE'), 'installer requires explicit confirmation before database changes');
 financeInstallerCheck(str_contains($installer, 'Partial finance foundation detected')
     && str_contains($installer, 'Partial academic term-fee schema detected'), 'installer refuses to continue with partially applied schemas');
 financeInstallerCheck(str_contains($installer, 'for table in admins students classes'), 'installer validates existing school-table prerequisites');
