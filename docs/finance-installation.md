@@ -16,7 +16,7 @@ From the repository root, run:
 bash scripts/install-finance.sh
 ```
 
-The installer checks the database and required school-table prerequisites, detects complete and partial Finance schemas, refuses to guess when a partial migration is found, asks for the exact confirmation phrase INSTALL FINANCE, creates and verifies a timestamped SQL backup, applies only missing stages in dependency order, and verifies the expected tables and columns.
+The installer checks the database and required school-table prerequisites, detects complete and partial Finance schemas, refuses to guess when a partial migration is found, asks for the exact confirmation phrase INSTALL FINANCE ON TEST DATABASE, creates and verifies a timestamped SQL backup, applies only missing stages in dependency order, and verifies the expected tables and columns.
 
 It uses the normal MariaDB client credentials/configuration for the current shell. Configure access through the local MariaDB option file or deployment environment; do not put passwords in the script or commit credentials.
 
