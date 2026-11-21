@@ -14,7 +14,7 @@ termFeeCheck(str_contains($migration,'UNIQUE KEY uq_term_fee_class (session_id,t
 termFeeCheck(str_contains($migration,'UNIQUE KEY uq_term_student_invoice (student_id,session_id,term)'),'term invoice generation is idempotent per student and term');
 termFeeCheck(str_contains($migration,'finance_student_fee_adjustments'),'individual scholarships and negotiated fees have separate audited records');
 termFeeCheck(str_contains($migration,'ENUM(\'fixed_fee\',\'discount_amount\',\'discount_percent\',\'full_scholarship\')'),'fixed, percentage and full scholarships are supported');
-termFeeCheck(str_contains($api,'WHERE s.is_active=1 AND s.class_id IS NOT NULL'),'billing targets existing active conventional students without re-registration');
+termFeeCheck(str_contains($api,'FROM students WHERE is_active=1 AND class_id IS NOT NULL'),'billing targets existing active conventional students without re-registration');
 termFeeCheck(str_contains($api,'INSERT IGNORE INTO finance_term_fee_invoices'),'re-running a billing batch does not overwrite issued invoices');
 termFeeCheck(str_contains($api,'$type===\'full_scholarship\''),'full scholarships reduce only the selected student invoice to zero');
 termFeeCheck(str_contains($payments,'finance_term_fee_payments'),'confirmed receipts allocate to academic-term invoices');
