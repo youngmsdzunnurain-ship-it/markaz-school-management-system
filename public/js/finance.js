@@ -45,7 +45,57 @@ async function loadIncome(){try{const d=await request('income');const rows=d.inc
 async function loadExpenses(){try{const d=await request('expenses');$('#expenses').innerHTML=d.expenses.map(e=>'<tr><td>'+esc(e.expense_date)+'</td><td><b>'+esc(e.category)+'</b><small>'+esc(e.description)+'</small></td><td>'+esc(e.vendor_name||'—')+'</td><td>'+money(e.amount)+'</td><td><span class="pill '+esc(e.status)+'">'+esc(e.status)+'</span></td><td>'+(e.status==='pending'?'<button class="action-link" data-approve-expense="'+e.id+'">Approve & post</button>':'—')+'</td></tr>').join('')||'<tr><td colspan="6" class="empty">No expense records yet.</td></tr>';$('#expenseQueue').innerHTML=d.expenses.filter(e=>e.status==='pending').map(e=>'<div class="stack-item"><div><b>'+esc(e.category)+' · '+money(e.amount)+'</b><small>'+esc(e.description)+'</small></div><button class="action-link" data-approve-expense="'+e.id+'">Review & approve</button></div>').join('')||'<p class="muted">No expenses awaiting approval.</p>'}catch(e){notice(e.message,true)}}
 async function loadPayroll(){try{const d=await payrollRequest(null,{year:$('#payrollYear').value,month:$('#payrollMonth').value});currentPayrollPeriod=d.period;$('#approvePayroll').disabled=!d.period||d.period.status!=='calculated';$('#payrollRows').innerHTML=(d.items||[]).map(i=>'<tr><td>'+esc(i.teacher_name)+'</td><td>'+money(i.base_salary)+'</td><td>'+esc(i.late_minutes||'—')+'</td><td>'+money(i.lateness_deductions)+'</td><td><b>'+money(i.net_salary)+'</b></td><td><span class=\"pill '+esc(i.status)+'\">'+esc(i.status)+'</span></td></tr>').join('')||'<tr><td colspan=\"6\" class=\"empty\">No payroll calculated for this period.</td></tr>'}catch(e){notice(e.message,true)}}
 async function loadStaff(){try{const d=await request('staff');const options='<option value="">Select teacher</option>'+d.staff.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' · ID '+esc(s.id)+'</option>').join('');$('#salaryTeacherSelect').innerHTML=options;$('#attendanceTeacherSelect').innerHTML=options;$('#staffRows').innerHTML=d.staff.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+esc(s.id)+'</td><td>'+(s.base_salary?money(s.base_salary):'<span class="pill pending">Not configured</span>')+'</td><td>'+esc(s.expected_arrival||'—')+'</td><td>'+ (s.lateness_rate_per_minute?money(s.lateness_rate_per_minute):'—')+'</td></tr>').join('')||'<tr><td colspan="5" class="empty">No active teacher accounts found.</td></tr>'}catch(e){notice(e.message,true)}}
-document.getElementById('menuButton')?.addEventListener('click',()=>{const side=document.getElementById('sidebar'),overlay=document.getElementById('sidebarOverlay');const open=side.classList.toggle('mobile-open');overlay.classList.toggle('open',open);document.getElementById('menuButton').setAttribute('aria-expanded',String(open))});document.getElementById('sidebarOverlay')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('sidebarOverlay').classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false')});document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));document.querySelectorAll('[data-open-tab]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.openTab)));
+const financeSidebar=document.getElementById('sidebar'),financeSidebarOverlay=document.getElementById('sidebarOverlay'),financeMenuButton=document.getElementById('menuButton');
+function setFinanceSidebarOpen(open){
+ if(!financeSidebar)return;
+ const desktop=window.innerWidth>850;
+ if(desktop){
+  financeSidebar.classList.remove('open');
+  financeSidebarOverlay?.classList.remove('visible');
+  financeSidebar.classList.toggle('desktop-closed',!open);
+  document.body.classList.toggle('sidebar-desktop-closed',!open);
+ }else{
+  financeSidebar.classList.remove('desktop-closed');
+  document.body.classList.remove('sidebar-desktop-closed');
+  financeSidebar.classList.toggle('open',open);
+  financeSidebarOverlay?.classList.toggle('visible',open);
+ }
+ financeMenuButton?.setAttribute('aria-expanded',String(open));
+ financeMenuButton?.setAttribute('aria-label',open?'Close menu':'Open menu');
+}
+function closeFinanceSidebar(){setFinanceSidebarOpen(false)}
+financeMenuButton?.addEventListener('click',()=>{
+ const isOpen=window.innerWidth>850
+  ? !financeSidebar.classList.contains('desktop-closed')
+  : financeSidebar.classList.contains('open');
+ setFinanceSidebarOpen(!isOpen);
+});
+financeSidebarOverlay?.addEventListener('click',closeFinanceSidebar);
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>{
+ showTab(b.dataset.tab);
+ if(window.innerWidth<=850)closeFinanceSidebar();
+}));
+document.querySelectorAll('[data-open-tab]').forEach(b=>b.addEventListener('click',()=>{
+ showTab(b.dataset.openTab);
+ if(window.innerWidth<=850)closeFinanceSidebar();
+}));
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&financeSidebar?.classList.contains('open'))closeFinanceSidebar();
+});
+window.addEventListener('resize',()=>{
+ if(window.innerWidth<=850){
+  financeSidebar?.classList.remove('desktop-closed','open');
+  financeSidebarOverlay?.classList.remove('visible');
+  document.body.classList.remove('sidebar-desktop-closed');
+  financeMenuButton?.setAttribute('aria-expanded','false');
+  financeMenuButton?.setAttribute('aria-label','Open menu');
+ }else{
+  financeSidebar?.classList.remove('open');
+  financeSidebarOverlay?.classList.remove('visible');
+  financeMenuButton?.setAttribute('aria-expanded',String(!financeSidebar?.classList.contains('desktop-closed')));
+  financeMenuButton?.setAttribute('aria-label',financeSidebar?.classList.contains('desktop-closed')?'Open menu':'Close menu');
+ }
+});
 $('#refreshButton').addEventListener('click',()=>showTab(document.querySelector('.nav.active')?.dataset.tab||'overview'));$('#loadPlans').addEventListener('click',loadPlans);$('#reloadPayments').addEventListener('click',loadPayments);$('#reloadExpenses').addEventListener('click',loadExpenses);$('#reloadIncome').addEventListener('click',loadIncome);$('#reloadStaff').addEventListener('click',loadStaff);$('#runReport').addEventListener('click',loadReport);$('#payrollMonth').addEventListener('change',loadPayroll);$('#payrollYear').addEventListener('change',loadPayroll);$('#invoiceSearch').addEventListener('input',renderInvoices);
 $('#feeScope').addEventListener('change',()=>{$('#classFields').hidden=$('#feeScope').value!=='class';$('#feeClassSelect').required=$('#feeScope').value==='class';$('#studentField').hidden=$('#feeScope').value!=='student'});$('#feePlanForm [name=class_type]').addEventListener('change',renderClassOptions);$('#feeStudentSearch').addEventListener('input',e=>{$('#feeStudentId').value='';searchStudent(e.target.value,'#feeStudentOptions','fee')});$('#feeStudentSearch').addEventListener('change',()=>resolveStudent('#feeStudentSearch','#feeStudentId','fee'));$('#paymentStudentSearch').addEventListener('input',e=>{$('#paymentStudentId').value='';searchStudent(e.target.value,'#paymentStudentOptions','payment')});$('#paymentStudentSearch').addEventListener('change',()=>resolveStudent('#paymentStudentSearch','#paymentStudentId','payment'));
 $('#feePlanForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget);const d=Object.fromEntries(f.entries());d.action='create_fee_plan';d.class_id=Number(d.class_id)||null;d.student_id=Number(d.student_id)||null;if(d.scope==='student'&&!d.student_id){notice('Select a student from the admission-number suggestions.',true);return}try{await request('',d);e.currentTarget.reset();$('#feeScope').dispatchEvent(new Event('change'));notice('Fee plan saved.');loadPlans()}catch(err){notice(err.message,true)}});
