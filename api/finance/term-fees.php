@@ -10,7 +10,8 @@ try {
   if($action==='setup'){
    $sessions=$pdo->query("SELECT id,session_name,starts_on,ends_on,is_current FROM finance_academic_sessions ORDER BY starts_on DESC")->fetchAll(PDO::FETCH_ASSOC);
    $classes=$pdo->query("SELECT id,name FROM classes WHERE is_active=1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
-   financeJson(['success'=>true,'sessions'=>$sessions,'classes'=>$classes]);
+   $pending=$pdo->query("SELECT x.id,x.student_id,x.session_id,x.term,x.adjustment_type,x.value,x.reason,x.created_by,x.created_at,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,ac.session_name FROM finance_student_fee_adjustments x JOIN students s ON s.id=x.student_id JOIN finance_academic_sessions ac ON ac.id=x.session_id WHERE x.status='pending' ORDER BY x.created_at ASC")->fetchAll(PDO::FETCH_ASSOC);
+   financeJson(['success'=>true,'sessions'=>$sessions,'classes'=>$classes,'pending_adjustments'=>$pending,'current_admin_id'=>(int)($_SESSION['admin_id']??0)]);
   }
   if($action==='report'){
    $session=(int)($_GET['session_id']??0);$term=(string)($_GET['term']??'');
@@ -31,10 +32,14 @@ try {
  if($action==='save_session'){
   $name=trim((string)($in['session_name']??''));$start=(string)($in['starts_on']??'');$end=(string)($in['ends_on']??'');
   if(!preg_match('/^20\d{2}\/20\d{2}$/',$name)||!financeValidDate($start)||!financeValidDate($end)||$end<=$start)financeJson(['success'=>false,'message'=>'Enter a session like 2026/2027 and a valid date range.'],422);
-  $pdo->beginTransaction();$pdo->prepare('UPDATE finance_academic_sessions SET is_current=0')->execute();
+  $pdo->beginTransaction();
+  $pdo->prepare('UPDATE finance_academic_sessions SET is_current=0')->execute();
   $st=$pdo->prepare('INSERT INTO finance_academic_sessions(session_name,starts_on,ends_on,is_current,created_by) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE starts_on=VALUES(starts_on),ends_on=VALUES(ends_on),is_current=VALUES(is_current)');
-  $st->execute([$name,$start,$end,1,(int)$_SESSION['admin_id']]);$pdo->commit();
-  financeAudit($pdo,'academic_session_saved','academic_session',(int)$pdo->lastInsertId(),['session'=>$name]);
+  $st->execute([$name,$start,$end,1,(int)($_SESSION['admin_id']??0)]);
+  $find=$pdo->prepare('SELECT id FROM finance_academic_sessions WHERE session_name=? LIMIT 1');$find->execute([$name]);$sessionId=(int)$find->fetchColumn();
+  if($sessionId<1)throw new RuntimeException('Saved academic session could not be reloaded.');
+  financeAudit($pdo,'academic_session_saved','academic_session',$sessionId,['session'=>$name]);
+  $pdo->commit();
   financeJson(['success'=>true,'message'=>'Academic session saved and set as current.']);
  }
  if($action==='save_class_fee'){
@@ -50,9 +55,24 @@ try {
   if($student<1||$session<1||!in_array($term,['first','second','third'],true)||!in_array($type,$allowed,true)||$reason==='')financeJson(['success'=>false,'message'=>'Complete the student adjustment and explain the reason.'],422);
   if($type==='discount_percent'&&(float)$value>100)financeJson(['success'=>false,'message'=>'Percentage discount cannot exceed 100%.'],422);
   $st=$pdo->prepare('SELECT id FROM students WHERE id=? AND is_active=1');$st->execute([$student]);if(!$st->fetchColumn())financeJson(['success'=>false,'message'=>'Active student not found.'],404);
-  $pdo->beginTransaction();$st=$pdo->prepare('INSERT INTO finance_student_fee_adjustments(student_id,session_id,term,adjustment_type,value,reason,approved_by,created_by,effective_from) VALUES(?,?,?,?,?,?,?,?,CURDATE())');$st->execute([$student,$session,$term,$type,$value,$reason,(int)$_SESSION['admin_id'],(int)$_SESSION['admin_id']]);$pdo->commit();
-  financeAudit($pdo,'student_fee_adjustment_created','student_fee_adjustment',(int)$pdo->lastInsertId(),['student_id'=>$student,'type'=>$type,'value'=>$value]);
-  financeJson(['success'=>true,'message'=>'Individual fee adjustment saved. It affects only this student.']);
+  $actor=(int)($_SESSION['admin_id']??0);if($actor<1)financeJson(['success'=>false,'message'=>'Your staff session has expired. Sign in again.'],401);
+  $st=$pdo->prepare('SELECT id FROM finance_academic_sessions WHERE id=?');$st->execute([$session]);if(!$st->fetchColumn())financeJson(['success'=>false,'message'=>'Academic session not found.'],404);
+  $pdo->beginTransaction();$st=$pdo->prepare("INSERT INTO finance_student_fee_adjustments(student_id,session_id,term,adjustment_type,value,reason,status,created_by,effective_from) VALUES(?,?,?,?,?,?,'pending',?,CURDATE())");$st->execute([$student,$session,$term,$type,$value,$reason,$actor]);$adjustmentId=(int)$pdo->lastInsertId();
+  financeAudit($pdo,'student_fee_adjustment_submitted','student_fee_adjustment',$adjustmentId,['student_id'=>$student,'type'=>$type,'value'=>$value,'status'=>'pending']);$pdo->commit();
+  financeJson(['success'=>true,'message'=>'Adjustment submitted for independent approval. It will not affect invoices until another authorised staff member approves it.']);
+ }
+ if($action==='approve_student_adjustment'){
+  $id=(int)($in['adjustment_id']??0);$actor=(int)($_SESSION['admin_id']??0);
+  if($id<1||$actor<1)financeJson(['success'=>false,'message'=>'A valid adjustment and active staff session are required.'],422);
+  $pdo->beginTransaction();
+  $st=$pdo->prepare('SELECT id,created_by,status FROM finance_student_fee_adjustments WHERE id=? FOR UPDATE');$st->execute([$id]);$adjustment=$st->fetch(PDO::FETCH_ASSOC);
+  if(!$adjustment){$pdo->rollBack();financeJson(['success'=>false,'message'=>'Adjustment not found.'],404);}
+  if($adjustment['status']!=='pending'){$pdo->rollBack();financeJson(['success'=>false,'message'=>'This adjustment has already been reviewed.'],409);}
+  if((int)$adjustment['created_by']===$actor){$pdo->rollBack();financeJson(['success'=>false,'message'=>'A different authorised staff member must approve this adjustment.'],403);}
+  $up=$pdo->prepare("UPDATE finance_student_fee_adjustments SET status='approved',approved_by=?,approved_at=NOW() WHERE id=? AND status='pending'");$up->execute([$actor,$id]);
+  if($up->rowCount()!==1){$pdo->rollBack();financeJson(['success'=>false,'message'=>'Adjustment approval could not be completed. Refresh and try again.'],409);}
+  financeAudit($pdo,'student_fee_adjustment_approved','student_fee_adjustment',$id,['created_by'=>(int)$adjustment['created_by'],'approved_by'=>$actor]);$pdo->commit();
+  financeJson(['success'=>true,'message'=>'Student fee adjustment approved. It may now be used in a new invoice batch.']);
  }
  if($action==='generate_term_invoices'){
   $session=(int)($in['session_id']??0);$term=(string)($in['term']??'');
@@ -62,7 +82,7 @@ try {
    $st=$pdo->prepare('SELECT id,session_name,starts_on FROM finance_academic_sessions WHERE id=?');$st->execute([$session]);$academic=$st->fetch(PDO::FETCH_ASSOC);if(!$academic)financeJson(['success'=>false,'message'=>'Academic session not found.'],404);
    $fees=$pdo->prepare('SELECT * FROM finance_term_fee_schedules WHERE session_id=? AND term=? AND is_active=1');$fees->execute([$session,$term]);$feeMap=[];foreach($fees->fetchAll(PDO::FETCH_ASSOC) as $f)$feeMap[(int)$f['class_id']]=$f;
    $students=$pdo->query('SELECT id,class_id FROM students WHERE is_active=1 AND class_id IS NOT NULL')->fetchAll(PDO::FETCH_ASSOC);
-   $adj=$pdo->prepare('SELECT * FROM finance_student_fee_adjustments WHERE student_id=? AND session_id=? AND term=? ORDER BY id DESC LIMIT 1');
+   $adj=$pdo->prepare("SELECT * FROM finance_student_fee_adjustments WHERE student_id=? AND session_id=? AND term=? AND status='approved' AND effective_from<=CURDATE() AND (effective_until IS NULL OR effective_until>=CURDATE()) ORDER BY approved_at DESC,id DESC LIMIT 1");
    $insert=$pdo->prepare('INSERT IGNORE INTO finance_term_fee_invoices(invoice_number,student_id,session_id,term,class_id,base_amount,discount_amount,amount_due,due_on,generated_by) VALUES(?,?,?,?,?,?,?,?,?,?)');
    foreach($students as $student){$fee=$feeMap[(int)$student['class_id']]??null;if(!$fee)continue;$base=(float)$fee['amount'];$discount=0.0;$adj->execute([(int)$student['id'],$session,$term]);$a=$adj->fetch(PDO::FETCH_ASSOC);
     if($a){$type=$a['adjustment_type'];$value=(float)$a['value'];if($type==='fixed_fee')$base=$value;elseif($type==='discount_amount')$discount=min($base,$value);elseif($type==='discount_percent')$discount=round($base*$value/100,2);elseif($type==='full_scholarship')$discount=$base;}
