@@ -409,6 +409,7 @@ The current staff session helper uses `HttpOnly` and `SameSite=Lax`, but sets th
 
 - [Daily Attendance](docs/DAILY_ATTENDANCE.md) — attendance behavior, migration and focused checks.
 - [Password-reset email setup](docs/password-reset-email-setup.md) — PHPMailer/Gmail SMTP configuration and reset-link requirements.
+- [Finance installation](docs/finance-installation.md) — safe, ordered installation of the Finance/payroll, fee-category and academic term-fee database migrations.
 
 ## Contributing and maintenance
 
