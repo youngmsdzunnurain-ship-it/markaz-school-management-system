@@ -50,6 +50,14 @@ resultsScannerCheck(
     str_contains($classJs, 'loadResults({ updateRoster: false })'),
     'Automatic focus refreshes update result data without replacing the already loaded class roster'
 );
+
+resultsScannerCheck(
+    str_contains($classJs, 'let rosterLoadSequence = 0') &&
+    str_contains($classJs, 'const rosterRequestSequence = updateRoster ? ++rosterLoadSequence : null') &&
+    strpos($classJs, 'if (updateRoster && rosterRequestSequence === rosterLoadSequence') <
+        strpos($classJs, 'if (requestSequence !== resultsLoadSequence)'),
+    'A result-only focus refresh cannot invalidate the initial independent roster response'
+);
 resultsScannerCheck(
     str_contains($classJs, 'student.middle_name') &&
     str_contains($classJs, 'student.first_name') &&
