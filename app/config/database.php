@@ -4,11 +4,21 @@ declare(strict_types=1);
 
 function getDatabaseConnection(): PDO
 {
-    $host = '127.0.0.1';
-    $port = '3306';
-    $database = 'markaz_result_system';
-    $username = 'root';
-    $password = '';
+    // Environment overrides allow isolated development databases without
+    // changing the production database name or committing local credentials.
+    $env = static function (string $key, string $default = ''): string {
+        $value = getenv($key);
+        if ($value === false || $value === '') {
+            $value = $_ENV[$key] ?? null;
+        }
+        return is_string($value) && $value !== '' ? $value : $default;
+    };
+
+    $host = $env('DB_HOST', '127.0.0.1');
+    $port = $env('DB_PORT', '3306');
+    $database = $env('DB_NAME', 'markaz_result_system');
+    $username = $env('DB_USER', 'root');
+    $password = $env('DB_PASSWORD', '');
 
     $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
 
