@@ -2,6 +2,9 @@
 set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DB_NAME="${DB_NAME:-markaz_result_system}"
+DB_HOST="${DB_HOST:-127.0.0.1}"
+DB_USER="${DB_USER:-root}"
+DB_PORT="${DB_PORT:-3306}"
 MIGRATIONS="$ROOT/database/migrations"
 
 if [[ ! "$DB_NAME" =~ ^[A-Za-z0-9_]+$ ]]; then
@@ -15,7 +18,12 @@ for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_cate
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
-query() { mariadb --batch --skip-column-names -e "$1"; }
+# Use the same local TCP connection pattern as the MARKAZ PHP database config.
+# Credentials can be supplied through the user's MariaDB option file (~/.my.cnf).
+DB_CONNECT=(--protocol=TCP --host="$DB_HOST" --port="$DB_PORT" --user="$DB_USER")
+db_client() { mariadb "${DB_CONNECT[@]}" "$@"; }
+db_dump() { mariadb-dump "${DB_CONNECT[@]}" "$@"; }
+query() { db_client --batch --skip-column-names -e "$1"; }
 db_exists="$(query "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='$DB_NAME'")"
 [[ "$db_exists" == "1" ]] || { echo "ERROR: Database '$DB_NAME' does not exist or is not accessible." >&2; exit 2; }
 
@@ -83,14 +91,14 @@ read -r -p "Type INSTALL FINANCE ON TEST DATABASE to continue (anything else can
 
 backup="$HOME/markaz-before-finance-$(date +%Y%m%d-%H%M%S).sql"
 echo "Creating database backup: $backup"
-mariadb-dump --single-transaction --routines --triggers --events "$DB_NAME" > "$backup"
+db_dump --single-transaction --routines --triggers --events "$DB_NAME" > "$backup"
 [[ -s "$backup" ]] || { echo "ERROR: Backup is empty. No migrations were run." >&2; exit 4; }
 echo "Backup verified ($(wc -c < "$backup") bytes)."
 
 apply_migration() {
     local file="$1"
     echo "Applying $file"
-    mariadb "$DB_NAME" < "$MIGRATIONS/$file"
+    db_client "$DB_NAME" < "$MIGRATIONS/$file"
 }
 if [[ "$foundation_count" == "0" ]]; then apply_migration "20261121_markaz_finance_payroll.sql"; fi
 foundation_count="$(table_count "$(sql_names "${foundation_tables[@]}")")"
