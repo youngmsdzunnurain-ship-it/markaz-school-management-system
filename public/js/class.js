@@ -169,6 +169,7 @@
                         ${classRoster.map(student => {
                             const fullName = [
                                 student.first_name,
+                                student.middle_name,
                                 student.last_name
                             ].filter(Boolean).join(" ");
 
@@ -222,7 +223,7 @@
         `;
     }
 
-    async function loadResults() {
+    async function loadResults({ updateRoster = true } = {}) {
         const requestSequence = ++resultsLoadSequence;
         const response = await fetch(
             `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
@@ -247,7 +248,7 @@
         resultSubjects = data.subjects || [];
         classResults = data.results || [];
 
-        if (Array.isArray(data.roster)) {
+        if (updateRoster && Array.isArray(data.roster)) {
             const incomingRoster = data.roster;
             // Accept the first response even when the class is empty, then ignore
             // transient empty refreshes so the visible roster does not flash away.
@@ -899,7 +900,10 @@
     window.addEventListener("focus", async () => {
         if (document.visibilityState === "hidden" || !classId) return;
         try {
-            await loadResults();
+            // A focus refresh is for result data only. The class roster is
+            // deliberately kept stable until an explicit initial/save refresh,
+            // so a transient or partial refresh cannot make names disappear.
+            await loadResults({ updateRoster: false });
         } catch (error) {
             console.error("Class workspace refresh error:", error);
         }
