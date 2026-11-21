@@ -6,6 +6,7 @@ This workspace is separate from the production dashboard. It is not linked in th
 
 ## Implemented in this branch
 - Monthly fee plans configured by Admin for the whole school, a conventional/Arabic class, or an individual active student.
+- Fee category codes support independent charges (for example tuition and feeding). Within each category, an individual student plan overrides the class plan, which overrides the school-wide plan; the override does not change other students.
 - Monthly invoice generation with duplicate protection, student admission-number lookup, fee account table, partial payment allocations and printable receipt page.
 - Cash receipts and manually recorded bank/POS/online entries with pending verification for non-cash payments.
 - Separate other-school-income and expense records, approval/verification queues, balanced journal posting and a basic date-range report.
@@ -13,6 +14,10 @@ This workspace is separate from the production dashboard. It is not linked in th
 - Separate teacher attendance records, no grace period, configurable per-minute deduction, monthly payroll calculation with calendar-day salary proration for mid-month profile changes, and Admin-approved scheduled release records.
 - Finance access limited to Admin and Management accounts with the existing `management_school_fees` permission. Student, teacher and exam-officer accounts do not get the finance workspace.
 - The production dashboard, navigation and student attendance tables are not changed by this branch.
+
+## Additional migration
+
+After applying the foundation migration, apply `database/migrations/20261122_markaz_finance_fee_categories.sql` to add fee category codes to plans and invoices. The existing data receives the `general` category.
 
 ## Financial rules
 1. Amounts use NGN decimal storage and integer-cent arithmetic for calculations.
