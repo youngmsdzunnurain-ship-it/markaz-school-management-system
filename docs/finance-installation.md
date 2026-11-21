@@ -18,7 +18,7 @@ bash scripts/install-finance.sh
 
 The installer checks the database and required school-table prerequisites, detects complete and partial Finance schemas, refuses to guess when a partial migration is found, asks for the exact confirmation phrase INSTALL FINANCE ON TEST DATABASE, creates and verifies a timestamped SQL backup, applies only missing stages in dependency order, and verifies the expected tables and columns.
 
-It uses the normal MariaDB client credentials/configuration for the current shell. Configure access through the local MariaDB option file or deployment environment; do not put passwords in the script or commit credentials.
+The installer connects over TCP to 127.0.0.1 as root on port 3306 by default, matching the MARKAZ local database connection. Override with DB_HOST, DB_PORT and DB_USER when needed. For password-protected databases, configure credentials in the user's MariaDB option file (for example ~/.my.cnf with restrictive permissions); do not put passwords in the script, command line or repository.
 
 To target another database, set DB_NAME explicitly:
 
