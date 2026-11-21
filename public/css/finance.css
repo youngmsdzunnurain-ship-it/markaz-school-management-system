@@ -213,3 +213,81 @@
 .finance-page-tools #refreshButton.finance-refresh-button i{transition:transform .35s ease}
 .finance-page-tools #refreshButton.finance-refresh-button:hover i{transform:rotate(35deg)}
 @media(prefers-reduced-motion:reduce){.finance-page-tools #refreshButton.finance-refresh-button,.finance-page-tools #refreshButton.finance-refresh-button i{transition:none}}
+
+
+/* MARKAZ Finance: compact 2026 workspace refinements. */
+@media(min-width:851px){
+  .app{grid-template-columns:240px minmax(0,1fr)}
+  .sidebar{padding:13px 12px}
+  #tab-reports .report-metrics{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  #tab-reports .report-metrics .metric{padding:13px 12px;border-radius:13px}
+  #tab-reports .report-metrics .metric span{font-size:10px;min-height:28px}
+  #tab-reports .report-metrics .metric strong{font-size:clamp(16px,1.25vw,21px);white-space:nowrap}
+}
+.sidebar-header{height:64px;flex-basis:64px;margin-bottom:13px}
+.nav-section-label{margin:15px 0 9px}
+.nav-link{height:38px;margin-bottom:3px;padding:0 10px;gap:10px;font-size:13px}
+.sidebar-bottom{padding-top:10px}
+.dashboard-footer{padding:12px 20px 12px!important;line-height:1.35}
+.dashboard-footer::before{margin:0 auto 7px;width:38px}
+.dashboard-footer .footer-brand{font-size:12px}
+.dashboard-footer .footer-school{margin-top:3px;font-size:9px;line-height:1.35}
+.dashboard-footer .footer-copyright{margin-top:4px;font-size:8px}
+.page-content{gap:13px}
+.panel{padding:17px;margin-bottom:13px;border-radius:14px}
+.panel-heading{margin-bottom:12px;gap:10px}
+.panel-heading h2{font-size:17px}
+.two-col{gap:13px}
+.form-panel{gap:10px}
+.form-panel input,.form-panel select,.form-panel textarea,.search-box input{min-height:39px;padding:9px 11px;border-radius:9px;font-size:12px}
+.form-panel textarea{min-height:72px}
+.btn{min-height:36px;padding:9px 13px;border-radius:9px;font-size:11px}
+.button-row{gap:8px;margin:10px 0}
+.payroll-controls{max-width:940px;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:3px 0 12px}
+.payroll-controls>label{display:grid;gap:6px;min-width:0;color:#41564a;font-size:11px;font-weight:750}
+.payroll-controls input,.payroll-controls select{
+ width:100%;min-width:0;height:40px;padding:8px 11px;
+ border:1px solid #dce5d9;border-radius:10px;background:#fff;
+ color:var(--dg);font:600 12px/1.2 var(--sans);
+ box-shadow:0 2px 7px rgba(20,71,47,.035);
+}
+.payroll-controls input:focus,.payroll-controls select:focus{
+ outline:0;border-color:var(--mg);box-shadow:0 0 0 3px rgba(31,107,69,.12)
+}
+.payroll-controls select{appearance:auto;cursor:pointer}
+#tab-payroll .muted.small{font-size:10px;line-height:1.5;margin:8px 0 12px}
+#tab-payroll .table-wrap{margin-top:8px}
+#tab-payroll .table-wrap th,#tab-payroll .table-wrap td{padding:10px 11px}
+@media(max-width:850px){
+ .app{display:block}
+ .sidebar{width:min(212px,78vw)!important;max-width:min(212px,78vw)!important;padding:12px 10px}
+ .sidebar-header{height:60px;flex-basis:60px;margin-bottom:10px}
+ .nav-section-label{margin:13px 0 8px}
+ .nav-link{height:37px;padding:0 9px;font-size:12px}
+ .topbar{min-height:60px;height:60px;padding:0 12px!important;display:flex;flex-direction:row!important;align-items:center;justify-content:flex-start;gap:9px}
+ .topbar .menu-button{width:36px;height:36px;min-width:36px;flex:0 0 36px;border-radius:10px}
+ .topbar>div{min-width:0;flex:1;overflow:hidden}
+ .topbar h1{font-size:clamp(15px,4vw,18px);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .topbar p{font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .page-content{padding:12px 11px 16px;gap:11px}
+ #tab-reports .report-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #tab-reports .report-metrics .metric{padding:11px}
+ #tab-reports .report-metrics .metric span{font-size:10px;min-height:25px}
+ #tab-reports .report-metrics .metric strong{font-size:17px}
+ .payroll-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .payroll-controls>label:last-child{grid-column:1/-1}
+ .payroll-controls input,.payroll-controls select{height:39px}
+ .panel{padding:14px;margin-bottom:11px}
+ .panel-heading{margin-bottom:10px}
+ .form-panel{gap:9px}
+ .button-row{margin:9px 0}
+ .dashboard-footer{padding:10px 14px 10px!important}
+}
+@media(max-width:560px){
+ .payroll-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .payroll-controls>label:last-child{grid-column:1/-1}
+ #tab-payroll .inline-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .page-content{padding-left:9px;padding-right:9px}
+ .panel{padding:12px}
+ .dashboard-footer .footer-school{max-width:300px}
+}
