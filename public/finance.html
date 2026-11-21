@@ -54,6 +54,17 @@
     <article class="metric"><span>Net movement today</span><strong id="netToday">₦0.00</strong><small>Daily income less expenses</small></article>
     <article class="metric"><span>Outstanding fees</span><strong id="outstanding">₦0.00</strong><small><span id="openInvoices">0</span> unpaid or partial invoices</small></article>
   </div>
+  <div class="finance-chart-grid">
+    <section class="panel finance-chart-panel" aria-labelledby="cashflowHeading">
+      <div class="panel-heading"><div><span class="eyebrow">CASH FLOW · LAST SIX MONTHS</span><h2 id="cashflowHeading">Income vs expenses</h2><p class="muted">Confirmed income compared with paid expenses</p></div><span class="chart-period" id="chartPeriodLabel">Last 6 months</span></div>
+      <div id="cashflowChart" class="chart-canvas" role="img" aria-label="Monthly income and expense bar chart"><p class="chart-empty">Loading cash-flow analytics…</p></div>
+      <div class="chart-legend"><span><i class="legend-dot income"></i>Income</span><span><i class="legend-dot expense"></i>Expenses</span></div>
+    </section>
+    <section class="panel finance-chart-panel" aria-labelledby="incomeMixHeading">
+      <div class="panel-heading"><div><span class="eyebrow">INCOME COMPOSITION</span><h2 id="incomeMixHeading">Where income comes from</h2><p class="muted">Confirmed receipts · last six months</p></div></div>
+      <div id="incomeMixChart" class="income-mix-chart" role="img" aria-label="Income composition chart"><p class="chart-empty">Loading income composition…</p></div>
+    </section>
+  </div>
   <div class="panel"><div class="panel-heading"><div><span class="eyebrow">LATEST ACTIVITY</span><h2>Recent student payments</h2></div><button class="btn btn-primary" data-open-tab="payments"><i class="fa-solid fa-plus"></i> Record payment</button></div>
   <div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Student</th><th>Method</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentPayments"><tr><td colspan="6" class="empty">Loading financial activity…</td></tr></tbody></table></div></div>
   <div class="info-note"><i class="fa-solid fa-shield-halved"></i><div><b>Financial integrity</b><p>Only confirmed payments count as collected income. Pending bank transfers do not change a student's balance until verified. All posted financial entries are retained in the audit trail.</p></div></div>
