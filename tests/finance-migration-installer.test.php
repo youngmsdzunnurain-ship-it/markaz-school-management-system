@@ -27,6 +27,7 @@ financeInstallerCheck(str_contains($installer, 'Partial finance foundation detec
     && str_contains($installer, 'Partial academic term-fee schema detected'), 'installer refuses to continue with partially applied schemas');
 financeInstallerCheck(str_contains($installer, 'for table in admins students classes'), 'installer validates existing school-table prerequisites');
 financeInstallerCheck(str_contains($installer, 'MARKAZ Finance is already installed'), 'installer is safe to rerun after a complete installation');
+financeInstallerCheck(!str_contains($installer, '\\${'), 'shell parameter expansions are emitted as valid Bash syntax');
 financeInstallerCheck(str_contains($guide, 'The third migration references finance_fee_payments'), 'installation guide explains the missing dependency');
 financeInstallerCheck(str_contains($categories, 'ADD COLUMN fee_code'), 'fee-category migration remains part of the ordered installation');
 echo "MARKAZ Finance migration installer regression checks passed.\n";
