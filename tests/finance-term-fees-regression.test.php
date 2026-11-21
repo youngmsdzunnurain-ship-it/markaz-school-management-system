@@ -46,4 +46,5 @@ termFeeCheck(str_contains($dashboardJs,'./api/auth/me.php')&&str_contains($dashb
 termFeeCheck(!str_contains($js,'financeSidebar')&&!str_contains($js,'closeFinanceSidebar'),'Finance does not register a competing sidebar controller');
 termFeeCheck(str_contains($html,'<footer class="dashboard-footer">')&&str_contains($html,'© 2026 MARKAZ. All Rights Reserved.'),'Finance retains the exact shared dashboard footer');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'!important'),'Finance CSS does not override the shared dashboard shell geometry');
+termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.app{display:block'),'Finance preserves the dashboard grid shell on mobile');
 echo "MARKAZ academic term fee regression checks passed.\n";
