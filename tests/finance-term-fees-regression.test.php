@@ -37,10 +37,11 @@ termFeeCheck(!str_contains($html,'finance-demo-shortcut')&&!str_contains($html,'
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-demo-'),'finance stylesheet contains no demo-only styling');
 
 termFeeCheck(str_contains($dashboardHtml,'href="./finance.html" class="nav-link" data-role-access="management_school_fees"'),'the Admin Dashboard School Fees navigation opens the integrated Finance workspace');
-termFeeCheck(str_contains($html,'<nav class="sidebar-nav" aria-label="Main navigation">')&&str_contains($html,'id="logoutButton"')&&str_contains($html,'id="sidebarProfileRole"'),'Finance reuses the live dashboard sidebar, account identity and logout control');
-termFeeCheck(str_contains($html,'class="nav-link active" aria-current="page" data-role-access="management_school_fees"')&&str_contains($html,'href="./finance.html"'),'the shared sidebar marks Finance active on its own page');
-termFeeCheck(str_contains($html,'id="menuButton"')&&str_contains($html,'id="pageTitle"')&&str_contains($html,'class="topbar"'),'Finance uses the dashboard topbar and its shared menu control');
-termFeeCheck(str_contains($html,'class="finance-tabs"')&&str_contains($html,'data-tab="fees"'),'Finance section navigation remains available inside the page content');
+termFeeCheck(str_contains($html,'<nav class="sidebar-nav finance-sidebar-nav" aria-label="School Fees navigation">')&&str_contains($html,'id="logoutButton"')&&str_contains($html,'id="sidebarProfileRole"'),'School Fees has its own workspace sidebar and retains account identity and logout');
+termFeeCheck(str_contains($html,'href="./dashboard.html"')&&str_contains($html,'data-tab="overview"')&&str_contains($html,'data-tab="fees"')&&str_contains($html,'data-tab="payments"')&&str_contains($html,'data-tab="expenses"')&&str_contains($html,'data-tab="payroll"')&&str_contains($html,'data-tab="reports"'),'the dedicated sidebar provides Main Dashboard and all six finance workspaces');
+termFeeCheck(!str_contains($html,'class="finance-tabs"')&&str_contains($html,'class="finance-nav-link nav-link nav"'),'finance navigation is in the dedicated sidebar, not a horizontal tab row');
+termFeeCheck(str_contains($html,'id="menuButton"')&&str_contains($html,'id="pageTitle"')&&str_contains($html,'class="topbar"'),'Finance retains the shared topbar and mobile menu control');
+termFeeCheck(str_contains($html,'body class="finance-workspace-page"')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .topbar'),'the Finance shell explicitly removes the sidebar/header seam');
 termFeeCheck(str_contains($html,'js/dashboard.js?v=20261120-staff-messaging-role4'),'Finance loads the shared dashboard role, profile, sidebar and logout controller');
 termFeeCheck(str_contains($dashboardJs,'./api/auth/me.php')&&str_contains($dashboardJs,'management_school_fees'),'shared Finance navigation is governed by the same staff-role permissions as School Fees');
 termFeeCheck(!str_contains($js,'financeSidebar')&&!str_contains($js,'closeFinanceSidebar'),'Finance does not register a competing sidebar controller');
