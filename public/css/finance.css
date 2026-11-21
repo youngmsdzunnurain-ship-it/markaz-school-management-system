@@ -130,3 +130,10 @@
  .panel{padding:16px}
  .panel-heading{gap:10px}
 }
+
+.finance-demo-banner{margin:0 0 10px}
+.finance-demo-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:7px;border:1px solid #e1e8d6;border-radius:13px;background:rgba(255,255,255,.82)}
+.finance-demo-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 13px;border-radius:9px;color:#315744;text-decoration:none;font-size:12px;font-weight:700;transition:background .15s ease,color .15s ease}
+.finance-demo-nav a:hover{background:#edf3e9;color:#14472f}
+.finance-demo-nav a[aria-current=page]{background:#14472f;color:#fff;box-shadow:0 3px 9px rgba(20,71,47,.15)}
+@media(max-width:560px){.finance-demo-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.finance-demo-nav a{padding:8px 5px;font-size:11px}}
