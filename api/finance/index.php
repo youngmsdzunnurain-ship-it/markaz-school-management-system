@@ -225,8 +225,8 @@ try {
         try{
             $students=$pdo->query("SELECT id,class_id,COALESCE(NULLIF(arabic_class_id,0),arabia_class_id) arabic_class_id FROM students WHERE is_active=1")->fetchAll(PDO::FETCH_ASSOC);
             $insert=$pdo->prepare(
-                "INSERT IGNORE INTO finance_fee_invoices (invoice_number,student_id,fee_plan_id,billing_year,billing_month,issued_on,due_on,amount_due,created_by)
-                 VALUES (?,?,?,?,?,?,?,?,?)"
+                "INSERT IGNORE INTO finance_fee_invoices (invoice_number,student_id,fee_plan_id,fee_code,billing_year,billing_month,issued_on,due_on,amount_due,created_by)
+                 VALUES (?,?,?,?,?,?,?,?,?,?)"
             );
             foreach($students as $student){
                 // Exactly one plan per fee category: student override > class > school.
@@ -234,7 +234,7 @@ try {
                 foreach($applicablePlans as $plan){
                     $dueDay=min((int)$plan['due_day'],(int)date('t',strtotime($period)));
                     $due=sprintf('%04d-%02d-%02d',$year,$month,$dueDay);
-                    $insert->execute([financeNextNumber('INV'),(int)$student['id'],(int)$plan['id'],$year,$month,$period,$due,$plan['amount'],(int)$_SESSION['admin_id']]);
+                    $insert->execute([financeNextNumber('INV'),(int)$student['id'],(int)$plan['id'],(string)($plan['fee_code']??'general'),$year,$month,$period,$due,$plan['amount'],(int)$_SESSION['admin_id']]);
                     $created+=$insert->rowCount();
                 }
             }
