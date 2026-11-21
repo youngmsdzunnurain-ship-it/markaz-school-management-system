@@ -67,6 +67,10 @@ financeRegressionCheck(str_contains($financeApi, 'monthly_trend') && str_contain
 financeRegressionCheck(str_contains($financeStyles, '.finance-chart-grid') && str_contains($financeStyles, '.chart-legend'), 'finance analytics charts receive responsive and accessible styling');
 financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repeat(5,minmax(0,1fr))') && str_contains($financeStyles, '@media(max-width:850px)'), 'five finance overview metrics share one desktop row and adapt on mobile');
 financeRegressionCheck(str_contains($financePage, 'finance-refresh-button') && str_contains($financeStyles, '.finance-refresh-button'), 'finance refresh action uses the compact MARKAZ dashboard icon-button treatment');
+financeRegressionCheck(str_contains($financeStyles, '.payroll-controls select') && str_contains($financeStyles, '.payroll-controls input'), 'payroll month and scheduled release controls have dedicated polished styling');
+financeRegressionCheck(str_contains($financeStyles, '.report-metrics{grid-template-columns:repeat(5,minmax(0,1fr))'), 'all five financial report summary metrics fit one desktop row');
+financeRegressionCheck(str_contains($financeStyles, '.dashboard-footer{padding:12px 20px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
+financeRegressionCheck(str_contains($financeStyles, '.topbar{min-height:60px') && str_contains($financeStyles, '.topbar>div{'), 'mobile top navigation is compact and horizontally aligned');
 financeRegressionCheck(str_contains($financePage, 'finance-demo-shortcut') && str_contains($financePage, '?demo=overview'), 'finance overview exposes a visible demo entry point');
 financeRegressionCheck(str_contains($financeJs, 'Dashboard data could not be loaded:') && str_contains($financeJs, 'role="alert"'), 'dashboard API failures replace indefinite chart loading placeholders with visible errors');
 financeRegressionCheck(str_contains($financeJs, 'fees_today:25000') && str_contains($financeJs, 'net_movement:21500'), 'demo financial totals exclude the pending payment from confirmed income');
