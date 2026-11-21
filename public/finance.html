@@ -74,6 +74,7 @@
  <div class="two-col">
   <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
    <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
+   <label>Fee category code<input name="fee_code" required pattern="[a-z0-9][a-z0-9_-]{0,59}" value="general" placeholder="e.g. tuition, feeding, books"><small>Matching categories override by specificity: student, then class, then school.</small></label>
    <label>Description<textarea name="description" rows="2" placeholder="Optional explanation"></textarea></label>
    <label>Apply to<select name="scope" id="feeScope"><option value="school">Entire school</option><option value="class">Specific class</option><option value="student">Individual student</option></select></label>
    <div id="classFields" class="inline-fields" hidden><label>Class category<select name="class_type"><option value="conventional">Conventional</option><option value="arabic">Arabic</option></select></label><label>Class<select name="class_id" id="feeClassSelect" required><option value="">Loading classes…</option></select></label></div>
