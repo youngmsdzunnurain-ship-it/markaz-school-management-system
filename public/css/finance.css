@@ -203,3 +203,13 @@
 @media(max-width:850px){#tab-overview>.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.finance-chart-grid{gap:12px}.chart-canvas,.income-mix-chart{min-height:165px}.chart-empty{min-height:125px}}
 @media(max-width:560px){#tab-overview>.metric-grid .metric{padding:12px 11px}#tab-overview>.metric-grid .metric span{min-height:28px;font-size:10px}#tab-overview>.metric-grid .metric strong{font-size:17px}.finance-chart-panel{padding:14px 12px 12px}.finance-chart-grid{grid-template-columns:minmax(0,1fr)}.chart-canvas,.income-mix-chart{min-height:155px}.finance-demo-shortcut{min-height:34px;padding:7px 9px}}
 @media(min-width:851px){#tab-overview>.metric-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+
+/* Refresh control follows the compact MARKAZ dashboard icon-button language. */
+.finance-page-tools #refreshButton.finance-refresh-button{width:40px;height:40px;min-width:40px;min-height:40px;padding:0;display:inline-grid;place-items:center;border:1px solid rgba(20,71,47,.10);border-radius:12px;background:rgba(255,255,255,.78);color:var(--dg);box-shadow:0 3px 10px rgba(20,71,47,.045);font-size:14px;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease}
+.finance-page-tools #refreshButton.finance-refresh-button:hover{background:#fff;border-color:rgba(20,71,47,.2);transform:translateY(-1px)}
+.finance-page-tools #refreshButton.finance-refresh-button:active{transform:translateY(0)}
+.finance-page-tools #refreshButton.finance-refresh-button:focus-visible{outline:3px solid rgba(201,162,74,.65);outline-offset:3px}
+.finance-page-tools #refreshButton.finance-refresh-button i{transition:transform .35s ease}
+.finance-page-tools #refreshButton.finance-refresh-button:hover i{transform:rotate(35deg)}
+@media(prefers-reduced-motion:reduce){.finance-page-tools #refreshButton.finance-refresh-button,.finance-page-tools #refreshButton.finance-refresh-button i{transition:none}}
