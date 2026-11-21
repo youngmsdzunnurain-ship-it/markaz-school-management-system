@@ -109,7 +109,7 @@ async function loadAdmin() {
             const managerLinks = [
                 ["students", "Students", "./students.html", "fa-users"],
                 ["attendance", "Attendance", "./attendance.html", "fa-calendar-check"],
-                ["school_fees", "School Fees", "./school-fees.html", "fa-wallet"],
+                ["school_fees", "School Fees", "./finance.html", "fa-wallet"],
                 ["online_class_access", "MARKAZ Online Class", "./online-class.html", "fa-laptop"],
                 ["staff_messaging", "Let\u0027s Chat", "./staff-chat.html", "fa-comments"]
             ];
