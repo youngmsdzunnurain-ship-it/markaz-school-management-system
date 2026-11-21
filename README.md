@@ -348,6 +348,15 @@ node --check public/js/online-class-portal.js
 node --check public/js/online-class-report.js
 ```
 
+### Finance database installation
+
+Finance requires three ordered migrations. Use the guarded installer in [docs/finance-installation.md](docs/finance-installation.md); it checks prerequisites, creates a verified backup, refuses partial schemas and requires explicit test-database confirmation before applying changes.
+
+```sh
+bash -n scripts/install-finance.sh
+php tests/finance-migration-installer.test.php
+```
+
 ### Public website and shared UI
 
 ```sh
@@ -409,6 +418,7 @@ The current staff session helper uses `HttpOnly` and `SameSite=Lax`, but sets th
 
 - [Daily Attendance](docs/DAILY_ATTENDANCE.md) — attendance behavior, migration and focused checks.
 - [Password-reset email setup](docs/password-reset-email-setup.md) — PHPMailer/Gmail SMTP configuration and reset-link requirements.
+- [Finance installation](docs/finance-installation.md) — safe, ordered installation of the Finance/payroll, fee-category and academic term-fee database migrations.
 
 ## Contributing and maintenance
 
