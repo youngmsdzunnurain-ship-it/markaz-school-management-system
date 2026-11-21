@@ -71,6 +71,36 @@
   <div class="info-note"><i class="fa-solid fa-shield-halved"></i><div><b>Financial integrity</b><p>Only confirmed payments count as collected income. Pending bank transfers do not change a student's balance until verified. All posted financial entries are retained in the audit trail.</p></div></div>
 </section>
 <section class="tab-panel" id="tab-fees">
+ <section class="panel" id="termFeeWorkspace">
+ <div class="panel-heading"><div><span class="eyebrow">ACADEMIC BILLING</span><h2>Session &amp; term fees</h2><p class="muted">Set a different fee for each conventional class in each term. Amounts are never copied to another class or student automatically.</p></div></div>
+ <div class="two-col">
+  <form class="form-panel" id="academicSessionForm">
+   <h3>Academic session</h3>
+   <label>Session name<input name="session_name" placeholder="2026/2027" pattern="20[0-9]{2}/20[0-9]{2}" required></label>
+   <div class="inline-fields"><label>Starts<input name="starts_on" type="date" required></label><label>Ends<input name="ends_on" type="date" required></label></div>
+   <button class="btn btn-primary" type="submit">Save current session</button>
+  </form>
+  <form class="form-panel" id="termClassFeeForm">
+   <h3>Class fee configuration</h3>
+   <label>Academic session<select name="session_id" id="termSessionSelect" required><option value="">Create/select a session</option></select></label>
+   <div class="inline-fields"><label>Term<select name="term" id="termSelect"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label><label>Conventional class<select name="class_id" id="termClassSelect" required><option value="">Loading classes…</option></select></label></div>
+   <label>Fee amount (₦)<input name="amount" type="number" min="0" step="0.01" required placeholder="Enter class fee"></label>
+   <label>Payment due date<input name="due_on" type="date" required></label>
+   <button class="btn btn-primary" type="submit">Save class fee</button>
+  </form>
+ </div>
+ <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL SUPPORT</span><h3>Scholarship, waiver or negotiated fee</h3><p class="muted">An adjustment applies only to the selected student, session and term. Explain the reason for the audit trail.</p></div></div>
+ <form class="form-panel" id="studentFeeAdjustmentForm">
+  <div class="inline-fields"><label>Student<input id="termStudentSearch" list="termStudentOptions" placeholder="Admission number or name" required><datalist id="termStudentOptions"></datalist><input type="hidden" name="student_id" id="termStudentId"></label><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
+  <div class="inline-fields"><label>Adjustment<select name="adjustment_type"><option value="fixed_fee">Negotiated final fee</option><option value="discount_amount">Fixed discount</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / waiver</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
+  <label>Reason / approval note<input name="reason" required maxlength="500" placeholder="e.g. Approved 50% scholarship for this term"></label>
+  <button class="btn btn-primary" type="submit">Save individual adjustment</button>
+ </form>
+ <div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button">Generate term invoices</button><button class="btn btn-light" id="loadTermReport" type="button">Refresh class report</button></div>
+ <div class="table-wrap"><table><thead><tr><th>Class</th><th>Students billed</th><th>Total billed</th><th>Paid</th><th>Outstanding</th></tr></thead><tbody id="termFeeReport"><tr><td colspan="5" class="empty">Select a session and term to view class totals.</td></tr></tbody></table></div>
+ <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
+</section>
+
  <div class="two-col">
   <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
    <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
