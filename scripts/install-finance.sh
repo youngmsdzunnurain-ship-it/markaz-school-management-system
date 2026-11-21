@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-ROOT="$(cd "$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
-DB_NAME="\${DB_NAME:-markaz_result_system}"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DB_NAME="${DB_NAME:-markaz_result_system}"
 MIGRATIONS="$ROOT/database/migrations"
 
 if [[ ! "$DB_NAME" =~ ^[A-Za-z0-9_]+$ ]]; then
@@ -51,12 +51,12 @@ table_count() {
     query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ($1)"
 }
 
-foundation_count="$(table_count "$(sql_names "\${foundation_tables[@]}")")"
-term_count="$(table_count "$(sql_names "\${term_tables[@]}")")"
+foundation_count="$(table_count "$(sql_names "${foundation_tables[@]}")")"
+term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
 category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_plans' AND COLUMN_NAME='fee_code') OR (TABLE_NAME='finance_fee_invoices' AND COLUMN_NAME='fee_code'))")"
 
-if [[ "$foundation_count" != "0" && "$foundation_count" != "\${#foundation_tables[@]}" ]]; then
-    echo "ERROR: Partial finance foundation detected ($foundation_count/\${#foundation_tables[@]} tables). No changes made." >&2
+if [[ "$foundation_count" != "0" && "$foundation_count" != "${#foundation_tables[@]}" ]]; then
+    echo "ERROR: Partial finance foundation detected ($foundation_count/${#foundation_tables[@]} tables). No changes made." >&2
     exit 3
 fi
 if [[ "$foundation_count" == "0" && ( "$category_columns" != "0" || "$term_count" != "0" ) ]]; then
@@ -67,11 +67,11 @@ if [[ "$category_columns" != "0" && "$category_columns" != "2" ]]; then
     echo "ERROR: Partial fee-category migration detected ($category_columns/2 columns). No changes made." >&2
     exit 3
 fi
-if [[ "$term_count" != "0" && "$term_count" != "\${#term_tables[@]}" ]]; then
-    echo "ERROR: Partial academic term-fee schema detected ($term_count/\${#term_tables[@]} tables). No changes made." >&2
+if [[ "$term_count" != "0" && "$term_count" != "${#term_tables[@]}" ]]; then
+    echo "ERROR: Partial academic term-fee schema detected ($term_count/${#term_tables[@]} tables). No changes made." >&2
     exit 3
 fi
-if [[ "$foundation_count" == "\${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "\${#term_tables[@]}" ]]; then
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" ]]; then
     echo "MARKAZ Finance is already installed: foundation, fee categories and term fees are present."
     exit 0
 fi
@@ -93,16 +93,16 @@ apply_migration() {
     mariadb "$DB_NAME" < "$MIGRATIONS/$file"
 }
 if [[ "$foundation_count" == "0" ]]; then apply_migration "20261121_markaz_finance_payroll.sql"; fi
-foundation_count="$(table_count "$(sql_names "\${foundation_tables[@]}")")"
-[[ "$foundation_count" == "\${#foundation_tables[@]}" ]] || { echo "ERROR: Finance foundation verification failed. Restore from: $backup" >&2; exit 5; }
+foundation_count="$(table_count "$(sql_names "${foundation_tables[@]}")")"
+[[ "$foundation_count" == "${#foundation_tables[@]}" ]] || { echo "ERROR: Finance foundation verification failed. Restore from: $backup" >&2; exit 5; }
 
 if [[ "$category_columns" == "0" ]]; then apply_migration "20261122_markaz_finance_fee_categories.sql"; fi
 category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_plans' AND COLUMN_NAME='fee_code') OR (TABLE_NAME='finance_fee_invoices' AND COLUMN_NAME='fee_code'))")"
 [[ "$category_columns" == "2" ]] || { echo "ERROR: Fee-category verification failed. Restore from: $backup" >&2; exit 5; }
 
 if [[ "$term_count" == "0" ]]; then apply_migration "20261123_markaz_academic_term_fees.sql"; fi
-term_count="$(table_count "$(sql_names "\${term_tables[@]}")")"
-[[ "$term_count" == "\${#term_tables[@]}" ]] || { echo "ERROR: Academic term-fee verification failed. Restore from: $backup" >&2; exit 5; }
+term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
+[[ "$term_count" == "${#term_tables[@]}" ]] || { echo "ERROR: Academic term-fee verification failed. Restore from: $backup" >&2; exit 5; }
 
 echo "SUCCESS: MARKAZ Finance schema is installed and verified."
 echo "Backup retained at: $backup"
