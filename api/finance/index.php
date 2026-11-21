@@ -401,5 +401,28 @@ function financeAllocatePayment(PDO $pdo,int $paymentId,int $studentId,string $a
         $insert->execute([$paymentId,(int)$invoice['id'],$part]);$update->execute([(int)$invoice['id']]);
         $remainingCents-=$partCents;
     }
-    if($remainingCents>0){ throw new DomainException('The payment exceeds the student’s outstanding invoices. Generate the monthly invoice or correct the amount before confirming.'); }
+    // Continue allocating to academic-term invoices after monthly invoices.
+    $termStmt=$pdo->prepare(
+        "SELECT i.id,(i.amount_due-COALESCE(a.paid,0)) balance
+         FROM finance_term_fee_invoices i
+         LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) a ON a.term_invoice_id=i.id
+         WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-COALESCE(a.paid,0))>0
+         ORDER BY i.due_on,i.id FOR UPDATE"
+    );
+    $termStmt->execute([$studentId]);
+    $termInsert=$pdo->prepare('INSERT INTO finance_term_fee_payments (term_invoice_id,payment_id,amount) VALUES (?,?,?)');
+    $termUpdate=$pdo->prepare(
+        "UPDATE finance_term_fee_invoices i SET status=CASE
+         WHEN (i.amount_due-(SELECT COALESCE(SUM(p.amount),0) FROM finance_term_fee_payments p WHERE p.term_invoice_id=i.id))<=0 THEN 'paid'
+         ELSE 'partial' END WHERE id=?"
+    );
+    foreach($termStmt->fetchAll(PDO::FETCH_ASSOC) as $invoice){
+        if($remainingCents<=0)break;
+        $balanceCents=financeToCents((string)$invoice['balance']);
+        $partCents=min($remainingCents,$balanceCents);
+        $termInsert->execute([(int)$invoice['id'],$paymentId,financeFromCents($partCents)]);
+        $termUpdate->execute([(int)$invoice['id']]);
+        $remainingCents-=$partCents;
+    }
+    if($remainingCents>0){ throw new DomainException('The payment exceeds the student’s outstanding monthly and term invoices.'); }
 }
