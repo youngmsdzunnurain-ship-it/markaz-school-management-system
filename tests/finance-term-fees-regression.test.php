@@ -50,6 +50,8 @@ termFeeCheck(str_contains($html,'js/dashboard.js?v=20261120-staff-messaging-role
 termFeeCheck(str_contains($dashboardJs,'./api/auth/me.php')&&str_contains($dashboardJs,'management_school_fees'),'shared Finance navigation is governed by the same staff-role permissions as School Fees');
 termFeeCheck(!str_contains($js,'financeSidebar')&&!str_contains($js,'closeFinanceSidebar'),'Finance does not register a competing sidebar controller');
 termFeeCheck(str_contains($html,'<footer class="dashboard-footer">')&&str_contains($html,'© 2026 MARKAZ. All Rights Reserved.'),'Finance retains the exact shared dashboard footer');
+termFeeCheck(substr_count($html,'class="metric-icon"')===5,'all five Finance overview summary cards have their own accessible visual icon');
+termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .main-content')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .dashboard-footer'),'Finance explicitly anchors its content shell and footer to the shared dashboard layout');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'!important'),'Finance CSS does not override the shared dashboard shell geometry');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.app{display:block'),'Finance preserves the dashboard grid shell on mobile');
 echo "MARKAZ academic term fee regression checks passed.\n";
