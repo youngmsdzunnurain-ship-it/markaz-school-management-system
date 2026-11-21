@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DB_NAME="${DB_NAME:-markaz_result_system}"
+DB_NAME="${DB_NAME:-}"
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_USER="${DB_USER:-root}"
 DB_PORT="${DB_PORT:-3306}"
 MIGRATIONS="$ROOT/database/migrations"
+
+if [[ -z "$DB_NAME" ]]; then
+    echo "ERROR: DB_NAME must be set explicitly. Refusing to guess a database target." >&2
+    echo "For a disposable clone, use: DB_NAME=markaz_result_system_finance_test bash scripts/install-finance.sh" >&2
+    exit 2
+fi
+if [[ "${DB_NAME,,}" == "markaz_result_system" && "${ALLOW_PRODUCTION_INSTALL:-}" != "YES" ]]; then
+    echo "ERROR: Refusing to modify the live MARKAZ database." >&2
+    echo "Production requires the explicit environment setting ALLOW_PRODUCTION_INSTALL=YES." >&2
+    exit 2
+fi
 
 if [[ ! "$DB_NAME" =~ ^[A-Za-z0-9_]+$ ]]; then
     echo "ERROR: DB_NAME may contain only letters, numbers and underscores." >&2
@@ -86,8 +97,13 @@ fi
 
 echo "Target database: $DB_NAME"
 echo "Finance tables will be added; existing student, class, attendance and result records will not be deleted or rewritten."
-read -r -p "Type INSTALL FINANCE ON TEST DATABASE to continue (anything else cancels): " confirmation
-[[ "$confirmation" == "INSTALL FINANCE ON TEST DATABASE" ]] || { echo "Cancelled. No database changes made."; exit 0; }
+if [[ "${DB_NAME,,}" == "markaz_result_system" ]]; then
+    read -r -p "LIVE PRODUCTION DATABASE. Type INSTALL FINANCE ON PRODUCTION DATABASE to continue: " confirmation
+    [[ "$confirmation" == "INSTALL FINANCE ON PRODUCTION DATABASE" ]] || { echo "Cancelled. No database changes made."; exit 0; }
+else
+    read -r -p "Type INSTALL FINANCE ON TEST DATABASE to continue (anything else cancels): " confirmation
+    [[ "$confirmation" == "INSTALL FINANCE ON TEST DATABASE" ]] || { echo "Cancelled. No database changes made."; exit 0; }
+fi
 
 backup="$HOME/markaz-before-finance-$(date +%Y%m%d-%H%M%S).sql"
 echo "Creating database backup: $backup"
