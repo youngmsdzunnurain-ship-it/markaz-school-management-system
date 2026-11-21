@@ -58,3 +58,75 @@
  .dashboard-footer{padding:16px 20px 24px}
 }
 @media(max-width:640px){.topbar{padding:0 12px;gap:8px}.menu-button{width:38px;height:38px}}
+
+
+/* Finance workspace finishing layer: consistent controls, report layouts and focus states. */
+.finance-page-tools{min-height:38px}
+.finance-page-tools .today{font-size:12px;font-weight:600;letter-spacing:.02em}
+.finance-page-tools .btn{min-height:38px}
+.form-panel>label,.form-panel .inline-fields>label{min-width:0}
+.form-panel input,.form-panel select,.form-panel textarea{
+ min-height:42px;border-radius:10px;background:#fff;border-color:#d9e3d9;
+ transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.form-panel textarea{min-height:82px;line-height:1.5}
+.form-panel input:focus,.form-panel select:focus,.form-panel textarea:focus,
+.search-box input:focus{
+ border-color:var(--mg);box-shadow:0 0 0 3px rgba(31,107,69,.12);outline:0;
+}
+.form-panel input:disabled,.form-panel select:disabled{background:#f0f2ee;color:#87928a;cursor:not-allowed}
+.btn{min-height:38px;transition:background .16s ease,box-shadow .16s ease,transform .16s ease}
+.btn:focus-visible,.nav.nav-link:focus-visible,.action-link:focus-visible{
+ outline:3px solid rgba(201,162,74,.65);outline-offset:2px;
+}
+.btn-primary{box-shadow:0 4px 10px rgba(20,71,47,.12)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(20,71,47,.16)}
+.btn-light:hover{background:#e5eee6}
+.panel-heading{min-width:0}
+.panel-heading>div{min-width:0}
+.panel-heading .eyebrow{display:block;margin-bottom:3px}
+.report-filters{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) auto;
+ align-items:end;gap:12px;margin:4px 0 20px;
+}
+.report-filters label{display:grid;gap:7px;min-width:0;color:#41564a;font-size:12px;font-weight:700}
+.report-filters input{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #d9e3d9;border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.report-filters input:focus{border-color:var(--mg);box-shadow:0 0 0 3px rgba(31,107,69,.12);outline:0}
+.report-metrics{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.report-metrics .metric{min-width:0;padding:16px}
+.report-metrics .metric span{min-height:30px;line-height:1.4}
+.report-metrics .metric strong{font-size:clamp(18px,1.6vw,24px);overflow-wrap:anywhere}
+.table-wrap{border:1px solid #e5ebe2;border-radius:12px}
+.table-wrap table{min-width:620px}
+.table-wrap th{position:sticky;top:0;z-index:1;background:#f1f5ee}
+.table-wrap tbody tr:last-child td{border-bottom:0}
+.table-wrap tbody tr:hover td{background:rgba(31,107,69,.035)}
+.stack-list:empty{display:none}
+.stack-item{background:#fff;border-color:#e3eae1;border-radius:12px;line-height:1.45}
+.stack-item>div{min-width:0}
+.stack-item strong{color:var(--dg)}
+.pill{white-space:nowrap}
+.notice{border:1px solid rgba(31,107,69,.12);box-shadow:0 5px 16px rgba(20,71,47,.05)}
+.info-note{align-items:flex-start;line-height:1.55}
+.sidebar-user-avatar{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;background:#e6d9a4;color:var(--dg);font-size:12px;font-weight:800}
+.sidebar-user .logout-button{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border-radius:10px;color:#e6d9a4;background:rgba(255,255,255,.1)}
+.sidebar-user .logout-button:hover{background:rgba(255,255,255,.2)}
+@media(max-width:1100px){
+ .report-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ body .app>.sidebar{
+  width:min(220px,68vw)!important;max-width:min(220px,68vw)!important;
+ }
+ .sidebar.open{transform:translateX(0)!important}
+ .report-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .report-filters .btn{grid-column:1/-1;justify-self:start}
+}
+@media(max-width:560px){
+ .report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .report-filters{grid-template-columns:minmax(0,1fr)}
+ .report-filters .btn{grid-column:auto;width:100%}
+ .finance-page-tools{align-items:center}
+ .panel{padding:16px}
+ .panel-heading{gap:10px}
+}
