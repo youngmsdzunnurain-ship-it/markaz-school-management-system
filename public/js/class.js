@@ -34,6 +34,7 @@
     let classResults = [];
     let selectedSubjectId = "";
     let resultsLoadSequence = 0;
+    let rosterLoadSequence = 0;
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -225,6 +226,9 @@
 
     async function loadResults({ updateRoster = true } = {}) {
         const requestSequence = ++resultsLoadSequence;
+        // Result refreshes and roster refreshes have independent lifecycles.
+        // A focus refresh must never invalidate the initial roster response.
+        const rosterRequestSequence = updateRoster ? ++rosterLoadSequence : null;
         const response = await fetch(
             `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
             {
@@ -235,20 +239,15 @@
 
         const data = await response.json();
 
-        if (requestSequence !== resultsLoadSequence) {
-            return;
-        }
-
         if (!response.ok || !data.success) {
             throw new Error(
                 data.message || "Unable to load class results."
             );
         }
 
-        resultSubjects = data.subjects || [];
-        classResults = data.results || [];
-
-        if (updateRoster && Array.isArray(data.roster)) {
+        // Apply the newest explicitly requested roster response even when a
+        // newer result-only refresh has superseded this request's result data.
+        if (updateRoster && rosterRequestSequence === rosterLoadSequence && Array.isArray(data.roster)) {
             const incomingRoster = data.roster;
             // Accept the first response even when the class is empty, then ignore
             // transient empty refreshes so the visible roster does not flash away.
@@ -264,6 +263,16 @@
                 }
             }
         }
+
+        // Keep result data protected against out-of-order requests separately
+        // from the roster lifecycle above.
+        if (requestSequence !== resultsLoadSequence) {
+            return;
+        }
+
+        resultSubjects = data.subjects || [];
+        classResults = data.results || [];
+
         if (Array.isArray(data.students)) {
             classStudents = data.students;
             if (resultsStudentCount) {
