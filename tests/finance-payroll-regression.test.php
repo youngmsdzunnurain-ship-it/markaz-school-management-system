@@ -78,7 +78,7 @@ financeRegressionCheck(str_contains($financeStyles, '.report-filters') && str_co
 financeRegressionCheck(!str_contains($financeJs, 'DEMO_MODE') && !str_contains($financeJs, 'demoResponse'), 'Finance does not expose fabricated demo data or demo modes');
 financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo='), 'Finance navigation contains no demo shortcuts or demo URLs');
 financeRegressionCheck(!str_contains($financeStyles, '.finance-demo-nav'), 'Finance stylesheet contains no demo-only styling');
-financeRegressionCheck(str_contains($teacherAttendanceApi, 'financeAttendanceLateMinutes'), 'the Attendance module calculates lateness from the Finance arrival schedule');
+financeRegressionCheck(str_contains($teacherAttendanceApi, 'financeCalculateLateMinutes'), 'the Attendance module calculates lateness from the Finance arrival schedule');
 financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness calculation does not apply a grace period');
 
 financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_contains($financePage, 'id="incomeMixChart"'), 'finance overview provides dedicated cash-flow and income-mix chart regions');
