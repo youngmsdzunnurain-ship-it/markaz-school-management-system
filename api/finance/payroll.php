@@ -16,7 +16,7 @@ try{
 if($action==='save_salary_profile'){
     $staffId=(int)($input['finance_staff_id']??0);$salary=financeMoney($input['base_salary']??'',true);
     $arrival=(string)($input['expected_arrival']??'');$rate=financeMoney($input['lateness_rate_per_minute']??'10',true);$date=(string)($input['effective_from']??'');
-    if($account<1||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/',$arrival)||!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))financeJson(['success'=>false,'message'=>'Complete the salary profile with valid values.'],422);
+    if($staffId<1||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/',$arrival)||!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))financeJson(['success'=>false,'message'=>'Complete the salary profile with valid values.'],422);
     $q=$pdo->prepare('SELECT id FROM finance_staff WHERE id=? AND is_active=1');$q->execute([$staffId]);if(!$q->fetchColumn())financeJson(['success'=>false,'message'=>'Select an active Finance staff member.'],422);
     $futureProfile=$pdo->prepare('SELECT id FROM staff_salary_profiles WHERE finance_staff_id=? AND effective_from>? AND (effective_until IS NULL OR effective_until>=?) LIMIT 1');
     $futureProfile->execute([$staffId,$date,$date]);
@@ -50,7 +50,7 @@ if($action==='calculate'){
          FROM finance_staff s INNER JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
          WHERE s.is_active=1
            AND p.effective_from<=? AND (p.effective_until IS NULL OR p.effective_until>=?)
-         ORDER BY a.name"
+         ORDER BY s.full_name"
     );
     $peopleQuery->execute([$last,$first]);$people=$peopleQuery->fetchAll(PDO::FETCH_ASSOC);
     $profileQuery=$pdo->prepare(
@@ -82,7 +82,7 @@ if($action==='calculate'){
         $attendance->execute([$staffId,$first,$last]);$records=$attendance->fetchAll(PDO::FETCH_ASSOC);$lateMinutes=0;$deductionCents=0;
         foreach($records as $record){$lateMinutes+=(int)$record['late_minutes'];$deductionCents+=financeToCents((string)$record['lateness_deduction']);}
         $applied=min($baseCents,$deductionCents);$netCents=$baseCents-$applied;
-        $insert->execute([$periodId,$accountId,financeFromCents($baseCents),financeFromCents($applied),$lateMinutes,financeFromCents($netCents)]);$itemId=(int)$pdo->lastInsertId();
+        $insert->execute([$periodId,$staffId,financeFromCents($baseCents),financeFromCents($applied),$lateMinutes,financeFromCents($netCents)]);$itemId=(int)$pdo->lastInsertId();
         foreach($records as $record){if(financeToCents((string)$record['lateness_deduction'])>0)$deduct->execute([$itemId,(int)$record['id'],(int)$record['late_minutes'].' minutes late',$record['lateness_deduction']]);}
         $gross+=$baseCents;$totalDeduct+=$applied;$netTotal+=$netCents;
     }
