@@ -68,6 +68,7 @@ jobs:
       - name: Run Finance and attendance regression tests
         run: |
           set -e
+          touch .env
           php tests/finance-migration-installer.test.php
           php tests/finance-payroll-regression.test.php
           php tests/independent-finance-staff-attendance.test.php
