@@ -73,10 +73,6 @@
             </header>
 <div class="page-content">
 
-<div class="finance-page-tools">
-  <span class="today" id="todayLabel"></span>
-  <button id="refreshButton" class="finance-refresh-button" type="button" aria-label="Refresh finance data" title="Refresh finance data"><i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
-</div>
 <div id="notice" class="notice" role="status" hidden></div>
 <section class="tab-panel active" id="tab-overview">
   <div class="welcome-card">
@@ -86,6 +82,7 @@
       <h2><span id="welcomeGreeting">Good morning</span>, <span id="adminName">Administrator</span></h2>
       <p id="dashboardWelcomeDescription">Your school finance workspace is ready. Review collections, expenses and outstanding fees below.</p>
     </div>
+    <div class="finance-welcome-meta"><time class="today" id="todayLabel" aria-label="Today's date"></time></div>
   </div>
   <div class="metric-grid finance-overview-metrics">
     <article class="metric"><div class="metric-topline"><span class="metric-label">Fees collected today</span><span class="metric-icon" aria-hidden="true"><i class="fa-solid fa-wallet"></i></span></div><strong id="feesToday">₦0.00</strong><small>Confirmed student payments</small></article>

@@ -481,3 +481,67 @@ body.finance-workspace-page .sidebar-nav{flex:1 1 auto;min-height:0;overflow-y:a
 @media(max-width:1100px){.finance-overview-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:850px){body.finance-workspace-page .sidebar{height:100dvh}.finance-overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.finance-overview-metrics{gap:9px}.finance-overview-metrics .metric{min-height:112px;padding:12px}.finance-overview-metrics .metric-icon{width:29px;height:29px;flex-basis:29px}.finance-overview-metrics .metric strong{font-size:clamp(16px,4.5vw,20px)}}
+
+
+/* Keep Finance sidebar state in lockstep with the shared dashboard controller. */
+@media(min-width:851px){
+  body.finance-workspace-page.sidebar-desktop-closed .app{
+    grid-template-columns:minmax(0,1fr);
+  }
+  body.finance-workspace-page.sidebar-desktop-closed .sidebar{
+    display:none;
+  }
+}
+@media(max-width:850px){
+  body.finance-workspace-page .sidebar{
+    z-index:1001;
+    transform:translateX(-105%);
+    visibility:hidden;
+    pointer-events:none;
+  }
+  body.finance-workspace-page .sidebar.open{
+    transform:translateX(0);
+    visibility:visible;
+    pointer-events:auto;
+  }
+  body.finance-workspace-page .sidebar-overlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .2s ease,visibility .2s ease;
+  }
+  body.finance-workspace-page .sidebar-overlay.visible{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+}
+body.finance-workspace-page .page-content{padding-top:14px}
+body.finance-workspace-page .welcome-card{
+  margin:0;
+  justify-content:space-between;
+  gap:18px;
+}
+.finance-welcome-meta{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end}
+.finance-welcome-meta .today{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 13px;
+  border:1px solid rgba(255,255,255,.48);
+  border-radius:999px;
+  background:rgba(255,255,255,.96);
+  color:#174a31;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+@media(max-width:560px){
+  body.finance-workspace-page .welcome-card{align-items:flex-start;flex-wrap:wrap;padding:17px 18px}
+  .finance-welcome-meta{width:100%;justify-content:flex-start}
+}

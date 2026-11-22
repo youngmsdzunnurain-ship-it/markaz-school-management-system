@@ -54,4 +54,9 @@ termFeeCheck(substr_count($html,'class="metric-icon"')===5,'all five Finance ove
 termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .main-content')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .dashboard-footer'),'Finance explicitly anchors its content shell and footer to the shared dashboard layout');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'!important'),'Finance CSS does not override the shared dashboard shell geometry');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.app{display:block'),'Finance preserves the dashboard grid shell on mobile');
+termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'body.finance-workspace-page.sidebar-desktop-closed .app'),'desktop sidebar collapse also removes the Finance grid column');
+termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'body.finance-workspace-page .sidebar-overlay.visible')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'z-index:1001'),'mobile sidebar overlay follows the shared controller and stays behind the open sidebar');
+termFeeCheck(!str_contains($html,'id="refreshButton"')&&!str_contains($html,'class="finance-page-tools"'),'unnecessary Finance refresh toolbar is removed');
+termFeeCheck(str_contains($html,'class="finance-welcome-meta"')&&str_contains($html,'id="todayLabel"')&&substr_count($html,'id="todayLabel"')===1,'the current date is placed once inside the welcome header');
+
 echo "MARKAZ academic term fee regression checks passed.\n";
