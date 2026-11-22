@@ -1,0 +1,42 @@
+name: MARKAZ Finance School Fees Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/finance.html'
+      - 'public/js/finance.js'
+      - 'public/css/finance.css'
+      - 'api/finance/**'
+      - 'tests/finance-term-fees-regression.test.php'
+      - '.github/workflows/finance-school-fees-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'public/finance.html'
+      - 'public/js/finance.js'
+      - 'public/css/finance.css'
+      - 'api/finance/**'
+      - 'tests/finance-term-fees-regression.test.php'
+      - '.github/workflows/finance-school-fees-regression.yml'
+
+jobs:
+  school-fees:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Finance PHP syntax
+        run: |
+          php -l api/finance/index.php
+          php -l api/finance/term-fees.php
+          php -l tests/finance-term-fees-regression.test.php
+      - name: Check Finance JavaScript syntax
+        run: node --check public/js/finance.js
+      - name: Run School Fees and Finance regression tests
+        run: php tests/finance-term-fees-regression.test.php
