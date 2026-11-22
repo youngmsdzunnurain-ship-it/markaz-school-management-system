@@ -52,7 +52,7 @@ async function save() {
  busy=true;saveButton.disabled=true;show("Saving attendance register…");
  try {
   const result=await request("./api/attendance/teachers.php",{method:"POST",headers:{"Content-Type":"application/json","X-MARKAZ-Request":"attendance"},body:JSON.stringify({action:"save_register",attendance_date:dateInput.value,records})});
-  show(result.message+" ("+result.saved+" records).");busy=false;await load();
+  busy=false;await load();show(result.message+" ("+result.saved+" records).");
  } catch(error){show(error.message,true);}
  finally{busy=false;saveButton.disabled=!staff.length;}
 }
