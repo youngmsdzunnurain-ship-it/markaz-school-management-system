@@ -39,13 +39,15 @@ ALTER TABLE staff_salary_profiles
     DROP FOREIGN KEY fk_salary_profile_account,
     DROP INDEX idx_salary_profile_account,
     CHANGE COLUMN account_id finance_staff_id BIGINT UNSIGNED NOT NULL,
-    ADD KEY idx_salary_profile_staff (finance_staff_id, is_active, effective_from),
-    ADD CONSTRAINT fk_salary_profile_finance_staff
-        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
+    ADD KEY idx_salary_profile_staff (finance_staff_id, is_active, effective_from);
 
 UPDATE staff_salary_profiles p
 INNER JOIN finance_staff s ON s.staff_number = CONCAT('LEGACY-', p.finance_staff_id)
 SET p.finance_staff_id = s.id;
+
+ALTER TABLE staff_salary_profiles
+    ADD CONSTRAINT fk_salary_profile_finance_staff
+        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
 
 ALTER TABLE staff_attendance
     DROP FOREIGN KEY fk_staff_attendance_account,
@@ -53,22 +55,26 @@ ALTER TABLE staff_attendance
     DROP INDEX uq_staff_attendance_day,
     CHANGE COLUMN account_id finance_staff_id BIGINT UNSIGNED NOT NULL,
     ADD UNIQUE KEY uq_staff_attendance_day (finance_staff_id, attendance_date),
-    ADD KEY idx_staff_attendance_date (attendance_date, status),
-    ADD CONSTRAINT fk_staff_attendance_finance_staff
-        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
+    ADD KEY idx_staff_attendance_date (attendance_date, status);
 
 UPDATE staff_attendance a
 INNER JOIN finance_staff s ON s.staff_number = CONCAT('LEGACY-', a.finance_staff_id)
 SET a.finance_staff_id = s.id;
 
+ALTER TABLE staff_attendance
+    ADD CONSTRAINT fk_staff_attendance_finance_staff
+        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
+
 ALTER TABLE finance_payroll_items
     DROP FOREIGN KEY fk_payroll_item_account,
     DROP INDEX uq_payroll_item_staff,
     CHANGE COLUMN account_id finance_staff_id BIGINT UNSIGNED NOT NULL,
-    ADD UNIQUE KEY uq_payroll_item_staff (payroll_period_id, finance_staff_id),
-    ADD CONSTRAINT fk_payroll_item_finance_staff
-        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
+    ADD UNIQUE KEY uq_payroll_item_staff (payroll_period_id, finance_staff_id);
 
 UPDATE finance_payroll_items i
 INNER JOIN finance_staff s ON s.staff_number = CONCAT('LEGACY-', i.finance_staff_id)
 SET i.finance_staff_id = s.id;
+
+ALTER TABLE finance_payroll_items
+    ADD CONSTRAINT fk_payroll_item_finance_staff
+        FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id) ON DELETE RESTRICT;
