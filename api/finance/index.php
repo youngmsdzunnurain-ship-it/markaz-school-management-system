@@ -165,9 +165,14 @@ try {
         }
         if ($action === 'staff') {
             $rows=$pdo->query(
-                "SELECT a.id,a.name,a.email,p.base_salary,p.expected_arrival,p.lateness_rate_per_minute,p.effective_from,p.is_active
-                 FROM admins a LEFT JOIN staff_salary_profiles p ON p.account_id=a.id AND p.effective_from<=CURDATE() AND (p.effective_until IS NULL OR p.effective_until>=CURDATE())
-                 WHERE a.role='teacher' AND a.is_active=1 ORDER BY a.name"
+                "SELECT s.id,s.staff_number,s.full_name AS name,s.email,s.phone,s.job_title,
+                        s.employment_date,s.is_active,p.base_salary,p.expected_arrival,
+                        p.lateness_rate_per_minute,p.effective_from
+                 FROM finance_staff s
+                 LEFT JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
+                    AND p.effective_from<=CURDATE()
+                    AND (p.effective_until IS NULL OR p.effective_until>=CURDATE())
+                 ORDER BY s.is_active DESC,s.full_name,s.id"
             )->fetchAll(PDO::FETCH_ASSOC);
             financeJson(['success'=>true,'staff'=>$rows]);
         }
@@ -178,6 +183,54 @@ try {
     financeRequireSafePost();
     $input=financeInput();
     $action=(string)($input['action']??'');
+
+    if ($action === 'save_staff') {
+        $name = trim((string)($input['full_name'] ?? ''));
+        $number = strtoupper(trim((string)($input['staff_number'] ?? '')));
+        $jobTitle = trim((string)($input['job_title'] ?? 'Teacher'));
+        $phone = trim((string)($input['phone'] ?? '')) ?: null;
+        $email = strtolower(trim((string)($input['email'] ?? ''))) ?: null;
+        $employmentDate = trim((string)($input['employment_date'] ?? '')) ?: null;
+        $notes = trim((string)($input['notes'] ?? '')) ?: null;
+        if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
+            || ($email !== null && !filter_var($email, FILTER_VALIDATE_EMAIL))
+            || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
+            financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
+        }
+        if ($number === '') $number = 'MZ-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+        if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{0,39}$/', $number)) {
+            financeJson(['success'=>false,'message'=>'Staff number may contain only letters, numbers, hyphens and underscores.'],422);
+        }
+        $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?)');
+        try {
+            $stmt->execute([$number,$name,$phone,$email,$jobTitle,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
+        } catch (PDOException $error) {
+            if ((string)$error->getCode() === '23000') financeJson(['success'=>false,'message'=>'That Finance staff number is already in use.'],409);
+            throw $error;
+        }
+        $id=(int)$pdo->lastInsertId();
+        financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
+        financeJson(['success'=>true,'id'=>$id,'message'=>'Finance staff member added. No academic login account was created.'],201);
+    }
+    if ($action === 'deactivate_staff') {
+        $id=(int)($input['finance_staff_id']??0);
+        if($id<1) financeJson(['success'=>false,'message'=>'Choose a valid Finance staff member.'],422);
+        $stmt=$pdo->prepare('SELECT id,is_active FROM finance_staff WHERE id=? FOR UPDATE');
+        $pdo->beginTransaction();
+        try {
+            $stmt->execute([$id]);$person=$stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$person) { $pdo->rollBack(); financeJson(['success'=>false,'message'=>'Finance staff member not found.'],404); }
+            if((int)$person['is_active']===0) { $pdo->commit(); financeJson(['success'=>true,'message'=>'This Finance staff member is already inactive.']); }
+            $pdo->prepare('UPDATE finance_staff SET is_active=0 WHERE id=?')->execute([$id]);
+            $pdo->prepare('UPDATE staff_salary_profiles SET is_active=0,effective_until=CASE WHEN effective_until IS NULL OR effective_until>CURDATE() THEN CURDATE() ELSE effective_until END WHERE finance_staff_id=? AND is_active=1')->execute([$id]);
+            financeAudit($pdo,'finance_staff_deactivated','finance_staff',$id,[]);
+            $pdo->commit();
+        } catch(Throwable $error) {
+            if($pdo->inTransaction())$pdo->rollBack();
+            throw $error;
+        }
+        financeJson(['success'=>true,'message'=>'Finance staff member deactivated. Historical attendance and payroll records were retained.']);
+    }
 
     if($action==='create_fee_plan'){
         $name=trim((string)($input['name']??''));
