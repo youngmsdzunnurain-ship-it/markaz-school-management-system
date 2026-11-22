@@ -109,7 +109,7 @@
 <section class="tab-panel" id="tab-fees">
  <section class="panel" id="termFeeWorkspace">
  <div class="panel-heading"><div><span class="eyebrow">ACADEMIC BILLING</span><h2>Session &amp; term fees</h2><p class="muted">Set a different fee for each conventional class in each term. Amounts are never copied to another class or student automatically.</p></div></div>
- <div class="two-col">
+ <div class="two-col fee-workspace-grid fee-session-grid">
   <form class="form-panel" id="academicSessionForm">
    <h3>Academic session</h3>
    <label>Session name<input name="session_name" placeholder="2026/2027" pattern="20[0-9]{2}/20[0-9]{2}" required></label>
@@ -140,7 +140,7 @@
  <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
 </section>
 
- <div class="two-col">
+ <div class="two-col fee-workspace-grid fee-plan-grid">
   <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
    <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
    <label>Fee category code<input name="fee_code" required pattern="[a-z0-9][a-z0-9_-]{0,59}" value="general" placeholder="e.g. tuition, feeding, books"><small>Matching categories override by specificity: student, then class, then school.</small></label>
