@@ -92,7 +92,7 @@ financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repea
 financeRegressionCheck(!str_contains($financePage, 'finance-refresh-button') && !str_contains($financeStyles, '.finance-refresh-button'), 'Finance has no redundant refresh toolbar control');
 financeRegressionCheck(str_contains($financeStyles, '.payroll-controls select') && str_contains($financeStyles, '.payroll-controls input'), 'payroll month and scheduled release controls have dedicated polished styling');
 financeRegressionCheck(str_contains($financeStyles, '.report-metrics{grid-template-columns:repeat(5,minmax(0,1fr))'), 'all five financial report summary metrics fit one desktop row');
-financeRegressionCheck(str_contains($financeStyles, '.dashboard-footer{padding:12px 20px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
+financeRegressionCheck(str_contains($financeStyles, '.footer{padding:18px 4px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
 financeRegressionCheck(str_contains($financeStyles, '.topbar{min-height:60px') && str_contains($financeStyles, '.topbar>div{'), 'mobile top navigation is compact and horizontally aligned');
 financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo=overview'), 'Finance overview exposes no demo entry point');
 financeRegressionCheck(str_contains($financeJs, 'Dashboard data could not be loaded:') && str_contains($financeJs, 'role="alert"'), 'dashboard API failures replace indefinite chart loading placeholders with visible errors');
