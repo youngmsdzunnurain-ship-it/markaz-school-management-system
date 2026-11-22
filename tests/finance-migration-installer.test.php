@@ -16,6 +16,7 @@ $guide = file_get_contents($root . '/docs/finance-installation.md');
 $foundation = file_get_contents($root . '/database/migrations/20261121_markaz_finance_payroll.sql');
 $categories = file_get_contents($root . '/database/migrations/20261122_markaz_finance_fee_categories.sql');
 $terms = file_get_contents($root . '/database/migrations/20261123_markaz_academic_term_fees.sql');
+$independentStaff = file_get_contents($root . '/database/migrations/20261124_markaz_independent_finance_staff.sql');
 
 financeInstallerCheck(str_contains($foundation, 'CREATE TABLE finance_fee_payments'), 'foundation migration creates the payment table required by term fees');
 financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'), 'term-fee payment allocation references the foundation payment table');
@@ -35,4 +36,6 @@ financeInstallerCheck(str_contains($installer, 'MARKAZ Finance is already instal
 financeInstallerCheck(!str_contains($installer, '\\${'), 'shell parameter expansions are emitted as valid Bash syntax');
 financeInstallerCheck(str_contains($guide, 'The third migration references finance_fee_payments'), 'installation guide explains the missing dependency');
 financeInstallerCheck(str_contains($categories, 'ADD COLUMN fee_code'), 'fee-category migration remains part of the ordered installation');
+financeInstallerCheck(str_contains($independentStaff, 'CREATE TABLE finance_staff') && str_contains($independentStaff, 'finance_staff_id'), 'independent staff migration creates a separate payroll identity');
+financeInstallerCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql') && str_contains($installer, 'independent_staff_columns'), 'installer applies and verifies the independent staff schema after Finance foundations');
 echo "MARKAZ Finance migration installer regression checks passed.\n";
