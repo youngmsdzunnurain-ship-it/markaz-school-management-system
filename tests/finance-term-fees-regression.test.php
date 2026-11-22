@@ -31,6 +31,13 @@ termFeeCheck(str_contains($api,'different authorised staff member must approve')
 termFeeCheck(str_contains($api,'SELECT id FROM finance_academic_sessions WHERE session_name=? LIMIT 1'),'session audit uses the persisted session ID after insert or update');
 termFeeCheck(str_contains($html,'id="termAdjustmentQueue"')&&str_contains($html,'id="reloadTermAdjustments"'),'Finance UI exposes a separate scholarship approval queue');
 termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading classes')&&str_contains($js,'No active classes found'),'class dropdowns expose loading, available options and empty states');
+termFeeCheck(str_contains($api,"SELECT id,name,'conventional' class_type FROM classes WHERE is_active=1")&&str_contains($api,'arabic_classes WHERE is_active=1'),'class selector endpoint returns live active conventional and Arabic class records');
+termFeeCheck(str_contains($html,'id="feeStudentSelect"')&&str_contains($html,'id="termStudentSelect"'),'monthly fee plans and individual fee adjustments use real selectable student dropdowns');
+termFeeCheck(str_contains($html,'id="feeStudentDetails"')&&str_contains($html,'id="termStudentDetails"'),'selected student details show the linked class and admission identity');
+termFeeCheck(str_contains($js,'loadStudentChoices')&&str_contains($js,'class_name')&&str_contains($js,'arabic_class_name'),'student choices are populated from existing student records and display their linked class details');
+termFeeCheck(str_contains($js,'feeStudentSelect')&&str_contains($js,'termStudentSelect')&&!str_contains($js,"$('#termStudentSearch')?.addEventListener('change',async"),'student selection resolves directly by selected database ID instead of re-searching a combined label');
+termFeeCheck(str_contains($js,'classSelect.disabled=true')&&str_contains($js,'Classes could not load — tap to retry'),'class dropdown reports loading/errors and can retry a failed live class lookup');
+
 termFeeCheck(str_contains($js,'data-approve-term-adjustment')&&str_contains($js,'approve_student_adjustment'),'the approval queue submits a distinct independent approval action');
 termFeeCheck(str_contains($js,'financeStaffLoaded')&&str_contains($js,'Teachers could not load'),'teacher dropdowns handle delayed or failed staff loading');
 termFeeCheck(str_contains($html,'href="css/dashboard-2026.css')&&str_contains($html,'href="css/dashboard-polish-2026.css'),'Finance reuses the established MARKAZ dashboard shell and visual system');
