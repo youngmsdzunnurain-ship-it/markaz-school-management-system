@@ -64,7 +64,7 @@ $save = $pdo->prepare(
 );
 
 $actor = (int)($_SESSION['admin_id'] ?? 0);
-$saved = 0;
+$saved = 0;\n$seenStaffIds = [];
 $pdo->beginTransaction();
 try {
     foreach ($records as $record) {
@@ -73,10 +73,10 @@ try {
         $status = (string)($record['status'] ?? '');
         $actual = trim((string)($record['actual_arrival'] ?? ''));
         $notes = trim((string)($record['notes'] ?? ''));
-        if (!$staffId || $staffId < 1 || !in_array($status,['present','absent','approved_leave','excused'],true) || mb_strlen($notes)>500) {
+        if (!$staffId || $staffId < 1 || isset($seenStaffIds[$staffId]) || !in_array($status,['present','absent','approved_leave','excused'],true) || mb_strlen($notes)>500) {
             throw new InvalidArgumentException('A staff attendance row contains invalid details.');
         }
-        $staffQuery->execute([$staffId]);
+        $seenStaffIds[$staffId] = true;\n        $staffQuery->execute([$staffId]);
         if (!$staffQuery->fetchColumn()) throw new InvalidArgumentException('An inactive or unknown Finance staff member was selected.');
         $profileQuery->execute([$staffId,$date,$date]);
         $profile = $profileQuery->fetch(PDO::FETCH_ASSOC);
@@ -90,7 +90,7 @@ try {
             }
             $actualValue = strlen($actual) === 5 ? $actual . ':00' : $actual;
             $lateMinutes = financeAttendanceLateMinutes((string)$profile['expected_arrival'],$actualValue);
-            $rate = (int)round((float)$profile['lateness_rate_per_minute'] * 100);
+            [$rateWhole,$rateFraction] = array_pad(explode('.', (string)$profile['lateness_rate_per_minute'], 2), 2, '');\n            $rate = ((int)$rateWhole * 100) + (int)str_pad(substr($rateFraction, 0, 2), 2, '0');
             $deduction = number_format(($lateMinutes * $rate) / 100,2,'.','');
         }
         $save->execute([$staffId,$date,$profile['expected_arrival'],$actualValue,$status,$lateMinutes,$deduction,$notes?:null,$actor,$actor]);
