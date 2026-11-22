@@ -655,7 +655,20 @@
 
     let observedToday = localDateValue();
     window.setInterval(() => {
-        const today = localDateValue();
+        // Teacher attendance is a restricted full-attendance workspace.
+    const teacherAttendanceLink = $("teacherAttendanceNav");
+    if (teacherAttendanceLink) {
+        fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { Accept: "application/json" } })
+            .then(response => response.ok ? response.json() : null)
+            .then(data => {
+                if (data?.success && data.admin?.can_access_teacher_attendance === true) {
+                    teacherAttendanceLink.hidden = false;
+                }
+            })
+            .catch(() => { teacherAttendanceLink.hidden = true; });
+    }
+
+    const today = localDateValue();
         if (today === observedToday) return;
         const previousToday = observedToday;
         observedToday = today;
