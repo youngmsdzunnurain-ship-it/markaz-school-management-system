@@ -1,0 +1,118 @@
+/* ==========================================================================
+   MARKAZ right-to-left layout for staff-chat.html: GENERATED FILE. Do not edit by hand.
+   Built by tools/i18n/build-rtl.mjs from the stylesheets this page loads.
+   Applies only when <html dir="rtl"> (Arabic). Hand-written details: rtl-extras.css.
+   ========================================================================== */
+/* ---- css/staff-chat.css ---- */
+html[dir="rtl"] .chat-topbar {
+    background: linear-gradient(-100deg,#12472f,#1b6040)
+}
+html[dir="rtl"] .inbox-panel {
+    border-right: 0;
+    border-left: 1px solid var(--line)
+}
+html[dir="rtl"] .conversation-item {
+    text-align: right
+}
+html[dir="rtl"] .message {
+    border-radius: 14px 14px 4px 14px
+}
+html[dir="rtl"] .message.mine {
+    border-radius: 14px 14px 14px 4px
+}
+html[dir="rtl"] .message time {
+    text-align: left
+}
+html[dir="rtl"] .toast {
+    transform: translate(50%,20px);
+    left: auto;
+    right: 50%
+}
+html[dir="rtl"] .toast.show {
+    transform: translate(50%,0)
+}
+@media (max-width:760px) {
+    html[dir="rtl"] .inbox-panel {
+        border-right: 0;
+        border-left: 0
+    }
+    html[dir="rtl"] .chat-layout.thread-open .thread-heading:before {
+        margin-left: 2px;
+        margin-right: 0
+    }
+}
+html[dir="rtl"] .online-dot {
+    left: 0;
+    right: auto
+}
+html[dir="rtl"] .message-ticks {
+    padding-left: 3px;
+    padding-right: 0
+}
+/* ---- css/staff-chat-polish-2026.css ---- */
+html[dir="rtl"] .chat-topbar {
+    background: linear-gradient(-90deg, #08261a 0%, #0f3b29 55%, #165a3b 100%)
+}
+html[dir="rtl"] .brand-mark {
+    background: linear-gradient(-135deg, #fbefc4, #e6c26a)
+}
+html[dir="rtl"] .inbox-panel {
+    border-right: 0;
+    background: linear-gradient(-180deg, #ffffff 0%, #f6faf6 100%);
+    border-left: 0
+}
+html[dir="rtl"] .new-chat {
+    background: linear-gradient(-135deg, #f3d98a, #c9a24a)
+}
+html[dir="rtl"] .conversation-item.active {
+    background: linear-gradient(-90deg, #e1f0e6, #edf6ef);
+    box-shadow: inset -3px 0 0 #c9a24a
+}
+html[dir="rtl"] .person-avatar,
+html[dir="rtl"] .directory-avatar {
+    background: linear-gradient(-135deg, #2b8a58, #145035)
+}
+html[dir="rtl"] .unread {
+    background: linear-gradient(-135deg, #3fc079, #1e7049)
+}
+html[dir="rtl"] .message {
+    border-radius: 14px 14px 3px 14px
+}
+html[dir="rtl"] .message.mine {
+    background: linear-gradient(-135deg, #dcf5e3, #cdeed9);
+    border-radius: 14px 14px 14px 3px
+}
+html[dir="rtl"] .message:not(.mine)::after {
+    left: auto;
+    right: -6px
+}
+html[dir="rtl"] .message.mine::after {
+    left: -6px;
+    right: auto
+}
+html[dir="rtl"] .composer button {
+    background: linear-gradient(-135deg, #1e8a56, #145035)
+}
+html[dir="rtl"] .welcome-icon {
+    background: linear-gradient(-135deg, #f3d98a, #c9a24a)
+}
+html[dir="rtl"] .primary-button {
+    background: linear-gradient(-135deg, #1e8a56, #145035)
+}
+html[dir="rtl"] .staff-direct-chat {
+    background: linear-gradient(-135deg, #f3d98a, #d9b45a)
+}
+html[dir="rtl"][dir="rtl"] .conversation-item {
+    text-align: left
+}
+@media screen {
+    html[dir="rtl"][data-theme="dark"] .inbox-panel {
+        background: linear-gradient(-180deg, #1b2620, #17211c)
+    }
+    html[dir="rtl"][data-theme="dark"] .conversation-item.active {
+        background: linear-gradient(-90deg, #223a2d, #1f2f26)
+    }
+    html[dir="rtl"][data-theme="dark"] .message.mine {
+        background: linear-gradient(-135deg, #1d5a3b, #174a31)
+    }
+}

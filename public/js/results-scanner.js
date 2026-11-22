@@ -295,7 +295,8 @@
     }
 
     const button = document.getElementById("openResultsScanner");
-    const panel = $("[data-scanner-panel]");
+    // The panel attribute is on the root section itself, so querySelector() inside the root cannot find it.
+    const panel = root.matches("[data-scanner-panel]") ? root : $("[data-scanner-panel]");
     button?.addEventListener("click", () => {
         panel.hidden = !panel.hidden;
         if (!panel.hidden) panel.scrollIntoView({behavior:"smooth", block:"start"});

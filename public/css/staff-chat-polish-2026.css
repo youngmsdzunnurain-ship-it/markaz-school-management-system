@@ -1,0 +1,148 @@
+/* ==========================================================================
+   MARKAZ staff chat: a warmer, WhatsApp-style look in green / gold / white.
+   Additive. Loaded after staff-chat.css. Visual only: the chat logic is untouched.
+   No animation is used on messages or the list, because they are redrawn on every refresh.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Amiri:wght@400;700&display=swap');
+
+:root {
+    --chat-wall: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22 viewBox=%220 0 240 240%22%3E%3Cg fill=%22none%22 stroke=%22%23145035%22 stroke-opacity=%22.11%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cg transform=%22translate(34 34) rotate(-12)%22%3E%3Cpath d=%22M4 -13 A14 14 0 1 0 12 7 A11 11 0 1 1 4 -13 Z%22/%3E%3Cpolygon points=%2217.0,-16.0 18.1,-13.5 20.8,-13.2 18.7,-11.4 19.4,-8.8 17.0,-10.2 14.6,-8.8 15.3,-11.4 13.2,-13.2 15.9,-13.5%22/%3E%3C/g%3E%3Cg transform=%22translate(104 30) rotate(8)%22%3E%3Cpath d=%22M-16 -9 Q-8 -13 0 -9 Q8 -13 16 -9 V9 Q8 5 0 9 Q-8 5 -16 9 Z M0 -9 V9%22/%3E%3C/g%3E%3Cg transform=%22translate(172 36) rotate(-6)%22%3E%3Cpath d=%22M-7 -10 H7 M-5 -10 V-14 H5 V-10 M-9 -10 Q-12 2 -8 10 H8 Q12 2 9 -10 M0 -10 V10 M-9 0 H9 M0 10 V15%22/%3E%3C/g%3E%3Cg transform=%22translate(214 28) rotate(0)%22%3E%3Cpolygon points=%220.0,-9.0 1.5,-3.7 6.4,-6.4 3.7,-1.5 9.0,0.0 3.7,1.5 6.4,6.4 1.5,3.7 0.0,9.0 -1.5,3.7 -6.4,6.4 -3.7,1.5 -9.0,0.0 -3.7,-1.5 -6.4,-6.4 -1.5,-3.7%22/%3E%3C/g%3E%3Cg transform=%22translate(58 100) rotate(10)%22%3E%3Cpath d=%22M-12 12 L-8 3 L8 -13 L13 -8 L-3 8 Z M-8 3 L-3 8 M5 -10 L10 -5%22/%3E%3C/g%3E%3Cg transform=%22translate(128 96) rotate(0)%22%3E%3Cpath d=%22M-14 12 V4 Q-14 -8 0 -14 Q14 -8 14 4 V12 Z M0 -14 V-20 M-14 12 H14%22/%3E%3Ccircle cx=%220%22 cy=%22-22%22 r=%222%22/%3E%3C/g%3E%3Cg transform=%22translate(198 102) rotate(-10)%22%3E%3Cpath d=%22M-13 -10 H13 Q15 -10 15 -8 V6 Q15 8 13 8 H-2 L-9 14 V8 H-13 Q-15 8 -15 6 V-8 Q-15 -10 -13 -10 Z M-8 -3 H8 M-8 2 H3%22/%3E%3C/g%3E%3Cg transform=%22translate(30 170) rotate(6)%22%3E%3Crect x=%22-9%22 y=%22-9%22 width=%2218%22 height=%2218%22 rx=%221%22/%3E%3Crect x=%22-9%22 y=%22-9%22 width=%2218%22 height=%2218%22 rx=%221%22 transform=%22rotate(45)%22/%3E%3C/g%3E%3Cg transform=%22translate(92 172) rotate(-14)%22%3E%3Cpath d=%22M-12 12 Q-12 -8 12 -12 Q12 8 -12 12 Z M-12 12 L8 -8%22/%3E%3C/g%3E%3Cg transform=%22translate(152 166) rotate(8)%22%3E%3Crect x=%22-14%22 y=%22-9%22 width=%2228%22 height=%2218%22 rx=%222%22/%3E%3Cpath d=%22M-14 -8 L0 3 L14 -8%22/%3E%3C/g%3E%3Cg transform=%22translate(212 176) rotate(0)%22%3E%3Ccircle cx=%2212.5%22 cy=%226.4%22 r=%222.3%22/%3E%3Ccircle cx=%229.9%22 cy=%229.9%22 r=%222.3%22/%3E%3Ccircle cx=%226.4%22 cy=%2212.5%22 r=%222.3%22/%3E%3Ccircle cx=%222.2%22 cy=%2213.8%22 r=%222.3%22/%3E%3Ccircle cx=%22-2.2%22 cy=%2213.8%22 r=%222.3%22/%3E%3Ccircle cx=%22-6.4%22 cy=%2212.5%22 r=%222.3%22/%3E%3Ccircle cx=%22-9.9%22 cy=%229.9%22 r=%222.3%22/%3E%3Ccircle cx=%22-12.5%22 cy=%226.4%22 r=%222.3%22/%3E%3Cpath d=%22M0 14 V22%22/%3E%3Ccircle cx=%220%22 cy=%2224%22 r=%222.3%22/%3E%3C/g%3E%3C/g%3E%3Cg fill=%22%23145035%22 fill-opacity=%22.11%22%3E%3Ccircle cx=%2260%22 cy=%2260%22 r=%221.3%22/%3E%3Ccircle cx=%22155%22 cy=%2260%22 r=%221.3%22/%3E%3Ccircle cx=%22110%22 cy=%22128%22 r=%221.3%22/%3E%3Ccircle cx=%2230%22 cy=%22130%22 r=%221.3%22/%3E%3Ccircle cx=%22185%22 cy=%22135%22 r=%221.3%22/%3E%3Ccircle cx=%2270%22 cy=%22205%22 r=%221.3%22/%3E%3Ccircle cx=%22130%22 cy=%22215%22 r=%221.3%22/%3E%3Ccircle cx=%22190%22 cy=%22215%22 r=%221.3%22/%3E%3Ccircle cx=%2210%22 cy=%2295%22 r=%221.3%22/%3E%3Ccircle cx=%22225%22 cy=%2275%22 r=%221.3%22/%3E%3C/g%3E%3C/svg%3E");
+    --chat-wall-base: #e6eee2;
+}
+
+body { background: radial-gradient(120% 60% at 50% 0%, #eaf2e8 0%, #f4f7f2 60%); }
+
+/* ---------------------------------------------------------------- top bar */
+.chat-topbar {
+    min-height: 72px; height: auto;
+    background: linear-gradient(90deg, #08261a 0%, #0f3b29 55%, #165a3b 100%);
+    border-bottom: 1px solid rgba(230, 194, 106, .6);
+    box-shadow: 0 10px 30px rgba(6, 32, 21, .28);
+}
+.brand-mark { background: linear-gradient(135deg, #fbefc4, #e6c26a); font-family: "Playfair Display", Georgia, serif; box-shadow: 0 0 0 3px rgba(230, 194, 106, .25); }
+.current-staff { padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(230, 194, 106, .45); background: rgba(255, 255, 255, .08); color: #fff; font-weight: 600; text-transform: capitalize; }
+.back-link { padding: 8px 16px; border: 1px solid rgba(230, 194, 106, .55); border-radius: 999px; background: rgba(255, 255, 255, .09); color: #fff; }
+.top-actions { margin-inline-end: 226px; }
+
+/* the language + theme buttons sit in the top bar on this page (logical sides, so they also work in Arabic) */
+.mk-lang-floating { inset-block-start: 16px !important; inset-block-end: auto !important; inset-inline-start: auto !important; inset-inline-end: 72px !important; }
+.mk-theme-toggle.mk-theme-toggle-floating { top: 13px !important; bottom: auto !important; right: auto !important; left: auto !important; inset-inline-end: 16px !important; }
+@media (max-width: 760px) {
+    .top-actions { margin-inline-end: 0; gap: 10px; }
+    .current-staff { display: none; }
+    .brand > span:not(.brand-mark) { display: none; }
+    .mk-lang-floating { inset-block-start: 17px !important; inset-inline-end: 142px !important; padding: 3px; }
+    .mk-lang-floating .mk-lang-seg button { min-width: 44px !important; padding: 5px 8px !important; font-size: 12px; }
+    .mk-theme-toggle.mk-theme-toggle-floating { top: 17px !important; inset-inline-end: 100px !important; width: 38px; height: 38px; }
+}
+
+/* messages, names and previews are typed by people in either language: each one reads in its own direction */
+.message-body, .conversation-copy p, .conversation-copy strong, .thread-title h2, .message-author { unicode-bidi: plaintext; text-align: start; }
+
+/* ---------------------------------------------------------------- the frame */
+.chat-layout {
+    border: 0; border-radius: 22px;
+    box-shadow: 0 24px 60px rgba(16, 70, 44, .16), 0 0 0 1px rgba(20, 80, 53, .08);
+}
+
+/* ---------------------------------------------------------------- contacts */
+.inbox-panel { background: linear-gradient(180deg, #ffffff 0%, #f6faf6 100%); border-inline-end: 1px solid rgba(20, 80, 53, .10); border-right: 0; }
+.inbox-heading h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 27px; }
+.eyebrow { letter-spacing: .22em; }
+.new-chat { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #f3d98a, #c9a24a); color: #0e3a27; box-shadow: 0 8px 18px rgba(201, 162, 74, .4); transition: scale .25s ease, box-shadow .25s ease; }
+.new-chat:hover { scale: 1.08; box-shadow: 0 12px 24px rgba(201, 162, 74, .5); }
+.search-box { height: 42px; border: 0; border-radius: 999px; background: #eef3ee; box-shadow: inset 0 1px 3px rgba(20, 80, 53, .10); transition: box-shadow .2s ease, background .2s ease; }
+.search-box:focus-within { background: #fff; box-shadow: 0 0 0 2px rgba(30, 112, 73, .35); }
+.conversation-list { padding: 2px 10px 14px; }
+.conversation-item { position: relative; padding: 11px 12px; border-radius: 14px; transition: background .2s ease, translate .2s ease; }
+.conversation-item:hover { background: #eef5ef; translate: 2px 0; }
+.conversation-item.active { background: linear-gradient(90deg, #e1f0e6, #edf6ef); box-shadow: inset 3px 0 0 #c9a24a; }
+.person-avatar, .directory-avatar { background: linear-gradient(135deg, #2b8a58, #145035); color: #fff; box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px rgba(201, 162, 74, .65); }
+.conversation-copy strong { font-size: 13.5px; color: #123d2a; }
+.conversation-copy p { font-size: 11.5px; }
+.conversation-meta time { font-size: 10px; font-weight: 600; }
+.unread { background: linear-gradient(135deg, #3fc079, #1e7049); box-shadow: 0 3px 8px rgba(30, 112, 73, .4); font-weight: 800; }
+.empty-note { margin: 18px 12px; padding: 14px 16px; border-radius: 14px; background: #f1f6f1; color: #6b7d73; text-align: center; font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- the conversation + wallpaper */
+.thread-panel {
+    background-color: var(--chat-wall-base);
+    background-image: var(--chat-wall);
+    background-size: 240px 240px;
+}
+.thread-heading {
+    background: rgba(255, 255, 255, .94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(20, 80, 53, .10);
+    box-shadow: 0 6px 18px rgba(16, 70, 44, .06);
+    position: relative; z-index: 2;
+}
+.thread-title h2 { font-family: "Playfair Display", Georgia, serif; font-size: 16.5px; }
+.message-list { background: transparent !important; padding-block: 22px 26px; gap: 8px; }
+.message-day { align-self: center; padding: 4px 14px; border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: 0 1px 3px rgba(0, 0, 0, .10); color: #5f7468; font-weight: 700; }
+.message {
+    position: relative;
+    background: #ffffff;
+    border-radius: 14px 14px 14px 3px;
+    box-shadow: 0 1px 2px rgba(16, 40, 28, .16);
+    padding: 9px 13px 7px;
+}
+.message.mine { background: linear-gradient(135deg, #dcf5e3, #cdeed9); border-radius: 14px 14px 3px 14px; }
+.message::after { content: ""; position: absolute; bottom: 0; width: 9px; height: 12px; background: inherit; }
+.message:not(.mine)::after { left: -6px; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+.message.mine::after { right: -6px; clip-path: polygon(0 0, 100% 100%, 0 100%); }
+.message-author { font-size: 11px; color: #1e7049; }
+.message-body { font-size: 13.5px; color: #1b2e24; }
+
+/* ---------------------------------------------------------------- the message box */
+.composer { align-items: center; padding: 12px 18px 6px; background: rgba(255, 255, 255, .96); border-top: 1px solid rgba(20, 80, 53, .10); }
+.composer textarea { min-height: 46px; border: 0; border-radius: 24px; padding: 13px 18px; background: #eef3ee; box-shadow: inset 0 1px 3px rgba(20, 80, 53, .10); }
+.composer textarea:focus { background: #fff; box-shadow: 0 0 0 2px rgba(30, 112, 73, .35); }
+.composer button { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #1e8a56, #145035); box-shadow: 0 8px 18px rgba(20, 80, 53, .35); transition: scale .2s ease, box-shadow .2s ease; }
+.composer button:hover:not(:disabled) { scale: 1.08; box-shadow: 0 12px 22px rgba(20, 80, 53, .45); }
+.composer-hint { background: rgba(255, 255, 255, .96); margin: 0; padding: 0 18px 10px; text-align: center; font-size: 10.5px; color: #7a8a80; }
+
+/* ---------------------------------------------------------------- welcome (nothing open yet) */
+.thread-welcome { background: rgba(255, 255, 255, .92); border-radius: 24px; box-shadow: 0 18px 44px rgba(16, 70, 44, .14); backdrop-filter: blur(6px); }
+.welcome-icon { background: linear-gradient(135deg, #f3d98a, #c9a24a); color: #0e3a27; box-shadow: 0 12px 28px rgba(201, 162, 74, .45); }
+.thread-welcome h2 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; }
+.primary-button { background: linear-gradient(135deg, #1e8a56, #145035); box-shadow: 0 8px 18px rgba(20, 80, 53, .3); }
+
+/* ---------------------------------------------------------------- new message window */
+.new-chat-dialog { border: 0; border-radius: 24px; padding: 0; box-shadow: 0 30px 80px rgba(6, 32, 21, .45); overflow: hidden; }
+.new-chat-dialog::backdrop { background: rgba(8, 32, 22, .55); backdrop-filter: blur(4px); }
+.dialog-heading h2 { font-family: "Playfair Display", Georgia, serif; }
+.staff-option { border-radius: 12px; transition: background .2s ease; }
+.staff-option:hover { background: #eef5ef; }
+.staff-direct-chat { background: linear-gradient(135deg, #f3d98a, #d9b45a); color: #3a2a00; }
+.dialog-search { border-radius: 12px; }
+
+/* ---------------------------------------------------------------- Arabic */
+html[lang="ar"] .inbox-heading h1, html[lang="ar"] .thread-title h2, html[lang="ar"] .thread-welcome h2, html[lang="ar"] .dialog-heading h2 { font-family: "Amiri", "Cairo", serif !important; }
+html[dir="rtl"] .conversation-item { text-align: right; }
+
+/* ---------------------------------------------------------------- dark mode */
+@media screen {
+    html[data-theme="dark"] { --chat-wall: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22 viewBox=%220 0 240 240%22%3E%3Cg fill=%22none%22 stroke=%22%23ffffff%22 stroke-opacity=%22.07%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cg transform=%22translate(34 34) rotate(-12)%22%3E%3Cpath d=%22M4 -13 A14 14 0 1 0 12 7 A11 11 0 1 1 4 -13 Z%22/%3E%3Cpolygon points=%2217.0,-16.0 18.1,-13.5 20.8,-13.2 18.7,-11.4 19.4,-8.8 17.0,-10.2 14.6,-8.8 15.3,-11.4 13.2,-13.2 15.9,-13.5%22/%3E%3C/g%3E%3Cg transform=%22translate(104 30) rotate(8)%22%3E%3Cpath d=%22M-16 -9 Q-8 -13 0 -9 Q8 -13 16 -9 V9 Q8 5 0 9 Q-8 5 -16 9 Z M0 -9 V9%22/%3E%3C/g%3E%3Cg transform=%22translate(172 36) rotate(-6)%22%3E%3Cpath d=%22M-7 -10 H7 M-5 -10 V-14 H5 V-10 M-9 -10 Q-12 2 -8 10 H8 Q12 2 9 -10 M0 -10 V10 M-9 0 H9 M0 10 V15%22/%3E%3C/g%3E%3Cg transform=%22translate(214 28) rotate(0)%22%3E%3Cpolygon points=%220.0,-9.0 1.5,-3.7 6.4,-6.4 3.7,-1.5 9.0,0.0 3.7,1.5 6.4,6.4 1.5,3.7 0.0,9.0 -1.5,3.7 -6.4,6.4 -3.7,1.5 -9.0,0.0 -3.7,-1.5 -6.4,-6.4 -1.5,-3.7%22/%3E%3C/g%3E%3Cg transform=%22translate(58 100) rotate(10)%22%3E%3Cpath d=%22M-12 12 L-8 3 L8 -13 L13 -8 L-3 8 Z M-8 3 L-3 8 M5 -10 L10 -5%22/%3E%3C/g%3E%3Cg transform=%22translate(128 96) rotate(0)%22%3E%3Cpath d=%22M-14 12 V4 Q-14 -8 0 -14 Q14 -8 14 4 V12 Z M0 -14 V-20 M-14 12 H14%22/%3E%3Ccircle cx=%220%22 cy=%22-22%22 r=%222%22/%3E%3C/g%3E%3Cg transform=%22translate(198 102) rotate(-10)%22%3E%3Cpath d=%22M-13 -10 H13 Q15 -10 15 -8 V6 Q15 8 13 8 H-2 L-9 14 V8 H-13 Q-15 8 -15 6 V-8 Q-15 -10 -13 -10 Z M-8 -3 H8 M-8 2 H3%22/%3E%3C/g%3E%3Cg transform=%22translate(30 170) rotate(6)%22%3E%3Crect x=%22-9%22 y=%22-9%22 width=%2218%22 height=%2218%22 rx=%221%22/%3E%3Crect x=%22-9%22 y=%22-9%22 width=%2218%22 height=%2218%22 rx=%221%22 transform=%22rotate(45)%22/%3E%3C/g%3E%3Cg transform=%22translate(92 172) rotate(-14)%22%3E%3Cpath d=%22M-12 12 Q-12 -8 12 -12 Q12 8 -12 12 Z M-12 12 L8 -8%22/%3E%3C/g%3E%3Cg transform=%22translate(152 166) rotate(8)%22%3E%3Crect x=%22-14%22 y=%22-9%22 width=%2228%22 height=%2218%22 rx=%222%22/%3E%3Cpath d=%22M-14 -8 L0 3 L14 -8%22/%3E%3C/g%3E%3Cg transform=%22translate(212 176) rotate(0)%22%3E%3Ccircle cx=%2212.5%22 cy=%226.4%22 r=%222.3%22/%3E%3Ccircle cx=%229.9%22 cy=%229.9%22 r=%222.3%22/%3E%3Ccircle cx=%226.4%22 cy=%2212.5%22 r=%222.3%22/%3E%3Ccircle cx=%222.2%22 cy=%2213.8%22 r=%222.3%22/%3E%3Ccircle cx=%22-2.2%22 cy=%2213.8%22 r=%222.3%22/%3E%3Ccircle cx=%22-6.4%22 cy=%2212.5%22 r=%222.3%22/%3E%3Ccircle cx=%22-9.9%22 cy=%229.9%22 r=%222.3%22/%3E%3Ccircle cx=%22-12.5%22 cy=%226.4%22 r=%222.3%22/%3E%3Cpath d=%22M0 14 V22%22/%3E%3Ccircle cx=%220%22 cy=%2224%22 r=%222.3%22/%3E%3C/g%3E%3C/g%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%22.07%22%3E%3Ccircle cx=%2260%22 cy=%2260%22 r=%221.3%22/%3E%3Ccircle cx=%22155%22 cy=%2260%22 r=%221.3%22/%3E%3Ccircle cx=%22110%22 cy=%22128%22 r=%221.3%22/%3E%3Ccircle cx=%2230%22 cy=%22130%22 r=%221.3%22/%3E%3Ccircle cx=%22185%22 cy=%22135%22 r=%221.3%22/%3E%3Ccircle cx=%2270%22 cy=%22205%22 r=%221.3%22/%3E%3Ccircle cx=%22130%22 cy=%22215%22 r=%221.3%22/%3E%3Ccircle cx=%22190%22 cy=%22215%22 r=%221.3%22/%3E%3Ccircle cx=%2210%22 cy=%2295%22 r=%221.3%22/%3E%3Ccircle cx=%22225%22 cy=%2275%22 r=%221.3%22/%3E%3C/g%3E%3C/svg%3E"); --chat-wall-base: #101a15; }
+    html[data-theme="dark"] body { background: #0c1410; }
+    html[data-theme="dark"] .chat-layout { box-shadow: 0 24px 60px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .06); }
+    html[data-theme="dark"] .inbox-panel { background: linear-gradient(180deg, #1b2620, #17211c); border-color: rgba(255, 255, 255, .07); }
+    html[data-theme="dark"] .search-box, html[data-theme="dark"] .composer textarea { background: #243029; box-shadow: inset 0 1px 3px rgba(0, 0, 0, .4); }
+    html[data-theme="dark"] .search-box:focus-within, html[data-theme="dark"] .composer textarea:focus { background: #2b3a31; }
+    html[data-theme="dark"] .conversation-item:hover { background: #223029; }
+    html[data-theme="dark"] .conversation-item.active { background: linear-gradient(90deg, #223a2d, #1f2f26); }
+    html[data-theme="dark"] .conversation-copy strong, html[data-theme="dark"] .inbox-heading h1, html[data-theme="dark"] .thread-title h2, html[data-theme="dark"] .thread-welcome h2 { color: #eaf3ee; }
+    html[data-theme="dark"] .empty-note { background: #212d26; color: #9bb0a3; }
+    html[data-theme="dark"] .thread-heading { background: rgba(27, 38, 32, .95); border-color: rgba(255, 255, 255, .07); }
+    html[data-theme="dark"] .message { background: #202c25; box-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+    html[data-theme="dark"] .message.mine { background: linear-gradient(135deg, #1d5a3b, #174a31); }
+    html[data-theme="dark"] .message-body { color: #eef6f1; }
+    html[data-theme="dark"] .message-author { color: #7fd3a1; }
+    html[data-theme="dark"] .message time { color: #9db3a5; }
+    html[data-theme="dark"] .message-day { background: rgba(32, 44, 37, .95); color: #b3c7bb; }
+    html[data-theme="dark"] .composer, html[data-theme="dark"] .composer-hint { background: rgba(27, 38, 32, .97); border-color: rgba(255, 255, 255, .07); }
+    html[data-theme="dark"] .thread-welcome { background: rgba(27, 38, 32, .93); }
+    html[data-theme="dark"] .new-chat-dialog { background: #1b2620; color: #eaf3ee; }
+    html[data-theme="dark"] .staff-option:hover { background: #243029; }
+}
+@media print { .chat-topbar, .composer, .mk-lang-floating, .mk-theme-toggle-floating { display: none !important; } }

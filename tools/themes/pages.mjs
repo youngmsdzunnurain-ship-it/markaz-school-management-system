@@ -10,7 +10,7 @@ export const PUBLIC = path.join(process.cwd(), 'public');
 
 export const STAFF = [
   'dashboard.html', 'students.html', 'classes.html', 'class.html', 'settings.html', 'attendance.html',
-  'school-fees.html', 'online-class.html', 'subjects/index.html', 'class-subjects/index.html'
+  'school-fees.html', 'online-class.html', 'subjects/index.html', 'class-subjects/index.html', 'staff-chat.html'
 ];
 export const AUTH = [
   'login.html', 'teacher-login.html', 'management-login.html', 'exam-officer-login.html',
