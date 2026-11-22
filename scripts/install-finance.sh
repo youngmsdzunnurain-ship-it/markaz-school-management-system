@@ -90,8 +90,18 @@ if [[ "$term_count" != "0" && "$term_count" != "${#term_tables[@]}" ]]; then
     echo "ERROR: Partial academic term-fee schema detected ($term_count/${#term_tables[@]} tables). No changes made." >&2
     exit 3
 fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" ]]; then
-    echo "MARKAZ Finance is already installed: foundation, fee categories and term fees are present."
+independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+if [[ "$independent_staff_tables" == "0" && "$independent_staff_columns" != "0" ]]; then
+    echo "ERROR: Partial independent Finance staff migration detected. No changes made." >&2
+    exit 3
+fi
+if [[ "$independent_staff_tables" == "1" && "$independent_staff_columns" != "4" ]]; then
+    echo "ERROR: Partial independent Finance staff migration detected ($independent_staff_columns/4 required columns). No changes made." >&2
+    exit 3
+fi
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" ]]; then
+    echo "MARKAZ Finance is already installed: foundation, fee categories, term fees and independent Finance staff are present."
     exit 0
 fi
 
