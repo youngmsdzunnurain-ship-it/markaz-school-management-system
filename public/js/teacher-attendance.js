@@ -62,7 +62,8 @@ $("loadTeacherAttendance").addEventListener("click",load);
 saveButton.addEventListener("click",save);
 dateInput.addEventListener("change",load);
 request("./api/auth/me.php").then(data=>{
- const admin=data.admin||{};const financeLink=$("teacherFinanceLink");if(financeLink)financeLink.hidden=!(admin.role==="admin"||(admin.role==="management"&&admin.management_permissions?.school_fees===true));\n if(admin.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
+ const admin=data.admin||{};const financeLink=$("teacherFinanceLink");if(financeLink)financeLink.hidden=!(admin.role==="admin"||(admin.role==="management"&&admin.management_permissions?.school_fees===true));
+ if(admin.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
  load();
 }).catch(error=>show(error.message,true));
 })();
