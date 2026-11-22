@@ -40,6 +40,7 @@ financeRegressionCheck(financeProrateMonthlySalary('20000.00', 15, 30) === '1000
 financeRegressionCheck(financeMoney('1250.5') === '1250.50', 'money input is normalised to two decimal places');
 
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261121_markaz_finance_payroll.sql');
+$feeCategoriesMigration = file_get_contents(__DIR__ . '/../database/migrations/20261122_markaz_finance_fee_categories.sql');
 $independentStaffMigration = file_get_contents(__DIR__ . '/../database/migrations/20261124_markaz_independent_finance_staff.sql');
 $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
@@ -84,7 +85,7 @@ financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness cal
 financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_contains($financePage, 'id="incomeMixChart"'), 'finance overview provides dedicated cash-flow and income-mix chart regions');
 financeRegressionCheck(str_contains($financeJs, 'renderCashflowChart') && str_contains($financeJs, 'renderIncomeMixChart'), 'finance overview renders responsive visual analytics from returned data');
 financeRegressionCheck(str_contains($financeApi, 'financeSelectApplicableFeePlans') && str_contains($financeApi, 'fee_code'), 'invoice generation applies one winning plan per fee category');
-financeRegressionCheck(str_contains($migration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
+financeRegressionCheck(str_contains($feeCategoriesMigration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
 financeRegressionCheck(str_contains($financeApi, 'monthly_trend') && str_contains($financeApi, 'income_mix'), 'finance dashboard returns database-backed monthly trend and income composition');
 financeRegressionCheck(str_contains($financeStyles, '.finance-chart-grid') && str_contains($financeStyles, '.chart-legend'), 'finance analytics charts receive responsive and accessible styling');
 financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repeat(5,minmax(0,1fr))') && str_contains($financeStyles, '@media(max-width:850px)'), 'five finance overview metrics share one desktop row and adapt on mobile');
