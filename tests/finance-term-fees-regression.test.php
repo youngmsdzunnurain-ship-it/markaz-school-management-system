@@ -29,7 +29,7 @@ termFeeCheck(str_contains($api,'SELECT id FROM finance_academic_sessions WHERE s
 termFeeCheck(str_contains($html,'id="termAdjustmentQueue"')&&str_contains($html,'id="reloadTermAdjustments"'),'Finance UI exposes a separate scholarship approval queue');
 termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading classes')&&str_contains($js,'No active classes found'),'class dropdowns expose loading, available options and empty states');
 termFeeCheck(str_contains($js,'data-approve-term-adjustment')&&str_contains($js,'approve_student_adjustment'),'the approval queue submits a distinct independent approval action');
-termFeeCheck(str_contains($js,'financeStaffLoaded')&&str_contains($js,'Teachers could not load'),'teacher dropdowns handle delayed or failed staff loading');
+termFeeCheck(str_contains($js,'No active Finance staff')&&str_contains($js,'Finance staff could not load'),'teacher dropdowns handle delayed or failed staff loading');
 termFeeCheck(str_contains($html,'href="css/dashboard-2026.css')&&str_contains($html,'href="css/dashboard-polish-2026.css'),'Finance reuses the established MARKAZ dashboard shell and visual system');
 termFeeCheck(!str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'Finance shell: remove the unintended white seam'),'Finance does not introduce a competing custom sidebar/topbar geometry override');
 termFeeCheck(!str_contains($js,'DEMO_')&&!str_contains($js,'demoResponse')&&!str_contains($js,'Teacher Demo'),'finance JavaScript contains no fabricated demo students, receipts, expenses or payroll');
@@ -46,7 +46,7 @@ termFeeCheck(str_contains($html,'href="./dashboard.html"')&&str_contains($html,'
 termFeeCheck(!str_contains($html,'class="finance-tabs"')&&str_contains($html,'class="finance-nav-link nav-link nav"'),'finance navigation is in the dedicated sidebar, not a horizontal tab row');
 termFeeCheck(str_contains($html,'id="menuButton"')&&str_contains($html,'id="pageTitle"')&&str_contains($html,'class="topbar"'),'Finance retains the shared topbar and mobile menu control');
 termFeeCheck(str_contains($html,'body class="finance-workspace-page"')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'finance-workspace-page .topbar'),'the Finance shell explicitly removes the sidebar/header seam');
-termFeeCheck(str_contains($html,'js/dashboard.js?v=20261120-staff-messaging-role4'),'Finance loads the shared dashboard role, profile, sidebar and logout controller');
+termFeeCheck(str_contains($html,'js/dashboard.js?v=20261124-teacher-attendance1'),'Finance loads the shared dashboard role, profile, sidebar and logout controller');
 termFeeCheck(str_contains($dashboardJs,'./api/auth/me.php')&&str_contains($dashboardJs,'management_school_fees'),'shared Finance navigation is governed by the same staff-role permissions as School Fees');
 termFeeCheck(!str_contains($js,'financeSidebar')&&!str_contains($js,'closeFinanceSidebar'),'Finance does not register a competing sidebar controller');
 termFeeCheck(str_contains($html,'<footer class="dashboard-footer">')&&str_contains($html,'© 2026 MARKAZ. All Rights Reserved.'),'Finance retains the exact shared dashboard footer');
