@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/config/app.php';
 require_once __DIR__ . '/../../app/middleware/auth.php';
 require_once __DIR__ . '/_common.php';
+require_once __DIR__ . '/../../app/helpers/finance.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -91,10 +92,9 @@ try {
                 throw new InvalidArgumentException('Enter a valid arrival time for every present staff member.');
             }
             $actualValue = strlen($actual) === 5 ? $actual . ':00' : $actual;
-            $lateMinutes = financeAttendanceLateMinutes((string)$profile['expected_arrival'],$actualValue);
-            [$rateWhole,$rateFraction] = array_pad(explode('.', (string)$profile['lateness_rate_per_minute'], 2), 2, '');
-            $rate = ((int)$rateWhole * 100) + (int)str_pad(substr($rateFraction, 0, 2), 2, '0');
-            $deduction = number_format(($lateMinutes * $rate) / 100,2,'.','');
+            $lateMinutes = financeCalculateLateMinutes((string)$profile['expected_arrival'],$actualValue);
+            $rate = financeToCents((string)$profile['lateness_rate_per_minute']);
+            $deduction = financeFromCents($lateMinutes * $rate);
         }
         $save->execute([$staffId,$date,$profile['expected_arrival'],$actualValue,$status,$lateMinutes,$deduction,$notes?:null,$actor,$actor]);
         $saved++;
@@ -117,13 +117,3 @@ try {
 }
 
 echo json_encode(['success'=>true,'saved'=>$saved,'message'=>'Teacher attendance saved and approved for payroll calculation.'],JSON_UNESCAPED_UNICODE);
-
-/** Calculate late minutes without relying on server timezone date arithmetic. */
-function financeAttendanceLateMinutes(string $expected, string $actual): int
-{
-    $expectedParts = array_map('intval',explode(':',$expected));
-    $actualParts = array_map('intval',explode(':',$actual));
-    $expectedSeconds = ($expectedParts[0]*3600)+($expectedParts[1]*60)+($expectedParts[2]??0);
-    $actualSeconds = ($actualParts[0]*3600)+($actualParts[1]*60)+($actualParts[2]??0);
-    return (int)floor(max(0,$actualSeconds-$expectedSeconds)/60);
-}
