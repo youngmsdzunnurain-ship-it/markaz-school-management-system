@@ -197,17 +197,21 @@
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">AUDITABLE RECORDS</span><h2>Expense register</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="expenses"><tr><td colspan="6" class="empty">Loading expenses…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-payroll">
- <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Separate teacher timekeeping</b><p>MARKAZ's existing daily register is for students. Teacher arrival and departure records are stored separately and linked to existing staff accounts. No grace period is applied. Payroll only uses approved time records.</p></div></div>
+ <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Teacher attendance is managed in the Attendance workspace</b><p>Use the dedicated Teacher Attendance register alongside student attendance. Only Admin and Management accounts with full Attendance access can open it. Approved arrival records are the single source used for payroll deductions.</p><a href="./teacher-attendance.html" class="action-link" data-role-access="teacher_attendance">Open Teacher Attendance <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div></div>
  <div class="two-col">
-  <form class="panel form-panel" id="salaryForm"><div class="panel-heading"><div><span class="eyebrow">STAFF COMPENSATION</span><h2>Set teacher salary profile</h2></div></div>
-   <label>Teacher<select name="account_id" id="salaryTeacherSelect" required><option value="">Loading teachers…</option></select></label>
+  <form class="panel form-panel" id="financeStaffForm"><div class="panel-heading"><div><span class="eyebrow">INDEPENDENT STAFF REGISTER</span><h2>Add Finance staff member</h2><p class="muted">This does not create or modify an academic login account.</p></div></div>
+   <label>Full name<input name="full_name" maxlength="160" required placeholder="Teacher or staff full name"></label>
+   <label>Staff number (optional)<input name="staff_number" maxlength="40" placeholder="Generated automatically if blank"></label>
+   <div class="inline-fields"><label>Phone<input name="phone" maxlength="40" type="tel"></label><label>Email<input name="email" maxlength="190" type="email"></label></div>
+   <div class="inline-fields"><label>Job title<input name="job_title" maxlength="100" value="Teacher" required></label><label>Employment date<input name="employment_date" type="date"></label></div>
+   <label>Notes<input name="notes" maxlength="500"></label>
+   <button class="btn btn-primary" type="submit">Add Finance staff</button>
+  </form>
+  <form class="panel form-panel" id="salaryForm"><div class="panel-heading"><div><span class="eyebrow">STAFF COMPENSATION</span><h2>Set salary and arrival schedule</h2></div></div>
+   <label>Finance staff member<select name="finance_staff_id" id="salaryTeacherSelect" required><option value="">Loading Finance staff…</option></select></label>
    <label>Monthly basic salary (₦)<input name="base_salary" type="number" min="0" step="0.01" required></label>
    <div class="inline-fields"><label>Expected arrival time<input name="expected_arrival" type="time" required></label><label>Late deduction per minute (₦)<input name="lateness_rate_per_minute" type="number" min="0" step="0.01" value="10" required></label></div>
    <label>Effective from<input name="effective_from" type="date" required></label><button class="btn btn-primary" type="submit">Save salary profile</button>
-  </form>
-  <form class="panel form-panel" id="staffAttendanceForm"><div class="panel-heading"><div><span class="eyebrow">TIME & ATTENDANCE</span><h2>Record teacher attendance</h2></div></div>
-   <label>Teacher<select name="account_id" id="attendanceTeacherSelect" required><option value="">Loading teachers…</option></select></label><div class="inline-fields"><label>Attendance date<input name="attendance_date" type="date" required></label><label>Actual arrival<input name="actual_arrival" id="staffActualArrival" type="time" required></label></div>
-   <label>Status<select name="status" id="staffAttendanceStatus"><option value="present">Present</option><option value="approved_leave">Approved leave</option><option value="excused">Excused</option><option value="absent">Absent</option></select></label><label>Notes<input name="notes"></label><button class="btn btn-primary" type="submit">Save attendance record</button>
   </form>
  </div>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">MONTH-END PAYROLL</span><h2>Calculate and approve payroll</h2></div></div>
@@ -216,7 +220,7 @@
   <p class="muted small">Approval freezes the reviewed payroll figures. The scheduled transfer worker will remain disabled until a payout provider, verified teacher bank recipients, server scheduler and credentials have been configured and tested.</p>
   <div class="table-wrap"><table><thead><tr><th>Teacher</th><th>Basic salary</th><th>Late minutes</th><th>Late deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollRows"><tr><td colspan="6" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
  </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STAFF REGISTER</span><h2>Teacher salary profiles</h2></div><button class="btn btn-light" id="reloadStaff">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Teacher</th><th>Account</th><th>Monthly salary</th><th>Arrival</th><th>Deduction / min</th></tr></thead><tbody id="staffRows"><tr><td colspan="5" class="empty">Loading staff profiles…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FINANCE STAFF REGISTER</span><h2>Payroll staff and salary profiles</h2></div><button class="btn btn-light" id="reloadStaff">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Finance ID</th><th>Monthly salary</th><th>Arrival</th><th>Deduction / min</th><th>Status / action</th></tr></thead><tbody id="staffRows"><tr><td colspan="6" class="empty">Loading Finance staff…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-reports">
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FINANCIAL REPORTING</span><h2>Income and expense report</h2></div></div>
@@ -236,10 +240,10 @@
 
         </main>
     </div>
-    <script src="js/dashboard.js?v=20261120-staff-messaging-role4"></script>
+    <script src="js/dashboard.js?v=20261124-teacher-attendance1"></script>
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261122-dedicated-workspace1"></script>
+    <script src="js/finance.js?v=20261124-independent-staff1"></script>
 </body>
 </html>
