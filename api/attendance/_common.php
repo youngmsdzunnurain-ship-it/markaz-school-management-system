@@ -93,6 +93,24 @@ function attendanceRequireStaff(): string
     attendanceJsonError(403, 'An authorised staff account is required.');
 }
 
+/**
+ * Teacher attendance is restricted to full school-attendance administrators.
+ * Academic teachers and managers with limited attendance workspace access are
+ * deliberately excluded; Management must have its explicit attendance grant.
+ */
+function attendanceRequireTeacherAttendanceAccess(): string
+{
+    $role = currentAdminRole();
+    if ($role === 'admin') {
+        return $role;
+    }
+    if ($role === 'management') {
+        requireManagementPermission('attendance');
+        return $role;
+    }
+    attendanceJsonError(403, 'Teacher attendance is available only to Admin and Management accounts with full Attendance access.');
+}
+
 function attendanceRequireClassAccess(PDO $pdo, string $classType, int $classId): array
 {
     $table = attendanceClassTable($classType);
