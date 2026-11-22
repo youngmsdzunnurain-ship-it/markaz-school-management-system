@@ -22,7 +22,6 @@ if ($method === 'GET') {
          FROM finance_staff s
          INNER JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
             AND p.effective_from<=? AND (p.effective_until IS NULL OR p.effective_until>=?)
-            AND p.is_active=1
          LEFT JOIN staff_attendance a ON a.finance_staff_id=s.id AND a.attendance_date=?
          WHERE s.is_active=1
          ORDER BY s.full_name,s.id"
@@ -49,7 +48,7 @@ if (count($records) > 300) attendanceJsonError(422, 'The attendance register is 
 $profileQuery = $pdo->prepare(
     'SELECT expected_arrival,lateness_rate_per_minute
      FROM staff_salary_profiles
-     WHERE finance_staff_id=? AND is_active=1 AND effective_from<=?
+     WHERE finance_staff_id=? AND effective_from<=?
        AND (effective_until IS NULL OR effective_until>=?)
      ORDER BY effective_from DESC,id DESC LIMIT 1'
 );
