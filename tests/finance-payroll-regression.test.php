@@ -93,7 +93,7 @@ financeRegressionCheck(!str_contains($financePage, 'finance-refresh-button') && 
 financeRegressionCheck(str_contains($financeStyles, '.payroll-controls select') && str_contains($financeStyles, '.payroll-controls input'), 'payroll month and scheduled release controls have dedicated polished styling');
 financeRegressionCheck(str_contains($financeStyles, '.report-metrics{grid-template-columns:repeat(5,minmax(0,1fr))'), 'all five financial report summary metrics fit one desktop row');
 financeRegressionCheck(str_contains($financeStyles, '.footer{padding:18px 4px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
-financeRegressionCheck(str_contains($financeStyles, '.topbar{min-height:60px') && str_contains($financeStyles, '.topbar>div{'), 'mobile top navigation is compact and horizontally aligned');
+financeRegressionCheck(str_contains($financeStyles, '.topbar{display:flex;justify-content:space-between') && str_contains($financeStyles, '.topbar{align-items:flex-start;flex-direction:column'), 'mobile top navigation is compact and horizontally aligned');
 financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo=overview'), 'Finance overview exposes no demo entry point');
 financeRegressionCheck(str_contains($financeJs, 'Dashboard data could not be loaded:') && str_contains($financeJs, 'role="alert"'), 'dashboard API failures replace indefinite chart loading placeholders with visible errors');
 financeRegressionCheck(!str_contains($financeJs, 'fees_today:25000') && !str_contains($financeJs, 'net_movement:21500'), 'Finance totals are loaded from live API data rather than hard-coded demo figures');
