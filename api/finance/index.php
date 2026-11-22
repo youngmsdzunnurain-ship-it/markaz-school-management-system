@@ -194,11 +194,11 @@ try {
         $notes = trim((string)($input['notes'] ?? '')) ?: null;
         if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
             || ($email !== null && !filter_var($email, FILTER_VALIDATE_EMAIL))
-            || ($employmentDate !== null && !financeValidDate($employmentDate))) {
+            || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
             financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
         }
         if ($number === '') $number = 'MZ-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
-        if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{1,39}$/', $number)) {
+        if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{0,39}$/', $number)) {
             financeJson(['success'=>false,'message'=>'Staff number may contain only letters, numbers, hyphens and underscores.'],422);
         }
         $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?)');
