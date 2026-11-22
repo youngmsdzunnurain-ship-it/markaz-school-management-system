@@ -585,3 +585,33 @@ body.finance-workspace-page .welcome-card{
  .finance-workspace-page #tab-fees .fee-support-grid #reloadTermAdjustments{width:100%}
  .finance-workspace-page #tab-fees .fee-workspace-grid .btn{max-width:100%;white-space:normal;text-align:center}
 }
+
+
+/* School Fees searchable selectors: make live student choices usable on touch screens. */
+.finance-workspace-page #tab-fees #studentField,
+.finance-workspace-page #tab-fees #studentFeeAdjustmentForm .inline-fields{min-width:0}
+.finance-workspace-page #tab-fees .student-selection-details{
+ display:block;
+ min-height:1.4em;
+ margin-top:6px;
+ color:var(--mut,#64756b);
+ font-size:12px;
+ line-height:1.5;
+ overflow-wrap:anywhere;
+}
+.finance-workspace-page #tab-fees #feeStudentSelect,
+.finance-workspace-page #tab-fees #termStudentSelect,
+.finance-workspace-page #tab-fees #feeStudentSearch,
+.finance-workspace-page #tab-fees #termStudentSearch{
+ width:100%;
+ min-width:0;
+}
+.finance-workspace-page #tab-fees #studentField{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px;
+}
+.finance-workspace-page #tab-fees #studentField[hidden]{display:none}
+@media(max-width:560px){
+ .finance-workspace-page #tab-fees #studentField{grid-template-columns:minmax(0,1fr);gap:10px}
+}
