@@ -23,8 +23,8 @@ CREATE TABLE finance_staff (
 -- no admins.id foreign key or account relationship is retained.
 INSERT INTO finance_staff (staff_number, full_name, email, notes, is_active)
 SELECT CONCAT('LEGACY-', legacy.account_id), COALESCE(NULLIF(a.name,''), CONCAT('Legacy staff ',legacy.account_id)),
-       a.email, 'Imported only to preserve existing Finance payroll history; verify this staff record.',
-       0
+       a.email, 'Migrated from a pre-existing Finance payroll reference; verify this independent staff record.',
+       1
 FROM (
     SELECT account_id FROM staff_salary_profiles
     UNION
