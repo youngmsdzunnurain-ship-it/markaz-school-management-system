@@ -73,7 +73,7 @@ financeRegressionCheck(str_contains($dashboardStyles, 'grid-template-columns:260
 financeRegressionCheck(str_contains($financeStyles, 'width:min(220px,68vw)') || str_contains($financeStyles, 'width: min(220px, 68vw)'), 'mobile finance drawer is constrained to a compact responsive width');
 financeRegressionCheck(str_contains($dashboardJs, 'sidebar.classList.add("open")') && str_contains($dashboardJs, 'sidebarOverlay?.classList.add("visible")'), 'shared dashboard controller owns mobile drawer and overlay state');
 financeRegressionCheck(str_contains($dashboardJs, 'sidebar-desktop-closed') && str_contains($dashboardJs, 'desktop-closed'), 'shared dashboard controller can collapse and restore the desktop sidebar');
-financeRegressionCheck(str_contains($dashboardJs, 'closeSidebar') && str_contains($dashboardJs, 'window.innerWidth <= 850'), 'shared dashboard controller closes the mobile drawer on navigation');
+financeRegressionCheck(str_contains($dashboardJs, 'closeSidebar') && str_contains($dashboardJs, 'window.innerWidth > 850'), 'shared dashboard controller closes the mobile drawer on navigation');
 financeRegressionCheck(str_contains($financeStyles, '.report-filters') && str_contains($financeStyles, '.report-metrics'), 'financial report filters and summary metrics receive dedicated layout styling');
 financeRegressionCheck(!str_contains($financeJs, 'DEMO_MODE') && !str_contains($financeJs, 'demoResponse'), 'Finance does not expose fabricated demo data or demo modes');
 financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo='), 'Finance navigation contains no demo shortcuts or demo URLs');
