@@ -33,7 +33,7 @@ independentStaffCheck(str_contains($teacherAttendanceApi, 'attendanceRequireTeac
 independentStaffCheck(str_contains($attendanceCommon, 'attendanceRequireTeacherAttendanceAccess'), 'teacher attendance has a dedicated server-side permission gate');
 independentStaffCheck(str_contains($attendancePage, 'teacher-attendance.html') && str_contains($attendancePage, 'data-role-access="teacher_attendance"'), 'student Attendance workspace links to restricted Teacher Attendance');
 independentStaffCheck(str_contains($teacherAttendanceApi, 'attendanceRequireTeacherAttendanceAccess') && !str_contains($teacherAttendanceApi, 'requireAdmin();'), 'teacher attendance endpoint enforces the dedicated Admin/fully-authorised-Management gate instead of ordinary attendance access');
-independentStaffCheck(str_contains($financePage, 'id="financeStaffForm"') && str_contains($financePage, 'id="financeStaffRows"'), 'Finance provides an independent add/deactivate staff register');
+independentStaffCheck(str_contains($financePage, 'id="financeStaffForm"') && str_contains($financePage, 'id="staffRows"'), 'Finance provides an independent add/deactivate staff register');
 independentStaffCheck(str_contains($financeJs, 'save_staff') && str_contains($financeJs, 'deactivate_staff'), 'Finance staff UI submits create and deactivate operations');
 independentStaffCheck(str_contains($authMe, 'can_access_teacher_attendance'), 'session capability response exposes the separate teacher-attendance permission');
 independentStaffCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql'), 'Finance installer applies the independent staff migration after existing Finance migrations');
