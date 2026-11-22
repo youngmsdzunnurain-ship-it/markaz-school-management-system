@@ -128,11 +128,18 @@ if [[ "$term_count" == "0" ]]; then apply_migration "20261123_markaz_academic_te
 term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
 [[ "$term_count" == "${#term_tables[@]}" ]] || { echo "ERROR: Academic term-fee verification failed. Restore from: $backup" >&2; exit 5; }
 
-# Apply the identity separation only after all original Finance dependencies exist.
+# Apply and verify the independent Finance staff identity migration.
 if [[ "${foundation_count}" == "${#foundation_tables[@]}" && "${category_columns}" == "2" && "${term_count}" == "${#term_tables[@]}" ]]; then
-    independent_staff_exists="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
-    if [[ "$independent_staff_exists" == "0" ]]; then
+    independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+    independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+    if [[ "$independent_staff_tables" == "0" && "$independent_staff_columns" == "0" ]]; then
         apply_migration "20261124_markaz_independent_finance_staff.sql"
+        independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+        independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+    fi
+    if [[ "$independent_staff_tables" != "1" || "$independent_staff_columns" != "4" ]]; then
+        echo "ERROR: Independent Finance staff migration is partial ($independent_staff_tables table, $independent_staff_columns/4 required columns). Restore from the verified backup: $backup" >&2
+        exit 5
     fi
 fi
 
