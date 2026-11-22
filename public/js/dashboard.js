@@ -578,6 +578,8 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin"
                 || (role === "teacher" && permissions.can_manage_attendance === true)
                 || (role === "management" && permissions.management_permissions?.attendance === true);
+        } else if (requiredRole === "teacher_attendance") {
+            allowed = permissions.can_access_teacher_attendance === true;
         }
 
         element.style.display = allowed ? "" : "none";
