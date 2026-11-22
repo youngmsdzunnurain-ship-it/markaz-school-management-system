@@ -40,6 +40,7 @@ financeRegressionCheck(financeProrateMonthlySalary('20000.00', 15, 30) === '1000
 financeRegressionCheck(financeMoney('1250.5') === '1250.50', 'money input is normalised to two decimal places');
 
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261121_markaz_finance_payroll.sql');
+$independentStaffMigration = file_get_contents(__DIR__ . '/../database/migrations/20261124_markaz_independent_finance_staff.sql');
 $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
 
@@ -54,7 +55,9 @@ $financeHelper = file_get_contents(__DIR__ . '/../app/helpers/finance.php');
 financeRegressionCheck(str_contains($migration, "frequency ENUM('monthly')"), 'fee plans use monthly billing periods');
 financeRegressionCheck(str_contains($migration, "scope ENUM('school','class','student')"), 'fee plans support school-wide, class and individual scopes');
 financeRegressionCheck(str_contains($migration, 'FOREIGN KEY (student_id) REFERENCES students(id)'), 'fee accounts reuse the existing MARKAZ student identity');
-financeRegressionCheck(str_contains($migration, 'FOREIGN KEY (account_id) REFERENCES admins(id)'), 'payroll reuses existing staff account identities');
+financeRegressionCheck(str_contains($independentStaffMigration, 'FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id)'), 'salary, attendance and payroll now reference the independent Finance staff register');
+financeRegressionCheck(str_contains($payrollApi, 'FROM finance_staff') && str_contains($payrollApi, 'finance_staff_id'), 'payroll calculations and history use Finance staff IDs rather than academic accounts');
+financeRegressionCheck(!str_contains($financeApi, "WHERE a.role='teacher'"), 'Finance staff discovery never imports academic teacher login accounts');
 financeRegressionCheck(str_contains($migration, 'CREATE TABLE staff_attendance'), 'teacher clock records are separate from student attendance');
 financeRegressionCheck(str_contains($migration, 'CREATE TABLE finance_other_income'), 'non-fee school income has its own verified record type');
 financeRegressionCheck(str_contains($migration, 'idempotency_key VARCHAR(120) NOT NULL UNIQUE'), 'salary payout records have unique idempotency keys');
