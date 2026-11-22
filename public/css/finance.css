@@ -203,13 +203,6 @@
 
 
 /* Refresh control follows the compact MARKAZ dashboard icon-button language. */
-.finance-page-tools #refreshButton.finance-refresh-button{width:40px;height:40px;min-width:40px;min-height:40px;padding:0;display:inline-grid;place-items:center;border:1px solid rgba(20,71,47,.10);border-radius:12px;background:rgba(255,255,255,.78);color:var(--dg);box-shadow:0 3px 10px rgba(20,71,47,.045);font-size:14px;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease}
-.finance-page-tools #refreshButton.finance-refresh-button:hover{background:#fff;border-color:rgba(20,71,47,.2);transform:translateY(-1px)}
-.finance-page-tools #refreshButton.finance-refresh-button:active{transform:translateY(0)}
-.finance-page-tools #refreshButton.finance-refresh-button:focus-visible{outline:3px solid rgba(201,162,74,.65);outline-offset:3px}
-.finance-page-tools #refreshButton.finance-refresh-button i{transition:transform .35s ease}
-.finance-page-tools #refreshButton.finance-refresh-button:hover i{transform:rotate(35deg)}
-@media(prefers-reduced-motion:reduce){.finance-page-tools #refreshButton.finance-refresh-button,.finance-page-tools #refreshButton.finance-refresh-button i{transition:none}}
 
 
 /* MARKAZ Finance: compact 2026 workspace refinements. */
