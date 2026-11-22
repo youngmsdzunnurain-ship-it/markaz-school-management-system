@@ -52,7 +52,7 @@ async function save() {
  busy=true;saveButton.disabled=true;show("Saving attendance register…");
  try {
   const result=await request("./api/attendance/teachers.php",{method:"POST",headers:{"Content-Type":"application/json","X-MARKAZ-Request":"attendance"},body:JSON.stringify({action:"save_register",attendance_date:dateInput.value,records})});
-  show(result.message+" ("+result.saved+" records).");await load();
+  show(result.message+" ("+result.saved+" records).");busy=false;await load();
  } catch(error){show(error.message,true);}
  finally{busy=false;saveButton.disabled=!staff.length;}
 }
@@ -62,7 +62,7 @@ $("loadTeacherAttendance").addEventListener("click",load);
 saveButton.addEventListener("click",save);
 dateInput.addEventListener("change",load);
 request("./api/auth/me.php").then(data=>{
- if(data.admin?.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
+ const admin=data.admin||{};const financeLink=$("teacherFinanceLink");if(financeLink)financeLink.hidden=!(admin.role==="admin"||(admin.role==="management"&&admin.management_permissions?.school_fees===true));\n if(admin.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
  load();
 }).catch(error=>show(error.message,true));
 })();
