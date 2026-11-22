@@ -21,6 +21,9 @@ termFeeCheck(str_contains($api,'INSERT IGNORE INTO finance_term_fee_invoices'),'
 termFeeCheck(str_contains($api,'$type===\'full_scholarship\''),'full scholarships reduce only the selected student invoice to zero');
 termFeeCheck(str_contains($payments,'finance_term_fee_payments'),'confirmed receipts allocate to academic-term invoices');
 termFeeCheck(str_contains($html,'id="termClassFeeForm"')&&str_contains($html,'id="studentFeeAdjustmentForm"'),'finance screen exposes class fee and individual adjustment forms');
+termFeeCheck(str_contains($html,'class="two-col fee-workspace-grid fee-session-grid"')&&str_contains($html,'class="two-col fee-workspace-grid fee-support-grid"')&&str_contains($html,'class="two-col fee-workspace-grid fee-plan-grid"'),'School Fees groups session setup, individual adjustments with approvals, and monthly plan creation into three intentional paired rows');
+termFeeCheck(str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'.fee-workspace-grid{')&&str_contains(file_get_contents(__DIR__.'/../public/css/finance.css'),'@media(max-width:900px)'),'School Fees paired forms stay side by side on desktop and stack cleanly on narrow screens');
+
 termFeeCheck(str_contains($html,'id="termFeeReport"')&&str_contains($html,'id="termFeeInvoices"'),'finance screen exposes class totals and individual term invoices');
 termFeeCheck(str_contains($js,'loadTermFeeReport')&&str_contains($js,'generate_term_invoices'),'term fee interface loads reports and generates invoices');
 termFeeCheck(str_contains($migration,"status ENUM('pending','approved','rejected')")&&str_contains($migration,'approved_by BIGINT UNSIGNED NULL'),'scholarship adjustments require a separate approval state and nullable approver');
@@ -28,6 +31,13 @@ termFeeCheck(str_contains($api,'different authorised staff member must approve')
 termFeeCheck(str_contains($api,'SELECT id FROM finance_academic_sessions WHERE session_name=? LIMIT 1'),'session audit uses the persisted session ID after insert or update');
 termFeeCheck(str_contains($html,'id="termAdjustmentQueue"')&&str_contains($html,'id="reloadTermAdjustments"'),'Finance UI exposes a separate scholarship approval queue');
 termFeeCheck(str_contains($js,'renderClassOptions')&&str_contains($js,'Loading classes')&&str_contains($js,'No active classes found'),'class dropdowns expose loading, available options and empty states');
+termFeeCheck(str_contains($payments,"SELECT id,name,'conventional' class_type FROM classes WHERE is_active=1")&&str_contains($payments,'arabic_classes WHERE is_active=1'),'class selector endpoint returns live active conventional and Arabic class records');
+termFeeCheck(str_contains($html,'id="feeStudentSelect"')&&str_contains($html,'id="termStudentSelect"'),'monthly fee plans and individual fee adjustments use real selectable student dropdowns');
+termFeeCheck(str_contains($html,'id="feeStudentDetails"')&&str_contains($html,'id="termStudentDetails"'),'selected student details show the linked class and admission identity');
+termFeeCheck(str_contains($js,'loadStudentChoices')&&str_contains($js,'class_name')&&str_contains($js,'arabic_class_name'),'student choices are populated from existing student records and display their linked class details');
+termFeeCheck(str_contains($js,'feeStudentSelect')&&str_contains($js,'termStudentSelect')&&!str_contains($js,"$('#termStudentSearch')?.addEventListener('change',async"),'student selection resolves directly by selected database ID instead of re-searching a combined label');
+termFeeCheck(str_contains($js,'select.disabled=true')&&str_contains($js,'Classes could not load — tap to retry'),'class dropdown reports loading/errors and can retry a failed live class lookup');
+
 termFeeCheck(str_contains($js,'data-approve-term-adjustment')&&str_contains($js,'approve_student_adjustment'),'the approval queue submits a distinct independent approval action');
 termFeeCheck(str_contains($js,'No active Finance staff')&&str_contains($js,'Finance staff could not load'),'teacher dropdowns handle delayed or failed staff loading');
 termFeeCheck(str_contains($html,'href="css/dashboard-2026.css')&&str_contains($html,'href="css/dashboard-polish-2026.css'),'Finance reuses the established MARKAZ dashboard shell and visual system');

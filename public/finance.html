@@ -109,7 +109,7 @@
 <section class="tab-panel" id="tab-fees">
  <section class="panel" id="termFeeWorkspace">
  <div class="panel-heading"><div><span class="eyebrow">ACADEMIC BILLING</span><h2>Session &amp; term fees</h2><p class="muted">Set a different fee for each conventional class in each term. Amounts are never copied to another class or student automatically.</p></div></div>
- <div class="two-col">
+ <div class="two-col fee-workspace-grid fee-session-grid">
   <form class="form-panel" id="academicSessionForm">
    <h3>Academic session</h3>
    <label>Session name<input name="session_name" placeholder="2026/2027" pattern="20[0-9]{2}/20[0-9]{2}" required></label>
@@ -125,27 +125,29 @@
    <button class="btn btn-primary" type="submit">Save class fee</button>
   </form>
  </div>
- <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL SUPPORT</span><h3>Scholarship, waiver or negotiated fee</h3><p class="muted">An adjustment applies only to the selected student, session and term. Explain the reason for the audit trail.</p></div></div>
- <form class="form-panel" id="studentFeeAdjustmentForm">
-  <div class="inline-fields"><label>Student<input id="termStudentSearch" list="termStudentOptions" placeholder="Admission number or name" required><datalist id="termStudentOptions"></datalist><input type="hidden" name="student_id" id="termStudentId"></label><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
-  <div class="inline-fields"><label>Adjustment<select name="adjustment_type"><option value="fixed_fee">Negotiated final fee</option><option value="discount_amount">Fixed discount</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / waiver</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
-  <label>Reason / approval note<input name="reason" required maxlength="500" placeholder="e.g. Approved 50% scholarship for this term"></label>
-  <button class="btn btn-primary" type="submit">Submit for approval</button>
- </form>
- <section class="panel" id="termAdjustmentApprovalPanel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER CONTROL</span><h3>Pending scholarship approvals</h3><p class="muted">The staff member who submitted an adjustment cannot approve it.</p></div><button class="btn btn-light" id="reloadTermAdjustments" type="button">Refresh approvals</button></div><div id="termAdjustmentQueue" class="stack-list"><p class="muted">Loading pending adjustments…</p></div></section>
+ <div class="two-col fee-workspace-grid fee-support-grid">
+  <form class="panel form-panel" id="studentFeeAdjustmentForm">
+   <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL SUPPORT</span><h3>Scholarship, waiver or negotiated fee</h3><p class="muted">An adjustment applies only to the selected student, session and term. Explain the reason for the audit trail.</p></div></div>
+   <div class="inline-fields"><label>Find student<input id="termStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label>Student<select name="student_id" id="termStudentSelect" required><option value="">Search for a student first</option></select><small id="termStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
+   <div class="inline-fields"><label>Adjustment<select name="adjustment_type"><option value="fixed_fee">Negotiated final fee</option><option value="discount_amount">Fixed discount</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / waiver</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
+   <label>Reason / approval note<input name="reason" required maxlength="500" placeholder="e.g. Approved 50% scholarship for this term"></label>
+   <button class="btn btn-primary" type="submit">Submit for approval</button>
+  </form>
+  <section class="panel" id="termAdjustmentApprovalPanel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER CONTROL</span><h3>Pending scholarship approvals</h3><p class="muted">The staff member who submitted an adjustment cannot approve it.</p></div><button class="btn btn-light" id="reloadTermAdjustments" type="button">Refresh approvals</button></div><div id="termAdjustmentQueue" class="stack-list"><p class="muted">Loading pending adjustments…</p></div></section>
+ </div>
  <div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button">Generate term invoices</button><button class="btn btn-light" id="loadTermReport" type="button">Refresh class report</button></div>
  <div class="table-wrap"><table><thead><tr><th>Class</th><th>Students billed</th><th>Total billed</th><th>Paid</th><th>Outstanding</th></tr></thead><tbody id="termFeeReport"><tr><td colspan="5" class="empty">Select a session and term to view class totals.</td></tr></tbody></table></div>
  <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
 </section>
 
- <div class="two-col">
+ <div class="two-col fee-workspace-grid fee-plan-grid">
   <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
    <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
    <label>Fee category code<input name="fee_code" required pattern="[a-z0-9][a-z0-9_-]{0,59}" value="general" placeholder="e.g. tuition, feeding, books"><small>Matching categories override by specificity: student, then class, then school.</small></label>
    <label>Description<textarea name="description" rows="2" placeholder="Optional explanation"></textarea></label>
    <label>Apply to<select name="scope" id="feeScope"><option value="school">Entire school</option><option value="class">Specific class</option><option value="student">Individual student</option></select></label>
    <div id="classFields" class="inline-fields" hidden><label>Class category<select name="class_type"><option value="conventional">Conventional</option><option value="arabic">Arabic</option></select></label><label>Class<select name="class_id" id="feeClassSelect" required><option value="">Loading classes…</option></select></label></div>
-   <label id="studentField" hidden>Student search<input id="feeStudentSearch" list="feeStudentOptions" autocomplete="off" placeholder="Admission number or student name"><datalist id="feeStudentOptions"></datalist><input type="hidden" name="student_id" id="feeStudentId"></label>
+   <div id="studentField" hidden><label for="feeStudentSearch">Find student<input id="feeStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label for="feeStudentSelect">Student<select name="student_id" id="feeStudentSelect" required><option value="">Search for a student first</option></select><small id="feeStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label></div>
    <label>Monthly amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="Set by administrator"></label>
    <label>Due day of each month<input name="due_day" type="number" min="1" max="31" required></label>
    <div class="inline-fields"><label>Effective from<input name="effective_from" type="date" required></label><label>Effective until<input name="effective_until" type="date"></label></div>
