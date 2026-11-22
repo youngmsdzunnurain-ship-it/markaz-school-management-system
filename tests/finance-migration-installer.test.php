@@ -37,5 +37,5 @@ financeInstallerCheck(!str_contains($installer, '\\${'), 'shell parameter expans
 financeInstallerCheck(str_contains($guide, 'The third migration references finance_fee_payments'), 'installation guide explains the missing dependency');
 financeInstallerCheck(str_contains($categories, 'ADD COLUMN fee_code'), 'fee-category migration remains part of the ordered installation');
 financeInstallerCheck(str_contains($independentStaff, 'CREATE TABLE finance_staff') && str_contains($independentStaff, 'finance_staff_id'), 'independent staff migration creates a separate payroll identity');
-financeInstallerCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql') && str_contains($installer, 'independent_staff_columns'), 'installer applies and verifies the independent staff schema after Finance foundations');
+financeInstallerCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql') && str_contains($installer, 'independent_staff_columns') && str_contains($installer, 'independent_staff_constraints'), 'installer applies and verifies the independent staff schema after Finance foundations');
 echo "MARKAZ Finance migration installer regression checks passed.\n";
