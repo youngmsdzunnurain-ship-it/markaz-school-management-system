@@ -124,6 +124,7 @@ echo json_encode([
         'can_print_results' => $resolvePermission('print_results'),
         'can_export_results' => $resolvePermission('export_results'),
         'can_manage_attendance' => $canManageAttendance,
+        'can_access_teacher_attendance' => $role === 'admin' || ($role === 'management' && $managementPermissions['attendance'] === true),
         'management_permissions' => $managementPermissions,
         'can_access_online_class' => $canAccessOnlineClass
     ]
