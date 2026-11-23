@@ -1,0 +1,68 @@
+name: MARKAZ Finance Attendance and Refund Schema Integration
+on:
+  pull_request:
+    paths:
+      - 'database/migrations/20261125_teacher_attendance_modes.sql'
+      - 'database/migrations/20261126_markaz_fee_refunds.sql'
+      - '.github/workflows/finance-attendance-refund-schema.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'database/migrations/20261125_teacher_attendance_modes.sql'
+      - 'database/migrations/20261126_markaz_fee_refunds.sql'
+      - '.github/workflows/finance-attendance-refund-schema.yml'
+jobs:
+  mariadb-schema:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: markaz_finance_schema_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MariaDB client
+        run: sudo apt-get update && sudo apt-get install -y mariadb-client
+      - name: Build minimal existing MARKAZ Finance schema
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_finance_schema_test <<'SQL'
+          CREATE TABLE admins (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(160) NOT NULL);
+          CREATE TABLE finance_fee_payments (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY);
+          CREATE TABLE finance_staff (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY);
+          CREATE TABLE staff_salary_profiles (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            finance_staff_id BIGINT UNSIGNED NOT NULL,
+            expected_arrival TIME NOT NULL,
+            lateness_rate_per_minute DECIMAL(12,2) NOT NULL DEFAULT 0
+          );
+          CREATE TABLE staff_attendance (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            finance_staff_id BIGINT UNSIGNED NOT NULL,
+            expected_arrival TIME NOT NULL
+          );
+          INSERT INTO admins(name) VALUES ('Schema Test Admin');
+          INSERT INTO finance_fee_payments() VALUES ();
+          INSERT INTO finance_staff() VALUES ();
+          INSERT INTO staff_salary_profiles(finance_staff_id,expected_arrival,lateness_rate_per_minute) VALUES (1,'08:00:00',10.00);
+          INSERT INTO staff_attendance(finance_staff_id,expected_arrival) VALUES (1,'08:00:00');
+          SQL
+      - name: Apply attendance and refund migrations
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_finance_schema_test < database/migrations/20261125_teacher_attendance_modes.sql
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_finance_schema_test < database/migrations/20261126_markaz_fee_refunds.sql
+      - name: Verify legacy compatibility and refund constraints
+        run: |
+          result="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_finance_schema_test -e "SELECT CONCAT(p.attendance_mode,':',TIME_FORMAT(p.expected_arrival,'%H:%i'),':',a.attendance_mode,':',TIME_FORMAT(a.expected_arrival,'%H:%i')) FROM staff_salary_profiles p JOIN staff_attendance a ON a.finance_staff_id=p.finance_staff_id WHERE p.id=1 AND a.id=1")"
+          test "$result" = "time_based:08:00:time_based:08:00"
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_finance_schema_test -e "INSERT INTO staff_salary_profiles(finance_staff_id,expected_arrival,attendance_mode,lateness_rate_per_minute) VALUES (1,NULL,'attendance_only',0); INSERT INTO finance_fee_refunds(refund_number,payment_id,amount,reason,recorded_by) VALUES ('REFUND-SCHEMA-TEST',1,5.00,'Schema verification',1); INSERT INTO finance_fee_refund_allocations(refund_id,allocation_type,source_allocation_id,amount) VALUES (1,'monthly',1,5.00);"
+          tables="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_finance_schema_test -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='markaz_finance_schema_test' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
+          test "$tables" = "2"
