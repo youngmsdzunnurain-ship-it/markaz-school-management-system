@@ -27,7 +27,7 @@ printProfileCheck(
     'settings must expose a separate result-completion threshold control'
 );
 printProfileCheck(
-    str_contains($thresholdNavigation, 'id: "result-print-threshold"') &&
+    str_contains($thresholdNavigation, 'id:"result-print-threshold"') &&
     str_contains($thresholdNavigation, 'page.querySelector(".result-print-threshold-card")'),
     'print eligibility threshold must be reachable as its own Settings navigation category'
 );
