@@ -207,7 +207,7 @@ teacherPortalCheck(
     'Teacher lockout countdown updates every second and login errors use the red error state'
 );
 teacherPortalCheck(
-    substr_count($dashboardHtml, 'href="./settings.html"') === 1,
+    substr_count($dashboardHtml, 'href="./settings.html" class="nav-link"') === 1,
     'Admin sidebar contains one Settings navigation entry'
 );
 
