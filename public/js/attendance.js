@@ -653,22 +653,34 @@
         els.date.max = localDateValue();
     }
 
-    let observedToday = localDateValue();
-    window.setInterval(() => {
-        // Teacher attendance is a restricted full-attendance workspace.
-    const teacherAttendanceLink = $("teacherAttendanceNav");
-    if (teacherAttendanceLink) {
-        fetch("./api/auth/me.php", { credentials: "same-origin", cache: "no-store", headers: { Accept: "application/json" } })
-            .then(response => response.ok ? response.json() : null)
-            .then(data => {
-                if (data?.success && data.admin?.can_access_teacher_attendance === true) {
-                    teacherAttendanceLink.hidden = false;
-                }
-            })
-            .catch(() => { teacherAttendanceLink.hidden = true; });
+    // Resolve the restricted Teacher Attendance link as soon as the page loads.
+    // Fail closed on network/API errors; retry when the page becomes visible again.
+    async function refreshTeacherAttendanceNavigation() {
+        const teacherAttendanceLink = $("teacherAttendanceNav");
+        if (!teacherAttendanceLink) return;
+        teacherAttendanceLink.hidden = true;
+        try {
+            const response = await fetch("./api/auth/me.php", {
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: { Accept: "application/json" }
+            });
+            const data = response.ok ? await response.json() : null;
+            teacherAttendanceLink.hidden = data?.success !== true
+                || data?.admin?.can_access_teacher_attendance !== true;
+        } catch (_) {
+            teacherAttendanceLink.hidden = true;
+        }
     }
 
-    const today = localDateValue();
+    refreshTeacherAttendanceNavigation();
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) refreshTeacherAttendanceNavigation();
+    });
+
+    let observedToday = localDateValue();
+    window.setInterval(() => {
+        const today = localDateValue();
         if (today === observedToday) return;
         const previousToday = observedToday;
         observedToday = today;
