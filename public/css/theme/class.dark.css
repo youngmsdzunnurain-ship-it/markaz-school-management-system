@@ -1543,6 +1543,60 @@ html[data-theme="dark"] .results-scanner-table td small {
 html[data-theme="dark"] .results-scanner-table input[type=number] {
     border: 1px solid #38433b
 }
+/* ---- css/results-scanner-live.css ---- */
+html[data-theme="dark"] .mkls-close {
+    background: rgba(26, 33, 30, 0.08)
+}
+html[data-theme="dark"] .mkls-camera {
+    box-shadow: 0 24px 60px rgba(0,0,0,0.85), 0 0 0 1px rgba(230, 194, 106, .45)
+}
+html[data-theme="dark"] .mkls-mark-icon {
+    box-shadow: 0 0 0 10px rgba(111, 224, 162, .18), 0 18px 40px rgba(0,0,0,0.76)
+}
+html[data-theme="dark"] .mkls-mark[data-kind="warn"] .mkls-mark-icon {
+    box-shadow: 0 0 0 10px rgba(255, 210, 110, .18), 0 18px 40px rgba(0,0,0,0.76)
+}
+html[data-theme="dark"] .mkls-btn.ghost {
+    background: rgba(26, 33, 30, 0.08)
+}
+html[data-theme="dark"] .mkls-btn.primary {
+    box-shadow: 0 10px 24px rgba(0,0,0,0.67)
+}
+html[data-theme="dark"] .mkls-table-wrap {
+    background: #1a211e;
+    color: #c4e3d4;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.58)
+}
+html[data-theme="dark"] .mkls-table td {
+    border-bottom: 1px solid #3a423d
+}
+html[data-theme="dark"] .mkls-table td:nth-child(2) {
+    color: #adc7bb
+}
+html[data-theme="dark"] .mkls-table input {
+    border: 1px solid #35443b;
+    background: #161d1a;
+    color: #bce2cd
+}
+html[data-theme="dark"] .mkls-table input:focus {
+    background: #28302c
+}
+html[data-theme="dark"] .mkls-total {
+    color: #a9dbbe
+}
+html[data-theme="dark"] .mkls-table tr.needs-check td {
+    background: #1c1706
+}
+html[data-theme="dark"] .mkls-table tr.needs-check .mkls-total {
+    color: #d3a966
+}
+html[data-theme="dark"] .mkls-hint {
+    background: #1f1a09;
+    color: #dfc08c
+}
+html[data-theme="dark"] .mkls-summary-list li {
+    background: rgba(26, 33, 30, 0.08)
+}
 /* ---- css/app-watermark.css ---- */
 html[data-theme="dark"] {
     background: #0d1411

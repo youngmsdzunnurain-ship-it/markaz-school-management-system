@@ -1,17 +1,41 @@
+/* MARKAZ Results Scanner: live camera, whole class sheet.
+   "Scan results" opens the camera at once. Hold it over the sheet and move it slowly over the whole page.
+   The sheet is read on this device: the subject names written at the top, every student row (admission
+   number and name) and the three scores (CA1, CA2, Exam) under each subject. Any number of subjects on
+   the sheet is supported, and the page can have 30 or more student rows.
+   Results are saved automatically only when every student and every subject on the sheet has been read the
+   same way on consecutive frames. Anything unclear goes to the review table instead. An existing, different
+   score is never overwritten. Nothing is uploaded and no picture is kept. */
 (() => {
     "use strict";
+    if (window.MarkazResultsScanner) return;
 
-    const root = document.getElementById("resultsScanner");
-    if (!root || window.MarkazResultsScanner) return;
+    const ROLES = ["admin", "exam_officer", "teacher"];
+    const FIELDS = ["ca1", "ca2", "exam"];
+    const LABELS = { ca1: "CA1", ca2: "CA2", exam: "Exam" };
+    const MAX_KEYS = { ca1: "max_ca1", ca2: "max_ca2", exam: "max_exam" };
+    const READ_EVERY_MS = 400;
+    const CONFIRM_READS = 2;
+    const WARN_MS = 40000;
+    const CAMERA = { width: 1920, height: 1440 };
+    const OCR_MAX_WIDTH = 2000;
+    const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
-    const $ = selector => root.querySelector(selector);
-    const state = { config: null, worker: null, rows: [], imageUrl: "", scopeKey: "", busy: false };
+    const state = {
+        meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
+        startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
+        subjectSeen: new Map(), subjectInfo: new Map(),
+        votes: new Map(), lastSeen: new Map(), studentSeen: new Set()
+    };
 
-    function status(message, kind = "") {
-        const node = $("[data-scanner-status]");
-        node.textContent = message;
-        node.dataset.kind = kind;
-    }
+    const $ = (selector, scope = document) => scope.querySelector(selector);
+    const button = document.getElementById("openResultsScanner");
+    const hint = document.createElement("p");
+    hint.className = "mkls-hint";
+    hint.hidden = true;
+    hint.setAttribute("role", "status");
+    if (button) button.insertAdjacentElement("afterend", hint);
+    let overlay = null;
 
     function normalise(value) {
         return String(value || "").toLowerCase().normalize("NFKD")
@@ -46,96 +70,6 @@
         return partialNameMatches.length === 1 ? partialNameMatches[0] : null;
     }
 
-    function extractRows(lines, students, subject) {
-        const found = new Map();
-        for (const line of lines) {
-            const text = String(line.text || "")
-                .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
-                .trim();
-            const student = rosterMatch(text, students);
-            if (!student || found.has(String(student.id))) continue;
-            const name = [student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ");
-            const tokens = text.match(/(?:^|\s)(\d{1,3}(?:\.\d{1,2})?)(?=\s|$)/g) || [];
-            const scores = tokens.map(token => Number(token.trim())).filter(Number.isFinite);
-            const max = [Number(subject.max_ca1), Number(subject.max_ca2), Number(subject.max_exam)];
-            const plausible = scores.length >= 3 ? scores.slice(-3) : [];
-            const valid = plausible.length === 3 && plausible.every((score, index) => score >= 0 && score <= max[index]);
-            found.set(String(student.id), {
-                student,
-                ca1: valid ? plausible[0] : "",
-                ca2: valid ? plausible[1] : "",
-                exam: valid ? plausible[2] : "",
-                detected: valid,
-                source: text
-            });
-        }
-        return [...found.values()];
-    }
-
-    function renderReview() {
-        const wrap = $("[data-scanner-review]");
-        wrap.replaceChildren();
-        if (!state.rows.length) {
-            wrap.hidden = true;
-            return;
-        }
-        const heading = document.createElement("p");
-        heading.className = "results-scanner-review-note";
-        heading.textContent = "Review every detected mark against the original sheet. Only checked rows will be saved.";
-        wrap.appendChild(heading);
-        const tableWrap = document.createElement("div");
-        tableWrap.className = "results-scanner-table-wrap";
-        const table = document.createElement("table");
-        table.className = "results-scanner-table";
-        table.innerHTML = "<thead><tr><th>Save</th><th>Student</th><th>CA1</th><th>CA2</th><th>Exam</th><th>OCR match</th></tr></thead>";
-        const body = document.createElement("tbody");
-        state.rows.forEach((item, index) => {
-            const tr = document.createElement("tr");
-            tr.dataset.studentId = String(item.student.id);
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = item.detected;
-            checkbox.setAttribute("aria-label", "Include " + item.student.first_name + " in save");
-            const selectCell = document.createElement("td");
-            selectCell.appendChild(checkbox);
-            tr.appendChild(selectCell);
-            const nameCell = document.createElement("td");
-            nameCell.textContent = [item.student.first_name, item.student.middle_name, item.student.last_name].filter(Boolean).join(" ");
-            const admission = document.createElement("small");
-            admission.textContent = item.student.admission_number || "";
-            nameCell.appendChild(document.createElement("br"));
-            nameCell.appendChild(admission);
-            tr.appendChild(nameCell);
-            ["ca1", "ca2", "exam"].forEach((field, fieldIndex) => {
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "number";
-                input.min = "0";
-                input.max = String([state.config.subject.max_ca1, state.config.subject.max_ca2, state.config.subject.max_exam][fieldIndex]);
-                input.step = "0.01";
-                input.value = item[field];
-                input.dataset.field = field;
-                input.setAttribute("aria-label", field.toUpperCase() + " for " + nameCell.firstChild.textContent);
-                td.appendChild(input);
-                tr.appendChild(td);
-            });
-            const matchCell = document.createElement("td");
-            matchCell.textContent = item.detected ? "Name matched · verify marks" : "Name matched · enter marks";
-            tr.appendChild(matchCell);
-            body.appendChild(tr);
-        });
-        table.appendChild(body);
-        tableWrap.appendChild(table);
-        wrap.appendChild(tableWrap);
-        const save = document.createElement("button");
-        save.type = "button";
-        save.className = "primary-button";
-        save.textContent = "Save reviewed results";
-        save.addEventListener("click", saveReviewedRows);
-        wrap.appendChild(save);
-        wrap.hidden = false;
-    }
-
     async function loadOcr() {
         if (window.Tesseract) return window.Tesseract;
         if (window.markazResultsOcrLoading) return window.markazResultsOcrLoading;
@@ -144,198 +78,743 @@
             script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
             script.async = true;
             script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("OCR engine did not initialise."));
-            script.onerror = () => reject(new Error("Could not load the free OCR engine. Check your internet connection."));
+            script.onerror = () => reject(new Error("Could not load the reader. Check your internet connection, then try again."));
             document.head.appendChild(script);
         });
         try { return await window.markazResultsOcrLoading; }
         catch (error) { window.markazResultsOcrLoading = null; throw error; }
     }
 
-    async function prepareImage(file) {
-        if (typeof createImageBitmap !== "function") return file;
-        const bitmap = await createImageBitmap(file);
-        try {
-            const scale = Math.min(1, 2200 / Math.max(bitmap.width, bitmap.height));
-            if (scale === 1) return file;
-            const canvas = document.createElement("canvas");
-            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-            const context = canvas.getContext("2d", {alpha:false});
-            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-            return await new Promise(resolve => canvas.toBlob(blob => resolve(blob || file), "image/jpeg", 0.88));
-        } finally {
-            bitmap.close();
+
+    /* ------------------------------------------------------------------ text on the page */
+    function editDistance(a, b) {
+        const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+        for (let i = 1; i <= a.length; i++) {
+            let previous = row[0];
+            row[0] = i;
+            for (let j = 1; j <= b.length; j++) {
+                const current = row[j];
+                row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1));
+                previous = current;
+            }
         }
+        return row[b.length];
     }
 
-    async function scan(file) {
-        if (!state.config || !state.config.subject) {
-            status("Select a subject in the Results section first.", "error");
-            return;
-        }
-        if (!file || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) {
-            status("Choose a JPEG, PNG or WebP image up to 8 MB.", "error");
-            return;
-        }
-        const scanScope = state.scopeKey;
-        const scanConfig = state.config;
-        state.busy = true;
-        status("Preparing the free on-device OCR engine…");
-        const progress = $("[data-scanner-progress]");
-        progress.hidden = false;
-        try {
-            if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-            state.imageUrl = URL.createObjectURL(file);
-            const preview = $("[data-scanner-preview]");
-            preview.src = state.imageUrl;
-            preview.hidden = false;
-            const Tesseract = await loadOcr();
-            const ocrImage = await prepareImage(file);
-            const ocrLanguage = scanConfig.classType === "arabic" ? "ara+eng" : "eng";
-            state.worker = await Tesseract.createWorker(ocrLanguage, 1, {
-                logger: message => {
-                    if (message.status === "recognizing text") {
-                        const percent = Math.round((message.progress || 0) * 100);
-                        progress.value = percent;
-                        status("Reading result sheet… " + percent + "%");
+    function wordsOf(result) {
+        const raw = (result && result.data && result.data.words) || [];
+        return raw.map(word => {
+            const box = word.bbox || {};
+            return {
+                text: String(word.text || "").trim(),
+                x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1,
+                cx: (box.x0 + box.x1) / 2, cy: (box.y0 + box.y1) / 2,
+                h: Math.max(1, box.y1 - box.y0)
+            };
+        }).filter(word => word.text && [word.x0, word.x1, word.cx, word.cy].every(Number.isFinite));
+    }
+
+    /* words on the same line of the page form one row, read left to right */
+    function toRows(words) {
+        if (!words.length) return [];
+        const heights = words.map(word => word.h).sort((a, b) => a - b);
+        const tolerance = Math.max(6, heights[Math.floor(heights.length / 2)] * 0.6);
+        const rows = [];
+        [...words].sort((a, b) => a.cy - b.cy).forEach(word => {
+            const last = rows[rows.length - 1];
+            if (last && Math.abs(last.cy - word.cy) <= tolerance) {
+                last.words.push(word);
+                last.cy = last.words.reduce((sum, w) => sum + w.cy, 0) / last.words.length;
+            } else {
+                rows.push({ cy: word.cy, words: [word] });
+            }
+        });
+        rows.forEach(row => row.words.sort((a, b) => a.cx - b.cx));
+        return rows;
+    }
+
+    /* where each subject name is written at the top of the sheet (one or more words, one letter of OCR error allowed) */
+    function findSubjectSpans(words, subjects) {
+        const spans = [];
+        subjects.forEach(subject => {
+            const target = normalise(subject.name);
+            if (target.length < 3) return;
+            const allowed = target.length >= 7 ? 1 : 0;
+            let best = null;
+            for (let i = 0; i < words.length; i++) {
+                let joined = "";
+                for (let j = i; j < Math.min(words.length, i + 5); j++) {
+                    joined += normalise(words[j].text);
+                    if (joined.length > target.length + allowed) break;
+                    if (joined.length >= target.length - allowed && editDistance(joined, target) <= allowed) {
+                        const group = words.slice(i, j + 1);
+                        const span = {
+                            subject,
+                            x0: Math.min(...group.map(w => w.x0)),
+                            x1: Math.max(...group.map(w => w.x1)),
+                            count: group.length
+                        };
+                        if (!best || span.count > best.count) best = span;
+                        break;
                     }
                 }
-            });
-            const recognised = await state.worker.recognize(ocrImage);
-            if (state.scopeKey !== scanScope) return;
-            const lines = recognised?.data?.lines || [];
-            state.rows = extractRows(lines, scanConfig.students, scanConfig.subject);
-            if (!state.rows.length) {
-                const raw = String(recognised?.data?.text || "").trim();
-                status(raw
-                    ? "Text was detected, but no student could be matched confidently to this class. Check the image and roster, or enter marks manually."
-                    : "No readable text found. Try a sharper, well-lit photo.", "error");
-                return;
             }
-            renderReview();
-            status(state.rows.length + " student name(s) matched. Check every score before saving.", "success");
-        } catch (error) {
-            status(error.message || "Could not scan this image.", "error");
-        } finally {
-            if (state.worker) {
-                await state.worker.terminate().catch(() => {});
-                state.worker = null;
-            }
-            state.busy = false;
-        }
+            if (best) spans.push(best);
+        });
+        return spans.sort((a, b) => a.x0 - b.x0);
     }
 
-    async function saveReviewedRows() {
-        if (!state.config || state.busy) return;
-        const selected = [...$("[data-scanner-review] tbody").querySelectorAll("tr")]
-            .filter(row => row.querySelector('input[type="checkbox"]').checked);
-        if (!selected.length) {
-            status("Select at least one reviewed student row.", "error");
+    /* the column titles CA1, CA2 and Exam (one letter of OCR error allowed, e.g. "CAl1" for "CA1") */
+    function findLabels(words) {
+        const labels = [];
+        const sorted = [...words].sort((a, b) => a.cx - b.cx);
+        /* the closest title wins; a tie (or more than one letter of difference) is not a label */
+        const kindOf = token => {
+            const scores = [["ca1", editDistance(token, "ca1")], ["ca2", editDistance(token, "ca2")], ["exam", editDistance(token, "exam")]]
+                .sort((a, b) => a[1] - b[1]);
+            if (scores[0][1] > 1 || scores[0][1] === scores[1][1]) return null;
+            return scores[0][0];
+        };
+        for (let i = 0; i < sorted.length; i++) {
+            /* OCR often reads the digit 1 as a letter l or i in a title (CA1 -> CAl) */
+            const token = normalise(sorted[i].text).replace(/[li]/g, "1");
+            const kind = kindOf(token);
+            if (kind) { labels.push({ kind, cx: sorted[i].cx }); continue; }
+            /* "CA" and "1" written as two words */
+            const next = sorted[i + 1] ? normalise(sorted[i + 1].text) : "";
+            if (token === "ca" && (next === "1" || next === "2")) {
+                labels.push({ kind: next === "1" ? "ca1" : "ca2", cx: (sorted[i].cx + sorted[i + 1].cx) / 2 });
+                i++;
+            }
+        }
+        return labels;
+    }
+
+    /* the centre of each column title (CA1, CA2, Exam) for every subject, matched to the nearest subject name */
+    function columnsFor(spans, labels) {
+        const columns = new Map();
+        const groups = new Map(spans.map(span => [String(span.subject.id), { ca1: [], ca2: [], exam: [] }]));
+        const centre = span => (span.x0 + span.x1) / 2;
+        labels.forEach(label => {
+            let best = null;
+            spans.forEach(span => {
+                const distance = Math.abs(label.cx - centre(span));
+                if (!best || distance < best.distance) best = { span, distance };
+            });
+            if (best) groups.get(String(best.span.subject.id))[label.kind].push(label.cx);
+        });
+        groups.forEach((group, id) => {
+            columns.set(id, FIELDS.every(field => group[field].length === 1)
+                ? { ca1: group.ca1[0], ca2: group.ca2[0], exam: group.exam[0] }
+                : null);
+        });
+        return columns;
+    }
+
+    /* the three scores of every subject on one student row, read from the digits-only pass.
+       A score belongs to a column only when exactly one number sits under that column title. */
+    function readRowScores(row, digits, spans, columns, tolerance) {
+        const numbers = digits.filter(number => Math.abs(number.cy - row.cy) <= tolerance);
+        const allColumns = [];
+        columns.forEach(cols => { if (cols) FIELDS.forEach(field => allColumns.push(cols[field])); });
+        const sorted = allColumns.slice().sort((x, y) => x - y);
+        let spacing = Infinity;
+        for (let i = 1; i < sorted.length; i++) spacing = Math.min(spacing, sorted[i] - sorted[i - 1]);
+        const reach = Number.isFinite(spacing) ? spacing * 0.5 : 40;
+        const cells = new Map();
+        spans.forEach(span => {
+            const id = String(span.subject.id);
+            const cols = columns.get(id);
+            if (!cols) { cells.set(id, null); return; }
+            const values = {};
+            let ok = true;
+            FIELDS.forEach(field => {
+                const near = numbers.filter(number => Math.abs(number.cx - cols[field]) <= reach);
+                if (near.length !== 1) ok = false;
+                else values[field] = Number(near[0].text);
+            });
+            cells.set(id, ok ? values : null);
+        });
+        return cells;
+    }
+
+    /* one camera frame. The text pass finds subject names and student rows; the digits pass reads the scores. */
+    function parseFrame(textResult, digitResult, students, subjects) {
+        const rows = toRows(wordsOf(textResult));
+        const digits = wordsOf(digitResult).filter(word => NUMBER.test(word.text));
+        const heights = wordsOf(textResult).map(word => word.h).sort((a, b) => a - b);
+        const tolerance = Math.max(6, (heights[Math.floor(heights.length / 2)] || 20) * 0.6);
+        const studentRows = [];
+        const seen = new Set();
+        rows.forEach(row => {
+            const student = rosterMatch(row.words.map(word => word.text).join(" "), students);
+            if (student && !seen.has(String(student.id))) {
+                seen.add(String(student.id));
+                studentRows.push({ row, student });
+            }
+        });
+        if (!studentRows.length) return { spans: [], read: [] };
+        const firstStudentY = studentRows[0].row.cy;
+        const headerWords = rows.filter(row => row.cy < firstStudentY - 2).flatMap(row => row.words);
+        const spans = findSubjectSpans(headerWords, subjects);
+        const columns = columnsFor(spans, findLabels(headerWords));
+        const read = studentRows.map(({ row, student }) => ({ student, cells: readRowScores(row, digits, spans, columns, tolerance) }));
+        state.debug = {
+            labels: findLabels(headerWords).map(label => `${label.kind}@${Math.round(label.cx)}`),
+            columns: [...columns.entries()].map(([id, cols]) => `${id}:${cols ? `${Math.round(cols.ca1)},${Math.round(cols.ca2)},${Math.round(cols.exam)}` : "null"}`),
+            firstRow: studentRows[0] ? { y: Math.round(studentRows[0].row.cy), numbers: digits.filter(n => Math.abs(n.cy - studentRows[0].row.cy) <= tolerance).map(n => `${n.text}@${Math.round(n.cx)}`) } : null,
+            tolerance: Math.round(tolerance)
+        };
+        return { spans, read };
+    }
+
+    /* ------------------------------------------------------------------ collecting across frames */
+    function resetSession() {
+        state.subjectSeen = new Map();
+        state.subjectInfo = new Map();
+        state.votes = new Map();
+        state.lastSeen = new Map();
+        state.studentSeen = new Set();
+    }
+
+    function classStudents() { return (state.meta && state.meta.students) || []; }
+
+    function confirmedSubjects() {
+        return [...state.subjectSeen.keys()]
+            .filter(id => state.subjectSeen.get(id) >= CONFIRM_READS)
+            .map(id => state.subjectInfo.get(id))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    function confirmedValue(studentId, subjectId, field) {
+        const vote = state.votes.get(`${studentId}|${subjectId}|${field}`);
+        return vote && vote.count >= CONFIRM_READS ? vote.value : null;
+    }
+
+    function studentDone(student, subjects) {
+        return subjects.every(subject => FIELDS.every(field => confirmedValue(String(student.id), String(subject.id), field) !== null));
+    }
+
+    function judge(parsed) {
+        parsed.spans.forEach(span => {
+            const id = String(span.subject.id);
+            state.subjectInfo.set(id, span.subject);
+            state.subjectSeen.set(id, (state.subjectSeen.get(id) || 0) + 1);
+        });
+        parsed.read.forEach(({ student, cells }) => {
+            const studentId = String(student.id);
+            state.studentSeen.add(studentId);
+            cells.forEach((values, subjectId) => {
+                if (!values) return;
+                FIELDS.forEach(field => {
+                    const key = `${studentId}|${subjectId}|${field}`;
+                    const value = values[field];
+                    state.lastSeen.set(key, value);
+                    const vote = state.votes.get(key);
+                    state.votes.set(key, vote && vote.value === value ? { value, count: vote.count + 1 } : { value, count: 1 });
+                });
+            });
+        });
+
+        const subjects = confirmedSubjects();
+        const students = classStudents();
+        const done = subjects.length ? students.filter(student => studentDone(student, subjects)).length : 0;
+        if (subjects.length && students.length && done === students.length) { succeed(subjects); return; }
+
+        if (!parsed.read.length && !subjects.length && !state.studentSeen.size) {
+            setGuide("Looking for the result sheet. Move closer and keep the whole sheet in view.");
             return;
         }
-        for (const row of selected) {
-            const values = ["ca1", "ca2", "exam"].map(field => {
-                const raw = row.querySelector('[data-field="' + field + '"]').value.trim();
-                return raw === "" ? null : Number(raw);
-            });
-            const maxes = [state.config.subject.max_ca1, state.config.subject.max_ca2, state.config.subject.max_exam].map(Number);
-            if (values.some(value => value === null)) {
-                status("Enter CA1, CA2 and Exam for every selected student. Blank marks are never saved.", "error");
+        const names = subjects.length ? subjects.map(subject => subject.name).join(", ") : "not yet read";
+        setGuide(`Subjects on this sheet: ${names}. Students complete: ${done} of ${students.length}. ` +
+            (subjects.length ? "Keep moving the camera slowly over the whole sheet." : "Keep the subject names at the top of the sheet in view."));
+    }
+
+    /* ------------------------------------------------------------------ what to save */
+    function sameNumber(a, b) { return a !== null && a !== undefined && a !== "" && Number(a) === Number(b); }
+
+    /* entries: [{ student, subject, values: { ca1, ca2, exam } }]. Blank lines are never saved. */
+    function planSave(entries) {
+        const payloads = [], conflicts = [], unchanged = [], incomplete = [];
+        const results = (state.meta && state.meta.results) || [];
+        entries.forEach(({ student, subject, values }) => {
+            const label = `${student.first_name} ${student.last_name} · ${subject.name}`;
+            const filled = FIELDS.filter(field => values[field] !== null && values[field] !== undefined && values[field] !== "");
+            if (!filled.length) return;
+            if (filled.length < FIELDS.length) { incomplete.push(label); return; }
+            const existing = results.find(result => Number(result.student_id) === Number(student.id) && Number(result.subject_id) === Number(subject.id));
+            if (existing && FIELDS.some(field => existing[field] !== null && existing[field] !== undefined && !sameNumber(existing[field], values[field]))) {
+                conflicts.push(label);
                 return;
             }
-            if (values.some((value, index) => !Number.isFinite(value) || value < 0 || value > maxes[index])) {
-                status("A selected row contains a mark outside the subject's allowed range. Correct it before saving.", "error");
+            if (existing && FIELDS.every(field => sameNumber(existing[field], values[field]))) {
+                unchanged.push(label);
                 return;
+            }
+            payloads.push({
+                class_type: state.meta.classType,
+                class_id: Number(state.meta.classId),
+                student_id: Number(student.id),
+                subject_id: Number(subject.id),
+                teacher_remark: existing ? (existing.teacher_remark ?? null) : null,
+                result_remark: existing ? (existing.result_remark ?? null) : null,
+                ca1: Number(values.ca1),
+                ca2: Number(values.ca2),
+                exam: Number(values.exam)
+            });
+        });
+        return { payloads, conflicts, unchanged, incomplete };
+    }
+
+    function scoreRangeError(values, subject) {
+        for (const field of FIELDS) {
+            const score = Number(values[field]);
+            if (!Number.isFinite(score) || score < 0 || score > Number(subject[MAX_KEYS[field]])) {
+                return `${LABELS[field]} must be between 0 and ${subject[MAX_KEYS[field]]}.`;
             }
         }
-        if (!window.confirm("Save the reviewed results for " + selected.length + " selected student(s) in " + state.config.subject.name + "?")) return;
-        state.busy = true;
+        return "";
+    }
+
+    async function saveEntries(plan, messageNode) {
         let saved = 0;
-        try {
-            for (const row of selected) {
-                const studentId = Number(row.dataset.studentId);
-                const existingResult = (state.config.results || []).find(result =>
-                    Number(result.student_id) === studentId &&
-                    Number(result.subject_id) === Number(state.config.subject.id)
-                );
-                const payload = {
-                    class_type: state.config.classType,
-                    class_id: Number(state.config.classId),
-                    student_id: studentId,
-                    subject_id: Number(state.config.subject.id),
-                    teacher_remark: existingResult?.teacher_remark ?? null,
-                    result_remark: existingResult?.result_remark ?? null,
-                    ca1: row.querySelector('[data-field="ca1"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca1"]').value),
-                    ca2: row.querySelector('[data-field="ca2"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca2"]').value),
-                    exam: row.querySelector('[data-field="exam"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="exam"]').value)
-                };
-                const response = await fetch("./api/results/save.php", {
-                    method: "POST",
-                    credentials: "same-origin",
-                    cache: "no-store",
-                    headers: {"Content-Type":"application/json", "Accept":"application/json"},
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json().catch(() => ({}));
-                if (!response.ok || !data.success) throw new Error(data.message || "A result could not be saved.");
-                row.querySelector('input[type="checkbox"]').checked = false;
-                saved++;
+        for (const payload of plan.payloads) {
+            messageNode.textContent = `Saving ${saved + 1} of ${plan.payloads.length}…`;
+            const response = await fetch("./api/results/save.php", {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                throw Object.assign(new Error(data.message || "A result could not be saved."), { saved });
             }
-            status(saved + " reviewed result(s) saved successfully. Refreshing the class results…", "success");
-            if (typeof state.config.onSaved === "function") await state.config.onSaved();
-            state.rows = [];
-            $("[data-scanner-review]").replaceChildren();
-            $("[data-scanner-review]").hidden = true;
+            saved++;
+        }
+        if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
+        return saved;
+    }
+
+    /* ------------------------------------------------------------------ the window */
+    const TEMPLATE = `
+      <div class="mkls-sheet" role="dialog" aria-modal="true" aria-labelledby="mklsTitle">
+        <header class="mkls-top">
+          <div class="mkls-titles">
+            <p class="mkls-eyebrow">Scan results</p>
+            <h2 id="mklsTitle" class="mkls-title">Scan the class sheet</h2>
+          </div>
+          <button type="button" class="mkls-close" data-mkls-close aria-label="Close">&times;</button>
+        </header>
+        <section class="mkls-camera" data-mkls-camera>
+          <video class="mkls-video" playsinline muted autoplay></video>
+          <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <div class="mkls-scanline" aria-hidden="true"></div>
+          <div class="mkls-mark" data-mkls-mark hidden>
+            <span class="mkls-mark-icon" data-mkls-mark-icon aria-hidden="true"></span>
+            <strong class="mkls-mark-text" data-mkls-mark-text></strong>
+          </div>
+        </section>
+        <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
+        <div class="mkls-bar" data-mkls-bar>
+          <button type="button" class="mkls-btn ghost" data-mkls-review>Review scanned students</button>
+        </div>
+        <section class="mkls-preview" data-mkls-preview hidden>
+          <p class="mkls-preview-note" data-mkls-note></p>
+          <div class="mkls-table-wrap">
+            <table class="mkls-table">
+              <thead><tr><th>Student</th><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th></tr></thead>
+              <tbody data-mkls-rows></tbody>
+            </table>
+          </div>
+          <div class="mkls-bar">
+            <button type="button" class="mkls-btn ghost" data-mkls-rescan>Scan again</button>
+            <button type="button" class="mkls-btn primary" data-mkls-save>Save reviewed results</button>
+          </div>
+          <p class="mkls-save-msg" data-mkls-save-msg role="status" aria-live="polite"></p>
+        </section>
+        <section class="mkls-summary" data-mkls-summary hidden>
+          <p class="mkls-summary-title" data-mkls-summary-title></p>
+          <ul class="mkls-summary-list" data-mkls-summary-list></ul>
+          <div class="mkls-bar"><button type="button" class="mkls-btn primary" data-mkls-done>Done</button></div>
+        </section>
+      </div>`;
+
+    function buildOverlay() {
+        overlay = document.createElement("div");
+        overlay.className = "mkls-overlay";
+        overlay.hidden = true;
+        overlay.innerHTML = TEMPLATE;
+        document.body.appendChild(overlay);
+        $("[data-mkls-close]", overlay).addEventListener("click", closeScanner);
+        $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
+        $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
+        $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
+        $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && state.phase !== "closed") closeScanner();
+        });
+    }
+
+    function showHint(text) {
+        hint.textContent = text;
+        hint.hidden = false;
+        clearTimeout(state.hintTimer);
+        state.hintTimer = setTimeout(() => { hint.hidden = true; }, 5000);
+    }
+
+    function setGuide(text) {
+        const guide = $("[data-mkls-guide]", overlay);
+        if (guide) guide.textContent = text;
+    }
+
+    function setMark(kind, text, hideAfter) {
+        const mark = $("[data-mkls-mark]", overlay);
+        clearTimeout(state.markTimer);
+        if (!kind) { mark.hidden = true; return; }
+        mark.hidden = false;
+        mark.dataset.kind = kind;
+        $("[data-mkls-mark-icon]", overlay).textContent = kind === "ok" ? "✓" : "!";
+        $("[data-mkls-mark-text]", overlay).textContent = text;
+        if (hideAfter) state.markTimer = setTimeout(() => { mark.hidden = true; }, hideAfter);
+    }
+
+    function showPhase(name) {
+        state.phase = name;
+        $("[data-mkls-camera]", overlay).hidden = !(name === "camera" || name === "marking");
+        $("[data-mkls-guide]", overlay).hidden = !(name === "camera" || name === "marking" || name === "saving");
+        $("[data-mkls-bar]", overlay).hidden = name !== "camera";
+        $("[data-mkls-preview]", overlay).hidden = name !== "review";
+        $("[data-mkls-summary]", overlay).hidden = name !== "summary";
+    }
+
+    function videoEl() { return overlay ? $("video", overlay) : null; }
+
+    /* ------------------------------------------------------------------ camera */
+    function stopStream() {
+        if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        const video = videoEl();
+        if (video) video.srcObject = null;
+    }
+
+    function scheduleRead(delay) {
+        clearTimeout(state.timer);
+        state.timer = setTimeout(readFrame, delay);
+    }
+
+    function captureFrame(video) {
+        const scale = Math.min(1, OCR_MAX_WIDTH / video.videoWidth);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(video.videoWidth * scale);
+        canvas.height = Math.round(video.videoHeight * scale);
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    }
+
+    async function prepareWorker() {
+        if (state.worker) return;
+        const Tesseract = await loadOcr();
+        const language = state.meta.classType === "arabic" ? "ara+eng" : "eng";
+        const worker = await Tesseract.createWorker(language, 1, {});
+        await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" }).catch(() => {});
+        state.worker = worker;
+    }
+
+    async function startCamera() {
+        if (!overlay) buildOverlay();
+        clearTimeout(state.timer);
+        stopStream();
+        showPhase("camera");
+        setMark(null);
+        state.warned = false;
+        setGuide("Opening the camera…");
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setGuide("This browser cannot open the camera. Use Chrome or Edge on a secure (https) address.");
+            return;
+        }
+        try {
+            state.stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" }, width: { ideal: CAMERA.width }, height: { ideal: CAMERA.height } },
+                audio: false
+            });
         } catch (error) {
-            status(saved + " row(s) saved before the following error: " + (error.message || "Save failed.") + " Review the class results before retrying.", "error");
-            if (typeof state.config.onSaved === "function") await state.config.onSaved();
+            setGuide("Camera access is needed. Allow the camera for this site in your browser settings, then tap Scan again.");
+            return;
+        }
+        if (state.phase !== "camera") { stopStream(); return; }
+
+        const video = videoEl();
+        video.srcObject = state.stream;
+        await video.play().catch(() => {});
+        state.startedAt = Date.now();
+
+        setGuide("Getting the reader ready…");
+        try {
+            await prepareWorker();
+        } catch (error) {
+            setGuide(error.message || "Could not start the reader.");
+            return;
+        }
+        if (state.phase !== "camera") return;
+        setGuide("Hold the camera over the whole sheet. Start with the subject names at the top, then move slowly down the page.");
+        scheduleRead(300);
+    }
+
+    async function readFrame() {
+        if (state.phase !== "camera" || state.reading) return;
+        const video = videoEl();
+        if (!state.worker || !video || !video.videoWidth) { scheduleRead(300); return; }
+        state.reading = true;
+        try {
+            const canvas = captureFrame(video);
+            await state.worker.setParameters({ tessedit_char_whitelist: "" });
+            const textResult = await state.worker.recognize(canvas);
+            await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
+            const digitResult = await state.worker.recognize(canvas);
+            await state.worker.setParameters({ tessedit_char_whitelist: "" });
+            if (state.phase !== "camera") return;
+            judge(parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []));
+        } catch (error) {
+            setGuide("The reader paused. Keep the sheet in view.");
         } finally {
-            state.busy = false;
+            state.reading = false;
+            if (state.phase === "camera") {
+                if (!state.warned && Date.now() - state.startedAt > WARN_MS) warnNotDone();
+                scheduleRead(READ_EVERY_MS);
+            }
         }
     }
 
-    const button = document.getElementById("openResultsScanner");
-    const panel = $("[data-scanner-panel]");
+    function warnNotDone() {
+        state.warned = true;
+        const subjects = confirmedSubjects();
+        const students = classStudents();
+        const done = subjects.length ? students.filter(student => studentDone(student, subjects)).length : 0;
+        setMark("warn", `${done} of ${students.length} complete`, 3000);
+        setGuide("Not everything is clear yet. Keep moving the camera slowly, or tap Review scanned students to check the rest by hand.");
+    }
+
+    /* the whole sheet is clear: stop the camera, show the tick, save automatically */
+    function succeed(subjects) {
+        showPhase("marking");
+        stopStream();
+        clearTimeout(state.timer);
+        setMark("ok", `All ${classStudents().length} students clear in ${subjects.length} subject(s)`);
+        setGuide("Saving the results…");
+        setTimeout(() => { if (state.phase === "marking") autoSave(subjects); }, 1100);
+    }
+
+    async function autoSave(subjects) {
+        showPhase("saving");
+        const entries = [];
+        classStudents().forEach(student => subjects.forEach(subject => {
+            const values = {};
+            FIELDS.forEach(field => { values[field] = confirmedValue(String(student.id), String(subject.id), field); });
+            entries.push({ student, subject, values });
+        }));
+        const outOfRange = entries.filter(entry => scoreRangeError(entry.values, entry.subject)).length;
+        const plan = planSave(entries);
+        let saved = 0, failure = "";
+        try {
+            saved = await saveEntries(plan, $("[data-mkls-guide]", overlay));
+        } catch (error) {
+            saved = error.saved || 0;
+            failure = error.message || "Save failed.";
+        }
+        showSummary(plan, saved, failure, outOfRange);
+    }
+
+    function showSummary(plan, saved, failure, outOfRange) {
+        showPhase("summary");
+        $("[data-mkls-summary-title]", overlay).textContent = failure
+            ? `${saved} result(s) saved before an error: ${failure} Open the results table to check the rest.`
+            : `${saved} result(s) saved to student results.`;
+        const list = $("[data-mkls-summary-list]", overlay);
+        list.replaceChildren();
+        const add = text => { const item = document.createElement("li"); item.textContent = text; list.appendChild(item); };
+        if (plan.unchanged.length) add(`${plan.unchanged.length} already saved with the same scores.`);
+        if (plan.conflicts.length) add(`${plan.conflicts.length} not changed, because the school already has a different score: ${plan.conflicts.slice(0, 6).join("; ")}${plan.conflicts.length > 6 ? "…" : ""}`);
+        if (plan.incomplete.length) add(`${plan.incomplete.length} not saved, because a score was missing: ${plan.incomplete.slice(0, 6).join("; ")}`);
+        if (outOfRange) add(`${outOfRange} score line(s) were outside the allowed range and were not saved.`);
+        if (!failure && !plan.payloads.length && !plan.conflicts.length) add("Nothing new needed saving.");
+    }
+
+    /* ------------------------------------------------------------------ review (the manual fallback) */
+    function reviewNow() {
+        if (state.phase !== "camera") return;
+        const subjects = confirmedSubjects();
+        if (!subjects.length) {
+            setGuide("No subject names have been read yet. Move the camera to the top of the sheet, where the subject names are written.");
+            return;
+        }
+        clearTimeout(state.timer);
+        stopStream();
+        buildReview(subjects);
+        showPhase("review");
+    }
+
+    function buildReview(subjects) {
+        const body = $("[data-mkls-rows]", overlay);
+        body.replaceChildren();
+        let missing = 0;
+        classStudents().forEach(student => subjects.forEach(subject => {
+            const studentId = String(student.id), subjectId = String(subject.id);
+            const values = {};
+            let clear = true;
+            FIELDS.forEach(field => {
+                const confirmed = confirmedValue(studentId, subjectId, field);
+                const lastSeen = state.lastSeen.get(`${studentId}|${subjectId}|${field}`);
+                values[field] = confirmed !== null ? confirmed : (lastSeen ?? "");
+                if (confirmed === null) clear = false;
+            });
+            const empty = FIELDS.every(field => values[field] === "");
+            if (empty) missing++;
+            body.appendChild(reviewRow(student, subject, values, clear, empty));
+        }));
+        $("[data-mkls-note]", overlay).textContent = missing
+            ? `${missing} score line(s) not captured yet. Scan again to capture them, or type the scores. Blank lines are never saved.`
+            : "Check each score, then save reviewed results.";
+        $("[data-mkls-save-msg]", overlay).textContent = "";
+    }
+
+    function reviewRow(student, subject, values, clear, empty) {
+        const tr = document.createElement("tr");
+        tr.dataset.studentId = String(student.id);
+        tr.dataset.subjectId = String(subject.id);
+        if (!clear) tr.className = "needs-check";
+        const name = [student.first_name, student.middle_name, student.last_name].filter(Boolean).join(" ");
+        const nameCell = document.createElement("td");
+        nameCell.textContent = name;
+        const subjectCell = document.createElement("td");
+        subjectCell.textContent = subject.name;
+        tr.append(nameCell, subjectCell);
+        FIELDS.forEach(field => {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.inputMode = "decimal";
+            input.min = "0";
+            input.max = String(subject[MAX_KEYS[field]]);
+            input.step = "any";
+            input.dataset.field = field;
+            input.setAttribute("aria-label", `${LABELS[field]} for ${name}, ${subject.name}`);
+            input.value = values[field] === "" || values[field] === null ? "" : String(values[field]);
+            input.addEventListener("input", () => updateTotal(tr));
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+        const total = document.createElement("td");
+        total.className = "mkls-total";
+        tr.appendChild(total);
+        updateTotal(tr);
+        if (empty) total.textContent = "Not captured";
+        return tr;
+    }
+
+    function updateTotal(tr) {
+        const values = FIELDS.map(field => tr.querySelector(`[data-field="${field}"]`).value.trim());
+        const total = tr.querySelector(".mkls-total");
+        if (values.some(value => value === "")) { total.textContent = values.every(value => value === "") ? "—" : "Check"; return; }
+        total.textContent = String(values.reduce((sum, value) => sum + Number(value), 0));
+    }
+
+    async function saveReviewed() {
+        if (state.phase !== "review") return;
+        const message = $("[data-mkls-save-msg]", overlay);
+        const saveButton = $("[data-mkls-save]", overlay);
+        const subjectsById = new Map(confirmedSubjects().map(subject => [String(subject.id), subject]));
+        const studentsById = new Map(classStudents().map(student => [String(student.id), student]));
+        const entries = [];
+        for (const tr of overlay.querySelectorAll("[data-mkls-rows] tr")) {
+            const subject = subjectsById.get(tr.dataset.subjectId);
+            const student = studentsById.get(tr.dataset.studentId);
+            if (!subject || !student) continue;
+            const raw = FIELDS.map(field => tr.querySelector(`[data-field="${field}"]`).value.trim());
+            if (raw.every(value => value === "")) continue;
+            const values = {};
+            FIELDS.forEach((field, index) => { values[field] = raw[index] === "" ? "" : Number(raw[index]); });
+            if (raw.some(value => value === "")) {
+                message.textContent = `${student.first_name} ${student.last_name} · ${subject.name}: fill in all three scores or clear the line.`;
+                return;
+            }
+            const error = scoreRangeError(values, subject);
+            if (error) {
+                message.textContent = `${student.first_name} ${student.last_name} · ${subject.name}: ${error}`;
+                return;
+            }
+            entries.push({ student, subject, values });
+        }
+        const plan = planSave(entries);
+        if (!plan.payloads.length) {
+            message.textContent = plan.conflicts.length
+                ? "Nothing was saved: the school already has different scores for these lines."
+                : "There are no complete score lines to save.";
+            return;
+        }
+        saveButton.disabled = true;
+        let saved = 0, failure = "";
+        try {
+            saved = await saveEntries(plan, message);
+        } catch (error) {
+            saved = error.saved || 0;
+            failure = error.message || "Save failed.";
+        }
+        saveButton.disabled = false;
+        showSummary(plan, saved, failure, 0);
+    }
+
+    /* ------------------------------------------------------------------ open / close */
+    function openScanner() {
+        if (!overlay) buildOverlay();
+        resetSession();
+        overlay.hidden = false;
+        document.body.classList.add("mkls-open");
+        startCamera();
+    }
+
+    function closeScanner() {
+        state.phase = "closed";
+        clearTimeout(state.timer);
+        clearTimeout(state.markTimer);
+        stopStream();
+        if (state.worker) { state.worker.terminate().catch(() => {}); state.worker = null; }
+        if (overlay) overlay.hidden = true;
+        document.body.classList.remove("mkls-open");
+    }
+
     button?.addEventListener("click", () => {
-        panel.hidden = !panel.hidden;
-        if (!panel.hidden) panel.scrollIntoView({behavior:"smooth", block:"start"});
-    });
-    $("[data-scanner-upload]")?.addEventListener("change", event => scan(event.target.files?.[0]));
-    $("[data-scanner-camera]")?.addEventListener("change", event => scan(event.target.files?.[0]));
-    $("[data-scanner-close]")?.addEventListener("click", () => { panel.hidden = true; });
-    $("[data-scanner-reset]")?.addEventListener("click", () => {
-        state.rows = [];
-        $("[data-scanner-review]").replaceChildren();
-        $("[data-scanner-review]").hidden = true;
-        $("[data-scanner-preview]").hidden = true;
-        if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-        state.imageUrl = "";
-        $("[data-scanner-upload]").value = "";
-        $("[data-scanner-camera]").value = "";
-        status("");
+        const meta = state.meta;
+        if (!meta || !ROLES.includes(meta.role)) return;
+        if (!classStudents().length) { showHint("The class list is still loading. Try again in a moment."); return; }
+        if (!(meta.subjects || []).length) { showHint("This class has no subjects set up yet."); return; }
+        openScanner();
     });
 
-    window.MarkazResultsScanner = {
-        configure(config) {
-            const nextConfig = config && config.subject ? config : null;
-            const nextKey = nextConfig ? [nextConfig.classType, nextConfig.classId, nextConfig.subject.id].join("|") : "";
-            if (state.scopeKey && nextKey !== state.scopeKey) {
-                state.rows = [];
-                $("[data-scanner-review]").replaceChildren();
-                $("[data-scanner-review]").hidden = true;
-                $("[data-scanner-preview]").hidden = true;
-                if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-                state.imageUrl = "";
-                panel.hidden = true;
-                status("The class or subject changed. Start a new scan for the selected subject.");
-            }
-            state.scopeKey = nextKey;
-            state.config = nextConfig;
-            if (button) button.hidden = !state.config || !["admin", "exam_officer", "teacher"].includes(state.config.role);
-            if (!state.config) {
-                panel.hidden = true;
-                status("Select an assigned subject to use the scanner.");
-            }
+    /* class.js gives the scanner the class, the roster, the class subjects and the saved results */
+    function configure(config) {
+        const next = config || {};
+        state.meta = next;
+        if (button) button.hidden = !ROLES.includes(next.role);
+        const key = [next.classId, next.classType].join("|");
+        if (key !== state.scopeKey) {
+            state.scopeKey = key;
+            if (state.phase !== "closed") closeScanner();
         }
-    };
+    }
+
+    /* a readable summary of what is still missing (used by support and by the tests) */
+    function status() {
+        const subjects = confirmedSubjects();
+        const missing = [];
+        classStudents().forEach(student => subjects.forEach(subject => FIELDS.forEach(field => {
+            if (confirmedValue(String(student.id), String(subject.id), field) === null) {
+                missing.push(`${student.admission_number} ${subject.name} ${LABELS[field]} (last read: ${state.lastSeen.get(`${student.id}|${subject.id}|${field}`) ?? "none"})`);
+            }
+        })));
+        return { subjects: subjects.map(subject => subject.name), missing, debug: state.debug };
+    }
+
+    window.MarkazResultsScanner = { configure, status };
 })();
