@@ -1,0 +1,75 @@
+name: MARKAZ Independent Finance Staff Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/attendance/**'
+      - 'api/auth/me.php'
+      - 'api/finance/**'
+      - 'app/helpers/finance.php'
+      - 'database/migrations/20261124_markaz_independent_finance_staff.sql'
+      - 'public/attendance.html'
+      - 'public/finance.html'
+      - 'public/teacher-attendance.html'
+      - 'public/js/attendance.js'
+      - 'public/js/dashboard.js'
+      - 'public/js/finance.js'
+      - 'public/js/teacher-attendance.js'
+      - 'scripts/install-finance.sh'
+      - 'tests/finance-*'
+      - 'tests/independent-finance-staff-attendance.test.php'
+      - '.github/workflows/finance-independent-staff.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  finance-staff-and-attendance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validate PHP syntax
+        run: |
+          set -e
+          php -l api/attendance/_common.php
+          php -l api/attendance/teachers.php
+          php -l api/auth/me.php
+          php -l api/finance/index.php
+          php -l api/finance/payroll.php
+          php -l public/api/attendance/teachers.php
+          php -l tests/finance-migration-installer.test.php
+          php -l tests/finance-payroll-regression.test.php
+          php -l tests/independent-finance-staff-attendance.test.php
+
+      - name: Validate JavaScript and installer syntax
+        run: |
+          set -e
+          node --check public/js/attendance.js
+          node --check public/js/dashboard.js
+          node --check public/js/finance.js
+          node --check public/js/teacher-attendance.js
+          bash -n scripts/install-finance.sh
+
+      - name: Run Finance and attendance regression tests
+        run: |
+          set -e
+          touch .env
+          php tests/finance-migration-installer.test.php
+          php tests/finance-payroll-regression.test.php
+          php tests/independent-finance-staff-attendance.test.php
+          php tests/finance-term-fees-regression.test.php

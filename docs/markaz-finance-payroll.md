@@ -10,14 +10,17 @@ This workspace is separate from the production dashboard. It is not linked in th
 - Monthly invoice generation with duplicate protection, student admission-number lookup, fee account table, partial payment allocations and printable receipt page.
 - Cash receipts and manually recorded bank/POS/online entries with pending verification for non-cash payments.
 - Separate other-school-income and expense records, approval/verification queues, balanced journal posting and a basic date-range report.
-- Teacher salary profiles attached to existing `admins.id` staff accounts, including effective-date history.
-- Separate teacher attendance records, no grace period, configurable per-minute deduction, monthly payroll calculation with calendar-day salary proration for mid-month profile changes, and Admin-approved scheduled release records.
+- An independent Finance staff register. Adding or deactivating Finance staff never creates, edits or removes academic login accounts.
+- Salary profiles and payroll items reference `finance_staff.id`, not `admins.id`; effective-dated salary history is retained.
+- Teacher attendance is recorded from the dedicated Teacher Attendance register inside the existing Attendance workspace. Only Admin and Management accounts explicitly granted full Attendance access can open it.
+- The Teacher Attendance API reads expected arrival and per-minute lateness rules from the effective Finance salary profile. Approved teacher attendance is the only attendance source used for payroll deductions.
+- Monthly payroll calculation uses Finance staff and approved attendance records, with calendar-day salary proration for mid-month profile changes and Admin/authorised Finance approval before scheduling.
 - Finance access limited to Admin and Management accounts with the existing `management_school_fees` permission. Student, teacher and exam-officer accounts do not get the finance workspace.
-- The production dashboard, navigation and student attendance tables are not changed by this branch.
+- Student attendance tables and individual class attendance views remain unchanged. The Attendance workspace gains a restricted navigation link to Teacher Attendance; teacher logins and Management accounts without full Attendance access are denied server-side.
 
 ## Additional migration
 
-After applying the foundation migration, apply `database/migrations/20261122_markaz_finance_fee_categories.sql` to add fee category codes to plans and invoices. The existing data receives the `general` category.
+Finance migrations are applied in order by `scripts/install-finance.sh`: foundation, fee categories, academic term fees, then `20261124_markaz_independent_finance_staff.sql`. The final migration preserves any historical Finance payroll references as independent Finance staff records; it does not enrol all existing teacher accounts.
 
 ## Financial rules
 1. Amounts use NGN decimal storage and integer-cent arithmetic for calculations.
@@ -33,17 +36,18 @@ After applying the foundation migration, apply `database/migrations/20261122_mar
 ## Integration contracts
 - Student references use existing `students.id`; admission number, names and class labels are read from the existing MARKAZ student records.
 - Class fee plans use `class_type` plus `class_id` because conventional and Arabic classes are separate tables.
-- Staff salary and attendance records use existing `admins.id` teacher accounts.
-- Student daily attendance remains untouched. Staff arrival records live in `staff_attendance`.
-- Management access reuses the existing `management_school_fees` permission key in `account_permissions`.
+- Finance employees use the independent `finance_staff.id` identity. Academic teacher accounts are not queried or automatically enrolled.
+- Teacher arrival records are written to `staff_attendance` by `api/attendance/teachers.php`, not by the Finance UI. Payroll reads only approved records from this table.
+- Teacher Attendance authorization is Admin-only or Management with the existing explicit `management_attendance` permission. Management access to Finance remains separately controlled by `management_school_fees`.
+- Migration `20261124_markaz_independent_finance_staff.sql` creates the independent register and remaps only staff already referenced by historical Finance records; it does not bulk import academic teachers.
 
 ## Isolated local preview — port 8884
 
 Do not point this branch at the live/working database.
 
 1. Create a disposable database named `markaz_finance_dev`.
-2. Import a recent development copy of MARKAZ so the existing students, classes, staff accounts and permissions are available.
-3. Back up that development database, then apply `database/migrations/20261121_markaz_finance_payroll.sql` to it only.
+2. Import a recent development copy of MARKAZ so existing students, classes and permissions are available.
+3. Back up that development database, then run `DB_NAME=markaz_finance_dev bash scripts/install-finance.sh` and confirm the test-database prompt.
 4. From the feature branch root, start the PHP server with an explicit database override:
 
 ```sh

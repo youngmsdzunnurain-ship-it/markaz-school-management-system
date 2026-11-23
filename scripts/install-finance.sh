@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -90,8 +90,19 @@ if [[ "$term_count" != "0" && "$term_count" != "${#term_tables[@]}" ]]; then
     echo "ERROR: Partial academic term-fee schema detected ($term_count/${#term_tables[@]} tables). No changes made." >&2
     exit 3
 fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" ]]; then
-    echo "MARKAZ Finance is already installed: foundation, fee categories and term fees are present."
+independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+independent_staff_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME='finance_staff' AND ((TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+if [[ "$independent_staff_tables" == "0" && ( "$independent_staff_columns" != "0" || "$independent_staff_constraints" != "0" ) ]]; then
+    echo "ERROR: Partial independent Finance staff migration detected. No changes made." >&2
+    exit 3
+fi
+if [[ "$independent_staff_tables" == "1" && ( "$independent_staff_columns" != "4" || "$independent_staff_constraints" != "3" ) ]]; then
+    echo "ERROR: Partial independent Finance staff migration detected ($independent_staff_columns/4 required columns, $independent_staff_constraints/3 required foreign keys). No changes made." >&2
+    exit 3
+fi
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" ]]; then
+    echo "MARKAZ Finance is already installed: foundation, fee categories, term fees and independent Finance staff are present."
     exit 0
 fi
 
@@ -127,6 +138,22 @@ category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE
 if [[ "$term_count" == "0" ]]; then apply_migration "20261123_markaz_academic_term_fees.sql"; fi
 term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
 [[ "$term_count" == "${#term_tables[@]}" ]] || { echo "ERROR: Academic term-fee verification failed. Restore from: $backup" >&2; exit 5; }
+
+# Apply and verify the independent Finance staff identity migration.
+if [[ "${foundation_count}" == "${#foundation_tables[@]}" && "${category_columns}" == "2" && "${term_count}" == "${#term_tables[@]}" ]]; then
+    independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+    independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+    if [[ "$independent_staff_tables" == "0" && "$independent_staff_columns" == "0" ]]; then
+        apply_migration "20261124_markaz_independent_finance_staff.sql"
+        independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
+        independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+        independent_staff_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME='finance_staff' AND ((TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+    fi
+    if [[ "$independent_staff_tables" != "1" || "$independent_staff_columns" != "4" || "$independent_staff_constraints" != "3" ]]; then
+        echo "ERROR: Independent Finance staff migration is partial ($independent_staff_tables table, $independent_staff_columns/4 required columns, $independent_staff_constraints/3 required foreign keys). Restore from the verified backup: $backup" >&2
+        exit 5
+    fi
+fi
 
 echo "SUCCESS: MARKAZ Finance schema is installed and verified."
 echo "Backup retained at: $backup"

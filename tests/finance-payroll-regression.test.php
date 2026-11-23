@@ -40,6 +40,8 @@ financeRegressionCheck(financeProrateMonthlySalary('20000.00', 15, 30) === '1000
 financeRegressionCheck(financeMoney('1250.5') === '1250.50', 'money input is normalised to two decimal places');
 
 $migration = file_get_contents(__DIR__ . '/../database/migrations/20261121_markaz_finance_payroll.sql');
+$feeCategoriesMigration = file_get_contents(__DIR__ . '/../database/migrations/20261122_markaz_finance_fee_categories.sql');
+$independentStaffMigration = file_get_contents(__DIR__ . '/../database/migrations/20261124_markaz_independent_finance_staff.sql');
 $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
 
@@ -49,12 +51,16 @@ $financePage = file_get_contents(__DIR__ . '/../public/finance.html');
 $financeStyles = file_get_contents(__DIR__ . '/../public/css/finance.css');
 $dashboardStyles = file_get_contents(__DIR__ . '/../public/css/dashboard-2026.css');
 $financeJs = file_get_contents(__DIR__ . '/../public/js/finance.js');
+$dashboardJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
+$teacherAttendanceApi = file_get_contents(__DIR__ . '/../api/attendance/teachers.php');
 $financeHelper = file_get_contents(__DIR__ . '/../app/helpers/finance.php');
 
 financeRegressionCheck(str_contains($migration, "frequency ENUM('monthly')"), 'fee plans use monthly billing periods');
 financeRegressionCheck(str_contains($migration, "scope ENUM('school','class','student')"), 'fee plans support school-wide, class and individual scopes');
 financeRegressionCheck(str_contains($migration, 'FOREIGN KEY (student_id) REFERENCES students(id)'), 'fee accounts reuse the existing MARKAZ student identity');
-financeRegressionCheck(str_contains($migration, 'FOREIGN KEY (account_id) REFERENCES admins(id)'), 'payroll reuses existing staff account identities');
+financeRegressionCheck(str_contains($independentStaffMigration, 'FOREIGN KEY (finance_staff_id) REFERENCES finance_staff(id)'), 'salary, attendance and payroll now reference the independent Finance staff register');
+financeRegressionCheck(str_contains($payrollApi, 'FROM finance_staff') && str_contains($payrollApi, 'finance_staff_id'), 'payroll calculations and history use Finance staff IDs rather than academic accounts');
+financeRegressionCheck(!str_contains($financeApi, "WHERE a.role='teacher'"), 'Finance staff discovery never imports academic teacher login accounts');
 financeRegressionCheck(str_contains($migration, 'CREATE TABLE staff_attendance'), 'teacher clock records are separate from student attendance');
 financeRegressionCheck(str_contains($migration, 'CREATE TABLE finance_other_income'), 'non-fee school income has its own verified record type');
 financeRegressionCheck(str_contains($migration, 'idempotency_key VARCHAR(120) NOT NULL UNIQUE'), 'salary payout records have unique idempotency keys');
@@ -65,32 +71,32 @@ financeRegressionCheck(str_contains($financeApi, 'verify_payment'), 'bank transf
 financeRegressionCheck(!str_contains($financePage, 'Development workspace'), 'development-only labels do not leak into the standard MARKAZ finance footer');
 financeRegressionCheck(str_contains($financePage, '<span class="footer-brand">MARKAZ</span>') && str_contains($financePage, '© 2026 MARKAZ. All Rights Reserved.'), 'finance footer uses the exact standard MARKAZ footer structure');
 financeRegressionCheck(str_contains($dashboardStyles, 'grid-template-columns:260px minmax(0,1fr)'), 'desktop finance sidebar inherits the exact 260px MARKAZ dashboard width');
-financeRegressionCheck(str_contains($financeStyles, 'width:min(220px,68vw)') || str_contains($financeStyles, 'width: min(220px, 68vw)'), 'mobile finance drawer is constrained to a compact responsive width');
-financeRegressionCheck(str_contains($financeJs, "classList.toggle('open'") && str_contains($financeJs, "classList.toggle('visible'"), 'mobile drawer and overlay use the same open-state classes as MARKAZ dashboard CSS');
-financeRegressionCheck(str_contains($financeJs, 'sidebar-desktop-closed') && str_contains($financeJs, 'desktop-closed'), 'desktop menu button can collapse and restore the sidebar');
-financeRegressionCheck(str_contains($financeJs, 'closeFinanceSidebar') && str_contains($financeJs, 'window.innerWidth<=850'), 'selecting a finance section closes the mobile drawer');
+financeRegressionCheck(str_contains($financeStyles, 'width:min(290px,86vw)') || str_contains($financeStyles, 'width:260px;max-width:86vw'), 'mobile finance drawer is constrained to a compact responsive width');
+financeRegressionCheck(str_contains($dashboardJs, 'sidebar.classList.add("open")') && str_contains($dashboardJs, 'sidebarOverlay?.classList.add("visible")'), 'shared dashboard controller owns mobile drawer and overlay state');
+financeRegressionCheck(str_contains($dashboardJs, 'sidebar-desktop-closed') && str_contains($dashboardJs, 'desktop-closed'), 'shared dashboard controller can collapse and restore the desktop sidebar');
+financeRegressionCheck(str_contains($dashboardJs, 'closeSidebar') && str_contains($dashboardJs, 'window.innerWidth > 850'), 'shared dashboard controller closes the mobile drawer on navigation');
 financeRegressionCheck(str_contains($financeStyles, '.report-filters') && str_contains($financeStyles, '.report-metrics'), 'financial report filters and summary metrics receive dedicated layout styling');
-financeRegressionCheck(str_contains($financeJs, "DEMO_MODE==='fees'") && str_contains($financeJs, "DEMO_MODE==='payroll'"), 'fee and payroll demo views are directly accessible and use read-only sample data');
-financeRegressionCheck(str_contains($financeJs, 'finance-demo-nav') && str_contains($financeJs, "['overview','Overview'],['fees','Student fees'],['payroll','Teacher payroll']"), 'demo mode provides three clearly labelled finance walkthroughs');
-financeRegressionCheck(str_contains($financeStyles, '.finance-demo-nav a[aria-current=page]'), 'active finance demo view is visibly highlighted');
-financeRegressionCheck(str_contains($payrollApi, 'financeCalculateLateMinutes'), 'payroll uses the shared lateness calculation');
+financeRegressionCheck(!str_contains($financeJs, 'DEMO_MODE') && !str_contains($financeJs, 'demoResponse'), 'Finance does not expose fabricated demo data or demo modes');
+financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo='), 'Finance navigation contains no demo shortcuts or demo URLs');
+financeRegressionCheck(!str_contains($financeStyles, '.finance-demo-nav'), 'Finance stylesheet contains no demo-only styling');
+financeRegressionCheck(str_contains($teacherAttendanceApi, 'financeCalculateLateMinutes'), 'the Attendance module calculates lateness from the Finance arrival schedule');
 financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness calculation does not apply a grace period');
 
 financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_contains($financePage, 'id="incomeMixChart"'), 'finance overview provides dedicated cash-flow and income-mix chart regions');
 financeRegressionCheck(str_contains($financeJs, 'renderCashflowChart') && str_contains($financeJs, 'renderIncomeMixChart'), 'finance overview renders responsive visual analytics from returned data');
 financeRegressionCheck(str_contains($financeApi, 'financeSelectApplicableFeePlans') && str_contains($financeApi, 'fee_code'), 'invoice generation applies one winning plan per fee category');
-financeRegressionCheck(str_contains($migration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
+financeRegressionCheck(str_contains($feeCategoriesMigration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
 financeRegressionCheck(str_contains($financeApi, 'monthly_trend') && str_contains($financeApi, 'income_mix'), 'finance dashboard returns database-backed monthly trend and income composition');
 financeRegressionCheck(str_contains($financeStyles, '.finance-chart-grid') && str_contains($financeStyles, '.chart-legend'), 'finance analytics charts receive responsive and accessible styling');
 financeRegressionCheck(str_contains($financeStyles, 'grid-template-columns:repeat(5,minmax(0,1fr))') && str_contains($financeStyles, '@media(max-width:850px)'), 'five finance overview metrics share one desktop row and adapt on mobile');
-financeRegressionCheck(str_contains($financePage, 'finance-refresh-button') && str_contains($financeStyles, '.finance-refresh-button'), 'finance refresh action uses the compact MARKAZ dashboard icon-button treatment');
+financeRegressionCheck(!str_contains($financePage, 'finance-refresh-button') && !str_contains($financeStyles, '.finance-refresh-button'), 'Finance has no redundant refresh toolbar control');
 financeRegressionCheck(str_contains($financeStyles, '.payroll-controls select') && str_contains($financeStyles, '.payroll-controls input'), 'payroll month and scheduled release controls have dedicated polished styling');
 financeRegressionCheck(str_contains($financeStyles, '.report-metrics{grid-template-columns:repeat(5,minmax(0,1fr))'), 'all five financial report summary metrics fit one desktop row');
-financeRegressionCheck(str_contains($financeStyles, '.dashboard-footer{padding:12px 20px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
-financeRegressionCheck(str_contains($financeStyles, '.topbar{min-height:60px') && str_contains($financeStyles, '.topbar>div{'), 'mobile top navigation is compact and horizontally aligned');
-financeRegressionCheck(str_contains($financePage, 'finance-demo-shortcut') && str_contains($financePage, '?demo=overview'), 'finance overview exposes a visible demo entry point');
+financeRegressionCheck(str_contains($financeStyles, '.footer{padding:18px 4px') && str_contains($financeStyles, '.sidebar{width:240px'), 'finance footer and desktop sidebar use compact MARKAZ proportions');
+financeRegressionCheck(str_contains($financeStyles, '.topbar{display:flex;justify-content:space-between') && str_contains($financeStyles, '.topbar{align-items:flex-start;flex-direction:column'), 'mobile top navigation is compact and horizontally aligned');
+financeRegressionCheck(!str_contains($financePage, 'finance-demo-shortcut') && !str_contains($financePage, '?demo=overview'), 'Finance overview exposes no demo entry point');
 financeRegressionCheck(str_contains($financeJs, 'Dashboard data could not be loaded:') && str_contains($financeJs, 'role="alert"'), 'dashboard API failures replace indefinite chart loading placeholders with visible errors');
-financeRegressionCheck(str_contains($financeJs, 'fees_today:25000') && str_contains($financeJs, 'net_movement:21500'), 'demo financial totals exclude the pending payment from confirmed income');
+financeRegressionCheck(!str_contains($financeJs, 'fees_today:25000') && !str_contains($financeJs, 'net_movement:21500'), 'Finance totals are loaded from live API data rather than hard-coded demo figures');
 financeRegressionCheck(str_contains($financeApi, 'exact same six calendar-month window'), 'income composition and cash-flow charts share the same reporting window');
 
 echo "MARKAZ finance and payroll regression checks passed.\n";
