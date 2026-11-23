@@ -212,7 +212,9 @@
   <form class="panel form-panel" id="salaryForm"><div class="panel-heading"><div><span class="eyebrow">STAFF COMPENSATION</span><h2>Set salary and arrival schedule</h2></div></div>
    <label>Finance staff member<select name="finance_staff_id" id="salaryTeacherSelect" required><option value="">Loading Finance staff…</option></select></label>
    <label>Monthly basic salary (₦)<input name="base_salary" type="number" min="0" step="0.01" required></label>
-   <div class="inline-fields"><label>Expected arrival time<input name="expected_arrival" type="time" required></label><label>Late deduction per minute (₦)<input name="lateness_rate_per_minute" type="number" min="0" step="0.01" value="10" required></label></div>
+   <label>Teacher attendance policy<select name="attendance_mode" id="salaryAttendanceMode" required><option value="time_based">Time-based — arrival time affects salary</option><option value="attendance_only">Attendance-only — record attendance, ignore arrival time</option></select></label>
+   <div class="inline-fields" id="salaryTimeFields"><label>Expected arrival time<input name="expected_arrival" id="salaryExpectedArrival" type="time" required></label><label>Late deduction per minute (₦)<input name="lateness_rate_per_minute" id="salaryLatenessRate" type="number" min="0" step="0.01" value="10" required></label></div>
+   <p class="muted small" id="salaryAttendanceHint">Time-based staff must have an expected arrival time. Only recorded lateness for these staff can affect salary.</p>
    <label>Effective from<input name="effective_from" type="date" required></label><button class="btn btn-primary" type="submit">Save salary profile</button>
   </form>
  </div>
