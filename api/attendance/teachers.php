@@ -17,7 +17,7 @@ if ($method === 'GET') {
     $date = attendanceValidateDate((string)($_GET['date'] ?? date('Y-m-d')));
     $stmt = $pdo->prepare(
         "SELECT s.id AS finance_staff_id,s.staff_number,s.full_name,s.job_title,
-                p.expected_arrival,p.lateness_rate_per_minute,
+                p.expected_arrival,p.attendance_mode,p.lateness_rate_per_minute,
                 a.id AS attendance_id,a.actual_arrival,a.status,a.late_minutes,
                 a.lateness_deduction,a.notes
          FROM finance_staff s
@@ -84,19 +84,25 @@ try {
         $profileQuery->execute([$staffId,$date,$date]);
         $profile = $profileQuery->fetch(PDO::FETCH_ASSOC);
         if (!$profile) throw new InvalidArgumentException('Every selected staff member must have an active salary and arrival-time profile for this date.');
+        $mode = (string)($profile['attendance_mode'] ?? 'time_based');
+        if (!in_array($mode, ['time_based','attendance_only'], true)) {
+            throw new InvalidArgumentException('The staff attendance policy is invalid. Update the salary profile first.');
+        }
         $actualValue = null;
         $lateMinutes = 0;
         $deduction = '0.00';
-        if ($status === 'present') {
+        if ($status === 'present' && $mode === 'time_based') {
             if (!preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d)?$/',$actual)) {
-                throw new InvalidArgumentException('Enter a valid arrival time for every present staff member.');
+                throw new InvalidArgumentException('Enter a valid arrival time for every present time-based staff member.');
             }
             $actualValue = strlen($actual) === 5 ? $actual . ':00' : $actual;
             $lateMinutes = financeCalculateLateMinutes((string)$profile['expected_arrival'],$actualValue);
             $rate = financeToCents((string)$profile['lateness_rate_per_minute']);
             $deduction = financeFromCents($lateMinutes * $rate);
         }
-        $save->execute([$staffId,$date,$profile['expected_arrival'],$actualValue,$status,$lateMinutes,$deduction,$notes?:null,$actor,$actor]);
+        // Excused/approved leave and attendance-only staff never incur lateness deductions.
+        $expectedArrival = $mode === 'time_based' ? $profile['expected_arrival'] : null;
+        $save->execute([$staffId,$date,$expectedArrival,$mode,$actualValue,$status,$lateMinutes,$deduction,$notes?:null,$actor,$actor]);
         $saved++;
     }
     $audit = $pdo->prepare(
