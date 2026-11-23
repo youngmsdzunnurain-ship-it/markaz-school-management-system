@@ -188,6 +188,14 @@
    <p class="muted small">Cash is recorded as received. Bank transfers and other non-cash entries remain pending verification.</p>
   </form>
   <div class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">VERIFICATION QUEUE</span><h2>Payment control</h2></div></div><p class="muted">Verify the bank transaction against the school's actual bank statement before confirming it. A transfer screenshot alone is not proof of settlement.</p><button class="btn btn-light" id="reloadPayments">Refresh payment history</button><div id="paymentHistory" class="stack-list"></div></div>
+  <form class="panel form-panel" id="refundForm"><div class="panel-heading"><div><span class="eyebrow">REFUND CONTROL</span><h2>Request a fee refund</h2></div></div>
+   <p class="muted">Refund requests require a second authorised staff member to approve them. Approved refunds reopen the affected invoice balances and create a ledger entry.</p>
+   <label>Confirmed payment<select name="payment_id" id="refundPaymentSelect" required><option value="">Load confirmed payments</option></select></label>
+   <label>Refund amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
+   <label>Reason for refund<textarea name="reason" rows="3" maxlength="500" required placeholder="Explain why the school is refunding this payment"></textarea></label>
+   <button class="btn btn-primary" type="submit">Submit refund for approval</button>
+  </form>
+  <section class="panel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER APPROVAL</span><h2>Refund approval queue</h2><p class="muted">The person who requested a refund cannot approve or reject the same request.</p></div><button class="btn btn-light" id="reloadRefunds" type="button">Refresh refunds</button></div><div id="refundQueue" class="stack-list"><p class="muted">Loading refund requests…</p></div></section>
  </div>
 </section>
 <section class="tab-panel" id="tab-expenses">
