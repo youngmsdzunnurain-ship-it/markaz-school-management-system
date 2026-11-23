@@ -20,14 +20,17 @@ $staffChatJs = file_get_contents(__DIR__ . '/../public/js/staff-chat.js');
 $resultSaveApi = file_get_contents(__DIR__ . '/../api/results/save.php');
 
 resultsScannerCheck(
-    str_contains($classHtml, '20261121-roster-stable3') && str_contains($classApi, "header('Cache-Control: no-store, no-cache, must-revalidate, private')") && !str_contains($classHtml, 'list="resultStudentSuggestions"'),
+    str_contains($classHtml, '20261120-roster-stable1') && str_contains($classApi, "header('Cache-Control: no-store, no-cache, must-revalidate, private')") && !str_contains($classHtml, 'list="resultStudentSuggestions"'),
     'Results roster API disables intermediary caching and student search uses its custom accessible dropdown instead of a broken datalist reference'
 );
 resultsScannerCheck(
-    str_contains($classHtml, 'id="resultsScanner"') &&
-    str_contains($classHtml, 'capture="environment"') &&
-    str_contains($classHtml, 'accept="image/'),
-    'Results workspace exposes camera capture and image upload controls'
+    str_contains($classHtml, 'results-scanner-live.css') &&
+    !str_contains($classHtml, 'data-scanner-upload') &&
+    !str_contains($classHtml, 'data-scanner-panel') &&
+    str_contains($scannerJs, 'getUserMedia') &&
+    str_contains($scannerJs, 'facingMode') &&
+    str_contains($scannerJs, 'environment'),
+    'Scan results opens a live camera straight away; no image upload or photo-snapshot panel is offered'
 );
 resultsScannerCheck(
     str_contains($classApi, "'roster' => array_map(") &&
@@ -38,31 +41,12 @@ resultsScannerCheck(
     'The class roster retains active and inactive students independently from the active-only result-entry list, and overlapping refreshes cannot erase it'
 );
 resultsScannerCheck(
-    str_contains($classHtml, '20261121-roster-stable3') &&
+    str_contains($classHtml, '20261120-roster-stable1') &&
     str_contains($classJs, 'let classRosterLoaded = false') &&
     str_contains($classJs, 'JSON.stringify(incomingRoster) !== JSON.stringify(classRoster)') &&
     str_contains($classJs, 'if (rosterChanged)') &&
     substr_count($classJs, 'classStudentsContainer.addEventListener("click"') === 1,
     'Class roster only re-renders when its data changes, first empty responses settle correctly, and student actions have one delegated handler'
-);
-resultsScannerCheck(
-    str_contains($classJs, 'if (updateRoster && rosterRequestSequence === rosterLoadSequence && Array.isArray(data.roster))') &&
-    str_contains($classJs, 'loadResults({ updateRoster: false })'),
-    'Automatic focus refreshes update result data without replacing the already loaded class roster'
-);
-
-resultsScannerCheck(
-    str_contains($classJs, 'let rosterLoadSequence = 0') &&
-    str_contains($classJs, 'const rosterRequestSequence = updateRoster ? ++rosterLoadSequence : null') &&
-    strpos($classJs, 'if (updateRoster && rosterRequestSequence === rosterLoadSequence') <
-        strpos($classJs, 'if (requestSequence !== resultsLoadSequence)'),
-    'A result-only focus refresh cannot invalidate the initial independent roster response'
-);
-resultsScannerCheck(
-    str_contains($classJs, 'student.middle_name') &&
-    str_contains($classJs, 'student.first_name') &&
-    str_contains($classJs, 'student.last_name'),
-    'Class roster displays each student full name, including the middle name'
 );
 resultsScannerCheck(
     str_contains($classJs, 'MarkazResultsScanner.configure') &&
@@ -81,9 +65,9 @@ resultsScannerCheck(
     'OCR is local, supports Arabic and English, and saves through the authenticated results endpoint'
 );
 resultsScannerCheck(
-    str_contains($scannerJs, 'Review every detected mark') &&
-    str_contains($scannerJs, 'Blank marks are never saved') &&
-    str_contains($scannerJs, 'Save reviewed results') &&
+    str_contains($scannerJs, 'Check each score, then save to student results.') &&
+    str_contains($scannerJs, 'values.every(value => value === "")') &&
+    str_contains($scannerJs, 'Save to student results') &&
     str_contains($scannerJs, 'dataset.studentId') &&
     str_contains($resultSaveApi, 'requireResultStaff()') &&
     str_contains($resultSaveApi, 'requireTeacherAssignment('),
