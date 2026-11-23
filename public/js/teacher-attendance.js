@@ -18,14 +18,17 @@ async function request(url,options={}) {
  return data;
 }
 function render() {
- if(!staff.length){rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">No active Finance staff have a salary and arrival-time profile for this date. Configure staff and salary details in Finance first.</td></tr>';saveButton.disabled=true;return;}
- rowsHost.innerHTML=staff.map((s,i)=>{
- const status=s.status||"";
- const options=[["","Choose status"],["present","Present"],["absent","Absent"],["approved_leave","Approved leave"],["excused","Excused"]];
- const selected=options.map(([v,l])=>'<option value="'+v+'" '+(v===status?'selected':'')+'>'+l+'</option>').join("");
- const late=Number(s.late_minutes||0);
- return '<tr data-staff-row="'+esc(s.finance_staff_id)+'"><td>'+(i+1)+'</td><td><span class="staff-name">'+esc(s.full_name)+'</span><span class="staff-meta">'+esc(s.staff_number)+' · '+esc(s.job_title)+'</span></td><td>'+esc(String(s.expected_arrival||"").slice(0,5))+'</td><td><input type="time" data-arrival value="'+esc(String(s.actual_arrival||"").slice(0,5))+'" aria-label="Actual arrival for '+esc(s.full_name)+'"></td><td><select data-status aria-label="Attendance status for '+esc(s.full_name)+'">'+selected+'</select></td><td><input type="text" maxlength="500" data-notes value="'+esc(s.notes||"")+'" aria-label="Notes for '+esc(s.full_name)+'"></td><td data-late>'+late+' min</td></tr>';
- }).join("");
+ const timed=staff.filter(s=>(s.attendance_mode||"time_based")==="time_based");
+ const untimed=staff.filter(s=>(s.attendance_mode||"time_based")==="attendance_only");
+ if(!staff.length){rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">No active Finance staff have an approved salary profile for this date. Configure staff and salary details in Finance first.</td></tr>';saveButton.disabled=true;return;}
+ const options=[["","Choose status"],["present","Present"],["absent","Absent"],["approved_leave","Approved leave"],["excused","Excused — no deduction"]];
+ const renderGroup=(people,label,mode)=>people.length?'<tr class="teacher-attendance-group"><th colspan="7">'+label+' ('+people.length+')</th></tr>'+people.map((s,i)=>{
+  const selected=options.map(([v,l])=>'<option value="'+v+'" '+(v===(s.status||"")?'selected':'')+'>'+l+'</option>').join("");
+  const late=mode==="time_based"?Number(s.late_minutes||0):0;
+  const arrivalCell=mode==="time_based"?'<input type="time" data-arrival value="'+esc(String(s.actual_arrival||"").slice(0,5))+'" aria-label="Actual arrival for '+esc(s.full_name)+'">':'<span class="staff-meta">Not applicable</span>';
+  return '<tr data-staff-row="'+esc(s.finance_staff_id)+'" data-attendance-mode="'+mode+'"><td>'+(i+1)+'</td><td><span class="staff-name">'+esc(s.full_name)+'</span><span class="staff-meta">'+esc(s.staff_number)+' · '+esc(s.job_title)+'</span></td><td>'+(mode==="time_based"?esc(String(s.expected_arrival||"").slice(0,5)):'Not applicable')+'</td><td>'+arrivalCell+'</td><td><select data-status aria-label="Attendance status for '+esc(s.full_name)+'">'+selected+'</select></td><td><input type="text" maxlength="500" data-notes value="'+esc(s.notes||"")+'" aria-label="Notes for '+esc(s.full_name)+'"></td><td data-late>'+(mode==="time_based"?late+' min':'Not timed')+'</td></tr>';
+ }).join(""):"";
+ rowsHost.innerHTML=renderGroup(timed,"Time-based staff — arrival and lateness affect salary","time_based")+renderGroup(untimed,"Attendance-only staff — arrival time does not affect salary","attendance_only");
  saveButton.disabled=false;
 }
 async function load() {
@@ -34,7 +37,7 @@ async function load() {
   const data=await request("./api/attendance/teachers.php?date="+encodeURIComponent(dateInput.value));
   staff=Array.isArray(data.staff)?data.staff:[];
   $("teacherAttendanceSubtitle").textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(dateInput.value+"T12:00:00"))+" · "+staff.length+" Finance staff with active salary profiles";
-  render();show(staff.length?"Mark each staff member's attendance and save the register.":"No eligible staff found for this date.");
+  render();show(staff.length?"Mark attendance in the two staff groups. Only time-based staff require arrival times.":"No eligible staff found for this date.");
  } catch(error){staff=[];render();show(error.message,true);}
  finally{busy=false;}
 }
@@ -42,7 +45,7 @@ async function save() {
  if(busy||!staff.length)return;
  const records=[...rowsHost.querySelectorAll("[data-staff-row]")].map(row=>({
   finance_staff_id:Number(row.dataset.staffRow),
-  actual_arrival:row.querySelector("[data-arrival]").value,
+  actual_arrival:row.querySelector("[data-arrival]")?.value||"",
   status:row.querySelector("[data-status]").value,
   notes:row.querySelector("[data-notes]").value
  }));
