@@ -47,7 +47,7 @@ $records = $input['records'];
 if (count($records) > 300) attendanceJsonError(422, 'The attendance register is too large.');
 
 $profileQuery = $pdo->prepare(
-    'SELECT expected_arrival,lateness_rate_per_minute
+    'SELECT expected_arrival,attendance_mode,lateness_rate_per_minute
      FROM staff_salary_profiles
      WHERE finance_staff_id=? AND effective_from<=?
        AND (effective_until IS NULL OR effective_until>=?)
@@ -56,9 +56,9 @@ $profileQuery = $pdo->prepare(
 $staffQuery = $pdo->prepare('SELECT id FROM finance_staff WHERE id=? AND is_active=1');
 $save = $pdo->prepare(
     'INSERT INTO staff_attendance
-        (finance_staff_id,attendance_date,expected_arrival,actual_arrival,status,late_minutes,lateness_deduction,notes,recorded_by,approved_by,approved_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,NOW())
-     ON DUPLICATE KEY UPDATE expected_arrival=VALUES(expected_arrival),
+        (finance_staff_id,attendance_date,expected_arrival,attendance_mode,actual_arrival,status,late_minutes,lateness_deduction,notes,recorded_by,approved_by,approved_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())
+     ON DUPLICATE KEY UPDATE expected_arrival=VALUES(expected_arrival),attendance_mode=VALUES(attendance_mode),
         actual_arrival=VALUES(actual_arrival),status=VALUES(status),
         late_minutes=VALUES(late_minutes),lateness_deduction=VALUES(lateness_deduction),
         notes=VALUES(notes),recorded_by=VALUES(recorded_by),approved_by=VALUES(approved_by),approved_at=NOW()'
