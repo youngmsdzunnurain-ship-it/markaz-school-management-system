@@ -69,6 +69,10 @@ try {
             )->fetchAll(PDO::FETCH_ASSOC);
             financeJson(['success'=>true,'payments'=>$rows]);
         }
+        if ($action === 'refunds') {
+            $rows=$pdo->query("SELECT r.*,p.receipt_number,p.amount payment_amount,p.method,p.student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,a.name recorded_by_name,v.name reviewed_by_name FROM finance_fee_refunds r JOIN finance_fee_payments p ON p.id=r.payment_id JOIN students s ON s.id=p.student_id JOIN admins a ON a.id=r.recorded_by LEFT JOIN admins v ON v.id=r.reviewed_by ORDER BY FIELD(r.status,'pending','approved','rejected'),r.created_at DESC LIMIT 300")->fetchAll(PDO::FETCH_ASSOC);
+            financeJson(['success'=>true,'refunds'=>$rows]);
+        }
         if ($action === 'receipt') {
             $id=(int)($_GET['payment_id']??0);
             $stmt=$pdo->prepare(
@@ -400,6 +404,66 @@ try {
             $pdo->commit();
         }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
         financeJson(['success'=>true,'message'=>'Payment '.$new.'.']);
+    }
+
+    if($action==='request_refund'){
+        $paymentId=(int)($input['payment_id']??0);$amount=financeMoney($input['amount']??'');$reason=trim((string)($input['reason']??''));
+        if($paymentId<1||$reason===''||mb_strlen($reason)>500)financeJson(['success'=>false,'message'=>'Choose a payment and provide a clear refund reason.'],422);
+        $pdo->beginTransaction();
+        try{
+            $st=$pdo->prepare("SELECT id,amount,status FROM finance_fee_payments WHERE id=? FOR UPDATE");$st->execute([$paymentId]);$payment=$st->fetch(PDO::FETCH_ASSOC);
+            if(!$payment||$payment['status']!=='confirmed')throw new DomainException('Only confirmed fee payments can be refunded.');
+            $reserved=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE payment_id=? AND status IN ('pending','approved')");$reserved->execute([$paymentId]);
+            if(financeToCents((string)$reserved->fetchColumn())+financeToCents($amount)>financeToCents((string)$payment['amount']))throw new DomainException('The requested refund exceeds the payment amount remaining after existing refund requests.');
+            $actor=(int)$_SESSION['admin_id'];$stmt=$pdo->prepare("INSERT INTO finance_fee_refunds(refund_number,payment_id,amount,reason,status,recorded_by) VALUES(?,?,?,?,'pending',?)");
+            $stmt->execute([financeNextNumber('MZRFND'),$paymentId,$amount,$reason,$actor]);$refundId=(int)$pdo->lastInsertId();
+            financeAudit($pdo,'fee_refund_requested','fee_refund',$refundId,['payment_id'=>$paymentId,'amount'=>$amount]);
+            $pdo->commit();
+        }catch(Throwable $error){if($pdo->inTransaction())$pdo->rollBack();if($error instanceof DomainException)financeJson(['success'=>false,'message'=>$error->getMessage()],422);throw $error;}
+        financeJson(['success'=>true,'refund_id'=>$refundId,'message'=>'Refund request submitted for independent approval.'],201);
+    }
+    if($action==='review_refund'){
+        $refundId=(int)($input['refund_id']??0);$decision=(string)($input['decision']??'');
+        if($refundId<1||!in_array($decision,['approve','reject'],true))financeJson(['success'=>false,'message'=>'Choose a valid refund decision.'],422);
+        $pdo->beginTransaction();
+        try{
+            $st=$pdo->prepare("SELECT r.*,p.amount payment_amount,p.method,p.paid_at FROM finance_fee_refunds r JOIN finance_fee_payments p ON p.id=r.payment_id WHERE r.id=? FOR UPDATE");$st->execute([$refundId]);$refund=$st->fetch(PDO::FETCH_ASSOC);
+            $actor=(int)$_SESSION['admin_id'];
+            if(!$refund||$refund['status']!=='pending')throw new DomainException('Only pending refund requests can be reviewed.');
+            if((int)$refund['recorded_by']===$actor)throw new DomainException('The staff member who requested a refund cannot approve or reject it.');
+            if($decision==='reject'){
+                $pdo->prepare("UPDATE finance_fee_refunds SET status='rejected',reviewed_by=?,reviewed_at=NOW() WHERE id=?")->execute([$actor,$refundId]);
+                financeAudit($pdo,'fee_refund_rejected','fee_refund',$refundId,[]);
+                $pdo->commit();financeJson(['success'=>true,'message'=>'Refund request rejected and retained in the audit history.']);
+            }
+            $approved=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE payment_id=? AND status='approved'");$approved->execute([(int)$refund['payment_id']]);
+            if(financeToCents((string)$approved->fetchColumn())+financeToCents((string)$refund['amount'])>financeToCents((string)$refund['payment_amount']))throw new DomainException('Approved refunds cannot exceed the original confirmed payment.');
+            $remaining=financeToCents((string)$refund['amount']);
+            $monthly=$pdo->prepare("SELECT a.id,a.invoice_id,a.amount,i.due_on,COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='monthly' AND x.source_allocation_id=a.id),0) refunded FROM finance_fee_allocations a JOIN finance_fee_invoices i ON i.id=a.invoice_id WHERE a.payment_id=? ORDER BY i.due_on DESC,a.id DESC FOR UPDATE");
+            $monthly->execute([(int)$refund['payment_id']]);
+            $term=$pdo->prepare("SELECT a.id,a.term_invoice_id invoice_id,a.amount,i.due_on,COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='term' AND x.source_allocation_id=a.id),0) refunded FROM finance_term_fee_payments a JOIN finance_term_fee_invoices i ON i.id=a.term_invoice_id WHERE a.payment_id=? ORDER BY i.due_on DESC,a.id DESC FOR UPDATE");
+            $term->execute([(int)$refund['payment_id']]);
+            $insertAllocation=$pdo->prepare("INSERT INTO finance_fee_refund_allocations(refund_id,allocation_type,source_allocation_id,amount) VALUES(?,?,?,?)");
+            $monthlyRows=$monthly->fetchAll(PDO::FETCH_ASSOC);
+            foreach($monthlyRows as $allocation){if($remaining<=0)break;$available=financeToCents((string)$allocation['amount'])-financeToCents((string)$allocation['refunded']);$part=min($remaining,max(0,$available));if($part<=0)continue;$insertAllocation->execute([$refundId,'monthly',(int)$allocation['id'],financeFromCents($part)]);$remaining-=$part;}
+            $termRows=$term->fetchAll(PDO::FETCH_ASSOC);
+            foreach($termRows as $allocation){if($remaining<=0)break;$available=financeToCents((string)$allocation['amount'])-financeToCents((string)$allocation['refunded']);$part=min($remaining,max(0,$available));if($part<=0)continue;$insertAllocation->execute([$refundId,'term',(int)$allocation['id'],financeFromCents($part)]);$remaining-=$part;}
+            if($remaining>0)throw new DomainException('The refund amount is greater than the remaining allocated payment balance.');
+            $pdo->prepare("UPDATE finance_fee_refunds SET status='approved',reviewed_by=?,reviewed_at=NOW() WHERE id=?")->execute([$actor,$refundId]);
+            $refreshMonthly=$pdo->prepare("UPDATE finance_fee_invoices i SET status=CASE WHEN (i.amount_due-i.discount_amount-(COALESCE((SELECT SUM(a.amount) FROM finance_fee_allocations a WHERE a.invoice_id=i.id),0)-COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='monthly' AND x.source_allocation_id IN (SELECT a2.id FROM finance_fee_allocations a2 WHERE a2.invoice_id=i.id)),0)))<=0 THEN 'paid' WHEN (COALESCE((SELECT SUM(a.amount) FROM finance_fee_allocations a WHERE a.invoice_id=i.id),0)-COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='monthly' AND x.source_allocation_id IN (SELECT a2.id FROM finance_fee_allocations a2 WHERE a2.invoice_id=i.id)),0))>0 THEN 'partial' ELSE 'unpaid' END WHERE i.id=?");
+            $refreshTerm=$pdo->prepare("UPDATE finance_term_fee_invoices i SET status=CASE WHEN (i.amount_due-(COALESCE((SELECT SUM(a.amount) FROM finance_term_fee_payments a WHERE a.term_invoice_id=i.id),0)-COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='term' AND x.source_allocation_id IN (SELECT a2.id FROM finance_term_fee_payments a2 WHERE a2.term_invoice_id=i.id)),0)))<=0 THEN 'paid' WHEN (COALESCE((SELECT SUM(a.amount) FROM finance_term_fee_payments a WHERE a.term_invoice_id=i.id),0)-COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id WHERE r.status='approved' AND x.allocation_type='term' AND x.source_allocation_id IN (SELECT a2.id FROM finance_term_fee_payments a2 WHERE a2.term_invoice_id=i.id)),0))>0 THEN 'partial' ELSE 'unpaid' END WHERE i.id=?");
+            foreach($monthlyRows as $allocation)$refreshMonthly->execute([(int)$allocation['invoice_id']]);
+            foreach($termRows as $allocation)$refreshTerm->execute([(int)$allocation['invoice_id']]);
+            $account=$refund['method']==='cash'?'1000':'1010';
+            $journal=financePostJournal($pdo,'adjustment',$refundId,'Student fee refund',date('Y-m-d'),[
+                ['account_id'=>financeAccountId($pdo,'4000'),'debit'=>$refund['amount'],'credit'=>'0.00','description'=>'Approved student fee refund'],
+                ['account_id'=>financeAccountId($pdo,$account),'debit'=>'0.00','credit'=>$refund['amount'],'description'=>'Refund paid from school funds']
+            ]);
+            $pdo->prepare("UPDATE finance_fee_refunds SET journal_id=? WHERE id=?")->execute([$journal,$refundId]);
+            financeAudit($pdo,'fee_refund_approved','fee_refund',$refundId,['payment_id'=>(int)$refund['payment_id'],'amount'=>$refund['amount'],'journal_id'=>$journal]);
+            $pdo->commit();
+        }catch(Throwable $error){if($pdo->inTransaction())$pdo->rollBack();if($error instanceof DomainException)financeJson(['success'=>false,'message'=>$error->getMessage()],422);throw $error;}
+        financeJson(['success'=>true,'message'=>'Refund approved, invoice balances restored and the refund posted to the ledger.']);
     }
 
     if($action==='record_income'){
