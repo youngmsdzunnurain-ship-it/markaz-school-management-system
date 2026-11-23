@@ -100,8 +100,9 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     !str_contains($managementShellJs, '<a href="/settings.html">Settings</a>') &&
-    (str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }') ||
-     str_contains($studentResultCss, '.student-information .student-photo { display: none !important; }')),
+    (str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
+     str_contains($studentResultCss, 'display: none !important;') &&
+     str_contains($studentResultCss, '@media screen and (max-width: 760px)')),
     'Avatar Settings is removed and mobile result profile photo is hidden'
 );
 teacherPortalCheck(
@@ -120,7 +121,9 @@ $studentResultCss = file_get_contents(__DIR__ . '/../public/css/student-result.c
 teacherPortalCheck(
     str_contains($studentResultCss, 'Shared student information treatment') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
-    str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }'),
+    str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
+    str_contains($studentResultCss, 'display: none !important;') &&
+    str_contains($studentResultCss, '@media screen and (max-width: 760px)'),
     'Staff result mobile profile follows the compact Student Portal layout and removes the photo column'
 );
 teacherPortalCheck(
