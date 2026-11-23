@@ -608,3 +608,6 @@ body.finance-workspace-page .welcome-card{
 @media(max-width:560px){
  .finance-workspace-page #tab-fees #studentField{grid-template-columns:minmax(0,1fr);gap:10px}
 }
+
+/* Teacher attendance policy selector: keep hidden schedule controls out of layout. */
+#salaryTimeFields[hidden]{display:none!important}
