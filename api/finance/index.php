@@ -168,21 +168,23 @@ try {
                  FROM (
                     SELECT i.student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
                            COALESCE(c.name,ac.name,'Unassigned') class_name,
-                           (i.amount_due-i.discount_amount-COALESCE(a.paid,0)) balance,
+                           (i.amount_due-i.discount_amount-COALESCE(a.paid,0)+COALESCE(r.refunded,0)) balance,
                            GREATEST(DATEDIFF(CURDATE(),i.due_on),0) days_overdue
                     FROM finance_fee_invoices i JOIN students s ON s.id=i.student_id
                     LEFT JOIN classes c ON c.id=s.class_id
                     LEFT JOIN arabic_classes ac ON ac.id=COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id)
                     LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
+                    LEFT JOIN (SELECT a2.invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id JOIN finance_fee_allocations a2 ON x.allocation_type='monthly' AND a2.id=x.source_allocation_id WHERE rf.status='approved' GROUP BY a2.invoice_id) r ON r.invoice_id=i.id
                     WHERE i.status IN ('unpaid','partial') AND i.status<>'void'
                     UNION ALL
                     SELECT i.student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
                            COALESCE(c.name,'Unassigned') class_name,
-                           (i.amount_due-COALESCE(p.paid,0)) balance,
+                           (i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0)) balance,
                            GREATEST(DATEDIFF(CURDATE(),i.due_on),0) days_overdue
                     FROM finance_term_fee_invoices i JOIN students s ON s.id=i.student_id
                     LEFT JOIN classes c ON c.id=i.class_id
                     LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id
+                    LEFT JOIN (SELECT a2.term_invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id JOIN finance_term_fee_payments a2 ON x.allocation_type='term' AND a2.id=x.source_allocation_id WHERE rf.status='approved' GROUP BY a2.term_invoice_id) r ON r.term_invoice_id=i.id
                     WHERE i.status IN ('unpaid','partial')
                  ) x WHERE x.balance>0
                  GROUP BY x.student_id,x.admission_number,x.student_name,x.class_name
