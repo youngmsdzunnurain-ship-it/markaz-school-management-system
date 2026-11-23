@@ -13,7 +13,7 @@ settingsDashboardCheck(str_contains($nav, 'Result Footer Signatures & Date')
     && str_contains($nav, 'Emergency Contact & System Support')
     && str_contains($nav, 'Qur’an Memorization'), 'Settings categories are clearly named');
 settingsDashboardCheck(str_contains($nav, '"profile", "result-release", "academic-archive", "academic", "results", "memorization"')
-    && str_contains($nav, 'activate("profile")'), 'Exam Officer retains result footer/signature settings');
+    && str_contains($nav, 'activate(preservedCategory?.id || "profile")'), 'Exam Officer retains result footer/signature settings');
 settingsDashboardCheck(str_contains($css, '.result-footer-settings-card #saveResultFooterButton')
     && str_contains($css, '.signature-editor-actions button:hover'), 'Result footer and signature actions are styled');
 settingsDashboardCheck(str_contains($dash, 'object-position:center center')
