@@ -561,3 +561,30 @@ html[dir="rtl"][dir="rtl"] body :is(.admin-profile-button, .markaz-shell-profile
     padding-left: 5px;
     padding-right: 16px
 }
+/* ---- css/school-fees-2026.css ---- */
+html[dir="rtl"] .fees-hero {
+    background: radial-gradient(90% 140% at 100% 0%, rgba(230, 194, 106, .26), transparent 55%),
+        linear-gradient(-135deg, #071f15 0%, #0c3a27 48%, #15603f 100%)
+}
+html[dir="rtl"] .fees-hero-badge {
+    background: linear-gradient(-135deg, #fbefc4, #e6c26a)
+}
+html[dir="rtl"] .fees-notice {
+    background: linear-gradient(-180deg, #fffdf4, #fbf3d6)
+}
+html[dir="rtl"] .fees-notice-icon {
+    background: linear-gradient(-135deg, #e0b95a, #b88a2c)
+}
+html[dir="rtl"] .fees-stat::before {
+    background: linear-gradient(-90deg, var(--fees-gold), #f3d98a, var(--fees-gold))
+}
+html[dir="rtl"] .fees-stat-icon {
+    left: 18px;
+    right: auto
+}
+html[dir="rtl"] .fees-module {
+    background: linear-gradient(-180deg, #fff, #f7fbf8)
+}
+html[dir="rtl"] .fees-module-icon {
+    background: linear-gradient(-135deg, var(--fees-green-2), var(--fees-green))
+}
