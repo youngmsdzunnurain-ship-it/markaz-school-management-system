@@ -19,9 +19,9 @@ websiteImageCheck(
     'website image replacements must be checked for real readable files before being sent to public pages'
 );
 websiteImageCheck(
-    str_contains($api, "unset($mappings[$image['url']])") &&
+    str_contains($api, 'array_key_exists(') &&
     str_contains($api, 'writeWebsiteImageManifest($manifestPath, $mappings)') &&
-    str_contains($api, "$staleMappingFound = true"),
+    str_contains($api, '$staleMappingFound = true'),
     'stale managed image mappings must be removed so the original image is restored'
 );
 websiteImageCheck(
