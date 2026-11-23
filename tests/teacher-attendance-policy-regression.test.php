@@ -18,7 +18,7 @@ $financeJs = file_get_contents($root . '/public/js/finance.js');
 $installer = file_get_contents($root . '/scripts/install-finance.sh');
 
 teacherPolicyCheck(str_contains($migration, "attendance_mode ENUM('time_based','attendance_only')"), 'salary profiles distinguish time-based and attendance-only staff');
-teacherPolicyCheck(str_contains($migration, 'MODIFY expected_arrival TIME NULL'), 'arrival schedules are optional for attendance-only staff');
+teacherPolicyCheck(str_contains($migration, 'MODIFY COLUMN expected_arrival TIME NULL'), 'arrival schedules are optional for attendance-only staff');
 teacherPolicyCheck(str_contains($migration, 'ADD COLUMN attendance_mode'), 'attendance records preserve the policy active on the attendance date');
 teacherPolicyCheck(str_contains($attendanceApi, "['time_based','attendance_only']"), 'attendance API validates the two permitted staff policies');
 teacherPolicyCheck(str_contains($attendanceApi, '$mode === \'time_based\''), 'only time-based staff require arrival-time entry and lateness calculation');
