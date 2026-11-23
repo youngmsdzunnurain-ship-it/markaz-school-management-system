@@ -185,7 +185,8 @@ teacherPortalCheck(
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
+    str_contains($dashboardComboJs, '"Kindergarten", "KG"') &&
+    str_contains($dashboardComboJs, '"Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "Basic 1"') &&
     !str_contains($dashboardComboJs, '"Basic 6"') &&
     str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
     'Attendance chart follows the established conventional class hierarchy'
