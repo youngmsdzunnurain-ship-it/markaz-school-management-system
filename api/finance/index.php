@@ -166,7 +166,7 @@ try {
         if ($action === 'staff') {
             $rows=$pdo->query(
                 "SELECT s.id,s.staff_number,s.full_name AS name,s.email,s.phone,s.job_title,
-                        s.employment_date,s.is_active,p.base_salary,p.expected_arrival,
+                        s.employment_date,s.is_active,p.base_salary,p.expected_arrival,p.attendance_mode,
                         p.lateness_rate_per_minute,p.effective_from
                  FROM finance_staff s
                  LEFT JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
