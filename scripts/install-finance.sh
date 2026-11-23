@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -92,6 +92,8 @@ if [[ "$term_count" != "0" && "$term_count" != "${#term_tables[@]}" ]]; then
 fi
 independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
 independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
+attendance_policy_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND COLUMN_NAME='attendance_mode' AND TABLE_NAME IN ('staff_salary_profiles','staff_attendance')")"
+refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
 independent_staff_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME='finance_staff' AND ((TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
 if [[ "$independent_staff_tables" == "0" && ( "$independent_staff_columns" != "0" || "$independent_staff_constraints" != "0" ) ]]; then
     echo "ERROR: Partial independent Finance staff migration detected. No changes made." >&2
@@ -101,8 +103,16 @@ if [[ "$independent_staff_tables" == "1" && ( "$independent_staff_columns" != "4
     echo "ERROR: Partial independent Finance staff migration detected ($independent_staff_columns/4 required columns, $independent_staff_constraints/3 required foreign keys). No changes made." >&2
     exit 3
 fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" ]]; then
-    echo "MARKAZ Finance is already installed: foundation, fee categories, term fees and independent Finance staff are present."
+if [[ "$refund_tables" != "0" && "$refund_tables" != "2" ]]; then
+    echo "ERROR: Partial student fee refund migration detected ($refund_tables/2 tables). No changes made." >&2
+    exit 3
+fi
+if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2" ]]; then
+        echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
+        exit 3
+    fi
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
+    echo "MARKAZ Finance is already installed: fee foundations, term fees, independent Finance staff, attendance policies and refund controls are present."
     exit 0
 fi
 
@@ -154,6 +164,16 @@ if [[ "${foundation_count}" == "${#foundation_tables[@]}" && "${category_columns
         exit 5
     fi
 fi
+
+# Apply attendance policy only after the independent Finance staff IDs exist.
+if [[ "$attendance_policy_columns" == "0" ]]; then apply_migration "20261125_teacher_attendance_modes.sql"; fi
+attendance_policy_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND COLUMN_NAME='attendance_mode' AND TABLE_NAME IN ('staff_salary_profiles','staff_attendance')")"
+[[ "$attendance_policy_columns" == "2" ]] || { echo "ERROR: Teacher attendance policy verification failed. Restore from: $backup" >&2; exit 5; }
+
+# Refund schema is applied last because it references confirmed fee payments.
+if [[ "$refund_tables" == "0" ]]; then apply_migration "20261126_markaz_fee_refunds.sql"; fi
+refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
+[[ "$refund_tables" == "2" ]] || { echo "ERROR: Fee refund schema verification failed. Restore from: $backup" >&2; exit 5; }
 
 echo "SUCCESS: MARKAZ Finance schema is installed and verified."
 echo "Backup retained at: $backup"

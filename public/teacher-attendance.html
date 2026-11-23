@@ -26,7 +26,7 @@
       .teacher-attendance-tools input{min-width:190px}
       .teacher-attendance-table{width:100%;border-collapse:separate;border-spacing:0}
       .teacher-attendance-table th,.teacher-attendance-table td{padding:12px;text-align:left;border-bottom:1px solid #e8eee9;vertical-align:middle}
-      .teacher-attendance-table th{font-size:.82rem;color:#567062;background:#f4f8f5}
+      .teacher-attendance-table th{font-size:.82rem;color:#567062;background:#f4f8f5}.teacher-attendance-table .teacher-attendance-group th{padding:14px 16px;background:#eaf3ec;color:#174a31;font-size:.9rem;border-top:1px solid #d8e6dc}.teacher-attendance-table .teacher-attendance-group:not(:first-child) th{border-top:3px solid #d5e4d9}
       .teacher-attendance-table input,.teacher-attendance-table select{width:100%;min-width:115px}
       .teacher-attendance-table .staff-name{font-weight:800;color:#173c2b}
       .teacher-attendance-table .staff-meta{display:block;color:#728378;font-size:.78rem;margin-top:3px}
@@ -39,11 +39,11 @@
 <main class="attendance-shell">
     <header class="attendance-header">
         <a href="./attendance.html" class="attendance-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Student Attendance</a>
-        <div class="attendance-brand"><div><span class="attendance-eyebrow">MARKAZ · SCHOOL MANAGEMENT</span><h1>Teacher Attendance</h1><p>Record staff arrival and attendance for payroll.</p></div></div>
+        <div class="attendance-brand"><div><span class="attendance-eyebrow">MARKAZ · SCHOOL MANAGEMENT</span><h1>Teacher Attendance</h1><p>Record teacher attendance with separate time-based and attendance-only rules.</p></div></div>
         <div class="attendance-header-actions"><a href="./finance.html" id="teacherFinanceLink" class="button button-light" hidden><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>Finance &amp; Payroll</span></a></div>
     </header>
     <section class="attendance-intro">
-        <div><span class="attendance-eyebrow">STAFF REGISTER</span><h2>One attendance record, one payroll source.</h2><p>Only Finance staff with an active salary and arrival-time profile appear here. Saved records are approved for the monthly payroll calculation.</p></div>
+        <div><span class="attendance-eyebrow">STAFF REGISTER</span><h2>One attendance record, one payroll source.</h2><p>Active Finance staff with a salary profile appear here. Time-based staff record arrival times; attendance-only staff are recorded without salary timing deductions.</p></div>
         <div class="attendance-date-chip"><i class="fa-regular fa-calendar"></i><div><span>School date</span><strong id="teacherTodayLabel">Loading date…</strong></div></div>
     </section>
     <section class="attendance-filter-panel">
@@ -56,7 +56,7 @@
         <div id="teacherAttendanceMessage" class="teacher-attendance-message" role="status" aria-live="polite">Loading Finance staff…</div>
     </section>
     <section class="attendance-register-panel">
-        <div class="register-panel-header"><div><span class="attendance-eyebrow">STAFF REGISTER</span><h2>Arrival and attendance</h2><p id="teacherAttendanceSubtitle">Choose a date to load the register.</p></div></div>
+        <div class="register-panel-header"><div><span class="attendance-eyebrow">STAFF REGISTER</span><h2>Attendance register</h2><p id="teacherAttendanceSubtitle">Time-based and attendance-only staff are recorded separately. Excused and approved leave entries carry no lateness deduction.</p></div></div>
         <div class="attendance-table-wrap">
             <table class="teacher-attendance-table">
                 <thead><tr><th>#</th><th>Teacher / staff</th><th>Expected arrival</th><th>Actual arrival</th><th>Status</th><th>Notes</th><th>Lateness</th></tr></thead>
