@@ -20,5 +20,5 @@ settingsDashboardCheck(str_contains($dash, 'object-position:center center')
     && str_contains($dash, 'grid-template-columns:repeat(2,minmax(0,1fr))')
     && str_contains($dash, '@media (max-width:850px)'), 'Dashboard avatar and attendance chart layout adapt');
 settingsDashboardCheck(str_contains($navHtml, 'Result Footer Signatures &amp; Report Date')
-    && str_contains($dashHtml, '20261112-staff-motion1'), 'Updated assets are loaded by the pages');
+    && str_contains($dashHtml, 'src="js/app-motion-2026.js') && str_contains($dashHtml, 'src="js/dashboard.js'), 'Updated assets are loaded by the pages');
 echo "Settings and dashboard polish regression tests passed (5 checks).\n";
