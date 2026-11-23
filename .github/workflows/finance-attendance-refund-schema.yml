@@ -7,6 +7,7 @@ on:
       - '.github/workflows/finance-attendance-refund-schema.yml'
   push:
     branches:
+      - 'feature/**'
       - main
     paths:
       - 'database/migrations/20261125_teacher_attendance_modes.sql'
