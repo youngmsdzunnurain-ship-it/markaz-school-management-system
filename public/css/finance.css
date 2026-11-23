@@ -540,7 +540,7 @@ body.finance-workspace-page .welcome-card{
 }
 
 
-/* School Fees workspace: keep related tasks together on desktop, stack on smaller screens. */
+/* School Fees workspace: keep related tasks together on desktop, stack on smaller screens; pair related setup tasks. */
 .finance-workspace-page #tab-fees .fee-workspace-grid{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
