@@ -162,6 +162,20 @@
  </div>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FEE CONFIGURATION</span><h2>Active and previous fee plans</h2></div><button class="btn btn-light" id="loadPlans">Reload plans</button></div><div class="table-wrap"><table><thead><tr><th>Fee</th><th>Applies to</th><th>Amount / month</th><th>Due day</th><th>Effective</th><th>Status</th></tr></thead><tbody id="feePlans"><tr><td colspan="6" class="empty">Loading fee plans…</td></tr></tbody></table></div></div>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STUDENT LEDGERS</span><h2>Monthly fee accounts</h2></div><div class="search-box"><i class="fa-solid fa-search"></i><input id="invoiceSearch" placeholder="Admission number or student name"></div></div><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student / Admission no.</th><th>Billing month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="invoices"><tr><td colspan="7" class="empty">Loading student accounts…</td></tr></tbody></table></div></div>
+ <div class="two-col fee-workspace-grid fee-support-grid">
+  <section class="panel" id="studentFeeStatementPanel">
+   <div class="panel-heading"><div><span class="eyebrow">STUDENT ACCOUNT</span><h2>Complete fee statement</h2><p class="muted">View monthly and term invoices, payments, discounts and the remaining balance for one student.</p></div></div>
+   <form id="studentStatementForm" class="inline-fields"><label>Admission number<input id="statementAdmissionNumber" name="admission_number" required maxlength="80" placeholder="Enter exact admission number"></label><button class="btn btn-primary" type="submit">Load statement</button></form>
+   <div id="studentStatementSummary" class="report-metrics" aria-live="polite"><p class="muted">Enter an admission number to load the account statement.</p></div>
+   <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Type / period</th><th>Due date</th><th>Amount</th><th>Discount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="studentStatementRows"><tr><td colspan="8" class="empty">No statement loaded.</td></tr></tbody></table></div>
+   <h3>Payment history</h3><div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Date</th><th>Method</th><th>Reference</th><th>Amount</th><th>Status</th></tr></thead><tbody id="studentStatementPayments"><tr><td colspan="6" class="empty">No payment history loaded.</td></tr></tbody></table></div>
+  </section>
+  <section class="panel" id="feeArrearsPanel">
+   <div class="panel-heading"><div><span class="eyebrow">COLLECTION FOLLOW-UP</span><h2>Outstanding fee accounts</h2><p class="muted">Monthly and term balances grouped by student, with overdue ageing.</p></div><button class="btn btn-light" id="reloadFeeArrears" type="button">Refresh arrears</button></div>
+   <div id="feeArrearsSummary" class="report-metrics"><p class="muted">Load the report to see outstanding accounts.</p></div>
+   <div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Open invoices</th><th>Outstanding</th><th>1–30 days</th><th>31–60 days</th><th>61–90 days</th><th>90+ days</th></tr></thead><tbody id="feeArrearsRows"><tr><td colspan="8" class="empty">Arrears report not loaded.</td></tr></tbody></table></div>
+  </section>
+ </div>
 </section>
 <section class="tab-panel" id="tab-payments">
  <div class="two-col">
