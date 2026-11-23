@@ -179,7 +179,7 @@ teacherPortalCheck(
     str_contains($authMeApi, "'attendance_records'") &&
     str_contains($authMeApi, "can_manage_attendance") &&
     str_contains($dashboardJs, "permissions.can_manage_attendance === true") &&
-    str_contains($managementShellJs, "a.can_manage_attendance!==true") &&
+    str_contains($managementShellJs, 'account.can_manage_attendance !== true') &&
     str_contains($attendanceCommonApi, "Attendance recording has not been enabled for your teacher account."),
     'Attendance is hidden from unpermitted teachers and denied by the backend unless their individual permission is enabled'
 );
