@@ -19,6 +19,7 @@ on:
       - 'public/js/teacher-attendance.js'
       - 'scripts/install-finance.sh'
       - 'tests/finance-*'
+      - 'tests/finance-fee-accounting-regression.test.php'
       - 'tests/independent-finance-staff-attendance.test.php'
       - 'tests/teacher-attendance-policy-regression.test.php'
       - '.github/workflows/finance-independent-staff.yml'
@@ -58,6 +59,7 @@ jobs:
           php -l tests/finance-payroll-regression.test.php
           php -l tests/independent-finance-staff-attendance.test.php
           php -l tests/teacher-attendance-policy-regression.test.php
+          php -l tests/finance-fee-accounting-regression.test.php
 
       - name: Validate JavaScript and installer syntax
         run: |
@@ -76,4 +78,5 @@ jobs:
           php tests/finance-payroll-regression.test.php
           php tests/independent-finance-staff-attendance.test.php
           php tests/teacher-attendance-policy-regression.test.php
+          php tests/finance-fee-accounting-regression.test.php
           php tests/finance-term-fees-regression.test.php
