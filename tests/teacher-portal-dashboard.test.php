@@ -307,4 +307,12 @@ teacherPortalCheck(
 );
 
 
+teacherPortalCheck(
+    str_contains($attendancePageJs, 'async function refreshTeacherAttendanceNavigation()') &&
+    str_contains($attendancePageJs, 'refreshTeacherAttendanceNavigation();') &&
+    str_contains($attendancePageJs, 'teacherAttendanceLink.hidden = true;') &&
+    str_contains($attendancePageJs, 'can_access_teacher_attendance !== true'),
+    'Teacher Attendance navigation resolves immediately and fails closed when its permission check fails'
+);
+
 echo "Teacher portal dashboard regression tests passed.\n";
