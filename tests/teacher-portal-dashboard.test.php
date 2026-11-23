@@ -119,8 +119,8 @@ $dashboardLogoutJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $studentResultCss = file_get_contents(__DIR__ . '/../public/css/student-result.css');
 
 teacherPortalCheck(
-    str_contains($studentResultCss, 'Shared student information treatment') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
+    str_contains($studentResultCss, 'Staff result previews: match the established Student Portal mobile profile.') &&
     str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
     str_contains($studentResultCss, 'display: none !important;') &&
     str_contains($studentResultCss, '@media screen and (max-width: 760px)'),
