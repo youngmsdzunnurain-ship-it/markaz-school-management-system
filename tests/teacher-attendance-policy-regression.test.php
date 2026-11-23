@@ -21,10 +21,11 @@ teacherPolicyCheck(str_contains($migration, "attendance_mode ENUM('time_based','
 teacherPolicyCheck(str_contains($migration, 'MODIFY expected_arrival TIME NULL'), 'arrival schedules are optional for attendance-only staff');
 teacherPolicyCheck(str_contains($migration, 'ADD COLUMN attendance_mode'), 'attendance records preserve the policy active on the attendance date');
 teacherPolicyCheck(str_contains($attendanceApi, "['time_based','attendance_only']"), 'attendance API validates the two permitted staff policies');
-teacherPolicyCheck(str_contains($attendanceApi, "$mode === 'time_based'"), 'only time-based staff require arrival-time entry and lateness calculation');
+teacherPolicyCheck(str_contains($attendanceApi, '$mode === \'time_based\''), 'only time-based staff require arrival-time entry and lateness calculation');
 teacherPolicyCheck(str_contains($attendanceApi, "'attendance_only'"), 'attendance-only staff are recorded without arrival times or lateness deductions');
 teacherPolicyCheck(str_contains($attendanceApi, "['present','absent','approved_leave','excused']"), 'teacher attendance supports present, absent, approved leave and excused statuses');
 teacherPolicyCheck(str_contains($attendanceApi, "lateness_deduction"), 'attendance records persist payroll deductions from the attendance workflow');
+teacherPolicyCheck(str_contains($attendanceApi, '$notes===\'\''), 'excused and approved-leave entries require an auditable reason');
 teacherPolicyCheck(str_contains($payrollApi, "attendance_mode='time_based'") || str_contains($payrollApi, "attendance_mode']"), 'payroll applies lateness deductions only to time-based attendance');
 teacherPolicyCheck(str_contains($payrollApi, "status") && str_contains($payrollApi, "'present'"), 'payroll excludes excused and non-present records from lateness deductions');
 teacherPolicyCheck(str_contains($financePage, 'name="attendance_mode"'), 'Finance salary setup lets authorised users choose the staff attendance policy');
