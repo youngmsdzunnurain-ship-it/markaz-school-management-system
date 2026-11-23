@@ -112,7 +112,7 @@ if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2"
         exit 3
     fi
 if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
-    echo "MARKAZ Finance is already installed: foundation, fee categories, term fees and independent Finance staff are present."
+    echo "MARKAZ Finance is already installed: fee foundations, term fees, independent Finance staff, attendance policies and refund controls are present."
     exit 0
 fi
 
