@@ -7,6 +7,8 @@ refundCheck(str_contains($api,'if($action===\'request_refund\')')&&str_contains(
 refundCheck(str_contains($api,'status IN (\'pending\',\'approved\')'),'pending refund requests reserve the remaining refundable payment amount');
 refundCheck(str_contains($api,'recorded_by')&&str_contains($api,'cannot approve or reject it'),'refund maker cannot review their own request');
 refundCheck(str_contains($api,'finance_fee_refund_allocations')&&str_contains($api,'financePostJournal'),'approved refunds restore invoice balances and post a balanced ledger journal');
+refundCheck(str_contains($api,'reserved_refund_amount')&&str_contains($api,'refunded_amount'),'payment history exposes remaining and already-refunded amounts');
+refundCheck(str_contains($api,'fees_net')&&str_contains($api,'refunds_approved'),'financial reports separate gross receipts, approved refunds and net fee income');
 refundCheck(str_contains($api,'overdue_1_30')&&str_contains($api,'r.refunded'),'student statement and arrears reports calculate net paid balances after refunds');
 refundCheck(str_contains($termApi,'r.refunded'),'term class reports and invoices include approved refunds');
 refundCheck(str_contains($html,'id="refundForm"')&&str_contains($html,'id="refundQueue"'),'Finance UI provides refund request and maker-checker approval workspaces');
