@@ -31,8 +31,8 @@ settingsFirstRenderAssert(
     'the initial-render guard must hide non-profile settings cards before navigation initializes'
 );
 settingsFirstRenderAssert(
-    str_contains($navigationJs, 'activate("profile")') &&
-    str_contains($navigationJs, 'classList.remove("settings-page-pending")'),
+    str_contains($navigationJs, 'activate(preservedCategory?.id || "profile")') &&
+    strpos($navigationJs, 'activate(preservedCategory?.id || "profile")') < strpos($navigationJs, 'classList.remove("settings-page-pending")'),
     'navigation must select General & Profile before releasing the initial-render guard'
 );
 
