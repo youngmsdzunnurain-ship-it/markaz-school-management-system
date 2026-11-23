@@ -10,4 +10,6 @@ feeAccountCheck(str_contains($html,'id="studentStatementForm"')&&str_contains($h
 feeAccountCheck(str_contains($html,'id="feeArrearsPanel"')&&str_contains($html,'id="feeArrearsRows"'),'School Fees exposes an outstanding balance and arrears workspace');
 feeAccountCheck(str_contains($js,"request('student_statement'")&&str_contains($js,"request('arrears')"),'student statement and arrears views load live API data');
 feeAccountCheck(str_contains($js,'studentStatementPayments')&&str_contains($js,'feeArrearsSummary'),'student statement includes payment history and arrears include summary totals');
+feeAccountCheck(str_contains($api,'if ($action === \'audit\''))&&str_contains($api,'finance_audit_logs'),'Finance exposes a date-scoped audit history endpoint');
+feeAccountCheck(str_contains($html,'id="financeAuditPanel"')&&str_contains($js,"request('audit'"),'Finance reports include an audit trail viewer backed by saved audit events');
 echo "MARKAZ fee account regression checks passed.\n";
