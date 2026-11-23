@@ -9,6 +9,7 @@ on:
       - 'api/finance/**'
       - 'app/helpers/finance.php'
       - 'database/migrations/20261124_markaz_independent_finance_staff.sql'
+      - 'database/migrations/20261125_teacher_attendance_modes.sql'
       - 'public/attendance.html'
       - 'public/finance.html'
       - 'public/teacher-attendance.html'
@@ -19,6 +20,7 @@ on:
       - 'scripts/install-finance.sh'
       - 'tests/finance-*'
       - 'tests/independent-finance-staff-attendance.test.php'
+      - 'tests/teacher-attendance-policy-regression.test.php'
       - '.github/workflows/finance-independent-staff.yml'
 
 permissions:
@@ -55,6 +57,7 @@ jobs:
           php -l tests/finance-migration-installer.test.php
           php -l tests/finance-payroll-regression.test.php
           php -l tests/independent-finance-staff-attendance.test.php
+          php -l tests/teacher-attendance-policy-regression.test.php
 
       - name: Validate JavaScript and installer syntax
         run: |
@@ -72,4 +75,5 @@ jobs:
           php tests/finance-migration-installer.test.php
           php tests/finance-payroll-regression.test.php
           php tests/independent-finance-staff-attendance.test.php
+          php tests/teacher-attendance-policy-regression.test.php
           php tests/finance-term-fees-regression.test.php
