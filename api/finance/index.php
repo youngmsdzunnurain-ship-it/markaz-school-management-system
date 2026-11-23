@@ -104,6 +104,13 @@ try {
             $refunds->execute([$id]);
             financeJson(['success'=>true,'payment'=>$payment,'allocations'=>$alloc->fetchAll(PDO::FETCH_ASSOC),'refunds'=>$refunds->fetchAll(PDO::FETCH_ASSOC)]);
         }
+        if ($action === 'audit') {
+            $from=(string)($_GET['from']??date('Y-m-01'));$to=(string)($_GET['to']??date('Y-m-d'));
+            if(!financeValidDate($from)||!financeValidDate($to)||$from>$to)financeJson(['success'=>false,'message'=>'Choose a valid audit date range.'],422);
+            $stmt=$pdo->prepare("SELECT l.id,l.action,l.entity_type,l.entity_id,l.details_json,l.ip_address,l.created_at,a.name actor_name FROM finance_audit_logs l LEFT JOIN admins a ON a.id=l.actor_id WHERE DATE(l.created_at) BETWEEN ? AND ? ORDER BY l.id DESC LIMIT 500");
+            $stmt->execute([$from,$to]);$rows=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            financeJson(['success'=>true,'from'=>$from,'to'=>$to,'events'=>$rows,'count'=>count($rows)]);
+        }
         if ($action === 'reports') {
             $from=(string)($_GET['from']??date('Y-m-01'));$to=(string)($_GET['to']??date('Y-m-d'));
             if(!financeValidDate($from)||!financeValidDate($to)||$from>$to)financeJson(['success'=>false,'message'=>'Choose a valid report date range.'],422);
