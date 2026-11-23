@@ -64,7 +64,7 @@ dashboardAssert(
     'Four examination status figures must remain on one row at dashboard widths'
 );
 dashboardAssert(
-    str_contains($html, 'href="./school-fees.html" class="nav-link" data-role-access="management_school_fees"') &&
+    str_contains($html, 'href="./finance.html" class="nav-link" data-role-access="management_school_fees"') &&
     str_contains($html, 'href="./attendance.html" class="nav-link" data-role-access="attendance"') &&
     str_contains($js, 'requiredRole === "attendance"') &&
     str_contains($js, 'requiredRole === "management_school_fees"') &&
