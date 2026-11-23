@@ -295,7 +295,8 @@
     }
 
     const button = document.getElementById("openResultsScanner");
-    const panel = $("[data-scanner-panel]");
+    // The panel attribute is on the root section itself, so querySelector() inside the root cannot find it.
+    const panel = root.matches("[data-scanner-panel]") ? root : $("[data-scanner-panel]");
     button?.addEventListener("click", () => {
         panel.hidden = !panel.hidden;
         if (!panel.hidden) panel.scrollIntoView({behavior:"smooth", block:"start"});
@@ -331,10 +332,15 @@
             }
             state.scopeKey = nextKey;
             state.config = nextConfig;
-            if (button) button.hidden = !state.config || !["admin", "exam_officer", "teacher"].includes(state.config.role);
+            // The button is visible as soon as the page knows the role, so it is never missing.
+            // Choosing a subject only changes the message inside the panel.
+            const roleAllowed = !!config && ["admin", "exam_officer", "teacher"].includes(config.role);
+            if (button) button.hidden = !roleAllowed;
             if (!state.config) {
-                panel.hidden = true;
-                status("Select an assigned subject to use the scanner.");
+                status("Choose a subject in the Results section first, then open the scanner.", "");
+                if (!roleAllowed) panel.hidden = true;
+            } else if (!state.busy && state.rows.length === 0) {
+                status("Ready to scan " + state.config.subject.name + ". Take a clear photo or upload a result sheet.", "");
             }
         }
     };
