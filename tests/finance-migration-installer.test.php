@@ -17,6 +17,8 @@ $foundation = file_get_contents($root . '/database/migrations/20261121_markaz_fi
 $categories = file_get_contents($root . '/database/migrations/20261122_markaz_finance_fee_categories.sql');
 $terms = file_get_contents($root . '/database/migrations/20261123_markaz_academic_term_fees.sql');
 $independentStaff = file_get_contents($root . '/database/migrations/20261124_markaz_independent_finance_staff.sql');
+$attendanceModes = file_get_contents($root . '/database/migrations/20261125_teacher_attendance_modes.sql');
+$refunds = file_get_contents($root . '/database/migrations/20261126_markaz_fee_refunds.sql');
 
 financeInstallerCheck(str_contains($foundation, 'CREATE TABLE finance_fee_payments'), 'foundation migration creates the payment table required by term fees');
 financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'), 'term-fee payment allocation references the foundation payment table');
@@ -38,4 +40,7 @@ financeInstallerCheck(str_contains($guide, 'The third migration references finan
 financeInstallerCheck(str_contains($categories, 'ADD COLUMN fee_code'), 'fee-category migration remains part of the ordered installation');
 financeInstallerCheck(str_contains($independentStaff, 'CREATE TABLE finance_staff') && str_contains($independentStaff, 'finance_staff_id'), 'independent staff migration creates a separate payroll identity');
 financeInstallerCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql') && str_contains($installer, 'independent_staff_columns') && str_contains($installer, 'independent_staff_constraints'), 'installer applies and verifies the independent staff schema after Finance foundations');
+financeInstallerCheck(str_contains($attendanceModes, "attendance_mode ENUM('time_based','attendance_only')") && str_contains($attendanceModes, 'MODIFY COLUMN expected_arrival TIME NULL'), 'teacher attendance migration preserves existing time-based staff and permits attendance-only profiles');
+financeInstallerCheck(str_contains($refunds, 'CREATE TABLE finance_fee_refunds') && str_contains($refunds, 'CREATE TABLE finance_fee_refund_allocations'), 'refund migration creates maker-checker requests and invoice-allocation reversals');
+financeInstallerCheck(str_contains($installer, '20261125_teacher_attendance_modes.sql') && str_contains($installer, '20261126_markaz_fee_refunds.sql') && str_contains($installer, 'refund_tables'), 'installer applies and verifies teacher attendance policies and refund tables after their dependencies');
 echo "MARKAZ Finance migration installer regression checks passed.\n";
