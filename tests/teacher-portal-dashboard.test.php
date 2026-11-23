@@ -288,8 +288,15 @@ teacherPortalCheck(
     'Dashboard attendance charts retain the explicit conventional and Arabic class hierarchies'
 );
 teacherPortalCheck(
-    str_contains($classHierarchy, "'kg', 'nursery 1', 'nursery 2', 'primary 1', 'primary 2'") &&
-    str_contains($classHierarchy, "'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani'"),
+    strpos($classHierarchy, "'kg'") !== false &&
+    strpos($classHierarchy, "'kg'") < strpos($classHierarchy, "'nursery 1'") &&
+    strpos($classHierarchy, "'nursery 1'") < strpos($classHierarchy, "'nursery 2'") &&
+    strpos($classHierarchy, "'nursery 2'") < strpos($classHierarchy, "'primary 1'") &&
+    strpos($classHierarchy, "'primary 1'") < strpos($classHierarchy, "'primary 2'") &&
+    strpos($classHierarchy, "'roudoh awwal'") !== false &&
+    strpos($classHierarchy, "'roudoh awwal'") < strpos($classHierarchy, "'roudoh sani'") &&
+    strpos($classHierarchy, "'roudoh sani'") < strpos($classHierarchy, "'faslu ula'") &&
+    strpos($classHierarchy, "'faslu ula'") < strpos($classHierarchy, "'faslu sani'"),
     'Shared class ordering preserves the established conventional and Arabic academic hierarchies'
 );
 teacherPortalCheck(
