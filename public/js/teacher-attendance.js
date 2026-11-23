@@ -50,7 +50,7 @@ async function save() {
   notes:row.querySelector("[data-notes]").value
  }));
  if(records.some(r=>!r.status)){show("Choose an attendance status for every staff member before saving.",true);return;}
- if(records.some(r=>r.status==="present"&&!r.actual_arrival)){show("Enter the actual arrival time for every staff member marked Present.",true);return;}
+ if([...rowsHost.querySelectorAll("[data-staff-row]")].some(row=>row.dataset.attendanceMode==="time_based"&&row.querySelector("[data-status]").value==="present"&&!row.querySelector("[data-arrival]").value)){show("Enter the actual arrival time for every time-based staff member marked Present.",true);return;}
  if(!confirm("Save and approve this teacher attendance register for payroll?"))return;
  busy=true;saveButton.disabled=true;show("Saving attendance register…");
  try {
