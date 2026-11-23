@@ -100,8 +100,9 @@ teacherPortalCheck(
 );
 teacherPortalCheck(
     !str_contains($managementShellJs, '<a href="/settings.html">Settings</a>') &&
-    (str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }') ||
-     str_contains($studentResultCss, '.student-information .student-photo { display: none !important; }')),
+    (str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
+     str_contains($studentResultCss, 'display: none !important;') &&
+     str_contains($studentResultCss, '@media screen and (max-width: 760px)')),
     'Avatar Settings is removed and mobile result profile photo is hidden'
 );
 teacherPortalCheck(
@@ -118,9 +119,11 @@ $dashboardLogoutJs = file_get_contents(__DIR__ . '/../public/js/dashboard.js');
 $studentResultCss = file_get_contents(__DIR__ . '/../public/css/student-result.css');
 
 teacherPortalCheck(
-    str_contains($studentResultCss, 'Shared student information treatment') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
-    str_contains($studentResultCss, '.student-information .student-photo { display:none!important; }'),
+    str_contains($studentResultCss, 'Staff result previews: match the established Student Portal mobile profile.') &&
+    str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
+    str_contains($studentResultCss, 'display: none !important;') &&
+    str_contains($studentResultCss, '@media screen and (max-width: 760px)'),
     'Staff result mobile profile follows the compact Student Portal layout and removes the photo column'
 );
 teacherPortalCheck(
@@ -176,13 +179,14 @@ teacherPortalCheck(
     str_contains($authMeApi, "'attendance_records'") &&
     str_contains($authMeApi, "can_manage_attendance") &&
     str_contains($dashboardJs, "permissions.can_manage_attendance === true") &&
-    str_contains($managementShellJs, "a.can_manage_attendance!==true") &&
+    str_contains($managementShellJs, 'account.can_manage_attendance !== true') &&
     str_contains($attendanceCommonApi, "Attendance recording has not been enabled for your teacher account."),
     'Attendance is hidden from unpermitted teachers and denied by the backend unless their individual permission is enabled'
 );
 
 teacherPortalCheck(
-    str_contains($dashboardComboJs, '"KG", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2"') &&
+    str_contains($dashboardComboJs, '"Kindergarten", "KG"') &&
+    str_contains($dashboardComboJs, '"Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "Basic 1"') &&
     !str_contains($dashboardComboJs, '"Basic 6"') &&
     str_contains($dashboardComboJs, '"SS 1", "SS 2", "SS 3"'),
     'Attendance chart follows the established conventional class hierarchy'
@@ -203,15 +207,15 @@ teacherPortalCheck(
     'Teacher lockout countdown updates every second and login errors use the red error state'
 );
 teacherPortalCheck(
-    substr_count($dashboardHtml, 'href="./settings.html"') === 1,
+    substr_count($dashboardHtml, 'href="./settings.html" class="nav-link"') === 1,
     'Admin sidebar contains one Settings navigation entry'
 );
 
 teacherPortalCheck(
-    !str_contains($studentResultCss, 'Final mobile parity for staff result previews and Student Check Results') &&
-    str_contains($studentResultCss, 'min-width: 561px') &&
+    str_contains($studentResultCss, 'body.student-portal-result-view .student-information .student-photo') &&
+    str_contains($studentResultCss, 'body:not(.student-portal-result-view) .student-information .student-photo') &&
     str_contains($studentResultCss, 'grid-template-areas:') &&
-    str_contains($studentResultCss, 'max-width: 760px'),
+    str_contains($studentResultCss, '@media screen and (max-width: 760px)'),
     'Student Portal and staff result profile rows stay aligned through tablet widths'
 );
 
@@ -284,8 +288,15 @@ teacherPortalCheck(
     'Dashboard attendance charts retain the explicit conventional and Arabic class hierarchies'
 );
 teacherPortalCheck(
-    str_contains($classHierarchy, "'kg', 'nursery 1', 'nursery 2', 'primary 1', 'primary 2'") &&
-    str_contains($classHierarchy, "'roudoh awwal', 'roudoh sani', 'faslu ula', 'faslu sani'"),
+    strpos($classHierarchy, "'kg'") !== false &&
+    strpos($classHierarchy, "'kg'") < strpos($classHierarchy, "'nursery 1'") &&
+    strpos($classHierarchy, "'nursery 1'") < strpos($classHierarchy, "'nursery 2'") &&
+    strpos($classHierarchy, "'nursery 2'") < strpos($classHierarchy, "'primary 1'") &&
+    strpos($classHierarchy, "'primary 1'") < strpos($classHierarchy, "'primary 2'") &&
+    strpos($classHierarchy, "'roudoh awwal'") !== false &&
+    strpos($classHierarchy, "'roudoh awwal'") < strpos($classHierarchy, "'roudoh sani'") &&
+    strpos($classHierarchy, "'roudoh sani'") < strpos($classHierarchy, "'faslu ula'") &&
+    strpos($classHierarchy, "'faslu ula'") < strpos($classHierarchy, "'faslu sani'"),
     'Shared class ordering preserves the established conventional and Arabic academic hierarchies'
 );
 teacherPortalCheck(
@@ -303,5 +314,13 @@ teacherPortalCheck(
     'Teacher class student management converts student rows into labelled mobile cards'
 );
 
+
+teacherPortalCheck(
+    str_contains($attendancePageJs, 'async function refreshTeacherAttendanceNavigation()') &&
+    str_contains($attendancePageJs, 'refreshTeacherAttendanceNavigation();') &&
+    str_contains($attendancePageJs, 'teacherAttendanceLink.hidden = true;') &&
+    str_contains($attendancePageJs, 'can_access_teacher_attendance !== true'),
+    'Teacher Attendance navigation resolves immediately and fails closed when its permission check fails'
+);
 
 echo "Teacher portal dashboard regression tests passed.\n";

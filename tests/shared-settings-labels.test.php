@@ -34,8 +34,8 @@ sharedSettingsAssert(
     'Portion of Memorization is defined once in the shared settings implementation used by both portals'
 );
 sharedSettingsAssert(
-    str_contains($navigation, 'const examOfficerCategoryIds') &&
-    str_contains($navigation, 'categories = isExamOfficer'),
+    str_contains($navigation, 'role === "exam_officer"') &&
+    str_contains($navigation, 'new Set(["profile", "result-release", "academic-archive", "academic", "results", "memorization"])'),
     'Exam Officer retains its restricted category access without changing shared category names'
 );
 

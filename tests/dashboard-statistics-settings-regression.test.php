@@ -16,6 +16,7 @@ $stats = file_get_contents($root . '/api/dashboard/stats.php');
 $redesign = file_get_contents($root . '/public/css/dashboard-redesign.css');
 $settingsHtml = file_get_contents($root . '/public/settings.html');
 $settingsJs = file_get_contents($root . '/public/js/settings.js');
+$settingsNavigationJs = file_get_contents($root . '/public/js/settings-panel-navigation.js');
 $settingsCss = file_get_contents($root . '/public/css/settings.css');
 $classHtml = file_get_contents($root . '/public/class.html');
 $classJs = file_get_contents($root . '/public/js/class.js');
@@ -46,7 +47,7 @@ dashboardRegressionAssert(
     !str_contains($settingsJs, 'MARKAZ RESULT COMPLETION THRESHOLD') &&
     !str_contains($settingsJs, 'resultCompletionThresholdCard') &&
     str_contains($settingsHtml, 'id="resultPrintThresholdForm"') &&
-    str_contains($settingsHtml, 'js/result-print-threshold-settings.js'),
+    str_contains($settingsNavigationJs, 'result-print-threshold-settings.js'),
     'only the single persisted Print Eligibility Threshold setting must remain'
 );
 dashboardRegressionAssert(

@@ -75,8 +75,8 @@ deviceActivityAssert(
     'Account Devices shows usage duration and gives the Admin a clear-history action'
 );
 deviceActivityAssert(
-    str_contains($settingsNav, 'account-devices') &&
-    str_contains($settingsNav, 'Account Devices'),
+    str_contains($settingsNav, 'id:"account-devices"') &&
+    str_contains($settingsNav, 'label:"Account Device Activity"'),
     'Account Devices appears as a first-class grouped settings category'
 );
 deviceActivityAssert(
