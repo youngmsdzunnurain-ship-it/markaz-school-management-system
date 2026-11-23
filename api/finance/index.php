@@ -13,18 +13,26 @@ try {
         if ($action === 'dashboard') {
             $today = $pdo->query(
                 "SELECT
-                    COALESCE(SUM(CASE WHEN status='confirmed' AND DATE(paid_at)=CURDATE() THEN amount ELSE 0 END),0) AS fees_today,
+                    COALESCE(SUM(CASE WHEN status='confirmed' AND DATE(paid_at)=CURDATE() THEN amount ELSE 0 END),0)
+                    -(SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE status='approved' AND DATE(reviewed_at)=CURDATE()) AS fees_today,
                     (SELECT COALESCE(SUM(amount),0) FROM finance_expenses WHERE status='paid' AND expense_date=CURDATE()) AS expenses_today,
                     (SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date=CURDATE()) AS other_income_today,
-                    (SELECT COUNT(*) FROM finance_fee_invoices WHERE status IN ('unpaid','partial')) AS open_invoices,
-                    (SELECT COALESCE(SUM(i.amount_due-i.discount_amount-COALESCE(a.paid,0)),0)
-                     FROM finance_fee_invoices i
-                     LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
-                     WHERE i.status IN ('unpaid','partial')) AS outstanding
+                    ((SELECT COUNT(*) FROM finance_fee_invoices WHERE status IN ('unpaid','partial'))+(SELECT COUNT(*) FROM finance_term_fee_invoices WHERE status IN ('unpaid','partial'))) AS open_invoices,
+                    ((SELECT COALESCE(SUM(i.amount_due-i.discount_amount-COALESCE(a.paid,0)+COALESCE(r.refunded,0)),0)
+                      FROM finance_fee_invoices i
+                      LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
+                      LEFT JOIN (SELECT a2.invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id JOIN finance_fee_allocations a2 ON x.allocation_type='monthly' AND a2.id=x.source_allocation_id WHERE rf.status='approved' GROUP BY a2.invoice_id) r ON r.invoice_id=i.id
+                      WHERE i.status IN ('unpaid','partial'))
+                     +(SELECT COALESCE(SUM(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0)),0)
+                      FROM finance_term_fee_invoices i
+                      LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id
+                      LEFT JOIN (SELECT a2.term_invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id JOIN finance_term_fee_payments a2 ON x.allocation_type='term' AND a2.id=x.source_allocation_id WHERE rf.status='approved' GROUP BY a2.term_invoice_id) r ON r.term_invoice_id=i.id
+                      WHERE i.status IN ('unpaid','partial'))) AS outstanding
                  FROM finance_fee_payments"
             )->fetch(PDO::FETCH_ASSOC);
             $month = $pdo->query(
                 "SELECT COALESCE(SUM(CASE WHEN status='confirmed' THEN amount ELSE 0 END),0)
+                 -(SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE status='approved' AND YEAR(reviewed_at)=YEAR(CURDATE()) AND MONTH(reviewed_at)=MONTH(CURDATE()))
                  FROM finance_fee_payments WHERE YEAR(paid_at)=YEAR(CURDATE()) AND MONTH(paid_at)=MONTH(CURDATE())"
             )->fetchColumn();
             $recent = $pdo->query(
@@ -53,9 +61,12 @@ try {
                     if (isset($trend[$row['period']])) $trend[$row['period']][$key] = (float)$row['total'];
                 }
             }
+            $refundTrend=$pdo->prepare("SELECT DATE_FORMAT(reviewed_at,'%Y-%m') period,SUM(amount) total FROM finance_fee_refunds WHERE status='approved' AND reviewed_at>=? GROUP BY period");
+            $refundTrend->execute([$trendStart]);
+            foreach($refundTrend->fetchAll(PDO::FETCH_ASSOC) as $row){if(isset($trend[$row['period']]))$trend[$row['period']]['fees']-=(float)$row['total'];}
             $incomeMix = [
                 // Use the exact same six calendar-month window as the bar chart.
-                'fees' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND paid_at>='{$trendStart}'")->fetchColumn(),
+                'fees' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND paid_at>='{$trendStart}'")->fetchColumn()-(float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE status='approved' AND reviewed_at>='{$trendStart}'")->fetchColumn(),
                 'other_income' => (float)$pdo->query("SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date>='{$trendStart}'")->fetchColumn(),
             ];
             financeJson(['success'=>true,'summary'=>$today,'fees_this_month'=>(string)$month,'recent_payments'=>$recent,'monthly_trend'=>array_values($trend),'income_mix'=>$incomeMix]);
