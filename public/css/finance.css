@@ -610,4 +610,4 @@ body.finance-workspace-page .welcome-card{
 }
 
 /* Teacher attendance policy selector: keep hidden schedule controls out of layout. */
-#salaryTimeFields[hidden]{display:none!important}
+#salaryTimeFields[hidden]{display:none}
