@@ -93,7 +93,7 @@ try {
             $from=(string)($_GET['from']??date('Y-m-01'));$to=(string)($_GET['to']??date('Y-m-d'));
             if(!financeValidDate($from)||!financeValidDate($to)||$from>$to)financeJson(['success'=>false,'message'=>'Choose a valid report date range.'],422);
             $fees=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='confirmed' AND DATE(paid_at) BETWEEN ? AND ?");
-            $fees->execute([$from,$to]);$expenses=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_expenses WHERE status='paid' AND expense_date BETWEEN ? AND ?");
+            $fees->execute([$from,$to]);$refunds=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_fee_refunds WHERE status='approved' AND DATE(reviewed_at) BETWEEN ? AND ?");$refunds->execute([$from,$to]);$refundTotal=(string)$refunds->fetchColumn();$expenses=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_expenses WHERE status='paid' AND expense_date BETWEEN ? AND ?");
             $expenses->execute([$from,$to]);
             $otherIncome=$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM finance_other_income WHERE status='confirmed' AND received_date BETWEEN ? AND ?");
             $otherIncome->execute([$from,$to]);
@@ -101,8 +101,8 @@ try {
             $categories->execute([$from,$to]);
             $pending=$pdo->prepare("SELECT COUNT(*),COALESCE(SUM(amount),0) FROM finance_fee_payments WHERE status='pending' AND DATE(paid_at) BETWEEN ? AND ?");
             $pending->execute([$from,$to]);$pendingRow=$pending->fetch(PDO::FETCH_NUM);
-            $feeTotal=(string)$fees->fetchColumn();$expenseTotal=(string)$expenses->fetchColumn();$otherIncomeTotal=(string)$otherIncome->fetchColumn();
-            financeJson(['success'=>true,'from'=>$from,'to'=>$to,'fees_collected'=>$feeTotal,'other_income'=>$otherIncomeTotal,'expenses_paid'=>$expenseTotal,'net_movement'=>financeFromCents(financeToCents($feeTotal)+financeToCents($otherIncomeTotal)-financeToCents($expenseTotal)),'pending_payment_count'=>(int)$pendingRow[0],'pending_payment_amount'=>(string)$pendingRow[1],'expense_categories'=>$categories->fetchAll(PDO::FETCH_ASSOC)]);
+            $feeTotal=(string)$fees->fetchColumn();$feesNet=financeFromCents(financeToCents($feeTotal)-financeToCents($refundTotal));$expenseTotal=(string)$expenses->fetchColumn();$otherIncomeTotal=(string)$otherIncome->fetchColumn();
+            financeJson(['success'=>true,'from'=>$from,'to'=>$to,'fees_collected'=>$feeTotal,'refunds_approved'=>$refundTotal,'fees_net'=>$feesNet,'other_income'=>$otherIncomeTotal,'expenses_paid'=>$expenseTotal,'net_movement'=>financeFromCents(financeToCents($feesNet)+financeToCents($otherIncomeTotal)-financeToCents($expenseTotal)),'pending_payment_count'=>(int)$pendingRow[0],'pending_payment_amount'=>(string)$pendingRow[1],'expense_categories'=>$categories->fetchAll(PDO::FETCH_ASSOC)]);
         }
         if ($action === 'classes') {
             $classes=$pdo->query(
