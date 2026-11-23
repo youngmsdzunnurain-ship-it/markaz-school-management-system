@@ -1,17 +1,33 @@
+/* MARKAZ Results Scanner (live camera).
+   Press "Scan results": the camera opens straight away. Hold it over the result sheet and move it slowly.
+   The sheet is read on this device, frame by frame. Nothing is uploaded and no picture is kept.
+   When every score line is read clearly and stays the same on two readings, a green tick appears and
+   the scores are shown in a preview. Saving sends each student's scores through the normal result-save path. */
 (() => {
     "use strict";
+    if (window.MarkazResultsScanner) return;
 
-    const root = document.getElementById("resultsScanner");
-    if (!root || window.MarkazResultsScanner) return;
+    const ROLES = ["admin", "exam_officer", "teacher"];
+    const FIELDS = ["ca1", "ca2", "exam"];
+    const LABELS = ["CA1", "CA2", "Exam"];
+    const MAX_KEYS = ["max_ca1", "max_ca2", "max_exam"];
+    const READ_EVERY_MS = 650;
+    const CLEAR_WARNING_MS = 30000;
+    const STABLE_READS = 2;
 
-    const $ = selector => root.querySelector(selector);
-    const state = { config: null, worker: null, rows: [], imageUrl: "", scopeKey: "", busy: false };
+    const state = { meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
+        startedAt: 0, lastSignature: "", stableCount: 0, lastRows: [], clearWarned: false, scopeKey: "" };
 
-    function status(message, kind = "") {
-        const node = $("[data-scanner-status]");
-        node.textContent = message;
-        node.dataset.kind = kind;
-    }
+    const $ = (selector, scope = document) => scope.querySelector(selector);
+    const button = document.getElementById("openResultsScanner");
+    const hint = document.createElement("p");
+    hint.className = "mkls-hint";
+    hint.hidden = true;
+    hint.setAttribute("role", "status");
+    if (button) button.insertAdjacentElement("afterend", hint);
+    let hintTimer = null;
+    let markTimer = null;
+    let overlay = null;
 
     function normalise(value) {
         return String(value || "").toLowerCase().normalize("NFKD")
@@ -72,70 +88,6 @@
         return [...found.values()];
     }
 
-    function renderReview() {
-        const wrap = $("[data-scanner-review]");
-        wrap.replaceChildren();
-        if (!state.rows.length) {
-            wrap.hidden = true;
-            return;
-        }
-        const heading = document.createElement("p");
-        heading.className = "results-scanner-review-note";
-        heading.textContent = "Review every detected mark against the original sheet. Only checked rows will be saved.";
-        wrap.appendChild(heading);
-        const tableWrap = document.createElement("div");
-        tableWrap.className = "results-scanner-table-wrap";
-        const table = document.createElement("table");
-        table.className = "results-scanner-table";
-        table.innerHTML = "<thead><tr><th>Save</th><th>Student</th><th>CA1</th><th>CA2</th><th>Exam</th><th>OCR match</th></tr></thead>";
-        const body = document.createElement("tbody");
-        state.rows.forEach((item, index) => {
-            const tr = document.createElement("tr");
-            tr.dataset.studentId = String(item.student.id);
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = item.detected;
-            checkbox.setAttribute("aria-label", "Include " + item.student.first_name + " in save");
-            const selectCell = document.createElement("td");
-            selectCell.appendChild(checkbox);
-            tr.appendChild(selectCell);
-            const nameCell = document.createElement("td");
-            nameCell.textContent = [item.student.first_name, item.student.middle_name, item.student.last_name].filter(Boolean).join(" ");
-            const admission = document.createElement("small");
-            admission.textContent = item.student.admission_number || "";
-            nameCell.appendChild(document.createElement("br"));
-            nameCell.appendChild(admission);
-            tr.appendChild(nameCell);
-            ["ca1", "ca2", "exam"].forEach((field, fieldIndex) => {
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "number";
-                input.min = "0";
-                input.max = String([state.config.subject.max_ca1, state.config.subject.max_ca2, state.config.subject.max_exam][fieldIndex]);
-                input.step = "0.01";
-                input.value = item[field];
-                input.dataset.field = field;
-                input.setAttribute("aria-label", field.toUpperCase() + " for " + nameCell.firstChild.textContent);
-                td.appendChild(input);
-                tr.appendChild(td);
-            });
-            const matchCell = document.createElement("td");
-            matchCell.textContent = item.detected ? "Name matched · verify marks" : "Name matched · enter marks";
-            tr.appendChild(matchCell);
-            body.appendChild(tr);
-        });
-        table.appendChild(body);
-        tableWrap.appendChild(table);
-        wrap.appendChild(tableWrap);
-        const save = document.createElement("button");
-        save.type = "button";
-        save.className = "primary-button";
-        save.textContent = "Save reviewed results";
-        save.addEventListener("click", saveReviewedRows);
-        wrap.appendChild(save);
-        wrap.hidden = false;
-    }
-
     async function loadOcr() {
         if (window.Tesseract) return window.Tesseract;
         if (window.markazResultsOcrLoading) return window.markazResultsOcrLoading;
@@ -144,198 +96,411 @@
             script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
             script.async = true;
             script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("OCR engine did not initialise."));
-            script.onerror = () => reject(new Error("Could not load the free OCR engine. Check your internet connection."));
+            script.onerror = () => reject(new Error("Could not load the reader. Check your internet connection, then try again."));
             document.head.appendChild(script);
         });
         try { return await window.markazResultsOcrLoading; }
         catch (error) { window.markazResultsOcrLoading = null; throw error; }
     }
 
-    async function prepareImage(file) {
-        if (typeof createImageBitmap !== "function") return file;
-        const bitmap = await createImageBitmap(file);
-        try {
-            const scale = Math.min(1, 2200 / Math.max(bitmap.width, bitmap.height));
-            if (scale === 1) return file;
-            const canvas = document.createElement("canvas");
-            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-            const context = canvas.getContext("2d", {alpha:false});
-            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-            return await new Promise(resolve => canvas.toBlob(blob => resolve(blob || file), "image/jpeg", 0.88));
-        } finally {
-            bitmap.close();
-        }
+    /* ------------------------------------------------------------------ the window */
+    const TEMPLATE = `
+      <div class="mkls-sheet" role="dialog" aria-modal="true" aria-labelledby="mklsTitle">
+        <header class="mkls-top">
+          <div class="mkls-titles">
+            <p class="mkls-eyebrow">Scan results</p>
+            <h2 id="mklsTitle" class="mkls-title"></h2>
+          </div>
+          <button type="button" class="mkls-close" data-mkls-close aria-label="Close">&times;</button>
+        </header>
+        <section class="mkls-camera" data-mkls-camera>
+          <video class="mkls-video" playsinline muted autoplay></video>
+          <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <div class="mkls-scanline" aria-hidden="true"></div>
+          <div class="mkls-mark" data-mkls-mark hidden>
+            <span class="mkls-mark-icon" data-mkls-mark-icon aria-hidden="true"></span>
+            <strong class="mkls-mark-text" data-mkls-mark-text></strong>
+          </div>
+        </section>
+        <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
+        <div class="mkls-bar" data-mkls-bar>
+          <button type="button" class="mkls-btn ghost" data-mkls-capture>Capture now</button>
+        </div>
+        <section class="mkls-preview" data-mkls-preview hidden>
+          <p class="mkls-preview-note" data-mkls-note></p>
+          <div class="mkls-table-wrap">
+            <table class="mkls-table">
+              <thead><tr><th>Student</th><th>Admission no.</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th></tr></thead>
+              <tbody data-mkls-rows></tbody>
+            </table>
+          </div>
+          <div class="mkls-bar">
+            <button type="button" class="mkls-btn ghost" data-mkls-rescan>Scan again</button>
+            <button type="button" class="mkls-btn primary" data-mkls-save>Save to student results</button>
+          </div>
+          <p class="mkls-save-msg" data-mkls-save-msg role="status" aria-live="polite"></p>
+        </section>
+      </div>`;
+
+    function buildOverlay() {
+        overlay = document.createElement("div");
+        overlay.className = "mkls-overlay";
+        overlay.hidden = true;
+        overlay.innerHTML = TEMPLATE;
+        document.body.appendChild(overlay);
+        $("[data-mkls-close]", overlay).addEventListener("click", closeScanner);
+        $("[data-mkls-capture]", overlay).addEventListener("click", captureNow);
+        $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
+        $("[data-mkls-save]", overlay).addEventListener("click", saveRows);
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && state.phase !== "closed") closeScanner();
+        });
     }
 
-    async function scan(file) {
-        if (!state.config || !state.config.subject) {
-            status("Select a subject in the Results section first.", "error");
+    function showHint(text) {
+        if (!hint) return;
+        hint.textContent = text;
+        hint.hidden = false;
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(() => { hint.hidden = true; }, 5000);
+    }
+
+    function setGuide(text) {
+        const guide = $("[data-mkls-guide]", overlay);
+        if (guide) guide.textContent = text;
+    }
+
+    function setMark(kind, text, hideAfter) {
+        const mark = $("[data-mkls-mark]", overlay);
+        clearTimeout(markTimer);
+        if (!kind) { mark.hidden = true; return; }
+        mark.hidden = false;
+        mark.dataset.kind = kind;
+        $("[data-mkls-mark-icon]", overlay).textContent = kind === "ok" ? "✓" : "!";
+        $("[data-mkls-mark-text]", overlay).textContent = text;
+        if (hideAfter) markTimer = setTimeout(() => { mark.hidden = true; }, hideAfter);
+    }
+
+    function showPhase(name) {
+        state.phase = name;
+        const cameraOn = name === "camera" || name === "marking";
+        $("[data-mkls-camera]", overlay).hidden = !cameraOn;
+        $("[data-mkls-guide]", overlay).hidden = !cameraOn;
+        $("[data-mkls-bar]", overlay).hidden = name !== "camera";
+        $("[data-mkls-preview]", overlay).hidden = !(name === "preview" || name === "saving");
+    }
+
+    function videoEl() { return overlay ? $("video", overlay) : null; }
+
+    /* ------------------------------------------------------------------ camera */
+    function stopStream() {
+        if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        const video = videoEl();
+        if (video) video.srcObject = null;
+    }
+
+    async function prepareWorker() {
+        if (state.worker) return;
+        const Tesseract = await loadOcr();
+        const language = state.meta.classType === "arabic" ? "ara+eng" : "eng";
+        state.worker = await Tesseract.createWorker(language, 1, {});
+    }
+
+    function scheduleRead(delay) {
+        clearTimeout(state.timer);
+        state.timer = setTimeout(readFrame, delay);
+    }
+
+    function captureFrame(video) {
+        const scale = Math.min(1, 1280 / video.videoWidth);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(video.videoWidth * scale);
+        canvas.height = Math.round(video.videoHeight * scale);
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    }
+
+    async function startCamera() {
+        if (!overlay) buildOverlay();
+        clearTimeout(state.timer);
+        stopStream();
+        showPhase("camera");
+        setMark(null);
+        state.lastRows = [];
+        state.lastSignature = "";
+        state.stableCount = 0;
+        state.clearWarned = false;
+        setGuide("Opening the camera…");
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setGuide("This browser cannot open the camera. Use Chrome or Edge on a secure (https) address.");
             return;
         }
-        if (!file || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) {
-            status("Choose a JPEG, PNG or WebP image up to 8 MB.", "error");
-            return;
-        }
-        const scanScope = state.scopeKey;
-        const scanConfig = state.config;
-        state.busy = true;
-        status("Preparing the free on-device OCR engine…");
-        const progress = $("[data-scanner-progress]");
-        progress.hidden = false;
         try {
-            if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-            state.imageUrl = URL.createObjectURL(file);
-            const preview = $("[data-scanner-preview]");
-            preview.src = state.imageUrl;
-            preview.hidden = false;
-            const Tesseract = await loadOcr();
-            const ocrImage = await prepareImage(file);
-            const ocrLanguage = scanConfig.classType === "arabic" ? "ara+eng" : "eng";
-            state.worker = await Tesseract.createWorker(ocrLanguage, 1, {
-                logger: message => {
-                    if (message.status === "recognizing text") {
-                        const percent = Math.round((message.progress || 0) * 100);
-                        progress.value = percent;
-                        status("Reading result sheet… " + percent + "%");
-                    }
-                }
+            state.stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 960 } },
+                audio: false
             });
-            const recognised = await state.worker.recognize(ocrImage);
-            if (state.scopeKey !== scanScope) return;
-            const lines = recognised?.data?.lines || [];
-            state.rows = extractRows(lines, scanConfig.students, scanConfig.subject);
-            if (!state.rows.length) {
-                const raw = String(recognised?.data?.text || "").trim();
-                status(raw
-                    ? "Text was detected, but no student could be matched confidently to this class. Check the image and roster, or enter marks manually."
-                    : "No readable text found. Try a sharper, well-lit photo.", "error");
-                return;
-            }
-            renderReview();
-            status(state.rows.length + " student name(s) matched. Check every score before saving.", "success");
         } catch (error) {
-            status(error.message || "Could not scan this image.", "error");
+            setGuide("Camera access is needed. Allow the camera for this site in your browser settings, then tap Scan again.");
+            return;
+        }
+        if (state.phase !== "camera") { stopStream(); return; }
+
+        const video = videoEl();
+        video.srcObject = state.stream;
+        await video.play().catch(() => {});
+        state.startedAt = Date.now();
+
+        setGuide("Getting the reader ready…");
+        try {
+            await prepareWorker();
+        } catch (error) {
+            setGuide(error.message || "Could not start the reader.");
+            return;
+        }
+        if (state.phase !== "camera") return;
+        setGuide("Hold the camera over the result sheet. Move slowly up, down and sideways.");
+        scheduleRead(300);
+    }
+
+    /* ------------------------------------------------------------------ reading */
+    async function readFrame() {
+        if (state.phase !== "camera" || state.reading) return;
+        const video = videoEl();
+        if (!state.worker || !video || !video.videoWidth) { scheduleRead(300); return; }
+        state.reading = true;
+        try {
+            const result = await state.worker.recognize(captureFrame(video));
+            if (state.phase !== "camera") return;
+            const lines = (result && result.data && result.data.lines) || [];
+            judge(extractRows(lines, state.meta.students || [], state.meta.subject));
+        } catch (error) {
+            setGuide("The reader paused. Keep the sheet in view.");
         } finally {
-            if (state.worker) {
-                await state.worker.terminate().catch(() => {});
-                state.worker = null;
+            state.reading = false;
+            if (state.phase === "camera") {
+                if (!state.clearWarned && Date.now() - state.startedAt > CLEAR_WARNING_MS) warnNotClear();
+                scheduleRead(READ_EVERY_MS);
             }
-            state.busy = false;
         }
     }
 
-    async function saveReviewedRows() {
-        if (!state.config || state.busy) return;
-        const selected = [...$("[data-scanner-review] tbody").querySelectorAll("tr")]
-            .filter(row => row.querySelector('input[type="checkbox"]').checked);
-        if (!selected.length) {
-            status("Select at least one reviewed student row.", "error");
+    function judge(rows) {
+        state.lastRows = rows;
+        if (!rows.length) {
+            state.stableCount = 0;
+            setGuide("Looking for the result sheet. Move closer and keep the whole sheet in view.");
             return;
         }
-        for (const row of selected) {
-            const values = ["ca1", "ca2", "exam"].map(field => {
-                const raw = row.querySelector('[data-field="' + field + '"]').value.trim();
-                return raw === "" ? null : Number(raw);
-            });
-            const maxes = [state.config.subject.max_ca1, state.config.subject.max_ca2, state.config.subject.max_exam].map(Number);
-            if (values.some(value => value === null)) {
-                status("Enter CA1, CA2 and Exam for every selected student. Blank marks are never saved.", "error");
-                return;
-            }
-            if (values.some((value, index) => !Number.isFinite(value) || value < 0 || value > maxes[index])) {
-                status("A selected row contains a mark outside the subject's allowed range. Correct it before saving.", "error");
-                return;
-            }
+        const unclear = rows.filter(row => !row.detected).length;
+        const valid = rows.length - unclear;
+        const signature = rows.map(row => `${row.student.id}:${row.ca1}:${row.ca2}:${row.exam}:${row.detected ? 1 : 0}`).sort().join("|");
+        if (unclear === 0) {
+            state.stableCount = signature === state.lastSignature ? state.stableCount + 1 : 1;
+        } else {
+            state.stableCount = 0;
         }
-        if (!window.confirm("Save the reviewed results for " + selected.length + " selected student(s) in " + state.config.subject.name + "?")) return;
-        state.busy = true;
+        state.lastSignature = signature;
+
+        if (unclear > 0) {
+            setGuide(`Reading ${valid} student(s). ${unclear} line(s) are not clear yet. Move closer and hold steady.`);
+            return;
+        }
+        setGuide(`Reading ${valid} student(s) clearly. Hold steady…`);
+        if (state.stableCount >= STABLE_READS) succeed(rows);
+    }
+
+    function succeed(rows) {
+        showPhase("marking");
+        setMark("ok", "Every score is clear");
+        setGuide("Checking the scores…");
+        stopStream();
+        clearTimeout(state.timer);
+        setTimeout(() => { if (state.phase === "marking") showPreview(rows); }, 1100);
+    }
+
+    function warnNotClear() {
+        state.clearWarned = true;
+        setMark("warn", "Not fully clear yet");
+        setGuide("Some scores are still not clear. Keep scanning, or tap Capture now to check the scores in the preview.");
+    }
+
+    function captureNow() {
+        if (state.phase !== "camera") return;
+        if (!state.lastRows.length) {
+            setGuide("No student rows have been read yet. Keep the sheet in view and try again.");
+            return;
+        }
+        clearTimeout(state.timer);
+        stopStream();
+        showPreview(state.lastRows);
+    }
+
+    /* ------------------------------------------------------------------ preview */
+    function showPreview(rows) {
+        showPhase("preview");
+        setMark(null);
+        const body = $("[data-mkls-rows]", overlay);
+        body.replaceChildren(...rows.map(previewRow));
+        const flagged = rows.filter(row => !row.detected).length;
+        $("[data-mkls-note]", overlay).textContent = flagged
+            ? `${flagged} student(s) need checking. Correct any score that is wrong before saving.`
+            : "Check each score, then save to student results.";
+        $("[data-mkls-save-msg]", overlay).textContent = "";
+    }
+
+    function previewRow(row) {
+        const subject = state.meta.subject;
+        const tr = document.createElement("tr");
+        tr.dataset.studentId = String(row.student.id);
+        if (!row.detected) tr.className = "needs-check";
+
+        const name = [row.student.first_name, row.student.middle_name, row.student.last_name].filter(Boolean).join(" ");
+        const nameCell = document.createElement("td");
+        nameCell.textContent = name;
+        const admissionCell = document.createElement("td");
+        admissionCell.textContent = row.student.admission_number || "";
+        tr.append(nameCell, admissionCell);
+
+        FIELDS.forEach((field, index) => {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.inputMode = "decimal";
+            input.min = "0";
+            input.max = String(subject[MAX_KEYS[index]]);
+            input.step = "any";
+            input.dataset.field = field;
+            input.setAttribute("aria-label", `${LABELS[index]} for ${name}`);
+            input.value = row[field] === "" || row[field] == null ? "" : String(row[field]);
+            input.addEventListener("input", () => updateTotal(tr));
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+
+        const total = document.createElement("td");
+        total.className = "mkls-total";
+        tr.appendChild(total);
+        updateTotal(tr);
+        return tr;
+    }
+
+    function updateTotal(tr) {
+        const values = FIELDS.map(field => tr.querySelector(`[data-field="${field}"]`).value.trim());
+        const filled = values.filter(value => value !== "");
+        tr.querySelector(".mkls-total").textContent = filled.length ? String(filled.reduce((sum, value) => sum + Number(value), 0)) : "—";
+    }
+
+    /* ------------------------------------------------------------------ save */
+    async function saveRows() {
+        if (state.phase !== "preview") return;
+        const meta = state.meta;
+        const subject = meta.subject;
+        const message = $("[data-mkls-save-msg]", overlay);
+        const saveButton = $("[data-mkls-save]", overlay);
+        const payloads = [];
+
+        for (const tr of overlay.querySelectorAll("[data-mkls-rows] tr")) {
+            const values = FIELDS.map(field => tr.querySelector(`[data-field="${field}"]`).value.trim());
+            if (values.every(value => value === "")) continue;
+            const numbers = values.map(value => (value === "" ? null : Number(value)));
+            for (let index = 0; index < numbers.length; index++) {
+                const score = numbers[index];
+                if (score !== null && (!Number.isFinite(score) || score < 0 || score > Number(subject[MAX_KEYS[index]]))) {
+                    message.textContent = `${tr.children[0].textContent}: ${LABELS[index]} must be between 0 and ${subject[MAX_KEYS[index]]}.`;
+                    tr.querySelector(`[data-field="${FIELDS[index]}"]`).focus();
+                    return;
+                }
+            }
+            const studentId = Number(tr.dataset.studentId);
+            const existing = (meta.results || []).find(result =>
+                Number(result.student_id) === studentId && Number(result.subject_id) === Number(subject.id));
+            payloads.push({
+                class_type: meta.classType,
+                class_id: Number(meta.classId),
+                student_id: studentId,
+                subject_id: Number(subject.id),
+                teacher_remark: existing ? (existing.teacher_remark ?? null) : null,
+                result_remark: existing ? (existing.result_remark ?? null) : null,
+                ca1: numbers[0],
+                ca2: numbers[1],
+                exam: numbers[2]
+            });
+        }
+
+        if (!payloads.length) {
+            message.textContent = "There are no scores to save.";
+            return;
+        }
+
+        state.phase = "saving";
+        saveButton.disabled = true;
         let saved = 0;
         try {
-            for (const row of selected) {
-                const studentId = Number(row.dataset.studentId);
-                const existingResult = (state.config.results || []).find(result =>
-                    Number(result.student_id) === studentId &&
-                    Number(result.subject_id) === Number(state.config.subject.id)
-                );
-                const payload = {
-                    class_type: state.config.classType,
-                    class_id: Number(state.config.classId),
-                    student_id: studentId,
-                    subject_id: Number(state.config.subject.id),
-                    teacher_remark: existingResult?.teacher_remark ?? null,
-                    result_remark: existingResult?.result_remark ?? null,
-                    ca1: row.querySelector('[data-field="ca1"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca1"]').value),
-                    ca2: row.querySelector('[data-field="ca2"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="ca2"]').value),
-                    exam: row.querySelector('[data-field="exam"]').value.trim() === "" ? null : Number(row.querySelector('[data-field="exam"]').value)
-                };
+            for (const payload of payloads) {
+                message.textContent = `Saving ${saved + 1} of ${payloads.length}…`;
                 const response = await fetch("./api/results/save.php", {
                     method: "POST",
                     credentials: "same-origin",
                     cache: "no-store",
-                    headers: {"Content-Type":"application/json", "Accept":"application/json"},
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok || !data.success) throw new Error(data.message || "A result could not be saved.");
-                row.querySelector('input[type="checkbox"]').checked = false;
                 saved++;
             }
-            status(saved + " reviewed result(s) saved successfully. Refreshing the class results…", "success");
-            if (typeof state.config.onSaved === "function") await state.config.onSaved();
-            state.rows = [];
-            $("[data-scanner-review]").replaceChildren();
-            $("[data-scanner-review]").hidden = true;
+            message.textContent = `${saved} result(s) saved to student results.`;
+            if (typeof meta.onSaved === "function") await meta.onSaved();
+            setTimeout(closeScanner, 1400);
         } catch (error) {
-            status(saved + " row(s) saved before the following error: " + (error.message || "Save failed.") + " Review the class results before retrying.", "error");
-            if (typeof state.config.onSaved === "function") await state.config.onSaved();
+            message.textContent = `${saved} saved before an error: ${error.message || "Save failed."} Check the scores and try again.`;
+            if (typeof meta.onSaved === "function") await meta.onSaved();
+            state.phase = "preview";
         } finally {
-            state.busy = false;
+            saveButton.disabled = false;
         }
     }
 
-    const button = document.getElementById("openResultsScanner");
-    const panel = $("[data-scanner-panel]");
+    /* ------------------------------------------------------------------ open / close */
+    function openScanner() {
+        if (!overlay) buildOverlay();
+        $("#mklsTitle", overlay).textContent = state.meta.subject.name;
+        overlay.hidden = false;
+        document.body.classList.add("mkls-open");
+        startCamera();
+    }
+
+    function closeScanner() {
+        state.phase = "closed";
+        clearTimeout(state.timer);
+        clearTimeout(markTimer);
+        stopStream();
+        if (state.worker) { state.worker.terminate().catch(() => {}); state.worker = null; }
+        if (overlay) overlay.hidden = true;
+        document.body.classList.remove("mkls-open");
+    }
+
     button?.addEventListener("click", () => {
-        panel.hidden = !panel.hidden;
-        if (!panel.hidden) panel.scrollIntoView({behavior:"smooth", block:"start"});
-    });
-    $("[data-scanner-upload]")?.addEventListener("change", event => scan(event.target.files?.[0]));
-    $("[data-scanner-camera]")?.addEventListener("change", event => scan(event.target.files?.[0]));
-    $("[data-scanner-close]")?.addEventListener("click", () => { panel.hidden = true; });
-    $("[data-scanner-reset]")?.addEventListener("click", () => {
-        state.rows = [];
-        $("[data-scanner-review]").replaceChildren();
-        $("[data-scanner-review]").hidden = true;
-        $("[data-scanner-preview]").hidden = true;
-        if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-        state.imageUrl = "";
-        $("[data-scanner-upload]").value = "";
-        $("[data-scanner-camera]").value = "";
-        status("");
+        const meta = state.meta;
+        if (!meta || !ROLES.includes(meta.role)) return;
+        if (!meta.subject) { showHint("Choose the subject in the results table first, then press Scan results."); return; }
+        if (!meta.students || !meta.students.length) { showHint("No students are loaded for this class yet."); return; }
+        openScanner();
     });
 
-    window.MarkazResultsScanner = {
-        configure(config) {
-            const nextConfig = config && config.subject ? config : null;
-            const nextKey = nextConfig ? [nextConfig.classType, nextConfig.classId, nextConfig.subject.id].join("|") : "";
-            if (state.scopeKey && nextKey !== state.scopeKey) {
-                state.rows = [];
-                $("[data-scanner-review]").replaceChildren();
-                $("[data-scanner-review]").hidden = true;
-                $("[data-scanner-preview]").hidden = true;
-                if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-                state.imageUrl = "";
-                panel.hidden = true;
-                status("The class or subject changed. Start a new scan for the selected subject.");
-            }
-            state.scopeKey = nextKey;
-            state.config = nextConfig;
-            if (button) button.hidden = !state.config || !["admin", "exam_officer", "teacher"].includes(state.config.role);
-            if (!state.config) {
-                panel.hidden = true;
-                status("Select an assigned subject to use the scanner.");
-            }
+    /* class.js gives the scanner the class, the roster, the chosen subject and a refresh callback */
+    function configure(config) {
+        const next = config || {};
+        state.meta = next;
+        if (button) button.hidden = !ROLES.includes(next.role);
+        const key = [next.classId, next.classType, next.subject ? next.subject.id : ""].join("|");
+        if (key !== state.scopeKey) {
+            state.scopeKey = key;
+            if (state.phase !== "closed") closeScanner();
         }
-    };
+    }
+
+    window.MarkazResultsScanner = { configure };
 })();
