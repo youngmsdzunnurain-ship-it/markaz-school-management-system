@@ -98,7 +98,9 @@ try {
             if(!$payment)financeJson(['success'=>false,'message'=>'Receipt record not found.'],404);
             $alloc=$pdo->prepare('SELECT i.invoice_number,i.billing_year,i.billing_month,fa.amount FROM finance_fee_allocations fa INNER JOIN finance_fee_invoices i ON i.id=fa.invoice_id WHERE fa.payment_id=? ORDER BY i.billing_year,i.billing_month');
             $alloc->execute([$id]);
-            financeJson(['success'=>true,'payment'=>$payment,'allocations'=>$alloc->fetchAll(PDO::FETCH_ASSOC)]);
+            $refunds=$pdo->prepare("SELECT refund_number,amount,reason,status,created_at,reviewed_at FROM finance_fee_refunds WHERE payment_id=? ORDER BY created_at");
+            $refunds->execute([$id]);
+            financeJson(['success'=>true,'payment'=>$payment,'allocations'=>$alloc->fetchAll(PDO::FETCH_ASSOC),'refunds'=>$refunds->fetchAll(PDO::FETCH_ASSOC)]);
         }
         if ($action === 'reports') {
             $from=(string)($_GET['from']??date('Y-m-01'));$to=(string)($_GET['to']??date('Y-m-d'));
@@ -161,7 +163,7 @@ try {
             $monthly->execute([(int)$student['id']]);$monthlyRows=$monthly->fetchAll(PDO::FETCH_ASSOC);
             $term=$pdo->prepare("SELECT i.invoice_number,'Term' invoice_type,CONCAT(ac.session_name,' · ',i.term) period_label,i.created_at issued_on,i.due_on,i.base_amount,i.discount_amount,(COALESCE(p.paid,0)-COALESCE(r.refunded,0)) paid_amount,(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0)) balance,i.status FROM finance_term_fee_invoices i JOIN finance_academic_sessions ac ON ac.id=i.session_id LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id LEFT JOIN (SELECT a2.term_invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds r ON r.id=x.refund_id JOIN finance_term_fee_payments a2 ON x.allocation_type='term' AND a2.id=x.source_allocation_id WHERE r.status='approved' GROUP BY a2.term_invoice_id) r ON r.term_invoice_id=i.id WHERE i.student_id=? ORDER BY i.due_on,i.id");
             $term->execute([(int)$student['id']]);$termRows=$term->fetchAll(PDO::FETCH_ASSOC);
-            $payments=$pdo->prepare("SELECT receipt_number,amount,method,reference,status,paid_at,payer_name FROM finance_fee_payments WHERE student_id=? ORDER BY paid_at,id");
+            $payments=$pdo->prepare("SELECT p.receipt_number,p.amount,p.method,p.reference,p.status,p.paid_at,p.payer_name,COALESCE((SELECT SUM(r.amount) FROM finance_fee_refunds r WHERE r.payment_id=p.id AND r.status='approved'),0) refunded_amount FROM finance_fee_payments p WHERE p.student_id=? ORDER BY paid_at,id");
             $payments->execute([(int)$student['id']]);$paymentRows=$payments->fetchAll(PDO::FETCH_ASSOC);
             $invoices=array_merge($monthlyRows,$termRows);
             $totals=['billed'=>0.0,'discounts'=>0.0,'paid_allocated'=>0.0,'outstanding'=>0.0];
