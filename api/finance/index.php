@@ -136,6 +136,56 @@ try {
             );
             financeJson(['success'=>true,'plans'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
         }
+        if ($action === 'student_statement') {
+            $admission = trim((string)($_GET['admission_number'] ?? ''));
+            if ($admission === '' || mb_strlen($admission) > 80) financeJson(['success'=>false,'message'=>'Enter a valid admission number.'],422);
+            $studentQuery=$pdo->prepare("SELECT id,admission_number,CONCAT_WS(' ',first_name,middle_name,last_name) student_name,class_id,COALESCE(NULLIF(arabic_class_id,0),arabia_class_id) arabic_class_id FROM students WHERE admission_number=? LIMIT 1");
+            $studentQuery->execute([$admission]);$student=$studentQuery->fetch(PDO::FETCH_ASSOC);
+            if(!$student)financeJson(['success'=>false,'message'=>'No student was found with that admission number.'],404);
+            $monthly=$pdo->prepare("SELECT i.invoice_number,'Monthly' invoice_type,CONCAT(LPAD(i.billing_month,2,'0'),'/',i.billing_year) period_label,i.issued_on,i.due_on,i.amount_due base_amount,i.discount_amount,COALESCE(a.paid,0) paid_amount,(i.amount_due-i.discount_amount-COALESCE(a.paid,0)) balance,i.status FROM finance_fee_invoices i LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id WHERE i.student_id=? ORDER BY i.due_on,i.id");
+            $monthly->execute([(int)$student['id']]);$monthlyRows=$monthly->fetchAll(PDO::FETCH_ASSOC);
+            $term=$pdo->prepare("SELECT i.invoice_number,'Term' invoice_type,CONCAT(ac.session_name,' · ',i.term) period_label,i.created_at issued_on,i.due_on,i.base_amount,i.discount_amount,COALESCE(p.paid,0) paid_amount,(i.amount_due-COALESCE(p.paid,0)) balance,i.status FROM finance_term_fee_invoices i JOIN finance_academic_sessions ac ON ac.id=i.session_id LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id WHERE i.student_id=? ORDER BY i.due_on,i.id");
+            $term->execute([(int)$student['id']]);$termRows=$term->fetchAll(PDO::FETCH_ASSOC);
+            $payments=$pdo->prepare("SELECT receipt_number,amount,method,reference,status,paid_at,payer_name FROM finance_fee_payments WHERE student_id=? ORDER BY paid_at,id");
+            $payments->execute([(int)$student['id']]);$paymentRows=$payments->fetchAll(PDO::FETCH_ASSOC);
+            $invoices=array_merge($monthlyRows,$termRows);
+            $totals=['billed'=>0.0,'discounts'=>0.0,'paid_allocated'=>0.0,'outstanding'=>0.0];
+            foreach($invoices as $invoice){$totals['billed']+=(float)$invoice['base_amount'];$totals['discounts']+=(float)$invoice['discount_amount'];$totals['paid_allocated']+=(float)$invoice['paid_amount'];$totals['outstanding']+=(float)$invoice['balance'];}
+            financeJson(['success'=>true,'student'=>$student,'invoices'=>$invoices,'payments'=>$paymentRows,'totals'=>$totals]);
+        }
+        if ($action === 'arrears') {
+            $rows=$pdo->query(
+                "SELECT x.student_id,x.admission_number,x.student_name,x.class_name,COUNT(*) open_invoices,
+                        SUM(x.balance) outstanding,MAX(x.days_overdue) max_days_overdue,
+                        SUM(CASE WHEN x.days_overdue BETWEEN 1 AND 30 THEN x.balance ELSE 0 END) overdue_1_30,
+                        SUM(CASE WHEN x.days_overdue BETWEEN 31 AND 60 THEN x.balance ELSE 0 END) overdue_31_60,
+                        SUM(CASE WHEN x.days_overdue BETWEEN 61 AND 90 THEN x.balance ELSE 0 END) overdue_61_90,
+                        SUM(CASE WHEN x.days_overdue>90 THEN x.balance ELSE 0 END) overdue_over_90
+                 FROM (
+                    SELECT i.student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
+                           COALESCE(c.name,ac.name,'Unassigned') class_name,
+                           (i.amount_due-i.discount_amount-COALESCE(a.paid,0)) balance,
+                           GREATEST(DATEDIFF(CURDATE(),i.due_on),0) days_overdue
+                    FROM finance_fee_invoices i JOIN students s ON s.id=i.student_id
+                    LEFT JOIN classes c ON c.id=s.class_id
+                    LEFT JOIN arabic_classes ac ON ac.id=COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id)
+                    LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
+                    WHERE i.status IN ('unpaid','partial') AND i.status<>'void'
+                    UNION ALL
+                    SELECT i.student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
+                           COALESCE(c.name,'Unassigned') class_name,
+                           (i.amount_due-COALESCE(p.paid,0)) balance,
+                           GREATEST(DATEDIFF(CURDATE(),i.due_on),0) days_overdue
+                    FROM finance_term_fee_invoices i JOIN students s ON s.id=i.student_id
+                    LEFT JOIN classes c ON c.id=i.class_id
+                    LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id
+                    WHERE i.status IN ('unpaid','partial')
+                 ) x WHERE x.balance>0
+                 GROUP BY x.student_id,x.admission_number,x.student_name,x.class_name
+                 ORDER BY outstanding DESC,student_name"
+            )->fetchAll(PDO::FETCH_ASSOC);
+            financeJson(['success'=>true,'students'=>$rows,'student_count'=>count($rows),'total_outstanding'=>array_sum(array_map(static fn($row)=>(float)$row['outstanding'],$rows))]);
+        }
         if ($action === 'invoices') {
             $studentId=(int)($_GET['student_id']??0);
             $sql="SELECT i.*,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
