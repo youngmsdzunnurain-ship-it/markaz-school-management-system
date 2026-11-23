@@ -588,6 +588,44 @@ html[dir="rtl"] .results-scanner-table th,
 html[dir="rtl"] .results-scanner-table td {
     text-align: right
 }
+/* ---- css/results-scanner-live.css ---- */
+html[dir="rtl"] .mkls-frame span:nth-child(1) {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0 14px 0 0;
+    left: auto;
+    right: 0
+}
+html[dir="rtl"] .mkls-frame span:nth-child(2) {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 14px 0 0 0;
+    left: 0;
+    right: auto
+}
+html[dir="rtl"] .mkls-frame span:nth-child(3) {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0 0 14px 0;
+    left: auto;
+    right: 0
+}
+html[dir="rtl"] .mkls-frame span:nth-child(4) {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0 0 0 14px;
+    left: 0;
+    right: auto
+}
+html[dir="rtl"] .mkls-scanline {
+    background: linear-gradient(-90deg, transparent, #f3d98a, transparent)
+}
+html[dir="rtl"] .mkls-btn.primary {
+    background: linear-gradient(-135deg, #f3d98a, #c9a24a)
+}
+html[dir="rtl"][dir="rtl"] .mkls-table input {
+    direction: rtl
+}
 /* ---- css/app-watermark.css ---- */
 html[dir="rtl"] .sidebar {
     background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important

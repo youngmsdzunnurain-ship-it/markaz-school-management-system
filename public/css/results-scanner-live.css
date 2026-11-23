@@ -1,0 +1,136 @@
+/* MARKAZ Results Scanner (live camera): the full-screen window, the scan frame, the big marks and the preview.
+   Works in light, dark and Arabic. Hidden when printing. */
+
+.mkls-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    display: grid; place-items: start center;
+    overflow-y: auto; padding: 14px 12px 28px;
+    background: radial-gradient(120% 80% at 50% 0%, #1a5a3d 0%, #0a2a1c 60%, #06190f 100%);
+    color: #f4fbf6;
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+}
+.mkls-overlay[hidden], .mkls-overlay [hidden] { display: none !important; }
+body.mkls-open { overflow: hidden; }
+
+.mkls-sheet { width: min(640px, 100%); display: grid; gap: 14px; }
+
+.mkls-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mkls-eyebrow { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; color: #e6c26a; }
+.mkls-title { margin: 4px 0 0; font-family: "Playfair Display", Georgia, serif; font-size: clamp(1.25rem, 3vw, 1.6rem); font-weight: 700; color: #fff; }
+.mkls-close {
+    width: 44px; height: 44px; border-radius: 50%; flex: none;
+    border: 1px solid rgba(230, 194, 106, .55); background: rgba(255, 255, 255, .08);
+    color: #fff; font-size: 26px; line-height: 1; cursor: pointer;
+}
+
+/* the camera window */
+.mkls-camera {
+    position: relative; overflow: hidden; border-radius: 24px;
+    aspect-ratio: 3 / 4; max-height: 68vh; width: 100%; justify-self: center;
+    background: #000; box-shadow: 0 24px 60px rgba(0, 0, 0, .45), 0 0 0 1px rgba(230, 194, 106, .45);
+}
+.mkls-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.mkls-frame { position: absolute; inset: 7% 6%; pointer-events: none; }
+.mkls-frame span { position: absolute; width: 44px; height: 44px; border: 4px solid #e6c26a; }
+.mkls-frame span:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; border-radius: 14px 0 0 0; }
+.mkls-frame span:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 14px 0 0; }
+.mkls-frame span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 14px; }
+.mkls-frame span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; border-radius: 0 0 14px 0; }
+
+.mkls-scanline {
+    position: absolute; left: 8%; right: 8%; top: 9%; height: 3px; border-radius: 3px;
+    background: linear-gradient(90deg, transparent, #f3d98a, transparent);
+    box-shadow: 0 0 14px rgba(243, 217, 138, .9);
+    opacity: .85;
+}
+.mkls-camera[data-busy="1"] .mkls-scanline { animation: none; }
+
+.mkls-mark {
+    position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px;
+    background: rgba(4, 22, 14, .55); backdrop-filter: blur(3px);
+}
+.mkls-mark-icon {
+    width: 132px; height: 132px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 78px; font-weight: 900; line-height: 1; color: #fff;
+    background: radial-gradient(circle at 35% 30%, #6fe0a2, #1e8a56 70%);
+    box-shadow: 0 0 0 10px rgba(111, 224, 162, .18), 0 18px 40px rgba(0, 0, 0, .4);
+}
+.mkls-mark[data-kind="warn"] .mkls-mark-icon {
+    background: radial-gradient(circle at 35% 30%, #ffe08a, #d39a1a 70%);
+    box-shadow: 0 0 0 10px rgba(255, 210, 110, .18), 0 18px 40px rgba(0, 0, 0, .4);
+}
+.mkls-mark-text { font-family: "Playfair Display", Georgia, serif; font-size: 1.2rem; color: #fff; text-align: center; padding: 0 16px; }
+
+.mkls-guide { margin: 0; text-align: center; font-size: 15px; line-height: 1.5; color: rgba(255, 255, 255, .92); min-height: 3em; }
+
+.mkls-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.mkls-btn {
+    min-height: 46px; padding: 10px 22px; border-radius: 999px; font: inherit; font-weight: 800; cursor: pointer;
+    border: 1px solid rgba(230, 194, 106, .6);
+}
+.mkls-btn.ghost { background: rgba(255, 255, 255, .08); color: #fff; }
+.mkls-btn.primary { background: linear-gradient(135deg, #f3d98a, #c9a24a); color: #0e3a27; border-color: transparent; box-shadow: 0 10px 24px rgba(201, 162, 74, .35); }
+.mkls-btn:disabled { opacity: .6; cursor: wait; }
+
+/* the preview: a clean light card so every score is easy to read */
+.mkls-preview { display: grid; gap: 14px; }
+.mkls-preview-note { margin: 0; text-align: center; font-size: 14px; color: rgba(255, 255, 255, .9); }
+.mkls-table-wrap { overflow-x: auto; border-radius: 18px; background: #fff; color: #17372a; box-shadow: 0 18px 40px rgba(0, 0, 0, .3); }
+.mkls-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+.mkls-table th { text-align: start; padding: 10px 6px; background: #145035; color: #fff; font-weight: 700; font-size: 11.5px; letter-spacing: .02em; }
+.mkls-table td { padding: 8px 6px; border-bottom: 1px solid #e3ede6; overflow-wrap: anywhere; vertical-align: middle; }
+.mkls-table td:nth-child(2) { font-size: 11px; color: #456155; white-space: nowrap; }
+.mkls-table tr:last-child td { border-bottom: 0; }
+.mkls-table input {
+    width: 100%; max-width: 62px; min-height: 36px; padding: 5px 4px; border-radius: 10px; border: 1px solid #c7d9ce;
+    font: inherit; font-weight: 700; text-align: center; background: #f6faf7; color: #123d2a;
+}
+.mkls-table input:focus { outline: 2px solid #c9a24a; outline-offset: 1px; background: #fff; }
+.mkls-total { font-weight: 800; color: #145035; }
+.mkls-table tr.needs-check td { background: #fff4d6; }
+.mkls-table tr.needs-check .mkls-total { color: #9a6b07; }
+.mkls-save-msg { margin: 0; text-align: center; font-size: 14px; min-height: 1.5em; color: #f6e7b4; }
+
+.mkls-hint {
+    margin: 8px 0 0; padding: 9px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5;
+    background: #fff8e1; color: #6b4b00; border: 1px solid #ecd58f;
+}
+
+/* Arabic: names and numbers keep their natural direction, text follows the page */
+html[dir="rtl"] .mkls-table th, html[dir="rtl"] .mkls-table td { text-align: start; }
+html[dir="rtl"] .mkls-table input { direction: ltr; }
+
+/* dark mode */
+@media screen {
+    html[data-theme="dark"] .mkls-table-wrap { background: #1d2a23; color: #e6efe9; }
+    html[data-theme="dark"] .mkls-table td { border-color: #2c3b33; }
+    html[data-theme="dark"] .mkls-table input { background: #243029; color: #eaf3ee; border-color: #3b4a41; }
+    html[data-theme="dark"] .mkls-table tr.needs-check td { background: #3a3117; }
+    html[data-theme="dark"] .mkls-total { color: #8fe0ad; }
+    html[data-theme="dark"] .mkls-hint { background: #3a3117; color: #f3d98a; border-color: #5a4a1f; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes mkls-sweep { 0% { top: 9%; } 50% { top: 88%; } 100% { top: 9%; } }
+    .mkls-scanline { animation: mkls-sweep 2.6s ease-in-out infinite; }
+    @keyframes mkls-pop { from { scale: .5; opacity: 0; } to { scale: 1; opacity: 1; } }
+    .mkls-mark:not([hidden]) .mkls-mark-icon { animation: mkls-pop 520ms cubic-bezier(.34, 1.56, .64, 1) both; }
+}
+
+@media print { .mkls-overlay, .mkls-hint { display: none !important; } }
+
+/* phones: the preview table uses the full width with the same six columns */
+@media (max-width: 520px) {
+    .mkls-table { font-size: 12px; }
+    .mkls-table th { font-size: 10.5px; padding: 8px 4px; }
+    .mkls-table td { padding: 6px 4px; }
+    .mkls-table td:nth-child(2) { font-size: 10px; }
+    .mkls-table input { font-size: 14px; }
+}
+
+/* the summary after an automatic save */
+.mkls-summary { display: grid; gap: 14px; text-align: center; }
+.mkls-summary-title { margin: 0; font-family: "Playfair Display", Georgia, serif; font-size: 1.25rem; color: #fff; }
+.mkls-summary-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; text-align: start; }
+.mkls-summary-list li { padding: 10px 14px; border-radius: 14px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(230, 194, 106, .3); color: rgba(255, 255, 255, .92); font-size: 14px; line-height: 1.5; }

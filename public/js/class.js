@@ -34,7 +34,6 @@
     let classResults = [];
     let selectedSubjectId = "";
     let resultsLoadSequence = 0;
-    let rosterLoadSequence = 0;
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -170,7 +169,6 @@
                         ${classRoster.map(student => {
                             const fullName = [
                                 student.first_name,
-                                student.middle_name,
                                 student.last_name
                             ].filter(Boolean).join(" ");
 
@@ -224,11 +222,8 @@
         `;
     }
 
-    async function loadResults({ updateRoster = true } = {}) {
+    async function loadResults() {
         const requestSequence = ++resultsLoadSequence;
-        // Result refreshes and roster refreshes have independent lifecycles.
-        // A focus refresh must never invalidate the initial roster response.
-        const rosterRequestSequence = updateRoster ? ++rosterLoadSequence : null;
         const response = await fetch(
             `./api/results/class.php?class_id=${encodeURIComponent(classId)}&class_type=${encodeURIComponent(classType)}`,
             {
@@ -239,15 +234,20 @@
 
         const data = await response.json();
 
+        if (requestSequence !== resultsLoadSequence) {
+            return;
+        }
+
         if (!response.ok || !data.success) {
             throw new Error(
                 data.message || "Unable to load class results."
             );
         }
 
-        // Apply the newest explicitly requested roster response even when a
-        // newer result-only refresh has superseded this request's result data.
-        if (updateRoster && rosterRequestSequence === rosterLoadSequence && Array.isArray(data.roster)) {
+        resultSubjects = data.subjects || [];
+        classResults = data.results || [];
+
+        if (Array.isArray(data.roster)) {
             const incomingRoster = data.roster;
             // Accept the first response even when the class is empty, then ignore
             // transient empty refreshes so the visible roster does not flash away.
@@ -263,16 +263,6 @@
                 }
             }
         }
-
-        // Keep result data protected against out-of-order requests separately
-        // from the roster lifecycle above.
-        if (requestSequence !== resultsLoadSequence) {
-            return;
-        }
-
-        resultSubjects = data.subjects || [];
-        classResults = data.results || [];
-
         if (Array.isArray(data.students)) {
             classStudents = data.students;
             if (resultsStudentCount) {
@@ -384,18 +374,23 @@
 
     function configureResultsScanner() {
         if (!window.MarkazResultsScanner) return;
-        window.MarkazResultsScanner.configure({
-            classId,
-            classType,
-            role: currentRole,
-            subject: getSelectedSubject(),
-            students: classStudents,
-            results: classResults,
-            onSaved: async () => {
-                await loadResults();
-                renderResultsTable();
-            }
-        });
+        // The scanner is an optional extra. A problem in it must never replace the class roster with an error.
+        try {
+            window.MarkazResultsScanner.configure({
+                classId,
+                classType,
+                role: currentRole,
+                subjects: resultSubjects,
+                students: classStudents,
+                results: classResults,
+                onSaved: async () => {
+                    await loadResults();
+                    renderResultsTable();
+                }
+            });
+        } catch (error) {
+            console.error("Results scanner setup error:", error);
+        }
     }
 
     function getStudentResult(studentId, subjectId) {
@@ -909,10 +904,7 @@
     window.addEventListener("focus", async () => {
         if (document.visibilityState === "hidden" || !classId) return;
         try {
-            // A focus refresh is for result data only. The class roster is
-            // deliberately kept stable until an explicit initial/save refresh,
-            // so a transient or partial refresh cannot make names disappear.
-            await loadResults({ updateRoster: false });
+            await loadResults();
         } catch (error) {
             console.error("Class workspace refresh error:", error);
         }
