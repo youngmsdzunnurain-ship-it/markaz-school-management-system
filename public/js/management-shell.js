@@ -22,7 +22,7 @@ overlay.className = "markaz-shell-overlay";
 overlay.hidden = true;
 const sidebar = document.createElement("aside");
 sidebar.className = "markaz-shell-sidebar";
-sidebar.innerHTML = '<div class="markaz-shell-sidebar-head"><img src="/assets/images/markaz-logo.jpg" alt=""><strong>MARKAZ</strong><button type="button" aria-label="Close menu">×</button></div><nav><a href="/dashboard.html">⌂　Dashboard</a><a href="/students.html" data-shell-permission="students" hidden>♙　Students</a><a href="/classes.html" data-shell-non-management>▤　Classes</a><a href="/subjects/" data-shell-non-management>▣　Subjects</a><a href="/classes.html" data-shell-non-management>▥　Results</a><a href="/attendance.html" data-shell-permission="attendance" hidden>▦　Attendance</a><a href="/school-fees.html" data-shell-permission="school_fees" hidden>▤　School Fees</a><a href="/print-results.html" data-shell-non-management>▧　Print Results</a><a href="/settings.html" data-shell-settings-link>⚙　Settings</a></nav>';
+sidebar.innerHTML = '<div class="markaz-shell-sidebar-head"><img src="/assets/images/markaz-logo.jpg" alt=""><strong>MARKAZ</strong><button type="button" aria-label="Close menu">×</button></div><nav><a href="/dashboard.html">⌂　Dashboard</a><a href="/students.html" data-shell-permission="students" hidden>♙　Students</a><a href="/classes.html" data-shell-non-management>▤　Classes</a><a href="/subjects/" data-shell-non-management>▣　Subjects</a><a href="/classes.html" data-shell-non-management>▥　Results</a><a href="/attendance.html" data-shell-permission="attendance" hidden>▦　Attendance</a><a href="/teacher-attendance.html" data-shell-permission="attendance" hidden>◷　Teacher attendance</a><a href="/school-fees.html" data-shell-permission="school_fees" hidden>▤　School Fees</a><a href="/print-results.html" data-shell-non-management>▧　Print Results</a><a href="/settings.html" data-shell-settings-link>⚙　Settings</a></nav>';
 document.body.prepend(overlay, sidebar);
 
 const menu = header.querySelector(".markaz-shell-menu");
@@ -96,6 +96,7 @@ shellAccountPromise
       const required = {
         "/students.html": permissions.students === true,
         "/attendance.html": permissions.attendance === true,
+        "/teacher-attendance.html": permissions.attendance === true,
         "/school-fees.html": permissions.school_fees === true,
         "/settings.html": true
       };
