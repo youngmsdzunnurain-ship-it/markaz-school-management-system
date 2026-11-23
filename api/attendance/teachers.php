@@ -75,8 +75,8 @@ try {
         $status = (string)($record['status'] ?? '');
         $actual = trim((string)($record['actual_arrival'] ?? ''));
         $notes = trim((string)($record['notes'] ?? ''));
-        if (!$staffId || $staffId < 1 || isset($seenStaffIds[$staffId]) || !in_array($status,['present','absent','approved_leave','excused'],true) || mb_strlen($notes)>500) {
-            throw new InvalidArgumentException('A staff attendance row contains invalid details.');
+        if (!$staffId || $staffId < 1 || isset($seenStaffIds[$staffId]) || !in_array($status,['present','absent','approved_leave','excused'],true) || mb_strlen($notes)>500 || (in_array($status,['approved_leave','excused'],true) && $notes==='')) {
+            throw new InvalidArgumentException('A staff attendance row is invalid. Add a reason for approved leave or an excused absence.');
         }
         $seenStaffIds[$staffId] = true;
         $staffQuery->execute([$staffId]);
