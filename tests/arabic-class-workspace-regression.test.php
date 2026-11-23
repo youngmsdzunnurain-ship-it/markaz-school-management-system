@@ -22,6 +22,7 @@ $studentResultApi = file_get_contents(__DIR__ . '/../api/results/student.php');
 $arabicNamesHelper = file_get_contents(__DIR__ . '/../app/helpers/arabic-class-names.php');
 $settingsNavigationJs = file_get_contents(__DIR__ . '/../public/js/settings-panel-navigation.js');
 $settingsCss = file_get_contents(__DIR__ . '/../public/css/settings.css');
+$settingsNavigationCss = file_get_contents(__DIR__ . '/../public/css/settings-panel-navigation.css');
 $settingsJs = file_get_contents(__DIR__ . '/../public/js/settings.js');
 
 arabicClassWorkspaceCheck(
@@ -82,7 +83,8 @@ arabicClassWorkspaceCheck(
         && strpos($settingsNavigationJs, 'const allCategories = [') < strrpos($settingsNavigationJs, 'classList.remove("settings-page-pending")')
         && str_contains($settingsNavigationJs, 'role === "management"')
         && str_contains(file_get_contents(__DIR__ . '/../public/settings.html'), 'settings-page-pending')
-        && str_contains($settingsCss, 'html.settings-page-pending body .settings-page{visibility:hidden!important}'),
+        && str_contains($settingsNavigationCss, 'html.settings-page-pending .settings-category-nav')
+        && str_contains($settingsNavigationCss, 'html.settings-page-pending .settings-page > .settings-card:first-of-type'),
     'Settings keeps role-specific navigation hidden until the authenticated role is resolved'
 );
 arabicClassWorkspaceCheck(
