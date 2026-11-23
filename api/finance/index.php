@@ -74,6 +74,8 @@ try {
         if ($action === 'payments') {
             $rows=$pdo->query(
                 "SELECT p.id,p.receipt_number,p.amount,p.method,p.reference,p.status,p.paid_at,p.payer_name,
+                        COALESCE((SELECT SUM(r.amount) FROM finance_fee_refunds r WHERE r.payment_id=p.id AND r.status='approved'),0) refunded_amount,
+                        COALESCE((SELECT SUM(r.amount) FROM finance_fee_refunds r WHERE r.payment_id=p.id AND r.status IN ('pending','approved')),0) reserved_refund_amount,
                         s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name
                  FROM finance_fee_payments p INNER JOIN students s ON s.id=p.student_id
                  ORDER BY p.created_at DESC LIMIT 300"
