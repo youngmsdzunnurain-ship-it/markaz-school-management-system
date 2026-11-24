@@ -24,6 +24,7 @@ const CORE_ASSETS = [
     "./css/public-motion-2026.css",
     "./js/home.js",
     "./js/markaz-global.js",
+    "./js/lang-init.js",
     "./js/website-image-overrides.js",
     "./js/social-link-overrides.js",
     "./js/public-resilience.js",
