@@ -25,7 +25,7 @@ studentPhotoCheck(str_contains($helper, 'move_uploaded_file') && str_contains($h
 studentPhotoCheck(str_contains($create, 'markazStoreStudentPhoto') && str_contains($update, 'markazStoreStudentPhoto'), 'both student creation and replacement use session-scoped storage');
 studentPhotoCheck(str_contains($photos, 'Cache-Control') && str_contains($photos, 'SELECT id, profile_image FROM students'), 'photo lookup is database-backed and never HTTP-cached');
 studentPhotoCheck(str_contains($studentsJs, './api/students/photos.php') && str_contains($studentsJs, 'loading = "lazy"'), 'student management loads photo paths asynchronously and lazily');
-studentPhotoCheck(str_contains($apache, 'private, max-age=31536000, immutable'), 'Apache caches immutable uploads only in private browser caches');
+studentPhotoCheck(str_contains($apache, 'private, max-age=31536000, immutable') && str_contains($apache, 'php[0-9]?') && str_contains($apache, 'Require all denied'), 'Apache caches immutable uploads only in private browser caches');
 studentPhotoCheck(str_contains($worker, 'markaz-public-v6') && str_contains($worker, 'MAX_CACHED_ASSETS') && !str_contains($worker, 'uploads/students'), 'service worker cache version is refreshed without persisting private student photos');
 studentPhotoCheck(str_contains($resultJs, 'image.loading = "lazy"') && str_contains($checkJs, 'image.loading = "lazy"'), 'student result views keep native lazy loading');
 
