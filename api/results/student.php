@@ -13,6 +13,12 @@ if ($studentPortalScope === null) {
     requireResultStaff();
 }
 
+if (($_GET['export'] ?? '') === '1') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Separate result export is no longer supported. Use the browser Print dialog.']);
+    exit;
+}
+
 if ($studentPortalScope !== null) {
     if (($_GET['print'] ?? '') === '1' && !systemAccessEnabled('student_print_results')) {
         http_response_code(403);
@@ -21,7 +27,7 @@ if ($studentPortalScope !== null) {
     }
 }
 
-// Staff printing and export each require their own independently assigned permission.
+// Result printing is the only supported document action.
 // A verified student portal session is read-only and cannot enter staff actions.
 if ($studentPortalScope === null) {
     if (($_GET['print'] ?? '') === '1') {
@@ -428,7 +434,7 @@ try {
     ];
 
     if (
-        (($_GET['print'] ?? '') === '1' || ($_GET['export'] ?? '') === '1')
+        (($_GET['print'] ?? '') === '1')
         && $completionPercent < $printThreshold
     ) {
         http_response_code(403);
