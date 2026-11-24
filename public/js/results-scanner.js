@@ -18,11 +18,11 @@
     const CONFIRM_READS = 2;
     const WARN_MS = 40000;
     const CAMERA = { width: 1920, height: 1440 };
-    const OCR_MAX_WIDTH = 2000;
+    const OCR_TARGET_WIDTH = 2400;
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
-        meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
+        meta: null, phase: "closed", stream: null, track: null, torchOn: false, timer: null, reading: false, worker: null,
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set()
@@ -134,11 +134,11 @@
     }
 
     /* where each subject name is written at the top of the sheet (one or more words, one letter of OCR error allowed) */
+    /* where each subject is written at the top of the sheet: by its full name or its short code
+       (a broadsheet often prints codes such as MTH or ENG). One letter of OCR error is allowed in longer words. */
     function findSubjectSpans(words, subjects) {
         const spans = [];
-        subjects.forEach(subject => {
-            const target = normalise(subject.name);
-            if (target.length < 3) return;
+        const bestFor = (subject, target) => {
             const allowed = target.length >= 7 ? 1 : 0;
             let best = null;
             for (let i = 0; i < words.length; i++) {
@@ -159,6 +159,15 @@
                     }
                 }
             }
+            return best;
+        };
+        subjects.forEach(subject => {
+            const targets = [subject.name, subject.code].map(normalise).filter(target => target.length >= 2);
+            let best = null;
+            targets.forEach(target => {
+                const span = bestFor(subject, target);
+                if (span && (!best || span.count > best.count)) best = span;
+            });
             if (best) spans.push(best);
         });
         return spans.sort((a, b) => a.x0 - b.x0);
@@ -325,9 +334,12 @@
             setGuide("Looking for the result sheet. Move closer and keep the whole sheet in view.");
             return;
         }
-        const names = subjects.length ? subjects.map(subject => subject.name).join(", ") : "not yet read";
-        setGuide(`Subjects on this sheet: ${names}. Students complete: ${done} of ${students.length}. ` +
-            (subjects.length ? "Keep moving the camera slowly over the whole sheet." : "Keep the subject names at the top of the sheet in view."));
+        if (subjects.length) {
+            setGuide(`Subjects on this sheet: ${subjects.map(subject => subject.name).join(", ")}. Students complete: ${done} of ${students.length}. Keep moving the camera slowly over the whole sheet.`);
+        } else {
+            const looking = (state.meta.subjects || []).slice(0, 6).map(subject => subject.code ? `${subject.name} (${subject.code})` : subject.name).join(", ");
+            setGuide(`Subject headings not recognised yet. Keep the subject names or codes at the top of the sheet in view. Looking for: ${looking}.`);
+        }
     }
 
     /* ------------------------------------------------------------------ what to save */
@@ -411,6 +423,7 @@
           <video class="mkls-video" playsinline muted autoplay></video>
           <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <div class="mkls-scanline" aria-hidden="true"></div>
+          <button type="button" class="mkls-torch" data-mkls-torch aria-pressed="false" hidden>Torch off</button>
           <div class="mkls-mark" data-mkls-mark hidden>
             <span class="mkls-mark-icon" data-mkls-mark-icon aria-hidden="true"></span>
             <strong class="mkls-mark-text" data-mkls-mark-text></strong>
@@ -450,6 +463,7 @@
         $("[data-mkls-close]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
+        $("[data-mkls-torch]", overlay).addEventListener("click", toggleTorch);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
@@ -494,6 +508,8 @@
     /* ------------------------------------------------------------------ camera */
     function stopStream() {
         if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        state.track = null;
+        state.torchOn = false;
         const video = videoEl();
         if (video) video.srcObject = null;
     }
@@ -504,7 +520,8 @@
     }
 
     function captureFrame(video) {
-        const scale = Math.min(1, OCR_MAX_WIDTH / video.videoWidth);
+        /* small print (a broadsheet) reads only when the letters are large enough: enlarge the frame for the reader */
+        const scale = Math.min(3, Math.max(1, OCR_TARGET_WIDTH / video.videoWidth));
         const canvas = document.createElement("canvas");
         canvas.width = Math.round(video.videoWidth * scale);
         canvas.height = Math.round(video.videoHeight * scale);
@@ -519,6 +536,29 @@
         const worker = await Tesseract.createWorker(language, 1, {});
         await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" }).catch(() => {});
         state.worker = worker;
+    }
+
+    /* the torch (where the phone has one) lights the sheet while it is scanned */
+    async function toggleTorch() {
+        const torch = $("[data-mkls-torch]", overlay);
+        if (!torch) return;
+        if (!state.track) {
+            setGuide("The camera is still starting. Tap the torch again in a moment.");
+            return;
+        }
+        const next = !state.torchOn;
+        try {
+            await state.track.applyConstraints({ advanced: [{ torch: next }] });
+            state.torchOn = next;
+            torch.setAttribute("aria-pressed", String(next));
+            torch.textContent = next ? "Torch on" : "Torch off";
+            if (torch.dataset.supported !== "1") setGuide(next ? "Torch on." : "Torch off.");
+        } catch (error) {
+            state.torchOn = false;
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+            setGuide("This phone or browser does not let the page switch on the torch. Use Chrome on an Android phone with a torch, or keep the sheet in good light.");
+        }
     }
 
     async function startCamera() {
@@ -544,6 +584,18 @@
             return;
         }
         if (state.phase !== "camera") { stopStream(); return; }
+
+        state.track = state.stream.getVideoTracks()[0] || null;
+        state.torchOn = false;
+        const torch = $("[data-mkls-torch]", overlay);
+        if (torch) {
+            const capabilities = state.track && state.track.getCapabilities ? state.track.getCapabilities() : {};
+            /* always visible; on phones without a torch the button explains itself when tapped */
+            torch.hidden = false;
+            torch.dataset.supported = capabilities.torch ? "1" : "0";
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+        }
 
         const video = videoEl();
         video.srcObject = state.stream;
