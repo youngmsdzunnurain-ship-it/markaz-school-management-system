@@ -316,8 +316,12 @@ php tests/result-print-current-period.test.php
 php tests/result-print-flow-isolation.test.php
 php tests/print-results-validation.test.php
 php tests/print-threshold-profile-image.test.php
+php tests/student-photo-storage.test.php
 php tests/result-footer-signatures.test.php
 php tests/student-result-display-regression.test.php
+node --check public/js/students.js
+node --check public/js/student-result.js
+node --check student-result-check.js
 ```
 
 ### Accounts, portals and permissions
