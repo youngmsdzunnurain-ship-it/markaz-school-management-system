@@ -22,7 +22,7 @@
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
-        meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
+        meta: null, phase: "closed", stream: null, track: null, torchOn: false, timer: null, reading: false, worker: null,
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set()
@@ -411,6 +411,7 @@
           <video class="mkls-video" playsinline muted autoplay></video>
           <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <div class="mkls-scanline" aria-hidden="true"></div>
+          <button type="button" class="mkls-torch" data-mkls-torch aria-pressed="false" hidden>Torch off</button>
           <div class="mkls-mark" data-mkls-mark hidden>
             <span class="mkls-mark-icon" data-mkls-mark-icon aria-hidden="true"></span>
             <strong class="mkls-mark-text" data-mkls-mark-text></strong>
@@ -450,6 +451,7 @@
         $("[data-mkls-close]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
+        $("[data-mkls-torch]", overlay).addEventListener("click", toggleTorch);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
@@ -494,6 +496,8 @@
     /* ------------------------------------------------------------------ camera */
     function stopStream() {
         if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        state.track = null;
+        state.torchOn = false;
         const video = videoEl();
         if (video) video.srcObject = null;
     }
@@ -521,6 +525,29 @@
         state.worker = worker;
     }
 
+    /* the torch (where the phone has one) lights the sheet while it is scanned */
+    async function toggleTorch() {
+        const torch = $("[data-mkls-torch]", overlay);
+        if (!torch) return;
+        if (!state.track) {
+            setGuide("The camera is still starting. Tap the torch again in a moment.");
+            return;
+        }
+        const next = !state.torchOn;
+        try {
+            await state.track.applyConstraints({ advanced: [{ torch: next }] });
+            state.torchOn = next;
+            torch.setAttribute("aria-pressed", String(next));
+            torch.textContent = next ? "Torch on" : "Torch off";
+            if (torch.dataset.supported !== "1") setGuide(next ? "Torch on." : "Torch off.");
+        } catch (error) {
+            state.torchOn = false;
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+            setGuide("This phone or browser does not let the page switch on the torch. Use Chrome on an Android phone with a torch, or keep the sheet in good light.");
+        }
+    }
+
     async function startCamera() {
         if (!overlay) buildOverlay();
         clearTimeout(state.timer);
@@ -544,6 +571,18 @@
             return;
         }
         if (state.phase !== "camera") { stopStream(); return; }
+
+        state.track = state.stream.getVideoTracks()[0] || null;
+        state.torchOn = false;
+        const torch = $("[data-mkls-torch]", overlay);
+        if (torch) {
+            const capabilities = state.track && state.track.getCapabilities ? state.track.getCapabilities() : {};
+            /* always visible; on phones without a torch the button explains itself when tapped */
+            torch.hidden = false;
+            torch.dataset.supported = capabilities.torch ? "1" : "0";
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+        }
 
         const video = videoEl();
         video.srcObject = state.stream;
