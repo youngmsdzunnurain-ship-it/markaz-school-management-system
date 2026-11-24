@@ -313,10 +313,8 @@
             );
 
         printPermission.disabled = !hasFullClassAccess;
-        exportPermission.disabled = !hasFullClassAccess;
         if (!hasFullClassAccess) {
             printPermission.checked = false;
-            exportPermission.checked = false;
         }
     }
 
@@ -567,7 +565,6 @@
         managementSchoolFeesPermission.checked = false;
         onlineClassPermission.checked = false;
         printPermission.checked = false;
-        exportPermission.checked = false;
         assignmentRows.innerHTML = '';
         $('#accountFormHeading').textContent = 'Create an account';
         saveButton.textContent = 'Create account';
