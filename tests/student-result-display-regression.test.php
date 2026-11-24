@@ -59,9 +59,10 @@ studentDisplayCheck(
 
 studentDisplayCheck(
     str_contains($printPage, 'id="printStudentResultButton"')
-        && str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'Download PDF')
         && !str_contains($printPage, 'id="editScoresButton"'),
-    'dedicated printable result page owns print and PDF actions and has no Edit action'
+    'dedicated printable result page owns the browser Print action only and has no Edit action'
 );
 
 studentDisplayCheck(
