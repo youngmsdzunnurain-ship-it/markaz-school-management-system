@@ -18,22 +18,19 @@ $printPage = file_get_contents(__DIR__ . '/../public/student-result-print.html')
 
 teacherDocumentPermissionCheck(
     str_contains($accountsApi, "'print_results',") &&
-    str_contains($accountsApi, "'export_results',") &&
     str_contains($accountsApi, "saveAccountPermission("),
-    'Admin account changes persist separate teacher print and export permissions'
+    'Admin account changes persist a single teacher print permission'
 );
 teacherDocumentPermissionCheck(
     str_contains($accountUi, 'accountCanPrintResults') &&
-    str_contains($accountUi, 'accountCanExportResults') &&
     str_contains($accountUi, "print_results: role.value === 'teacher'") &&
-    str_contains($accountUi, "export_results: role.value === 'teacher'"),
-    'Admin account editor exposes independent teacher print and export controls'
+    'Admin account editor exposes the teacher print control only'
 );
 teacherDocumentPermissionCheck(
     str_contains($accountUi, 'syncTeacherDocumentPermissions') &&
     str_contains($accountUi, "assignment-mode") &&
     str_contains($accountsApi, '$hasFullClassAccess && filter_var'),
-    'Teacher print/export switches are disabled and persisted off without Full Class Access'
+    'Teacher print permission is disabled and persisted off without Full Class Access'
 );
 teacherDocumentPermissionCheck(
     str_contains($auth, 'subject_id IS NULL LIMIT 1') &&
