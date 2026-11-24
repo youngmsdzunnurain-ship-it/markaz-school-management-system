@@ -95,8 +95,10 @@ teacherDocumentPermissionCheck(
 );
 teacherDocumentPermissionCheck(
     str_contains($auth, '$role === \'admin\'') &&
-    str_contains($auth, '$role === \'management\''),
-    'Admin printing remains superuser-enabled while Management printing is denied server-side'
+    str_contains($auth, '$role === \'management\'') &&
+    str_contains($currentUser, '$role === \'admin\'') &&
+    str_contains($currentUser, '$role === \'management\''),
+    'Admin printing remains superuser-enabled while Management printing is denied in both action and session permission checks'
 );
 teacherDocumentPermissionCheck(
     str_contains($accountsApi, '$accountRole === \'admin\'') &&
