@@ -2644,6 +2644,19 @@ html[data-theme="dark"] .staff-photo-crop-zoom {
 html[data-theme="dark"] .staff-photo-crop-error {
     color: #ffa39a
 }
+html[data-theme="dark"] .settings-page .markaz-role-permissions-panel {
+    border: 1px solid #39423c;
+    background: rgba(26, 33, 30, 0.78)
+}
+html[data-theme="dark"] .settings-page .markaz-role-permissions-panel-heading {
+    border-bottom: 1px solid #3b423d
+}
+html[data-theme="dark"] .settings-page .markaz-role-permissions-panel-heading h3 {
+    color: #bfe6d2
+}
+html[data-theme="dark"] .settings-page .markaz-role-permissions-panel-heading p {
+    color: #aec1b5
+}
 /* ---- css/attendance.css ---- */
 html[data-theme="dark"] .attendance-page {
     background: #121916;
