@@ -5502,3 +5502,63 @@ body {
     }
 }
 
+
+
+/* Keep portal access LEFT and result printing RIGHT, including on narrow phones. */
+@media (max-width: 700px) {
+    .settings-page .markaz-role-permissions-card #markazPermissionFields {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) !important;
+        gap: 8px !important;
+    }
+
+    .settings-page .markaz-role-permissions-access-panel,
+    .settings-page .markaz-role-permissions-print-panel {
+        padding: 8px;
+    }
+
+    .settings-page .markaz-role-permissions-panel-heading {
+        min-height: 0;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+    }
+
+    .settings-page .markaz-role-permissions-panel-heading h3 {
+        font-size: 0.78rem;
+        line-height: 1.25;
+    }
+
+    .settings-page .markaz-role-permissions-panel-heading p {
+        font-size: 0.68rem;
+        line-height: 1.3;
+    }
+
+    .settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 4px;
+    }
+
+    .settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid > fieldset {
+        padding: 6px 3px !important;
+    }
+
+    .settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid > fieldset legend {
+        padding: 3px;
+        font-size: 0.65rem;
+        overflow-wrap: anywhere;
+    }
+
+    .settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid > fieldset label {
+        min-height: 0;
+        padding: 5px 2px !important;
+        gap: 3px;
+        font-size: 0.62rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .settings-page .markaz-role-permissions-print-panel input[type="checkbox"] {
+        width: 16px !important;
+        height: 16px !important;
+        flex: 0 0 16px;
+    }
+}
