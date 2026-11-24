@@ -15,7 +15,6 @@ header('Content-Type: application/json; charset=utf-8');
 $action = $_GET['action'] ?? '';
 $permissions = [
     'print_results' => 'print_results',
-    'export_results' => 'export_results',
 ];
 
 if (!isset($permissions[$action])) {
@@ -28,9 +27,7 @@ if (!isset($permissions[$action])) {
 }
 
 if ($studentPortalScope !== null) {
-    $studentSetting = $action === 'print_results'
-        ? 'student_print_results'
-        : 'student_export_results';
+    $studentSetting = 'student_print_results';
     if (!systemAccessEnabled($studentSetting)) {
         http_response_code(403);
         echo json_encode([
