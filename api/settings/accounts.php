@@ -156,7 +156,7 @@ if ($method === 'GET') {
     $permissionStmt = $pdo->query(
         'SELECT account_id, permission_key, is_allowed
          FROM account_permissions
-         WHERE permission_key IN ("print_results", "export_results", "attendance_records", "management_attendance", "management_students", "management_school_fees", "online_class_access")'
+         WHERE permission_key IN ("print_results", "attendance_records", "management_attendance", "management_students", "management_school_fees", "online_class_access")'
     );
 
     $permissions = [];
@@ -170,32 +170,27 @@ if ($method === 'GET') {
     $rolePermissionSettings = [
         'admin' => [
             'print_results' => 'admin_print_results',
-            'export_results' => 'admin_export_results',
         ],
         'exam_officer' => [
             'print_results' => 'exam_officer_print_results',
-            'export_results' => 'exam_officer_export_results',
         ],
         'teacher' => [
             'print_results' => 'teacher_print_results',
-            'export_results' => 'teacher_export_results',
         ],
         'student' => [
             'print_results' => 'student_print_results',
-            'export_results' => 'student_export_results',
         ],
         'management' => [
             'print_results' => 'management_print_results',
-            'export_results' => 'management_export_results',
         ],
     ];
 
     $permissionSettingKeys = [
-        'admin_print_results', 'admin_export_results',
-        'exam_officer_print_results', 'exam_officer_export_results',
-        'teacher_print_results', 'teacher_export_results',
-        'student_print_results', 'student_export_results',
-        'management_print_results', 'management_export_results',
+        'admin_print_results',
+        'exam_officer_print_results',
+        'teacher_print_results',
+        'student_print_results',
+        'management_print_results',
     ];
 
     $settingPlaceholders = implode(',', array_fill(0, count($permissionSettingKeys), '?'));
@@ -245,7 +240,7 @@ if ($method === 'GET') {
                 $assignments[$id] ?? [],
                 static fn(array $assignment): bool => $assignment['subject_id'] === null
             ));
-        foreach (['print_results', 'export_results'] as $permissionKey) {
+        foreach (['print_results'] as $permissionKey) {
             $settingKey = $roleSettings[$permissionKey] ?? '';
             $effectivePermissions[$permissionKey] = (string) $account['role'] === 'teacher'
                 ? ($hasFullClassAccess && ($permissions[$id][$permissionKey] ?? false))
@@ -604,16 +599,9 @@ try {
             'print_results',
             $hasFullClassAccess && filter_var($data['print_results'] ?? false, FILTER_VALIDATE_BOOLEAN)
         );
-        saveAccountPermission(
-            $pdo,
-            $targetId,
-            'export_results',
-            $hasFullClassAccess && filter_var($data['export_results'] ?? false, FILTER_VALIDATE_BOOLEAN)
-        );
     } else {
         saveAccountPermission($pdo, $targetId, 'attendance_records', false);
         saveAccountPermission($pdo, $targetId, 'print_results', false);
-        saveAccountPermission($pdo, $targetId, 'export_results', false);
     }
 
     saveAccountPermission($pdo, $targetId, 'online_class_access',

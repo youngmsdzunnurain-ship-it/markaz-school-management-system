@@ -1315,7 +1315,6 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
         legend.textContent = label;
         group.appendChild(legend);
         addCheckbox(group, `${role}_print_results`, "Allow printing student results");
-        addCheckbox(group, `${role}_export_results`, "Allow downloading/exporting student results");
         roleFields.appendChild(group);
     });
 

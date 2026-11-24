@@ -136,8 +136,8 @@ portalAssert(!str_contains($resultCss, 'Final mobile parity for staff result pre
 portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
     str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
-    str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
-    'Student print and PDF permissions are returned from the Admin-controlled role-wide settings and enforced by the result API'
+    !str_contains($resultApi, "student_export_results"),
+    'Student result printing uses the single Admin-controlled print permission'
 );
 portalAssert(
     str_contains($resultScript, 'studentData?.student_document_permissions') &&
@@ -153,7 +153,7 @@ portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
     str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
     str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
-    'Student print and PDF actions are governed by the Admin role switches'
+    'Student report printing is governed by the Admin print switch'
 );
 portalAssert(
     str_contains($resultScript, 'studentData?.student_document_permissions') &&

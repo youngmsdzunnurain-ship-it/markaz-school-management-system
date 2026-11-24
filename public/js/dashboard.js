@@ -567,8 +567,6 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer";
         } else if (requiredRole === "print_results") {
             allowed = permissions.can_print_results === true;
-        } else if (requiredRole === "export_results") {
-            allowed = permissions.can_export_results === true;
         } else if (requiredRole === "online_class") {
             allowed = role === "admin" || permissions.can_access_online_class === true;
         } else if (requiredRole === "attendance_dashboard") {

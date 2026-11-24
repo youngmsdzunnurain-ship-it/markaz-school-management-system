@@ -391,7 +391,6 @@ function requireRolePermission(
 
     $permissionKeys = [
         "print_results",
-        "export_results",
     ];
 
     if (!in_array($permission, $permissionKeys, true)) {

@@ -79,7 +79,7 @@ if (in_array($role, ['exam_officer', 'teacher', 'management'], true)) {
 }
 
 $resolvePermission = static function (string $permissionKey) use ($role, $accountId): bool {
-    if (!in_array($permissionKey, ['print_results', 'export_results'], true)) {
+    if (!in_array($permissionKey, ['print_results'], true)) {
         return false;
     }
 
@@ -122,7 +122,6 @@ echo json_encode([
         'role' => $role,
         'profile_image' => $admin['profile_image'],
         'can_print_results' => $resolvePermission('print_results'),
-        'can_export_results' => $resolvePermission('export_results'),
         'can_manage_attendance' => $canManageAttendance,
         'can_access_teacher_attendance' => $role === 'admin' || ($role === 'management' && $managementPermissions['attendance'] === true),
         'management_permissions' => $managementPermissions,
