@@ -99,8 +99,8 @@ teacherDocumentPermissionCheck(
     'Admin printing remains superuser-enabled while Management printing is denied server-side'
 );
 teacherDocumentPermissionCheck(
-    str_contains($accountsApi, "$accountRole === 'admin'") &&
-    str_contains($accountsApi, "$accountRole === 'management'"),
+    str_contains($accountsApi, '$accountRole === \'admin\'') &&
+    str_contains($accountsApi, '$accountRole === \'management\''),
     'Account permission responses report Admin as always allowed and Management as never allowed to print'
 );
 
