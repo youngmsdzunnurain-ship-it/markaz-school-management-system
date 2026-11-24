@@ -23,7 +23,7 @@ teacherDocumentPermissionCheck(
 );
 teacherDocumentPermissionCheck(
     str_contains($accountUi, 'accountCanPrintResults') &&
-    str_contains($accountUi, "print_results: role.value === 'teacher'") &&
+    str_contains($accountUi, "print_results: role.value === 'teacher'"),
     'Admin account editor exposes the teacher print control only'
 );
 teacherDocumentPermissionCheck(
