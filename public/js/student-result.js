@@ -151,6 +151,31 @@ function initials(name) {
         .toUpperCase();
 }
 
+function showStudentPhotoInitials(photoElement, photoBox, student) {
+    if (!photoElement || !photoBox) return;
+    photoBox.classList.remove("has-profile-image");
+    photoElement.replaceChildren(
+        document.createTextNode(initials([
+            student?.first_name,
+            student?.middle_name,
+            student?.last_name
+        ].filter(Boolean).join(" ")))
+    );
+}
+
+async function waitForStudentPhotoImage() {
+    const image = document.querySelector(".student-photo img");
+    if (!image || image.complete) return;
+    if (typeof image.decode === "function") {
+        await image.decode().catch(() => undefined);
+        return;
+    }
+    await new Promise(resolve => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+    });
+}
+
 function formatNumber(value) {
     const number = Number(value);
     return Number.isFinite(number) ? number.toFixed(1) : "—";
@@ -420,20 +445,21 @@ function renderStudentResult(data) {
         const profileImage = String(student.profile_image || "").trim();
 
         if (profileImage) {
-            studentPhoto.textContent = "";
+            studentPhoto.replaceChildren();
             studentPhotoBox.classList.add("has-profile-image");
 
             const image = document.createElement("img");
-            image.src = `./${profileImage.replace(/^\/+/, "")}`;
-            image.alt = `${student.first_name || ""} ${student.last_name || ""}`.trim() || "Student photo";
-            image.loading = "lazy";
+            image.alt = "";
+            image.loading = "eager";
             image.decoding = "async";
+            image.addEventListener("error", () => {
+                showStudentPhotoInitials(studentPhoto, studentPhotoBox, student);
+            }, { once: true });
 
             studentPhoto.appendChild(image);
+            image.src = `./${profileImage.replace(/^\/+/, "")}`;
         } else {
-            studentPhotoBox.classList.remove("has-profile-image");
-            studentPhoto.textContent =
-                initials($("studentName").textContent);
+            showStudentPhotoInitials(studentPhoto, studentPhotoBox, student);
         }
     }
 
@@ -1574,6 +1600,7 @@ async function authorizeAndPrint() {
             throw new Error(data.message || "You are not permitted to perform this action.");
         }
 
+        await waitForStudentPhotoImage();
         await waitForResultFooterImages();
         setStudentResultDocumentTitle();
         await applyResultPrintScale();
