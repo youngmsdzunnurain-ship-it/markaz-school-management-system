@@ -1783,7 +1783,7 @@ function setEditMode(editing) {
         else if (printStudentResultButton) printStudentResultButton.hidden = !isPrintMode;
         if (resultDocumentActions) {
             const hasStudentDocumentAction = Boolean(
-                (currentUserPermissions.can_print_results && printStudentResultButton?.isConnected) ||
+                currentUserPermissions.can_print_results && printStudentResultButton?.isConnected
             );
             resultDocumentActions.hidden = !isPrintMode || editing || !studentData || !hasStudentDocumentAction;
             if (!hasStudentDocumentAction) resultDocumentActions.remove();
