@@ -1,0 +1,439 @@
+/* ==========================================================================
+   MARKAZ School Fees & Finance: layout, typography and hierarchy (2026).
+   One type system for this finance page: Fraunces for headings, Manrope for text (the shared typography of the finance screens).
+   Nothing below 13px. Inputs are 16px so phones never zoom in on focus.
+   Only appearance and layout are changed here. Dark mode and language are not changed.
+   ========================================================================== */
+
+:root {
+    --fin-ink: #0f3324;
+    --fin-green: #145035;
+    --fin-green-2: #1d6b45;
+    --fin-gold: #c9a24a;
+    --fin-gold-soft: #fbf3d6;
+    --fin-muted: #5d6f66;
+    --fin-line: #e1ebe4;
+    --fin-field: #cfdcd3;
+    --fin-radius: 20px;
+    --fin-radius-sm: 14px;
+    --fin-serif: Fraunces, Georgia, "Times New Roman", serif;
+    --fin-sans: Manrope, "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* ------------------------------------------------------------ base type */
+.finance-workspace-page {
+    font-family: var(--fin-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fin-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+.finance-workspace-page :is(h1, h2, h3, h4) {
+    font-family: var(--fin-serif);
+    color: var(--fin-green);
+    letter-spacing: -.005em;
+    line-height: 1.2;
+}
+.finance-workspace-page h1 { font-size: clamp(1.9rem, 3.6vw, 2.6rem); font-weight: 700; margin: 0; }
+.finance-workspace-page h2 { font-size: clamp(1.3rem, 2.2vw, 1.55rem); font-weight: 700; margin: 0; }
+.finance-workspace-page h3 { font-family: var(--fin-sans); font-size: 1.02rem; font-weight: 700; margin: 0; color: var(--fin-ink); }
+.finance-workspace-page p { margin: 0; }
+
+/* the small caps labels above headings: clear and never tiny */
+.finance-workspace-page .eyebrow {
+    display: inline-block;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #8a6a1f;
+}
+.finance-workspace-page .muted,
+.finance-workspace-page .small,
+.finance-workspace-page .metric-label,
+.finance-workspace-page .legend-dot + span,
+.finance-workspace-page .info-note,
+.finance-workspace-page .empty {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--fin-muted);
+}
+
+/* ------------------------------------------------------------ panels */
+.finance-workspace-page .panel {
+    position: relative;
+    padding: clamp(18px, 2.4vw, 28px);
+    border-radius: var(--fin-radius);
+    background: linear-gradient(180deg, #ffffff, #fbfdfb);
+    border: 1px solid var(--fin-line);
+    box-shadow: 0 12px 28px rgba(16, 70, 44, .07);
+}
+.finance-workspace-page .panel-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px 16px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--fin-line);
+}
+.finance-workspace-page .panel-heading > div { display: grid; gap: 4px; min-width: 0; }
+.finance-workspace-page .panel-heading .muted { font-size: 14px; }
+
+/* ------------------------------------------------------------ headline figures */
+.finance-workspace-page .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+.finance-workspace-page .metric {
+    position: relative;
+    padding: 18px 18px 16px;
+    border-radius: var(--fin-radius);
+    background: #fff;
+    border: 1px solid var(--fin-line);
+    box-shadow: 0 10px 24px rgba(16, 70, 44, .06);
+}
+.finance-workspace-page .metric::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    border-radius: var(--fin-radius) var(--fin-radius) 0 0;
+    background: linear-gradient(90deg, var(--fin-gold), #f3d98a, var(--fin-gold));
+}
+.finance-workspace-page .metric-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.finance-workspace-page .metric-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--fin-muted);
+}
+.finance-workspace-page .metric-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 15px;
+    color: var(--fin-green);
+    background: #eef6f0;
+}
+.finance-workspace-page .metric strong,
+.finance-workspace-page .metric .metric-value {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--fin-serif);
+    font-size: clamp(1.7rem, 3vw, 2.15rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--fin-green);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ buttons */
+.finance-workspace-page .btn,
+.finance-workspace-page button.btn {
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font: 600 14px/1.2 var(--fin-sans);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.finance-workspace-page .btn-primary {
+    color: #fff;
+    border: 0;
+    background: linear-gradient(135deg, var(--fin-green-2), var(--fin-green));
+    box-shadow: 0 10px 22px rgba(20, 80, 53, .25);
+}
+.finance-workspace-page .btn-light {
+    color: var(--fin-green);
+    background: #fff;
+    border: 1px solid #b9cfc0;
+}
+.finance-workspace-page .btn:focus-visible,
+.finance-workspace-page input:focus-visible,
+.finance-workspace-page select:focus-visible,
+.finance-workspace-page textarea:focus-visible,
+.finance-workspace-page a:focus-visible {
+    outline: 2px solid var(--fin-gold);
+    outline-offset: 2px;
+}
+.finance-workspace-page .button-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ------------------------------------------------------------ forms */
+.finance-workspace-page .form-panel { display: grid; gap: 16px; }
+.finance-workspace-page .inline-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px 16px;
+    align-items: end;
+}
+.finance-workspace-page .two-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.finance-workspace-page label {
+    display: grid;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--fin-ink);
+}
+.finance-workspace-page :is(input, select, textarea) {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 14px;
+    border-radius: var(--fin-radius-sm);
+    border: 1px solid var(--fin-field);
+    background: #fff;
+    font: 400 16px/1.4 var(--fin-sans);
+    color: var(--fin-ink);
+    box-sizing: border-box;
+}
+.finance-workspace-page textarea { min-height: 96px; resize: vertical; }
+.finance-workspace-page :is(input, select, textarea):focus {
+    outline: none;
+    border-color: var(--fin-gold);
+    box-shadow: 0 0 0 3px rgba(201, 162, 74, .22);
+}
+
+/* ------------------------------------------------------------ tables */
+.finance-workspace-page .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--fin-radius-sm);
+    border: 1px solid var(--fin-line);
+    background: #fff;
+}
+.finance-workspace-page table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.finance-workspace-page th {
+    padding: 12px 14px;
+    text-align: start;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: var(--fin-green);
+    white-space: nowrap;
+}
+.finance-workspace-page td {
+    padding: 13px 14px;
+    border-top: 1px solid var(--fin-line);
+    color: var(--fin-ink);
+    vertical-align: middle;
+}
+.finance-workspace-page tbody tr:hover td { background: #f6fbf7; }
+.finance-workspace-page td.num, .finance-workspace-page th.num { text-align: end; font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------ empty states */
+.finance-workspace-page .empty {
+    display: grid;
+    place-items: center;
+    gap: 6px;
+    padding: 26px 18px;
+    text-align: center;
+    border-radius: var(--fin-radius-sm);
+    border: 1px dashed #c7d9cd;
+    background: #fbfdfb;
+}
+
+/* ------------------------------------------------------------ notes */
+.finance-workspace-page .info-note {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: var(--fin-radius-sm);
+    border: 1px solid #ecd58f;
+    background: var(--fin-gold-soft);
+    color: #6e5a22;
+}
+.finance-workspace-page .info-note i { margin-top: 3px; color: #b88a2c; }
+
+/* ------------------------------------------------------------ sections spacing */
+.finance-workspace-page main,
+.finance-workspace-page .finance-main { display: grid; gap: 22px; }
+
+/* one sidebar item = one content area: only the active tab is shown */
+.finance-workspace-page .tab-panel { display: none; gap: 22px; min-width: 0; }
+.finance-workspace-page .tab-panel.active { display: grid; }
+
+/* ------------------------------------------------------------ phones */
+@media (max-width: 760px) {
+    .finance-workspace-page { font-size: 15px; }
+    .finance-workspace-page .two-col,
+    .finance-workspace-page .inline-fields { grid-template-columns: 1fr; }
+    .finance-workspace-page .metric-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .finance-workspace-page .metric { padding: 14px 14px 13px; }
+    .finance-workspace-page .metric-icon { display: none; }
+    .finance-workspace-page .panel { padding: 18px 16px; border-radius: 18px; }
+    .finance-workspace-page .panel-heading { flex-direction: column; }
+    .finance-workspace-page .button-row .btn { width: 100%; }
+    .finance-workspace-page .btn { min-height: 46px; }
+}
+@media (max-width: 380px) {
+    .finance-workspace-page .metric-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .finance-workspace-page * { transition: none !important; animation: none !important; }
+}
+@media print {
+    .finance-workspace-page .sidebar, .finance-workspace-page .btn { display: none !important; }
+    .finance-workspace-page .panel, .finance-workspace-page .metric { box-shadow: none; }
+}
+
+/* ------------------------------------------------------------ legibility floor
+   Every visible label, note and sidebar item is at least 13px, whatever the shared
+   stylesheets set. Icons keep their own size. */
+.finance-workspace-page :is(span, p, small, label, td, th, li, button, summary, dt, dd):not([class*="fa-"]) {
+    font-size: max(13px, .875rem);
+}
+.finance-workspace-page .nav-section-label,
+.finance-workspace-page .admin-profile-arrow,
+.finance-workspace-page .eyebrow { font-size: max(12.5px, .8rem); }
+.finance-workspace-page .eyebrow { font-size: 13px; }
+.finance-workspace-page :is(div.metric-label, .metric-label, .today, .eyebrow, .nav-section-label, .legend-dot + span) {
+    font-size: 13px !important;
+}
+.finance-workspace-page :is(span, small) { font-size: max(13px, .875rem) !important; }
+
+/* ------------------------------------------------------------ phones: one tab bar
+   On phones the finance tabs move from the sidebar into the page, as one scrolling bar under the banner.
+   The sidebar is hidden on phones, and its duplicate block and menu button are hidden too.
+   (finance-tabbar.js moves the same buttons, so every tab keeps working.) */
+@media (max-width: 760px) {
+    .finance-workspace-page aside.sidebar,
+    .finance-workspace-page .sidebar-overlay,
+    .finance-workspace-page .sidebar-toggle,
+    .finance-workspace-page .menu-toggle,
+    .finance-workspace-page #sidebarToggle,
+    .finance-workspace-page #menuToggle,
+    .finance-workspace-page .menu-button,
+    .finance-workspace-page #menuButton { display: none !important; }
+    .finance-workspace-page .finance-tabbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        gap: 8px;
+        width: auto;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        margin: 0 -2px;
+        padding: 10px 2px 12px;
+        background: linear-gradient(180deg, #f3f6f2 80%, rgba(243, 246, 242, 0));
+    }
+    .finance-workspace-page .finance-tabbar::-webkit-scrollbar { display: none; }
+    .finance-workspace-page .finance-tabbar .nav-section-label { display: none !important; }
+    .finance-workspace-page .finance-tabbar .nav-link {
+        flex: 0 0 auto;
+        width: auto !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-size: 14px;
+        color: var(--fin-green);
+        background: #fff;
+        border: 1px solid #cfdcd3;
+    }
+    .finance-workspace-page .finance-tabbar .nav-link.active,
+    .finance-workspace-page .finance-tabbar .nav-link[aria-current="page"] {
+        color: #fff;
+        background: linear-gradient(135deg, var(--fin-green-2), var(--fin-green));
+        border-color: transparent;
+    }
+}
+
+/* ------------------------------------------------------------ status colours
+   Success (paid, verified, approved, active): solid dark green. Waiting (pending, part paid): amber.
+   Problems (unpaid, overdue, failed, rejected, inactive): solid red. */
+.finance-workspace-page .pill { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .02em; text-transform: capitalize; white-space: nowrap; }
+.finance-workspace-page .pill.paid,
+.finance-workspace-page .pill.verified,
+.finance-workspace-page .pill.approved,
+.finance-workspace-page .pill.active,
+.finance-workspace-page .pill.calculated.approved { color: #fff; background: linear-gradient(135deg, #1d6b45, #0f3324); box-shadow: 0 6px 14px rgba(15, 51, 36, .25); }
+.finance-workspace-page .pill.pending,
+.finance-workspace-page .pill.part_paid,
+.finance-workspace-page .pill.partial,
+.finance-workspace-page .pill.draft,
+.finance-workspace-page .pill.calculated { color: #4a3300; background: linear-gradient(135deg, #ffd27a, #f2a93b); box-shadow: 0 6px 14px rgba(242, 169, 59, .28); }
+.finance-workspace-page .pill.unpaid,
+.finance-workspace-page .pill.overdue,
+.finance-workspace-page .pill.failed,
+.finance-workspace-page .pill.rejected,
+.finance-workspace-page .pill.inactive,
+.finance-workspace-page .pill.cancelled { color: #fff; background: linear-gradient(135deg, #e5484d, #b3262b); box-shadow: 0 6px 14px rgba(179, 38, 43, .26); }
+
+/* admission number: the gold pill used on the public admissions pages */
+.finance-workspace-page .adm-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #e7c76a, #c9a44c);
+    color: #2b1d00;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    box-shadow: 0 6px 14px rgba(201, 164, 76, .3);
+}
+
+/* charts: trading-style candles, bars, count-up figures */
+.finance-workspace-page .fc-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.finance-workspace-page .fc-kicker { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--fin-muted); }
+.finance-workspace-page .fc-net-value { display: block; margin-top: 4px; font-family: var(--fin-serif); font-size: clamp(1.5rem, 2.8vw, 2rem); font-weight: 700; }
+.finance-workspace-page .fc-net-value.up { color: #145035; }
+.finance-workspace-page .fc-net-value.down { color: #b3262b; }
+.finance-workspace-page .fc-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; font-weight: 700; color: var(--fin-muted); }
+.finance-workspace-page .fc-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.finance-workspace-page .fc-legend .up i { background: #1d6b45; }
+.finance-workspace-page .fc-legend .down i { background: #e5484d; }
+.finance-workspace-page .fc-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.finance-workspace-page .fc-grid { stroke: #e3ece6; stroke-width: 1; }
+.finance-workspace-page .fc-axis { font-size: 12px; fill: var(--fin-muted); font-weight: 600; }
+.finance-workspace-page .fc-label { font-size: 12.5px; fill: var(--fin-ink); font-weight: 700; }
+.finance-workspace-page .fc-wick { stroke-width: 2; stroke-linecap: round; }
+.finance-workspace-page .fc-wick.up { stroke: #1d6b45; }
+.finance-workspace-page .fc-wick.down { stroke: #e5484d; }
+.finance-workspace-page .fc-body { transition: filter .2s ease; cursor: pointer; }
+.finance-workspace-page .fc-body.up { fill: #1d6b45; }
+.finance-workspace-page .fc-body.down { fill: #e5484d; }
+.finance-workspace-page .fc-body:hover { filter: brightness(1.12) drop-shadow(0 6px 10px rgba(15, 51, 36, .25)); }
+.finance-workspace-page .fc-net { fill: none; stroke: #c9a24a; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 4 6; }
+.finance-workspace-page .fc-mix { display: grid; gap: 18px; }
+.finance-workspace-page .fc-bar-row { display: grid; gap: 8px; }
+.finance-workspace-page .fc-bar-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; font-weight: 700; }
+.finance-workspace-page .fc-bar-top strong { font-family: var(--fin-serif); font-size: 1.2rem; color: var(--fin-green); }
+.finance-workspace-page .fc-track { height: 14px; border-radius: 999px; background: #eef4ef; overflow: hidden; }
+.finance-workspace-page .fc-fill { display: block; height: 100%; border-radius: 999px; transition: width .9s cubic-bezier(.22,1,.36,1); }
+.finance-workspace-page .fc-fill.fees { background: linear-gradient(90deg, #1d6b45, #0f3324); }
+.finance-workspace-page .fc-fill.other { background: linear-gradient(90deg, #f2c35f, #c9a24a); }
+.finance-workspace-page .fc-bar-row small { font-size: 13px; color: var(--fin-muted); }
+
+/* chart hosts: the figure sits above the chart, the chart uses the full width */
+.finance-workspace-page #cashflowChart,
+.finance-workspace-page #incomeMixChart { display: block; width: 100%; min-width: 0; overflow: visible; }
+.finance-workspace-page #cashflowChart .fc-head { width: 100%; }
+.finance-workspace-page #cashflowChart .fc-legend { margin-top: 0; }
