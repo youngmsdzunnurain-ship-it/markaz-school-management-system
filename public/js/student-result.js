@@ -22,7 +22,6 @@ let currentUserRole = "";
 let currentUserRolePromise = null;
 let currentUserPermissions = {
     can_print_results: false,
-    can_export_results: false
 };
 let studentDocumentPermissionsResolved = !isStudentPortalView || !isPrintMode;
 let lastFocusedScoreInput = null;
@@ -91,7 +90,6 @@ async function loadCurrentUserPermissions() {
     currentUserRole = role;
     currentUserPermissions = {
         can_print_results: data.admin.can_print_results === true,
-        can_export_results: data.admin.can_export_results === true
     };
     return role;
 }
@@ -130,7 +128,6 @@ async function getCurrentUserRole() {
             document.body.classList.toggle("teacher-result-view", currentUserRole === "teacher");
             currentUserPermissions = {
                 can_print_results: data.admin.can_print_results === true,
-                can_export_results: data.admin.can_export_results === true
             };
             return role;
         })();
@@ -244,7 +241,7 @@ function setReportRemarks(score) {
     }
 }
 
-async function fetchStudentResultPayload(enforcePrintEligibility, action = "print") {
+async function fetchStudentResultPayload(enforcePrintEligibility) {
     const query = new URLSearchParams({
         student_id: studentId,
         class_type: classType
@@ -253,7 +250,7 @@ async function fetchStudentResultPayload(enforcePrintEligibility, action = "prin
     if (classId) query.set("class_id", classId);
     if (isStudentPortalView) query.set("student_portal", "1");
     if (enforcePrintEligibility && isPrintMode) {
-        query.set(action === "export" ? "export" : "print", "1");
+        query.set("print", "1");
     }
 
     const response = await fetch(
@@ -292,9 +289,9 @@ function showResultPrintBlockedNotice(completion) {
         : [];
 
     let message = completion?.message
-        || "This result is available for review, but printing and export are disabled until the required result entries are complete.";
+        || "This result is available for review, but printing is disabled until the required result entries are complete.";
     if (hasPercentage && hasThreshold) {
-        message = `This result is ${percentage}% complete. Printing or export requires at least ${threshold}% completion.`;
+        message = `This result is ${percentage}% complete. Printing requires at least ${threshold}% completion.`;
     }
     if (missingFields.length) {
         message += " Missing: " + missingFields.join(", ") + ".";
@@ -305,7 +302,6 @@ function showResultPrintBlockedNotice(completion) {
     document.body.classList.add("result-print-blocked");
 
     $("printStudentResultButton")?.setAttribute("disabled", "disabled");
-    $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
 }
 
 async function loadStudentResult() {
@@ -324,26 +320,20 @@ async function loadStudentResult() {
             if (params.get("student_portal") === "1") {
                 currentUserPermissions = {
                     can_print_results: studentData?.student_document_permissions?.can_print_results === true,
-                    can_export_results: studentData?.student_document_permissions?.can_export_results === true
                 };
             } else {
                 await loadCurrentUserPermissions();
             }
 
-            const permissionAction = currentUserPermissions.can_print_results
-                ? "print"
-                : (currentUserPermissions.can_export_results ? "export" : null);
-
-            if (permissionAction) {
-                await fetchStudentResultPayload(true, permissionAction);
+            if (currentUserPermissions.can_print_results) {
+                await fetchStudentResultPayload(true);
             } else {
                 resultPrintBlocked = {
-                    message: "Your account does not have permission to print or export results."
+                    message: "Your account does not have permission to print results."
                 };
             }
         } catch (error) {
-            // Check the action the account is independently allowed to perform.
-            // This keeps Export available when Print is disabled, and vice versa.
+            // A failed permission or completion check keeps printing unavailable.
             resultPrintBlocked = error.completion || {
                 message: error.message || "Result document permission could not be verified."
             };
@@ -362,7 +352,7 @@ async function loadStudentResult() {
     captureOriginalEditState();
     document.body.dataset.resultReady = "true";
     if (params.get("auto_print") === "1" && isPrintMode && !resultPrintBlocked) {
-        await authorizeAndPrint("print_results");
+        await authorizeAndPrint();
     }
 }
 function renderStudentResult(data) {
@@ -1563,13 +1553,12 @@ async function waitForResultFooterImages() {
     }));
 }
 
-async function authorizeAndPrint(permission) {
+async function authorizeAndPrint() {
     try {
-        // A public student can print/export only the read-only report bound to
-        // the verified, short-lived student portal session. Staff still use
-        // the existing role permission endpoint.
+        // Student printing is limited to the read-only report bound to the
+        // verified, short-lived student portal session. Staff use role permissions.
         const actionQuery = new URLSearchParams({
-            action: permission,
+            action: "print_results",
             class_id: classId || "",
             class_type: classType || "conventional",
             student_id: studentId || ""
@@ -1594,10 +1583,9 @@ async function authorizeAndPrint(permission) {
     }
 }
 
-// Print and PDF actions belong exclusively to student-result-print.html.
+// The printable report is generated in-browser; printing is the only document action.
 
 const printStudentResultButton = $("printStudentResultButton");
-const downloadStudentPdfButton = $("downloadStudentPdfButton");
 const resultDocumentActions = $("resultDocumentActions");
 
 function buildDedicatedPrintUrl(autoPrint = false) {
@@ -1613,12 +1601,7 @@ function buildDedicatedPrintUrl(autoPrint = false) {
 
 printStudentResultButton?.addEventListener("click", () => {
     if (!isPrintMode || !studentData || resultPrintBlocked) return;
-    authorizeAndPrint("print_results");
-});
-
-downloadStudentPdfButton?.addEventListener("click", () => {
-    if (!isPrintMode || !studentData || resultPrintBlocked) return;
-    authorizeAndPrint("export_results");
+    authorizeAndPrint();
 });
 
 const editScoresButton = $("editScoresButton");
@@ -1798,32 +1781,23 @@ function setEditMode(editing) {
         // Disabled student actions must not exist in the page at all.
         if (!currentUserPermissions.can_print_results) printStudentResultButton?.remove();
         else if (printStudentResultButton) printStudentResultButton.hidden = !isPrintMode;
-
-        if (!currentUserPermissions.can_export_results) downloadStudentPdfButton?.remove();
-        else if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = !isPrintMode;
-
         if (resultDocumentActions) {
             const hasStudentDocumentAction = Boolean(
-                (currentUserPermissions.can_print_results && printStudentResultButton?.isConnected) ||
-                (currentUserPermissions.can_export_results && downloadStudentPdfButton?.isConnected)
+                currentUserPermissions.can_print_results && printStudentResultButton?.isConnected
             );
             resultDocumentActions.hidden = !isPrintMode || editing || !studentData || !hasStudentDocumentAction;
             if (!hasStudentDocumentAction) resultDocumentActions.remove();
         }
     } else if (isStudentPortalView) {
         if (printStudentResultButton) printStudentResultButton.hidden = true;
-        if (downloadStudentPdfButton) downloadStudentPdfButton.hidden = true;
         if (resultDocumentActions) resultDocumentActions.hidden = true;
     } else {
         if (printStudentResultButton) {
             printStudentResultButton.hidden = !isPrintMode || !currentUserPermissions.can_print_results;
         }
-        if (downloadStudentPdfButton) {
-            downloadStudentPdfButton.hidden = !isPrintMode || !currentUserPermissions.can_export_results;
-        }
         if (resultDocumentActions) {
             resultDocumentActions.hidden = !isPrintMode || editing || !studentData
-                || (!currentUserPermissions.can_print_results && !currentUserPermissions.can_export_results);
+                || !currentUserPermissions.can_print_results;
         }
     }
 
@@ -2240,7 +2214,6 @@ loadStudentResult().catch(error => {
     console.error(error);
     if (isPrintMode) {
         $("printStudentResultButton")?.setAttribute("disabled", "disabled");
-        $("downloadStudentPdfButton")?.setAttribute("disabled", "disabled");
     }
 
     if ($("studentName")?.textContent === "Loading...") {

@@ -40,7 +40,7 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
-    str_contains($classHtml, 'class.js?v=') && str_contains($classHtml, 'class.js?v=20261121-roster-stable3')
+    str_contains($classHtml, 'class.js?v=') && str_contains($classHtml, 'class.js?v=20261120-roster-stable1')
         && str_contains($classJs, 'display_version=20261106-targeted-student-display-fix'),
     'class workspace and student result navigation bypass stale cached markup/scripts'
 );
@@ -59,9 +59,10 @@ studentDisplayCheck(
 
 studentDisplayCheck(
     str_contains($printPage, 'id="printStudentResultButton"')
-        && str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'Download PDF')
         && !str_contains($printPage, 'id="editScoresButton"'),
-    'dedicated printable result page owns print and PDF actions and has no Edit action'
+    'dedicated printable result page owns the browser Print action only and has no Edit action'
 );
 
 studentDisplayCheck(

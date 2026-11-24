@@ -14,6 +14,7 @@ $accountUi = file_get_contents(__DIR__ . '/../public/js/account-management.js');
 $auth = file_get_contents(__DIR__ . '/../app/middleware/auth.php');
 $currentUser = file_get_contents(__DIR__ . '/../api/auth/me.php');
 $resultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
+$printPage = file_get_contents(__DIR__ . '/../public/student-result-print.html');
 
 teacherDocumentPermissionCheck(
     str_contains($accountsApi, "'print_results',") &&
@@ -63,10 +64,13 @@ teacherDocumentPermissionCheck(
     'Full-class teacher printing preserves conventional and Arabic class separation'
 );
 teacherDocumentPermissionCheck(
-    str_contains(file_get_contents(__DIR__ . '/../api/results/student.php'), "requireRolePermission('export_results')") &&
-    str_contains(file_get_contents(__DIR__ . '/../public/js/student-result.js'), 'action === "export" ? "export" : "print"') &&
-    str_contains(file_get_contents(__DIR__ . '/../public/js/student-result.js'), 'currentUserPermissions.can_export_results'),
-    'Export is independently authorized and remains available when teacher printing is disabled'
+    str_contains($resultJs, 'action: "print_results"') &&
+    str_contains($resultJs, 'window.print();') &&
+    !str_contains($resultJs, 'export_results') &&
+    !str_contains($resultJs, 'downloadStudentPdfButton') &&
+    !str_contains($printPage, 'downloadStudentPdfButton') &&
+    !str_contains($printPage, 'Download PDF'),
+    'Student reports use one permission-checked browser Print action; no separate PDF export or server document is offered'
 );
 teacherDocumentPermissionCheck(
     str_contains(file_get_contents(__DIR__ . '/../api/results/class-completion.php'), 'ta.subject_id = s.id') &&
