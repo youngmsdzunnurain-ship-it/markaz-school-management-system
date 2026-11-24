@@ -83,6 +83,18 @@ $resolvePermission = static function (string $permissionKey) use ($role, $accoun
         return false;
     }
 
+    if ($role === 'admin') {
+        return true;
+    }
+
+    if ($role === 'management') {
+        return false;
+    }
+
+    if (!in_array($role, ['exam_officer', 'teacher', 'student'], true)) {
+        return false;
+    }
+
     if (!systemAccessEnabled($role . '_' . $permissionKey)) {
         return false;
     }
