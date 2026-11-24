@@ -15,6 +15,8 @@ $auth = file_get_contents(__DIR__ . '/../app/middleware/auth.php');
 $currentUser = file_get_contents(__DIR__ . '/../api/auth/me.php');
 $resultJs = file_get_contents(__DIR__ . '/../public/js/student-result.js');
 $printPage = file_get_contents(__DIR__ . '/../public/student-result-print.html');
+$settingsJs = file_get_contents(__DIR__ . '/../public/js/settings.js');
+$settingsCss = file_get_contents(__DIR__ . '/../public/css/settings.css');
 
 teacherDocumentPermissionCheck(
     str_contains($accountsApi, "'print_results',") &&
@@ -78,6 +80,30 @@ teacherDocumentPermissionCheck(
     str_contains(file_get_contents(__DIR__ . '/../api/classes/list.php'), 'subject_id IS NULL') &&
     str_contains(file_get_contents(__DIR__ . '/../api/students/list.php'), 'subject_id IS NULL'),
     'Teacher print roster exposes only assigned Full Class Access classes and students'
+);
+
+teacherDocumentPermissionCheck(
+    preg_match('/const roles = \\[\\s*\\["exam_officer", "Exam Officer"\\],\\s*\\["teacher", "Teacher"\\],\\s*\\["student", "Student"\\]\\s*\\];/s', $settingsJs) === 1,
+    'Result printing settings show only Exam Officer, Teacher and Student; Admin and Management are excluded'
+);
+teacherDocumentPermissionCheck(
+    str_contains($settingsJs, 'markaz-role-permissions-access-panel') &&
+    str_contains($settingsJs, 'markaz-role-permissions-print-panel') &&
+    str_contains($settingsCss, 'grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)') &&
+    str_contains($settingsCss, 'grid-template-columns: repeat(3, minmax(0, 1fr))'),
+    'Portal opening and closing controls stay on the left while the three print permissions share the right column'
+);
+teacherDocumentPermissionCheck(
+    str_contains($auth, '$role === \'admin\'') &&
+    str_contains($auth, '$role === \'management\'') &&
+    str_contains($currentUser, '$role === \'admin\'') &&
+    str_contains($currentUser, '$role === \'management\''),
+    'Admin printing remains superuser-enabled while Management printing is denied in both action and session permission checks'
+);
+teacherDocumentPermissionCheck(
+    str_contains($accountsApi, '$accountRole === \'admin\'') &&
+    str_contains($accountsApi, '$accountRole === \'management\''),
+    'Account permission responses report Admin as always allowed and Management as never allowed to print'
 );
 
 echo "Teacher document permission regression tests passed.\n";

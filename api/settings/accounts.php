@@ -168,9 +168,6 @@ if ($method === 'GET') {
 
     // Resolve inherited print/export permissions for accounts without an override.
     $rolePermissionSettings = [
-        'admin' => [
-            'print_results' => 'admin_print_results',
-        ],
         'exam_officer' => [
             'print_results' => 'exam_officer_print_results',
         ],
@@ -180,17 +177,12 @@ if ($method === 'GET') {
         'student' => [
             'print_results' => 'student_print_results',
         ],
-        'management' => [
-            'print_results' => 'management_print_results',
-        ],
     ];
 
     $permissionSettingKeys = [
-        'admin_print_results',
         'exam_officer_print_results',
         'teacher_print_results',
         'student_print_results',
-        'management_print_results',
     ];
 
     $settingPlaceholders = implode(',', array_fill(0, count($permissionSettingKeys), '?'));
@@ -241,12 +233,21 @@ if ($method === 'GET') {
                 static fn(array $assignment): bool => $assignment['subject_id'] === null
             ));
         foreach (['print_results'] as $permissionKey) {
+            $accountRole = (string) $account['role'];
             $settingKey = $roleSettings[$permissionKey] ?? '';
-            $effectivePermissions[$permissionKey] = (string) $account['role'] === 'teacher'
-                ? ($hasFullClassAccess && ($permissions[$id][$permissionKey] ?? false))
-                : ($settingKey !== ''
+
+            if ($accountRole === 'admin') {
+                $effectivePermissions[$permissionKey] = true;
+            } elseif ($accountRole === 'management') {
+                $effectivePermissions[$permissionKey] = false;
+            } elseif ($accountRole === 'teacher') {
+                $effectivePermissions[$permissionKey] = $hasFullClassAccess
+                    && ($permissions[$id][$permissionKey] ?? false);
+            } else {
+                $effectivePermissions[$permissionKey] = $settingKey !== ''
                     ? ($rolePermissionValues[$settingKey] ?? false)
-                    : false);
+                    : false;
+            }
         }
 
         $effectivePermissions['attendance_records'] = $permissions[$id]['attendance_records'] ?? false;

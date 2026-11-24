@@ -402,25 +402,31 @@ function requireRolePermission(
         exit;
     }
 
-    $roleSettings = [
-        "admin" => "admin",
-        "exam_officer" => "exam_officer",
-        "teacher" => "teacher",
-        "student" => "student",
-        "management" => "management",
-    ];
+    if ($role === 'admin') {
+        // Admin is the system superuser; no separate result-print toggle is required.
+        $allowed = true;
+    } elseif ($role === 'management') {
+        // Management accounts do not receive student-result printing access.
+        $allowed = false;
+    } else {
+        $roleSettings = [
+            "exam_officer" => "exam_officer",
+            "teacher" => "teacher",
+            "student" => "student",
+        ];
 
-    if (!isset($roleSettings[$role])) {
-        http_response_code(403);
-        echo json_encode([
-            "success" => false,
-            "message" => "Permission denied."
-        ]);
-        exit;
+        if (!isset($roleSettings[$role])) {
+            http_response_code(403);
+            echo json_encode([
+                "success" => false,
+                "message" => "Permission denied."
+            ]);
+            exit;
+        }
+
+        $settingKey = $roleSettings[$role] . "_" . $permission;
+        $allowed = systemAccessEnabled($settingKey);
     }
-
-    $settingKey = $roleSettings[$role] . "_" . $permission;
-    $allowed = systemAccessEnabled($settingKey);
 
     if ($role === 'teacher') {
         $accountId = (int) ($_SESSION['admin_id'] ?? 0);

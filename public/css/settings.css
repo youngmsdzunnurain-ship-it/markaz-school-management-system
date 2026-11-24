@@ -5418,3 +5418,87 @@ body {
 .staff-photo-crop-actions button{min-height:42px;cursor:pointer}
 @media(max-width:480px){.staff-photo-crop-modal{padding:10px}.staff-photo-crop-dialog{padding:16px;max-height:calc(100dvh - 20px)}.staff-photo-crop-stage{width:min(100%,min(320px,calc(100vw - 60px)))}.staff-photo-crop-actions{display:grid;grid-template-columns:1fr 1.3fr}.staff-photo-crop-actions button{width:100%;padding-inline:10px}}
 @media(prefers-reduced-motion:reduce){.staff-photo-crop-modal *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* ROLE ACCESS + RESULT PRINTING — paired panels on one desktop row */
+.settings-page .markaz-role-permissions-card #markazPermissionFields {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 18px !important;
+    width: 100%;
+}
+
+.settings-page .markaz-role-permissions-panel {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #dce7df;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.settings-page .markaz-role-permissions-panel-heading {
+    min-height: 76px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e3ebe5;
+}
+
+.settings-page .markaz-role-permissions-panel-heading h3 {
+    margin: 0 0 5px;
+    color: #0b3827;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.settings-page .markaz-role-permissions-panel-heading p {
+    margin: 0;
+    color: #53675b;
+    font-size: .86rem;
+    line-height: 1.45;
+}
+
+.settings-page .markaz-role-permissions-access-panel .markaz-role-permissions-access {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+}
+
+.settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 10px;
+}
+
+.settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid > fieldset {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    padding: 12px 10px;
+}
+
+.settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid > fieldset label {
+    align-items: flex-start;
+    gap: 8px;
+    font-size: .82rem;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+    .settings-page .markaz-role-permissions-print-panel .markaz-role-permissions-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .settings-page .markaz-role-permissions-card #markazPermissionFields {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .settings-page .markaz-role-permissions-panel-heading {
+        min-height: 0;
+    }
+}
+
