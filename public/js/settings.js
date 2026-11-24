@@ -1241,16 +1241,14 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
 })();
 
 
-/* MARKAZ ROLE ACCESS AND RESULT PRINT/EXPORT PERMISSIONS */
+/* MARKAZ ROLE ACCESS AND RESULT PRINT PERMISSIONS */
 (() => {
     "use strict";
 
     const roles = [
-        ["admin", "Admin"],
         ["exam_officer", "Exam Officer"],
         ["teacher", "Teacher"],
-        ["student", "Student"],
-        ["management", "Management"]
+        ["student", "Student"]
     ];
     const access = [
         ["exam_officer_access", "Exam Officer portal"],
@@ -1268,13 +1266,25 @@ whenStaffRole(["admin", "exam_officer"], loadAcademicPeriodSettings);
             <div>
                 <span class="settings-label">SENIOR ADMIN</span>
                 <h2>Role Access &amp; Result Permissions</h2>
-                <p>Set portal access and independently grant printing or exporting.</p>
+                <p>Manage portal availability and choose which roles may print student results.</p>
             </div>
         </div>
         <form id="markazRolePermissionsForm">
-            <div id="markazPermissionFields" class="markaz-permission-fields" style="display:grid;gap:16px">
-                <div class="markaz-role-permissions-access"></div>
-                <div class="markaz-role-permissions-grid"></div>
+            <div id="markazPermissionFields" class="markaz-permission-fields">
+                <section class="markaz-role-permissions-panel markaz-role-permissions-access-panel" aria-labelledby="markazPortalAccessTitle">
+                    <div class="markaz-role-permissions-panel-heading">
+                        <h3 id="markazPortalAccessTitle">Account Opening &amp; Closing</h3>
+                        <p>Open or close access to each school portal.</p>
+                    </div>
+                    <div class="markaz-role-permissions-access"></div>
+                </section>
+                <section class="markaz-role-permissions-panel markaz-role-permissions-print-panel" aria-labelledby="markazResultPrintingTitle">
+                    <div class="markaz-role-permissions-panel-heading">
+                        <h3 id="markazResultPrintingTitle">Student Result Printing</h3>
+                        <p>Choose which roles are allowed to print student results.</p>
+                    </div>
+                    <div class="markaz-role-permissions-grid"></div>
+                </section>
             </div>
             <p id="markazPermissionMessage" role="status" aria-live="polite"></p>
             <button type="submit" id="markazSavePermissions">Save Permissions</button>
