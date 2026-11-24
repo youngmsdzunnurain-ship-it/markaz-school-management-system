@@ -72,4 +72,18 @@ studentDisplayCheck(
     'print selection opens the dedicated printable page and waits for student result rendering'
 );
 
+
+studentDisplayCheck(
+    str_contains($resultJs, 'function showStudentPhotoInitials(')
+        && str_contains($resultJs, 'image.addEventListener("error"')
+        && str_contains($resultJs, 'image.alt = "";'),
+    'missing or broken student photos fall back to initials without rendering the full name as image alt text'
+);
+
+studentDisplayCheck(
+    str_contains($resultJs, 'async function waitForStudentPhotoImage(')
+        && str_contains($resultJs, 'await waitForStudentPhotoImage();'),
+    'student photo loading or fallback completes before the browser opens print'
+);
+
 echo "Targeted student/result display regression tests passed.\\n";
