@@ -10,14 +10,14 @@ Options -Indexes
 </IfModule>
 
 <IfModule mod_headers.c>
-    <FilesMatch "\\.(?:jpe?g|png|webp)$">
+    <FilesMatch "\.(?:jpe?g|png|webp)$">
         Header set Cache-Control "private, max-age=31536000, immutable"
         Header set X-Content-Type-Options "nosniff"
     </FilesMatch>
 </IfModule>
 
 <IfModule mod_authz_core.c>
-    <FilesMatch "\\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$">
+    <FilesMatch "\.(?:jpe?g|png|webp)$">
         Require all denied
     </FilesMatch>
 </IfModule>
