@@ -7,6 +7,7 @@ on:
       - "app/helpers/student-photos.php"
       - "public/images/.htaccess"
       - "public/js/students.js"
+      - "public/js/lang-init.js"
       - "public/js/student-result.js"
       - "public/sw.js"
       - "student-result-check.js"
@@ -51,6 +52,7 @@ jobs:
         run: php tests/student-photo-storage.test.php
       - name: JavaScript syntax checks
         run: |
+          node --check public/js/lang-init.js
           node --check public/js/students.js
           node --check public/js/student-result.js
           node --check student-result-check.js
