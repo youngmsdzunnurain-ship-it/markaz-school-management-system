@@ -206,6 +206,7 @@ function renderStudentResult(data) {
             image.src = `./${profileImage.replace(/^\/+/, "")}`;
             image.alt = `${student.first_name || ""} ${student.last_name || ""}`.trim() || "Student photo";
             image.loading = "lazy";
+            image.decoding = "async";
 
             studentPhoto.appendChild(image);
         } else {
