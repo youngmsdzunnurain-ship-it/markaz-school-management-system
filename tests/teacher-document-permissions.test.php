@@ -106,4 +106,10 @@ teacherDocumentPermissionCheck(
     'Account permission responses report Admin as always allowed and Management as never allowed to print'
 );
 
+teacherDocumentPermissionCheck(
+    str_contains($settingsCss, 'grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) !important') &&
+    str_contains($settingsCss, 'grid-template-columns: repeat(3, minmax(0, 1fr)) !important'),
+    'On narrow phones, account controls remain on the left and all three result-print roles remain in one row on the right'
+);
+
 echo "Teacher document permission regression tests passed.\n";
