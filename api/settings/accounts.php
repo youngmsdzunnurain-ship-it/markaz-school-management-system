@@ -186,11 +186,11 @@ if ($method === 'GET') {
     ];
 
     $permissionSettingKeys = [
-        'admin_print_results', 'admin_export_results',
-        'exam_officer_print_results', 'exam_officer_export_results',
-        'teacher_print_results', 'teacher_export_results',
-        'student_print_results', 'student_export_results',
-        'management_print_results', 'management_export_results',
+        'admin_print_results',
+        'exam_officer_print_results',
+        'teacher_print_results',
+        'student_print_results',
+        'management_print_results',
     ];
 
     $settingPlaceholders = implode(',', array_fill(0, count($permissionSettingKeys), '?'));
