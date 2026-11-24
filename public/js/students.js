@@ -448,18 +448,25 @@ async function loadStudentPhotos() {
     }
 
     try {
-        const response = await fetch("./api/students/photos.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "same-origin",
-            cache: "no-store",
-            body: JSON.stringify({ student_ids: studentIds })
-        });
-        const data = await response.json();
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "Unable to load student photos.");
+        const loadedPhotos = new Map();
+        for (let offset = 0; offset < studentIds.length; offset += 400) {
+            const batch = studentIds.slice(offset, offset + 400);
+            const response = await fetch("./api/students/photos.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                cache: "no-store",
+                body: JSON.stringify({ student_ids: batch })
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to load student photos.");
+            }
+            Object.entries(data.photos || {}).forEach(([id, path]) => {
+                loadedPhotos.set(String(id), path);
+            });
         }
-        studentPhotoPaths = new Map(Object.entries(data.photos || {}));
+        studentPhotoPaths = loadedPhotos;
         applyStudentPhotoPaths();
     } catch (error) {
         console.warn("Student photo lookup unavailable; using existing student data:", error);
