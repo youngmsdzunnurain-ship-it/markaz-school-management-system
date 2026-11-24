@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
     <link rel="stylesheet" href="css/finance.css?v=20261122-sidebar-footer-polish1">
+    <link rel="stylesheet" href="css/finance-2026.css?v=20261123-fin2026">
     <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-no-entrance-jump1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -43,7 +44,7 @@
             </div>
             <nav class="sidebar-nav finance-sidebar-nav" aria-label="School Fees navigation">
                 <div class="nav-section-label">Workspace</div>
-                <a href="./dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Main Dashboard</span></a>
+                <a href="./dashboard.html" class="nav-link" data-go-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Main Dashboard</span></a>
                 <div class="nav-section-label">Financial management</div>
                 <button type="button" class="finance-nav-link nav-link nav active" data-role-access="management_school_fees" data-tab="overview" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Overview</span></button>
                 <button type="button" class="finance-nav-link nav-link nav" data-role-access="management_school_fees" data-tab="fees"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i><span>Student Fees</span></button>
@@ -103,7 +104,7 @@
     </section>
   </div>
   <div class="panel"><div class="panel-heading"><div><span class="eyebrow">LATEST ACTIVITY</span><h2>Recent student payments</h2></div><button class="btn btn-primary" data-open-tab="payments"><i class="fa-solid fa-plus"></i> Record payment</button></div>
-  <div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Student</th><th>Method</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentPayments"><tr><td colspan="6" class="empty">Loading financial activity…</td></tr></tbody></table></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Student</th><th>Admission no.</th><th>Method</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentPayments"><tr><td colspan="6" class="empty">Loading financial activity…</td></tr></tbody></table></div></div>
   <div class="info-note"><i class="fa-solid fa-shield-halved"></i><div><b>Financial integrity</b><p>Only confirmed payments count as collected income. Pending bank transfers do not change a student's balance until verified. All posted financial entries are retained in the audit trail.</p></div></div>
 </section>
 <section class="tab-panel" id="tab-fees">
@@ -128,7 +129,8 @@
  <div class="two-col fee-workspace-grid fee-support-grid">
   <form class="panel form-panel" id="studentFeeAdjustmentForm">
    <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL SUPPORT</span><h3>Scholarship, waiver or negotiated fee</h3><p class="muted">An adjustment applies only to the selected student, session and term. Explain the reason for the audit trail.</p></div></div>
-   <div class="inline-fields"><label>Find student<input id="termStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label>Student<select name="student_id" id="termStudentSelect" required><option value="">Search for a student first</option></select><small id="termStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
+   <div class="inline-fields"><label>Find student<input id="termStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label>Student<select name="student_id" id="termStudentSelect" required><option value="">Search for a student first</option></select></label>
+                <p id="termStudentDetails" class="student-detail-note" aria-live="polite"></p><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
    <div class="inline-fields"><label>Adjustment<select name="adjustment_type"><option value="fixed_fee">Negotiated final fee</option><option value="discount_amount">Fixed discount</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / waiver</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
    <label>Reason / approval note<input name="reason" required maxlength="500" placeholder="e.g. Approved 50% scholarship for this term"></label>
    <button class="btn btn-primary" type="submit">Submit for approval</button>
@@ -137,7 +139,7 @@
  </div>
  <div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button">Generate term invoices</button><button class="btn btn-light" id="loadTermReport" type="button">Refresh class report</button></div>
  <div class="table-wrap"><table><thead><tr><th>Class</th><th>Students billed</th><th>Total billed</th><th>Paid</th><th>Outstanding</th></tr></thead><tbody id="termFeeReport"><tr><td colspan="5" class="empty">Select a session and term to view class totals.</td></tr></tbody></table></div>
- <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
+ <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Admission no.</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
 </section>
 
  <div class="two-col fee-workspace-grid fee-plan-grid">
@@ -147,7 +149,8 @@
    <label>Description<textarea name="description" rows="2" placeholder="Optional explanation"></textarea></label>
    <label>Apply to<select name="scope" id="feeScope"><option value="school">Entire school</option><option value="class">Specific class</option><option value="student">Individual student</option></select></label>
    <div id="classFields" class="inline-fields" hidden><label>Class category<select name="class_type"><option value="conventional">Conventional</option><option value="arabic">Arabic</option></select></label><label>Class<select name="class_id" id="feeClassSelect" required><option value="">Loading classes…</option></select></label></div>
-   <div id="studentField" hidden><label for="feeStudentSearch">Find student<input id="feeStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label for="feeStudentSelect">Student<select name="student_id" id="feeStudentSelect" required><option value="">Search for a student first</option></select><small id="feeStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label></div>
+   <div id="studentField" hidden><label for="feeStudentSearch">Find student<input id="feeStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label for="feeStudentSelect">Student<select name="student_id" id="feeStudentSelect" required><option value="">Search for a student first</option></select></label>
+                <p id="feeStudentDetails" class="student-detail-note" aria-live="polite"></p></div>
    <label>Monthly amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="Set by administrator"></label>
    <label>Due day of each month<input name="due_day" type="number" min="1" max="31" required></label>
    <div class="inline-fields"><label>Effective from<input name="effective_from" type="date" required></label><label>Effective until<input name="effective_until" type="date"></label></div>
@@ -161,7 +164,7 @@
   </div>
  </div>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FEE CONFIGURATION</span><h2>Active and previous fee plans</h2></div><button class="btn btn-light" id="loadPlans">Reload plans</button></div><div class="table-wrap"><table><thead><tr><th>Fee</th><th>Applies to</th><th>Amount / month</th><th>Due day</th><th>Effective</th><th>Status</th></tr></thead><tbody id="feePlans"><tr><td colspan="6" class="empty">Loading fee plans…</td></tr></tbody></table></div></div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STUDENT LEDGERS</span><h2>Monthly fee accounts</h2></div><div class="search-box"><i class="fa-solid fa-search"></i><input id="invoiceSearch" placeholder="Admission number or student name"></div></div><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student / Admission no.</th><th>Billing month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="invoices"><tr><td colspan="7" class="empty">Loading student accounts…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STUDENT LEDGERS</span><h2>Monthly fee accounts</h2></div><div class="search-box"><i class="fa-solid fa-search"></i><input id="invoiceSearch" placeholder="Admission number or student name"></div></div><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Admission no.</th><th>Billing month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="invoices"><tr><td colspan="7" class="empty">Loading student accounts…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-payments">
  <div class="two-col">
@@ -199,7 +202,7 @@
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">AUDITABLE RECORDS</span><h2>Expense register</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="expenses"><tr><td colspan="6" class="empty">Loading expenses…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-payroll">
- <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Teacher attendance is managed in the Attendance workspace</b><p>Use the dedicated Teacher Attendance register alongside student attendance. Only Admin and Management accounts with full Attendance access can open it. Approved arrival records are the single source used for payroll deductions.</p><a href="./teacher-attendance.html" class="action-link" data-role-access="teacher_attendance">Open Teacher Attendance <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div></div>
+ <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Teacher attendance is managed in the Attendance workspace</b><p>Use the dedicated Teacher Attendance register alongside student attendance. Only Admin and Management accounts with full Attendance access can open it. Approved arrival records are the single source used for payroll deductions.</p></div></div>
  <div class="two-col">
   <form class="panel form-panel" id="financeStaffForm"><div class="panel-heading"><div><span class="eyebrow">INDEPENDENT STAFF REGISTER</span><h2>Add Finance staff member</h2><p class="muted">This does not create or modify an academic login account.</p></div></div>
    <label>Full name<input name="full_name" maxlength="160" required placeholder="Teacher or staff full name"></label>
@@ -246,6 +249,12 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
+    <!-- DEMO:START (temporary demo data; see the erase instructions) -->
+    <script src="js/finance-demo.js?v=20261125-demo1"></script>
+    <!-- DEMO:END -->
+    <script src="js/finance-tabbar.js?v=20261125-tabbar1" defer></script>
+    <script src="js/finance-charts.js?v=20261125-charts1"></script>
+    <script src="js/go-back.js"></script>
     <script src="js/finance.js?v=20261124-independent-staff1"></script>
 </body>
 </html>
