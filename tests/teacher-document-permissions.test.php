@@ -94,13 +94,13 @@ teacherDocumentPermissionCheck(
     'Portal opening and closing controls stay on the left while the three print permissions share the right column'
 );
 teacherDocumentPermissionCheck(
-    str_contains($auth, "$role === 'admin'") &&
-    str_contains($auth, "$role === 'management'"),
+    str_contains($auth, '$role === \'admin\'') &&
+    str_contains($auth, '$role === \'management\''),
     'Admin printing remains superuser-enabled while Management printing is denied server-side'
 );
 teacherDocumentPermissionCheck(
-    str_contains($accountsApi, "'admin' => true") &&
-    str_contains($accountsApi, "'management' => false"),
+    str_contains($accountsApi, "$accountRole === 'admin'") &&
+    str_contains($accountsApi, "$accountRole === 'management'"),
     'Account permission responses report Admin as always allowed and Management as never allowed to print'
 );
 
