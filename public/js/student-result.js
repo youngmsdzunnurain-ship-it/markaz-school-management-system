@@ -333,8 +333,7 @@ async function loadStudentResult() {
                 };
             }
         } catch (error) {
-            // Check the action the account is independently allowed to perform.
-            // This keeps Export available when Print is disabled, and vice versa.
+            // A failed permission or completion check keeps printing unavailable.
             resultPrintBlocked = error.completion || {
                 message: error.message || "Result document permission could not be verified."
             };
@@ -1584,7 +1583,7 @@ async function authorizeAndPrint() {
     }
 }
 
-// Print and PDF actions belong exclusively to student-result-print.html.
+// The printable report is generated in-browser; printing is the only document action.
 
 const printStudentResultButton = $("printStudentResultButton");
 const resultDocumentActions = $("resultDocumentActions");
@@ -1602,7 +1601,7 @@ function buildDedicatedPrintUrl(autoPrint = false) {
 
 printStudentResultButton?.addEventListener("click", () => {
     if (!isPrintMode || !studentData || resultPrintBlocked) return;
-    authorizeAndPrint("print_results");
+    authorizeAndPrint();
 });
 
 const editScoresButton = $("editScoresButton");
