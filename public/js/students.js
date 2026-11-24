@@ -415,7 +415,7 @@ function renderStudents() {
 
 function isSafeStudentPhotoPath(path) {
     const value = String(path || "");
-    return /^(?:images|uploads\\/students)\\/[A-Za-z0-9._/-]+$/.test(value) && !value.includes("..");
+    return /^(?:images|uploads\/students)\/[A-Za-z0-9._/-]+$/.test(value) && !value.includes("..");
 }
 
 function applyStudentPhotoPaths() {
