@@ -137,8 +137,6 @@
                                 Allow this teacher to print results
                             </label>
                             <label class="account-check">
-                                <input type="checkbox" id="accountCanExportResults">
-                                Allow this teacher to export/download results
                             </label>
                             <small>Requires Full Class Access and the role-wide permission to be enabled.</small>
                         </fieldset>
@@ -191,7 +189,6 @@
     const attendancePermission = $('#accountCanTakeAttendance');
     const documentPermissionsWrap = $('#accountTeacherDocumentPermissions');
     const printPermission = $('#accountCanPrintResults');
-    const exportPermission = $('#accountCanExportResults');
     const assignmentRows = $('#accountAssignmentRows');
     const saveButton = $('#saveManagedAccount');
 
@@ -316,10 +313,8 @@
             );
 
         printPermission.disabled = !hasFullClassAccess;
-        exportPermission.disabled = !hasFullClassAccess;
         if (!hasFullClassAccess) {
             printPermission.checked = false;
-            exportPermission.checked = false;
         }
     }
 
@@ -570,7 +565,6 @@
         managementSchoolFeesPermission.checked = false;
         onlineClassPermission.checked = false;
         printPermission.checked = false;
-        exportPermission.checked = false;
         assignmentRows.innerHTML = '';
         $('#accountFormHeading').textContent = 'Create an account';
         saveButton.textContent = 'Create account';
@@ -650,7 +644,6 @@ populateStudents(account.student_id || '');
         });
 
         printPermission.checked = Boolean(account.permissions && account.permissions.print_results);
-        exportPermission.checked = Boolean(account.permissions && account.permissions.export_results);
         syncTeacherDocumentPermissions();
 
         $('#accountFormHeading').textContent = `Edit account: ${account.name}`;
@@ -752,7 +745,6 @@ populateStudents(account.student_id || '');
                 ? Number(studentSelect.value) : null,
             attendance_records: role.value === 'teacher' && attendancePermission.checked,
             print_results: role.value === 'teacher' && printPermission.checked,
-            export_results: role.value === 'teacher' && exportPermission.checked,
             online_class_access: ['exam_officer', 'teacher', 'management'].includes(role.value) && onlineClassPermission.checked,
             management_permissions: role.value === 'management' ? {
                 attendance: managementAttendancePermission.checked,

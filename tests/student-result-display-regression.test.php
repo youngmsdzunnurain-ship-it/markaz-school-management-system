@@ -40,7 +40,7 @@ studentDisplayCheck(
 );
 
 studentDisplayCheck(
-    str_contains($classHtml, 'class.js?v=20261109-mobile-class-roster-v2')
+    str_contains($classHtml, 'class.js?v=20261120-roster-stable1')
         && str_contains($classJs, 'display_version=20261106-targeted-student-display-fix'),
     'class workspace and student result navigation bypass stale cached markup/scripts'
 );
@@ -59,9 +59,10 @@ studentDisplayCheck(
 
 studentDisplayCheck(
     str_contains($printPage, 'id="printStudentResultButton"')
-        && str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'id="downloadStudentPdfButton"')
+        && !str_contains($printPage, 'Download PDF')
         && !str_contains($printPage, 'id="editScoresButton"'),
-    'dedicated printable result page owns print and PDF actions and has no Edit action'
+    'dedicated printable result page owns the browser Print action only and has no Edit action'
 );
 
 studentDisplayCheck(
@@ -69,6 +70,20 @@ studentDisplayCheck(
         && str_contains($resultJs, 'renderStudentResult(data);')
         && str_contains($resultJs, 'document.body.dataset.resultReady = "true";'),
     'print selection opens the dedicated printable page and waits for student result rendering'
+);
+
+
+studentDisplayCheck(
+    str_contains($resultJs, 'function showStudentPhotoInitials(')
+        && str_contains($resultJs, 'image.addEventListener("error"')
+        && str_contains($resultJs, 'image.alt = "";'),
+    'missing or broken student photos fall back to initials without rendering the full name as image alt text'
+);
+
+studentDisplayCheck(
+    str_contains($resultJs, 'async function waitForStudentPhotoImage(')
+        && str_contains($resultJs, 'await waitForStudentPhotoImage();'),
+    'student photo loading or fallback completes before the browser opens print'
 );
 
 echo "Targeted student/result display regression tests passed.\\n";

@@ -12,7 +12,7 @@ const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<"
 const show = (text,error=false) => { message.textContent=text; message.classList.toggle("error",error); };
 async function request(url,options={}) {
  const response=await fetch(url,{credentials:"same-origin",cache:"no-store",...options,headers:{Accept:"application/json",...(options.headers||{})}});
- const data=await response.json().catch(()=>({success:false,message:"The server returned an invalid response."}));
+ const data=await response.json().catch(()=>({success:false,message:"The server returned an invalid response (HTTP "+(response&&response.status?response.status:"?")+"). Send this code to the developer."}));
  if(response.status===401){location.replace("./login.html");throw new Error("Please sign in again.");}
  if(!response.ok||!data.success)throw new Error(data.message||"Teacher attendance request failed.");
  return data;

@@ -3,16 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="js/lang-init.js"></script>
+<script src="js/theme-init.js"></script>
+<link rel="stylesheet" href="css/i18n-extras.css?v=20261121-chat1">
+<link rel="stylesheet" href="css/dark-mode-extras.css?v=20261121-chat1">
+<script src="js/theme-toggle.js?v=20261121-chat1" defer></script>
+<script src="js/i18n.js?v=20261121-chat1" defer></script>
+<script src="js/staff-chat-nav.js?v=20261123-topbar1" defer></script>
 <meta name="theme-color" content="#145035">
 <title>Staff Chat | MARKAZ</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="css/staff-chat.css?v=20261120-chatflow1">
+<link rel="stylesheet" href="css/staff-chat-polish-2026.css?v=20261121-chat1">
+<link rel="stylesheet" href="css/staff-chat-topbar-2026.css?v=20261123-topbar1">
 <script src="js/staff-chat.js?v=20261120-chatflow1" defer></script>
 </head>
 <body>
 <header class="chat-topbar">
-<a class="brand" href="dashboard.html"><span class="brand-mark">M</span><span>MARKAZ<small>STAFF MESSAGING</small></span></a>
-<div class="top-actions"><span id="currentStaff" class="current-staff">Staff workspace</span><a href="dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div>
+<a class="chat-brand" href="dashboard.html"><img class="chat-brand-logo" src="assets/images/markaz-logo.jpg" alt="" width="44" height="44"><span class="chat-brand-text"><strong>MARKAZ</strong><small>Staff messaging</small></span></a>
+<div class="top-actions">
+<a href="dashboard.html" class="back-link" aria-label="Dashboard"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span class="chat-back-label">Dashboard</span></a>
+<div class="chat-account">
+<button type="button" class="chat-account-button" id="chatAccountButton" aria-haspopup="true" aria-expanded="false" aria-controls="chatAccountMenu">
+<span class="chat-account-avatar" id="chatAccountInitials" aria-hidden="true">M</span>
+<span class="chat-account-text"><strong id="chatAccountName">Staff</strong><small id="chatAccountRole">Staff workspace</small></span>
+<i class="fa-solid fa-chevron-down chat-account-chevron" aria-hidden="true"></i>
+</button>
+<div class="profile-dropdown chat-account-menu" id="chatAccountMenu" role="menu" hidden>
+<div class="profile-dropdown-header"><strong id="chatMenuName">Staff</strong><span id="chatMenuEmail"></span></div>
+<a class="profile-dropdown-item" href="dashboard.html" role="menuitem"><i class="fa-solid fa-gauge" aria-hidden="true"></i> Dashboard</a>
+<a class="profile-dropdown-item" href="settings.html" role="menuitem"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+<button type="button" class="profile-dropdown-item" id="topProfileLogoutButton" role="menuitem"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Logout</button>
+</div>
+</div>
+</div>
+<span id="currentStaff" hidden>Staff workspace</span>
 </header>
 <main class="chat-layout">
 <aside class="inbox-panel">

@@ -567,8 +567,6 @@ function applyDashboardRoleAccess(role, permissions = {}) {
             allowed = role === "admin" || role === "exam_officer";
         } else if (requiredRole === "print_results") {
             allowed = permissions.can_print_results === true;
-        } else if (requiredRole === "export_results") {
-            allowed = permissions.can_export_results === true;
         } else if (requiredRole === "online_class") {
             allowed = role === "admin" || permissions.can_access_online_class === true;
         } else if (requiredRole === "attendance_dashboard") {
@@ -656,7 +654,7 @@ function renderAttendanceComboChart(rows, category, target) {
     const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     }[char]));
-    const conventionalOrder = ["Kindergarten", "KG", "Prinosgy 1", "Preschool 1", "Pre Nursery 1", "Prinosgy 2", "Preschool 2", "Pre Nursery 2", "Nursery 1", "Nursery 2", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JS 1", "JSS 1", "JS 2", "JSS 2", "JS 3", "JSS 3", "SS 1", "SS 2", "SS 3"];
+    const conventionalOrder = ["Kindergarten", "KG", "Prinosgy 1", "Preschool 1", "Pre Nursery 1", "Prinosgy 2", "Preschool 2", "Pre Nursery 2", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "Basic 1", "Basic 2", "Basic 3", "Basic 4", "Basic 5", "JS 1", "JSS 1", "JS 2", "JSS 2", "JS 3", "JSS 3", "SS 1", "SS 2", "SS 3"];
     const arabicOrder = ["Roudoh Ula", "Roudoh Thani", "Faslu Awal", "Faslu Thani", "Faslu Thalith", "Faslu Rabia", "Faslu Khamis", "Faslu Sadis"];
     const order = category === "arabic" ? arabicOrder : conventionalOrder;
     const normalize = value => String(value || "").trim().toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ");

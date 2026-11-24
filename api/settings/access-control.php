@@ -16,15 +16,10 @@ $allowedSettings = [
     'exam_officer_access',
     'management_access',
     'exam_officer_print_results',
-    'exam_officer_export_results',
     'teacher_print_results',
-    'teacher_export_results',
     'student_print_results',
-    'student_export_results',
     'management_print_results',
-    'management_export_results',
     'admin_print_results',
-    'admin_export_results',
     'login_lockout_enabled'
 ];
 
@@ -34,15 +29,10 @@ $defaultSettings = [
     'exam_officer_access' => true,
     'management_access' => true,
     'exam_officer_print_results' => false,
-    'exam_officer_export_results' => false,
     'teacher_print_results' => false,
-    'teacher_export_results' => false,
     'student_print_results' => false,
-    'student_export_results' => false,
     'management_print_results' => false,
-    'management_export_results' => false,
     'admin_print_results' => false,
-    'admin_export_results' => false,
     'login_lockout_enabled' => true
 ];
 

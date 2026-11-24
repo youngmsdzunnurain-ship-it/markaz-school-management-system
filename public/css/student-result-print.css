@@ -441,14 +441,17 @@
      wrapper fill the photo frame so the image's 100% dimensions resolve
      against the actual passport-photo area, not an auto-sized span. */
   #studentReportCard .student-photo > span#studentPhotoInitials {
-    display: block !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     width: 100% !important;
     height: 100% !important;
     min-width: 0 !important;
     min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 0 !important;
+    line-height: 1 !important;
+    text-align: center !important;
     overflow: hidden !important;
   }
   #studentReportCard .student-photo span {

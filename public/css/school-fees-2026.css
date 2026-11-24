@@ -1,0 +1,336 @@
+/* ==========================================================================
+   MARKAZ School Fees: page design (2026).
+   Clear order: banner, status notice, summary figures, then the four fee modules.
+   Green / gold / white, consistent with the rest of the system. Only colours and
+   layout are styled; the page logic is unchanged. Works on phones and desktops.
+   ========================================================================== */
+
+:root {
+    --fees-ink: #0f3324;
+    --fees-green: #145035;
+    --fees-green-2: #1d6b45;
+    --fees-gold: #c9a24a;
+    --fees-gold-soft: #fbf3d6;
+    --fees-muted: #5d6f66;
+    --fees-line: #e1ebe4;
+    --fees-radius: 22px;
+    --fees-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+html { background: #f5f8f5; }
+html, body { min-height: 100%; }
+body.fees-page {
+    margin: 0;
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    color: var(--fees-ink);
+    background:
+        radial-gradient(120% 60% at 50% -10%, #eaf3ec 0%, #f5f8f5 55%, #f7faf7 100%);
+}
+
+.fees-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ------------------------------------------------------------ banner */
+.fees-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 18px 18px 0;
+    padding: clamp(22px, 4vw, 40px) clamp(20px, 4vw, 44px);
+    border-radius: 26px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    background:
+        radial-gradient(90% 140% at 100% 0%, rgba(230, 194, 106, .26), transparent 55%),
+        linear-gradient(135deg, #071f15 0%, #0c3a27 48%, #15603f 100%);
+    box-shadow: inset 0 -3px 0 rgba(230, 194, 106, .9), 0 18px 40px rgba(6, 32, 21, .22);
+}
+.fees-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(1.4px 1.4px at 9% 28%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 22% 70%, #fff 99%, transparent),
+        radial-gradient(1.2px 1.2px at 41% 18%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 63% 62%, #fff 99%, transparent),
+        radial-gradient(1.3px 1.3px at 84% 26%, #fff 99%, transparent);
+    opacity: .55;
+}
+.fees-hero-copy { min-width: 0; }
+.fees-crumbs {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, .8);
+}
+.fees-crumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(230, 194, 106, .55);
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    text-decoration: none;
+}
+.fees-crumbs a:hover { background: rgba(255, 255, 255, .16); }
+.fees-crumbs a:focus-visible { outline: 2px solid #f3d98a; outline-offset: 2px; }
+.fees-crumbs span[aria-hidden="true"] { opacity: .6; }
+.fees-eyebrow {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: #e6c26a;
+}
+.fees-hero h1 {
+    margin: 0;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-size: clamp(2rem, 4.4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    color: #fff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .3);
+}
+.fees-lede {
+    margin: 12px 0 0;
+    max-width: 56ch;
+    font-size: clamp(.95rem, 1.5vw, 1.05rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, .86);
+}
+.fees-hero-badge {
+    flex: none;
+    width: 84px;
+    height: 84px;
+    display: grid;
+    place-items: center;
+    border-radius: 26px;
+    font-size: 32px;
+    color: #0e3a27;
+    background: linear-gradient(135deg, #fbefc4, #e6c26a);
+    box-shadow: 0 0 0 6px rgba(230, 194, 106, .2), 0 16px 34px rgba(0, 0, 0, .28);
+}
+
+/* ------------------------------------------------------------ content */
+.fees-main {
+    width: min(1120px, 100% - 36px);
+    margin: 22px auto 0;
+    display: grid;
+    gap: 22px;
+    flex: 1;
+}
+
+.fees-notice {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    border: 1px solid #ecd58f;
+    background: linear-gradient(180deg, #fffdf4, #fbf3d6);
+    box-shadow: 0 10px 24px rgba(201, 162, 74, .14);
+}
+.fees-notice-icon {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    font-size: 19px;
+    color: #fff;
+    background: linear-gradient(135deg, #e0b95a, #b88a2c);
+    box-shadow: 0 8px 18px rgba(184, 138, 44, .35);
+}
+.fees-notice strong { display: block; font-size: 15px; color: #5a4308; }
+.fees-notice p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.6; color: #6e5a22; }
+.fees-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 800;
+    color: #6b4f0e;
+    background: #fff;
+    border: 1px solid #ecd58f;
+}
+
+/* summary figures */
+.fees-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+.fees-stat {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 20px 18px;
+    border-radius: var(--fees-radius);
+    background: #fff;
+    border: 1px solid var(--fees-line);
+    box-shadow: 0 12px 28px rgba(16, 70, 44, .07);
+}
+.fees-stat::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--fees-gold), #f3d98a, var(--fees-gold));
+}
+.fees-stat-label {
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--fees-muted);
+}
+.fees-stat-value {
+    margin: 10px 0 4px;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.8rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    color: var(--fees-green);
+    font-variant-numeric: tabular-nums;
+}
+.fees-stat-note { margin: 0; font-size: 12.5px; color: var(--fees-muted); }
+.fees-stat-icon {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 15px;
+    color: var(--fees-green);
+    background: #eef6f0;
+}
+
+/* modules */
+.fees-modules { display: grid; gap: 16px; }
+.fees-section-head { display: grid; gap: 4px; }
+.fees-section-title {
+    margin: 0;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+    font-weight: 700;
+    color: var(--fees-green);
+}
+.fees-section-sub { margin: 0; font-size: 14px; color: var(--fees-muted); }
+.fees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+.fees-module {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 22px;
+    border-radius: var(--fees-radius);
+    background: linear-gradient(180deg, #fff, #f7fbf8);
+    border: 1px solid var(--fees-line);
+    box-shadow: 0 12px 28px rgba(16, 70, 44, .07);
+    transition: translate .45s var(--fees-ease), box-shadow .45s var(--fees-ease);
+}
+.fees-module-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    font-size: 21px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--fees-green-2), var(--fees-green));
+    box-shadow: 0 10px 22px rgba(20, 80, 53, .28);
+}
+.fees-module h3 {
+    margin: 6px 0 0;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--fees-green);
+}
+.fees-module p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--fees-muted); }
+.fees-chip {
+    justify-self: start;
+    margin-top: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: #6b4f0e;
+    background: var(--fees-gold-soft);
+    border: 1px dashed #d9bd6a;
+}
+@media (hover: hover) {
+    .fees-module:hover { translate: 0 -4px; box-shadow: 0 22px 44px rgba(16, 70, 44, .14); }
+}
+
+/* footer */
+.fees-footer {
+    margin-top: 34px;
+    padding: 22px 20px 26px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--fees-muted);
+    border-top: 1px solid var(--fees-line);
+    background: rgba(255, 255, 255, .6);
+}
+.fees-footer strong {
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: .2em;
+    color: var(--fees-green);
+}
+
+/* ------------------------------------------------------------ phones */
+@media (max-width: 760px) {
+    .fees-hero { margin: 10px 10px 0; border-radius: 22px; }
+    .fees-hero-badge { display: none; }
+    .fees-crumbs { font-size: 12px; gap: 6px; }
+    .fees-main { width: min(1120px, 100% - 20px); margin-top: 16px; gap: 16px; }
+    .fees-notice { grid-template-columns: auto 1fr; }
+    .fees-status { grid-column: 1 / -1; justify-self: start; }
+    .fees-grid { grid-template-columns: 1fr; }
+    .fees-summary { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fees-stat { padding: 16px 14px 14px; }
+    .fees-stat-icon { display: none; }
+    .fees-stat-value { font-size: 1.6rem; }
+    .fees-stat-note { font-size: 11.5px; }
+}
+@media (max-width: 380px) {
+    .fees-crumbs a { padding: 5px 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fees-module { transition: none; }
+}
+@media print {
+    .fees-hero, .fees-notice, .fees-stat, .fees-module { box-shadow: none !important; }
+}

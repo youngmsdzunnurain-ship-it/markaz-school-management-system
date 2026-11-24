@@ -11463,3 +11463,22 @@ body:not(.student-portal-result-view) .student-information #studentMemorizationP
         box-sizing: border-box !important;
     }
 }
+
+
+/* Keep the student photo frame stable for both initials and loaded portraits. */
+#studentReportCard .student-photo > span#studentPhotoInitials {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+#studentReportCard .student-photo > span#studentPhotoInitials img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}

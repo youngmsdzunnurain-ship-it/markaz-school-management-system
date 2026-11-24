@@ -58,7 +58,7 @@ portalAssert(!str_contains($script, 'View My Result'), 'welcome action does not 
 portalAssert(str_contains($script, 'student-result-print.html'), 'Check Results opens the existing official printable page');
 portalAssert(str_contains($script, "display_version: '20261106-targeted-student-display-fix'"), 'student report uses the same preview version as the staff Print Results listing');
 portalAssert(str_contains($printPage, 'id="printStudentResultButton"'), 'official preview exposes the existing Print action');
-portalAssert(str_contains($printPage, 'id="downloadStudentPdfButton"'), 'official preview exposes the existing Download PDF action');
+portalAssert(!str_contains($printPage, 'id="downloadStudentPdfButton"'), 'official preview does not expose a server PDF export action');
 portalAssert(str_contains($script, "student_portal: '1'"), 'official report is opened in scoped student-portal mode');
 portalAssert(!str_contains($script, 'portal-report-sheet'), 'student portal does not render a second report card');
 portalAssert(!str_contains($css, '.portal-report-sheet'), 'portal stylesheet does not duplicate official report styling');
@@ -102,8 +102,8 @@ portalAssert(
 portalAssert(
     str_contains($resultScript, 'studentDocumentPermissionsResolved') &&
     str_contains($resultScript, 'printStudentResultButton?.remove()') &&
-    str_contains($resultScript, 'downloadStudentPdfButton?.remove()'),
-    'Student Portal removes unavailable document actions only after server permissions are resolved'
+    !str_contains($resultScript, 'downloadStudentPdfButton'),
+    'Student Portal removes the unavailable browser Print action only after server permissions are resolved'
 );
 portalAssert(str_contains($resultCss, 'grid-template-columns: repeat(12, minmax(0, 1fr)) !important;') && str_contains($resultCss, 'grid-auto-rows: 56px !important;'), 'desktop student profile uses one 12-column grid with equal 56px rows');
 portalAssert(str_contains($resultCss, 'grid-column: span 5 !important;') && substr_count($resultCss, 'grid-column: span 2 !important;') >= 3 && substr_count($resultCss, 'grid-column: span 3 !important;') >= 3 && str_contains($resultCss, 'grid-column: span 4 !important;'), 'desktop student profile applies the requested 5/2/2/3 and 3/3/2/4 column spans');
@@ -136,8 +136,8 @@ portalAssert(!str_contains($resultCss, 'Final mobile parity for staff result pre
 portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
     str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
-    str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
-    'Student print and PDF permissions are returned from the Admin-controlled role-wide settings and enforced by the result API'
+    !str_contains($resultApi, "student_export_results"),
+    'Student result printing uses the single Admin-controlled print permission'
 );
 portalAssert(
     str_contains($resultScript, 'studentData?.student_document_permissions') &&
@@ -145,15 +145,15 @@ portalAssert(
     'Student print and PDF actions follow the current permission payload instead of being granted unconditionally'
 );
 portalAssert(
-    str_contains($resultScript, 'await fetchStudentResultPayload(true, permissionAction)'),
-    'Student print and PDF actions are re-authorized by the server when clicked'
+    str_contains($resultScript, 'await fetchStudentResultPayload(true)'),
+    'Student browser printing is re-authorized by the server when requested'
 );
 
 portalAssert(
     str_contains($resultApi, "'student_document_permissions'") &&
     str_contains($resultApi, "systemAccessEnabled('student_print_results')") &&
-    str_contains($resultApi, "systemAccessEnabled('student_export_results')"),
-    'Student print and PDF actions are governed by the Admin role switches'
+    !str_contains($resultApi, "student_export_results"),
+    'Student report printing is governed by the Admin print switch'
 );
 portalAssert(
     str_contains($resultScript, 'studentData?.student_document_permissions') &&

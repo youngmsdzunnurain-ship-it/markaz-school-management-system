@@ -1,0 +1,95 @@
+/* ==========================================================================
+   MARKAZ Attendance and Teacher Attendance: header, compact panels, footer (2026).
+   The header reads left to right: Go Back on the left, title in the middle, actions on the right,
+   all on one line. Panels are compact. The footer stays at the bottom of the page.
+   Visual only: the attendance logic is unchanged.
+   ========================================================================== */
+
+html { background: #f5f8f5; }
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+body > main, body > .app, body > .attendance-shell, body > .teacher-shell, body > .register-shell {
+    flex: 1 0 auto;
+}
+.markaz-global-footer { margin-top: auto; }
+
+/* header: one row, back on the left, actions on the right, vertically centred */
+html body .attendance-header {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 18px;
+    padding: 18px 22px !important;
+    min-height: 0 !important;
+}
+html body .attendance-back {
+    position: static !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(230, 194, 106, .6);
+    background: rgba(255, 255, 255, .1);
+    color: #fff;
+    font: 700 14px/1 Manrope, system-ui, sans-serif;
+    text-decoration: none;
+    white-space: nowrap;
+    flex: none;
+}
+html body .attendance-brand { flex: 1 1 260px; min-width: 0; }
+html body .attendance-brand h1 { margin: 2px 0 0; font-size: clamp(1.7rem, 3vw, 2.3rem); }
+html body .attendance-brand p { margin: 6px 0 0; font-size: 14px; color: rgba(255, 255, 255, .82); }
+html body .attendance-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-inline-start: auto;
+}
+html body .attendance-header-actions .button {
+    min-height: 42px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font: 700 14px/1 Manrope, system-ui, sans-serif;
+    white-space: nowrap;
+}
+
+/* compact panels */
+html body main { gap: 14px; }
+html body main > section,
+html body .panel,
+html body [class*="-panel"],
+html body [class*="-card"],
+html body [class*="summary"] {
+    padding: 16px 18px !important;
+    border-radius: 16px !important;
+}
+html body :is(.attendance-grid, [class*="-grid"]) { gap: 12px !important; }
+html body :is(h2, h3) { margin: 0; line-height: 1.25; }
+html body :is(h2) { font-size: 1.25rem; }
+html body :is(input, select, textarea) { min-height: 42px; }
+html body :is(label) { gap: 4px; font-size: 13.5px; }
+html body .button { min-height: 42px; }
+html body p, html body small { font-size: 14px; line-height: 1.5; }
+
+/* the icon font keeps its own family even when a button sets text styles */
+.fa-solid, .fas, .fa, .fa-regular, .far, .fa-brands, .fab {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", sans-serif;
+}
+.fa-solid, .fas, .fa { font-weight: 900; }
+.fa-brands, .fab { font-weight: 400; }
+
+@media (max-width: 760px) {
+    html body .attendance-header { padding: 16px 16px !important; }
+    html body .attendance-header-actions { width: 100%; justify-content: flex-start; margin-inline-start: 0; }
+    html body .attendance-header-actions .button { flex: 1 1 auto; justify-content: center; }
+}
+
+html body .attendance-header-actions a { text-decoration: none; }

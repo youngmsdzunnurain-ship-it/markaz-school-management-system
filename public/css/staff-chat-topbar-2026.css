@@ -1,0 +1,182 @@
+/* MARKAZ staff chat: top bar (school logo, Dashboard, avatar menu with Dark mode and Language inside it).
+   Loaded after staff-chat-polish-2026.css. Visual only. */
+
+.chat-topbar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 76px;
+    padding: 12px clamp(14px, 3vw, 26px);
+}
+
+.chat-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    text-decoration: none;
+    color: #fff;
+}
+.chat-brand-logo {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 50%;
+    padding: 3px;
+    background: #fff;
+    object-fit: contain;
+    box-shadow: 0 0 0 2px rgba(230, 194, 106, .75), 0 6px 14px rgba(0, 0, 0, .25);
+}
+.chat-brand-text { display: grid; min-width: 0; line-height: 1.15; }
+.chat-brand-text strong {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: #fff;
+}
+.chat-brand-text small {
+    margin-top: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #e6c26a;
+}
+
+.chat-topbar .top-actions {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    margin: 0 !important;
+}
+#currentStaff { display: none !important; }
+
+.chat-topbar .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(230, 194, 106, .55);
+    background: rgba(255, 255, 255, .09);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.chat-topbar .back-link:hover { background: rgba(255, 255, 255, .16); }
+.chat-topbar .back-link:focus-visible,
+.chat-account-button:focus-visible { outline: 2px solid #f3d98a; outline-offset: 2px; }
+
+/* the avatar button */
+.chat-account { position: relative; }
+.chat-account-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 4px 14px 4px 5px;
+    border-radius: 999px;
+    border: 1px solid rgba(230, 194, 106, .55);
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+.chat-account-avatar {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 2px solid #d6b65f;
+    background: #dff3e7;
+    color: #145035;
+    font-size: 13px;
+    font-weight: 900;
+}
+.chat-account-text { display: grid; text-align: start; line-height: 1.2; min-width: 0; }
+.chat-account-text strong { font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+.chat-account-text small { font-size: 11px; color: rgba(255, 255, 255, .72); }
+.chat-account-chevron { font-size: 11px; color: #e6c26a; }
+
+/* the menu: Dark mode and Language sit in it, between the links and Logout */
+.chat-account-menu {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + 10px);
+    z-index: 200;
+    width: 264px;
+    padding: 8px;
+    border-radius: 18px;
+    border: 1px solid rgba(20, 80, 53, .12);
+    background: #fff;
+    color: #17372a;
+    box-shadow: 0 22px 48px rgba(6, 32, 21, .28);
+}
+.chat-account-menu[hidden] { display: none !important; }
+.chat-account-menu .profile-dropdown-header {
+    display: grid;
+    gap: 2px;
+    padding: 10px 12px 12px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #e6efe9;
+}
+.chat-account-menu .profile-dropdown-header strong { font-size: 14px; color: #123d2a; }
+.chat-account-menu .profile-dropdown-header span { font-size: 12px; color: #6b7d73; overflow-wrap: anywhere; }
+.chat-account-menu .profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #17372a;
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+}
+.chat-account-menu .profile-dropdown-item:hover { background: #eef6f0; }
+.chat-account-menu .profile-dropdown-item > i { width: 18px; text-align: center; color: #1e7049; }
+.chat-account-menu #topProfileLogoutButton,
+.chat-account-menu #topProfileLogoutButton > i { color: #b03a2e; }
+
+/* the floating switches are not needed here any more (they live in the menu) */
+.chat-topbar ~ .mk-lang-floating,
+.chat-topbar ~ .mk-theme-toggle-floating { display: none !important; }
+
+/* phones: the logo and the avatar stay; the text labels shorten */
+@media (max-width: 760px) {
+    .chat-brand-text small { display: none; }
+    .chat-brand-text strong { font-size: 13px; }
+    .chat-account-text { display: none; }
+    .chat-account-button { padding: 4px 6px 4px 4px; gap: 6px; }
+    .chat-account-chevron { display: none; }
+    .chat-back-label { display: none; }
+    .chat-topbar .back-link { padding: 8px 12px; }
+    .chat-account-menu { width: min(264px, calc(100vw - 24px)); }
+}
+
+/* dark mode */
+@media screen {
+    html[data-theme="dark"] .chat-account-menu { background: #1b2620; color: #eaf3ee; border-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .chat-account-menu .profile-dropdown-header { border-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .chat-account-menu .profile-dropdown-header strong,
+    html[data-theme="dark"] .chat-account-menu .profile-dropdown-item { color: #eaf3ee; }
+    html[data-theme="dark"] .chat-account-menu .profile-dropdown-header span { color: #9bb0a3; }
+    html[data-theme="dark"] .chat-account-menu .profile-dropdown-item:hover { background: #243029; }
+    html[data-theme="dark"] .chat-account-menu #topProfileLogoutButton,
+    html[data-theme="dark"] .chat-account-menu #topProfileLogoutButton > i { color: #ff9b8f; }
+}
+
+@media print { .chat-topbar { display: none !important; } }

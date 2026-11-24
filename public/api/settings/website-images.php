@@ -174,6 +174,7 @@ try {
     if ($method === 'GET') {
         $images = discoverImages($publicRoot);
         $mappings = $loadMappings($images);
+        $staleMappingFound = false;
         foreach ($images as &$image) {
             $replacement = $mappings[$image['url']] ?? null;
             if (is_string($replacement)) {
@@ -190,11 +191,22 @@ try {
                     dirname($resolved) !== $expectedDirectory ||
                     !is_file($resolved) || !is_readable($resolved)) {
                     $replacement = null;
+                    if (array_key_exists($image['url'], $mappings)) {
+                        unset($mappings[$image['url']]);
+                        $staleMappingFound = true;
+                    }
                 }
             }
             $image['replacement'] = $replacement;
         }
         unset($image);
+        if ($staleMappingFound) {
+            try {
+                writeWebsiteImageManifest($manifestPath, $mappings);
+            } catch (Throwable $storageError) {
+                error_log('Stale website image mappings could not be cleaned up: ' . $storageError->getMessage());
+            }
+        }
         respond(['success' => true, 'images' => $images, 'count' => count($images)]);
     }
 

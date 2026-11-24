@@ -104,8 +104,8 @@ deviceActivityAssert(
 );
 deviceActivityAssert(
     str_contains($resultScript, 'printStudentResultButton?.remove()') &&
-    str_contains($resultScript, 'downloadStudentPdfButton?.remove()'),
-    'student result portal removes unavailable Print and Download PDF actions from the DOM'
+    !str_contains($resultScript, 'downloadStudentPdfButton'),
+    'student result portal removes the unavailable browser Print action from the DOM'
 );
 
 echo "Account device activity, security messaging and result action regression checks passed." . PHP_EOL;
