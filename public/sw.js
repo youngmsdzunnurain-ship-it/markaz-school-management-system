@@ -127,9 +127,10 @@ self.addEventListener("fetch", event => {
     if (!isApprovedPublicAsset(url)) return;
 
     const assetCachePromise = caches.open(ASSET_CACHE);
-    const network = assetCachePromise.then(cache => fetch(request).then(response => {
+    const network = assetCachePromise.then(cache => fetch(request).then(async response => {
         if (response.ok && response.type === "basic") {
-            cache.put(request, response.clone()).then(() => trimAssetCache(cache));
+            await cache.put(request, response.clone());
+            await trimAssetCache(cache);
         }
         return response;
     })).catch(async () => {
