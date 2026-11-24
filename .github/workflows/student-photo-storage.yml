@@ -1,0 +1,59 @@
+name: MARKAZ Student Photo Storage Regression
+
+on:
+  pull_request:
+    paths:
+      - "api/students/**"
+      - "app/helpers/student-photos.php"
+      - "public/images/.htaccess"
+      - "public/js/students.js"
+      - "public/js/lang-init.js"
+      - "public/js/student-result.js"
+      - "public/sw.js"
+      - "student-result-check.js"
+      - "tests/student-photo-storage.test.php"
+      - ".github/workflows/student-photo-storage.yml"
+  push:
+    branches: [main]
+    paths:
+      - "api/students/**"
+      - "app/helpers/student-photos.php"
+      - "public/images/.htaccess"
+      - "public/js/students.js"
+      - "public/js/student-result.js"
+      - "public/sw.js"
+      - "student-result-check.js"
+      - "tests/student-photo-storage.test.php"
+      - ".github/workflows/student-photo-storage.yml"
+
+jobs:
+  student-photo-storage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: none
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: PHP syntax checks
+        run: |
+          php -l app/helpers/student-photos.php
+          php -l api/students/create.php
+          php -l api/students/update.php
+          php -l api/students/photos.php
+          php -l tests/student-photo-storage.test.php
+      - name: Student photo storage regression
+        run: php tests/student-photo-storage.test.php
+      - name: JavaScript syntax checks
+        run: |
+          node --check public/js/lang-init.js
+          node --check public/js/students.js
+          node --check public/js/student-result.js
+          node --check student-result-check.js
+          node --check public/sw.js

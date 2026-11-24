@@ -64,6 +64,7 @@ function setStudentSaveButtonState(button, state, defaultText) {
 let students = [];
 let classes = [];
 let arabicClasses = [];
+let studentPhotoPaths = new Map();
 
 function escapeHtml(value) {
     return String(value ?? "")
@@ -92,6 +93,7 @@ async function loadStudents() {
 
         updateStudentSummary();
         renderStudents();
+        await loadStudentPhotos();
 
     } catch (error) {
                 setStudentSaveButtonState(
@@ -322,14 +324,7 @@ function renderStudents() {
                 (student.last_name || "").charAt(0)
             ).toUpperCase() || "ST";
 
-        const studentAvatar = student.profile_image
-            ? `<span class="student-avatar has-photo">
-                    <img
-                        src="./${escapeHtml(student.profile_image)}"
-                        alt="${escapeHtml(fullName)}"
-                    >
-                </span>`
-            : `<span class="student-avatar">
+        const studentAvatar = `<span class="student-avatar" data-student-avatar-id="${Number(student.id)}">
                     ${escapeHtml(initials)}
                 </span>`;
 
@@ -415,6 +410,73 @@ function renderStudents() {
             </tr>
         `;
     }).join("");
+    applyStudentPhotoPaths();
+}
+
+function isSafeStudentPhotoPath(path) {
+    const value = String(path || "");
+    return /^(?:images|uploads\/students)\/[A-Za-z0-9._/-]+$/.test(value) && !value.includes("..");
+}
+
+function applyStudentPhotoPaths() {
+    document.querySelectorAll("[data-student-avatar-id]").forEach(avatar => {
+        const studentId = String(avatar.dataset.studentAvatarId || "");
+        const path = studentPhotoPaths.get(studentId);
+        if (!path || !isSafeStudentPhotoPath(path)) return;
+
+        const student = students.find(item => String(item.id) === studentId);
+        const image = document.createElement("img");
+        image.src = "./" + path.split("/").map(encodeURIComponent).join("/");
+        image.alt = student
+            ? `${student.first_name || ""} ${student.last_name || ""}`.trim()
+            : "Student photo";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.addEventListener("error", () => image.remove(), { once: true });
+        avatar.replaceChildren(image);
+        avatar.classList.add("has-photo");
+    });
+}
+
+async function loadStudentPhotos() {
+    const studentIds = students
+        .map(student => Number(student.id))
+        .filter(id => Number.isInteger(id) && id > 0);
+    if (!studentIds.length) {
+        studentPhotoPaths = new Map();
+        return;
+    }
+
+    try {
+        const loadedPhotos = new Map();
+        for (let offset = 0; offset < studentIds.length; offset += 400) {
+            const batch = studentIds.slice(offset, offset + 400);
+            const response = await fetch("./api/students/photos.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                cache: "no-store",
+                body: JSON.stringify({ student_ids: batch })
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to load student photos.");
+            }
+            Object.entries(data.photos || {}).forEach(([id, path]) => {
+                loadedPhotos.set(String(id), path);
+            });
+        }
+        studentPhotoPaths = loadedPhotos;
+        applyStudentPhotoPaths();
+    } catch (error) {
+        console.warn("Student photo lookup unavailable; using existing student data:", error);
+        students.forEach(student => {
+            if (student.profile_image) {
+                studentPhotoPaths.set(String(student.id), student.profile_image);
+            }
+        });
+        applyStudentPhotoPaths();
+    }
 }
 
 if (studentSearch) {
@@ -1434,11 +1496,12 @@ function openEditStudent(studentId) {
         removeStudentPhotoButton.dataset.remove = "0";
     }
 
-    if (student.profile_image) {
+    const editPhotoPath = studentPhotoPaths.get(String(student.id)) || student.profile_image;
+    if (editPhotoPath && isSafeStudentPhotoPath(editPhotoPath)) {
         editStudentPhotoPreview.style.backgroundImage = "";
         editStudentPhotoPreview.innerHTML =
             `<img
-                src="./${student.profile_image}"
+                src="./${editPhotoPath.split("/").map(encodeURIComponent).join("/")}"
                 alt="${escapeHtml(
                     `${student.first_name || ""} ${student.last_name || ""}`.trim()
                 )}"

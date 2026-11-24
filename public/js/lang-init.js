@@ -25,3 +25,17 @@
         }
     } catch (error) { /* storage blocked: stay in English */ }
 })();
+
+/* Register the root-scoped worker from this shared script so approved public
+   image assets can be cached across public and authenticated MARKAZ pages. */
+(function () {
+    if (!("serviceWorker" in navigator)) return;
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") return;
+    var scriptUrl = document.currentScript && document.currentScript.src;
+    if (!scriptUrl) return;
+    var workerUrl = new URL("../sw.js", scriptUrl);
+    var scopeUrl = new URL("../", scriptUrl).pathname;
+    navigator.serviceWorker.register(workerUrl.href, { scope: scopeUrl }).catch(function (error) {
+        console.warn("MARKAZ image cache worker could not be registered:", error);
+    });
+})();

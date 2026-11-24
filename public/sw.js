@@ -1,8 +1,9 @@
 "use strict";
 
-const CACHE_VERSION = "markaz-public-v5";
+const CACHE_VERSION = "markaz-public-v6";
 const PAGE_CACHE = CACHE_VERSION + "-pages";
 const ASSET_CACHE = CACHE_VERSION + "-assets";
+const MAX_CACHED_ASSETS = 160;
 
 const PUBLIC_PAGES = new Set([
     "./home.html", "./about.html", "./academics.html", "./admissions.html",
@@ -23,6 +24,7 @@ const CORE_ASSETS = [
     "./css/public-motion-2026.css",
     "./js/home.js",
     "./js/markaz-global.js",
+    "./js/lang-init.js",
     "./js/website-image-overrides.js",
     "./js/social-link-overrides.js",
     "./js/public-resilience.js",
@@ -62,10 +64,19 @@ async function notifyPublicClients(state, message) {
     }));
 }
 
+async function trimAssetCache(cache) {
+    const requests = await cache.keys();
+    const excess = requests.length - MAX_CACHED_ASSETS;
+    if (excess > 0) {
+        await Promise.all(requests.slice(0, excess).map(request => cache.delete(request)));
+    }
+}
+
 async function cacheResponse(cacheName, request, response) {
     if (response && response.ok && response.type === "basic") {
         const cache = await caches.open(cacheName);
         await cache.put(request, response.clone());
+        if (cacheName === ASSET_CACHE) await trimAssetCache(cache);
     }
 }
 
@@ -117,9 +128,10 @@ self.addEventListener("fetch", event => {
     if (!isApprovedPublicAsset(url)) return;
 
     const assetCachePromise = caches.open(ASSET_CACHE);
-    const network = assetCachePromise.then(cache => fetch(request).then(response => {
+    const network = assetCachePromise.then(cache => fetch(request).then(async response => {
         if (response.ok && response.type === "basic") {
-            cache.put(request, response.clone());
+            await cache.put(request, response.clone());
+            await trimAssetCache(cache);
         }
         return response;
     })).catch(async () => {

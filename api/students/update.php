@@ -182,80 +182,20 @@ if ($removeProfileImage) {
     $profileImage = null;
 }
 
-if (
-    isset($_FILES['profile_image']) &&
-    $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE
-) {
-    if ($_FILES['profile_image']['error'] !== UPLOAD_ERR_OK) {
-        http_response_code(422);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Student photo upload failed.'
-        ]);
-        exit;
-    }
-
-    if ($_FILES['profile_image']['size'] > 3 * 1024 * 1024) {
-        http_response_code(422);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Student photo must not exceed 3MB.'
-        ]);
-        exit;
-    }
-
-    $tmpFile = $_FILES['profile_image']['tmp_name'];
-    $imageInfo = @getimagesize($tmpFile);
-
-    if ($imageInfo === false) {
-        http_response_code(422);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Uploaded file is not a valid image.'
-        ]);
-        exit;
-    }
-
-    $allowedTypes = [
-        'image/jpeg' => 'jpg',
-        'image/png' => 'png',
-        'image/webp' => 'webp'
-    ];
-
-    $mime = $imageInfo['mime'] ?? '';
-
-    if (!isset($allowedTypes[$mime])) {
-        http_response_code(422);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Only JPG, PNG, and WebP images are allowed.'
-        ]);
-        exit;
-    }
-
-    $uploadDirectory = __DIR__ . '/../../public/uploads/students';
-
-    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Unable to prepare the student photo directory.']);
-        exit;
-    }
-    @chmod($uploadDirectory, 0755);
-
-    $fileName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mime];
-    $destination = $uploadDirectory . '/' . $fileName;
-
-    if (!move_uploaded_file($tmpFile, $destination)) {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Unable to save student photo.'
-        ]);
-        exit;
-    }
-
-    @chmod($destination, 0644);
-    $profileImage = 'uploads/students/' . $fileName;
+if (isset($_FILES['profile_image']) && ($_FILES['profile_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+    try {
+            require_once __DIR__ . '/../../app/helpers/student-photos.php';
+            $profileImage = markazStoreStudentPhoto($db, $_FILES['profile_image']);
+        } catch (InvalidArgumentException $error) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'message' => $error->getMessage()]);
+            exit;
+        } catch (Throwable $error) {
+            error_log('Student photo upload failed: ' . $error->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Unable to save student photo.']);
+            exit;
+        }
 }
 
 $stmt = $db->prepare(
