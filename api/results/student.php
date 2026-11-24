@@ -19,11 +19,6 @@ if ($studentPortalScope !== null) {
         echo json_encode(['success' => false, 'message' => 'Student printing is currently disabled by the Admin.']);
         exit;
     }
-    if (($_GET['export'] ?? '') === '1' && !systemAccessEnabled('student_export_results')) {
-        http_response_code(403);
-        echo json_encode(['success' => false, 'message' => 'Student PDF downloads are currently disabled by the Admin.']);
-        exit;
-    }
 }
 
 // Staff printing and export each require their own independently assigned permission.
@@ -31,9 +26,6 @@ if ($studentPortalScope !== null) {
 if ($studentPortalScope === null) {
     if (($_GET['print'] ?? '') === '1') {
         requireRolePermission('print_results');
-    }
-    if (($_GET['export'] ?? '') === '1') {
-        requireRolePermission('export_results');
     }
 }
 header('Content-Type: application/json; charset=utf-8');
@@ -632,7 +624,6 @@ try {
         'current_user_role' => $studentPortalScope === null ? currentAdminRole() : null,
         'student_document_permissions' => $studentPortalScope !== null ? [
             'can_print_results' => systemAccessEnabled('student_print_results'),
-            'can_export_results' => systemAccessEnabled('student_export_results'),
         ] : null,
 
         'student' => [
