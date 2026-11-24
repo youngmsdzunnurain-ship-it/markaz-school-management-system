@@ -457,7 +457,7 @@ function renderStudentResult(data) {
             }, { once: true });
 
             studentPhoto.appendChild(image);
-            image.src = `./${profileImage.replace(/^\\/+/, "")}`;
+            image.src = `./${profileImage.replace(/^\/+/, "")}`;
         } else {
             showStudentPhotoInitials(studentPhoto, studentPhotoBox, student);
         }
