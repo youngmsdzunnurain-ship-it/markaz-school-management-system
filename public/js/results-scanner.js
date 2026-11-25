@@ -18,11 +18,11 @@
     const CONFIRM_READS = 2;
     const WARN_MS = 40000;
     const CAMERA = { width: 1920, height: 1440 };
-    const OCR_MAX_WIDTH = 2000;
+    const OCR_TARGET_WIDTH = 2400;
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
-        meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
+        meta: null, phase: "closed", stream: null, track: null, torchOn: false, timer: null, reading: false, worker: null,
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set()
@@ -134,11 +134,11 @@
     }
 
     /* where each subject name is written at the top of the sheet (one or more words, one letter of OCR error allowed) */
+    /* where each subject is written at the top of the sheet: by its full name or its short code
+       (a broadsheet often prints codes such as MTH or ENG). One letter of OCR error is allowed in longer words. */
     function findSubjectSpans(words, subjects) {
         const spans = [];
-        subjects.forEach(subject => {
-            const target = normalise(subject.name);
-            if (target.length < 3) return;
+        const bestFor = (subject, target) => {
             const allowed = target.length >= 7 ? 1 : 0;
             let best = null;
             for (let i = 0; i < words.length; i++) {
@@ -159,6 +159,15 @@
                     }
                 }
             }
+            return best;
+        };
+        subjects.forEach(subject => {
+            const targets = [subject.name, subject.code].map(normalise).filter(target => target.length >= 2);
+            let best = null;
+            targets.forEach(target => {
+                const span = bestFor(subject, target);
+                if (span && (!best || span.count > best.count)) best = span;
+            });
             if (best) spans.push(best);
         });
         return spans.sort((a, b) => a.x0 - b.x0);
@@ -273,6 +282,8 @@
         state.subjectSeen = new Map();
         state.subjectInfo = new Map();
         state.votes = new Map();
+        state.gridPasses = 0;
+        state.gridPartialDone = false;
         state.lastSeen = new Map();
         state.studentSeen = new Set();
     }
@@ -287,8 +298,11 @@
     }
 
     function confirmedValue(studentId, subjectId, field) {
-        const vote = state.votes.get(`${studentId}|${subjectId}|${field}`);
-        return vote && vote.count >= CONFIRM_READS ? vote.value : null;
+        const bucket = state.votes.get(`${studentId}|${subjectId}|${field}`);
+        if (!bucket) return null;
+        let best = null, bestCount = 0;
+        bucket.forEach((count, value) => { if (count > bestCount) { best = value; bestCount = count; } });
+        return bestCount >= CONFIRM_READS ? best : null;
     }
 
     function studentDone(student, subjects) {
@@ -310,8 +324,9 @@
                     const key = `${studentId}|${subjectId}|${field}`;
                     const value = values[field];
                     state.lastSeen.set(key, value);
-                    const vote = state.votes.get(key);
-                    state.votes.set(key, vote && vote.value === value ? { value, count: vote.count + 1 } : { value, count: 1 });
+                    const bucket = state.votes.get(key) || new Map();
+                    bucket.set(value, (bucket.get(value) || 0) + 1);
+                    state.votes.set(key, bucket);
                 });
             });
         });
@@ -325,9 +340,12 @@
             setGuide("Looking for the result sheet. Move closer and keep the whole sheet in view.");
             return;
         }
-        const names = subjects.length ? subjects.map(subject => subject.name).join(", ") : "not yet read";
-        setGuide(`Subjects on this sheet: ${names}. Students complete: ${done} of ${students.length}. ` +
-            (subjects.length ? "Keep moving the camera slowly over the whole sheet." : "Keep the subject names at the top of the sheet in view."));
+        if (subjects.length) {
+            setGuide(`Subjects on this sheet: ${subjects.map(subject => subject.name).join(", ")}. Students complete: ${done} of ${students.length}. Keep moving the camera slowly over the whole sheet.`);
+        } else {
+            const looking = (state.meta.subjects || []).slice(0, 6).map(subject => subject.code ? `${subject.name} (${subject.code})` : subject.name).join(", ");
+            setGuide(`Subject headings not recognised yet. Keep the subject names or codes at the top of the sheet in view. Looking for: ${looking}.`);
+        }
     }
 
     /* ------------------------------------------------------------------ what to save */
@@ -411,6 +429,7 @@
           <video class="mkls-video" playsinline muted autoplay></video>
           <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <div class="mkls-scanline" aria-hidden="true"></div>
+          <button type="button" class="mkls-torch" data-mkls-torch aria-pressed="false" hidden>Torch off</button>
           <div class="mkls-mark" data-mkls-mark hidden>
             <span class="mkls-mark-icon" data-mkls-mark-icon aria-hidden="true"></span>
             <strong class="mkls-mark-text" data-mkls-mark-text></strong>
@@ -450,6 +469,7 @@
         $("[data-mkls-close]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
+        $("[data-mkls-torch]", overlay).addEventListener("click", toggleTorch);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
@@ -494,6 +514,8 @@
     /* ------------------------------------------------------------------ camera */
     function stopStream() {
         if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        state.track = null;
+        state.torchOn = false;
         const video = videoEl();
         if (video) video.srcObject = null;
     }
@@ -504,7 +526,8 @@
     }
 
     function captureFrame(video) {
-        const scale = Math.min(1, OCR_MAX_WIDTH / video.videoWidth);
+        /* small print (a broadsheet) reads only when the letters are large enough: enlarge the frame for the reader */
+        const scale = Math.min(3, Math.max(1, OCR_TARGET_WIDTH / video.videoWidth));
         const canvas = document.createElement("canvas");
         canvas.width = Math.round(video.videoWidth * scale);
         canvas.height = Math.round(video.videoHeight * scale);
@@ -519,6 +542,29 @@
         const worker = await Tesseract.createWorker(language, 1, {});
         await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" }).catch(() => {});
         state.worker = worker;
+    }
+
+    /* the torch (where the phone has one) lights the sheet while it is scanned */
+    async function toggleTorch() {
+        const torch = $("[data-mkls-torch]", overlay);
+        if (!torch) return;
+        if (!state.track) {
+            setGuide("The camera is still starting. Tap the torch again in a moment.");
+            return;
+        }
+        const next = !state.torchOn;
+        try {
+            await state.track.applyConstraints({ advanced: [{ torch: next }] });
+            state.torchOn = next;
+            torch.setAttribute("aria-pressed", String(next));
+            torch.textContent = next ? "Torch on" : "Torch off";
+            if (torch.dataset.supported !== "1") setGuide(next ? "Torch on." : "Torch off.");
+        } catch (error) {
+            state.torchOn = false;
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+            setGuide("This phone or browser does not let the page switch on the torch. Use Chrome on an Android phone with a torch, or keep the sheet in good light.");
+        }
     }
 
     async function startCamera() {
@@ -545,6 +591,18 @@
         }
         if (state.phase !== "camera") { stopStream(); return; }
 
+        state.track = state.stream.getVideoTracks()[0] || null;
+        state.torchOn = false;
+        const torch = $("[data-mkls-torch]", overlay);
+        if (torch) {
+            const capabilities = state.track && state.track.getCapabilities ? state.track.getCapabilities() : {};
+            /* always visible; on phones without a torch the button explains itself when tapped */
+            torch.hidden = false;
+            torch.dataset.supported = capabilities.torch ? "1" : "0";
+            torch.setAttribute("aria-pressed", "false");
+            torch.textContent = "Torch off";
+        }
+
         const video = videoEl();
         video.srcObject = state.stream;
         await video.play().catch(() => {});
@@ -562,41 +620,147 @@
         scheduleRead(300);
     }
 
+    /* a dense sheet is read in overlapping windows: each window keeps the name column and a band of subject
+       columns, enlarged so the small print can be read. Each window is read on its own; results are kept together. */
+    function tilesFor(video) {
+        const vw = video.videoWidth, vh = video.videoHeight;
+        const nameW = Math.round(vw * 0.2);
+        const windowW = Math.round(vw * 0.42);
+        const step = Math.round(windowW * 0.75);
+        const tiles = [];
+        for (let start = nameW; start < vw; start += step) {
+            const w = Math.min(windowW, vw - start);
+            const scale = Math.min(3, 1800 / (nameW + w));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round((nameW + w) * scale);
+            canvas.height = Math.round(vh * scale);
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, nameW, vh, 0, 0, nameW * scale, vh * scale);
+            ctx.drawImage(video, start, 0, w, vh, nameW * scale, 0, w * scale, vh * scale);
+            tiles.push(canvas);
+            if (start + w >= vw) break;
+        }
+        return tiles;
+    }
+
+    /* the reader for the whole broadsheet: find the ruled grid, read every cell, match headings and names, then save */
+    function matchSubject(heading, subjects) {
+        const h = normalise(heading);
+        if (h.length < 3) return null;
+        let best = null, bestDistance = Infinity;
+        subjects.forEach(subject => {
+            [subject.name, subject.code].forEach(label => {
+                const target = normalise(label || "");
+                if (target.length < 2) return;
+                const distance = editDistance(h, target);
+                if (distance <= (target.length >= 6 ? 2 : 1) && distance < bestDistance) { best = subject; bestDistance = distance; }
+            });
+        });
+        return best;
+    }
+
+    async function gridRecognise(canvas, mode) {
+        if (mode === "any-cell") {
+            if (state.gridMode !== "any") { state.gridMode = "any"; await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "8" }); }
+            const r = await state.worker.recognize(canvas);
+            return (r.data.text || "").replace(/\s+/g, "").trim();
+        }
+        if (mode === "digits-cell") {
+            if (state.gridMode !== "cell") { state.gridMode = "cell"; await state.worker.setParameters({ tessedit_char_whitelist: "0123456789", tessedit_pageseg_mode: "8" }); }
+            const r = await state.worker.recognize(canvas);
+            return (r.data.text || "").replace(/\s+/g, "").trim();
+        }
+        if (mode === "digits-words") {
+            if (state.gridMode !== "words") { state.gridMode = "words"; await state.worker.setParameters({ tessedit_char_whitelist: "0123456789", tessedit_pageseg_mode: "11" }); }
+            const r = await state.worker.recognize(canvas);
+            return (r.data.words || []).filter(w => w.text.trim()).map(w => ({ text: w.text.trim(), cx: (w.bbox.x0 + w.bbox.x1) / 2 }));
+        }
+        const pageMode = mode === "block" ? "6" : "7";
+        if (state.gridMode !== "text" + pageMode) { state.gridMode = "text" + pageMode; await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: pageMode }); }
+        const r = await state.worker.recognize(canvas);
+        return (r.data.text || "").replace(/\s+/g, " ").trim();
+    }
+
     async function readFrame() {
         if (state.phase !== "camera" || state.reading) return;
         const video = videoEl();
-        if (!state.worker || !video || !video.videoWidth) { scheduleRead(300); return; }
+        if (!state.worker || !video || !video.videoWidth || !window.MarkazResultsGrid) { scheduleRead(300); return; }
         state.reading = true;
         try {
-            const canvas = captureFrame(video);
-            await state.worker.setParameters({ tessedit_char_whitelist: "" });
-            const textResult = await state.worker.recognize(canvas);
-            await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
-            const digitResult = await state.worker.recognize(canvas);
-            await state.worker.setParameters({ tessedit_char_whitelist: "" });
+            const canvas = document.createElement("canvas");
+            canvas.width = 2400;
+            canvas.height = Math.round(video.videoHeight * (2400 / video.videoWidth));
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const grid = MarkazResultsGrid.detectGrid(canvas);
+            if (!grid.ok) { state.gridHits = 0; setGuide(grid.reason); return; }
+            state.gridHits = (state.gridHits || 0) + 1;
+            if (state.gridHits < 2) { if (!state.gridPasses) setGuide(`Sheet found: ${grid.students} students, ${grid.subjects} subjects. Keep it still…`); return; }
+            setGuide(`Reading ${grid.students} students and ${grid.subjects} subjects…`);
+            const result = await MarkazResultsGrid.readCells(canvas, grid, gridRecognise, (done, total) => setGuide(`Reading the sheet: ${Math.round(100 * done / total)}%`));
             if (state.phase !== "camera") return;
-            judge(parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []));
+            applyGridResult(result);
         } catch (error) {
-            setGuide("The reader paused. Keep the sheet in view.");
+            state.gridHits = 0;
+            setGuide("The reader paused. Keep the whole sheet in view and flat.");
         } finally {
             state.reading = false;
-            if (state.phase === "camera") {
-                if (!state.warned && Date.now() - state.startedAt > WARN_MS) warnNotDone();
-                scheduleRead(READ_EVERY_MS);
-            }
+            if (state.phase === "camera") scheduleRead(400);
         }
     }
 
-    function warnNotDone() {
-        state.warned = true;
-        const subjects = confirmedSubjects();
+    /* each read adds its readings to the votes. A score is confirmed when the same value is read in two reads;
+       an unclear score is read again on the next pass. When every score is confirmed, the existing save runs. */
+    function applyGridResult(result) {
+        const subjects = state.meta.subjects || [];
+        const headingSubjects = result.headerNames.map(heading => matchSubject(heading, subjects));
+        const unknown = result.headerNames.filter((heading, index) => !headingSubjects[index]);
+        if (unknown.length) { setGuide(`Subject heading not recognised: ${unknown.join(", ")}. Keep the headings at the top of the sheet in view.`); return; }
         const students = classStudents();
-        const done = subjects.length ? students.filter(student => studentDone(student, subjects)).length : 0;
-        setMark("warn", `${done} of ${students.length} complete`, 3000);
-        setGuide("Not everything is clear yet. Keep moving the camera slowly, or tap Review scanned students to check the rest by hand.");
+        const unique = Array.from(new Set(headingSubjects));
+        const seen = new Set();
+        const unclear = [];
+        result.rows.forEach(row => {
+            const student = rosterMatch(row.name, students);
+            if (!student) { unclear.push(`name "${row.name}"`); return; }
+            seen.add(String(student.id));
+            row.cells.forEach((trio, index) => {
+                const subject = headingSubjects[index];
+                trio.forEach((text, k) => {
+                    if (!/^\d{1,3}$/.test(text)) { unclear.push(`${student.first_name} ${student.last_name} · ${subject.name} · ${FIELDS[k]} (read "${text}")`); return; }
+                    const key = `${student.id}|${subject.id}|${FIELDS[k]}`;
+                    const bucket = state.votes.get(key) || new Map();
+                    const value = Number(text);
+                    bucket.set(value, (bucket.get(value) || 0) + 1);
+                    state.votes.set(key, bucket);
+                });
+            });
+        });
+        const total = students.length * unique.length * FIELDS.length;
+        let confirmed = 0;
+        students.forEach(student => unique.forEach(subject => FIELDS.forEach(field => {
+            if (confirmedValue(String(student.id), String(subject.id), field) !== null) confirmed++;
+        })));
+        if (seen.size === students.length && confirmed === total) {
+            succeed(unique);
+            return;
+        }
+        state.gridHits = 0;
+        state.gridPasses = (state.gridPasses || 0) + 1;
+        const problem = seen.size < students.length ? `${students.length - seen.size} student row(s) not matched to the roster. ` : "";
+        const which = unclear.length ? `Not yet clear: ${unclear.slice(0, 2).join("; ")}. ` : "";
+        if (state.gridPasses >= 2 && !state.gridPartialDone && seen.size === students.length) {
+            /* after three passes the complete students and subjects are saved; the few unclear scores are filled in Review scanned students */
+            state.gridPartialDone = true;
+            showPhase("marking");
+            stopStream();
+            clearTimeout(state.timer);
+            setGuide(`Saving the ${confirmed} confirmed scores. ${which}Tap Review scanned students to fill the rest.`);
+            setTimeout(() => { if (state.phase === "marking") autoSave(unique); }, 600);
+            return;
+        }
+        setGuide(`Confirmed ${confirmed} of ${total} scores. ${problem}${which}Keep the whole sheet still and in view, or tap Review scanned students.`);
     }
 
-    /* the whole sheet is clear: stop the camera, show the tick, save automatically */
     function succeed(subjects) {
         showPhase("marking");
         stopStream();
