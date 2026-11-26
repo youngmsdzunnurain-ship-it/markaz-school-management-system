@@ -297,7 +297,8 @@ try {
             $stmt->execute([$number,$name,$phone,$email,$jobTitle,$teachingType,$age,$bankAccountNumber,$bankAccountName,$bankName,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
             $id=(int)$pdo->lastInsertId();
             $profile=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,\'time_based\',?,?,?,?)');
-            $profile->execute([$id,$initialSalary,$expectedArrival,$latenessRate,(int)$deductLateness,date('Y-m-d'),(int)$_SESSION['admin_id']]);
+            $salaryEffectiveFrom = $employmentDate ?? date('Y-m-d');
+            $profile->execute([$id,$initialSalary,$expectedArrival,$latenessRate,(int)$deductLateness,$salaryEffectiveFrom,(int)$_SESSION['admin_id']]);
             financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
             $pdo->commit();
         } catch (PDOException $error) {
