@@ -52,7 +52,7 @@ if($action==='calculate'){
     $peopleQuery=$pdo->prepare(
         "SELECT DISTINCT s.id finance_staff_id,s.full_name name
          FROM finance_staff s INNER JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
-         WHERE p.effective_from<=? AND (p.effective_until IS NULL OR p.effective_until>=?)
+         WHERE s.is_active=1 AND p.effective_from<=? AND (p.effective_until IS NULL OR p.effective_until>=?)
          ORDER BY s.full_name"
     );
     $peopleQuery->execute([$last,$first]);$people=$peopleQuery->fetchAll(PDO::FETCH_ASSOC);
