@@ -63,6 +63,7 @@ html[dir="rtl"] .markaz-shell-profile-menu button {
     text-align: right
 }
 html[dir="rtl"] .markaz-shell-sidebar {
+    inset: 0 0 0 auto;
     background: linear-gradient(-180deg,#123d2a,#0d2b1c);
     box-shadow: -12px 0 36px rgba(0,0,0,.18);
     transform: translateX(110%);
@@ -75,6 +76,31 @@ html[dir="rtl"] .markaz-shell-sidebar {
         padding-right: 5px
     }
 }
+/* ---- css/app-motion-2026.css ---- */
+@media screen and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .mk-auth .btn:hover .icon {
+        translate: -5px 0
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .sidebar-nav .nav-link:hover > i,
+html[dir="rtl"] .markaz-shell-sidebar nav a:hover > i {
+        translate: -3px 0
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .stat-card:hover .stat-icon,
+html[dir="rtl"] .progress-card:hover .progress-card-icon {
+        rotate: 9deg
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .classes-stat-card:hover .classes-stat-icon,
+html[dir="rtl"] .attendance-summary-card:hover .summary-icon,
+html[dir="rtl"] .summary-card:hover .panel-icon {
+        rotate: 9deg
+    }
+}
 /* ---- css/page-header-2026.css ---- */
 html[dir="rtl"][lang] body:not(#mkhdr) .students-topbar,
 html[dir="rtl"][lang] body:not(#mkhdr) .classes-topbar,
@@ -85,8 +111,28 @@ html[dir="rtl"][lang] body:not(#mkhdr) .class-subjects-page .page-header,
 html[dir="rtl"][lang] body:not(#mkhdr) .welcome-card,
 html[dir="rtl"][lang] body:not(#mkhdr) .online-welcome-card,
 html[dir="rtl"][lang] body:not(#mkhdr) .fees-placeholder-top {
-    background: radial-gradient(120% 150% at 84% -10%, rgba(230, 194, 106, .22), transparent 48%),
+    background: radial-gradient(120% 150% at 16% -10%, rgba(230, 194, 106, .22), transparent 48%),
         linear-gradient(-135deg, #071f15 0%, #0c3a27 46%, #15603f 100%) !important
+}
+html[dir="rtl"][lang] body:not(#mkhdr) .students-topbar::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .classes-topbar::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .class-topbar::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .settings-header::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .attendance-header::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .class-subjects-page .page-header::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .welcome-card::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .online-welcome-card::before,
+html[dir="rtl"][lang] body:not(#mkhdr) .fees-placeholder-top::before {
+    background: radial-gradient(1.4px 1.4px at 92% 24%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 83% 66%, #fff 99%, transparent),
+        radial-gradient(1.2px 1.2px at 73% 16%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 62% 74%, #fff 99%, transparent),
+        radial-gradient(1.3px 1.3px at 54% 30%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 42% 12%, #fff 99%, transparent),
+        radial-gradient(1.2px 1.2px at 34% 56%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 24% 20%, #fff 99%, transparent),
+        radial-gradient(1.3px 1.3px at 10% 40%, #fff 99%, transparent),
+        radial-gradient(1px 1px at 5% 12%, #fff 99%, transparent) !important
 }
 html[dir="rtl"][lang] body:not(#mkhdr) .students-topbar::after,
 html[dir="rtl"][lang] body:not(#mkhdr) .classes-topbar::after,

@@ -16,6 +16,7 @@ html[dir="rtl"] .page-form {
     right: calc(50% - 1px)
 }
 html[dir="rtl"] .page-form::before {
+    inset: 0 0 0 auto;
     background: linear-gradient(-90deg,rgba(0,0,0,.14),transparent);
     left: auto;
     right: 0
@@ -82,4 +83,29 @@ html[dir="rtl"] .student-success-mode #studentPortalExperience .portal-welcome-c
 }
 html[dir="rtl"] .student-success-mode #studentPortalExperience .portal-welcome-mark {
     background: linear-gradient(-145deg, #176b45, #0d4b31)
+}
+/* ---- css/app-motion-2026.css ---- */
+@media screen and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .mk-auth .btn:hover .icon {
+        translate: -5px 0
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .sidebar-nav .nav-link:hover > i,
+html[dir="rtl"] .markaz-shell-sidebar nav a:hover > i {
+        translate: -3px 0
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .stat-card:hover .stat-icon,
+html[dir="rtl"] .progress-card:hover .progress-card-icon {
+        rotate: 9deg
+    }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[dir="rtl"] .classes-stat-card:hover .classes-stat-icon,
+html[dir="rtl"] .attendance-summary-card:hover .summary-icon,
+html[dir="rtl"] .summary-card:hover .panel-icon {
+        rotate: 9deg
+    }
 }
