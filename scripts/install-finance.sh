@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -172,6 +172,12 @@ attendance_policy_columns="$(query "SELECT COUNT(*) FROM information_schema.COLU
 
 # Refund schema is applied last because it references confirmed fee payments.
 if [[ "$refund_tables" == "0" ]]; then apply_migration "20261126_markaz_fee_refunds.sql"; fi
+payroll_staff_details="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff' AND COLUMN_NAME IN ('age','bank_account_number','bank_account_name','bank_name','teaching_type')")"
+payroll_opt_in="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='deduct_lateness'")"
+if [[ "$payroll_staff_details" == "0" && "$payroll_opt_in" == "0" ]]; then apply_migration "20261127_payroll_deduction_and_staff_details.sql"; fi
+payroll_staff_details="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff' AND COLUMN_NAME IN ('age','bank_account_number','bank_account_name','bank_name','teaching_type')")"
+payroll_opt_in="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='deduct_lateness'")"
+[[ "$payroll_staff_details" == "5" && "$payroll_opt_in" == "1" ]] || { echo "ERROR: Payroll staff detail migration verification failed. Restore from: $backup" >&2; exit 5; }
 refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
 [[ "$refund_tables" == "2" ]] || { echo "ERROR: Fee refund schema verification failed. Restore from: $backup" >&2; exit 5; }
 
