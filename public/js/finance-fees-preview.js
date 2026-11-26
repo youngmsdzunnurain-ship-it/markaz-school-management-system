@@ -30,7 +30,7 @@ for(let i=0;i<100;i++){
  let paid=status==='paid'?currentFee:status==='partial'?Math.max(5000,Math.round(currentFee*(.25+(i%3)*.15)/1000)*1000):0;
  if(currentFee===0)status='paid';
  
- const admissionDate=intake==='New Intake'?new Date(Date.UTC(2026,8,15+(i%88))).toISOString().slice(0,10):'2024-09-'+String(2+(i%26)).padStart(2,'0');
+ const admissionDate=intake==='New Intake'?new Date(Date.UTC(2026,8,15+(i%74))).toISOString().slice(0,10):'2024-09-'+String(2+(i%26)).padStart(2,'0');
  const name=firstNames[i%firstNames.length]+' '+lastNames[(i*7)%lastNames.length]+' '+['A.','M.','S.','O.','U.'][(i*3)%5];
  const payments=[];
  if(paid>0){const first=Math.min(paid,Math.round(paid*.6/1000)*1000);payments.push({amount:first,date:'2026-10-'+String(14+(i%12)).padStart(2,'0'),reference:'MZ-FEE-'+String(27001+i),method:i%2?'Bank transfer':'Cash',staff:'Finance Officer'});if(paid>first)payments.push({amount:paid-first,date:'2026-11-'+String(3+(i%20)).padStart(2,'0'),reference:'MZ-FEE-'+String(28001+i),method:'POS',staff:'Bursary Desk'});}
