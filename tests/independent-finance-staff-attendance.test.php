@@ -38,5 +38,9 @@ independentStaffCheck(str_contains($financeJs, 'save_staff') && str_contains($fi
 independentStaffCheck(str_contains($financeJs, 'financeStaffLoaded=true') && str_contains($financeJs, 'financeStaffLoaded=false') && str_contains($financeJs, 'financeStaffLoading=null'), 'Finance staff loading state is cached only after success and reset after failure for retry');
 independentStaffCheck(str_contains($authMe, 'can_access_teacher_attendance'), 'session capability response exposes the separate teacher-attendance permission');
 independentStaffCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql'), 'Finance installer applies the independent staff migration after existing Finance migrations');
+independentStaffCheck(str_contains($teacherAttendanceApi, 'deduct_lateness') && str_contains($teacherAttendanceApi, "financeToCents('10.00')"), 'lateness deductions default to ten naira per minute and respect staff opt-in');
+independentStaffCheck(str_contains($payrollApi, "status==='absent'") || str_contains($payrollApi, "status']==='absent'"), 'unexcused absent attendance contributes to payroll deductions');
+independentStaffCheck(str_contains($payrollApi, '30000') || str_contains($payrollApi, "'300.00'"), 'each unexcused absent day deducts exactly three hundred naira');
+independentStaffCheck(str_contains($payrollApi, "'excused'") && str_contains($payrollApi, "'approved_leave'"), 'excused and approved leave do not incur absence deductions');
 
 echo "Independent Finance staff and teacher attendance regression checks passed.\n";
