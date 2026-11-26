@@ -273,6 +273,7 @@ try {
         $bankAccountName = trim((string)($input['bank_account_name'] ?? ''));
         $bankName = trim((string)($input['bank_name'] ?? ''));
         $initialSalary = financeMoney($input['initial_salary'] ?? '', true);
+        $latenessRate = financeMoney($input['lateness_rate_per_minute'] ?? '13', true);
         $expectedArrival = trim((string)($input['expected_arrival'] ?? ''));
         $deductLateness = ($input['deduct_lateness'] ?? '0') === '1';
         $phone = trim((string)($input['phone'] ?? '')) ?: null;
@@ -296,7 +297,7 @@ try {
             $stmt->execute([$number,$name,$phone,$email,$jobTitle,$teachingType,$age,$bankAccountNumber,$bankAccountName,$bankName,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
             $id=(int)$pdo->lastInsertId();
             $profile=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,\'time_based\',10.00,?,?,?)');
-            $profile->execute([$id,$initialSalary,$expectedArrival,(int)$deductLateness,date('Y-m-d'),(int)$_SESSION['admin_id']]);
+            $profile->execute([$id,$initialSalary,$expectedArrival,$latenessRate,(int)$deductLateness,date('Y-m-d'),(int)$_SESSION['admin_id']]);
             financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
             $pdo->commit();
         } catch (PDOException $error) {
