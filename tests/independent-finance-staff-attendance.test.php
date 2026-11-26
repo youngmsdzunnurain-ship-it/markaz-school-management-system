@@ -39,13 +39,14 @@ independentStaffCheck(str_contains($financeJs, 'save_staff') && str_contains($fi
 independentStaffCheck(str_contains($financeJs, 'financeStaffLoaded=true') && str_contains($financeJs, 'financeStaffLoaded=false') && str_contains($financeJs, 'financeStaffLoading=null'), 'Finance staff loading state is cached only after success and reset after failure for retry');
 independentStaffCheck(str_contains($authMe, 'can_access_teacher_attendance'), 'session capability response exposes the separate teacher-attendance permission');
 independentStaffCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql'), 'Finance installer applies the independent staff migration after existing Finance migrations');
-independentStaffCheck(str_contains($teacherAttendanceApi, 'deduct_lateness') && str_contains($payrollApi, "??'10'") && str_contains($payrollApi, 'deduct_lateness=?'), 'lateness defaults to ten naira per minute and is saved as an explicit per-staff opt-in');
+independentStaffCheck(str_contains($teacherAttendanceApi, 'deduct_lateness') && str_contains($payrollApi, "??'13'") && str_contains($payrollApi, 'deduct_lateness=?'), 'lateness defaults to thirteen naira per minute and is saved as an explicit per-staff opt-in');
 independentStaffCheck(str_contains($payrollApi, 'absenceDeductionCents+=30000'), 'unexcused absent attendance contributes to payroll deductions');
 independentStaffCheck(str_contains($payrollApi, '30000') || str_contains($payrollApi, "'300.00'"), 'each unexcused absent day deducts exactly three hundred naira');
 independentStaffCheck(str_contains($teacherAttendanceApi, "['present','absent','approved_leave','excused']") && str_contains($payrollApi, 'absenceDeductionCents+=30000'), 'excused and approved leave remain distinct from the only absence-deducted status');
 
 independentStaffCheck(str_contains($financeApi, 'bank_account_number') && str_contains($financeApi, 'teaching_type'), 'Finance staff records store bank and teaching details independently');
 independentStaffCheck(str_contains($financePage, 'bank_account_number') && str_contains($financePage, 'otherJobTitleWrap') && str_contains($financePage, 'initial_salary') && str_contains($financePage, 'expected_arrival'), 'Finance registration captures bank details, role-specific fields, salary and arrival schedule');
+independentStaffCheck(str_contains($financeApi, "?? '13'") || str_contains($financeApi, "??'13'"), 'new Finance staff profiles default to thirteen naira per minute');
 independentStaffCheck(str_contains($payrollRulesMigration, 'deduct_lateness') && str_contains($payrollRulesMigration, 'bank_account_number'), 'the new migration adds the explicit deduction preference and Finance-only bank details');
 independentStaffCheck(str_contains($installer, '20261127_payroll_deduction_and_staff_details.sql'), 'Finance installer includes the payroll staff details migration');
 
