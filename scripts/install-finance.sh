@@ -178,6 +178,14 @@ if [[ "$payroll_staff_details" == "0" && "$payroll_opt_in" == "0" ]]; then apply
 payroll_staff_details="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff' AND COLUMN_NAME IN ('age','bank_account_number','bank_account_name','bank_name','teaching_type')")"
 payroll_opt_in="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='deduct_lateness'")"
 [[ "$payroll_staff_details" == "5" && "$payroll_opt_in" == "1" ]] || { echo "ERROR: Payroll staff detail migration verification failed. Restore from: $backup" >&2; exit 5; }
+# Enforce the approved default rate for new and previously default-configured profiles.
+lateness_rate_default="$(query "SELECT COLUMN_DEFAULT FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='lateness_rate_per_minute'")"
+if [[ "$lateness_rate_default" != "13.00" && "$lateness_rate_default" != "13" ]]; then
+    apply_migration "20261128_teacher_lateness_rate_13_naira.sql"
+fi
+lateness_rate_default="$(query "SELECT COLUMN_DEFAULT FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='lateness_rate_per_minute'")"
+[[ "$lateness_rate_default" == "13.00" || "$lateness_rate_default" == "13" ]] || { echo "ERROR: Teacher lateness rate default was not updated. Restore from the verified backup: $backup" >&2; exit 5; }
+
 refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
 [[ "$refund_tables" == "2" ]] || { echo "ERROR: Fee refund schema verification failed. Restore from: $backup" >&2; exit 5; }
 
