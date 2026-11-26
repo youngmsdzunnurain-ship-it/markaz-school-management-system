@@ -61,7 +61,7 @@ if($action==='calculate'){
          ORDER BY effective_from,id'
     );
     $attendance=$pdo->prepare('SELECT id,attendance_mode,status,late_minutes,lateness_deduction FROM staff_attendance WHERE finance_staff_id=? AND attendance_date BETWEEN ? AND ? AND approved_at IS NOT NULL ORDER BY attendance_date');
-    $insert=$pdo->prepare('INSERT INTO finance_payroll_items(payroll_period_id,finance_staff_id,base_salary,lateness_deductions,late_minutes,other_deductions,allowances,net_salary) VALUES(?,?,?,?,?,0,0,?)');
+    $insert=$pdo->prepare('INSERT INTO finance_payroll_items(payroll_period_id,finance_staff_id,base_salary,lateness_deductions,late_minutes,other_deductions,allowances,net_salary) VALUES(?,?,?,?,?,?,0,?)');
     $deduct=$pdo->prepare('INSERT INTO finance_payroll_deductions(payroll_item_id,staff_attendance_id,description,amount) VALUES(?,?,?,?)');
     $daysInMonth=(int)date('t',strtotime($first));$gross=0;$totalDeduct=0;$netTotal=0;
     foreach($people as $person){
