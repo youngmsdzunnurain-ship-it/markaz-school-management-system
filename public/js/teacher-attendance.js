@@ -67,7 +67,7 @@ saveButton.addEventListener("click",save);
 dateInput.addEventListener("change",load);
 request("./api/auth/me.php").then(data=>{
  
- if(admin.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
+ if(data.admin?.can_access_teacher_attendance!==true){show("This page is available only to Admin and Management accounts with full Attendance access.",true);rowsHost.innerHTML='<tr><td colspan="7" class="register-empty">Access denied.</td></tr>';return;}
  load();
 }).catch(error=>show(error.message,true));
 })();

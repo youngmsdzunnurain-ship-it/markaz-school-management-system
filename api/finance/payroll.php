@@ -8,7 +8,8 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
     $st=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE period_year=? AND period_month=? LIMIT 1');
     $st->execute([$year,$month]);$period=$st->fetch(PDO::FETCH_ASSOC);$items=[];
     if($period){$q=$pdo->prepare('SELECT i.*,s.full_name teacher_name,s.staff_number,s.job_title FROM finance_payroll_items i INNER JOIN finance_staff s ON s.id=i.finance_staff_id WHERE i.payroll_period_id=? ORDER BY s.full_name');$q->execute([(int)$period['id']]);$items=$q->fetchAll(PDO::FETCH_ASSOC);}
-    financeJson(['success'=>true,'period'=>$period,'items'=>$items]);
+    $history=$pdo->query('SELECT CONCAT(LPAD(p.period_month,2,\'0\'),\'/\',p.period_year) period_label,s.full_name teacher_name,s.staff_number,s.job_title,i.base_salary,i.lateness_deductions,i.other_deductions,i.net_salary,i.status FROM finance_payroll_items i INNER JOIN finance_payroll_periods p ON p.id=i.payroll_period_id INNER JOIN finance_staff s ON s.id=i.finance_staff_id ORDER BY p.period_year DESC,p.period_month DESC,s.full_name LIMIT 500')->fetchAll(PDO::FETCH_ASSOC);
+    financeJson(['success'=>true,'period'=>$period,'items'=>$items,'history'=>$history]);
 }
 if($_SERVER['REQUEST_METHOD']!=='POST')financeJson(['success'=>false,'message'=>'Method not allowed.'],405);
 financeRequireSafePost();$input=financeInput();$action=(string)($input['action']??'');
