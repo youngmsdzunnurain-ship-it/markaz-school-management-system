@@ -272,6 +272,9 @@ try {
         $bankAccountNumber = trim((string)($input['bank_account_number'] ?? ''));
         $bankAccountName = trim((string)($input['bank_account_name'] ?? ''));
         $bankName = trim((string)($input['bank_name'] ?? ''));
+        $initialSalary = financeMoney($input['initial_salary'] ?? '', true);
+        $expectedArrival = trim((string)($input['expected_arrival'] ?? ''));
+        $deductLateness = ($input['deduct_lateness'] ?? '0') === '1';
         $phone = trim((string)($input['phone'] ?? '')) ?: null;
         $email = strtolower(trim((string)($input['email'] ?? ''))) ?: null;
         $employmentDate = trim((string)($input['employment_date'] ?? '')) ?: null;
@@ -279,7 +282,7 @@ try {
         if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
             || $phone === null || $email === null || !filter_var($email, FILTER_VALIDATE_EMAIL)
             || $bankAccountNumber === '' || !preg_match('/^\d{6,34}$/', $bankAccountNumber)
-            || $bankAccountName === '' || $bankName === '' || ($age !== null && ($age < 16 || $age > 100))
+            || $bankAccountName === '' || $bankName === '' || !preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $expectedArrival) || ($age !== null && ($age < 16 || $age > 100))
             || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
             financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
         }
@@ -287,15 +290,23 @@ try {
         if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{0,39}$/', $number)) {
             financeJson(['success'=>false,'message'=>'Staff number may contain only letters, numbers, hyphens and underscores.'],422);
         }
-        $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,teaching_type,age,bank_account_number,bank_account_name,bank_name,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');
+        $pdo->beginTransaction();
         try {
+            $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,teaching_type,age,bank_account_number,bank_account_name,bank_name,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');
             $stmt->execute([$number,$name,$phone,$email,$jobTitle,$teachingType,$age,$bankAccountNumber,$bankAccountName,$bankName,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
+            $id=(int)$pdo->lastInsertId();
+            $profile=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,\'time_based\',10.00,?,?,?)');
+            $profile->execute([$id,$initialSalary,$expectedArrival,(int)$deductLateness,date('Y-m-d'),(int)$_SESSION['admin_id']]);
+            financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
+            $pdo->commit();
         } catch (PDOException $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
             if ((string)$error->getCode() === '23000') financeJson(['success'=>false,'message'=>'That Finance staff number is already in use.'],409);
             throw $error;
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
         }
-        $id=(int)$pdo->lastInsertId();
-        financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
         financeJson(['success'=>true,'id'=>$id,'message'=>'Finance staff member added. No academic login account was created.'],201);
     }
     if ($action === 'deactivate_staff') {
