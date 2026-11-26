@@ -11,7 +11,7 @@ $checks = [
     'preview covers payment statuses' => str_contains($js, "'paid'") && str_contains($js, "'partial'") && str_contains($js, "'unpaid'") && str_contains($js, "'overdue'"),
     'preview shows previous-term debt and instalment history' => str_contains($js, 'previousDebt') && str_contains($js, 'payments') && str_contains($html, 'payment histories'),
     'preview has responsive layout and filters' => str_contains($css, '@media(max-width:760px)') && str_contains($html, 'statusFilter'),
-    'preview does not submit or save financial transactions' => !str_contains($js, 'method:\'POST\'') && !str_contains($js, 'termFeeRequest'),
+    'preview does not submit or save financial transactions' => !str_contains($js, "method:'POST'") && !str_contains($js, 'termFeeRequest'),
 ];
 foreach ($checks as $label => $ok) {
     if (!$ok) { fwrite(STDERR, "FAIL: {$label}\\n"); exit(1); }
