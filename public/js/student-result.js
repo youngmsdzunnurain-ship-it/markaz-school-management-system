@@ -1407,11 +1407,9 @@ function leaveStudentResultPage() {
         ? `./class.html?id=${encodeURIComponent(classId)}`
         : "./dashboard.html";
 
-    if (typeof window.markazGoBack === "function") {
-        window.markazGoBack(fallback);
-    } else {
-        window.location.href = fallback;
-    }
+    // Use the explicit destination instead of browser history. Mobile webviews
+    // can return to an unrelated page or appear not to respond to history.back().
+    window.location.replace(fallback);
 }
 
 function showUnsavedChangesModal() {

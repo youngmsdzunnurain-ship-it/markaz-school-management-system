@@ -13,6 +13,9 @@ $attendanceJs = file_get_contents($root . '/public/js/teacher-attendance.js');
 $financePage = file_get_contents($root . '/public/finance.html');
 $financeJs = file_get_contents($root . '/public/js/finance.js');
 
+demoStaffCheck(str_contains($attendancePage, 'href="./dashboard.html" class="attendance-back"'), 'Teacher Attendance back navigation returns directly to the Dashboard');
+demoStaffCheck(str_contains($attendancePage, 'v=20261126-attendance-nav1'), 'Teacher Attendance loads a cache-busted JavaScript version');
+demoStaffCheck(str_contains($financePage, 'v=20261126-demo-payroll1'), 'Finance loads the latest demo payroll JavaScript instead of a stale cached copy');
 demoStaffCheck(!str_contains($attendancePage, 'teacherFinanceLink'), 'Teacher Attendance has no Finance/Payroll navigation link');
 demoStaffCheck(!str_contains($attendancePage, 'Finance &amp; Payroll'), 'Teacher Attendance header does not display Finance & Payroll navigation');
 demoStaffCheck(!str_contains($attendanceJs, 'teacherFinanceLink'), 'Teacher Attendance JavaScript does not restore the Finance/Payroll link');
