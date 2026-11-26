@@ -29,12 +29,12 @@ for(let i=0;i<100;i++){
  let status=bucket<=2?'paid':bucket<=5?'partial':bucket<=8?'unpaid':'overdue';
  let paid=status==='paid'?currentFee:status==='partial'?Math.max(5000,Math.round(currentFee*(.25+(i%3)*.15)/1000)*1000):0;
  if(currentFee===0)status='paid';
- const admissionYear=intake==='New Intake'?2027:2024+(i%3);
- const admissionDate=intake==='New Intake'?'2027-01-'+String(2+(i%26)).padStart(2,'0'):'2024-09-'+String(2+(i%26)).padStart(2,'0');
+ 
+ const admissionDate=intake==='New Intake'?new Date(Date.UTC(2026,8,15+(i%88))).toISOString().slice(0,10):'2024-09-'+String(2+(i%26)).padStart(2,'0');
  const name=firstNames[i%firstNames.length]+' '+lastNames[(i*7)%lastNames.length]+' '+['A.','M.','S.','O.','U.'][(i*3)%5];
  const payments=[];
- if(paid>0){const first=Math.min(paid,Math.round(paid*.6/1000)*1000);payments.push({amount:first,date:'2027-01-'+String(14+(i%12)).padStart(2,'0'),reference:'MZ-FEE-'+String(27001+i),method:i%2?'Bank transfer':'Cash',staff:'Finance Officer'});if(paid>first)payments.push({amount:paid-first,date:'2027-02-'+String(3+(i%20)).padStart(2,'0'),reference:'MZ-FEE-'+String(28001+i),method:'POS',staff:'Bursary Desk'});}
- students.push({id:i+1,name,admission:'MZ/27/'+String(1001+i),section:sectionKey,sectionLabel:section.label,className,type,intake,admissionDate,base,discount,currentFee,previousDebt,totalDue:currentFee+previousDebt,paid,currentBalance:currentFee-paid,totalBalance:currentFee-paid+previousDebt,status,adjustment,payments});
+ if(paid>0){const first=Math.min(paid,Math.round(paid*.6/1000)*1000);payments.push({amount:first,date:'2026-10-'+String(14+(i%12)).padStart(2,'0'),reference:'MZ-FEE-'+String(27001+i),method:i%2?'Bank transfer':'Cash',staff:'Finance Officer'});if(paid>first)payments.push({amount:paid-first,date:'2026-11-'+String(3+(i%20)).padStart(2,'0'),reference:'MZ-FEE-'+String(28001+i),method:'POS',staff:'Bursary Desk'});}
+ students.push({id:i+1,name,admission:'MZ/26/'+String(1001+i),section:sectionKey,sectionLabel:section.label,className,type,intake,admissionDate,base,discount,currentFee,previousDebt,totalDue:currentFee+previousDebt,paid,currentBalance:currentFee-paid,totalBalance:currentFee-paid+previousDebt,status,adjustment,payments});
 }
 let activeSection='',filtered=students.slice();
 function statusLabel(status){return {paid:'Fully paid',partial:'Part payment',unpaid:'Unpaid',overdue:'Overdue'}[status]||status}
