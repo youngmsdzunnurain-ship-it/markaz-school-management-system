@@ -28,7 +28,7 @@ for(let i=0;i<100;i++){
  const bucket=i%10;
  let status=bucket<=2?'paid':bucket<=5?'partial':bucket<=8?'unpaid':'overdue';
  let paid=status==='paid'?currentFee:status==='partial'?Math.max(5000,Math.round(currentFee*(.25+(i%3)*.15)/1000)*1000):0;
- if(currentFee===0)status='paid';
+ if(currentFee===0){status='paid';paid=0;}
  
  const admissionDate=intake==='New Intake'?new Date(Date.UTC(2026,8,15+(i%74))).toISOString().slice(0,10):'2024-09-'+String(2+(i%26)).padStart(2,'0');
  const name=firstNames[i%firstNames.length]+' '+lastNames[(i*7)%lastNames.length]+' '+['A.','M.','S.','O.','U.'][(i*3)%5];
