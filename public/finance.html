@@ -222,11 +222,7 @@
 </section>
 <section class="tab-panel" id="tab-payroll">
  <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Teacher attendance is managed in the Attendance workspace</b><p>Use the dedicated Teacher Attendance register alongside student attendance. Only Admin and Management accounts with full Attendance access can open it. Approved arrival records are the single source used for payroll deductions.</p><a href="./teacher-attendance.html" class="action-link" data-role-access="teacher_attendance">Open Teacher Attendance <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div></div>
- <section class="panel finance-demo-staff-panel" aria-labelledby="demoTeacherStaffTitle">
-  <div class="panel-heading"><div><span class="eyebrow">SAFE TEST DATA</span><h2 id="demoTeacherStaffTitle">Preview with 10 demo teachers</h2><p class="muted">Creates clearly labelled fictional staff profiles with assigned teaching roles, sample salaries and attendance schedules. These records appear in attendance and payroll until deactivated.</p></div></div>
-  <button class="btn btn-secondary" type="button" id="loadDemoTeacherStaff"><i class="fa-solid fa-users"></i> Load 10 Demo Teachers</button>
-  <p class="muted small">Demo profiles are added automatically when Finance opens. They are clearly labelled, fictional records; payroll preview is calculated as a draft and no salary payment is made.</p>
- </section>
+ 
  <div class="payroll-staff-create-layout">
   <details class="finance-staff-create"><summary class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Teacher / Staff</summary><form class="panel form-panel" id="financeStaffForm"><div class="panel-heading"><div><span class="eyebrow">INDEPENDENT STAFF REGISTER</span><h2>Add Finance staff member</h2><p class="muted">This does not create or modify an academic login account.</p></div></div>
    <label>Full name<input name="full_name" maxlength="160" required placeholder="Teacher or staff full name"></label>
@@ -244,7 +240,7 @@
   <p class="muted small">Approval freezes the reviewed payroll figures. The scheduled transfer worker will remain disabled until a payout provider, verified teacher bank recipients, server scheduler and credentials have been configured and tested.</p>
   <div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Position</th><th>Basic salary</th><th>Late minutes</th><th>Late deductions</th><th>Absence deductions</th><th>Total deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollRows"><tr><td colspan="10" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
  </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">PAYROLL HISTORY</span><h2>Calculated payroll history</h2><p class="muted small">Includes staff-level rows from saved payroll periods. Draft demo payroll is not a payment.</p></div></div><div class="table-wrap"><table><thead><tr><th>Period</th><th>Staff member</th><th>Staff ID</th><th>Basic salary</th><th>Total deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="7" class="empty">Loading payroll history…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">PAYROLL HISTORY</span><h2>Calculated payroll history</h2><p class="muted small">Includes staff-level rows from saved payroll periods.</p></div></div><div class="table-wrap"><table><thead><tr><th>Period</th><th>Staff member</th><th>Staff ID</th><th>Basic salary</th><th>Total deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="7" class="empty">Loading payroll history…</td></tr></tbody></table></div></div>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FINANCE STAFF REGISTER</span><h2>Payroll staff and salary profiles</h2></div><button class="btn btn-light" id="reloadStaff">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Position</th><th>Monthly salary</th><th>Attendance policy</th><th>Arrival</th><th>Lateness rule</th><th>Status / action</th></tr></thead><tbody id="staffRows"><tr><td colspan="8" class="empty">Loading Finance staff…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-reports">
@@ -270,6 +266,6 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261126-demo-payroll1"></script>
+    <script src="js/finance.js?v=20261126-remove-demo1"></script>
 </body>
 </html>
