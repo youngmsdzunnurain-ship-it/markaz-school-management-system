@@ -22,6 +22,7 @@ $financeJs = file_get_contents($root . '/public/js/finance.js');
 $authMe = file_get_contents($root . '/api/auth/me.php');
 $installer = file_get_contents($root . '/scripts/install-finance.sh');
 $payrollRulesMigration = file_get_contents($root . '/database/migrations/20261127_payroll_deduction_and_staff_details.sql');
+$latenessRateMigration = file_get_contents($root . '/database/migrations/20261128_teacher_lateness_rate_13_naira.sql');
 
 independentStaffCheck(str_contains($migration, 'CREATE TABLE finance_staff'), 'Finance has an independent staff register');
 independentStaffCheck(str_contains($migration, 'finance_staff_id') && str_contains($migration, 'REFERENCES finance_staff(id)'), 'salary, attendance and payroll records reference Finance staff IDs');
@@ -49,5 +50,7 @@ independentStaffCheck(str_contains($financePage, 'bank_account_number') && str_c
 independentStaffCheck(str_contains($financeApi, "?? '13'") || str_contains($financeApi, "??'13'"), 'new Finance staff profiles default to thirteen naira per minute');
 independentStaffCheck(str_contains($payrollRulesMigration, 'deduct_lateness') && str_contains($payrollRulesMigration, 'bank_account_number'), 'the new migration adds the explicit deduction preference and Finance-only bank details');
 independentStaffCheck(str_contains($installer, '20261127_payroll_deduction_and_staff_details.sql'), 'Finance installer includes the payroll staff details migration');
+independentStaffCheck(str_contains($latenessRateMigration, 'DEFAULT 13.00') && str_contains($latenessRateMigration, 'SET lateness_rate_per_minute = 13.00'), 'the migration changes the default and upgrades old default-rate profiles to thirteen naira');
+independentStaffCheck(str_contains($installer, '20261128_teacher_lateness_rate_13_naira.sql'), 'Finance installer applies and verifies the thirteen-naira rate migration');
 
 echo "Independent Finance staff and teacher attendance regression checks passed.\n";
