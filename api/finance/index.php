@@ -591,50 +591,92 @@ try {
 function financeAllocatePayment(PDO $pdo,int $paymentId,int $studentId,string $amount):void
 {
     $remainingCents=financeToCents($amount);
-    $stmt=$pdo->prepare(
-        "SELECT i.id,(i.amount_due-i.discount_amount-COALESCE(a.paid,0)) balance
-         FROM finance_fee_invoices i
-         LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
-         WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-i.discount_amount-COALESCE(a.paid,0))>0
-         ORDER BY i.due_on,i.id FOR UPDATE"
-    );
-    $stmt->execute([$studentId]);$invoices=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    $insert=$pdo->prepare('INSERT INTO finance_fee_allocations (payment_id,invoice_id,amount) VALUES (?,?,?)');
-    $update=$pdo->prepare(
-        "UPDATE finance_fee_invoices i SET status=CASE
-          WHEN (i.amount_due-i.discount_amount-(SELECT COALESCE(SUM(a.amount),0) FROM finance_fee_allocations a WHERE a.invoice_id=i.id))<=0 THEN 'paid'
-          ELSE 'partial' END WHERE id=?"
-    );
-    foreach($invoices as $invoice){
-        if($remainingCents<=0)break;
-        $balanceCents=financeToCents((string)$invoice['balance']);
-        $partCents=min($remainingCents,$balanceCents);
-        $part=financeFromCents($partCents);
-        $insert->execute([$paymentId,(int)$invoice['id'],$part]);$update->execute([(int)$invoice['id']]);
-        $remainingCents-=$partCents;
-    }
-    // Continue allocating to academic-term invoices after monthly invoices.
-    $termStmt=$pdo->prepare(
-        "SELECT i.id,(i.amount_due-COALESCE(a.paid,0)) balance
-         FROM finance_term_fee_invoices i
-         LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) a ON a.term_invoice_id=i.id
-         WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-COALESCE(a.paid,0))>0
-         ORDER BY i.due_on,i.id FOR UPDATE"
-    );
-    $termStmt->execute([$studentId]);
+
+    $current=$pdo->query(
+        "SELECT ap.id period_id,t.name term_name,COALESCE(fs.id,0) finance_session_id
+         FROM academic_periods ap
+         INNER JOIN academic_sessions s ON s.id=ap.academic_session_id
+         INNER JOIN terms t ON t.id=ap.term_id
+         LEFT JOIN finance_academic_sessions fs ON fs.session_name=s.name
+         WHERE s.is_current=1 AND ap.is_current=1
+         ORDER BY ap.id DESC LIMIT 1"
+    )->fetch(PDO::FETCH_ASSOC) ?: [];
+    $periodId=(int)($current['period_id']??0);
+    $financeSessionId=(int)($current['finance_session_id']??0);
+    $termName=strtolower((string)($current['term_name']??''));
+    $term='';
+    foreach(['first','second','third'] as $termKey){if(str_contains($termName,$termKey)){$term=$termKey;break;}}
+
     $termInsert=$pdo->prepare('INSERT INTO finance_term_fee_payments (term_invoice_id,payment_id,amount) VALUES (?,?,?)');
     $termUpdate=$pdo->prepare(
         "UPDATE finance_term_fee_invoices i SET status=CASE
          WHEN (i.amount_due-(SELECT COALESCE(SUM(p.amount),0) FROM finance_term_fee_payments p WHERE p.term_invoice_id=i.id))<=0 THEN 'paid'
          ELSE 'partial' END WHERE id=?"
     );
-    foreach($termStmt->fetchAll(PDO::FETCH_ASSOC) as $invoice){
+    $allocateTermRows=function(array $invoices) use (&$remainingCents,$termInsert,$termUpdate,$paymentId):void {
+        foreach($invoices as $invoice){
+            if($remainingCents<=0)break;
+            $balanceCents=financeToCents((string)$invoice['balance']);
+            $partCents=min($remainingCents,$balanceCents);
+            $termInsert->execute([(int)$invoice['id'],$paymentId,financeFromCents($partCents)]);
+            $termUpdate->execute([(int)$invoice['id']]);
+            $remainingCents-=$partCents;
+        }
+    };
+
+    // Current-term school fees are paid first so the current balance and
+    // previous-term carry-forward remain separately visible in the register.
+    if($periodId>0 && $term!==''){
+        $currentTerm=$pdo->prepare(
+            "SELECT i.id,(i.amount_due-COALESCE(a.paid,0)) balance
+             FROM finance_term_fee_invoices i
+             LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) a ON a.term_invoice_id=i.id
+             WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-COALESCE(a.paid,0))>0
+               AND (i.academic_period_id=? OR (i.academic_period_id IS NULL AND i.session_id=? AND i.term=?))
+             ORDER BY i.due_on,i.id FOR UPDATE"
+        );
+        $currentTerm->execute([$studentId,$periodId,$financeSessionId,$term]);
+        $allocateTermRows($currentTerm->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    // Legacy monthly invoices remain payable, but cannot consume an instalment
+    // before the current academic-term school fee.
+    $monthly=$pdo->prepare(
+        "SELECT i.id,(i.amount_due-i.discount_amount-COALESCE(a.paid,0)) balance
+         FROM finance_fee_invoices i
+         LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM finance_fee_allocations GROUP BY invoice_id) a ON a.invoice_id=i.id
+         WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-i.discount_amount-COALESCE(a.paid,0))>0
+         ORDER BY i.due_on,i.id FOR UPDATE"
+    );
+    $monthly->execute([$studentId]);
+    $monthlyRows=$monthly->fetchAll(PDO::FETCH_ASSOC);
+    $monthlyInsert=$pdo->prepare('INSERT INTO finance_fee_allocations (payment_id,invoice_id,amount) VALUES (?,?,?)');
+    $monthlyUpdate=$pdo->prepare(
+        "UPDATE finance_fee_invoices i SET status=CASE
+          WHEN (i.amount_due-i.discount_amount-(SELECT COALESCE(SUM(a.amount),0) FROM finance_fee_allocations a WHERE a.invoice_id=i.id))<=0 THEN 'paid'
+          ELSE 'partial' END WHERE id=?"
+    );
+    foreach($monthlyRows as $invoice){
         if($remainingCents<=0)break;
         $balanceCents=financeToCents((string)$invoice['balance']);
         $partCents=min($remainingCents,$balanceCents);
-        $termInsert->execute([(int)$invoice['id'],$paymentId,financeFromCents($partCents)]);
-        $termUpdate->execute([(int)$invoice['id']]);
+        $monthlyInsert->execute([$paymentId,(int)$invoice['id'],financeFromCents($partCents)]);
+        $monthlyUpdate->execute([(int)$invoice['id']]);
         $remainingCents-=$partCents;
     }
+
+    // Previous-term balances carry forward and are settled after current-term fees.
+    $previousTerms=$pdo->prepare(
+        "SELECT i.id,(i.amount_due-COALESCE(a.paid,0)) balance
+         FROM finance_term_fee_invoices i
+         LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) a ON a.term_invoice_id=i.id
+         WHERE i.student_id=? AND i.status IN ('unpaid','partial') AND (i.amount_due-COALESCE(a.paid,0))>0
+           AND (i.academic_period_id IS NULL OR i.academic_period_id<>?)
+           AND NOT (i.academic_period_id IS NULL AND i.session_id=? AND i.term=?)
+         ORDER BY i.due_on,i.id FOR UPDATE"
+    );
+    $previousTerms->execute([$studentId,$periodId,$financeSessionId,$term]);
+    $allocateTermRows($previousTerms->fetchAll(PDO::FETCH_ASSOC));
+
     if($remainingCents>0){ throw new DomainException('The payment exceeds the student’s outstanding monthly and term invoices.'); }
 }

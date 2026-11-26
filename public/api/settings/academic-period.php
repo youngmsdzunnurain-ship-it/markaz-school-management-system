@@ -23,7 +23,7 @@ function getCurrentAcademicPeriod(PDO $pdo): ?array
     $stmt = $pdo->query(
         'SELECT ap.id, ap.academic_session_id, ap.term_id,
                 s.name AS session_name, t.name AS term_name,
-                ap.examination_date, ap.vacation_date, ap.resumption_date,
+                ap.examination_date, ap.vacation_date, ap.resumption_date, ap.starts_on, ap.ends_on,
                 ap.results_released, ap.is_finalized, ap.finalized_at
          FROM academic_periods ap
          INNER JOIN academic_sessions s ON s.id = ap.academic_session_id
@@ -56,6 +56,8 @@ if ($method === 'GET') {
             'session_name' => $period['session_name'],
             'term_name' => $period['term_name'],
             'resumption_date' => $period['resumption_date'],
+            'starts_on' => $period['starts_on'],
+            'ends_on' => $period['ends_on'],
             'is_finalized' => (int) $period['is_finalized'],
             'finalized_at' => $period['finalized_at'],
             'results_released' => (int) $period['results_released']
@@ -71,13 +73,20 @@ if ($method !== 'POST') {
 $sessionId = filter_var($_POST['academic_session_id'] ?? null, FILTER_VALIDATE_INT);
 $termId = filter_var($_POST['term_id'] ?? null, FILTER_VALIDATE_INT);
 $resumptionDate = trim((string) ($_POST['resumption_date'] ?? ''));
+$startsOn = trim((string) ($_POST['starts_on'] ?? ''));
+$endsOn = trim((string) ($_POST['ends_on'] ?? ''));
 
 if (!$sessionId || $sessionId < 1 || !$termId || !in_array($termId, [1, 2, 3], true)) {
     academicPeriodResponse(422, ['success' => false, 'message' => 'Select a valid academic session and term.']);
 }
 $date = DateTime::createFromFormat('Y-m-d', $resumptionDate);
-if (!$date || $date->format('Y-m-d') !== $resumptionDate) {
-    academicPeriodResponse(422, ['success' => false, 'message' => 'Please enter a valid Next Term Begins date.']);
+$termStart = DateTime::createFromFormat('!Y-m-d', $startsOn);
+$termEnd = DateTime::createFromFormat('!Y-m-d', $endsOn);
+if (!$date || $date->format('Y-m-d') !== $resumptionDate
+    || !$termStart || $termStart->format('Y-m-d') !== $startsOn
+    || !$termEnd || $termEnd->format('Y-m-d') !== $endsOn
+    || $endsOn < $startsOn) {
+    academicPeriodResponse(422, ['success' => false, 'message' => 'Enter valid term start, term end and next-term resumption dates. The term end cannot be before its start.']);
 }
 
 try {
@@ -156,15 +165,15 @@ try {
     if ($target) {
         $periodId = (int) $target['id'];
         $update = $pdo->prepare(
-            'UPDATE academic_periods SET resumption_date = ?, updated_at = NOW() WHERE id = ? AND is_finalized = 0'
+            'UPDATE academic_periods SET starts_on = ?, ends_on = ?, resumption_date = ?, updated_at = NOW() WHERE id = ? AND is_finalized = 0'
         );
-        $update->execute([$resumptionDate, $periodId]);
+        $update->execute([$startsOn, $endsOn, $resumptionDate, $periodId]);
     } else {
         $insert = $pdo->prepare(
-            'INSERT INTO academic_periods (academic_session_id, term_id, resumption_date, is_current)
-             VALUES (?, ?, ?, 0)'
+            'INSERT INTO academic_periods (academic_session_id, term_id, starts_on, ends_on, resumption_date, is_current)
+             VALUES (?, ?, ?, ?, ?, 0)'
         );
-        $insert->execute([$sessionId, $termId, $resumptionDate]);
+        $insert->execute([$sessionId, $termId, $startsOn, $endsOn, $resumptionDate]);
         $periodId = (int) $pdo->lastInsertId();
     }
 
@@ -189,6 +198,8 @@ try {
             'academic_session_id' => $sessionId,
             'term_id' => $termId,
             'resumption_date' => $resumptionDate,
+            'starts_on' => $startsOn,
+            'ends_on' => $endsOn,
             'is_finalized' => false
         ]
     ]);

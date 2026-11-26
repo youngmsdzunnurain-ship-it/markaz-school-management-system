@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/finance-fee-calculations.php';
+
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../middleware/auth.php';
 
@@ -70,6 +72,7 @@ function financeMoney(mixed $value, bool $allowZero = false): string
     if (!$allowZero && (float) $value <= 0) financeJson(['success' => false, 'message' => 'Amount must be greater than zero.'], 422);
     return financeFromCents(financeToCents($value));
 }
+
 
 function financeAudit(PDO $pdo, string $action, string $entity, ?int $entityId, array $details = []): void
 {

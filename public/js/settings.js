@@ -708,6 +708,8 @@ const academicPeriodForm = document.getElementById("academicPeriodForm");
 const academicSessionSelect = document.getElementById("academicSessionSelect");
 const academicTermSelect = document.getElementById("academicTermSelect");
 const resumptionDateInput = document.getElementById("resumptionDate");
+const academicTermStartsOnInput = document.getElementById("academicTermStartsOn");
+const academicTermEndsOnInput = document.getElementById("academicTermEndsOn");
 const academicPeriodMessage = document.getElementById("academicPeriodMessage");
 const saveAcademicPeriodButton = document.getElementById("saveAcademicPeriodButton");
 
@@ -763,6 +765,8 @@ async function loadAcademicPeriodSettings() {
         if (resumptionDateInput) {
             resumptionDateInput.value = period.resumption_date || "";
         }
+        if (academicTermStartsOnInput) academicTermStartsOnInput.value = period.starts_on || "";
+        if (academicTermEndsOnInput) academicTermEndsOnInput.value = period.ends_on || "";
     } catch (error) {
         showAcademicPeriodMessage(error.message, "error");
     }
@@ -771,11 +775,16 @@ async function loadAcademicPeriodSettings() {
 academicPeriodForm?.addEventListener("submit", async event => {
     event.preventDefault();
 
-    if (!resumptionDateInput?.value) {
+    if (!resumptionDateInput?.value || !academicTermStartsOnInput?.value || !academicTermEndsOnInput?.value) {
         showAcademicPeriodMessage(
-            "Please select the Next Term Begins date.",
+            "Please enter the current term start, current term end and next-term resumption dates.",
             "error"
         );
+        return;
+    }
+
+    if (academicTermEndsOnInput.value < academicTermStartsOnInput.value) {
+        showAcademicPeriodMessage("The term end date cannot be before the term start date.", "error");
         return;
     }
 
