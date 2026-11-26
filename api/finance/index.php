@@ -278,7 +278,7 @@ try {
         $notes = trim((string)($input['notes'] ?? '')) ?: null;
         if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
             || $phone === null || $email === null || !filter_var($email, FILTER_VALIDATE_EMAIL)
-            || $bankAccountNumber === '' || !preg_match('/^\\d{6,34}$/', $bankAccountNumber)
+            || $bankAccountNumber === '' || !preg_match('/^\d{6,34}$/', $bankAccountNumber)
             || $bankAccountName === '' || $bankName === '' || ($age !== null && ($age < 16 || $age > 100))
             || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
             financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
