@@ -17,7 +17,7 @@ if ($method === 'GET') {
     $date = attendanceValidateDate((string)($_GET['date'] ?? date('Y-m-d')));
     $stmt = $pdo->prepare(
         "SELECT s.id AS finance_staff_id,s.staff_number,s.full_name,s.job_title,
-                p.expected_arrival,p.attendance_mode,p.lateness_rate_per_minute,
+                p.expected_arrival,p.attendance_mode,p.lateness_rate_per_minute,p.deduct_lateness,
                 a.id AS attendance_id,a.actual_arrival,a.status,a.late_minutes,
                 a.lateness_deduction,a.notes
          FROM finance_staff s
@@ -47,7 +47,7 @@ $records = $input['records'];
 if (count($records) > 300) attendanceJsonError(422, 'The attendance register is too large.');
 
 $profileQuery = $pdo->prepare(
-    'SELECT expected_arrival,attendance_mode,lateness_rate_per_minute
+    'SELECT expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness
      FROM staff_salary_profiles
      WHERE finance_staff_id=? AND effective_from<=?
        AND (effective_until IS NULL OR effective_until>=?)
@@ -97,7 +97,7 @@ try {
             }
             $actualValue = strlen($actual) === 5 ? $actual . ':00' : $actual;
             $lateMinutes = financeCalculateLateMinutes((string)$profile['expected_arrival'],$actualValue);
-            $rate = financeToCents((string)$profile['lateness_rate_per_minute']);
+            $rate = (int)($profile['deduct_lateness'] ?? 0) === 1 ? financeToCents((string)$profile['lateness_rate_per_minute']) : 0;
             $deduction = financeFromCents($lateMinutes * $rate);
         }
         // Excused/approved leave and attendance-only staff never incur lateness deductions.
