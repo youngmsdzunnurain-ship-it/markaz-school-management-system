@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/finance.css?v=20261122-sidebar-footer-polish1">
+    <link rel="stylesheet" href="css/finance.css?v=20261129-section-fees1">
     <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-no-entrance-jump1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -107,74 +107,72 @@
   <div class="info-note"><i class="fa-solid fa-shield-halved"></i><div><b>Financial integrity</b><p>Only confirmed payments count as collected income. Pending bank transfers do not change a student's balance until verified. All posted financial entries are retained in the audit trail.</p></div></div>
 </section>
 <section class="tab-panel" id="tab-fees">
- <section class="panel" id="termFeeWorkspace">
- <div class="panel-heading"><div><span class="eyebrow">ACADEMIC BILLING</span><h2>Session &amp; term fees</h2><p class="muted">Set a different fee for each conventional class in each term. Amounts are never copied to another class or student automatically.</p></div></div>
- <div class="two-col fee-workspace-grid fee-session-grid">
-  <form class="form-panel" id="academicSessionForm">
-   <h3>Academic session</h3>
-   <label>Session name<input name="session_name" placeholder="2026/2027" pattern="20[0-9]{2}/20[0-9]{2}" required></label>
-   <div class="inline-fields"><label>Starts<input name="starts_on" type="date" required></label><label>Ends<input name="ends_on" type="date" required></label></div>
-   <button class="btn btn-primary" type="submit">Save current session</button>
+ <section class="panel student-fees-period" id="studentFeesAcademicPeriod">
+  <div class="student-fees-period-heading">
+   <div><span class="eyebrow">ACADEMIC BILLING</span><h2>Student Fees</h2><p class="muted">One connected register for all active MARKAZ conventional students.</p></div>
+   <span class="period-status"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span id="studentFeesCurrentStatus">Loading current academic period…</span></span>
+  </div>
+  <div class="student-fees-period-grid">
+   <div><small>Academic session</small><strong id="studentFeesSession">—</strong></div>
+   <div><small>Current term</small><strong id="studentFeesTerm">—</strong></div>
+   <div><small>Term begins</small><strong id="studentFeesTermStarts">—</strong></div>
+   <div><small>Term ends</small><strong id="studentFeesTermEnds">—</strong></div>
+  </div>
+ </section>
+
+ <section class="student-fees-section-switcher" id="studentFeesSectionNav" aria-label="Student fee sections">
+  <button type="button" class="student-fee-section active" data-fee-section=""><i class="fa-solid fa-layer-group"></i><span>All sections</span></button>
+  <button type="button" class="student-fee-section" data-fee-section="nursery"><i class="fa-solid fa-shapes"></i><span>Nursery</span></button>
+  <button type="button" class="student-fee-section" data-fee-section="primary"><i class="fa-solid fa-book-open"></i><span>Primary</span></button>
+  <button type="button" class="student-fee-section" data-fee-section="junior_secondary"><i class="fa-solid fa-user-graduate"></i><span>Junior Secondary</span></button>
+  <button type="button" class="student-fee-section" data-fee-section="senior_secondary"><i class="fa-solid fa-graduation-cap"></i><span>Senior Secondary</span></button>
+ </section>
+
+ <section class="panel student-fees-rate-panel">
+  <div class="panel-heading"><div><span class="eyebrow">CURRENT TERM CONFIGURATION</span><h2><i class="fa-solid fa-sliders" aria-hidden="true"></i> School fee rates</h2><p class="muted">Set one Day and Boarding rate for each section, with separate New Intake rates. Saving affects this term's new assessments only.</p></div><span class="pill" id="studentFeesRateStatus">Not loaded</span></div>
+  <p class="student-fees-intake-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> New Intake rates apply when a student's admission date falls within the configured current-term dates. Other students use Returning rates.</p>
+  <form id="studentFeesRatesForm" class="student-fees-rates-form">
+   <div class="table-wrap"><table class="student-fees-rates-table">
+    <thead><tr><th>Section</th><th>Day · Returning</th><th>Boarding · Returning</th><th>Day · New intake</th><th>Boarding · New intake</th></tr></thead>
+    <tbody>
+     <tr><th>Nursery</th><td><label class="sr-only" for="rate_nursery_day">Nursery Day Returning</label><input id="rate_nursery_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_nursery_boarding">Nursery Boarding Returning</label><input id="rate_nursery_boarding" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_nursery_new_day">Nursery Day New Intake</label><input id="rate_nursery_new_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_nursery_new_boarding">Nursery Boarding New Intake</label><input id="rate_nursery_new_boarding" type="number" min="0" step="0.01" required></td></tr>
+     <tr><th>Primary</th><td><label class="sr-only" for="rate_primary_day">Primary Day Returning</label><input id="rate_primary_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_primary_boarding">Primary Boarding Returning</label><input id="rate_primary_boarding" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_primary_new_day">Primary Day New Intake</label><input id="rate_primary_new_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_primary_new_boarding">Primary Boarding New Intake</label><input id="rate_primary_new_boarding" type="number" min="0" step="0.01" required></td></tr>
+     <tr><th>Junior Secondary</th><td><label class="sr-only" for="rate_junior_secondary_day">Junior Secondary Day Returning</label><input id="rate_junior_secondary_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_junior_secondary_boarding">Junior Secondary Boarding Returning</label><input id="rate_junior_secondary_boarding" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_junior_secondary_new_day">Junior Secondary Day New Intake</label><input id="rate_junior_secondary_new_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_junior_secondary_new_boarding">Junior Secondary Boarding New Intake</label><input id="rate_junior_secondary_new_boarding" type="number" min="0" step="0.01" required></td></tr>
+     <tr><th>Senior Secondary</th><td><label class="sr-only" for="rate_senior_secondary_day">Senior Secondary Day Returning</label><input id="rate_senior_secondary_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_senior_secondary_boarding">Senior Secondary Boarding Returning</label><input id="rate_senior_secondary_boarding" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_senior_secondary_new_day">Senior Secondary Day New Intake</label><input id="rate_senior_secondary_new_day" type="number" min="0" step="0.01" required></td><td><label class="sr-only" for="rate_senior_secondary_new_boarding">Senior Secondary Boarding New Intake</label><input id="rate_senior_secondary_new_boarding" type="number" min="0" step="0.01" required></td></tr>
+    </tbody>
+   </table></div>
+   <div class="student-fees-rate-actions"><label>Payment due date<input type="date" id="studentFeesDueOn" required></label><button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save this term's rates</button></div>
   </form>
-  <form class="form-panel" id="termClassFeeForm">
-   <h3>Class fee configuration</h3>
-   <label>Academic session<select name="session_id" id="termSessionSelect" required><option value="">Create/select a session</option></select></label>
-   <div class="inline-fields"><label>Term<select name="term" id="termSelect"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label><label>Conventional class<select name="class_id" id="termClassSelect" required><option value="">Loading classes…</option></select></label></div>
-   <label>Fee amount (₦)<input name="amount" type="number" min="0" step="0.01" required placeholder="Enter class fee"></label>
-   <label>Payment due date<input name="due_on" type="date" required></label>
-   <button class="btn btn-primary" type="submit">Save class fee</button>
-  </form>
- </div>
+ </section>
+
+ <section class="panel student-fees-register-panel" id="studentFeesRegister">
+  <div class="panel-heading"><div><span class="eyebrow">LIVE STUDENT ACCOUNTS</span><h2><i class="fa-solid fa-users" aria-hidden="true"></i> Student fees register</h2><p class="muted">Search and filter students. Previous term debts remain separate and are included in the total balance.</p></div><button class="btn btn-primary" id="generateTermInvoices" type="button"><i class="fa-solid fa-file-circle-plus"></i> Generate term assessments</button></div>
+  <div class="student-fees-filters">
+   <label class="student-fees-search"><span class="sr-only">Search student</span><i class="fa-solid fa-magnifying-glass"></i><input id="studentFeesSearch" type="search" placeholder="Search student name or admission number"></label>
+   <label><span class="sr-only">Filter class</span><select id="studentFeesClassFilter"><option value="">All classes</option></select></label>
+   <label><span class="sr-only">Filter accommodation</span><select id="studentFeesAccommodationFilter"><option value="">Day &amp; Boarding</option><option value="Day Student">Day</option><option value="Boarding">Boarding</option></select></label>
+   <label><span class="sr-only">Filter intake type</span><select id="studentFeesIntakeFilter"><option value="">New &amp; returning</option><option value="new_intake">New Intake</option><option value="returning">Returning</option></select></label>
+   <label><span class="sr-only">Filter scholarship</span><select id="studentFeesScholarshipFilter"><option value="">All scholarship types</option><option value="yes">Scholarship / adjustment</option><option value="no">No adjustment</option></select></label>
+   <label><span class="sr-only">Filter payment status</span><select id="studentFeesPaymentFilter"><option value="">All payment statuses</option><option value="paid">Fully paid</option><option value="partial">Part payment</option><option value="unpaid">Unpaid</option></select></label>
+   <button class="btn btn-light" id="studentFeesClearFilters" type="button"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+  </div>
+  <div class="student-fees-summary" id="studentFeesSummary"><div><small>Students</small><strong>—</strong></div><div><small>Current term fees</small><strong>—</strong></div><div><small>Previous term debts</small><strong>—</strong></div><div><small>Total outstanding</small><strong>—</strong></div></div>
+  <div class="table-wrap"><table class="student-fees-register-table">
+   <thead><tr><th>Student</th><th>Class</th><th>Type</th><th>Intake</th><th>Current term payable</th><th>Previous debt</th><th>Total due</th><th>Paid this term</th><th>Current balance</th><th>Total balance</th><th>Fee support</th><th>Action</th></tr></thead>
+   <tbody id="studentFeesRows"><tr><td colspan="12" class="empty">Loading student fee accounts…</td></tr></tbody>
+  </table></div>
+ </section>
+
  <div class="two-col fee-workspace-grid fee-support-grid">
   <form class="panel form-panel" id="studentFeeAdjustmentForm">
-   <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL SUPPORT</span><h3>Scholarship, waiver or negotiated fee</h3><p class="muted">An adjustment applies only to the selected student, session and term. Explain the reason for the audit trail.</p></div></div>
-   <div class="inline-fields"><label>Find student<input id="termStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label>Student<select name="student_id" id="termStudentSelect" required><option value="">Search for a student first</option></select><small id="termStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label><label>Session<select name="session_id" id="adjustmentSessionSelect" required></select></label><label>Term<select name="term"><option value="first">First term</option><option value="second">Second term</option><option value="third">Third term</option></select></label></div>
-   <div class="inline-fields"><label>Adjustment<select name="adjustment_type"><option value="fixed_fee">Negotiated final fee</option><option value="discount_amount">Fixed discount</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / waiver</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
-   <label>Reason / approval note<input name="reason" required maxlength="500" placeholder="e.g. Approved 50% scholarship for this term"></label>
-   <button class="btn btn-primary" type="submit">Submit for approval</button>
+   <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL STUDENT SUPPORT</span><h2><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Scholarship or fee reduction</h2><p class="muted">Applies only to the selected student and current term. Previous debts are never waived by a new-term adjustment.</p></div></div>
+   <label>Find student<input id="termStudentSearch" type="search" autocomplete="off" placeholder="Name or admission number"></label>
+   <label>Student<select name="student_id" id="termStudentSelect" required><option value="">Search for a student first</option></select><small id="termStudentDetails" class="student-selection-details">Select a student from the search results.</small></label>
+   <div class="inline-fields"><label>Adjustment type<select name="adjustment_type"><option value="fixed_fee">Set negotiated final fee</option><option value="discount_amount">Fixed reduction</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / no current-term fee</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
+   <label>Reason / approval note<input name="reason" maxlength="500" required placeholder="Explain who approved the support and why"></label>
+   <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit for approval</button>
   </form>
-  <section class="panel" id="termAdjustmentApprovalPanel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER CONTROL</span><h3>Pending scholarship approvals</h3><p class="muted">The staff member who submitted an adjustment cannot approve it.</p></div><button class="btn btn-light" id="reloadTermAdjustments" type="button">Refresh approvals</button></div><div id="termAdjustmentQueue" class="stack-list"><p class="muted">Loading pending adjustments…</p></div></section>
- </div>
- <div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button">Generate term invoices</button><button class="btn btn-light" id="loadTermReport" type="button">Refresh class report</button></div>
- <div class="table-wrap"><table><thead><tr><th>Class</th><th>Students billed</th><th>Total billed</th><th>Paid</th><th>Outstanding</th></tr></thead><tbody id="termFeeReport"><tr><td colspan="5" class="empty">Select a session and term to view class totals.</td></tr></tbody></table></div>
- <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student</th><th>Class</th><th>Base fee</th><th>Scholarship / discount</th><th>Amount due</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="termFeeInvoices"><tr><td colspan="8" class="empty">Term invoices will appear here.</td></tr></tbody></table></div>
-</section>
-
- <div class="two-col fee-workspace-grid fee-plan-grid">
-  <form class="panel form-panel" id="feePlanForm"><div class="panel-heading"><div><span class="eyebrow">CONFIGURABLE BILLING</span><h2>Create monthly fee plan</h2></div></div>
-   <label>Fee name<input name="name" required placeholder="e.g. Monthly tuition"></label>
-   <label>Fee category code<input name="fee_code" required pattern="[a-z0-9][a-z0-9_-]{0,59}" value="general" placeholder="e.g. tuition, feeding, books"><small>Matching categories override by specificity: student, then class, then school.</small></label>
-   <label>Description<textarea name="description" rows="2" placeholder="Optional explanation"></textarea></label>
-   <label>Apply to<select name="scope" id="feeScope"><option value="school">Entire school</option><option value="class">Specific class</option><option value="student">Individual student</option></select></label>
-   <div id="classFields" class="inline-fields" hidden><label>Class category<select name="class_type"><option value="conventional">Conventional</option><option value="arabic">Arabic</option></select></label><label>Class<select name="class_id" id="feeClassSelect" required><option value="">Loading classes…</option></select></label></div>
-   <div id="studentField" hidden><label for="feeStudentSearch">Find student<input id="feeStudentSearch" type="search" autocomplete="off" placeholder="Type admission number or student name"></label><label for="feeStudentSelect">Student<select name="student_id" id="feeStudentSelect" required><option value="">Search for a student first</option></select><small id="feeStudentDetails" class="student-selection-details">Student class and admission details will appear here.</small></label></div>
-   <label>Monthly amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="Set by administrator"></label>
-   <label>Due day of each month<input name="due_day" type="number" min="1" max="31" required></label>
-   <div class="inline-fields"><label>Effective from<input name="effective_from" type="date" required></label><label>Effective until<input name="effective_until" type="date"></label></div>
-   <button class="btn btn-primary" type="submit">Save fee plan</button>
-  </form>
-  <div class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">MONTHLY BILLING RUN</span><h2>Generate student invoices</h2></div></div>
-   <p class="muted">Generate invoices for all active monthly fee plans. Existing invoices for the same student, plan and month are protected against duplication.</p>
-   <div class="inline-fields"><label>Year<input id="invoiceYear" type="number" min="2020" max="2100"></label><label>Month<select id="invoiceMonth"></select></label></div>
-   <button class="btn btn-primary" id="generateInvoices">Generate invoices</button>
-   <div class="info-note compact"><i class="fa-solid fa-circle-info"></i><p>Review fee plans before running a billing month. Fee plan changes do not rewrite previously issued invoices.</p></div>
-  </div>
- </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FEE CONFIGURATION</span><h2>Active and previous fee plans</h2></div><button class="btn btn-light" id="loadPlans">Reload plans</button></div><div class="table-wrap"><table><thead><tr><th>Fee</th><th>Applies to</th><th>Amount / month</th><th>Due day</th><th>Effective</th><th>Status</th></tr></thead><tbody id="feePlans"><tr><td colspan="6" class="empty">Loading fee plans…</td></tr></tbody></table></div></div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">STUDENT LEDGERS</span><h2>Monthly fee accounts</h2></div><div class="search-box"><i class="fa-solid fa-search"></i><input id="invoiceSearch" placeholder="Admission number or student name"></div></div><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Student / Admission no.</th><th>Billing month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="invoices"><tr><td colspan="7" class="empty">Loading student accounts…</td></tr></tbody></table></div></div>
- <div class="two-col fee-workspace-grid fee-support-grid">
-  <section class="panel" id="studentFeeStatementPanel">
-   <div class="panel-heading"><div><span class="eyebrow">STUDENT ACCOUNT</span><h2>Complete fee statement</h2><p class="muted">View monthly and term invoices, payments, discounts and the remaining balance for one student.</p></div></div>
-   <form id="studentStatementForm" class="inline-fields"><label>Admission number<input id="statementAdmissionNumber" name="admission_number" required maxlength="80" placeholder="Enter exact admission number"></label><button class="btn btn-primary" type="submit">Load statement</button></form>
-   <div id="studentStatementSummary" class="report-metrics" aria-live="polite"><p class="muted">Enter an admission number to load the account statement.</p></div>
-   <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Type / period</th><th>Due date</th><th>Amount</th><th>Discount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="studentStatementRows"><tr><td colspan="8" class="empty">No statement loaded.</td></tr></tbody></table></div>
-   <h3>Payment history</h3><div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Date</th><th>Method</th><th>Reference</th><th>Amount</th><th>Status</th></tr></thead><tbody id="studentStatementPayments"><tr><td colspan="6" class="empty">No payment history loaded.</td></tr></tbody></table></div>
-  </section>
-  <section class="panel" id="feeArrearsPanel">
-   <div class="panel-heading"><div><span class="eyebrow">COLLECTION FOLLOW-UP</span><h2>Outstanding fee accounts</h2><p class="muted">Monthly and term balances grouped by student, with overdue ageing.</p></div><button class="btn btn-light" id="reloadFeeArrears" type="button">Refresh arrears</button></div>
-   <div id="feeArrearsSummary" class="report-metrics"><p class="muted">Load the report to see outstanding accounts.</p></div>
-   <div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Open invoices</th><th>Outstanding</th><th>1–30 days</th><th>31–60 days</th><th>61–90 days</th><th>90+ days</th></tr></thead><tbody id="feeArrearsRows"><tr><td colspan="8" class="empty">Arrears report not loaded.</td></tr></tbody></table></div>
-  </section>
+  <section class="panel" id="termAdjustmentApprovalPanel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER CONTROL</span><h2>Pending fee-support approvals</h2><p class="muted">The person who submits an adjustment cannot approve their own request.</p></div><button class="btn btn-light" id="reloadTermAdjustments" type="button"><i class="fa-solid fa-rotate"></i> Refresh</button></div><div id="termAdjustmentQueue" class="stack-list"><p class="muted">Loading pending adjustments…</p></div></section>
  </div>
 </section>
 <section class="tab-panel" id="tab-payments">
@@ -266,6 +264,6 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261126-remove-demo1"></script>
+    <script src="js/finance.js?v=20261129-section-fees1"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql 20261128_teacher_lateness_rate_13_naira.sql 20261129_markaz_section_student_fees.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -72,6 +72,8 @@ table_count() {
 
 foundation_count="$(table_count "$(sql_names "${foundation_tables[@]}")")"
 term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
+section_fee_tables="$(table_count "'finance_section_fee_schedules'")"
+section_fee_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')) OR (TABLE_NAME='finance_term_fee_invoices' AND COLUMN_NAME IN ('academic_period_id','section','student_type','intake_type','fee_schedule_id'))) ")"
 category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_plans' AND COLUMN_NAME='fee_code') OR (TABLE_NAME='finance_fee_invoices' AND COLUMN_NAME='fee_code'))")"
 
 if [[ "$foundation_count" != "0" && "$foundation_count" != "${#foundation_tables[@]}" ]]; then
@@ -84,6 +86,14 @@ if [[ "$foundation_count" == "0" && ( "$category_columns" != "0" || "$term_count
 fi
 if [[ "$category_columns" != "0" && "$category_columns" != "2" ]]; then
     echo "ERROR: Partial fee-category migration detected ($category_columns/2 columns). No changes made." >&2
+    exit 3
+fi
+if [[ "$section_fee_tables" != "0" && "$section_fee_tables" != "1" ]]; then
+    echo "ERROR: Partial section-based student-fees schema detected. No changes made." >&2
+    exit 3
+fi
+if [[ "$section_fee_tables" == "0" && "$section_fee_columns" != "0" ]] || [[ "$section_fee_tables" == "1" && "$section_fee_columns" != "7" ]]; then
+    echo "ERROR: Partial section-based student-fees schema detected ($section_fee_tables schedule table, $section_fee_columns/7 required columns). No changes made." >&2
     exit 3
 fi
 if [[ "$term_count" != "0" && "$term_count" != "${#term_tables[@]}" ]]; then
@@ -111,7 +121,7 @@ if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2"
         echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
         exit 3
     fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
     echo "MARKAZ Finance is already installed: fee foundations, term fees, independent Finance staff, attendance policies and refund controls are present."
     exit 0
 fi
@@ -148,6 +158,11 @@ category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE
 if [[ "$term_count" == "0" ]]; then apply_migration "20261123_markaz_academic_term_fees.sql"; fi
 term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
 [[ "$term_count" == "${#term_tables[@]}" ]] || { echo "ERROR: Academic term-fee verification failed. Restore from: $backup" >&2; exit 5; }
+
+if [[ "$section_fee_tables" == "0" && "$section_fee_columns" == "0" ]]; then apply_migration "20261129_markaz_section_student_fees.sql"; fi
+section_fee_tables="$(table_count "'finance_section_fee_schedules'")"
+section_fee_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')) OR (TABLE_NAME='finance_term_fee_invoices' AND COLUMN_NAME IN ('academic_period_id','section','student_type','intake_type','fee_schedule_id'))) ")"
+[[ "$section_fee_tables" == "1" && "$section_fee_columns" == "7" ]] || { echo "ERROR: Section-based student-fees schema verification failed. Restore from: $backup" >&2; exit 5; }
 
 # Apply and verify the independent Finance staff identity migration.
 if [[ "${foundation_count}" == "${#foundation_tables[@]}" && "${category_columns}" == "2" && "${term_count}" == "${#term_tables[@]}" ]]; then

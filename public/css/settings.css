@@ -5562,3 +5562,7 @@ body {
         flex: 0 0 16px;
     }
 }
+
+.academic-term-date-range{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.academic-term-date-range label{min-width:0}
+@media(max-width:700px){.academic-term-date-range{grid-template-columns:1fr;gap:10px}}

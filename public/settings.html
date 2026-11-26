@@ -13,7 +13,7 @@
     <title>Settings | MARKAZ</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="./css/dashboard.css?v=20261102-single-shell1">
-    <link rel="stylesheet" href="css/settings.css?v=20261112-settings-fast1">
+    <link rel="stylesheet" href="css/settings.css?v=20261129-term-dates1">
     <link rel="stylesheet" href="css/account-devices.css?v=20261109-device-activity">
     <link rel="stylesheet" href="css/standard-page-heading.css?v=20261102-single-shell1">
     <link rel="stylesheet" href="css/settings-panel-navigation.css?v=20261112-settings-order2">
@@ -183,7 +183,7 @@
             <div>
                 <span class="settings-label">ACADEMIC CALENDAR</span>
                 <h2>Current Academic Period</h2>
-                <p>Set the date when the next academic term begins. This date will appear on every student result.</p>
+                <p>Set the current term's start and end dates, and the next term's resumption date. Student Fees uses this same academic calendar.</p>
             </div>
         </div>
 
@@ -205,15 +205,18 @@
         </div>
 
         <form id="academicPeriodForm">
-            <div class="academic-period-field">
+            <div class="academic-period-field academic-term-date-range">
+                <label for="academicTermStartsOn">
+                    <span>Current Term Begins</span>
+                    <input type="date" id="academicTermStartsOn" name="starts_on" required>
+                </label>
+                <label for="academicTermEndsOn">
+                    <span>Current Term Ends</span>
+                    <input type="date" id="academicTermEndsOn" name="ends_on" required>
+                </label>
                 <label for="resumptionDate">
                     <span>Next Term Begins</span>
-                    <input
-                        type="date"
-                        id="resumptionDate"
-                        name="resumption_date"
-                        required
-                    >
+                    <input type="date" id="resumptionDate" name="resumption_date" required>
                 </label>
             </div>
 
@@ -532,7 +535,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261112-staff-profile-crop4"></script>
+    <script src="js/settings.js?v=20261129-term-dates1"></script>
 
     <script src="/js/markaz-global.js"></script>
 

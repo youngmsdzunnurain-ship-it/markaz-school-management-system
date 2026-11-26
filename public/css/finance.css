@@ -636,3 +636,48 @@ body.finance-workspace-page .welcome-card{
 #tab-payroll #staffRows details{margin-top:7px;font-size:.82rem}
 #tab-payroll #staffRows details summary{cursor:pointer;color:var(--dg);font-weight:700}
 @media(max-width:680px){#tab-payroll .finance-staff-create[open] .form-panel{grid-template-columns:1fr}}
+
+
+/* Section-based Student Fees workspace */
+.student-fees-period{padding:20px 22px;background:linear-gradient(135deg,var(--white),color-mix(in srgb,var(--green) 5%,var(--white)))}
+.student-fees-period-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.student-fees-period-heading h2{margin:5px 0;font-size:21px}
+.student-fees-period-heading p{margin:4px 0}
+.period-status{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:11px;font-weight:750;white-space:nowrap}
+.period-status i{color:var(--green)}
+.student-fees-period-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:17px}
+.student-fees-period-grid>div{padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:var(--white)}
+.student-fees-period-grid small,.student-fees-summary small{display:block;color:var(--muted);font-size:10px;font-weight:700}
+.student-fees-period-grid strong{display:block;margin-top:5px;font-size:13px;color:var(--ink)}
+.student-fees-section-switcher{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.student-fee-section{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--muted);font:700 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.student-fee-section i{color:var(--green);font-size:14px}
+.student-fee-section:hover,.student-fee-section.active{border-color:var(--green);background:color-mix(in srgb,var(--green) 8%,var(--white));color:var(--ink)}
+.student-fees-rate-panel,.student-fees-register-panel{min-width:0}
+.student-fees-rate-panel .panel-heading h2,.student-fees-register-panel .panel-heading h2{display:flex;align-items:center;gap:9px}
+.student-fees-rate-panel .panel-heading h2 i,.student-fees-register-panel .panel-heading h2 i{color:var(--green);font-size:16px}
+.student-fees-rates-table{min-width:780px}
+.student-fees-rates-table th:first-child{min-width:140px}
+.student-fees-rates-table td{min-width:130px}
+.student-fees-rates-table input{width:100%;min-width:105px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--ink);font:600 12px Inter,"Segoe UI",Arial,sans-serif}
+.student-fees-rates-table input:focus,.student-fees-filters input:focus,.student-fees-filters select:focus{outline:2px solid color-mix(in srgb,var(--green) 25%,transparent);border-color:var(--green)}
+.student-fees-rate-actions{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:14px}
+.student-fees-rate-actions label{display:grid;gap:6px;min-width:min(260px,100%);color:var(--muted);font-size:11px;font-weight:700}
+.student-fees-rate-actions input,.student-fees-filters input,.student-fees-filters select{min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--white);color:var(--ink);font:500 12px Inter,"Segoe UI",Arial,sans-serif}
+.student-fees-filters{display:grid;grid-template-columns:minmax(220px,2fr) repeat(5,minmax(125px,1fr)) auto;gap:9px;margin:12px 0 15px}
+.student-fees-search{position:relative;display:flex;align-items:center}
+.student-fees-search i{position:absolute;left:12px;color:var(--muted);font-size:12px}
+.student-fees-search input{width:100%;padding-left:34px}
+.student-fees-filters select{width:100%}
+.student-fees-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:12px 0 16px}
+.student-fees-summary>div{padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.student-fees-summary strong{display:block;margin-top:5px;color:var(--ink);font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.student-fees-register-table{min-width:1120px}
+.student-fees-register-table td{vertical-align:middle;font-variant-numeric:tabular-nums}
+.student-fees-register-table td:first-child{font-variant-numeric:normal}
+.student-fees-register-table td small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.student-fees-register-table .action-link{white-space:nowrap}
+@media(max-width:1050px){.student-fees-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.student-fees-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.student-fees-search{grid-column:span 2}}
+@media(max-width:720px){.student-fees-period-heading{flex-direction:column}.student-fees-period-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.student-fees-section-switcher{grid-template-columns:repeat(2,minmax(0,1fr))}.student-fee-section:first-child{grid-column:span 2}.student-fees-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.student-fees-search{grid-column:span 2}.student-fees-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.student-fees-rate-actions{align-items:stretch;flex-direction:column}.student-fees-rate-actions label{min-width:0}.student-fees-rate-actions .btn{width:100%}}
+
+.student-fees-intake-note{display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;color:var(--muted);font-size:11px;line-height:1.5}.student-fees-intake-note i{margin-top:2px;color:var(--green)}
