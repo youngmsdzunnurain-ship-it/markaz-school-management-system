@@ -244,8 +244,8 @@ try {
         if ($action === 'staff') {
             $rows=$pdo->query(
                 "SELECT s.id,s.staff_number,s.full_name AS name,s.email,s.phone,s.job_title,
-                        s.employment_date,s.is_active,p.base_salary,p.expected_arrival,p.attendance_mode,
-                        p.lateness_rate_per_minute,p.effective_from
+                        s.employment_date,s.is_active,s.age,s.bank_account_number,s.bank_account_name,s.bank_name,s.teaching_type,p.base_salary,p.expected_arrival,p.attendance_mode,
+                        p.lateness_rate_per_minute,p.deduct_lateness,p.effective_from
                  FROM finance_staff s
                  LEFT JOIN staff_salary_profiles p ON p.finance_staff_id=s.id
                     AND p.effective_from<=CURDATE()
@@ -266,12 +266,20 @@ try {
         $name = trim((string)($input['full_name'] ?? ''));
         $number = strtoupper(trim((string)($input['staff_number'] ?? '')));
         $jobTitle = trim((string)($input['job_title'] ?? 'Teacher'));
+        if ($jobTitle === 'Others') $jobTitle = trim((string)($input['other_job_title'] ?? ''));
+        $teachingType = trim((string)($input['teaching_type'] ?? '')) ?: null;
+        $age = ($input['age'] ?? '') === '' ? null : (int)$input['age'];
+        $bankAccountNumber = trim((string)($input['bank_account_number'] ?? ''));
+        $bankAccountName = trim((string)($input['bank_account_name'] ?? ''));
+        $bankName = trim((string)($input['bank_name'] ?? ''));
         $phone = trim((string)($input['phone'] ?? '')) ?: null;
         $email = strtolower(trim((string)($input['email'] ?? ''))) ?: null;
         $employmentDate = trim((string)($input['employment_date'] ?? '')) ?: null;
         $notes = trim((string)($input['notes'] ?? '')) ?: null;
         if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
-            || ($email !== null && !filter_var($email, FILTER_VALIDATE_EMAIL))
+            || $phone === null || $email === null || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || $bankAccountNumber === '' || !preg_match('/^\\d{6,34}$/', $bankAccountNumber)
+            || $bankAccountName === '' || $bankName === '' || ($age !== null && ($age < 16 || $age > 100))
             || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
             financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
         }
@@ -279,9 +287,9 @@ try {
         if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{0,39}$/', $number)) {
             financeJson(['success'=>false,'message'=>'Staff number may contain only letters, numbers, hyphens and underscores.'],422);
         }
-        $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?)');
+        $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,teaching_type,age,bank_account_number,bank_account_name,bank_name,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');
         try {
-            $stmt->execute([$number,$name,$phone,$email,$jobTitle,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
+            $stmt->execute([$number,$name,$phone,$email,$jobTitle,$teachingType,$age,$bankAccountNumber,$bankAccountName,$bankName,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
         } catch (PDOException $error) {
             if ((string)$error->getCode() === '23000') financeJson(['success'=>false,'message'=>'That Finance staff number is already in use.'],409);
             throw $error;
