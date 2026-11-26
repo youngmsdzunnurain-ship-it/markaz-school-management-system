@@ -7,7 +7,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
     $year=(int)($_GET['year']??date('Y'));$month=(int)($_GET['month']??date('n'));
     $st=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE period_year=? AND period_month=? LIMIT 1');
     $st->execute([$year,$month]);$period=$st->fetch(PDO::FETCH_ASSOC);$items=[];
-    if($period){$q=$pdo->prepare('SELECT i.*,s.full_name teacher_name FROM finance_payroll_items i INNER JOIN finance_staff s ON s.id=i.finance_staff_id WHERE i.payroll_period_id=? ORDER BY s.full_name');$q->execute([(int)$period['id']]);$items=$q->fetchAll(PDO::FETCH_ASSOC);}
+    if($period){$q=$pdo->prepare('SELECT i.*,s.full_name teacher_name,s.staff_number,s.job_title FROM finance_payroll_items i INNER JOIN finance_staff s ON s.id=i.finance_staff_id WHERE i.payroll_period_id=? ORDER BY s.full_name');$q->execute([(int)$period['id']]);$items=$q->fetchAll(PDO::FETCH_ASSOC);}
     financeJson(['success'=>true,'period'=>$period,'items'=>$items]);
 }
 if($_SERVER['REQUEST_METHOD']!=='POST')financeJson(['success'=>false,'message'=>'Method not allowed.'],405);
@@ -16,7 +16,7 @@ try{
 if($action==='save_salary_profile'){
     $staffId=(int)($input['finance_staff_id']??0);$salary=financeMoney($input['base_salary']??'',true);
     $mode=(string)($input['attendance_mode']??'time_based');
-    $arrival=trim((string)($input['expected_arrival']??''));$deductLateness=($input['deduct_lateness']??'0')==='1'||($input['deduct_lateness']??false)===true;$rate=financeMoney($input['lateness_rate_per_minute']??'10',true);$date=(string)($input['effective_from']??'');
+    $arrival=trim((string)($input['expected_arrival']??''));$deductLateness=($input['deduct_lateness']??'0')==='1'||($input['deduct_lateness']??false)===true;$rate=financeMoney($input['lateness_rate_per_minute']??'13',true);$date=(string)($input['effective_from']??'');
     $validArrival=$mode==='attendance_only' ? $arrival==='' : preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/',$arrival);
     if($staffId<1||!in_array($mode,['time_based','attendance_only'],true)||!$validArrival||!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))financeJson(['success'=>false,'message'=>'Choose a staff member, attendance policy, valid schedule and effective date.'],422);
     if($mode==='attendance_only'){$arrival=null;$rate='0.00';$deductLateness=false;}
