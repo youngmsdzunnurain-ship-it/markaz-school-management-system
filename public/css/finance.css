@@ -611,3 +611,15 @@ body.finance-workspace-page .welcome-card{
 
 /* Teacher attendance policy selector: keep hidden schedule controls out of layout. */
 #salaryTimeFields[hidden]{display:none}
+
+/* Payroll staff registration and detail disclosure */
+.finance-staff-create{min-width:0}
+.finance-staff-create>summary{display:inline-flex;align-items:center;gap:9px;cursor:pointer;list-style:none;margin-bottom:12px}
+.finance-staff-create>summary::-webkit-details-marker{display:none}
+.finance-staff-create[open]>summary{margin-bottom:12px}
+.finance-staff-create .form-panel{margin:0}
+#staffRows details{margin-top:7px}
+#staffRows details summary{cursor:pointer;color:var(--primary,#176b52);font-size:12px;font-weight:700}
+#staffRows details small{display:block;line-height:1.7;margin-top:6px;overflow-wrap:anywhere}
+.checkbox-row{display:flex;align-items:center;gap:9px;font-weight:600}
+.checkbox-row input{width:auto;min-width:18px;min-height:18px}

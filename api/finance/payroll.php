@@ -16,10 +16,10 @@ try{
 if($action==='save_salary_profile'){
     $staffId=(int)($input['finance_staff_id']??0);$salary=financeMoney($input['base_salary']??'',true);
     $mode=(string)($input['attendance_mode']??'time_based');
-    $arrival=trim((string)($input['expected_arrival']??''));$rate=financeMoney($input['lateness_rate_per_minute']??'10',true);$date=(string)($input['effective_from']??'');
+    $arrival=trim((string)($input['expected_arrival']??''));$deductLateness=($input['deduct_lateness']??'0')==='1'||($input['deduct_lateness']??false)===true;$rate=financeMoney($input['lateness_rate_per_minute']??'10',true);$date=(string)($input['effective_from']??'');
     $validArrival=$mode==='attendance_only' ? $arrival==='' : preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/',$arrival);
     if($staffId<1||!in_array($mode,['time_based','attendance_only'],true)||!$validArrival||!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))financeJson(['success'=>false,'message'=>'Choose a staff member, attendance policy, valid schedule and effective date.'],422);
-    if($mode==='attendance_only'){$arrival=null;$rate='0.00';}
+    if($mode==='attendance_only'){$arrival=null;$rate='0.00';$deductLateness=false;}
     $q=$pdo->prepare('SELECT id FROM finance_staff WHERE id=? AND is_active=1');$q->execute([$staffId]);if(!$q->fetchColumn())financeJson(['success'=>false,'message'=>'Select an active Finance staff member.'],422);
     $futureProfile=$pdo->prepare('SELECT id FROM staff_salary_profiles WHERE finance_staff_id=? AND effective_from>? AND (effective_until IS NULL OR effective_until>=?) LIMIT 1');
     $futureProfile->execute([$staffId,$date,$date]);
@@ -29,11 +29,11 @@ if($action==='save_salary_profile'){
     $sameDate=$pdo->prepare('SELECT id FROM staff_salary_profiles WHERE finance_staff_id=? AND effective_from=? ORDER BY id DESC LIMIT 1');
     $sameDate->execute([$staffId,$date]);$existingProfile=(int)$sameDate->fetchColumn();
     if($existingProfile>0){
-        $q=$pdo->prepare('UPDATE staff_salary_profiles SET base_salary=?,expected_arrival=?,attendance_mode=?,lateness_rate_per_minute=?,effective_until=NULL,is_active=1,created_by=? WHERE id=?');
-        $q->execute([$salary,$arrival,$mode,$rate,(int)$_SESSION['admin_id'],$existingProfile]);$id=$existingProfile;
+        $q=$pdo->prepare('UPDATE staff_salary_profiles SET base_salary=?,expected_arrival=?,attendance_mode=?,lateness_rate_per_minute=?,deduct_lateness=?,effective_until=NULL,is_active=1,created_by=? WHERE id=?');
+        $q->execute([$salary,$arrival,$mode,$rate,(int)$deductLateness,(int)$_SESSION['admin_id'],$existingProfile]);$id=$existingProfile;
     }else{
-        $q=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,effective_from,created_by) VALUES(?,?,?,?,?,?,?)');
-        $q->execute([$staffId,$salary,$arrival,$mode,$rate,$date,(int)$_SESSION['admin_id']]);$id=(int)$pdo->lastInsertId();
+        $q=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,?,?,?,?,?)');
+        $q->execute([$staffId,$salary,$arrival,$mode,$rate,(int)$deductLateness,$date,(int)$_SESSION['admin_id']]);$id=(int)$pdo->lastInsertId();
     }
     financeAudit($pdo,'salary_profile_saved','salary_profile',$id,['finance_staff_id'=>$staffId,'attendance_mode'=>$mode]);$pdo->commit();
     financeJson(['success'=>true,'message'=>'Salary profile saved.']);
@@ -61,7 +61,7 @@ if($action==='calculate'){
          ORDER BY effective_from,id'
     );
     $attendance=$pdo->prepare('SELECT id,attendance_mode,status,late_minutes,lateness_deduction FROM staff_attendance WHERE finance_staff_id=? AND attendance_date BETWEEN ? AND ? AND approved_at IS NOT NULL ORDER BY attendance_date');
-    $insert=$pdo->prepare('INSERT INTO finance_payroll_items(payroll_period_id,finance_staff_id,base_salary,lateness_deductions,late_minutes,other_deductions,allowances,net_salary) VALUES(?,?,?,?,?,0,0,?)');
+    $insert=$pdo->prepare('INSERT INTO finance_payroll_items(payroll_period_id,finance_staff_id,base_salary,lateness_deductions,late_minutes,other_deductions,allowances,net_salary) VALUES(?,?,?,?,?,?,0,?)');
     $deduct=$pdo->prepare('INSERT INTO finance_payroll_deductions(payroll_item_id,staff_attendance_id,description,amount) VALUES(?,?,?,?)');
     $daysInMonth=(int)date('t',strtotime($first));$gross=0;$totalDeduct=0;$netTotal=0;
     foreach($people as $person){
@@ -81,12 +81,12 @@ if($action==='calculate'){
             }
         }
         if($baseCents<=0)continue;
-        $attendance->execute([$staffId,$first,$last]);$records=$attendance->fetchAll(PDO::FETCH_ASSOC);$lateMinutes=0;$deductionCents=0;
-        foreach($records as $record){if(($record['attendance_mode']??'time_based')!=='time_based'||($record['status']??'')!=='present')continue;$lateMinutes+=(int)$record['late_minutes'];$deductionCents+=financeToCents((string)$record['lateness_deduction']);}
-        $applied=min($baseCents,$deductionCents);$netCents=$baseCents-$applied;
-        $insert->execute([$periodId,$staffId,financeFromCents($baseCents),financeFromCents($applied),$lateMinutes,financeFromCents($netCents)]);$itemId=(int)$pdo->lastInsertId();
-        foreach($records as $record){if(($record['attendance_mode']??'time_based')==='time_based'&&($record['status']??'')==='present'&&financeToCents((string)$record['lateness_deduction'])>0)$deduct->execute([$itemId,(int)$record['id'],(int)$record['late_minutes'].' minutes late',$record['lateness_deduction']]);}
-        $gross+=$baseCents;$totalDeduct+=$applied;$netTotal+=$netCents;
+        $attendance->execute([$staffId,$first,$last]);$records=$attendance->fetchAll(PDO::FETCH_ASSOC);$lateMinutes=0;$lateDeductionCents=0;$absenceDeductionCents=0;
+        foreach($records as $record){if(($record['attendance_mode']??'time_based')==='time_based'&&($record['status']??'')==='present'){$lateMinutes+=(int)$record['late_minutes'];$lateDeductionCents+=financeToCents((string)$record['lateness_deduction']);}if(($record['status']??'')==='absent')$absenceDeductionCents+=30000;}
+        $lateApplied=min($baseCents,$lateDeductionCents);$otherApplied=min(max(0,$baseCents-$lateApplied),$absenceDeductionCents);$totalApplied=$lateApplied+$otherApplied;$netCents=$baseCents-$totalApplied;
+        $insert->execute([$periodId,$staffId,financeFromCents($baseCents),financeFromCents($lateApplied),$lateMinutes,financeFromCents($otherApplied),financeFromCents($netCents)]);$itemId=(int)$pdo->lastInsertId();
+        foreach($records as $record){if(($record['attendance_mode']??'time_based')==='time_based'&&($record['status']??'')==='present'&&financeToCents((string)$record['lateness_deduction'])>0)$deduct->execute([$itemId,(int)$record['id'],(int)$record['late_minutes'].' minutes late',$record['lateness_deduction']]);if(($record['status']??'')==='absent')$deduct->execute([$itemId,(int)$record['id'],'Unexcused absence — daily deduction','300.00']);}
+        $gross+=$baseCents;$totalDeduct+=$totalApplied;$netTotal+=$netCents;
     }
     $q=$pdo->prepare('UPDATE finance_payroll_periods SET status="calculated",total_gross=?,total_deductions=?,total_net=?,approved_by=NULL,approved_at=NULL,scheduled_at=NULL WHERE id=?');
     $q->execute([financeFromCents($gross),financeFromCents($totalDeduct),financeFromCents($netTotal),$periodId]);
