@@ -132,8 +132,8 @@ if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2"
         echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
         exit 3
     fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" ]]; then
-    echo "MARKAZ Finance is already installed: fee foundations, term fees, independent Finance staff, attendance policies and refund controls are present."
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
+    echo "MARKAZ Finance is already installed: fee foundations, term fees, student intake overrides, independent Finance staff, attendance policies and refund controls are present."
     exit 0
 fi
 
