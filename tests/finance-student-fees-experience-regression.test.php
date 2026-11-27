@@ -26,7 +26,7 @@ studentFeesExperienceCheck(str_contains($api, "financeToCents((string)\$r['total
 studentFeesExperienceCheck(str_contains($api, "financeToCents((string)\$r['total_paid'])>0"), 'part-paid filter checks the full account payment history');
 studentFeesExperienceCheck(str_contains($api, "adjustment_type']==='full_scholarship"), 'approved full-scholarship accounts are included in the settled filter');
 studentFeesExperienceCheck(str_contains($js, 'studentFeesRequestSequence') && str_contains($js, 'sequence!==studentFeesRequestSequence'), 'stale search and filter responses cannot overwrite newer results');
-studentFeesExperienceCheck(str_contains($js, "feeClearanceBadge('Full scholarship')"), 'approved full scholarship receives a distinct green clearance indicator');
+studentFeesExperienceCheck(str_contains($js, "const currentFee=fullScholarship") && str_contains($js, "?'—'"), 'approved full scholarship accounts show double dashes for current-term fee amounts');
 studentFeesExperienceCheck(str_contains($js, "feeClearanceBadge('No previous debt')"), 'students without previous-term debt receive a green clearance indicator');
 studentFeesExperienceCheck(str_contains($js, 'money(s.current_paid)') && str_contains($js, 'money(s.current_balance)'), 'ordinary students retain current-term paid and remaining amounts');
 studentFeesExperienceCheck(str_contains($js, 'await refreshStudentFeeViews(Number(d.student_id))'), 'recording a payment refreshes the register and the open matching student statement');
