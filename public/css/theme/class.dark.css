@@ -1597,6 +1597,12 @@ html[data-theme="dark"] .mkls-hint {
 html[data-theme="dark"] .mkls-summary-list li {
     background: rgba(26, 33, 30, 0.08)
 }
+html[data-theme="dark"] .mkls-icon-btn {
+    background: rgba(26, 33, 30, 0.1)
+}
+html[data-theme="dark"] .mkls-upload-status {
+    background: rgba(26, 33, 30, 0.09)
+}
 /* ---- css/app-watermark.css ---- */
 html[data-theme="dark"] {
     background: #0d1411

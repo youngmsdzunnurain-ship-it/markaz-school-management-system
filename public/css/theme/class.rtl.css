@@ -638,6 +638,9 @@ html[dir="rtl"] .mkls-btn.primary {
 html[dir="rtl"][dir="rtl"] .mkls-table input {
     direction: rtl
 }
+html[dir="rtl"] .mkls-progress-track > span {
+    background: linear-gradient(-90deg,#e6c26a,#75dba2)
+}
 /* ---- css/app-watermark.css ---- */
 html[dir="rtl"] .sidebar {
     background: linear-gradient(-180deg, #123d2a 0%, #0d2b1c 100%) !important
