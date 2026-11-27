@@ -36,6 +36,10 @@ termFeeCheck(str_contains($api,"if (\$action === 'register')")&&str_contains($ap
 termFeeCheck(str_contains($api,'INSERT IGNORE INTO finance_term_fee_invoices'),'re-running invoice generation cannot rewrite an issued student assessment');
 termFeeCheck(str_contains($api,'payment has already been recorded against this term assessment')&&str_contains($api,'student_fee_invoice_adjusted'),'assessed but unpaid invoices can be amended with approval; any payment history locks the assessment');
 termFeeCheck(str_contains($api,'different authorised staff member must approve'),'the person who submits an individual fee adjustment cannot approve it');
+termFeeCheck(str_contains($api,'markazSyncStudentTermFees') && str_contains($api,'$sync=markazSyncStudentTermFees'),'saving the 16 configured rates automatically creates or synchronises current-term student assessments');
+termFeeCheck(str_contains($api,"$role=currentAdminRole();$adminImmediate=$role==='admin'") && str_contains($api,"currentAdminRole()!=='admin'"),'Admin fee adjustments apply immediately while only Admin can approve Management requests');
+termFeeCheck(str_contains($api,"$action==='reset_student_adjustment'") && str_contains($api,'Reset scholarship to the standard scheduled fee.'),'resetting a scholarship restores the standard configured student fee');
+termFeeCheck(str_contains($api,'finance_term_fee_payments WHERE term_invoice_id=?') && str_contains($api,"$status=($dueCents===0||$paid>=$dueCents)?'paid':($paid>0?'partial':'unpaid')"),'revised assessments recalculate paid/partial/outstanding status without deleting payment allocations');
 termFeeCheck(str_contains($payments,'finance_term_fee_payments'),'confirmed instalment payments are allocated to term invoices');
 $currentTermAllocation = strpos($payments, '// Current-term school fees are paid first');
 $monthlyAllocation = strpos($payments, '// Legacy monthly invoices remain payable');
