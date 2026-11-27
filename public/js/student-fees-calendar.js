@@ -6,7 +6,7 @@
 
   const css = document.createElement('link');
   css.rel = 'stylesheet';
-  css.href = './css/student-fees-calendar.css?v=20261127-calendar1';
+  css.href = './css/student-fees-calendar.css?v=20261127-calendar2';
   document.head.appendChild(css);
 
   const periodPanel = document.getElementById('studentFeesAcademicPeriod');
@@ -22,11 +22,16 @@
   calendar.className = 'panel student-fees-calendar';
   calendar.id = 'studentFeesCalendar';
   calendar.setAttribute('aria-label', 'MARKAZ academic calendar');
+  calendar.classList.add('is-collapsed');
   calendar.innerHTML = `
     <div class="student-calendar-heading">
-      <div><span class="eyebrow">SCHOOL PLANNER</span><h2><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Academic calendar</h2></div>
+      <button type="button" class="student-calendar-toggle" id="studentCalendarToggle" aria-expanded="false" aria-controls="studentCalendarContent">
+        <span class="student-calendar-heading-copy"><span class="eyebrow">SCHOOL PLANNER</span><strong><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Academic calendar</strong><span id="studentCalendarMonthSummary" class="student-calendar-month-summary">Loading calendar…</span></span>
+        <i class="fa-solid fa-chevron-down student-calendar-chevron" aria-hidden="true"></i>
+      </button>
       <span class="student-calendar-live"><i aria-hidden="true"></i> Live</span>
     </div>
+    <div class="student-calendar-content" id="studentCalendarContent" hidden>
     <div class="student-calendar-toolbar">
       <button type="button" class="student-calendar-nav" data-calendar-shift="-1" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
       <h3 id="studentCalendarMonth" aria-live="polite">Loading calendar…</h3>
@@ -38,10 +43,12 @@
       <span><i class="term"></i> Term</span><span><i class="exam"></i> Exam</span><span><i class="break"></i> Vacation</span><span><i class="resume"></i> Resumption</span>
     </div>
     <div class="student-calendar-events" id="studentCalendarEvents" aria-live="polite"><p>Loading school dates…</p></div>
+    </div>
   `;
   layout.appendChild(calendar);
 
   const monthLabel = document.getElementById('studentCalendarMonth');
+  const monthSummary = document.getElementById('studentCalendarMonthSummary');
   const daysHost = document.getElementById('studentCalendarDays');
   const eventsHost = document.getElementById('studentCalendarEvents');
   const today = new Date();
@@ -75,7 +82,9 @@
   function render() {
     const year = month.getFullYear();
     const monthIndex = month.getMonth();
-    monthLabel.textContent = month.toLocaleDateString('en-NG', {month:'long',year:'numeric'});
+    const formattedMonth = month.toLocaleDateString('en-NG', {month:'long',year:'numeric'});
+    monthLabel.textContent = formattedMonth;
+    monthSummary.textContent = formattedMonth;
     const firstDay = new Date(year, monthIndex, 1).getDay();
     const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
     const cells = [];
@@ -109,12 +118,22 @@
       render();
     } catch (error) {
       monthLabel.textContent = 'Calendar unavailable';
+      monthSummary.textContent = 'Calendar unavailable';
       daysHost.innerHTML = '<p class="student-calendar-error">' + safe(error.message) + '</p>';
       eventsHost.innerHTML = '<p class="student-calendar-no-event">Set term dates, examination dates, vacation dates and resumption dates in School Settings. The calendar follows those saved dates automatically.</p>';
     }
   }
 
   calendar.addEventListener('click', event => {
+    const toggle = event.target.closest('#studentCalendarToggle');
+    if (toggle) {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      document.getElementById('studentCalendarContent').hidden = expanded;
+      calendar.classList.toggle('is-expanded', !expanded);
+      calendar.classList.toggle('is-collapsed', expanded);
+      return;
+    }
     const shift = event.target.closest('[data-calendar-shift]');
     if (shift) {
       month = new Date(month.getFullYear(), month.getMonth() + Number(shift.dataset.calendarShift), 1);
