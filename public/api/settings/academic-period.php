@@ -56,6 +56,8 @@ if ($method === 'GET') {
             'session_name' => $period['session_name'],
             'term_name' => $period['term_name'],
             'resumption_date' => $period['resumption_date'],
+            'examination_date' => $period['examination_date'],
+            'vacation_date' => $period['vacation_date'],
             'starts_on' => $period['starts_on'],
             'ends_on' => $period['ends_on'],
             'is_finalized' => (int) $period['is_finalized'],
@@ -73,18 +75,27 @@ if ($method !== 'POST') {
 $sessionId = filter_var($_POST['academic_session_id'] ?? null, FILTER_VALIDATE_INT);
 $termId = filter_var($_POST['term_id'] ?? null, FILTER_VALIDATE_INT);
 $resumptionDate = trim((string) ($_POST['resumption_date'] ?? ''));
+$examinationDate = trim((string) ($_POST['examination_date'] ?? ''));
+$vacationDate = trim((string) ($_POST['vacation_date'] ?? ''));
 $startsOn = trim((string) ($_POST['starts_on'] ?? ''));
 $endsOn = trim((string) ($_POST['ends_on'] ?? ''));
 
 if (!$sessionId || $sessionId < 1 || !$termId || !in_array($termId, [1, 2, 3], true)) {
     academicPeriodResponse(422, ['success' => false, 'message' => 'Select a valid academic session and term.']);
 }
-$date = DateTime::createFromFormat('Y-m-d', $resumptionDate);
+$date = DateTime::createFromFormat('!Y-m-d', $resumptionDate);
+$optionalDatesValid = true;
+foreach ([$examinationDate, $vacationDate] as $value) {
+    if ($value === '') continue;
+    $parsed = DateTime::createFromFormat('!Y-m-d', $value);
+    if (!$parsed || $parsed->format('Y-m-d') !== $value) $optionalDatesValid = false;
+}
 $termStart = DateTime::createFromFormat('!Y-m-d', $startsOn);
 $termEnd = DateTime::createFromFormat('!Y-m-d', $endsOn);
 if (!$date || $date->format('Y-m-d') !== $resumptionDate
     || !$termStart || $termStart->format('Y-m-d') !== $startsOn
     || !$termEnd || $termEnd->format('Y-m-d') !== $endsOn
+    || !$optionalDatesValid
     || $endsOn < $startsOn) {
     academicPeriodResponse(422, ['success' => false, 'message' => 'Enter valid term start, term end and next-term resumption dates. The term end cannot be before its start.']);
 }
@@ -165,15 +176,15 @@ try {
     if ($target) {
         $periodId = (int) $target['id'];
         $update = $pdo->prepare(
-            'UPDATE academic_periods SET starts_on = ?, ends_on = ?, resumption_date = ?, updated_at = NOW() WHERE id = ? AND is_finalized = 0'
+            'UPDATE academic_periods SET starts_on = ?, ends_on = ?, examination_date = ?, vacation_date = ?, resumption_date = ?, updated_at = NOW() WHERE id = ? AND is_finalized = 0'
         );
-        $update->execute([$startsOn, $endsOn, $resumptionDate, $periodId]);
+        $update->execute([$startsOn, $endsOn, $examinationDate !== '' ? $examinationDate : null, $vacationDate !== '' ? $vacationDate : null, $resumptionDate, $periodId]);
     } else {
         $insert = $pdo->prepare(
-            'INSERT INTO academic_periods (academic_session_id, term_id, starts_on, ends_on, resumption_date, is_current)
-             VALUES (?, ?, ?, ?, ?, 0)'
+            'INSERT INTO academic_periods (academic_session_id, term_id, starts_on, ends_on, examination_date, vacation_date, resumption_date, is_current)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 0)'
         );
-        $insert->execute([$sessionId, $termId, $startsOn, $endsOn, $resumptionDate]);
+        $insert->execute([$sessionId, $termId, $startsOn, $endsOn, $examinationDate !== '' ? $examinationDate : null, $vacationDate !== '' ? $vacationDate : null, $resumptionDate]);
         $periodId = (int) $pdo->lastInsertId();
     }
 
@@ -198,6 +209,8 @@ try {
             'academic_session_id' => $sessionId,
             'term_id' => $termId,
             'resumption_date' => $resumptionDate,
+            'examination_date' => $examinationDate !== '' ? $examinationDate : null,
+            'vacation_date' => $vacationDate !== '' ? $vacationDate : null,
             'starts_on' => $startsOn,
             'ends_on' => $endsOn,
             'is_finalized' => false
