@@ -708,6 +708,8 @@ const academicPeriodForm = document.getElementById("academicPeriodForm");
 const academicSessionSelect = document.getElementById("academicSessionSelect");
 const academicTermSelect = document.getElementById("academicTermSelect");
 const resumptionDateInput = document.getElementById("resumptionDate");
+const examinationDateInput = document.getElementById("examinationDate");
+const vacationDateInput = document.getElementById("vacationDate");
 const academicTermStartsOnInput = document.getElementById("academicTermStartsOn");
 const academicTermEndsOnInput = document.getElementById("academicTermEndsOn");
 const academicPeriodMessage = document.getElementById("academicPeriodMessage");
@@ -765,6 +767,8 @@ async function loadAcademicPeriodSettings() {
         if (resumptionDateInput) {
             resumptionDateInput.value = period.resumption_date || "";
         }
+        if (examinationDateInput) examinationDateInput.value = period.examination_date || "";
+        if (vacationDateInput) vacationDateInput.value = period.vacation_date || "";
         if (academicTermStartsOnInput) academicTermStartsOnInput.value = period.starts_on || "";
         if (academicTermEndsOnInput) academicTermEndsOnInput.value = period.ends_on || "";
     } catch (error) {
