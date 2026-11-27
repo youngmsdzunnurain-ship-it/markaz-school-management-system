@@ -18,6 +18,7 @@ $settingsApi=file_get_contents(__DIR__.'/../public/api/settings/academic-period.
 $settingsHtml=file_get_contents(__DIR__.'/../public/settings.html');
 $settingsJs=file_get_contents(__DIR__.'/../public/js/settings.js');
 $helper=file_get_contents(__DIR__.'/../app/helpers/finance-fee-calculations.php');
+$installer=file_get_contents(__DIR__.'/../scripts/install-finance.sh');
 
 termFeeCheck(str_contains($legacyMigration,'UNIQUE KEY uq_term_student_invoice (student_id,session_id,term)'),'term invoice identity remains unique per student and academic term');
 termFeeCheck(str_contains($legacyMigration,'finance_student_fee_adjustments'),'individual scholarships and negotiated fees retain a separate approval history');
