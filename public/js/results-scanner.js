@@ -25,7 +25,8 @@
         meta: null, phase: "closed", stream: null, timer: null, reading: false, worker: null,
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
-        votes: new Map(), lastSeen: new Map(), studentSeen: new Set()
+        votes: new Map(), lastSeen: new Map(), studentSeen: new Set(),
+        previewUrl: null, torchOn: false
     };
 
     const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -442,8 +443,21 @@
           </div>
           <button type="button" class="mkls-close" data-mkls-close aria-label="Close">&times;</button>
         </header>
+        <div class="mkls-controls" data-mkls-bar>
+          <div class="mkls-control-row">
+            <button type="button" class="mkls-icon-btn" data-mkls-upload-photo aria-label="Upload photo" title="Upload photo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 2v5m-2-2 2-2 2 2"/></svg>
+            </button>
+            <button type="button" class="mkls-icon-btn" data-mkls-torch aria-label="Turn torch on" aria-pressed="false" title="Turn torch on" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6l-1 7h3l-7 13 1-9H8l1-11Z"/></svg>
+            </button>
+          </div>
+          <button type="button" class="mkls-btn ghost mkls-review-control" data-mkls-review>Review scanned results</button>
+          <input type="file" data-mkls-photo-input accept="image/*" hidden>
+        </div>
         <section class="mkls-camera" data-mkls-camera>
           <video class="mkls-video" playsinline muted autoplay></video>
+          <img class="mkls-upload-preview" data-mkls-upload-preview alt="Selected result sheet preview" hidden>
           <div class="mkls-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <div class="mkls-scanline" aria-hidden="true"></div>
           <div class="mkls-mark" data-mkls-mark hidden>
@@ -451,14 +465,18 @@
             <strong class="mkls-mark-text" data-mkls-mark-text></strong>
           </div>
         </section>
+        <section class="mkls-upload-status" data-mkls-upload-status hidden aria-live="polite">
+          <div class="mkls-class-facts">
+            <strong data-mkls-class-name>Class</strong>
+            <span><b data-mkls-student-count>0</b> students</span>
+            <span><b data-mkls-subject-count>0</b> subjects</span>
+          </div>
+          <div class="mkls-progress-track" role="progressbar" aria-label="Photo scanning progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-mkls-progress>
+            <span data-mkls-progress-fill></span>
+          </div>
+          <div class="mkls-progress-meta"><span data-mkls-progress-label>Preparing photo…</span><strong data-mkls-progress-value>0%</strong></div>
+        </section>
         <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
-        <div class="mkls-bar" data-mkls-bar>
-          <button type="button" class="mkls-btn ghost" data-mkls-upload-files>Upload images</button>
-          <button type="button" class="mkls-btn ghost" data-mkls-upload-folder>Upload folder</button>
-          <button type="button" class="mkls-btn ghost" data-mkls-review>Review scanned students</button>
-          <input type="file" data-mkls-file-input accept="image/*" multiple hidden>
-          <input type="file" data-mkls-folder-input accept="image/*" webkitdirectory multiple hidden>
-        </div>
         <section class="mkls-preview" data-mkls-preview hidden>
           <p class="mkls-preview-note" data-mkls-note></p>
           <div class="mkls-table-wrap">
@@ -490,15 +508,13 @@
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
-        $("[data-mkls-upload-files]", overlay).addEventListener("click", () => $("[data-mkls-file-input]", overlay).click());
-        $("[data-mkls-upload-folder]", overlay).addEventListener("click", () => $("[data-mkls-folder-input]", overlay).click());
-        ["[data-mkls-file-input]", "[data-mkls-folder-input]"].forEach(selector => {
-            $(selector, overlay).addEventListener("change", event => {
-                const files = [...(event.target.files || [])];
-                event.target.value = "";
-                if (files.length) processUploadedFiles(files);
-            });
+        $("[data-mkls-upload-photo]", overlay).addEventListener("click", () => $("[data-mkls-photo-input]", overlay).click());
+        $("[data-mkls-photo-input]", overlay).addEventListener("change", event => {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = "";
+            if (file) processUploadedFiles([file]);
         });
+        $("[data-mkls-torch]", overlay).addEventListener("click", toggleTorch);
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
             if (event.key === "Escape" && state.phase !== "closed") closeScanner();
@@ -530,11 +546,68 @@
 
     function showPhase(name) {
         state.phase = name;
-        $("[data-mkls-camera]", overlay).hidden = !(name === "camera" || name === "marking");
-        $("[data-mkls-guide]", overlay).hidden = !(name === "camera" || name === "marking" || name === "saving");
-        $("[data-mkls-bar]", overlay).hidden = name !== "camera";
+        const imagePreview = $("[data-mkls-upload-preview]", overlay);
+        const hasPhoto = Boolean(state.previewUrl);
+        $("[data-mkls-camera]", overlay).hidden = !(name === "camera" || name === "uploading" || name === "review" || name === "marking");
+        if (imagePreview) imagePreview.hidden = !hasPhoto;
+        const video = videoEl();
+        if (video) video.hidden = hasPhoto;
+        $("[data-mkls-guide]", overlay).hidden = !(name === "camera" || name === "uploading" || name === "marking" || name === "saving");
+        $("[data-mkls-bar]", overlay).hidden = !["camera", "uploading", "review"].includes(name);
+        $("[data-mkls-review]", overlay).disabled = name !== "camera";
         $("[data-mkls-preview]", overlay).hidden = name !== "review";
         $("[data-mkls-summary]", overlay).hidden = name !== "summary";
+        $("[data-mkls-upload-status]", overlay).hidden = !["uploading", "review"].includes(name) || !hasPhoto;
+    }
+
+    function setUploadProgress(percent, label) {
+        const value = Math.max(0, Math.min(100, Math.round(percent)));
+        const progress = $("[data-mkls-progress]", overlay);
+        progress.setAttribute("aria-valuenow", String(value));
+        $("[data-mkls-progress-fill]", overlay).style.width = value + "%";
+        $("[data-mkls-progress-value]", overlay).textContent = value + "%";
+        $("[data-mkls-progress-label]", overlay).textContent = label;
+    }
+
+    function resetPhotoPreview() {
+        if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
+        state.previewUrl = null;
+        const preview = $("[data-mkls-upload-preview]", overlay);
+        if (preview) { preview.removeAttribute("src"); preview.hidden = true; }
+        const video = videoEl();
+        if (video) video.hidden = false;
+    }
+
+    async function toggleTorch() {
+        const track = state.stream && state.stream.getVideoTracks()[0];
+        const control = $("[data-mkls-torch]", overlay);
+        if (!track || typeof track.applyConstraints !== "function") return;
+        const next = !state.torchOn;
+        try {
+            await track.applyConstraints({ advanced: [{ torch: next }] });
+            state.torchOn = next;
+            control.setAttribute("aria-pressed", String(next));
+            control.setAttribute("aria-label", next ? "Turn torch off" : "Turn torch on");
+            control.title = next ? "Turn torch off" : "Turn torch on";
+            control.classList.toggle("is-on", next);
+        } catch (error) {
+            setGuide("The torch is not supported by this camera.");
+        }
+    }
+
+    function syncTorchAvailability() {
+        const control = $("[data-mkls-torch]", overlay);
+        const track = state.stream && state.stream.getVideoTracks()[0];
+        const capabilities = track && track.getCapabilities ? track.getCapabilities() : {};
+        const supported = Boolean(capabilities && capabilities.torch);
+        control.disabled = !supported;
+        if (!supported) {
+            state.torchOn = false;
+            control.setAttribute("aria-pressed", "false");
+            control.setAttribute("aria-label", "Torch unavailable");
+            control.title = "Torch unavailable on this camera";
+            control.classList.remove("is-on");
+        }
     }
 
     function videoEl() { return overlay ? $("video", overlay) : null; }
@@ -542,6 +615,15 @@
     /* ------------------------------------------------------------------ camera */
     function stopStream() {
         if (state.stream) { state.stream.getTracks().forEach(track => track.stop()); state.stream = null; }
+        state.torchOn = false;
+        const control = overlay && $("[data-mkls-torch]", overlay);
+        if (control) {
+            control.setAttribute("aria-pressed", "false");
+            control.setAttribute("aria-label", "Turn torch on");
+            control.title = "Turn torch on";
+            control.classList.remove("is-on");
+            control.disabled = true;
+        }
         const video = videoEl();
         if (video) video.srcObject = null;
     }
@@ -594,8 +676,11 @@
         if (state.phase !== "camera") { stopStream(); return; }
 
         const video = videoEl();
+        resetPhotoPreview();
+        video.hidden = false;
         video.srcObject = state.stream;
         await video.play().catch(() => {});
+        syncTorchAvailability();
         state.startedAt = Date.now();
 
         setGuide("Getting the reader ready…");
@@ -613,75 +698,87 @@
     async function processUploadedFiles(files) {
         clearTimeout(state.timer);
         stopStream();
-        showPhase("camera");
-        state.phase = "uploading";
-        const images = files.filter(file => file && /^image\//i.test(file.type));
-        if (!images.length) {
-            setGuide("No supported image files were selected. Choose JPG, PNG or another browser-supported image.");
-            state.phase = "camera";
+        resetSession();
+        resetPhotoPreview();
+        const file = files.find(item => item && /^image\\//i.test(item.type));
+        if (!file) {
+            showPhase("camera");
+            setGuide("Choose a supported photo of the result sheet.");
             return;
         }
-        const failures = [];
-        let processed = 0;
-        setGuide(`Preparing to read ${images.length} image(s)…`);
+
+        state.previewUrl = URL.createObjectURL(file);
+        const preview = $("[data-mkls-upload-preview]", overlay);
+        preview.src = state.previewUrl;
+        preview.hidden = false;
+        const className = (document.getElementById("classTitle")?.textContent || "Selected class").trim();
+        $("[data-mkls-class-name]", overlay).textContent = className;
+        $("[data-mkls-student-count]", overlay).textContent = String(classStudents().length);
+        $("[data-mkls-subject-count]", overlay).textContent = String((state.meta.subjects || []).length);
+        setUploadProgress(1, "Preparing photo");
+        showPhase("uploading");
+        setGuide("Your photo is ready. Reading the result sheet on this device…");
+
+        let bitmap = null;
         try {
+            setUploadProgress(8, "Preparing scanner");
             await prepareWorker();
-            for (let index = 0; index < images.length; index++) {
-                const file = images[index];
-                setGuide(`Reading image ${index + 1} of ${images.length}: ${file.name}`);
-                let bitmap = null;
-                try {
-                    bitmap = await createImageBitmap(file);
-                    const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
-                    const canvas = document.createElement("canvas");
-                    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-                    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-                    const context = canvas.getContext("2d");
-                    if (!context) throw new Error("Image processing is unavailable.");
-                    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-                    await state.worker.setParameters({ tessedit_char_whitelist: "" });
-                    const textResult = await state.worker.recognize(canvas);
-                    await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
-                    const digitResult = await state.worker.recognize(canvas);
-                    const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
-                    parsed.spans.forEach(span => {
-                        const id = String(span.subject.id);
-                        state.subjectInfo.set(id, span.subject);
-                        state.subjectSeen.set(id, CONFIRM_READS);
-                    });
-                    parsed.read.forEach(({ student, cells }) => {
-                        state.studentSeen.add(String(student.id));
-                        cells.forEach((values, subjectId) => {
-                            if (!values) return;
-                            FIELDS.forEach(field => state.lastSeen.set(`${student.id}|${subjectId}|${field}`, values[field]));
-                        });
-                    });
-                    processed++;
-                } catch (error) {
-                    failures.push(file.name);
-                } finally {
-                    await state.worker.setParameters({ tessedit_char_whitelist: "" }).catch(() => {});
-                    bitmap?.close?.();
-                }
-            }
+            setUploadProgress(18, "Photo ready — reading text");
+            bitmap = await createImageBitmap(file);
+            const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("Image processing is unavailable.");
+            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+            await state.worker.setParameters({ tessedit_char_whitelist: "" });
+            setUploadProgress(30, "Reading student names and subjects");
+            const textResult = await state.worker.recognize(canvas);
+            setUploadProgress(68, "Reading CA1, CA2 and Exam marks");
+            await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
+            const digitResult = await state.worker.recognize(canvas);
+            await state.worker.setParameters({ tessedit_char_whitelist: "" });
+            setUploadProgress(88, "Matching the class roster");
+            const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
+
+            parsed.spans.forEach(span => {
+                const id = String(span.subject.id);
+                state.subjectInfo.set(id, span.subject);
+                state.subjectSeen.set(id, CONFIRM_READS);
+            });
+            parsed.read.forEach(({ student, cells }) => {
+                state.studentSeen.add(String(student.id));
+                cells.forEach((values, subjectId) => {
+                    if (!values) return;
+                    FIELDS.forEach(field => state.lastSeen.set(`${student.id}|${subjectId}|${field}`, values[field]));
+                });
+            });
+            setUploadProgress(96, "Checking detected scores");
+
             const subjects = confirmedSubjects();
+            setUploadProgress(100, "Scan complete");
             if (!subjects.length) {
-                setGuide(failures.length === images.length
-                    ? "None of the selected images could be read. Try clear JPG or PNG photos taken straight-on."
-                    : "The selected images did not clearly show the subject headings. Include a clear image of the top of the result sheet.");
-                state.phase = "camera";
+                setGuide("The photo is visible, but the subject headings could not be identified clearly. Try a sharper, straight-on photo with the subject names visible.");
                 return;
             }
             buildReview(subjects);
             showPhase("review");
+            const detectedStudents = state.studentSeen.size;
             const captured = Math.round(state.lastSeen.size / FIELDS.length);
-            const failedNote = failures.length ? ` ${failures.length} image(s) could not be read: ${failures.slice(0, 4).join(", ")}.` : "";
+            const missing = Math.max(0, classStudents().length * subjects.length - captured);
+            const invalid = [...$("[data-mkls-rows]", overlay).querySelectorAll("tr.needs-check")].length;
             $("[data-mkls-note]", overlay).textContent =
-                `Read ${processed} of ${images.length} image(s). ${captured} score cell(s) were detected. Review and correct every row before saving; uploaded images are not saved.${failedNote}`;
+                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected across ${subjects.length} subject(s). ${captured} score line(s) read; ${missing} need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} Check the marks before saving.`;
+            setGuide("Review the highlighted rows and confirm every score before saving.");
         } catch (error) {
-            state.phase = "camera";
+            setUploadProgress(100, "Scan could not finish");
+            setGuide(error.message || "The photo could not be read. Your selected photo is still visible; try another clear image.");
             showPhase("camera");
-            setGuide(error.message || "The selected images could not be read. The scanner is still open; try another image or use the camera.");
+        } finally {
+            await state.worker?.setParameters({ tessedit_char_whitelist: "" }).catch(() => {});
+            bitmap?.close?.();
         }
     }
 
@@ -724,9 +821,11 @@
         showPhase("marking");
         stopStream();
         clearTimeout(state.timer);
-        setMark("ok", `All ${classStudents().length} students clear in ${subjects.length} subject(s)`);
-        setGuide("Saving the results…");
-        setTimeout(() => { if (state.phase === "marking") autoSave(subjects); }, 1100);
+        buildReview(subjects);
+        showPhase("review");
+        $("[data-mkls-note]", overlay).textContent =
+            `Scan complete: all ${classStudents().length} students were read across ${subjects.length} subject(s). Review the marks, then save.`;
+        setGuide("The scan is complete. Review the marks before saving.");
     }
 
     async function autoSave(subjects) {
@@ -911,6 +1010,7 @@
         clearTimeout(state.markTimer);
         stopStream();
         if (state.worker) { state.worker.terminate().catch(() => {}); state.worker = null; }
+        resetPhotoPreview();
         if (overlay) overlay.hidden = true;
         document.body.classList.remove("mkls-open");
     }
