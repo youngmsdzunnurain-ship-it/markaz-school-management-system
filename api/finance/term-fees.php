@@ -345,7 +345,7 @@ try {
         financeJson(['success'=>true,'message'=>'Student intake category saved for this academic term. It will be used when the term fee assessment is generated.']);
     }
 
-    if ($action==='save_student_adjustment') {
+    if (in_array($action,['save_student_adjustment','reset_student_adjustment'],true)) {
         $isReset=$action==='reset_student_adjustment';
         $student=(int)($input['student_id']??0);$type=$isReset?'fixed_fee':(string)($input['adjustment_type']??'');$value=financeMoney($input['value']??'0',true);$reason=$isReset?'Reset scholarship to the standard scheduled fee.':trim((string)($input['reason']??''));
         $allowed=['fixed_fee','discount_amount','discount_percent','full_scholarship'];
@@ -405,8 +405,6 @@ try {
         if((int)$adjustment['created_by']===$actor){$pdo->rollBack();financeJson(['success'=>false,'message'=>'A different authorised staff member must approve this adjustment.'],403);}
         $invoiceStmt=$pdo->prepare('SELECT id,base_amount FROM finance_term_fee_invoices WHERE student_id=(SELECT student_id FROM finance_student_fee_adjustments WHERE id=?) AND (academic_period_id=? OR (academic_period_id IS NULL AND session_id=? AND term=?)) LIMIT 1 FOR UPDATE');
         $invoiceStmt->execute([$id,$periodId,$financeSessionId,$term]);$issuedInvoice=$invoiceStmt->fetch(PDO::FETCH_ASSOC);
-        if($issuedInvoice){
-        }
         $up=$pdo->prepare("UPDATE finance_student_fee_adjustments SET status='approved',approved_by=?,approved_at=NOW() WHERE id=? AND status='pending'");$up->execute([$actor,$id]);
         if($up->rowCount()!==1){$pdo->rollBack();financeJson(['success'=>false,'message'=>'Adjustment approval could not be completed. Refresh and try again.'],409);}
         if($issuedInvoice){
