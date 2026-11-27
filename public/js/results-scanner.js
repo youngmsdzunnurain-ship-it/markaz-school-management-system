@@ -377,6 +377,9 @@
     }
 
     async function saveEntries(plan, messageNode) {
+        if (plan.conflicts.length || plan.incomplete.length) {
+            throw new Error("Resolve every conflicting or incomplete result row before saving. No results were saved.");
+        }
         if (!plan.payloads.length) {
             if (typeof state.meta.onSaved === "function") {
                 try { await state.meta.onSaved(); }
