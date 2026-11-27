@@ -13,6 +13,7 @@ refundCheck(str_contains($api,'overdue_1_30')&&str_contains($api,'r.refunded'),'
 refundCheck(str_contains($termApi,'r.refunded'),'term class reports and invoices include approved refunds');
 refundCheck(str_contains($html,'id="refundForm"')&&str_contains($html,'id="refundQueue"'),'Finance UI provides refund request and maker-checker approval workspaces');
 refundCheck(str_contains($js,"request('payments'")&&str_contains($js,"request('income'")&&str_contains($js,"request('refunds'"),'Finance loads payment, other income and refund registers from their live API actions');
+refundCheck(str_contains($js,'async function loadPayments()')&&str_contains($js,'async function loadIncome()')&&str_contains($js,'async function loadRefunds()'),'Finance defines every data loader invoked by startup and payment/refund controls');
 refundCheck(str_contains($js,"action='request_refund'")&&str_contains($js,'data-review-refund'),'refund requests and approvals are wired to live Finance API actions');
 refundCheck(str_contains($installer,'20261126_markaz_fee_refunds.sql'),'guarded Finance installer applies and verifies refund tables');
 echo "MARKAZ fee refund regression checks passed.\n";
