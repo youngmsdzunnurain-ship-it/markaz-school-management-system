@@ -34,7 +34,7 @@ ALTER TABLE finance_term_fee_invoices
     ADD COLUMN academic_period_id BIGINT UNSIGNED NULL AFTER session_id,
     ADD COLUMN section ENUM('nursery','primary','junior_secondary','senior_secondary') NULL AFTER class_id,
     ADD COLUMN student_type ENUM('Day Student','Boarding') NULL AFTER section,
-    ADD COLUMN intake_type ENUM('returning','new_intake') NOT NULL DEFAULT 'returning' AFTER student_type,
+    ADD COLUMN intake_type ENUM('returning','new_intake') NULL AFTER student_type,
     ADD COLUMN fee_schedule_id BIGINT UNSIGNED NULL AFTER intake_type,
     ADD KEY idx_term_invoice_period_section (academic_period_id,section,student_type,intake_type,status),
     ADD CONSTRAINT fk_term_invoice_academic_period FOREIGN KEY (academic_period_id)
@@ -42,21 +42,7 @@ ALTER TABLE finance_term_fee_invoices
     ADD CONSTRAINT fk_term_invoice_fee_schedule FOREIGN KEY (fee_schedule_id)
         REFERENCES finance_section_fee_schedules(id) ON DELETE RESTRICT;
 
--- Preserve the original fee snapshots. Only fill classification metadata on
--- historical invoices; never change their amount, discount, payment or status.
-UPDATE finance_term_fee_invoices i
-INNER JOIN students s ON s.id = i.student_id
-INNER JOIN classes c ON c.id = i.class_id
-SET i.student_type = CASE
-        WHEN s.student_type = 'Boarding' THEN 'Boarding'
-        ELSE 'Day Student'
-    END,
-    i.section = CASE
-        WHEN LOWER(REPLACE(c.name,'-',' ')) LIKE '%kindergarten%'
-          OR LOWER(REPLACE(c.name,'-',' ')) LIKE '%pre nursery%'
-          OR LOWER(c.name) LIKE '%nursery%' THEN 'nursery'
-        WHEN LOWER(c.name) LIKE '%jss%' OR LOWER(c.name) LIKE '%junior secondary%' THEN 'junior_secondary'
-        WHEN LOWER(c.name) REGEXP '(^|[^a-z])basic[[:space:]]*(1|2|3|4|5|one|two|three|four|five)([^a-z0-9]|$)' OR LOWER(c.name) LIKE '%primary%' THEN 'primary'
-        WHEN LOWER(c.name) REGEXP '(^|[^a-z])ss[[:space:]]*[123]([^0-9]|$)' OR LOWER(c.name) LIKE '%senior secondary%' THEN 'senior_secondary'
-        ELSE NULL
-    END;
+-- Historical invoice classification is intentionally left NULL.
+-- Current student class/type/admission data may have changed since an invoice
+-- was issued. Never infer historical fee classifications from mutable records.
+-- New invoices receive all classification snapshots in term-fees.php.
