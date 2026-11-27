@@ -183,7 +183,7 @@
             <div>
                 <span class="settings-label">ACADEMIC CALENDAR</span>
                 <h2>Current Academic Period</h2>
-                <p>Set the current term's start and end dates, and the next term's resumption date. Student Fees uses this same academic calendar.</p>
+                <p>Set the current term dates, examination and vacation dates, and the next term's resumption date. Student Fees uses this same academic calendar.</p>
             </div>
         </div>
 
@@ -213,6 +213,14 @@
                 <label for="academicTermEndsOn">
                     <span>Current Term Ends</span>
                     <input type="date" id="academicTermEndsOn" name="ends_on" required>
+                </label>
+                <label for="examinationDate">
+                    <span>Examination Date</span>
+                    <input type="date" id="examinationDate" name="examination_date">
+                </label>
+                <label for="vacationDate">
+                    <span>Vacation Begins</span>
+                    <input type="date" id="vacationDate" name="vacation_date">
                 </label>
                 <label for="resumptionDate">
                     <span>Next Term Begins</span>
@@ -535,7 +543,7 @@
     </main>
 
     <script src="js/go-back.js"></script>
-    <script src="js/settings.js?v=20261129-term-dates1"></script>
+    <script src="js/settings.js?v=20261127-calendar-events2"></script>
 
     <script src="/js/markaz-global.js"></script>
 
