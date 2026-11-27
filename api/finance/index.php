@@ -137,11 +137,9 @@ try {
         }
         if ($action === 'students') {
             $q = trim((string)($_GET['q'] ?? ''));
-            $period = markazCurrentAcademicPeriod($pdo);
-            $periodId = (int)$period['period_id'];
             $stmt = $pdo->prepare(
                 "SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.class_id,s.student_type,s.admission_date,
-                        (SELECT o.intake_type FROM finance_student_fee_intake_overrides o WHERE o.academic_period_id=? AND o.student_id=s.id LIMIT 1) configured_intake_type,
+                        (SELECT o.intake_type FROM finance_student_fee_intake_overrides o JOIN academic_periods ap ON ap.id=o.academic_period_id WHERE o.student_id=s.id AND ap.is_current=1 ORDER BY ap.id DESC LIMIT 1) configured_intake_type,
                         COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id) arabic_class_id,
                         c.name class_name,ac.name arabic_class_name
                  FROM students s
@@ -150,7 +148,7 @@ try {
                  WHERE s.is_active=1 AND (?='' OR s.admission_number LIKE ? OR s.first_name LIKE ? OR s.middle_name LIKE ? OR s.last_name LIKE ? OR CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) LIKE ?)
                  ORDER BY s.last_name,s.first_name LIMIT 100"
             );
-            $like='%'.$q.'%'; $stmt->execute([$periodId,$q,$like,$like,$like,$like,$like]);
+            $like='%'.$q.'%'; $stmt->execute([$q,$like,$like,$like,$like,$like]);
             financeJson(['success'=>true,'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
         }
         if ($action === 'plans') {
