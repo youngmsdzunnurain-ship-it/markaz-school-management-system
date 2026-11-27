@@ -141,7 +141,7 @@ try {
          WHERE id = ? AND class_type = ? AND class_id = ?'
     );
     $saved = 0;
-    $unchanged = 0;
+    $activity = [];
     foreach ($normalised as $row) {
         $existingStmt->execute([$row['student_id'], $classType, $classId, $row['subject_id'], (int) $period['id']]);
         $existing = $existingStmt->fetch();
@@ -162,6 +162,7 @@ try {
                 $row['result_remark'] !== '' ? $row['result_remark'] : null,
                 (int) $existing['id'], $classType, $classId
             ]);
+            $activity[] = ['action' => 'result_updated', 'student_id' => $row['student_id'], 'result_id' => (int) $existing['id'], 'subject_id' => $row['subject_id']];
         } else {
             $insert->execute([
                 $row['student_id'], $classType, $classId, $row['subject_id'], (int) $period['id'],
@@ -169,10 +170,33 @@ try {
                 $row['teacher_remark'] !== '' ? $row['teacher_remark'] : null,
                 $row['result_remark'] !== '' ? $row['result_remark'] : null
             ]);
+            $activity[] = ['action' => 'result_created', 'student_id' => $row['student_id'], 'result_id' => (int) $pdo->lastInsertId(), 'subject_id' => $row['subject_id']];
         }
         $saved++;
     }
     $pdo->commit();
+
+    foreach ($activity as $item) {
+        try {
+            markazRecordActivity(
+                $pdo,
+                (int) ($_SESSION['admin_id'] ?? 0),
+                currentAdminRole(),
+                $item['action'],
+                'student',
+                $item['student_id'],
+                [
+                    'class_type' => $classType,
+                    'class_id' => (int) $classId,
+                    'subject_id' => $item['subject_id'],
+                    'academic_period_id' => (int) $period['id'],
+                    'result_id' => $item['result_id']
+                ]
+            );
+        } catch (Throwable $auditError) {
+            error_log('MARKAZ activity audit write failed: ' . $auditError->getMessage());
+        }
+    }
 
     echo json_encode([
         'success' => true,
