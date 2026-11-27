@@ -104,9 +104,9 @@ function markazSyncStudentTermFees(PDO $pdo, array $period, int $financeSessionI
         WHERE student_id=? AND session_id=? AND term=? AND status='approved'
           AND effective_from<=CURDATE() AND (effective_until IS NULL OR effective_until>=CURDATE())
         ORDER BY approved_at DESC,id DESC LIMIT 1");
-    $findInvoice=$pdo->prepare("SELECT id FROM finance_term_fee_invoices
+    $findInvoice=$pdo->prepare("SELECT id,status FROM finance_term_fee_invoices
         WHERE student_id=? AND (academic_period_id=? OR (academic_period_id IS NULL AND session_id=? AND term=?))
-          AND status<>'void' LIMIT 1 FOR UPDATE");
+        LIMIT 1 FOR UPDATE");
     $insert=$pdo->prepare("INSERT INTO finance_term_fee_invoices
         (invoice_number,student_id,session_id,academic_period_id,term,class_id,section,student_type,intake_type,fee_schedule_id,base_amount,discount_amount,amount_due,due_on,generated_by)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -127,7 +127,9 @@ function markazSyncStudentTermFees(PDO $pdo, array $period, int $financeSessionI
         $adjustment=$adjustmentStmt->fetch(PDO::FETCH_ASSOC);
         if($adjustment)[$base,$discount,$due]=markazFeeDiscountCents($base,(string)$adjustment['adjustment_type'],(string)$adjustment['value']);
         $findInvoice->execute([(int)$student['id'],$periodId,$financeSessionId,$term]);
-        $invoiceId=(int)($findInvoice->fetchColumn()?:0);
+        $existingInvoice=$findInvoice->fetch(PDO::FETCH_ASSOC);
+        if($existingInvoice && $existingInvoice['status']==='void'){$skipped++;continue;}
+        $invoiceId=(int)($existingInvoice['id']??0);
         if($invoiceId>0){
             $paid=markazTermInvoiceNetPaidCents($pdo,$invoiceId);
             $status=($due===0||$paid>=$due)?'paid':($paid>0?'partial':'unpaid');
