@@ -106,16 +106,17 @@ try {
                 $params[] = '%'.$search.'%'; $params[] = '%'.$search.'%';
             }
             if ($classFilter > 0) { $where[]='s.class_id=?'; $params[]=$classFilter; }
-            if (in_array($typeFilter,['Day Student','Boarding'],true)) { $where[]='s.student_type=?'; $params[]=$typeFilter; }
+            if (in_array($typeFilter,['Day Student','Boarding'],true)) { $where[]="COALESCE(NULLIF(s.student_type,''),'Day Student')=?"; $params[]=$typeFilter; }
             $sql = "SELECT s.id student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
-                           s.class_id,c.name class_name,s.student_type,s.admission_date,
+                           s.class_id,COALESCE(c.name,'Class not assigned') class_name,s.student_type,s.admission_date,io.intake_type configured_intake_type,
                            COALESCE(cur.current_invoice_count,0) current_invoice_count,COALESCE(cur.has_payment_history,0) has_payment_history,cur.current_intake_type,COALESCE(cur.current_normal_fee,0) current_normal_fee,COALESCE(cur.current_discount,0) current_discount,COALESCE(cur.current_fee,0) current_fee,COALESCE(cur.current_paid,0) current_paid,
                            COALESCE(cur.current_balance,0) current_balance,COALESCE(prev.previous_outstanding,0) previous_outstanding,COALESCE(prev.previous_paid,0) previous_paid,COALESCE(prev.previous_invoice_count,0) previous_invoice_count,prev.previous_debt_details,
                            COALESCE(cur.current_fee,0)+COALESCE(prev.previous_outstanding,0) total_due,
                            COALESCE(cur.current_paid,0)+COALESCE(prev.previous_paid,0) total_paid,
                            COALESCE(cur.current_balance,0)+COALESCE(prev.previous_outstanding,0) total_balance,
                            COALESCE(adj.has_scholarship,0) has_scholarship,adj.adjustment_type
-                    FROM students s JOIN classes c ON c.id=s.class_id
+                    FROM students s LEFT JOIN classes c ON c.id=s.class_id
+                    LEFT JOIN finance_student_fee_intake_overrides io ON io.student_id=s.id AND io.academic_period_id=".$periodId."
                     LEFT JOIN (
                       SELECT i.student_id,COUNT(i.id) current_invoice_count,MAX(CASE WHEN COALESCE(p.paid,0)>0 THEN 1 ELSE 0 END) has_payment_history,MAX(i.intake_type) current_intake_type,SUM(i.base_amount) current_normal_fee,SUM(i.discount_amount) current_discount,SUM(i.amount_due) current_fee,
                              SUM(COALESCE(p.paid,0)-COALESCE(r.refunded,0)) current_paid,
@@ -168,7 +169,7 @@ try {
             foreach($rows as &$row) {
                 $row['section']=markazFeeSection((string)$row['class_name']);
                 $admission=(string)($row['admission_date']??'');
-                $row['intake_type']=in_array((string)($row['current_intake_type']??''),['new_intake','returning'],true)?(string)$row['current_intake_type']:(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
+                $row['intake_type']=in_array((string)($row['current_intake_type']??''),['new_intake','returning'],true)?(string)$row['current_intake_type']:(in_array((string)($row['configured_intake_type']??''),['new_intake','returning'],true)?(string)$row['configured_intake_type']:(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning'));
                 $row['current_normal_fee']=financeFromCents(financeToCents((string)$row['current_normal_fee']));
                 $row['current_discount']=financeFromCents(financeToCents((string)$row['current_discount']));
                 $row['current_fee']=financeFromCents(financeToCents((string)$row['current_fee']));
@@ -183,6 +184,7 @@ try {
             if ($sectionFilter !== '') $rows=array_values(array_filter($rows,fn($r)=>($r['section']??'')===$sectionFilter));
             if ($scholarshipFilter==='yes') $rows=array_values(array_filter($rows,fn($r)=>(int)$r['has_scholarship']===1));
             if ($scholarshipFilter==='no') $rows=array_values(array_filter($rows,fn($r)=>(int)$r['has_scholarship']===0));
+            if (in_array($scholarshipFilter,['full_scholarship','discount_percent','discount_amount','fixed_fee'],true)) $rows=array_values(array_filter($rows,fn($r)=>(int)$r['has_scholarship']===1 && (string)$r['adjustment_type']===$scholarshipFilter));
             if (in_array($intakeFilter,['new_intake','returning'],true)) $rows=array_values(array_filter($rows,fn($r)=>$r['intake_type']===$intakeFilter));
             if ($paymentFilter==='paid') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_balance'])===0 && ((int)$r['current_invoice_count']>0 || (int)$r['previous_invoice_count']>0 || ((int)$r['has_scholarship']===1 && (string)$r['adjustment_type']==='full_scholarship'))));
             if ($paymentFilter==='unpaid') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_paid'])===0 && financeToCents((string)$r['total_due'])>0));
@@ -249,6 +251,28 @@ try {
         financeJson(['success'=>true,'message'=>'The 16 fee rates were saved for this academic term only. Earlier terms and issued invoices were not changed.']);
     }
 
+    if ($action==='save_student_intake_override') {
+        $student=(int)($input['student_id']??0);
+        $intake=(string)($input['intake_type']??'');
+        $actor=(int)($_SESSION['admin_id']??0);
+        if($student<1||!in_array($intake,['new_intake','returning'],true)||$actor<1)financeJson(['success'=>false,'message'=>'Choose a student and a valid New Intake or Returning category.'],422);
+        $st=$pdo->prepare('SELECT s.id,c.name class_name FROM students s LEFT JOIN classes c ON c.id=s.class_id WHERE s.id=? AND s.is_active=1 LIMIT 1');
+        $st->execute([$student]);$studentRow=$st->fetch(PDO::FETCH_ASSOC);
+        if(!$studentRow)financeJson(['success'=>false,'message'=>'Active student not found.'],404);
+        if(markazFeeSection((string)($studentRow['class_name']??''))===null)financeJson(['success'=>false,'message'=>'Assign this student to a supported conventional class before configuring a fee intake category.'],422);
+        $issued=$pdo->prepare("SELECT COUNT(*) FROM finance_term_fee_invoices WHERE student_id=? AND (academic_period_id=? OR (academic_period_id IS NULL AND session_id=? AND term=?)) AND status<>'void'");
+        $issued->execute([$student,$periodId,$financeSessionId,$term]);
+        if((int)$issued->fetchColumn()>0)financeJson(['success'=>false,'message'=>'A fee assessment already exists for this student in the current term. Its intake category is locked to preserve the issued assessment and payment history.'],409);
+        $pdo->beginTransaction();
+        try{
+            $save=$pdo->prepare('INSERT INTO finance_student_fee_intake_overrides(academic_period_id,student_id,intake_type,created_by,updated_by) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE intake_type=VALUES(intake_type),updated_by=VALUES(updated_by)');
+            $save->execute([$periodId,$student,$intake,$actor,$actor]);
+            financeAudit($pdo,'student_fee_intake_classification_saved','student_fee_intake_override',null,['student_id'=>$student,'academic_period_id'=>$periodId,'intake_type'=>$intake]);
+            $pdo->commit();
+        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
+        financeJson(['success'=>true,'message'=>'Student intake category saved for this academic term. It will be used when the term fee assessment is generated.']);
+    }
+
     if ($action==='save_student_adjustment') {
         $student=(int)($input['student_id']??0);$type=(string)($input['adjustment_type']??'');$value=financeMoney($input['value']??'0',true);$reason=trim((string)($input['reason']??''));
         $allowed=['fixed_fee','discount_amount','discount_percent','full_scholarship'];
@@ -270,7 +294,9 @@ try {
         if($section===null)financeJson(['success'=>false,'message'=>'This student class is not part of the four configured MARKAZ fee sections.'],422);
         $studentType=in_array((string)$studentRow['student_type'],['Day Student','Boarding'],true)?(string)$studentRow['student_type']:'Day Student';
         $admission=(string)($studentRow['admission_date']??'');
-        $intake=($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning';
+        $overrideStmt=$pdo->prepare('SELECT intake_type FROM finance_student_fee_intake_overrides WHERE academic_period_id=? AND student_id=? LIMIT 1');
+        $overrideStmt->execute([$periodId,$student]);$configuredIntake=$overrideStmt->fetchColumn();
+        $intake=in_array((string)$configuredIntake,['new_intake','returning'],true)?(string)$configuredIntake:(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
         $rateStmt=$pdo->prepare('SELECT amount FROM finance_section_fee_schedules WHERE academic_period_id=? AND section=? AND student_type=? AND intake_type=? AND is_active=1 LIMIT 1');
         $rateStmt->execute([$periodId,$section,$studentType,$intake]);$normalFee=$rateStmt->fetchColumn();
         if($normalFee===false)financeJson(['success'=>false,'message'=>'Save this term’s section fee rates before configuring an individual student adjustment.'],409);
@@ -318,6 +344,9 @@ try {
         $rateStmt=$pdo->prepare('SELECT * FROM finance_section_fee_schedules WHERE academic_period_id=? AND is_active=1');
         $rateStmt->execute([$periodId]);$rateMap=[];
         foreach($rateStmt->fetchAll(PDO::FETCH_ASSOC) as $rate)$rateMap[$rate['section'].'|'.$rate['student_type'].'|'.$rate['intake_type']]=$rate;
+        $overrideQuery=$pdo->prepare('SELECT student_id,intake_type FROM finance_student_fee_intake_overrides WHERE academic_period_id=?');
+        $overrideQuery->execute([$periodId]);$intakeOverrides=[];
+        foreach($overrideQuery->fetchAll(PDO::FETCH_ASSOC) as $override)$intakeOverrides[(int)$override['student_id']]=(string)$override['intake_type'];
         if(count($rateMap)!==16)financeJson(['success'=>false,'message'=>'Configure all 16 fee rates for this term before generating student assessments.'],409);
         $pdo->beginTransaction();$created=0;
         try{
@@ -330,7 +359,7 @@ try {
                 $section=markazFeeSection((string)$student['class_name']);if($section===null)continue;
                 $type=(string)$student['student_type'];if(!in_array($type,['Day Student','Boarding'],true))$type='Day Student';
                 $admission=(string)($student['admission_date']??'');
-                $intake=($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning';
+                $intake=$intakeOverrides[(int)$student['id']]??(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
                 $rate=$rateMap[$section.'|'.$type.'|'.$intake]??null;if(!$rate)continue;
                 $base=financeToCents((string)$rate['amount']);$discount=0;$due=$base;
                 $adj->execute([(int)$student['id'],$financeSessionId,$term]);$adjustment=$adj->fetch(PDO::FETCH_ASSOC);
