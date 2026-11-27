@@ -59,7 +59,7 @@ termFeeCheck(str_contains($html,'id="studentFeeAdjustmentForm"')&&str_contains($
 termFeeCheck(str_contains($js,"termFeeRequest('register'")&&str_contains($js,'previous_outstanding')&&str_contains($js,'current_balance'),'the central register loads reconciled live student balances');
 termFeeCheck(!str_contains($js,'TERM_FEE_API')&&str_contains($js,"new URL('./api/finance/term-fees.php',location.href)"),'Student Fees API URL is resolved directly without a temporal-dead-zone global');
 termFeeCheck(str_contains($feesRoute, "require_once __DIR__ . '/../../../api/finance/term-fees.php'"), 'Student Fees API is reachable under the public document root');
-termFeeCheck(str_contains($html,'finance.js?v=20261127-student-fees-intake-cache8'),'Finance uses a fresh asset URL so browsers cannot reuse the previously failing Student Fees script');
+termFeeCheck(str_contains($html,'finance.js?v=20261127-student-fees-auto-sync-cache9'),'Finance uses a fresh asset URL so browsers cannot reuse the previously failing Student Fees script');
 termFeeCheck(str_contains($js,'let studentFeesClasses=[];') && strpos($js,'let studentFeesClasses=[];') < strpos($js,'function init(){') && strpos($js,'function init(){') < strpos($js,'init();'), 'Student Fees class state is initialized before startup invokes its asynchronous loader');
 termFeeCheck(str_contains($js,'async function loadTermFeeSetup()') && !str_contains($js,'loadTermFeesSetup'), 'Finance uses one canonical Student Fees loader name');
 termFeeCheck(preg_match('/^var studentFeesPeriod=null;/m', $js) === 1 && strpos($js, 'var studentFeesPeriod=null;') < strpos($js, 'function showTab('), 'Student Fees academic-period state is initialized before any tab handler can run');
