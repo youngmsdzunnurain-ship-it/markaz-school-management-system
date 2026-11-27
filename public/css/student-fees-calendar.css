@@ -4,10 +4,12 @@
 .student-fees-calendar::before{left:16px;right:16px}
 .student-calendar-heading,.student-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .student-calendar-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;padding:0;border:0;background:transparent;text-align:left;color:var(--dg);cursor:pointer}
-.student-calendar-heading-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:3px}
+.student-calendar-heading-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:4px}
+.student-calendar-title-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px}
 .student-calendar-heading-copy strong{font:600 16px/1.2 var(--serif);color:var(--dg)}
 .student-calendar-heading-copy strong i{margin-right:5px;color:var(--mg)}
 .student-calendar-month-summary{color:var(--mg);font:700 11px/1.3 var(--sans)}
+.student-calendar-month-summary::before{content:'·';margin-right:7px;color:var(--muted)}
 .student-calendar-chevron{flex:0 0 auto;color:var(--mg);font-size:12px;transition:transform .18s ease}
 .student-fees-calendar.is-expanded .student-calendar-chevron{transform:rotate(180deg)}
 .student-calendar-toggle:focus-visible{outline:3px solid rgba(201,162,74,.6);outline-offset:4px;border-radius:6px}
