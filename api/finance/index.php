@@ -138,16 +138,16 @@ try {
         if ($action === 'students') {
             $q = trim((string)($_GET['q'] ?? ''));
             $stmt = $pdo->prepare(
-                "SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.class_id,
+                "SELECT s.id,s.admission_number,s.first_name,s.middle_name,s.last_name,s.class_id,s.student_type,s.admission_date,
                         COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id) arabic_class_id,
                         c.name class_name,ac.name arabic_class_name
                  FROM students s
                  LEFT JOIN classes c ON c.id=s.class_id
                  LEFT JOIN arabic_classes ac ON ac.id=COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id)
-                 WHERE s.is_active=1 AND (?='' OR s.admission_number LIKE ? OR s.first_name LIKE ? OR s.middle_name LIKE ? OR s.last_name LIKE ?)
+                 WHERE s.is_active=1 AND (?='' OR s.admission_number LIKE ? OR s.first_name LIKE ? OR s.middle_name LIKE ? OR s.last_name LIKE ? OR CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) LIKE ?)
                  ORDER BY s.last_name,s.first_name LIMIT 100"
             );
-            $like='%'.$q.'%'; $stmt->execute([$q,$like,$like,$like,$like]);
+            $like='%'.$q.'%'; $stmt->execute([$q,$like,$like,$like,$like,$like]);
             financeJson(['success'=>true,'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
         }
         if ($action === 'plans') {
