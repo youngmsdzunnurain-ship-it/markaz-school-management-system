@@ -124,12 +124,14 @@ jobs:
           SQL
       - name: Apply section-based student-fee migration
         run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_section_fees_test < database/migrations/20261129_markaz_section_student_fees.sql
-      - name: Verify term dates, section backfill and preserved invoice amounts
+      - name: Verify term dates, untouched historical invoices and new fee schedules
         run: |
           columns="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='markaz_section_fees_test' AND TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')")"
           test "$columns" = "2"
-          result="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT CONCAT(i.section,':',i.student_type,':',FORMAT(i.amount_due,2)) FROM finance_term_fee_invoices i WHERE i.student_id=1")"
-          test "$result" = "junior_secondary:Boarding:90,000.00"
-          basic_six="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT COALESCE(section,'unmapped') FROM finance_term_fee_invoices WHERE student_id=2")"
-          test "$basic_six" = "unmapped"
-          mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" markaz_section_fees_test -e "INSERT INTO finance_section_fee_schedules(academic_period_id,section,student_type,intake_type,amount,due_on,created_by) VALUES (1,'primary','Day Student','new_intake',55000.00,'2027-03-01',1)"
+          historical="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT CONCAT(COALESCE(i.section,'NULL'),':',COALESCE(i.student_type,'NULL'),':',COALESCE(i.intake_type,'NULL'),':',FORMAT(i.amount_due,2),':',i.status) FROM finance_term_fee_invoices i WHERE i.student_id=1")"
+          test "$historical" = "NULL:NULL:NULL:90,000.00:unpaid"
+          historical_count="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT COUNT(*) FROM finance_term_fee_invoices WHERE section IS NOT NULL OR student_type IS NOT NULL OR intake_type IS NOT NULL")"
+          test "$historical_count" = "0"
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_section_fees_test -e "INSERT INTO finance_section_fee_schedules(academic_period_id,section,student_type,intake_type,amount,due_on,created_by) VALUES (1,'primary','Day Student','new_intake',55000.00,'2027-03-01',1)"
+          schedule="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT CONCAT(section,':',student_type,':',intake_type,':',FORMAT(amount,2)) FROM finance_section_fee_schedules WHERE academic_period_id=1")"
+          test "$schedule" = "primary:Day Student:new_intake:55,000.00"
