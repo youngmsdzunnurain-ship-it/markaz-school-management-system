@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql 20261128_teacher_lateness_rate_13_naira.sql 20261129_markaz_section_student_fees.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql 20261128_teacher_lateness_rate_13_naira.sql 20261129_markaz_section_student_fees.sql 20261130_markaz_student_fee_intake_overrides.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -74,6 +74,9 @@ foundation_count="$(table_count "$(sql_names "${foundation_tables[@]}")")"
 term_count="$(table_count "$(sql_names "${term_tables[@]}")")"
 section_fee_tables="$(table_count "'finance_section_fee_schedules'")"
 section_fee_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')) OR (TABLE_NAME='finance_term_fee_invoices' AND COLUMN_NAME IN ('academic_period_id','section','student_type','intake_type','fee_schedule_id'))) ")"
+intake_override_tables="$(table_count "'finance_student_fee_intake_overrides'")"
+intake_override_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_student_fee_intake_overrides'")"
+intake_override_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_student_fee_intake_overrides' AND REFERENCED_TABLE_NAME IS NOT NULL")"
 category_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_plans' AND COLUMN_NAME='fee_code') OR (TABLE_NAME='finance_fee_invoices' AND COLUMN_NAME='fee_code'))")"
 
 if [[ "$foundation_count" != "0" && "$foundation_count" != "${#foundation_tables[@]}" ]]; then
@@ -90,6 +93,14 @@ if [[ "$category_columns" != "0" && "$category_columns" != "2" ]]; then
 fi
 if [[ "$section_fee_tables" != "0" && "$section_fee_tables" != "1" ]]; then
     echo "ERROR: Partial section-based student-fees schema detected. No changes made." >&2
+    exit 3
+fi
+if [[ "$intake_override_tables" != "0" && "$intake_override_tables" != "1" ]]; then
+    echo "ERROR: Partial per-student intake override schema detected. No changes made." >&2
+    exit 3
+fi
+if [[ "$intake_override_tables" == "0" && ( "$intake_override_columns" != "0" || "$intake_override_constraints" != "0" ) ]] || [[ "$intake_override_tables" == "1" && ( "$intake_override_columns" != "8" || "$intake_override_constraints" != "4" ) ]]; then
+    echo "ERROR: Partial per-student intake override schema detected ($intake_override_tables table, $intake_override_columns/8 columns, $intake_override_constraints/4 foreign keys). No changes made." >&2
     exit 3
 fi
 if [[ "$section_fee_tables" == "0" && "$section_fee_columns" != "0" ]] || [[ "$section_fee_tables" == "1" && "$section_fee_columns" != "7" ]]; then
@@ -121,8 +132,8 @@ if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2"
         echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
         exit 3
     fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
-    echo "MARKAZ Finance is already installed: fee foundations, term fees, independent Finance staff, attendance policies and refund controls are present."
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
+    echo "MARKAZ Finance is already installed: fee foundations, term fees, student intake overrides, independent Finance staff, attendance policies and refund controls are present."
     exit 0
 fi
 
@@ -164,6 +175,12 @@ section_fee_tables="$(table_count "'finance_section_fee_schedules'")"
 section_fee_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')) OR (TABLE_NAME='finance_term_fee_invoices' AND COLUMN_NAME IN ('academic_period_id','section','student_type','intake_type','fee_schedule_id'))) ")"
 [[ "$section_fee_tables" == "1" && "$section_fee_columns" == "7" ]] || { echo "ERROR: Section-based student-fees schema verification failed. Restore from: $backup" >&2; exit 5; }
 
+if [[ "$intake_override_tables" == "0" && "$intake_override_columns" == "0" ]]; then apply_migration "20261130_markaz_student_fee_intake_overrides.sql"; fi
+intake_override_tables="$(table_count "'finance_student_fee_intake_overrides'")"
+intake_override_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_student_fee_intake_overrides'")"
+intake_override_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_student_fee_intake_overrides' AND REFERENCED_TABLE_NAME IS NOT NULL")"
+[[ "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" ]] || { echo "ERROR: Per-student intake override schema verification failed. Restore from: $backup" >&2; exit 5; }
+
 # Apply and verify the independent Finance staff identity migration.
 if [[ "${foundation_count}" == "${#foundation_tables[@]}" && "${category_columns}" == "2" && "${term_count}" == "${#term_tables[@]}" ]]; then
     independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_staff'")"
@@ -204,5 +221,5 @@ lateness_rate_default="$(query "SELECT COLUMN_DEFAULT FROM information_schema.CO
 refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
 [[ "$refund_tables" == "2" ]] || { echo "ERROR: Fee refund schema verification failed. Restore from: $backup" >&2; exit 5; }
 
-echo "SUCCESS: MARKAZ Finance schema is installed and verified."
+echo "SUCCESS: MARKAZ Finance schema, including per-student intake classification, is installed and verified."
 echo "Backup retained at: $backup"

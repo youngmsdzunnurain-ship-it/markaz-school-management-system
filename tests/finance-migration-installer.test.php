@@ -17,15 +17,18 @@ $foundation = file_get_contents($root . '/database/migrations/20261121_markaz_fi
 $categories = file_get_contents($root . '/database/migrations/20261122_markaz_finance_fee_categories.sql');
 $terms = file_get_contents($root . '/database/migrations/20261123_markaz_academic_term_fees.sql');
 $sectionFees = file_get_contents($root . '/database/migrations/20261129_markaz_section_student_fees.sql');
+$intakeOverrides = file_get_contents($root . '/database/migrations/20261130_markaz_student_fee_intake_overrides.sql');
 $independentStaff = file_get_contents($root . '/database/migrations/20261124_markaz_independent_finance_staff.sql');
 $attendanceModes = file_get_contents($root . '/database/migrations/20261125_teacher_attendance_modes.sql');
 $refunds = file_get_contents($root . '/database/migrations/20261126_markaz_fee_refunds.sql');
 
 financeInstallerCheck(str_contains($foundation, 'CREATE TABLE finance_fee_payments'), 'foundation migration creates the payment table required by term fees');
 financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'), 'term-fee payment allocation references the foundation payment table');
+financeInstallerCheck(str_contains($intakeOverrides, 'CREATE TABLE finance_student_fee_intake_overrides') && str_contains($intakeOverrides, 'REFERENCES academic_periods(id)') && str_contains($intakeOverrides, 'REFERENCES students(id)'), 'intake override migration links each student classification to its academic period and student');
 financeInstallerCheck(strpos($installer, '20261121_markaz_finance_payroll.sql') < strpos($installer, '20261122_markaz_finance_fee_categories.sql')
     && strpos($installer, '20261122_markaz_finance_fee_categories.sql') < strpos($installer, '20261123_markaz_academic_term_fees.sql')
-    && strpos($installer, '20261123_markaz_academic_term_fees.sql') < strpos($installer, '20261129_markaz_section_student_fees.sql'), 'installer applies migrations in dependency order');
+    && strpos($installer, '20261123_markaz_academic_term_fees.sql') < strpos($installer, '20261129_markaz_section_student_fees.sql')
+    && strpos($installer, '20261129_markaz_section_student_fees.sql') < strpos($installer, '20261130_markaz_student_fee_intake_overrides.sql'), 'installer applies migrations in dependency order');
 financeInstallerCheck(str_contains($installer, 'mariadb-dump') && str_contains($installer, '[[ -s "$backup" ]]'), 'installer verifies a database backup before running migrations');
 financeInstallerCheck(str_contains($installer, 'DB_HOST="${DB_HOST:-127.0.0.1}"') && str_contains($installer, 'DB_USER="${DB_USER:-root}"'), 'installer uses MARKAZ TCP database host and root defaults instead of the Termux shell account');
 financeInstallerCheck(str_contains($installer, '--protocol=TCP') && str_contains($installer, 'mariadb-dump'), 'installer applies the same explicit TCP connection settings to database operations');
