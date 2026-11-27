@@ -377,24 +377,22 @@
     }
 
     async function saveEntries(plan, messageNode) {
-        let saved = 0;
-        for (const payload of plan.payloads) {
-            messageNode.textContent = `Saving ${saved + 1} of ${plan.payloads.length}…`;
-            const response = await fetch("./api/results/save.php", {
-                method: "POST",
-                credentials: "same-origin",
-                cache: "no-store",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok || !data.success) {
-                throw Object.assign(new Error(data.message || "A result could not be saved."), { saved });
-            }
-            saved++;
-        }
+        messageNode.textContent = `Validating all ${plan.payloads.length} result rows…`;
+        const first = plan.payloads[0];
+        const entries = plan.payloads.map(({ student_id, subject_id, ca1, ca2, exam, teacher_remark, result_remark }) => ({
+            student_id, subject_id, ca1, ca2, exam, teacher_remark, result_remark
+        }));
+        const response = await fetch("./api/results/batch-save.php", {
+            method: "POST",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ class_type: first.class_type, class_id: first.class_id, entries })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.message || "The result batch was not saved.");
         if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
-        return saved;
+        return Number(data.saved || 0);
     }
 
     /* ------------------------------------------------------------------ the window */
@@ -418,7 +416,11 @@
         </section>
         <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
         <div class="mkls-bar" data-mkls-bar>
+          <button type="button" class="mkls-btn ghost" data-mkls-upload-files>Upload images</button>
+          <button type="button" class="mkls-btn ghost" data-mkls-upload-folder>Upload folder</button>
           <button type="button" class="mkls-btn ghost" data-mkls-review>Review scanned students</button>
+          <input type="file" data-mkls-file-input accept="image/*" multiple hidden>
+          <input type="file" data-mkls-folder-input accept="image/*" webkitdirectory multiple hidden>
         </div>
         <section class="mkls-preview" data-mkls-preview hidden>
           <p class="mkls-preview-note" data-mkls-note></p>
@@ -451,6 +453,15 @@
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
+        $("[data-mkls-upload-files]", overlay).addEventListener("click", () => $("[data-mkls-file-input]", overlay).click());
+        $("[data-mkls-upload-folder]", overlay).addEventListener("click", () => $("[data-mkls-folder-input]", overlay).click());
+        ["[data-mkls-file-input]", "[data-mkls-folder-input]"].forEach(selector => {
+            $(selector, overlay).addEventListener("change", event => {
+                const files = [...(event.target.files || [])];
+                event.target.value = "";
+                if (files.length) processUploadedFiles(files);
+            });
+        });
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
             if (event.key === "Escape" && state.phase !== "closed") closeScanner();
@@ -560,6 +571,60 @@
         if (state.phase !== "camera") return;
         setGuide("Hold the camera over the whole sheet. Start with the subject names at the top, then move slowly down the page.");
         scheduleRead(300);
+    }
+
+    async function processUploadedFiles(files) {
+        clearTimeout(state.timer);
+        stopStream();
+        state.phase = "camera";
+        showPhase("camera");
+        const images = files.filter(file => file && /^image\//i.test(file.type));
+        if (!images.length) {
+            setGuide("No supported image files were selected. Choose JPG, PNG or another browser-supported image.");
+            return;
+        }
+        setGuide(`Preparing to read ${images.length} image(s)…`);
+        try {
+            await prepareWorker();
+            for (let index = 0; index < images.length; index++) {
+                setGuide(`Reading image ${index + 1} of ${images.length}: ${images[index].name}`);
+                const bitmap = await createImageBitmap(images[index]);
+                try {
+                    await state.worker.setParameters({ tessedit_char_whitelist: "" });
+                    const textResult = await state.worker.recognize(bitmap);
+                    await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
+                    const digitResult = await state.worker.recognize(bitmap);
+                    const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
+                    parsed.spans.forEach(span => {
+                        const id = String(span.subject.id);
+                        state.subjectInfo.set(id, span.subject);
+                        state.subjectSeen.set(id, CONFIRM_READS);
+                    });
+                    parsed.read.forEach(({ student, cells }) => {
+                        state.studentSeen.add(String(student.id));
+                        cells.forEach((values, subjectId) => {
+                            if (!values) return;
+                            FIELDS.forEach(field => state.lastSeen.set(`${student.id}|${subjectId}|${field}`, values[field]));
+                        });
+                    });
+                } finally {
+                    bitmap.close?.();
+                }
+            }
+            const subjects = confirmedSubjects();
+            if (!subjects.length) {
+                setGuide("The selected images did not clearly show the subject headings. Try a clearer, straight-on image of the top of the sheet.");
+                return;
+            }
+            buildReview(subjects);
+            showPhase("review");
+            const captured = state.lastSeen.size / FIELDS.length;
+            $("[data-mkls-note]", overlay).textContent =
+                `Read ${images.length} image(s). ${Math.round(captured)} score cell(s) were detected. Review and correct every row before saving; uploaded images are not saved.`;
+        } catch (error) {
+            showPhase("camera");
+            setGuide(error.message || "The selected images could not be read. The scanner is still open; try another image or use the camera.");
+        }
     }
 
     async function readFrame() {
