@@ -377,24 +377,35 @@
     }
 
     async function saveEntries(plan, messageNode) {
-        let saved = 0;
-        for (const payload of plan.payloads) {
-            messageNode.textContent = `Saving ${saved + 1} of ${plan.payloads.length}…`;
-            const response = await fetch("./api/results/save.php", {
-                method: "POST",
-                credentials: "same-origin",
-                cache: "no-store",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok || !data.success) {
-                throw Object.assign(new Error(data.message || "A result could not be saved."), { saved });
-            }
-            saved++;
+        if (plan.conflicts.length || plan.incomplete.length) {
+            throw new Error("Resolve every conflicting or incomplete result row before saving. No results were saved.");
         }
-        if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
-        return saved;
+        if (!plan.payloads.length) {
+            if (typeof state.meta.onSaved === "function") {
+                try { await state.meta.onSaved(); }
+                catch (refreshError) { console.error("MARKAZ class view refresh failed:", refreshError); }
+            }
+            return 0;
+        }
+        messageNode.textContent = `Validating all ${plan.payloads.length} result rows…`;
+        const first = plan.payloads[0];
+        const entries = plan.payloads.map(({ student_id, subject_id, ca1, ca2, exam, teacher_remark, result_remark }) => ({
+            student_id, subject_id, ca1, ca2, exam, teacher_remark, result_remark
+        }));
+        const response = await fetch("./api/results/batch-save.php", {
+            method: "POST",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ class_type: first.class_type, class_id: first.class_id, entries })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.message || "The result batch was not saved.");
+        if (typeof state.meta.onSaved === "function") {
+            try { await state.meta.onSaved(); }
+            catch (refreshError) { console.error("MARKAZ results saved, but the class view did not refresh:", refreshError); }
+        }
+        return Number(data.saved || 0);
     }
 
     /* ------------------------------------------------------------------ the window */
@@ -418,7 +429,11 @@
         </section>
         <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
         <div class="mkls-bar" data-mkls-bar>
+          <button type="button" class="mkls-btn ghost" data-mkls-upload-files>Upload images</button>
+          <button type="button" class="mkls-btn ghost" data-mkls-upload-folder>Upload folder</button>
           <button type="button" class="mkls-btn ghost" data-mkls-review>Review scanned students</button>
+          <input type="file" data-mkls-file-input accept="image/*" multiple hidden>
+          <input type="file" data-mkls-folder-input accept="image/*" webkitdirectory multiple hidden>
         </div>
         <section class="mkls-preview" data-mkls-preview hidden>
           <p class="mkls-preview-note" data-mkls-note></p>
@@ -451,6 +466,15 @@
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
+        $("[data-mkls-upload-files]", overlay).addEventListener("click", () => $("[data-mkls-file-input]", overlay).click());
+        $("[data-mkls-upload-folder]", overlay).addEventListener("click", () => $("[data-mkls-folder-input]", overlay).click());
+        ["[data-mkls-file-input]", "[data-mkls-folder-input]"].forEach(selector => {
+            $(selector, overlay).addEventListener("change", event => {
+                const files = [...(event.target.files || [])];
+                event.target.value = "";
+                if (files.length) processUploadedFiles(files);
+            });
+        });
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);
         document.addEventListener("keydown", event => {
             if (event.key === "Escape" && state.phase !== "closed") closeScanner();
@@ -562,6 +586,81 @@
         scheduleRead(300);
     }
 
+    async function processUploadedFiles(files) {
+        clearTimeout(state.timer);
+        stopStream();
+        showPhase("camera");
+        state.phase = "uploading";
+        const images = files.filter(file => file && /^image\//i.test(file.type));
+        if (!images.length) {
+            setGuide("No supported image files were selected. Choose JPG, PNG or another browser-supported image.");
+            state.phase = "camera";
+            return;
+        }
+        const failures = [];
+        let processed = 0;
+        setGuide(`Preparing to read ${images.length} image(s)…`);
+        try {
+            await prepareWorker();
+            for (let index = 0; index < images.length; index++) {
+                const file = images[index];
+                setGuide(`Reading image ${index + 1} of ${images.length}: ${file.name}`);
+                let bitmap = null;
+                try {
+                    bitmap = await createImageBitmap(file);
+                    const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+                    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+                    const context = canvas.getContext("2d");
+                    if (!context) throw new Error("Image processing is unavailable.");
+                    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+                    await state.worker.setParameters({ tessedit_char_whitelist: "" });
+                    const textResult = await state.worker.recognize(canvas);
+                    await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
+                    const digitResult = await state.worker.recognize(canvas);
+                    const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
+                    parsed.spans.forEach(span => {
+                        const id = String(span.subject.id);
+                        state.subjectInfo.set(id, span.subject);
+                        state.subjectSeen.set(id, CONFIRM_READS);
+                    });
+                    parsed.read.forEach(({ student, cells }) => {
+                        state.studentSeen.add(String(student.id));
+                        cells.forEach((values, subjectId) => {
+                            if (!values) return;
+                            FIELDS.forEach(field => state.lastSeen.set(`${student.id}|${subjectId}|${field}`, values[field]));
+                        });
+                    });
+                    processed++;
+                } catch (error) {
+                    failures.push(file.name);
+                } finally {
+                    await state.worker.setParameters({ tessedit_char_whitelist: "" }).catch(() => {});
+                    bitmap?.close?.();
+                }
+            }
+            const subjects = confirmedSubjects();
+            if (!subjects.length) {
+                setGuide(failures.length === images.length
+                    ? "None of the selected images could be read. Try clear JPG or PNG photos taken straight-on."
+                    : "The selected images did not clearly show the subject headings. Include a clear image of the top of the result sheet.");
+                state.phase = "camera";
+                return;
+            }
+            buildReview(subjects);
+            showPhase("review");
+            const captured = Math.round(state.lastSeen.size / FIELDS.length);
+            const failedNote = failures.length ? ` ${failures.length} image(s) could not be read: ${failures.slice(0, 4).join(", ")}.` : "";
+            $("[data-mkls-note]", overlay).textContent =
+                `Read ${processed} of ${images.length} image(s). ${captured} score cell(s) were detected. Review and correct every row before saving; uploaded images are not saved.${failedNote}`;
+        } catch (error) {
+            state.phase = "camera";
+            showPhase("camera");
+            setGuide(error.message || "The selected images could not be read. The scanner is still open; try another image or use the camera.");
+        }
+    }
+
     async function readFrame() {
         if (state.phase !== "camera" || state.reading) return;
         const video = videoEl();
@@ -615,6 +714,13 @@
             entries.push({ student, subject, values });
         }));
         const outOfRange = entries.filter(entry => scoreRangeError(entry.values, entry.subject)).length;
+        if (outOfRange) {
+            buildReview(subjects);
+            showPhase("review");
+            $("[data-mkls-note]", overlay).textContent =
+                `${outOfRange} score line(s) need correction before anything can be saved. Review the highlighted values; no results have been saved yet.`;
+            return;
+        }
         const plan = planSave(entries);
         let saved = 0, failure = "";
         try {
@@ -629,7 +735,7 @@
     function showSummary(plan, saved, failure, outOfRange) {
         showPhase("summary");
         $("[data-mkls-summary-title]", overlay).textContent = failure
-            ? `${saved} result(s) saved before an error: ${failure} Open the results table to check the rest.`
+            ? `No results were saved because the batch was rejected: ${failure}`
             : `${saved} result(s) saved to student results.`;
         const list = $("[data-mkls-summary-list]", overlay);
         list.replaceChildren();
@@ -671,6 +777,7 @@
             });
             const empty = FIELDS.every(field => values[field] === "");
             if (empty) missing++;
+            clear = clear && !scoreRangeError(values, subject);
             body.appendChild(reviewRow(student, subject, values, clear, empty));
         }));
         $("[data-mkls-note]", overlay).textContent = missing
