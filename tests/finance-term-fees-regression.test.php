@@ -56,7 +56,7 @@ termFeeCheck(str_contains($js,"termFeeRequest('register'")&&str_contains($js,'pr
 termFeeCheck(!str_contains($js,'TERM_FEE_API')&&str_contains($js,"new URL('./api/finance/term-fees.php',location.href)"),'Student Fees API URL is resolved directly without a temporal-dead-zone global');
 termFeeCheck(str_contains($feesRoute, "require_once __DIR__ . '/../../../api/finance/term-fees.php'"), 'Student Fees API is reachable under the public document root');
 termFeeCheck(str_contains($html,'finance.js?v=20261127-student-fees-tdz-cache4'),'Finance uses a new cache key after the Student Fees initialization correction');
-termFeeCheck(str_contains($js,'let studentFeesPeriod=null;')&&!str_contains($js,'studentFeePeriod'),'Student Fees uses one consistently initialized academic-period binding');
+termFeeCheck(preg_match('/^var studentFeesPeriod=null;/m', $js) === 1 && strpos($js, 'var studentFeesPeriod=null;') < strpos($js, 'function showTab('), 'Student Fees academic-period state is initialized before any tab handler can run');
 termFeeCheck(str_contains($installer,'20261126_markaz_fee_refunds.sql')&&str_contains($installer,'refund_tables'),'Finance installation includes the refund tables required by the dashboard');
 termFeeCheck(str_contains($js,'data-fee-section')&&str_contains($js,'generate_term_invoices')&&str_contains($js,'data-approve-term-adjustment'),'section filters, invoice generation and independent approvals are connected');
 termFeeCheck(str_contains($settingsApi,'starts_on')&&str_contains($settingsApi,'ends_on')&&str_contains($settingsHtml,'academicTermStartsOn')&&str_contains($settingsHtml,'academicTermEndsOn'),'term start/end dates are configured in the existing Settings calendar');
