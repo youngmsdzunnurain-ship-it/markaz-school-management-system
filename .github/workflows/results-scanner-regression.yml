@@ -1,0 +1,43 @@
+name: MARKAZ Results Scanner Regression
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'api/results/batch-save.php'
+      - 'public/api/results/batch-save.php'
+      - 'public/js/results-scanner.js'
+      - 'tests/results-scanner-atomic-upload-regression.test.php'
+      - '.github/workflows/results-scanner-regression.yml'
+  push:
+    branches:
+      - fix/results-scanner-atomic-upload-20261127
+
+jobs:
+  scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up PHP and Node
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check PHP syntax
+        run: |
+          set -e
+          php -l api/results/batch-save.php
+          php -l public/api/results/batch-save.php
+          php -l tests/results-scanner-atomic-upload-regression.test.php
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/js/results-scanner.js
+          node --check public/js/class.js
+      - name: Run scanner regression checks
+        run: php tests/results-scanner-atomic-upload-regression.test.php
