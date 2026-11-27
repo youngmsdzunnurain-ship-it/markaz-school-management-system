@@ -113,9 +113,11 @@ function renderStudentFeesRegister(data){
   const fullScholarship=Number(s.has_scholarship)===1&&s.adjustment_type==='full_scholarship';
   const previousClear=Number(s.previous_outstanding)<=0;
   const accountClear=Number(s.total_balance)<=0;
-  const currentFee=Number(s.current_invoice_count)>0
-   ?(fullScholarship?feeClearanceBadge('Full scholarship'):money(s.current_fee)+'<small>Normal '+money(s.current_normal_fee)+(Number(s.current_discount)>0?' · Support −'+money(s.current_discount):'')+'</small>')
-   :'<span class="pill pending">Not assessed</span>';
+  const currentFee=fullScholarship
+   ?feeClearanceBadge('Full scholarship')
+   :(Number(s.current_invoice_count)>0
+     ?money(s.current_fee)+'<small>Normal '+money(s.current_normal_fee)+(Number(s.current_discount)>0?' · Support −'+money(s.current_discount):'')+'</small>'
+     :'<span class="pill pending">Not assessed</span>');
   const previousDebt=previousClear?feeClearanceBadge('No previous debt'):money(s.previous_outstanding)+(s.previous_debt_details?'<small>'+esc(s.previous_debt_details)+'</small>':'');
   const support=Number(s.has_scholarship)
    ?'<span class="fee-support-badge">'+esc(s.adjustment_type==='full_scholarship'?'Full scholarship':String(s.adjustment_type||'support').replaceAll('_',' '))+'</span>'
