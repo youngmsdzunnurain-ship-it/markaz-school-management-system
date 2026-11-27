@@ -12,6 +12,7 @@ $migration = file_get_contents($root . '/database/migrations/20261125_teacher_at
 $attendanceApi = file_get_contents($root . '/api/attendance/teachers.php');
 $payrollApi = file_get_contents($root . '/api/finance/payroll.php');
 $financePage = file_get_contents($root . '/public/finance.html');
+$financeApi = file_get_contents($root . '/api/finance/index.php');
 $attendancePage = file_get_contents($root . '/public/teacher-attendance.html');
 $attendanceJs = file_get_contents($root . '/public/js/teacher-attendance.js');
 $financeJs = file_get_contents($root . '/public/js/finance.js');
@@ -29,6 +30,7 @@ teacherPolicyCheck(str_contains($attendanceApi, '$notes===\'\''), 'excused and a
 teacherPolicyCheck(str_contains($payrollApi, "attendance_mode='time_based'") || str_contains($payrollApi, "attendance_mode']"), 'payroll applies lateness deductions only to time-based attendance');
 teacherPolicyCheck(str_contains($payrollApi, "status") && str_contains($payrollApi, "'present'"), 'payroll excludes excused and non-present records from lateness deductions');
 teacherPolicyCheck(str_contains($financePage, 'name="attendance_mode"'), 'Finance salary setup lets authorised users choose the staff attendance policy');
+teacherPolicyCheck(str_contains($financeApi, '$attendanceMode') && str_contains($financeApi, '$validArrival') && str_contains($financeApi, "'attendance_only'") && str_contains($financeApi, 'attendance_mode,lateness_rate_per_minute'), 'Finance staff creation persists attendance-only mode without requiring an arrival time');
 teacherPolicyCheck(str_contains($financeJs, 'Attendance-only staff'), 'Finance explains that attendance-only staff are not timed for payroll');
 teacherPolicyCheck(str_contains($attendancePage, 'Time-based staff') && str_contains($attendancePage, 'attendance-only staff'), 'Teacher Attendance presents the two staff groups separately');
 teacherPolicyCheck(str_contains($attendanceJs, 'attendance_mode') && str_contains($attendanceJs, 'attendance_only'), 'teacher register UI omits arrival-time requirements for attendance-only staff');
