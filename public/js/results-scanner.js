@@ -700,7 +700,7 @@
         stopStream();
         resetSession();
         resetPhotoPreview();
-        const file = files.find(item => item && /^image\\//i.test(item.type));
+        const file = files.find(item => item && /^image\//i.test(item.type));
         if (!file) {
             showPhase("camera");
             setGuide("Choose a supported photo of the result sheet.");
@@ -775,7 +775,8 @@
         } catch (error) {
             setUploadProgress(100, "Scan could not finish");
             setGuide(error.message || "The photo could not be read. Your selected photo is still visible; try another clear image.");
-            showPhase("camera");
+            state.phase = "uploading";
+            showPhase("uploading");
         } finally {
             await state.worker?.setParameters({ tessedit_char_whitelist: "" }).catch(() => {});
             bitmap?.close?.();
