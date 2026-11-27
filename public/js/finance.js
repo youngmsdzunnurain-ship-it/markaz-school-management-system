@@ -181,5 +181,5 @@ $('#reloadFeeArrears')?.addEventListener('click',loadFeeArrears);
 function init(){const now=new Date();$('#reportFrom').value=localDate(new Date(now.getFullYear(),now.getMonth(),1));$('#reportTo').value=localDate(now);$('#todayLabel').textContent=now.toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});$('#payrollYear').value=now.getFullYear();$('#payrollMonth').value=String(now.getMonth()+1);$('#expenseForm [name=expense_date]').value=now.toISOString().slice(0,10);fillMonths('#payrollMonth');$('#paymentPaidAt').value=localDateTime(now);loadTermFeeSetup();loadFeeArrears();loadDashboard();loadExpenses();loadIncome();loadPayments();loadRefunds()}
 init();
 const studentFeesCalendarScript=document.createElement('script');
-studentFeesCalendarScript.src='./js/student-fees-calendar.js?v=20261127-calendar1';
+studentFeesCalendarScript.src='./js/student-fees-calendar.js?v=20261127-calendar2';
 document.body.appendChild(studentFeesCalendarScript);
