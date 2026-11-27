@@ -585,19 +585,31 @@
         const images = files.filter(file => file && /^image\//i.test(file.type));
         if (!images.length) {
             setGuide("No supported image files were selected. Choose JPG, PNG or another browser-supported image.");
+            state.phase = "camera";
             return;
         }
+        const failures = [];
+        let processed = 0;
         setGuide(`Preparing to read ${images.length} image(s)…`);
         try {
             await prepareWorker();
             for (let index = 0; index < images.length; index++) {
-                setGuide(`Reading image ${index + 1} of ${images.length}: ${images[index].name}`);
-                const bitmap = await createImageBitmap(images[index]);
+                const file = images[index];
+                setGuide(`Reading image ${index + 1} of ${images.length}: ${file.name}`);
+                let bitmap = null;
                 try {
+                    bitmap = await createImageBitmap(file);
+                    const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+                    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+                    const context = canvas.getContext("2d");
+                    if (!context) throw new Error("Image processing is unavailable.");
+                    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
                     await state.worker.setParameters({ tessedit_char_whitelist: "" });
-                    const textResult = await state.worker.recognize(bitmap);
+                    const textResult = await state.worker.recognize(canvas);
                     await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
-                    const digitResult = await state.worker.recognize(bitmap);
+                    const digitResult = await state.worker.recognize(canvas);
                     const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
                     parsed.spans.forEach(span => {
                         const id = String(span.subject.id);
@@ -611,21 +623,30 @@
                             FIELDS.forEach(field => state.lastSeen.set(`${student.id}|${subjectId}|${field}`, values[field]));
                         });
                     });
+                    processed++;
+                } catch (error) {
+                    failures.push(file.name);
                 } finally {
-                    bitmap.close?.();
+                    await state.worker.setParameters({ tessedit_char_whitelist: "" }).catch(() => {});
+                    bitmap?.close?.();
                 }
             }
             const subjects = confirmedSubjects();
             if (!subjects.length) {
-                setGuide("The selected images did not clearly show the subject headings. Try a clearer, straight-on image of the top of the sheet.");
+                setGuide(failures.length === images.length
+                    ? "None of the selected images could be read. Try clear JPG or PNG photos taken straight-on."
+                    : "The selected images did not clearly show the subject headings. Include a clear image of the top of the result sheet.");
+                state.phase = "camera";
                 return;
             }
             buildReview(subjects);
             showPhase("review");
-            const captured = state.lastSeen.size / FIELDS.length;
+            const captured = Math.round(state.lastSeen.size / FIELDS.length);
+            const failedNote = failures.length ? ` ${failures.length} image(s) could not be read: ${failures.slice(0, 4).join(", ")}.` : "";
             $("[data-mkls-note]", overlay).textContent =
-                `Read ${images.length} image(s). ${Math.round(captured)} score cell(s) were detected. Review and correct every row before saving; uploaded images are not saved.`;
+                `Read ${processed} of ${images.length} image(s). ${captured} score cell(s) were detected. Review and correct every row before saving; uploaded images are not saved.${failedNote}`;
         } catch (error) {
+            state.phase = "camera";
             showPhase("camera");
             setGuide(error.message || "The selected images could not be read. The scanner is still open; try another image or use the camera.");
         }
