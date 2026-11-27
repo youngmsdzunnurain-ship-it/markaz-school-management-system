@@ -116,6 +116,52 @@ function financeCalculateLateMinutes(string $expectedArrival, string $actualArri
     return (int) floor(max(0, $actual->getTimestamp() - $expected->getTimestamp()) / 60);
 }
 
+/**
+ * Allocate payroll deduction detail rows without allowing the breakdown to
+ * exceed the capped lateness and absence totals saved on the payroll item.
+ */
+function financeAllocatePayrollDeductions(array $records, int $lateLimitCents, int $absenceLimitCents): array
+{
+    $lateRemaining = max(0, $lateLimitCents);
+    $absenceRemaining = max(0, $absenceLimitCents);
+    $details = [];
+
+    foreach ($records as $record) {
+        $attendanceId = (int) ($record['id'] ?? 0);
+        if ($attendanceId < 1) continue;
+
+        $mode = (string) ($record['attendance_mode'] ?? 'time_based');
+        $status = (string) ($record['status'] ?? '');
+
+        if ($mode === 'time_based' && $status === 'present' && $lateRemaining > 0) {
+            $recordCents = max(0, financeToCents((string) ($record['lateness_deduction'] ?? '0.00')));
+            $applied = min($lateRemaining, $recordCents);
+            if ($applied > 0) {
+                $details[] = [
+                    'staff_attendance_id' => $attendanceId,
+                    'description' => (int) ($record['late_minutes'] ?? 0) . ' minutes late',
+                    'amount' => financeFromCents($applied),
+                ];
+                $lateRemaining -= $applied;
+            }
+        }
+
+        if ($status === 'absent' && $absenceRemaining > 0) {
+            $applied = min($absenceRemaining, 30000);
+            if ($applied > 0) {
+                $details[] = [
+                    'staff_attendance_id' => $attendanceId,
+                    'description' => 'Unexcused absence — daily deduction',
+                    'amount' => financeFromCents($applied),
+                ];
+                $absenceRemaining -= $applied;
+            }
+        }
+    }
+
+    return $details;
+}
+
 
 /**
  * Resolve the single applicable plan per fee category for one student and

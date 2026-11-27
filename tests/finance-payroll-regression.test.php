@@ -46,6 +46,22 @@ $financeApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
 $payrollApi = file_get_contents(__DIR__ . '/../api/finance/payroll.php');
 
 financeRegressionCheck(str_contains($payrollApi, 'financeProrateMonthlySalary'), 'payroll uses the salary proration rule for mid-month profile changes');
+financeRegressionCheck(str_contains($payrollApi, 'financeAllocatePayrollDeductions'), 'payroll detail rows use the same capped deductions as the payroll totals');
+financeRegressionCheck(str_contains($payrollApi, 'financeValidDate($date)'), 'salary profile effective dates are validated as real calendar dates');
+
+$deductionRecords = [
+    ['id'=>1,'attendance_mode'=>'time_based','status'=>'present','late_minutes'=>90,'lateness_deduction'=>'1200.00'],
+    ['id'=>2,'attendance_mode'=>'time_based','status'=>'present','late_minutes'=>60,'lateness_deduction'=>'800.00'],
+    ['id'=>3,'attendance_mode'=>'time_based','status'=>'absent','late_minutes'=>0,'lateness_deduction'=>'0.00'],
+    ['id'=>4,'attendance_mode'=>'attendance_only','status'=>'absent','late_minutes'=>0,'lateness_deduction'=>'0.00'],
+];
+$cappedDetails = financeAllocatePayrollDeductions($deductionRecords, 100000, 0);
+$lateDetailTotal = array_sum(array_map(static fn(array $row): int => financeToCents($row['amount']), $cappedDetails));
+financeRegressionCheck($lateDetailTotal === 100000 && count($cappedDetails) === 1, 'payroll deduction details never exceed the salary-capped lateness total');
+$mixedDetails = financeAllocatePayrollDeductions($deductionRecords, 120000, 30000);
+$mixedLate = array_sum(array_map(static fn(array $row): int => str_contains($row['description'], 'late') ? financeToCents($row['amount']) : 0, $mixedDetails));
+$mixedAbsence = array_sum(array_map(static fn(array $row): int => str_contains($row['description'], 'absence') ? financeToCents($row['amount']) : 0, $mixedDetails));
+financeRegressionCheck($mixedLate === 120000 && $mixedAbsence === 30000, 'payroll deduction detail rows reconcile exactly with capped lateness and absence totals');
 
 $financePage = file_get_contents(__DIR__ . '/../public/finance.html');
 $financeStyles = file_get_contents(__DIR__ . '/../public/css/finance.css');
