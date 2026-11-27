@@ -108,8 +108,8 @@ function markazSyncStudentTermFees(PDO $pdo, array $period, int $financeSessionI
         WHERE student_id=? AND (academic_period_id=? OR (academic_period_id IS NULL AND session_id=? AND term=?))
         LIMIT 1 FOR UPDATE");
     $insert=$pdo->prepare("INSERT INTO finance_term_fee_invoices
-        (invoice_number,student_id,session_id,academic_period_id,term,class_id,section,student_type,intake_type,fee_schedule_id,base_amount,discount_amount,amount_due,due_on,generated_by)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        (invoice_number,student_id,session_id,academic_period_id,term,class_id,section,student_type,intake_type,fee_schedule_id,base_amount,discount_amount,amount_due,due_on,generated_by,status)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     $update=$pdo->prepare("UPDATE finance_term_fee_invoices SET class_id=?,section=?,student_type=?,intake_type=?,fee_schedule_id=?,
         base_amount=?,discount_amount=?,amount_due=?,due_on=?,status=? WHERE id=?");
 
@@ -139,7 +139,7 @@ function markazSyncStudentTermFees(PDO $pdo, array $period, int $financeSessionI
         }else{
             $insert->execute([financeNextNumber('TERM'),(int)$student['id'],$financeSessionId,$periodId,$term,(int)$student['class_id'],
                 $section,$type,$intake,(int)$rate['id'],financeFromCents($base),financeFromCents($discount),financeFromCents($due),
-                (string)$rate['due_on'],$actor]);
+                (string)$rate['due_on'],$actor,$due===0?'paid':'unpaid']);
             $created+=$insert->rowCount();
         }
     }
