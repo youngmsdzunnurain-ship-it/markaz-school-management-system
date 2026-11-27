@@ -395,7 +395,10 @@
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || !data.success) throw new Error(data.message || "The result batch was not saved.");
-        if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
+        if (typeof state.meta.onSaved === "function") {
+            try { await state.meta.onSaved(); }
+            catch (refreshError) { console.error("MARKAZ results saved, but the class view did not refresh:", refreshError); }
+        }
         return Number(data.saved || 0);
     }
 
