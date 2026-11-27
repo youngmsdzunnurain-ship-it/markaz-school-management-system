@@ -684,7 +684,7 @@ body.finance-workspace-page .welcome-card{
 
 
 /* Student Fees: clearer money entry, account states and section navigation. */
-body.finance-workspace-page #tab-fees{display:grid;gap:18px;align-content:start}
+body.finance-workspace-page #tab-fees.active{display:grid;gap:18px;align-content:start}
 body.finance-workspace-page #tab-fees>.panel,
 body.finance-workspace-page #tab-fees .fee-workspace-grid>.panel,
 body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
@@ -732,7 +732,7 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
 #feeArrearsPanel .table-wrap,#studentStatementPanel .table-wrap{max-width:100%;overflow:auto}
 #termAdjustmentApprovalPanel .stack-item{padding:14px}
 @media(max-width:850px){
- body.finance-workspace-page #tab-fees{gap:13px}
+ body.finance-workspace-page #tab-fees.active{gap:13px}
  .student-fees-section-switcher{gap:6px;padding:6px}
  .student-fee-section{min-height:46px;font-size:11px}
  .student-fees-filters{gap:8px;padding:10px}
