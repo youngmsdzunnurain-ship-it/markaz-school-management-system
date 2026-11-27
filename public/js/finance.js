@@ -110,7 +110,7 @@ function renderStudentFeesRegister(data){
  studentFeesRows=rows;
  const body=$('#studentFeesRows');
  body.innerHTML=rows.map(s=>{
-  const fullScholarship=Number(s.current_invoice_count)>0&&s.adjustment_type==='full_scholarship'&&Number(s.current_fee)===0;
+  const fullScholarship=Number(s.has_scholarship)===1&&s.adjustment_type==='full_scholarship';
   const previousClear=Number(s.previous_outstanding)<=0;
   const accountClear=Number(s.total_balance)<=0;
   const currentFee=Number(s.current_invoice_count)>0
