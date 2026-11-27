@@ -72,7 +72,7 @@
 
     /* Conservative OCR fallback: only accept a clearly unique, close full-name match. */
     function fuzzyStudentMatch(line, students) {
-        const candidate = normalise(line).replace(/\\d+/g, "");
+        const candidate = normalise(line).replace(/\d+/g, "");
         if (candidate.length < 6 || !students.length) return null;
 
         const scored = students.map(student => {
