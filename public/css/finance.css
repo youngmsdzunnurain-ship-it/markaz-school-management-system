@@ -750,3 +750,11 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
  #studentStatementPanel .inline-fields button{width:100%}
  .fee-clearance-badge{white-space:normal;text-align:center}
 }
+
+/* Per-student intake classification controls */
+.student-intake-config{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px 12px;margin:2px 0 4px;padding:12px 13px;border:1px solid rgba(31,107,69,.16);border-radius:12px;background:rgba(31,107,69,.045)}
+.student-intake-config label{display:grid;gap:6px;margin:0;color:var(--dg);font-size:12px;font-weight:700}
+.student-intake-config select{min-width:0;width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink)}
+.student-intake-config .btn{min-height:40px;white-space:nowrap}
+.student-intake-config>small{grid-column:1/-1;margin:0;color:var(--muted);font-size:10px;line-height:1.45}
+@media(max-width:560px){.student-intake-config{grid-template-columns:minmax(0,1fr)}.student-intake-config .btn{width:100%}.student-intake-config>small{grid-column:1}}
