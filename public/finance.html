@@ -163,6 +163,24 @@
   </table></div>
  </section>
 
+ <div class="two-col fee-workspace-grid" aria-label="Student account reports">
+  <section class="panel" id="studentStatementPanel">
+   <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL ACCOUNT</span><h2>Student account statement</h2><p class="muted">View monthly fees, term assessments, payments, refunds and the student's current balance.</p></div></div>
+   <form id="studentStatementForm" class="inline-fields">
+    <label>Admission number<input id="studentStatementAdmission" name="admission_number" maxlength="80" required placeholder="Enter the student's admission number"></label>
+    <button class="btn btn-primary" type="submit">Load statement</button>
+   </form>
+   <div class="student-fees-summary" id="studentStatementSummary"><div><small>Student</small><strong>—</strong></div><div><small>Total billed</small><strong>—</strong></div><div><small>Discounts</small><strong>—</strong></div><div><small>Paid / allocated</small><strong>—</strong></div><div><small>Outstanding</small><strong>—</strong></div></div>
+   <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Type</th><th>Period</th><th>Issued</th><th>Due</th><th>Billed</th><th>Discount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="studentStatementRows"><tr><td colspan="10" class="empty">Enter an admission number to load the student's statement.</td></tr></tbody></table></div>
+   <div class="panel-heading"><div><h3>Payment history</h3><p class="muted">Recorded receipts, verification status and approved refunds.</p></div></div>
+   <div id="studentStatementPayments" class="stack-list"><p class="muted">Payment history will appear after a student statement is loaded.</p></div>
+  </section>
+  <section class="panel" id="feeArrearsPanel">
+   <div class="panel-heading"><div><span class="eyebrow">COLLECTION FOLLOW-UP</span><h2>Outstanding balances &amp; arrears</h2><p class="muted">Monthly and term invoices combined, grouped by student and days overdue.</p></div><button class="btn btn-light" id="reloadFeeArrears" type="button"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
+   <div class="student-fees-summary" id="feeArrearsSummary"><div><small>Students with balances</small><strong>—</strong></div><div><small>Total outstanding</small><strong>—</strong></div></div>
+   <div class="table-wrap"><table><thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Open invoices</th><th>Outstanding</th><th>1–30 days</th><th>31–60 days</th><th>61–90 days</th><th>90+ days</th><th>Oldest overdue</th></tr></thead><tbody id="feeArrearsRows"><tr><td colspan="10" class="empty">Loading outstanding balances…</td></tr></tbody></table></div>
+  </section>
+ </div>
  <div class="two-col fee-workspace-grid fee-support-grid">
   <form class="panel form-panel" id="studentFeeAdjustmentForm">
    <div class="panel-heading"><div><span class="eyebrow">INDIVIDUAL STUDENT SUPPORT</span><h2><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Scholarship or fee reduction</h2><p class="muted">Applies only to the selected student and current term. Previous debts are never waived by a new-term adjustment.</p></div></div>
