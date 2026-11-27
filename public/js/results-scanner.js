@@ -580,8 +580,8 @@
     async function processUploadedFiles(files) {
         clearTimeout(state.timer);
         stopStream();
-        state.phase = "camera";
         showPhase("camera");
+        state.phase = "uploading";
         const images = files.filter(file => file && /^image\//i.test(file.type));
         if (!images.length) {
             setGuide("No supported image files were selected. Choose JPG, PNG or another browser-supported image.");
