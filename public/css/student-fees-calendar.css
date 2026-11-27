@@ -1,13 +1,23 @@
-.student-fees-top-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,340px);gap:14px;align-items:stretch;margin-bottom:14px}
-.student-fees-top-grid>.student-fees-period{height:100%;margin:0}
+.student-fees-top-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,340px);gap:14px;align-items:start;margin-bottom:14px}
+.student-fees-top-grid>.student-fees-period{height:auto;margin:0}
 .student-fees-calendar{min-width:0;margin:0;padding:16px 17px 14px;overflow:hidden;background:linear-gradient(145deg,var(--card,#fff),rgba(231,240,231,.72));border:1px solid rgba(31,107,69,.14);box-shadow:0 8px 24px rgba(20,71,47,.07)}
 .student-fees-calendar::before{left:16px;right:16px}
 .student-calendar-heading,.student-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.student-calendar-heading h2{margin:4px 0 0;font:600 17px/1.2 var(--serif);color:var(--dg)}
-.student-calendar-heading h2 i{margin-right:5px;color:var(--mg)}
+.student-calendar-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;padding:0;border:0;background:transparent;text-align:left;color:var(--dg);cursor:pointer}
+.student-calendar-heading-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:3px}
+.student-calendar-heading-copy strong{font:600 16px/1.2 var(--serif);color:var(--dg)}
+.student-calendar-heading-copy strong i{margin-right:5px;color:var(--mg)}
+.student-calendar-month-summary{color:var(--mg);font:700 11px/1.3 var(--sans)}
+.student-calendar-chevron{flex:0 0 auto;color:var(--mg);font-size:12px;transition:transform .18s ease}
+.student-fees-calendar.is-expanded .student-calendar-chevron{transform:rotate(180deg)}
+.student-calendar-toggle:focus-visible{outline:3px solid rgba(201,162,74,.6);outline-offset:4px;border-radius:6px}
+.student-fees-calendar.is-collapsed{padding:11px 15px}
+.student-calendar-content[hidden]{display:none!important}
+.student-calendar-content:not([hidden]){animation:student-calendar-reveal .16s ease-out}
+@keyframes student-calendar-reveal{from{opacity:.5;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
 .student-calendar-live{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:99px;background:rgba(31,107,69,.08);color:var(--mg);font-size:9px;font-weight:800}
 .student-calendar-live i{width:6px;height:6px;border-radius:50%;background:#2d9b5c;box-shadow:0 0 0 3px rgba(45,155,92,.12)}
-.student-calendar-toolbar{margin:15px 0 10px}
+.student-calendar-toolbar{margin:13px 0 10px}
 .student-calendar-toolbar h3{margin:0;color:var(--dg);font:700 13px/1.2 var(--sans)}
 .student-calendar-nav{width:29px;height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--mg);cursor:pointer}
 .student-calendar-nav:hover{background:rgba(31,107,69,.08)}
@@ -43,4 +53,4 @@
 .student-calendar-days button:focus-visible,.student-calendar-nav:focus-visible{outline:3px solid rgba(201,162,74,.6);outline-offset:2px}
 @media(max-width:1000px){.student-fees-top-grid{grid-template-columns:minmax(0,1fr) minmax(260px,310px)}}
 @media(max-width:760px){.student-fees-top-grid{grid-template-columns:minmax(0,1fr)}.student-fees-calendar{max-width:none}.student-calendar-days{gap:5px}.student-calendar-day{min-height:35px;font-size:11px}}
-@media(prefers-reduced-motion:reduce){.student-calendar-nav,.student-calendar-day{transition:none}}
+@media(prefers-reduced-motion:reduce){.student-calendar-nav,.student-calendar-day,.student-calendar-chevron{transition:none}.student-calendar-content:not([hidden]){animation:none}}
