@@ -14,6 +14,10 @@ $api = file_get_contents(__DIR__ . '/../api/finance/term-fees.php');
 $js = file_get_contents(__DIR__ . '/../public/js/finance.js');
 $html = file_get_contents(__DIR__ . '/../public/finance.html');
 $css = file_get_contents(__DIR__ . '/../public/css/finance.css');
+$calendarJs = file_get_contents(__DIR__ . '/../public/js/student-fees-calendar.js');
+$calendarCss = file_get_contents(__DIR__ . '/../public/css/student-fees-calendar.css');
+$studentsApi = file_get_contents(__DIR__ . '/../api/finance/index.php');
+$intakeMigration = file_get_contents(__DIR__ . '/../database/migrations/20261130_markaz_student_fee_intake_overrides.sql');
 
 studentFeesExperienceCheck(str_contains($api, 'previous_paid'), 'previous-term payment allocations are included in paid totals');
 studentFeesExperienceCheck(str_contains($api, 'previous_invoice_count'), 'fully settled accounts are distinguished from students without any fee assessment');
@@ -32,5 +36,14 @@ studentFeesExperienceCheck(substr_count($html, 'class="currency-field"') === 16,
 studentFeesExperienceCheck(str_contains($html, 'A different authorised staff member must approve it'), 'scholarship approval requirements are explicit in the form');
 studentFeesExperienceCheck(str_contains($css, '.fee-clearance-badge') && str_contains($css, '.fee-support-badge'), 'clearance and scholarship badges have dedicated styling');
 studentFeesExperienceCheck(str_contains($css, '.currency-field') && str_contains($css, '.student-fees-adjustment-note'), 'fee inputs and scholarship guidance have dedicated styling');
+studentFeesExperienceCheck(str_contains($html, 'value="full_scholarship"') && str_contains($html, 'value="discount_percent"') && str_contains($html, 'value="discount_amount"') && str_contains($html, 'value="fixed_fee"'), 'scholarship filter exposes each approved adjustment type');
+studentFeesExperienceCheck(str_contains($api, "$scholarshipFilter==='full_scholarship'") && str_contains($api, "$scholarshipFilter==='discount_percent'") && str_contains($api, "$scholarshipFilter==='discount_amount'") && str_contains($api, "$scholarshipFilter==='fixed_fee'"), 'each scholarship filter option is applied to the matching account adjustment');
+studentFeesExperienceCheck(str_contains($js, "const currentPaid=fullScholarship?'—':money(s.current_paid)") && str_contains($js, "const currentBalance=fullScholarship?'—':money(s.current_balance)"), 'full-scholarship register rows use clear double-dash amounts for current-term figures');
+studentFeesExperienceCheck(str_contains($studentsApi, "CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) LIKE ?"), 'student lookup supports searching by the complete student name');
+studentFeesExperienceCheck(str_contains($html, 'id="studentFeeIntakeType"') && str_contains($js, "save_student_intake_override"), 'staff can explicitly configure an individual student intake category');
+studentFeesExperienceCheck(str_contains($api, 'finance_student_fee_intake_overrides') && str_contains($api, 'save_student_intake_override'), 'intake overrides are saved and used by the current academic period');
+studentFeesExperienceCheck(str_contains($calendarJs, 'studentCalendarContent') && str_contains($calendarJs, 'aria-expanded') && str_contains($calendarJs, 'studentCalendarMonthSummary'), 'academic calendar has an accessible collapsible month header');
+studentFeesExperienceCheck(str_contains($calendarCss, '.student-fees-calendar.is-collapsed') && str_contains($calendarCss, '.student-calendar-toggle'), 'collapsed calendar uses a compact header without reserving expanded calendar space');
+studentFeesExperienceCheck(str_contains($intakeMigration, 'CREATE TABLE finance_student_fee_intake_overrides') && str_contains($intakeMigration, 'UNIQUE KEY'), 'per-student intake overrides are stored once per academic period');
 
 echo "MARKAZ Student Fees experience regression checks passed.\n";
