@@ -63,6 +63,11 @@ function markazCurrentAcademicPeriod(PDO $pdo): array
 
 function markazFeeDiscountCents(int $baseCents, string $type, string $value): array
 {
+    // A later reduction to the published schedule must not make an older
+    // negotiated final fee exceed the new normal rate.
+    if ($type === 'fixed_fee') {
+        $value = financeFromCents(min($baseCents, financeToCents($value)));
+    }
     return financeCalculateFeeAmountsCents($baseCents, $type, $value);
 }
 
@@ -377,7 +382,10 @@ try {
         $st->execute([$student,$financeSessionId,$term,$type,$value,$reason,$adminImmediate?'approved':'pending',$adminImmediate?$actor:null,$adminImmediate?date('Y-m-d H:i:s'):null,$actor]);$id=(int)$pdo->lastInsertId();
         if($adminImmediate && $issuedInvoice){
             [$baseCents,$discountCents,$dueCents]=markazFeeDiscountCents(financeToCents((string)$issuedInvoice['base_amount']),$type,$value);
-            $paidStmt=$pdo->prepare('SELECT COALESCE(SUM(amount),0) FROM finance_term_fee_payments WHERE term_invoice_id=?');$paidStmt->execute([(int)$issuedInvoice['id']]);$paid=financeToCents((string)$paidStmt->fetchColumn());
+            $paidStmt=$pdo->prepare("SELECT COALESCE(SUM(p.amount),0)-
+                COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id
+                    WHERE x.allocation_type='term' AND x.source_allocation_id=p.id AND rf.status='approved'),0)
+                FROM finance_term_fee_payments p WHERE p.term_invoice_id=?");$paidStmt->execute([(int)$issuedInvoice['id']]);$paid=financeToCents((string)$paidStmt->fetchColumn());
             $status=($dueCents===0||$paid>=$dueCents)?'paid':($paid>0?'partial':'unpaid');
             $amend=$pdo->prepare('UPDATE finance_term_fee_invoices SET discount_amount=?,amount_due=?,status=? WHERE id=?');
             $amend->execute([financeFromCents($discountCents),financeFromCents($dueCents),$status,(int)$issuedInvoice['id']]);
@@ -404,7 +412,10 @@ try {
         if($issuedInvoice){
             $details=$pdo->prepare('SELECT adjustment_type,value FROM finance_student_fee_adjustments WHERE id=?');$details->execute([$id]);$approved=$details->fetch(PDO::FETCH_ASSOC);
             [$baseCents,$discountCents,$dueCents]=markazFeeDiscountCents(financeToCents((string)$issuedInvoice['base_amount']),(string)$approved['adjustment_type'],(string)$approved['value']);
-            $paidStmt=$pdo->prepare('SELECT COALESCE(SUM(amount),0) FROM finance_term_fee_payments WHERE term_invoice_id=?');$paidStmt->execute([(int)$issuedInvoice['id']]);$paid=financeToCents((string)$paidStmt->fetchColumn());
+            $paidStmt=$pdo->prepare("SELECT COALESCE(SUM(p.amount),0)-
+                COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id
+                    WHERE x.allocation_type='term' AND x.source_allocation_id=p.id AND rf.status='approved'),0)
+                FROM finance_term_fee_payments p WHERE p.term_invoice_id=?");$paidStmt->execute([(int)$issuedInvoice['id']]);$paid=financeToCents((string)$paidStmt->fetchColumn());
             $status=($dueCents===0||$paid>=$dueCents)?'paid':($paid>0?'partial':'unpaid');
             $amend=$pdo->prepare('UPDATE finance_term_fee_invoices SET discount_amount=?,amount_due=?,status=? WHERE id=?');
             $amend->execute([financeFromCents($discountCents),financeFromCents($dueCents),$status,(int)$issuedInvoice['id']]);
