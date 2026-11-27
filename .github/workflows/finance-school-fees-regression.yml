@@ -6,6 +6,8 @@ on:
     paths:
       - 'public/finance.html'
       - 'public/js/finance.js'
+      - 'public/js/student-fees-calendar.js'
+      - 'public/css/student-fees-calendar.css'
       - 'public/css/finance.css'
       - 'public/settings.html'
       - 'public/js/settings.js'
@@ -14,11 +16,13 @@ on:
       - 'app/helpers/finance.php'
       - 'app/helpers/finance-fee-calculations.php'
       - 'database/migrations/20261129_markaz_section_student_fees.sql'
+      - 'database/migrations/20261130_markaz_student_fee_intake_overrides.sql'
       - 'scripts/install-finance.sh'
       - 'api/finance/**'
       - 'tests/finance-term-fees-regression.test.php'
       - 'tests/student-fees-section-regression.test.php'
       - 'tests/finance-migration-installer.test.php'
+      - 'tests/finance-student-fees-experience-regression.test.php'
       - '.github/workflows/finance-school-fees-regression.yml'
   push:
     branches: [main]
@@ -61,16 +65,19 @@ jobs:
           php -l tests/finance-term-fees-regression.test.php
           php -l tests/student-fees-section-regression.test.php
           php -l tests/finance-migration-installer.test.php
+          php -l tests/finance-student-fees-experience-regression.test.php
           bash -n scripts/install-finance.sh
       - name: Check Finance and Settings JavaScript syntax
         run: |
           node --check public/js/finance.js
+          node --check public/js/student-fees-calendar.js
           node --check public/js/settings.js
       - name: Run School Fees and Finance regression tests
         run: |
           php tests/finance-term-fees-regression.test.php
           php tests/student-fees-section-regression.test.php
           php tests/finance-migration-installer.test.php
+          php tests/finance-student-fees-experience-regression.test.php
 
   section-fees-migration:
     runs-on: ubuntu-latest
@@ -124,6 +131,13 @@ jobs:
           SQL
       - name: Apply section-based student-fee migration
         run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_section_fees_test < database/migrations/20261129_markaz_section_student_fees.sql
+      - name: Apply per-student intake override migration
+        run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_section_fees_test < database/migrations/20261130_markaz_student_fee_intake_overrides.sql
+      - name: Verify per-student intake override storage
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_section_fees_test -e "INSERT INTO finance_student_fee_intake_overrides(academic_period_id,student_id,intake_type,created_by,updated_by) VALUES (1,1,'new_intake',1,1)"
+          override="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_section_fees_test -e "SELECT CONCAT(academic_period_id,':',student_id,':',intake_type) FROM finance_student_fee_intake_overrides WHERE student_id=1")"
+          test "$override" = "1:1:new_intake"
       - name: Verify term dates, untouched historical invoices and new fee schedules
         run: |
           columns="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -N markaz_section_fees_test -e "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='markaz_section_fees_test' AND TABLE_NAME='academic_periods' AND COLUMN_NAME IN ('starts_on','ends_on')")"
