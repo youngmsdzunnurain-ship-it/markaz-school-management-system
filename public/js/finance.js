@@ -94,7 +94,31 @@ $('#studentFeeAdjustmentForm')?.addEventListener('submit',async e=>{e.preventDef
 $('#reloadTermAdjustments')?.addEventListener('click',loadTermFeeSetup);
 document.addEventListener('click',async event=>{const approve=event.target.closest('[data-approve-term-adjustment]');if(approve){const id=Number(approve.dataset.approveTermAdjustment);if(!id||approve.disabled||!confirm('Approve this student fee adjustment? The submitting staff member cannot approve it.'))return;approve.disabled=true;try{const result=await termFeeRequest('approve_student_adjustment',{adjustment_id:id});notice(result.message);await loadTermFeeSetup()}catch(error){approve.disabled=false;notice(error.message,true)}return}
 const edit=event.target.closest('[data-edit-fee-student]');if(edit){const student=studentFeesRows.find(s=>Number(s.student_id)===Number(edit.dataset.editFeeStudent));if(!student)return;$('#termStudentSearch').value=student.admission_number;await loadStudentChoices(student.admission_number,'#termStudentSelect','#termStudentDetails','term');$('#termStudentSelect').value=String(student.student_id);showSelectedStudent('#termStudentSelect','#termStudentDetails','term');$('#studentFeeAdjustmentForm').scrollIntoView({behavior:'smooth',block:'center'});}});
-function init(){const now=new Date();$('#reportFrom').value=localDate(new Date(now.getFullYear(),now.getMonth(),1));$('#reportTo').value=localDate(now);$('#todayLabel').textContent=now.toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});$('#payrollYear').value=now.getFullYear();$('#payrollMonth').value=String(now.getMonth()+1);$('#expenseForm [name=expense_date]').value=now.toISOString().slice(0,10);fillMonths('#payrollMonth');$('#paymentPaidAt').value=localDateTime(now);loadTermFeeSetup();loadDashboard();loadExpenses();loadIncome();loadPayments();loadRefunds()}
+function renderStudentStatement(data){
+ const student=data.student||{},totals=data.totals||{},invoices=Array.isArray(data.invoices)?data.invoices:[],payments=Array.isArray(data.payments)?data.payments:[];
+ $('#studentStatementSummary').innerHTML='<div><small>Student</small><strong>'+esc(student.student_name||'—')+'</strong><small>'+esc(student.admission_number||'')+'</small></div><div><small>Total billed</small><strong>'+money(totals.billed)+'</strong></div><div><small>Discounts</small><strong>'+money(totals.discounts)+'</strong></div><div><small>Paid / allocated</small><strong>'+money(totals.paid_allocated)+'</strong></div><div><small>Outstanding</small><strong>'+money(totals.outstanding)+'</strong></div>';
+ $('#studentStatementRows').innerHTML=invoices.map(i=>'<tr><td><b>'+esc(i.invoice_number)+'</b></td><td>'+esc(i.invoice_type)+'</td><td>'+esc(i.period_label)+'</td><td>'+esc(i.issued_on)+'</td><td>'+esc(i.due_on)+'</td><td>'+money(i.base_amount)+'</td><td>'+money(i.discount_amount)+'</td><td>'+money(i.paid_amount)+'</td><td><b>'+money(i.balance)+'</b></td><td><span class="pill '+esc(i.status)+'">'+esc(i.status)+'</span></td></tr>').join('')||'<tr><td colspan="10" class="empty">No monthly or term invoices were found for this student.</td></tr>';
+ $('#studentStatementPayments').innerHTML=payments.map(p=>'<div class="stack-item"><div><b>'+esc(p.receipt_number)+' · '+money(p.amount)+'</b><small>'+esc(p.paid_at)+' · '+esc(String(p.method||'').replaceAll('_',' '))+' · '+esc(p.payer_name||'Payer not specified')+'</small><small>Reference: '+esc(p.reference||'—')+(Number(p.refunded_amount)>0?' · Approved refunds: '+money(p.refunded_amount):'')+'</small></div><span class="pill '+esc(p.status)+'">'+esc(p.status)+'</span></div>').join('')||'<p class="muted">No payment records were found for this student.</p>';
+}
+$('#studentStatementForm')?.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const admissionNumber=$('#studentStatementAdmission').value.trim(),button=event.currentTarget.querySelector('button[type=submit]');
+ if(!admissionNumber)return;
+ button.disabled=true;
+ try{const data=await request('student_statement',null,{admission_number:admissionNumber});renderStudentStatement(data);}
+ catch(error){$('#studentStatementRows').innerHTML='<tr><td colspan="10" class="empty">The student statement could not be loaded.</td></tr>';$('#studentStatementPayments').innerHTML='<p class="muted">Payment history is unavailable.</p>';notice(error.message,true);}
+ finally{button.disabled=false;}
+});
+async function loadFeeArrears(){
+ try{
+  const data=await request('arrears'),students=Array.isArray(data.students)?data.students:[];
+  $('#feeArrearsSummary').innerHTML='<div><small>Students with balances</small><strong>'+esc(data.student_count||0)+'</strong></div><div><small>Total outstanding</small><strong>'+money(data.total_outstanding)+'</strong></div>';
+  $('#feeArrearsRows').innerHTML=students.map(s=>'<tr><td>'+esc(s.admission_number)+'</td><td><b>'+esc(s.student_name)+'</b></td><td>'+esc(s.class_name)+'</td><td>'+esc(s.open_invoices)+'</td><td><b>'+money(s.outstanding)+'</b></td><td>'+money(s.overdue_1_30)+'</td><td>'+money(s.overdue_31_60)+'</td><td>'+money(s.overdue_61_90)+'</td><td>'+money(s.overdue_over_90)+'</td><td>'+esc(s.max_days_overdue)+' days</td></tr>').join('')||'<tr><td colspan="10" class="empty">No outstanding student fee balances were found.</td></tr>';
+ }catch(error){$('#feeArrearsRows').innerHTML='<tr><td colspan="10" class="empty">Outstanding balances could not be loaded.</td></tr>';notice(error.message,true);}
+}
+$('#reloadFeeArrears')?.addEventListener('click',loadFeeArrears);
+
+function init(){const now=new Date();$('#reportFrom').value=localDate(new Date(now.getFullYear(),now.getMonth(),1));$('#reportTo').value=localDate(now);$('#todayLabel').textContent=now.toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});$('#payrollYear').value=now.getFullYear();$('#payrollMonth').value=String(now.getMonth()+1);$('#expenseForm [name=expense_date]').value=now.toISOString().slice(0,10);fillMonths('#payrollMonth');$('#paymentPaidAt').value=localDateTime(now);loadTermFeeSetup();loadFeeArrears();loadDashboard();loadExpenses();loadIncome();loadPayments();loadRefunds()}
 init();
 const studentFeesCalendarScript=document.createElement('script');
 studentFeesCalendarScript.src='./js/student-fees-calendar.js?v=20261127-calendar1';
