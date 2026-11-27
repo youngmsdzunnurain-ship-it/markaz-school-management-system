@@ -16,6 +16,7 @@ $html = file_get_contents(__DIR__ . '/../public/finance.html');
 $css = file_get_contents(__DIR__ . '/../public/css/finance.css');
 
 studentFeesExperienceCheck(str_contains($api, 'previous_paid'), 'previous-term payment allocations are included in paid totals');
+studentFeesExperienceCheck(str_contains($api, 'previous_invoice_count'), 'fully settled accounts are distinguished from students without any fee assessment');
 studentFeesExperienceCheck(str_contains($api, 'COALESCE(cur.current_paid,0)+COALESCE(prev.previous_paid,0) total_paid'), 'account payment status uses payments from current and previous terms');
 studentFeesExperienceCheck(str_contains($api, "financeToCents((string)\$r['total_paid'])===0"), 'unpaid filter checks the full account payment history');
 studentFeesExperienceCheck(str_contains($api, "financeToCents((string)\$r['total_paid'])>0"), 'part-paid filter checks the full account payment history');
