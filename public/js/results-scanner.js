@@ -378,7 +378,10 @@
 
     async function saveEntries(plan, messageNode) {
         if (!plan.payloads.length) {
-            if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
+            if (typeof state.meta.onSaved === "function") {
+                try { await state.meta.onSaved(); }
+                catch (refreshError) { console.error("MARKAZ class view refresh failed:", refreshError); }
+            }
             return 0;
         }
         messageNode.textContent = `Validating all ${plan.payloads.length} result rows…`;
