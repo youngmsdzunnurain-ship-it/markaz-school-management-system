@@ -11,7 +11,7 @@ function markazFeeSection(string $className): ?string
     if (str_contains($name, 'kindergarten') || str_contains($name, 'pre nursery') || preg_match('/\bnursery\b/', $name)) return 'nursery';
     if (preg_match('/\bbasic\s*(?:[1-5]|one|two|three|four|five)\b/', $name) || preg_match('/\bprimary\b/', $name)) return 'primary';
     if (preg_match('/\bjss\s*[1-3]\b/', $name) || str_contains($name, 'junior secondary')) return 'junior_secondary';
-    if (preg_match('/\bss\s*[1-3]\b/', $name) || str_contains($name, 'senior secondary')) return 'senior_secondary';
+    if (preg_match('/\b(?:ss|sss)\s*[1-3]\b/', $name) || str_contains($name, 'senior secondary')) return 'senior_secondary';
     return null;
 }
 
