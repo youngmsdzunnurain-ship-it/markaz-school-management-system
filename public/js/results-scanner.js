@@ -680,6 +680,13 @@
             entries.push({ student, subject, values });
         }));
         const outOfRange = entries.filter(entry => scoreRangeError(entry.values, entry.subject)).length;
+        if (outOfRange) {
+            buildReview(subjects);
+            showPhase("review");
+            $("[data-mkls-note]", overlay).textContent =
+                `${outOfRange} score line(s) need correction before anything can be saved. Review the highlighted values; no results have been saved yet.`;
+            return;
+        }
         const plan = planSave(entries);
         let saved = 0, failure = "";
         try {
