@@ -29,6 +29,8 @@ on:
     paths:
       - 'public/finance.html'
       - 'public/js/finance.js'
+      - 'public/js/student-fees-calendar.js'
+      - 'public/css/student-fees-calendar.css'
       - 'public/css/finance.css'
       - 'public/settings.html'
       - 'public/js/settings.js'
@@ -37,11 +39,13 @@ on:
       - 'app/helpers/finance.php'
       - 'app/helpers/finance-fee-calculations.php'
       - 'database/migrations/20261129_markaz_section_student_fees.sql'
+      - 'database/migrations/20261130_markaz_student_fee_intake_overrides.sql'
       - 'scripts/install-finance.sh'
       - 'api/finance/**'
       - 'tests/finance-term-fees-regression.test.php'
       - 'tests/student-fees-section-regression.test.php'
       - 'tests/finance-migration-installer.test.php'
+      - 'tests/finance-student-fees-experience-regression.test.php'
       - '.github/workflows/finance-school-fees-regression.yml'
 
 jobs:
