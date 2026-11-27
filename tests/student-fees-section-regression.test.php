@@ -29,6 +29,10 @@ studentFeesCheck(str_contains($settingsJs, 'academicTermStartsOn') && str_contai
 studentFeesCheck(str_contains($api, 'academic_periods') && str_contains($api, 'academic_sessions') && str_contains($api, 'terms'), 'Student Fees reads the single current period from MARKAZ academic settings');
 studentFeesCheck(str_contains($api, 'finance_section_fee_schedules') && str_contains($api, 'new_intake') && str_contains($api, 'student_type'), 'the API saves the four section-based day/boarding and intake fee rates');
 studentFeesCheck(str_contains($api, 'admission_date') && str_contains($api, 'starts_on') && str_contains($api, 'ends_on'), 'new intake classification uses the student admission date within the configured academic term');
+studentFeesCheck(str_contains($api, "save_student_intake_override") && str_contains($api, "finance_student_fee_intake_overrides"), 'an authorised staff member can save a per-student intake override for the active academic period');
+studentFeesCheck(str_contains($api, "io.intake_type configured_intake_type") && str_contains($api, "\$intakeOverrides[(int)\$student['id']]"), 'the register and invoice generation prefer the saved per-student intake classification');
+studentFeesCheck(str_contains($api, "already exists for this student in the current term") && str_contains($api, "intake category is locked"), 'an issued assessment cannot be silently reclassified after generation');
+
 studentFeesCheck(str_contains($api, 'function markazFeeSection') && str_contains($api, 'kindergarten') && str_contains($api, 'junior secondary'), 'existing active MARKAZ classes are mapped to the four requested sections');
 studentFeesCheck(str_contains($api, "if (\$action === 'register')") && str_contains($api, 'previous_outstanding') && str_contains($api, 'previous_debt_details') && str_contains($api, 'current_normal_fee') && str_contains($api, 'current_discount') && str_contains($api, 'current_balance'), 'central register reports previous debt and current-term balance separately');
 studentFeesCheck(str_contains($api, 'financeToCents') && str_contains($api, 'financeFromCents'), 'fee discounts and balances use integer kobo arithmetic');
