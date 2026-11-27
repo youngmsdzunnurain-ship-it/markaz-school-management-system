@@ -339,7 +339,7 @@ try {
 
     if ($action==='generate_term_invoices') {
         $students=$pdo->query("SELECT s.id,s.class_id,s.student_type,s.admission_date,c.name class_name
-                               FROM students s JOIN classes c ON c.id=s.class_id
+                               FROM students s LEFT JOIN classes c ON c.id=s.class_id
                                WHERE s.is_active=1 ORDER BY s.id")->fetchAll(PDO::FETCH_ASSOC);
         $rateStmt=$pdo->prepare('SELECT * FROM finance_section_fee_schedules WHERE academic_period_id=? AND is_active=1');
         $rateStmt->execute([$periodId]);$rateMap=[];
@@ -348,7 +348,7 @@ try {
         $overrideQuery->execute([$periodId]);$intakeOverrides=[];
         foreach($overrideQuery->fetchAll(PDO::FETCH_ASSOC) as $override)$intakeOverrides[(int)$override['student_id']]=(string)$override['intake_type'];
         if(count($rateMap)!==16)financeJson(['success'=>false,'message'=>'Configure all 16 fee rates for this term before generating student assessments.'],409);
-        $pdo->beginTransaction();$created=0;
+        $pdo->beginTransaction();$created=0;$skipped=0;
         try{
             $adj=$pdo->prepare("SELECT adjustment_type,value FROM finance_student_fee_adjustments WHERE student_id=? AND session_id=? AND term=? AND status='approved' AND effective_from<=CURDATE() AND (effective_until IS NULL OR effective_until>=CURDATE()) ORDER BY approved_at DESC,id DESC LIMIT 1");
             $insert=$pdo->prepare(
@@ -356,7 +356,7 @@ try {
                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
             );
             foreach($students as $student){
-                $section=markazFeeSection((string)$student['class_name']);if($section===null)continue;
+                $section=markazFeeSection((string)($student['class_name']??''));if($section===null){$skipped++;continue;}
                 $type=(string)$student['student_type'];if(!in_array($type,['Day Student','Boarding'],true))$type='Day Student';
                 $admission=(string)($student['admission_date']??'');
                 $intake=$intakeOverrides[(int)$student['id']]??(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
@@ -375,7 +375,7 @@ try {
             $pdo->commit();
         }catch(DomainException $e){if($pdo->inTransaction())$pdo->rollBack();financeJson(['success'=>false,'message'=>$e->getMessage()],422);}
         catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
-        financeJson(['success'=>true,'created'=>$created,'message'=>"Generated {$created} student fee assessments. Existing assessments and previous-term balances were left unchanged."]);
+        financeJson(['success'=>true,'created'=>$created,'skipped_without_supported_class'=>$skipped,'message'=>"Generated {$created} student fee assessments. ".($skipped>0?"{$skipped} active students were skipped because they need a supported conventional class assigned. ":'')."Existing assessments and previous-term balances were left unchanged."]);
     }
     financeJson(['success'=>false,'message'=>'Unknown Student Fees action.'],404);
 } catch(Throwable $e) {
