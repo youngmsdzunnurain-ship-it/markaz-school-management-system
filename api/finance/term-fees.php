@@ -110,9 +110,9 @@ try {
             $sql = "SELECT s.id student_id,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
                            s.class_id,c.name class_name,s.student_type,s.admission_date,
                            COALESCE(cur.current_invoice_count,0) current_invoice_count,COALESCE(cur.has_payment_history,0) has_payment_history,cur.current_intake_type,COALESCE(cur.current_normal_fee,0) current_normal_fee,COALESCE(cur.current_discount,0) current_discount,COALESCE(cur.current_fee,0) current_fee,COALESCE(cur.current_paid,0) current_paid,
-                           COALESCE(cur.current_balance,0) current_balance,COALESCE(prev.previous_outstanding,0) previous_outstanding,prev.previous_debt_details,
+                           COALESCE(cur.current_balance,0) current_balance,COALESCE(prev.previous_outstanding,0) previous_outstanding,COALESCE(prev.previous_paid,0) previous_paid,prev.previous_debt_details,
                            COALESCE(cur.current_fee,0)+COALESCE(prev.previous_outstanding,0) total_due,
-                           COALESCE(cur.current_paid,0) total_paid,
+                           COALESCE(cur.current_paid,0)+COALESCE(prev.previous_paid,0) total_paid,
                            COALESCE(cur.current_balance,0)+COALESCE(prev.previous_outstanding,0) total_balance,
                            COALESCE(adj.has_scholarship,0) has_scholarship,adj.adjustment_type
                     FROM students s JOIN classes c ON c.id=s.class_id
@@ -129,13 +129,18 @@ try {
                     LEFT JOIN (
                       SELECT i.student_id,
                              SUM(GREATEST(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0),0)) previous_outstanding,
-                             GROUP_CONCAT(CONCAT(fs.session_name,' · ',UPPER(i.term),' TERM: ₦',FORMAT(GREATEST(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0),0),2)) ORDER BY fs.starts_on,i.id SEPARATOR ' | ') previous_debt_details
+                             SUM(GREATEST(COALESCE(p.paid,0)-COALESCE(r.refunded,0),0)) previous_paid,
+                             GROUP_CONCAT(
+                               CASE WHEN GREATEST(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0),0)>0
+                                 THEN CONCAT(fs.session_name,' · ',UPPER(i.term),' TERM: ₦',FORMAT(GREATEST(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0),0),2))
+                                 ELSE NULL END
+                               ORDER BY fs.starts_on,i.id SEPARATOR ' | '
+                             ) previous_debt_details
                       FROM finance_term_fee_invoices i
                       INNER JOIN finance_academic_sessions fs ON fs.id=i.session_id
                       LEFT JOIN (SELECT term_invoice_id,SUM(amount) paid FROM finance_term_fee_payments GROUP BY term_invoice_id) p ON p.term_invoice_id=i.id
                       LEFT JOIN (SELECT a.term_invoice_id,SUM(x.amount) refunded FROM finance_fee_refund_allocations x JOIN finance_fee_refunds rf ON rf.id=x.refund_id JOIN finance_term_fee_payments a ON x.allocation_type='term' AND a.id=x.source_allocation_id WHERE rf.status='approved' GROUP BY a.term_invoice_id) r ON r.term_invoice_id=i.id
-                      WHERE i.status IN ('unpaid','partial')
-                        AND GREATEST(i.amount_due-COALESCE(p.paid,0)+COALESCE(r.refunded,0),0)>0
+                      WHERE i.status<>'void'
                         AND (
                           (i.academic_period_id IS NULL AND i.due_on<?)
                           OR (i.academic_period_id IS NOT NULL AND EXISTS (
