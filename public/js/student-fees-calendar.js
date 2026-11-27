@@ -26,7 +26,7 @@
   calendar.innerHTML = `
     <div class="student-calendar-heading">
       <button type="button" class="student-calendar-toggle" id="studentCalendarToggle" aria-expanded="false" aria-controls="studentCalendarContent">
-        <span class="student-calendar-heading-copy"><span class="eyebrow">SCHOOL PLANNER</span><strong><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Academic calendar</strong><span id="studentCalendarMonthSummary" class="student-calendar-month-summary">Loading calendar…</span></span>
+        <span class="student-calendar-heading-copy"><span class="eyebrow">SCHOOL PLANNER</span><span class="student-calendar-title-line"><strong><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Academic calendar</strong><span id="studentCalendarMonthSummary" class="student-calendar-month-summary">Loading calendar…</span></span></span>
         <i class="fa-solid fa-chevron-down student-calendar-chevron" aria-hidden="true"></i>
       </button>
       <span class="student-calendar-live"><i aria-hidden="true"></i> Live</span>
