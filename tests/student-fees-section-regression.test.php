@@ -22,7 +22,7 @@ studentFeesCheck(str_contains($migration, 'finance_section_fee_schedules') && st
 studentFeesCheck(str_contains($migration, "ENUM('nursery','primary','junior_secondary','senior_secondary')"), 'the four MARKAZ education sections are explicit and constrained');
 studentFeesCheck(str_contains($migration, 'ADD COLUMN academic_period_id') && str_contains($migration, 'ADD COLUMN section'), 'issued invoices retain their original academic period and fee classification');
 studentFeesCheck(str_contains($migration, 'intake_type ENUM(\'returning\',\'new_intake\') NULL') && !str_contains($migration, 'UPDATE finance_term_fee_invoices'), 'migration leaves historical invoice classifications untouched instead of guessing old intake data');
-studentFeesCheck(str_contains($api, "preg_match('/\\\\b(?:ss|sss)\\\\s*[1-3]\\\\b/'"), 'SSS classes with subject suffixes map to senior secondary');
+studentFeesCheck(str_contains($api, "preg_match('/\\b(?:ss|sss)\\s*[1-3]\\b/'"), 'SSS classes with subject suffixes map to senior secondary');
 studentFeesCheck(str_contains($settingsApi, 'starts_on') && str_contains($settingsApi, 'ends_on'), 'Settings reads and saves the academic term date range');
 studentFeesCheck(str_contains($settingsHtml, 'id="academicTermStartsOn"') && str_contains($settingsHtml, 'id="academicTermEndsOn"'), 'Settings exposes term begins and term ends fields');
 studentFeesCheck(str_contains($settingsJs, 'academicTermStartsOn') && str_contains($settingsJs, 'academicTermEndsOn'), 'Settings sends the configured term dates');
