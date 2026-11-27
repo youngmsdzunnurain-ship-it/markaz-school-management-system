@@ -55,9 +55,9 @@ $deductionRecords = [
     ['id'=>3,'attendance_mode'=>'time_based','status'=>'absent','late_minutes'=>0,'lateness_deduction'=>'0.00'],
     ['id'=>4,'attendance_mode'=>'attendance_only','status'=>'absent','late_minutes'=>0,'lateness_deduction'=>'0.00'],
 ];
-$cappedDetails = financeAllocatePayrollDeductions($deductionRecords, 150000, 0);
+$cappedDetails = financeAllocatePayrollDeductions($deductionRecords, 100000, 0);
 $lateDetailTotal = array_sum(array_map(static fn(array $row): int => financeToCents($row['amount']), $cappedDetails));
-financeRegressionCheck($lateDetailTotal === 150000 && count($cappedDetails) === 1, 'payroll deduction details never exceed the salary-capped lateness total');
+financeRegressionCheck($lateDetailTotal === 100000 && count($cappedDetails) === 1, 'payroll deduction details never exceed the salary-capped lateness total');
 $mixedDetails = financeAllocatePayrollDeductions($deductionRecords, 120000, 30000);
 $mixedLate = array_sum(array_map(static fn(array $row): int => str_contains($row['description'], 'late') ? financeToCents($row['amount']) : 0, $mixedDetails));
 $mixedAbsence = array_sum(array_map(static fn(array $row): int => str_contains($row['description'], 'absence') ? financeToCents($row['amount']) : 0, $mixedDetails));
