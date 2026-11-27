@@ -18,6 +18,8 @@ calendarCheck(str_contains($settings, 'starts_on') && str_contains($settings, 'e
 calendarCheck(str_contains($api, 'academic_periods') && str_contains($api, 'examination_date') && str_contains($api, 'vacation_date') && str_contains($api, 'resumption_date'), 'calendar events come from saved academic period dates');
 calendarCheck(str_contains($js, "./api/finance/academic-calendar.php") && str_contains($js, 'data-calendar-shift') && str_contains($js, 'data-calendar-date'), 'calendar loads live events and supports month navigation and date selection');
 calendarCheck(str_contains($js, 'student-fees-calendar.css') && str_contains($css, '.student-fees-top-grid'), 'calendar has a responsive top-right Student Fees layout');
+$financeJs = file_get_contents($root . '/public/js/finance.js');
+calendarCheck(str_contains($financeJs, 'student-fees-calendar.js'), 'Finance loads the calendar on the Student Fees workspace');
 calendarCheck(!preg_match('/202[0-9]-[0-9]{2}-[0-9]{2}/', $js), 'calendar contains no hardcoded academic dates');
 
 echo "MARKAZ Student Fees calendar regression checks passed.\n";
