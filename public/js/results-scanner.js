@@ -70,6 +70,29 @@
         return partialNameMatches.length === 1 ? partialNameMatches[0] : null;
     }
 
+    /* Conservative OCR fallback: only accept a clearly unique, close full-name match. */
+    function fuzzyStudentMatch(line, students) {
+        const candidate = normalise(line).replace(/\d+/g, "");
+        if (candidate.length < 6 || !students.length) return null;
+
+        const scored = students.map(student => {
+            const full = normalise([
+                student.first_name, student.middle_name, student.last_name
+            ].filter(Boolean).join(" "));
+            return { student, full, distance: editDistance(candidate, full) };
+        }).filter(item => item.full.length >= 6)
+          .sort((a, b) => a.distance - b.distance);
+
+        const best = scored[0];
+        const second = scored[1];
+        if (!best) return null;
+
+        const allowed = Math.max(1, Math.floor(best.full.length * 0.15));
+        if (best.distance > allowed) return null;
+        if (second && second.distance - best.distance < 2) return null;
+        return best.student;
+    }
+
     async function loadOcr() {
         if (window.Tesseract) return window.Tesseract;
         if (window.markazResultsOcrLoading) return window.markazResultsOcrLoading;
@@ -247,7 +270,8 @@
         const studentRows = [];
         const seen = new Set();
         rows.forEach(row => {
-            const student = rosterMatch(row.words.map(word => word.text).join(" "), students);
+            const line = row.words.map(word => word.text).join(" ");
+            const student = rosterMatch(line, students) || fuzzyStudentMatch(line, students);
             if (student && !seen.has(String(student.id))) {
                 seen.add(String(student.id));
                 studentRows.push({ row, student });
