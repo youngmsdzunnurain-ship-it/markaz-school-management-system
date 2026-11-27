@@ -18,6 +18,7 @@ $settingsApi=file_get_contents(__DIR__.'/../public/api/settings/academic-period.
 $settingsHtml=file_get_contents(__DIR__.'/../public/settings.html');
 $settingsJs=file_get_contents(__DIR__.'/../public/js/settings.js');
 $helper=file_get_contents(__DIR__.'/../app/helpers/finance-fee-calculations.php');
+$installer=file_get_contents(__DIR__.'/../scripts/install-finance.sh');
 
 termFeeCheck(str_contains($legacyMigration,'UNIQUE KEY uq_term_student_invoice (student_id,session_id,term)'),'term invoice identity remains unique per student and academic term');
 termFeeCheck(str_contains($legacyMigration,'finance_student_fee_adjustments'),'individual scholarships and negotiated fees retain a separate approval history');
@@ -51,6 +52,9 @@ termFeeCheck(str_contains($html,'id="studentFeesRegister"')&&str_contains($html,
 termFeeCheck(str_contains($html,'Previous debt')&&str_contains($html,'Current balance')&&str_contains($html,'Total balance'),'the register shows previous debt and current/total balances separately');
 termFeeCheck(str_contains($html,'id="studentFeeAdjustmentForm"')&&str_contains($html,'id="termAdjustmentQueue"'),'individual student fee support uses a separate approval queue');
 termFeeCheck(str_contains($js,"termFeeRequest('register'")&&str_contains($js,'previous_outstanding')&&str_contains($js,'current_balance'),'the central register loads reconciled live student balances');
+termFeeCheck(!str_contains($js,'TERM_FEE_API')&&str_contains($js,"new URL('./api/finance/term-fees.php',location.href)"),'Student Fees API URL is resolved directly without a temporal-dead-zone global');
+termFeeCheck(str_contains($html,'finance.js?v=20261127-student-fees-init2'),'Finance loads the corrected Student Fees script with a fresh cache key');
+termFeeCheck(str_contains($installer,'20261126_markaz_fee_refunds.sql')&&str_contains($installer,'refund_tables'),'Finance installation includes the refund tables required by the dashboard');
 termFeeCheck(str_contains($js,'data-fee-section')&&str_contains($js,'generate_term_invoices')&&str_contains($js,'data-approve-term-adjustment'),'section filters, invoice generation and independent approvals are connected');
 termFeeCheck(str_contains($settingsApi,'starts_on')&&str_contains($settingsApi,'ends_on')&&str_contains($settingsHtml,'academicTermStartsOn')&&str_contains($settingsHtml,'academicTermEndsOn'),'term start/end dates are configured in the existing Settings calendar');
 termFeeCheck(str_contains($settingsJs,'academicTermStartsOn')&&str_contains($settingsJs,'academicTermEndsOn'),'Settings loads and saves the shared term date range');
