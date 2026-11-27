@@ -377,6 +377,10 @@
     }
 
     async function saveEntries(plan, messageNode) {
+        if (!plan.payloads.length) {
+            if (typeof state.meta.onSaved === "function") await state.meta.onSaved();
+            return 0;
+        }
         messageNode.textContent = `Validating all ${plan.payloads.length} result rows…`;
         const first = plan.payloads[0];
         const entries = plan.payloads.map(({ student_id, subject_id, ca1, ca2, exam, teacher_remark, result_remark }) => ({
