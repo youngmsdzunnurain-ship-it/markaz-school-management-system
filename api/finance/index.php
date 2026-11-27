@@ -274,7 +274,9 @@ try {
         $bankName = trim((string)($input['bank_name'] ?? ''));
         $initialSalary = financeMoney($input['initial_salary'] ?? '', true);
         $latenessRate = financeMoney($input['lateness_rate_per_minute'] ?? '13', true);
+        $attendanceMode = (string)($input['attendance_mode'] ?? 'time_based');
         $expectedArrival = trim((string)($input['expected_arrival'] ?? ''));
+        $validArrival = $attendanceMode === 'attendance_only' ? $expectedArrival === '' : preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $expectedArrival) === 1;
         $deductLateness = ($input['deduct_lateness'] ?? '0') === '1';
         $phone = trim((string)($input['phone'] ?? '')) ?: null;
         $email = strtolower(trim((string)($input['email'] ?? ''))) ?: null;
@@ -283,9 +285,14 @@ try {
         if ($name === '' || mb_strlen($name) > 160 || $jobTitle === '' || mb_strlen($jobTitle) > 100
             || $phone === null || $email === null || !filter_var($email, FILTER_VALIDATE_EMAIL)
             || $bankAccountNumber === '' || !preg_match('/^\d{6,34}$/', $bankAccountNumber)
-            || $bankAccountName === '' || $bankName === '' || !preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $expectedArrival) || ($age !== null && ($age < 16 || $age > 100))
+            || $bankAccountName === '' || $bankName === '' || !in_array($attendanceMode, ['time_based','attendance_only'], true) || !$validArrival || ($age !== null && ($age < 16 || $age > 100))
             || ($employmentDate !== null && !financeValidDate($employmentDate)) || ($notes !== null && mb_strlen($notes) > 500)) {
             financeJson(['success'=>false,'message'=>'Enter a valid staff name, job title, contact and employment date.'],422);
+        }
+        if ($attendanceMode === 'attendance_only') {
+            $expectedArrival = null;
+            $latenessRate = '0.00';
+            $deductLateness = false;
         }
         if ($number === '') $number = 'MZ-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
         if (!preg_match('/^[A-Z0-9][A-Z0-9_-]{0,39}$/', $number)) {
@@ -296,9 +303,9 @@ try {
             $stmt = $pdo->prepare('INSERT INTO finance_staff(staff_number,full_name,phone,email,job_title,teaching_type,age,bank_account_number,bank_account_name,bank_name,employment_date,notes,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');
             $stmt->execute([$number,$name,$phone,$email,$jobTitle,$teachingType,$age,$bankAccountNumber,$bankAccountName,$bankName,$employmentDate,$notes,(int)$_SESSION['admin_id']]);
             $id=(int)$pdo->lastInsertId();
-            $profile=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,\'time_based\',?,?,?,?)');
+            $profile=$pdo->prepare('INSERT INTO staff_salary_profiles(finance_staff_id,base_salary,expected_arrival,attendance_mode,lateness_rate_per_minute,deduct_lateness,effective_from,created_by) VALUES(?,?,?,?,?,?,?,?)');
             $salaryEffectiveFrom = $employmentDate ?? date('Y-m-d');
-            $profile->execute([$id,$initialSalary,$expectedArrival,$latenessRate,(int)$deductLateness,$salaryEffectiveFrom,(int)$_SESSION['admin_id']]);
+            $profile->execute([$id,$initialSalary,$expectedArrival,$attendanceMode,$latenessRate,(int)$deductLateness,$salaryEffectiveFrom,(int)$_SESSION['admin_id']]);
             financeAudit($pdo,'finance_staff_created','finance_staff',$id,['staff_number'=>$number]);
             $pdo->commit();
         } catch (PDOException $error) {
