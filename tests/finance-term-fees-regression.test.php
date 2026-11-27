@@ -34,12 +34,12 @@ termFeeCheck(str_contains($api,'admission_date')&&str_contains($api,'starts_on')
 termFeeCheck(str_contains($api, "'save_rates'") && str_contains($api, 'finance_section_fee_schedules'),'section fee rates are saved through the current-period configuration action');
 termFeeCheck(str_contains($api,"if (\$action === 'register')")&&str_contains($api,'previous_outstanding')&&str_contains($api,'previous_debt_details')&&str_contains($api,'current_balance'),'central register separates current-term balances from previous-term debts');
 termFeeCheck(str_contains($api,'INSERT IGNORE INTO finance_term_fee_invoices'),'re-running invoice generation cannot rewrite an issued student assessment');
-termFeeCheck(str_contains($api,'student_fee_invoice_adjusted')&&str_contains($api,'$paidStmt'),'approved amendments recalculate the invoice while retaining recorded payment allocations');
+termFeeCheck(str_contains($api,'student_fee_invoice_adjusted')&&str_contains($api,'markazTermInvoiceNetPaidCents'),'approved amendments recalculate the invoice while retaining recorded payment allocations');
 termFeeCheck(str_contains($api,'different authorised staff member must approve'),'the person who submits an individual fee adjustment cannot approve it');
 termFeeCheck(str_contains($api,'markazSyncStudentTermFees') && str_contains($api,'$sync=markazSyncStudentTermFees'),'saving the 16 configured rates automatically creates or synchronises current-term student assessments');
 termFeeCheck(str_contains($api,'$adminImmediate') && str_contains($api,"currentAdminRole()!=='admin'"),'Admin fee adjustments apply immediately while only Admin can approve Management requests');
 termFeeCheck(str_contains($api,'reset_student_adjustment') && str_contains($api,'Reset scholarship to the standard scheduled fee.'),'resetting a scholarship restores the standard configured student fee');
-termFeeCheck(str_contains($api,'$paidStmt') && str_contains($api,"'partial'"),'revised assessments recalculate paid/partial/outstanding status without deleting payment allocations');
+termFeeCheck(str_contains($api,'markazTermInvoiceNetPaidCents') && str_contains($api,"'partial'"),'revised assessments recalculate paid/partial/outstanding status without deleting payment allocations');
 termFeeCheck(str_contains($payments,'finance_term_fee_payments'),'confirmed instalment payments are allocated to term invoices');
 $currentTermAllocation = strpos($payments, '// Current-term school fees are paid first');
 $monthlyAllocation = strpos($payments, '// Legacy monthly invoices remain payable');
