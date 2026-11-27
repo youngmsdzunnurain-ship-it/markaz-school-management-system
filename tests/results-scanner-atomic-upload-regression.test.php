@@ -13,6 +13,7 @@ $checks = [
     'folder picker accepts multiple files' => str_contains($scanner, 'webkitdirectory multiple'),
     'uploaded images are processed locally' => str_contains($scanner, 'createImageBitmap(file)'),
     'scanner uses one batch request' => str_contains($scanner, './api/results/batch-save.php'),
+    'scanner blocks partial saves when any row conflicts' => str_contains($scanner, 'Resolve every conflicting or incomplete result row before saving. No results were saved.'),
     'scanner no longer loops over individual save requests' => !str_contains($scanner, 'fetch("./api/results/save.php"'),
     'invalid automatic scan is sent to review' => str_contains($scanner, 'need correction before anything can be saved'),
     'batch endpoint validates class type' => str_contains($endpoint, "['conventional', 'arabic']"),
