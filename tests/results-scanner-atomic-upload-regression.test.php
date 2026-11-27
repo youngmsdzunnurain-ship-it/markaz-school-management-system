@@ -25,7 +25,7 @@ $checks = [
         str_contains($scanner, 'second.distance - best.distance < 2'),
     'scanner applies fuzzy matching only after exact roster matching' => str_contains($scanner, 'rosterMatch(line, students) || fuzzyStudentMatch(line, students)'),
     'scanner does not match short OCR fragments fuzzily' => str_contains($scanner, 'candidate.length < 6'),
-    'fuzzy matching strips admission-number digits before comparing names' => str_contains($scanner, 'replace(/\\\\d+/g, "")')
+    'fuzzy matching strips admission-number digits before comparing names' => str_contains($scanner, 'replace(/\\d+/g, "")')
 ];
 
 $failed = 0;
