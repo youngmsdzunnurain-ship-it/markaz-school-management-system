@@ -33,7 +33,7 @@ studentFeesExperienceCheck(str_contains($js, 'await refreshStudentFeeViews(Numbe
 studentFeesExperienceCheck(str_contains($js, 'await refreshStudentFeeViews()'), 'verifying a payment refreshes student balances and statements');
 studentFeesExperienceCheck(str_contains($js, 'Awaiting verification — this amount has not yet been applied'), 'pending transfers are clearly distinguished from allocated payments');
 studentFeesExperienceCheck(substr_count($html, 'class="currency-field"') === 16, 'all sixteen school fee rate inputs display the Naira prefix');
-studentFeesExperienceCheck(str_contains($html, 'A different authorised staff member must approve it'), 'scholarship approval requirements are explicit in the form');
+studentFeesExperienceCheck(str_contains($html, 'Admin changes and resets apply immediately. Management changes and resets require Admin approval.') && str_contains($html, 'The person who submits an adjustment cannot approve their own request.'), 'the form explains Admin-versus-Management approval and maker-checker requirements');
 studentFeesExperienceCheck(str_contains($css, '.fee-clearance-badge') && str_contains($css, '.fee-support-badge'), 'clearance and scholarship badges have dedicated styling');
 studentFeesExperienceCheck(str_contains($css, '.currency-field') && str_contains($css, '.student-fees-adjustment-note'), 'fee inputs and scholarship guidance have dedicated styling');
 studentFeesExperienceCheck(str_contains($html, 'value="full_scholarship"') && str_contains($html, 'value="discount_percent"') && str_contains($html, 'value="discount_amount"') && str_contains($html, 'value="fixed_fee"'), 'scholarship filter exposes each approved adjustment type');
