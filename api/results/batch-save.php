@@ -141,6 +141,7 @@ try {
          WHERE id = ? AND class_type = ? AND class_id = ?'
     );
     $saved = 0;
+    $unchanged = 0;
     $activity = [];
     foreach ($normalised as $row) {
         $existingStmt->execute([$row['student_id'], $classType, $classId, $row['subject_id'], (int) $period['id']]);
