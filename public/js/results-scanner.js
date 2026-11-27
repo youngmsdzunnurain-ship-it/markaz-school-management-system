@@ -726,7 +726,7 @@
     function showSummary(plan, saved, failure, outOfRange) {
         showPhase("summary");
         $("[data-mkls-summary-title]", overlay).textContent = failure
-            ? `${saved} result(s) saved before an error: ${failure} Open the results table to check the rest.`
+            ? `No results were saved because the batch was rejected: ${failure}`
             : `${saved} result(s) saved to student results.`;
         const list = $("[data-mkls-summary-list]", overlay);
         list.replaceChildren();
@@ -768,6 +768,7 @@
             });
             const empty = FIELDS.every(field => values[field] === "");
             if (empty) missing++;
+            clear = clear && !scoreRangeError(values, subject);
             body.appendChild(reviewRow(student, subject, values, clear, empty));
         }));
         $("[data-mkls-note]", overlay).textContent = missing
