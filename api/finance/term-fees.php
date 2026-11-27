@@ -184,7 +184,7 @@ try {
             if ($scholarshipFilter==='yes') $rows=array_values(array_filter($rows,fn($r)=>(int)$r['has_scholarship']===1));
             if ($scholarshipFilter==='no') $rows=array_values(array_filter($rows,fn($r)=>(int)$r['has_scholarship']===0));
             if (in_array($intakeFilter,['new_intake','returning'],true)) $rows=array_values(array_filter($rows,fn($r)=>$r['intake_type']===$intakeFilter));
-            if ($paymentFilter==='paid') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_balance'])===0 && financeToCents((string)$r['total_due'])>0));
+            if ($paymentFilter==='paid') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_balance'])===0 && (financeToCents((string)$r['total_due'])>0 || ((int)$r['has_scholarship']===1 && (string)$r['adjustment_type']==='full_scholarship'))));
             if ($paymentFilter==='unpaid') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_paid'])===0 && financeToCents((string)$r['total_due'])>0));
             if ($paymentFilter==='partial') $rows=array_values(array_filter($rows,fn($r)=>financeToCents((string)$r['total_paid'])>0 && financeToCents((string)$r['total_balance'])>0));
             $totals=['students'=>count($rows),'current_fee'=>'0.00','current_paid'=>'0.00','previous_outstanding'=>'0.00','total_due'=>'0.00','total_paid'=>'0.00','total_balance'=>'0.00'];
