@@ -20,15 +20,13 @@ $checks = [
     'batch endpoint opens a transaction' => str_contains($endpoint, '$pdo->beginTransaction()'),
     'batch endpoint rolls back failed batches' => str_contains($endpoint, '$pdo->rollBack()'),
     'batch endpoint locks academic period' => str_contains($endpoint, 'FOR UPDATE'),
-    'public API wrapper exists' => str_contains($wrapper, 'api/results/batch-save.php')
-];
-
-
+    'public API wrapper exists' => str_contains($wrapper, 'api/results/batch-save.php'),
     'scanner has ambiguity-safe fuzzy roster matching' => str_contains($scanner, 'function fuzzyStudentMatch(') &&
         str_contains($scanner, 'second.distance - best.distance < 2'),
     'scanner applies fuzzy matching only after exact roster matching' => str_contains($scanner, 'rosterMatch(line, students) || fuzzyStudentMatch(line, students)'),
     'scanner does not match short OCR fragments fuzzily' => str_contains($scanner, 'candidate.length < 6'),
-    'fuzzy matching strips admission-number digits before comparing names' => str_contains($scanner, 'replace(/\\d+/g, "")'),
+    'fuzzy matching strips admission-number digits before comparing names' => str_contains($scanner, 'replace(/\\\\d+/g, "")')
+];
 
 $failed = 0;
 foreach ($checks as $label => $passed) {
