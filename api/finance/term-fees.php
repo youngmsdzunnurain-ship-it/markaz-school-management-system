@@ -63,7 +63,86 @@ function markazCurrentAcademicPeriod(PDO $pdo): array
 
 function markazFeeDiscountCents(int $baseCents, string $type, string $value): array
 {
+    // A later reduction to the published schedule must not make an older
+    // negotiated final fee exceed the new normal rate.
+    if ($type === 'fixed_fee') {
+        $value = financeFromCents(min($baseCents, financeToCents($value)));
+    }
     return financeCalculateFeeAmountsCents($baseCents, $type, $value);
+}
+
+function markazTermInvoiceNetPaidCents(PDO $pdo, int $invoiceId): int
+{
+    $stmt=$pdo->prepare("SELECT
+        COALESCE((SELECT SUM(p.amount) FROM finance_term_fee_payments p WHERE p.term_invoice_id=?),0) -
+        COALESCE((SELECT SUM(x.amount) FROM finance_fee_refund_allocations x
+            JOIN finance_fee_refunds rf ON rf.id=x.refund_id
+            JOIN finance_term_fee_payments p ON p.id=x.source_allocation_id
+            WHERE x.allocation_type='term' AND p.term_invoice_id=? AND rf.status='approved'),0)");
+    $stmt->execute([$invoiceId,$invoiceId]);
+    return max(0,financeToCents((string)$stmt->fetchColumn()));
+}
+
+function markazSyncStudentTermFees(PDO $pdo, array $period, int $financeSessionId, string $term, int $actor): array
+{
+    $periodId=(int)$period['period_id'];
+    $ratesStmt=$pdo->prepare('SELECT * FROM finance_section_fee_schedules WHERE academic_period_id=? AND is_active=1');
+    $ratesStmt->execute([$periodId]);
+    $rateMap=[];
+    foreach($ratesStmt->fetchAll(PDO::FETCH_ASSOC) as $rate)$rateMap[$rate['section'].'|'.$rate['student_type'].'|'.$rate['intake_type']]=$rate;
+    if(count($rateMap)!==16)throw new DomainException('All 16 fee rates must be saved before student accounts can be synchronised.');
+
+    $overrideQuery=$pdo->prepare('SELECT student_id,intake_type FROM finance_student_fee_intake_overrides WHERE academic_period_id=?');
+    $overrideQuery->execute([$periodId]);
+    $intakeOverrides=[];
+    foreach($overrideQuery->fetchAll(PDO::FETCH_ASSOC) as $override)$intakeOverrides[(int)$override['student_id']]=(string)$override['intake_type'];
+
+    $students=$pdo->query("SELECT s.id,s.class_id,s.student_type,s.admission_date,c.name class_name
+                           FROM students s LEFT JOIN classes c ON c.id=s.class_id
+                           WHERE s.is_active=1 ORDER BY s.id")->fetchAll(PDO::FETCH_ASSOC);
+    $adjustmentStmt=$pdo->prepare("SELECT adjustment_type,value FROM finance_student_fee_adjustments
+        WHERE student_id=? AND session_id=? AND term=? AND status='approved'
+          AND effective_from<=CURDATE() AND (effective_until IS NULL OR effective_until>=CURDATE())
+        ORDER BY approved_at DESC,id DESC LIMIT 1");
+    $findInvoice=$pdo->prepare("SELECT id,status FROM finance_term_fee_invoices
+        WHERE student_id=? AND session_id=? AND term=? LIMIT 1 FOR UPDATE");
+    $insert=$pdo->prepare("INSERT INTO finance_term_fee_invoices
+        (invoice_number,student_id,session_id,academic_period_id,term,class_id,section,student_type,intake_type,fee_schedule_id,base_amount,discount_amount,amount_due,due_on,generated_by,status)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $update=$pdo->prepare("UPDATE finance_term_fee_invoices SET academic_period_id=?,class_id=?,section=?,student_type=?,intake_type=?,fee_schedule_id=?,
+        base_amount=?,discount_amount=?,amount_due=?,due_on=?,status=? WHERE id=?");
+
+    $created=0;$updated=0;$skipped=0;
+    foreach($students as $student){
+        $section=markazFeeSection((string)($student['class_name']??''));
+        if($section===null || empty($student['class_id'])){$skipped++;continue;}
+        $type=in_array((string)$student['student_type'],['Day Student','Boarding'],true)?(string)$student['student_type']:'Day Student';
+        $admission=(string)($student['admission_date']??'');
+        $intake=$intakeOverrides[(int)$student['id']]??(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
+        $rate=$rateMap[$section.'|'.$type.'|'.$intake]??null;
+        if(!$rate){$skipped++;continue;}
+        $base=financeToCents((string)$rate['amount']);$discount=0;$due=$base;
+        $adjustmentStmt->execute([(int)$student['id'],$financeSessionId,$term]);
+        $adjustment=$adjustmentStmt->fetch(PDO::FETCH_ASSOC);
+        if($adjustment)[$base,$discount,$due]=markazFeeDiscountCents($base,(string)$adjustment['adjustment_type'],(string)$adjustment['value']);
+        $findInvoice->execute([(int)$student['id'],$financeSessionId,$term]);
+        $existingInvoice=$findInvoice->fetch(PDO::FETCH_ASSOC);
+        if($existingInvoice && $existingInvoice['status']==='void'){$skipped++;continue;}
+        $invoiceId=(int)($existingInvoice['id']??0);
+        if($invoiceId>0){
+            $paid=markazTermInvoiceNetPaidCents($pdo,$invoiceId);
+            $status=($due===0||$paid>=$due)?'paid':($paid>0?'partial':'unpaid');
+            $update->execute([$periodId,(int)$student['class_id'],$section,$type,$intake,(int)$rate['id'],financeFromCents($base),
+                financeFromCents($discount),financeFromCents($due),(string)$rate['due_on'],$status,$invoiceId]);
+            $updated+=$update->rowCount()>0?1:0;
+        }else{
+            $insert->execute([financeNextNumber('TERM'),(int)$student['id'],$financeSessionId,$periodId,$term,(int)$student['class_id'],
+                $section,$type,$intake,(int)$rate['id'],financeFromCents($base),financeFromCents($discount),financeFromCents($due),
+                (string)$rate['due_on'],$actor,$due===0?'paid':'unpaid']);
+            $created+=$insert->rowCount();
+        }
+    }
+    return ['created'=>$created,'updated'=>$updated,'skipped'=>$skipped];
 }
 
 try {
@@ -88,7 +167,7 @@ try {
             );
             $pending->execute([$financeSessionId,$term]);
             financeJson(['success'=>true,'period'=>$period,'classes'=>$classes,'rates'=>$rates->fetchAll(PDO::FETCH_ASSOC),
-                'pending_adjustments'=>$pending->fetchAll(PDO::FETCH_ASSOC),'current_admin_id'=>(int)($_SESSION['admin_id']??0)]);
+                'pending_adjustments'=>$pending->fetchAll(PDO::FETCH_ASSOC),'current_admin_id'=>(int)($_SESSION['admin_id']??0),'current_admin_role'=>currentAdminRole()]);
         }
 
         if ($action === 'register') {
@@ -245,10 +324,11 @@ try {
                 $seen[$key]=true;$amount=financeMoney($row['amount']??'',true);
                 $save->execute([$periodId,$section,$type,$intake,$amount,$dueOn,(int)$_SESSION['admin_id']]);
             }
-            financeAudit($pdo,'section_student_fee_rates_saved','section_fee_schedule',null,['academic_period_id'=>$periodId,'rate_count'=>count($rows)]);
+            $sync=markazSyncStudentTermFees($pdo,$period,$financeSessionId,$term,(int)$_SESSION['admin_id']);
+            financeAudit($pdo,'section_student_fee_rates_saved','section_fee_schedule',null,['academic_period_id'=>$periodId,'rate_count'=>count($rows),'student_invoices_created'=>$sync['created'],'student_invoices_updated'=>$sync['updated'],'students_skipped'=>$sync['skipped']]);
             $pdo->commit();
         }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();if($e instanceof DomainException)financeJson(['success'=>false,'message'=>$e->getMessage()],422);throw $e;}
-        financeJson(['success'=>true,'message'=>'The 16 fee rates were saved for this academic term only. Earlier terms and issued invoices were not changed.']);
+        financeJson(['success'=>true,'created'=>$sync['created'],'updated'=>$sync['updated'],'skipped'=>$sync['skipped'],'message'=>"Fee rates saved. {$sync['created']} student accounts created and {$sync['updated']} existing assessments synchronised. {$sync['skipped']} students skipped because they need a supported conventional class or matching rate. Recorded payments were preserved; balances were recalculated."]);
     }
 
     if ($action==='save_student_intake_override') {
@@ -273,8 +353,9 @@ try {
         financeJson(['success'=>true,'message'=>'Student intake category saved for this academic term. It will be used when the term fee assessment is generated.']);
     }
 
-    if ($action==='save_student_adjustment') {
-        $student=(int)($input['student_id']??0);$type=(string)($input['adjustment_type']??'');$value=financeMoney($input['value']??'0',true);$reason=trim((string)($input['reason']??''));
+    if (in_array($action,['save_student_adjustment','reset_student_adjustment'],true)) {
+        $isReset=$action==='reset_student_adjustment';
+        $student=(int)($input['student_id']??0);$type=$isReset?'fixed_fee':(string)($input['adjustment_type']??'');$value=financeMoney($input['value']??'0',true);$reason=$isReset?'Reset scholarship to the standard scheduled fee.':trim((string)($input['reason']??''));
         $allowed=['fixed_fee','discount_amount','discount_percent','full_scholarship'];
         if($student<1||!in_array($type,$allowed,true)||$reason==='')financeJson(['success'=>false,'message'=>'Complete the student adjustment and explain the reason.'],422);
         if($type==='discount_percent'&&financeToCents($value)>10000)financeJson(['success'=>false,'message'=>'Percentage discount cannot exceed 100%.'],422);
@@ -283,7 +364,6 @@ try {
                                 WHERE i.student_id=? AND (i.academic_period_id=? OR (i.academic_period_id IS NULL AND i.session_id=? AND i.term=?))
                                 LIMIT 1");
         $issued->execute([$student,$periodId,$financeSessionId,$term]);$issuedInvoice=$issued->fetch(PDO::FETCH_ASSOC);
-        if($issuedInvoice && (int)$issuedInvoice['payment_count']>0)financeJson(['success'=>false,'message'=>'A payment has already been recorded against this term assessment. Its amount is locked to preserve the payment and refund history.'],409);
         $pending=$pdo->prepare("SELECT id FROM finance_student_fee_adjustments WHERE student_id=? AND session_id=? AND term=? AND status='pending' LIMIT 1");
         $pending->execute([$student,$financeSessionId,$term]);
         if($pending->fetchColumn())financeJson(['success'=>false,'message'=>'This student already has a pending fee adjustment awaiting approval.'],409);
@@ -301,18 +381,28 @@ try {
         $rateStmt->execute([$periodId,$section,$studentType,$intake]);$normalFee=$rateStmt->fetchColumn();
         if($normalFee===false)financeJson(['success'=>false,'message'=>'Save this term’s section fee rates before configuring an individual student adjustment.'],409);
         $feeBasis=$issuedInvoice?(string)$issuedInvoice['base_amount']:(string)$normalFee;
+        if($isReset)$value=financeMoney($normalFee,true);
         if($type==='fixed_fee'&&financeToCents($value)>financeToCents($feeBasis))financeJson(['success'=>false,'message'=>'The negotiated final fee cannot exceed the normal fee configured for this student.'],422);
         $actor=(int)($_SESSION['admin_id']??0);if($actor<1)financeJson(['success'=>false,'message'=>'Your staff session has expired. Sign in again.'],401);
+        $role=currentAdminRole();$adminImmediate=$role==='admin';
         $pdo->beginTransaction();
-        $st=$pdo->prepare("INSERT INTO finance_student_fee_adjustments(student_id,session_id,term,adjustment_type,value,reason,status,created_by,effective_from) VALUES(?,?,?,?,?,?,'pending',?,CURDATE())");
-        $st->execute([$student,$financeSessionId,$term,$type,$value,$reason,$actor]);$id=(int)$pdo->lastInsertId();
-        financeAudit($pdo,'student_fee_adjustment_submitted','student_fee_adjustment',$id,['student_id'=>$student,'type'=>$type,'value'=>$value,'academic_period_id'=>$periodId]);
+        $st=$pdo->prepare("INSERT INTO finance_student_fee_adjustments(student_id,session_id,term,adjustment_type,value,reason,status,approved_by,approved_at,created_by,effective_from) VALUES(?,?,?,?,?,?,?,?,?,?,CURDATE())");
+        $st->execute([$student,$financeSessionId,$term,$type,$value,$reason,$adminImmediate?'approved':'pending',$adminImmediate?$actor:null,$adminImmediate?date('Y-m-d H:i:s'):null,$actor]);$id=(int)$pdo->lastInsertId();
+        if($adminImmediate && $issuedInvoice){
+            [$baseCents,$discountCents,$dueCents]=markazFeeDiscountCents(financeToCents((string)$issuedInvoice['base_amount']),$type,$value);
+            $paid=markazTermInvoiceNetPaidCents($pdo,(int)$issuedInvoice['id']);
+            $status=($dueCents===0||$paid>=$dueCents)?'paid':($paid>0?'partial':'unpaid');
+            $amend=$pdo->prepare('UPDATE finance_term_fee_invoices SET discount_amount=?,amount_due=?,status=? WHERE id=?');
+            $amend->execute([financeFromCents($discountCents),financeFromCents($dueCents),$status,(int)$issuedInvoice['id']]);
+        }
+        financeAudit($pdo,$adminImmediate?'student_fee_adjustment_admin_applied':'student_fee_adjustment_submitted','student_fee_adjustment',$id,['student_id'=>$student,'type'=>$type,'value'=>$value,'academic_period_id'=>$periodId,'reset_to_standard_fee'=>$isReset]);
         $pdo->commit();
-        financeJson(['success'=>true,'message'=>'Student fee adjustment submitted for independent approval.']);
+        financeJson(['success'=>true,'message'=>$adminImmediate?($isReset?'Scholarship reset. The standard scheduled fee is now applied immediately.':'Admin change saved and applied immediately.'):'Management change submitted. Admin approval is required before the student fee changes.']);
     }
 
     if ($action==='approve_student_adjustment') {
         $id=(int)($input['adjustment_id']??0);$actor=(int)($_SESSION['admin_id']??0);
+        if(currentAdminRole()!=='admin')financeJson(['success'=>false,'message'=>'Only Admin can approve management fee adjustments.'],403);
         if($id<1||$actor<1)financeJson(['success'=>false,'message'=>'A valid adjustment and active staff session are required.'],422);
         $pdo->beginTransaction();
         $st=$pdo->prepare('SELECT id,created_by,status,session_id,term FROM finance_student_fee_adjustments WHERE id=? FOR UPDATE');$st->execute([$id]);$adjustment=$st->fetch(PDO::FETCH_ASSOC);
@@ -320,17 +410,15 @@ try {
         if((int)$adjustment['created_by']===$actor){$pdo->rollBack();financeJson(['success'=>false,'message'=>'A different authorised staff member must approve this adjustment.'],403);}
         $invoiceStmt=$pdo->prepare('SELECT id,base_amount FROM finance_term_fee_invoices WHERE student_id=(SELECT student_id FROM finance_student_fee_adjustments WHERE id=?) AND (academic_period_id=? OR (academic_period_id IS NULL AND session_id=? AND term=?)) LIMIT 1 FOR UPDATE');
         $invoiceStmt->execute([$id,$periodId,$financeSessionId,$term]);$issuedInvoice=$invoiceStmt->fetch(PDO::FETCH_ASSOC);
-        if($issuedInvoice){
-            $paymentCount=$pdo->prepare('SELECT COUNT(*) FROM finance_term_fee_payments WHERE term_invoice_id=?');$paymentCount->execute([(int)$issuedInvoice['id']]);
-            if((int)$paymentCount->fetchColumn()>0){$pdo->rollBack();financeJson(['success'=>false,'message'=>'This assessment has payment history. Its fee cannot be amended without a separate credit/refund workflow.'],409);}
-        }
         $up=$pdo->prepare("UPDATE finance_student_fee_adjustments SET status='approved',approved_by=?,approved_at=NOW() WHERE id=? AND status='pending'");$up->execute([$actor,$id]);
         if($up->rowCount()!==1){$pdo->rollBack();financeJson(['success'=>false,'message'=>'Adjustment approval could not be completed. Refresh and try again.'],409);}
         if($issuedInvoice){
             $details=$pdo->prepare('SELECT adjustment_type,value FROM finance_student_fee_adjustments WHERE id=?');$details->execute([$id]);$approved=$details->fetch(PDO::FETCH_ASSOC);
             [$baseCents,$discountCents,$dueCents]=markazFeeDiscountCents(financeToCents((string)$issuedInvoice['base_amount']),(string)$approved['adjustment_type'],(string)$approved['value']);
-            $amend=$pdo->prepare("UPDATE finance_term_fee_invoices SET discount_amount=?,amount_due=?,status=CASE WHEN ?=0 THEN 'paid' ELSE 'unpaid' END WHERE id=?");
-            $amend->execute([financeFromCents($discountCents),financeFromCents($dueCents),$dueCents,(int)$issuedInvoice['id']]);
+            $paid=markazTermInvoiceNetPaidCents($pdo,(int)$issuedInvoice['id']);
+            $status=($dueCents===0||$paid>=$dueCents)?'paid':($paid>0?'partial':'unpaid');
+            $amend=$pdo->prepare('UPDATE finance_term_fee_invoices SET discount_amount=?,amount_due=?,status=? WHERE id=?');
+            $amend->execute([financeFromCents($discountCents),financeFromCents($dueCents),$status,(int)$issuedInvoice['id']]);
             financeAudit($pdo,'student_fee_invoice_adjusted','term_fee_invoice',(int)$issuedInvoice['id'],['adjustment_id'=>$id,'base_amount'=>financeFromCents($baseCents),'discount_amount'=>financeFromCents($discountCents),'amount_due'=>financeFromCents($dueCents)]);
         }
         financeAudit($pdo,'student_fee_adjustment_approved','student_fee_adjustment',$id,['approved_by'=>$actor,'invoice_id'=>$issuedInvoice?(int)$issuedInvoice['id']:null]);
@@ -338,44 +426,14 @@ try {
     }
 
     if ($action==='generate_term_invoices') {
-        $students=$pdo->query("SELECT s.id,s.class_id,s.student_type,s.admission_date,c.name class_name
-                               FROM students s LEFT JOIN classes c ON c.id=s.class_id
-                               WHERE s.is_active=1 ORDER BY s.id")->fetchAll(PDO::FETCH_ASSOC);
-        $rateStmt=$pdo->prepare('SELECT * FROM finance_section_fee_schedules WHERE academic_period_id=? AND is_active=1');
-        $rateStmt->execute([$periodId]);$rateMap=[];
-        foreach($rateStmt->fetchAll(PDO::FETCH_ASSOC) as $rate)$rateMap[$rate['section'].'|'.$rate['student_type'].'|'.$rate['intake_type']]=$rate;
-        $overrideQuery=$pdo->prepare('SELECT student_id,intake_type FROM finance_student_fee_intake_overrides WHERE academic_period_id=?');
-        $overrideQuery->execute([$periodId]);$intakeOverrides=[];
-        foreach($overrideQuery->fetchAll(PDO::FETCH_ASSOC) as $override)$intakeOverrides[(int)$override['student_id']]=(string)$override['intake_type'];
-        if(count($rateMap)!==16)financeJson(['success'=>false,'message'=>'Configure all 16 fee rates for this term before generating student assessments.'],409);
-        $pdo->beginTransaction();$created=0;$skipped=0;
+        $pdo->beginTransaction();
         try{
-            $adj=$pdo->prepare("SELECT adjustment_type,value FROM finance_student_fee_adjustments WHERE student_id=? AND session_id=? AND term=? AND status='approved' AND effective_from<=CURDATE() AND (effective_until IS NULL OR effective_until>=CURDATE()) ORDER BY approved_at DESC,id DESC LIMIT 1");
-            $insert=$pdo->prepare(
-                'INSERT IGNORE INTO finance_term_fee_invoices(invoice_number,student_id,session_id,academic_period_id,term,class_id,section,student_type,intake_type,fee_schedule_id,base_amount,discount_amount,amount_due,due_on,generated_by)
-                 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-            );
-            foreach($students as $student){
-                $section=markazFeeSection((string)($student['class_name']??''));if($section===null){$skipped++;continue;}
-                $type=(string)$student['student_type'];if(!in_array($type,['Day Student','Boarding'],true))$type='Day Student';
-                $admission=(string)($student['admission_date']??'');
-                $intake=$intakeOverrides[(int)$student['id']]??(($admission!=='' && $admission>=(string)$period['starts_on'] && $admission<=(string)$period['ends_on'])?'new_intake':'returning');
-                $rate=$rateMap[$section.'|'.$type.'|'.$intake]??null;if(!$rate)continue;
-                $base=financeToCents((string)$rate['amount']);$discount=0;$due=$base;
-                $adj->execute([(int)$student['id'],$financeSessionId,$term]);$adjustment=$adj->fetch(PDO::FETCH_ASSOC);
-                if($adjustment){[$base,$discount,$due]=markazFeeDiscountCents($base,(string)$adjustment['adjustment_type'],(string)$adjustment['value']);}
-                $insert->execute([
-                    financeNextNumber('TERM'),(int)$student['id'],$financeSessionId,$periodId,$term,(int)$student['class_id'],
-                    $section,$type,$intake,(int)$rate['id'],financeFromCents($base),financeFromCents($discount),
-                    financeFromCents($due),(string)$rate['due_on'],(int)$_SESSION['admin_id']
-                ]);
-                $created+=$insert->rowCount();
-            }
-            financeAudit($pdo,'term_fee_invoices_generated','term_fee_invoice_batch',null,['academic_period_id'=>$periodId,'created'=>$created]);
+            $sync=markazSyncStudentTermFees($pdo,$period,$financeSessionId,$term,(int)$_SESSION['admin_id']);
+            financeAudit($pdo,'term_fee_invoices_synchronised','term_fee_invoice_batch',null,['academic_period_id'=>$periodId,'created'=>$sync['created'],'updated'=>$sync['updated'],'skipped'=>$sync['skipped']]);
             $pdo->commit();
-        }catch(DomainException $e){if($pdo->inTransaction())$pdo->rollBack();financeJson(['success'=>false,'message'=>$e->getMessage()],422);}
-        catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
-        financeJson(['success'=>true,'created'=>$created,'skipped_without_supported_class'=>$skipped,'message'=>"Generated {$created} student fee assessments. ".($skipped>0?"{$skipped} active students were skipped because they need a supported conventional class assigned. ":'')."Existing assessments and previous-term balances were left unchanged."]);
+        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();if($e instanceof DomainException)financeJson(['success'=>false,'message'=>$e->getMessage()],422);throw $e;}
+        financeJson(['success'=>true,'created'=>$sync['created'],'updated'=>$sync['updated'],'skipped'=>$sync['skipped'],
+            'message'=>"Student fee accounts synchronised. {$sync['created']} accounts created, {$sync['updated']} assessments updated and {$sync['skipped']} students skipped. Existing payment and refund records were preserved."]);
     }
     financeJson(['success'=>false,'message'=>'Unknown Student Fees action.'],404);
 } catch(Throwable $e) {

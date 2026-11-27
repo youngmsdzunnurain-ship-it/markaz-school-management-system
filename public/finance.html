@@ -129,8 +129,8 @@
  </section>
 
  <section class="panel student-fees-rate-panel">
-  <div class="panel-heading"><div><span class="eyebrow">CURRENT TERM CONFIGURATION</span><h2><i class="fa-solid fa-sliders" aria-hidden="true"></i> School fee rates</h2><p class="muted">Set one Day and Boarding rate for each section, with separate New Intake rates. Saving affects this term's new assessments only.</p></div><span class="pill" id="studentFeesRateStatus">Not loaded</span></div>
-  <p class="student-fees-intake-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> New Intake rates apply when a student's admission date falls within the configured current-term dates. Other students use Returning rates.</p>
+  <div class="panel-heading"><div><span class="eyebrow">CURRENT TERM CONFIGURATION</span><h2><i class="fa-solid fa-sliders" aria-hidden="true"></i> School fee rates</h2><p class="muted">Set one Day and Boarding rate for each section, with separate New Intake rates. Saving automatically creates or updates this term's individual student fee accounts. Recorded payments are preserved.</p></div><span class="pill" id="studentFeesRateStatus">Not loaded</span></div>
+  <p class="student-fees-intake-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> New Intake rates apply when a student's admission date falls within the configured current-term dates. Other students use Returning rates. Saving the 16 rates synchronises the Student Fees register automatically.</p>
   <form id="studentFeesRatesForm" class="student-fees-rates-form">
    <div class="table-wrap"><table class="student-fees-rates-table">
     <thead><tr><th>Section</th><th>Day · Returning</th><th>Boarding · Returning</th><th>Day · New intake</th><th>Boarding · New intake</th></tr></thead>
@@ -146,7 +146,7 @@
  </section>
 
  <section class="panel student-fees-register-panel" id="studentFeesRegister">
-  <div class="panel-heading"><div><span class="eyebrow">LIVE STUDENT ACCOUNTS</span><h2><i class="fa-solid fa-users" aria-hidden="true"></i> Student fees register</h2><p class="muted">Search and filter students. Previous term debts remain separate and are included in the total balance.</p></div><div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button"><i class="fa-solid fa-file-circle-plus"></i> Generate term assessments</button></div></div>
+  <div class="panel-heading"><div><span class="eyebrow">LIVE STUDENT ACCOUNTS</span><h2><i class="fa-solid fa-users" aria-hidden="true"></i> Student fees register</h2><p class="muted">Search and filter students. Previous term debts remain separate and are included in the total balance.</p></div><div class="button-row"><button class="btn btn-primary" id="generateTermInvoices" type="button"><i class="fa-solid fa-file-circle-plus"></i> Generate any missing assessments</button></div></div>
   <div class="student-fees-filters">
    <label class="student-fees-search"><span class="sr-only">Search student</span><i class="fa-solid fa-magnifying-glass"></i><input id="studentFeesSearch" type="search" placeholder="Search student name or admission number"></label>
    <label><span class="sr-only">Filter class</span><select id="studentFeesClassFilter"><option value="">All classes</option></select></label>
@@ -189,8 +189,8 @@
    <div class="student-intake-config"><label>Fee intake category<select id="studentFeeIntakeType"><option value="returning">Returning student</option><option value="new_intake">New intake</option></select></label><button class="btn btn-light" id="saveStudentIntakeType" type="button"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save intake category</button><small>Set this student's category for the current term before generating fee assessments.</small></div>
    <div class="inline-fields"><label>Adjustment type<select name="adjustment_type"><option value="fixed_fee">Set negotiated final fee</option><option value="discount_amount">Fixed reduction</option><option value="discount_percent">Percentage scholarship</option><option value="full_scholarship">Full scholarship / no current-term fee</option></select></label><label>Amount / percentage<input name="value" type="number" min="0" step="0.01" value="0" required></label></div>
    <label>Reason / approval note<input name="reason" maxlength="500" required placeholder="Explain who approved the support and why"></label>
-   <p class="student-fees-adjustment-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Every scholarship or fee reduction is saved as a pending request. A different authorised staff member must approve it before the current-term invoice changes. Full scholarship sets the current-term fee to ₦0; previous-term debts remain payable.</p>
-   <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit for approval</button>
+   <p class="student-fees-adjustment-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Admin changes and resets apply immediately. Management changes and resets require Admin approval. Payments already recorded are retained; the outstanding balance is recalculated. Previous-term debts remain separate.</p>
+   <div class="button-row"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Save scholarship / adjustment</button><button class="btn btn-light" id="resetStudentFeeAdjustment" type="button">Reset to standard fee</button></div>
   </form>
   <section class="panel" id="termAdjustmentApprovalPanel"><div class="panel-heading"><div><span class="eyebrow">MAKER-CHECKER CONTROL</span><h2>Pending fee-support approvals</h2><p class="muted">The person who submits an adjustment cannot approve their own request.</p></div><button class="btn btn-light" id="reloadTermAdjustments" type="button"><i class="fa-solid fa-rotate"></i> Refresh</button></div><div id="termAdjustmentQueue" class="stack-list"><p class="muted">Loading pending adjustments…</p></div></section>
  </div>
@@ -284,6 +284,6 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261127-student-fees-intake-cache8"></script>
+    <script src="js/finance.js?v=20261127-student-fees-auto-sync-cache9"></script>
 </body>
 </html>
