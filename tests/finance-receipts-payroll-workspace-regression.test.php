@@ -23,6 +23,8 @@ $financeApi = $read('api/finance/index.php');
 $payrollApi = $read('api/finance/payroll.php');
 $financeJs = $read('public/js/finance.js');
 $dashboardJs = $read('public/js/dashboard.js');
+$managementShellJs = $read('public/js/management-shell.js');
+$settingsJs = $read('public/js/settings.js');
 $dashboardCss = $read('public/css/dashboard-2026.css');
 $migration = $read('database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql');
 $installer = $read('scripts/install-finance.sh');
@@ -40,6 +42,8 @@ financeReceiptPayrollCheck(str_contains($receiptJs, 'payer_name') && str_contain
 financeReceiptPayrollCheck(str_contains($receiptJs, 'history.back()') && str_contains($receiptJs, './finance.html'), 'receipt back navigation returns to the previous page with a safe Finance fallback');
 financeReceiptPayrollCheck(str_contains($dashboardJs, 'addEventListener') && str_contains($dashboardJs, 'renderStaffAvatar(topAdminInitials') && str_contains($dashboardJs, 'getInitials(name)'), 'broken or missing staff profile images fall back to first-and-last-name initials');
 financeReceiptPayrollCheck(str_contains($dashboardCss, '.sidebar-user-avatar img'), 'sidebar staff avatar images fit the initials placeholder frame');
+financeReceiptPayrollCheck(str_contains($managementShellJs, 'staffInitials') && str_contains($managementShellJs, 'parts[parts.length - 1][0]') && str_contains($managementShellJs, 'image.addEventListener(\"error\"'), 'shared staff shell uses first and last initials when a profile image is missing or broken');
+financeReceiptPayrollCheck(str_contains($settingsJs, 'renderStaffAvatar') && str_contains($settingsJs, 'image.addEventListener(\"error\"'), 'staff profile settings restore initials when a saved profile image cannot load');
 financeReceiptPayrollCheck(str_contains($html, 'id="payrollAcademicPeriod"') && str_contains($html, 'id="payrollYear"') && str_contains($html, 'id="payrollMonth"'), 'payroll period selection includes academic session/term, calendar year and month');
 financeReceiptPayrollCheck(!str_contains($html, 'id="payrollSchedule"') && !str_contains($payrollApi, "['scheduled_at']"), 'payroll approval no longer asks for a future scheduled bank-release date');
 financeReceiptPayrollCheck(str_contains($html, 'Gross salary') && str_contains($html, 'Net salary due') && str_contains($html, 'Attendance history'), 'payroll separates gross salary, net salary due and its own attendance history');
