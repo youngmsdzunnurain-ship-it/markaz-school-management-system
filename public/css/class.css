@@ -1532,3 +1532,6 @@
         grid-column: auto;
     }
 }
+
+
+.results-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.results-heading-actions [hidden]{display:none!important}@media(max-width:640px){.results-heading-actions{width:100%;justify-content:flex-start}.results-heading-actions .results-scanner-launcher{font-size:12px;padding:9px 12px}}
