@@ -65,7 +65,7 @@ function renderSettingsAvatar(container, profileImage, name, fallbackNode = null
     image.loading = "eager";
     image.decoding = "async";
     image.addEventListener("error", showFallback, { once: true });
-    image.src = "/" + String(profileImage).replace(/^\\/+/, "");
+    image.src = "/" + String(profileImage).replace(/^\/+/, "");
     container.appendChild(image);
 }
 
