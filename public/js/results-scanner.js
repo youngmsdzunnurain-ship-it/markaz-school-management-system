@@ -323,6 +323,14 @@
         return { spans, read };
     }
 
+    function parsedScoreCount(parsed) {
+        let count = 0;
+        (parsed.read || []).forEach(({ cells }) => cells.forEach(values => {
+            if (values) count += FIELDS.filter(field => values[field] !== null && values[field] !== undefined).length;
+        }));
+        return count;
+    }
+
     /* ------------------------------------------------------------------ collecting across frames */
     function resetSession() {
         state.subjectSeen = new Map();
@@ -798,15 +806,19 @@
             await state.worker.setParameters({ tessedit_char_whitelist: "" });
             setUploadProgress(88, "Matching the class roster");
             let parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
-            if (!parsed.spans.length) {
-                /* Sparse-text mode is more reliable for printed headings separated by table borders
-                   or wide gaps. Retry only when the normal page layout found no subject at all. */
-                setUploadProgress(78, "Checking printed subject headings");
+            if (!parsed.spans.length || parsedScoreCount(parsed) === 0) {
+                /* Sparse-text mode handles printed headings split by table borders. Run a
+                   matching sparse digits pass too: otherwise OCR can find names but leave
+                   every CA/Exam cell blank even when the marks are clearly printed. */
+                setUploadProgress(76, "Recovering printed subject and score columns");
                 await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "11" });
                 const sparseTextResult = await state.worker.recognize(canvas);
-                await state.worker.setParameters({ tessedit_pageseg_mode: "6" });
-                const sparseParsed = parseFrame(sparseTextResult, digitResult, classStudents(), state.meta.subjects || []);
+                await state.worker.setParameters({ tessedit_char_whitelist: "0123456789.", tessedit_pageseg_mode: "11" });
+                const sparseDigitResult = await state.worker.recognize(canvas);
+                await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "6" });
+                const sparseParsed = parseFrame(sparseTextResult, sparseDigitResult, classStudents(), state.meta.subjects || []);
                 if (sparseParsed.spans.length > parsed.spans.length ||
+                    parsedScoreCount(sparseParsed) > parsedScoreCount(parsed) ||
                     (sparseParsed.spans.length === parsed.spans.length && sparseParsed.read.length > parsed.read.length)) {
                     parsed = sparseParsed;
                 }
