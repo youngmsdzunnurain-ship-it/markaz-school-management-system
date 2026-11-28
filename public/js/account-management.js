@@ -693,7 +693,7 @@ populateStudents(account.student_id || '');
                             <tr>
                                 <td>
                                     <strong>${escapeHTML(account.name)}</strong>
-                                    <small>${escapeHTML(account.email)}</small>
+                                    <small>${escapeHTML(account.role === 'teacher' ? 'Username: ' + (account.username || 'Not set') : (account.email || ''))}</small>
                                     ${account.role === 'student' && account.student_id
                                         ? `<small>Student ID: ${escapeHTML(account.student_id)}</small>` : ''}
                                 </td>
