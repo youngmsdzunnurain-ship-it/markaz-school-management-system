@@ -8,6 +8,11 @@ on:
       - 'api/results/batch-save.php'
       - 'public/api/results/batch-save.php'
       - 'public/js/results-scanner.js'
+      - 'public/js/results-scan-sheet.js'
+      - 'public/results-scan-sheet.html'
+      - 'public/class.html'
+      - 'public/js/class.js'
+      - 'tests/results-scan-sheet-regression.test.php'
       - 'tests/results-scanner-atomic-upload-regression.test.php'
       - '.github/workflows/results-scanner-regression.yml'
   push:
@@ -35,9 +40,11 @@ jobs:
           php -l api/results/batch-save.php
           php -l public/api/results/batch-save.php
           php -l tests/results-scanner-atomic-upload-regression.test.php
+          php -l tests/results-scan-sheet-regression.test.php
       - name: Check JavaScript syntax
         run: |
           node --check public/js/results-scanner.js
+          node --check public/js/results-scan-sheet.js
           node --check public/js/class.js
       - name: Run scanner regression checks
         run: php tests/results-scanner-atomic-upload-regression.test.php
