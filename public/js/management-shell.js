@@ -3,6 +3,32 @@
 const path = location.pathname;
 const isStudentPortal = new URLSearchParams(location.search).get("student_portal") === "1";
 let currentRole = "";
+const staffInitials = name => {
+  const parts = String(name || "Administrator").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "AD";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+const renderShellAvatar = (container, profileImage, name) => {
+  if (!container) return;
+  const initials = staffInitials(name);
+  const showInitials = () => {
+    const fallback = document.createElement("span");
+    fallback.id = "markazShellInitials";
+    fallback.textContent = initials;
+    container.replaceChildren(fallback);
+  };
+  container.replaceChildren();
+  if (!profileImage) {
+    showInitials();
+    return;
+  }
+  const image = document.createElement("img");
+  image.alt = "";
+  image.addEventListener("error", showInitials, { once: true });
+  image.src = "/" + String(profileImage).replace(/^\/+/, "");
+  container.appendChild(image);
+};
 const loginPathForRole = role => ({
   teacher: "/teacher-login.html",
   exam_officer: "/exam-officer-login.html",
@@ -74,11 +100,10 @@ shellAccountPromise
     currentRole = String(account.role || "").toLowerCase();
     const permissions = account.management_permissions || {};
     const name = account.name || "Administrator";
-    const initials = name.trim().split(/\s+/).map(part => part[0]).slice(0, 2).join("").toUpperCase();
     header.querySelector("#markazShellName").textContent = name;
     header.querySelector("#markazShellMenuName").textContent = name;
-    header.querySelector("#markazShellInitials").textContent = initials || "AD";
     header.querySelector("#markazShellRole").textContent = currentRole.replaceAll("_", " ");
+    renderShellAvatar(header.querySelector(".admin-profile-avatar"), account.profile_image || "", name);
     header.querySelector("#markazShellEmail").textContent = account.email || "";
 
     const settingsLink = header.querySelector("[data-shell-settings]");
@@ -112,14 +137,6 @@ shellAccountPromise
       sidebar.querySelectorAll("[data-shell-permission]").forEach(link => link.hidden = false);
     }
 
-    if (account.profile_image) {
-      const avatar = header.querySelector(".admin-profile-avatar");
-      avatar.replaceChildren();
-      const image = document.createElement("img");
-      image.src = "/" + String(account.profile_image).replace(/^\/+/, "");
-      image.alt = name;
-      avatar.appendChild(image);
-    }
   })
   .catch(error => console.error("Management profile load failed:", error));
 

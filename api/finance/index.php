@@ -90,16 +90,29 @@ try {
             $id=(int)($_GET['payment_id']??0);
             $stmt=$pdo->prepare(
                 "SELECT p.*,s.admission_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
-                        c.name class_name,ac.name arabic_class_name,a.name recorded_by_name
+                        c.name class_name,ac.name arabic_class_name,a.name recorded_by_name,v.name verified_by_name
                  FROM finance_fee_payments p INNER JOIN students s ON s.id=p.student_id
                  LEFT JOIN classes c ON c.id=s.class_id
                  LEFT JOIN arabic_classes ac ON ac.id=COALESCE(NULLIF(s.arabic_class_id,0),s.arabia_class_id)
-                 LEFT JOIN admins a ON a.id=p.recorded_by WHERE p.id=? LIMIT 1"
+                 LEFT JOIN admins a ON a.id=p.recorded_by
+                 LEFT JOIN admins v ON v.id=p.verified_by WHERE p.id=? LIMIT 1"
             );
             $stmt->execute([$id]);$payment=$stmt->fetch(PDO::FETCH_ASSOC);
             if(!$payment)financeJson(['success'=>false,'message'=>'Receipt record not found.'],404);
-            $alloc=$pdo->prepare('SELECT i.invoice_number,i.billing_year,i.billing_month,fa.amount FROM finance_fee_allocations fa INNER JOIN finance_fee_invoices i ON i.id=fa.invoice_id WHERE fa.payment_id=? ORDER BY i.billing_year,i.billing_month');
-            $alloc->execute([$id]);
+            $alloc=$pdo->prepare(
+                "SELECT invoice_number,billing_period,amount FROM (
+                    SELECT i.invoice_number,CONCAT(LPAD(i.billing_month,2,'0'),'/',i.billing_year) billing_period,fa.amount
+                    FROM finance_fee_allocations fa INNER JOIN finance_fee_invoices i ON i.id=fa.invoice_id
+                    WHERE fa.payment_id=?
+                    UNION ALL
+                    SELECT i.invoice_number,CONCAT(UPPER(LEFT(i.term,1)),SUBSTRING(i.term,2),' Term · ',s.session_name) billing_period,tp.amount
+                    FROM finance_term_fee_payments tp
+                    INNER JOIN finance_term_fee_invoices i ON i.id=tp.term_invoice_id
+                    INNER JOIN finance_academic_sessions s ON s.id=i.session_id
+                    WHERE tp.payment_id=?
+                ) receipt_allocations ORDER BY billing_period"
+            );
+            $alloc->execute([$id,$id]);
             $refunds=$pdo->prepare("SELECT refund_number,amount,reason,status,created_at,reviewed_at FROM finance_fee_refunds WHERE payment_id=? ORDER BY created_at");
             $refunds->execute([$id]);
             financeJson(['success'=>true,'payment'=>$payment,'allocations'=>$alloc->fetchAll(PDO::FETCH_ASSOC),'refunds'=>$refunds->fetchAll(PDO::FETCH_ASSOC)]);
@@ -408,7 +421,9 @@ try {
         $studentId=(int)($input['student_id']??0);$amount=financeMoney($input['amount']??'');
         $method=(string)($input['method']??'bank_transfer');
         $allowed=['cash','bank_transfer','pos','online','other'];
+        $bankName=trim((string)($input['bank_name']??''));
         if($studentId<1||!in_array($method,$allowed,true))financeJson(['success'=>false,'message'=>'Choose a student, amount and valid payment method.'],422);
+        if($method==='bank_transfer'&&($bankName===''||mb_strlen($bankName)>100))financeJson(['success'=>false,'message'=>'Enter a valid bank name for this transfer (maximum 100 characters).'],422);
         $st=$pdo->prepare('SELECT id FROM students WHERE id=?');$st->execute([$studentId]);if(!$st->fetchColumn())financeJson(['success'=>false,'message'=>'Student not found.'],404);
         $reference=trim((string)($input['reference']??''))?:null;
         $paidAtRaw=(string)($input['paid_at']??'');$paidAt=DateTimeImmutable::createFromFormat('!Y-m-d\\TH:i',$paidAtRaw);
@@ -418,11 +433,11 @@ try {
         $pdo->beginTransaction();
         try{
             $stmt=$pdo->prepare(
-                'INSERT INTO finance_fee_payments (receipt_number,student_id,amount,method,reference,payer_name,notes,status,paid_at,recorded_by,verified_by,verified_at)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+                'INSERT INTO finance_fee_payments (receipt_number,student_id,amount,method,reference,payer_name,bank_name,notes,status,paid_at,recorded_by,verified_by,verified_at)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
             );
             $actor=(int)$_SESSION['admin_id'];
-            $stmt->execute([financeNextNumber('MZRCPT'),$studentId,$amount,$method,$reference,trim((string)($input['payer_name']??''))?:null,trim((string)($input['notes']??''))?:null,$status,$paidAtValue,$actor,$status==='confirmed'?$actor:null,$status==='confirmed'?date('Y-m-d H:i:s'):null]);
+            $stmt->execute([financeNextNumber('MZRCPT'),$studentId,$amount,$method,$reference,trim((string)($input['payer_name']??''))?:null,$bankName?:null,trim((string)($input['notes']??''))?:null,$status,$paidAtValue,$actor,$status==='confirmed'?$actor:null,$status==='confirmed'?date('Y-m-d H:i:s'):null]);
             $paymentId=(int)$pdo->lastInsertId();
             if($status==='confirmed'){
                 financeAllocatePayment($pdo,$paymentId,$studentId,$amount);

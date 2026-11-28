@@ -21,6 +21,7 @@ $intakeOverrides = file_get_contents($root . '/database/migrations/20261130_mark
 $independentStaff = file_get_contents($root . '/database/migrations/20261124_markaz_independent_finance_staff.sql');
 $attendanceModes = file_get_contents($root . '/database/migrations/20261125_teacher_attendance_modes.sql');
 $refunds = file_get_contents($root . '/database/migrations/20261126_markaz_fee_refunds.sql');
+$receiptPayroll = file_get_contents($root . '/database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql');
 
 financeInstallerCheck(str_contains($foundation, 'CREATE TABLE finance_fee_payments'), 'foundation migration creates the payment table required by term fees');
 financeInstallerCheck(str_contains($terms, 'REFERENCES finance_fee_payments(id)'), 'term-fee payment allocation references the foundation payment table');
@@ -28,7 +29,8 @@ financeInstallerCheck(str_contains($intakeOverrides, 'CREATE TABLE finance_stude
 financeInstallerCheck(strpos($installer, '20261121_markaz_finance_payroll.sql') < strpos($installer, '20261122_markaz_finance_fee_categories.sql')
     && strpos($installer, '20261122_markaz_finance_fee_categories.sql') < strpos($installer, '20261123_markaz_academic_term_fees.sql')
     && strpos($installer, '20261123_markaz_academic_term_fees.sql') < strpos($installer, '20261129_markaz_section_student_fees.sql')
-    && strpos($installer, '20261129_markaz_section_student_fees.sql') < strpos($installer, '20261130_markaz_student_fee_intake_overrides.sql'), 'installer applies migrations in dependency order');
+    && strpos($installer, '20261129_markaz_section_student_fees.sql') < strpos($installer, '20261130_markaz_student_fee_intake_overrides.sql')
+     && strpos($installer, '20261130_markaz_student_fee_intake_overrides.sql') < strpos($installer, '20261128_finance_receipts_payroll_periods_manual_payments.sql'), 'installer applies migrations in dependency order');
 financeInstallerCheck(str_contains($installer, 'mariadb-dump') && str_contains($installer, '[[ -s "$backup" ]]'), 'installer verifies a database backup before running migrations');
 financeInstallerCheck(str_contains($installer, 'DB_HOST="${DB_HOST:-127.0.0.1}"') && str_contains($installer, 'DB_USER="${DB_USER:-root}"'), 'installer uses MARKAZ TCP database host and root defaults instead of the Termux shell account');
 financeInstallerCheck(str_contains($installer, '--protocol=TCP') && str_contains($installer, 'mariadb-dump'), 'installer applies the same explicit TCP connection settings to database operations');
@@ -49,5 +51,7 @@ financeInstallerCheck(str_contains($independentStaff, 'CREATE TABLE finance_staf
 financeInstallerCheck(str_contains($installer, '20261124_markaz_independent_finance_staff.sql') && str_contains($installer, 'independent_staff_columns') && str_contains($installer, 'independent_staff_constraints'), 'installer applies and verifies the independent staff schema after Finance foundations');
 financeInstallerCheck(str_contains($attendanceModes, "attendance_mode ENUM('time_based','attendance_only')") && str_contains($attendanceModes, 'MODIFY COLUMN expected_arrival TIME NULL'), 'teacher attendance migration preserves existing time-based staff and permits attendance-only profiles');
 financeInstallerCheck(str_contains($refunds, 'CREATE TABLE finance_fee_refunds') && str_contains($refunds, 'CREATE TABLE finance_fee_refund_allocations'), 'refund migration creates maker-checker requests and invoice-allocation reversals');
+financeInstallerCheck(str_contains($receiptPayroll, 'ADD COLUMN bank_name') && str_contains($receiptPayroll, 'ADD COLUMN academic_period_id') && str_contains($receiptPayroll, 'ADD COLUMN payment_method'), 'receipt and payroll migration adds bank details, term linkage and manual payment audit fields');
+financeInstallerCheck(str_contains($installer, 'receipt_payroll_columns') && str_contains($installer, 'receipt_payroll_constraints') && str_contains($installer, 'receipt_payroll_index'), 'installer verifies all receipt and academic payroll migration columns, keys and foreign keys');
 financeInstallerCheck(str_contains($installer, '20261125_teacher_attendance_modes.sql') && str_contains($installer, '20261126_markaz_fee_refunds.sql') && str_contains($installer, 'refund_tables'), 'installer applies and verifies teacher attendance policies and refund tables after their dependencies');
 echo "MARKAZ Finance migration installer regression checks passed.\n";

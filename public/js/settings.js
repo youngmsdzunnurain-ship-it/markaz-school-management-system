@@ -48,6 +48,27 @@ function initials(name) {
     ).toUpperCase();
 }
 
+function renderSettingsAvatar(container, profileImage, name, fallbackNode = null) {
+    if (!container) return;
+    const showFallback = () => {
+        const fallback = fallbackNode || document.createElement("span");
+        fallback.textContent = initials(name);
+        container.replaceChildren(fallback);
+    };
+    container.replaceChildren();
+    if (!profileImage) {
+        showFallback();
+        return;
+    }
+    const image = document.createElement("img");
+    image.alt = "";
+    image.loading = "eager";
+    image.decoding = "async";
+    image.addEventListener("error", showFallback, { once: true });
+    image.src = "/" + String(profileImage).replace(/^\/+/, "");
+    container.appendChild(image);
+}
+
 function showMessage(text, type) {
     message.textContent = text;
     message.className = "form-message " + type;
@@ -109,20 +130,7 @@ async function loadProfile() {
         previewEmail.textContent =
             data.admin.email || "";
 
-        profilePhoto.innerHTML = "";
-
-        if (data.admin.profile_image) {
-            const image = document.createElement("img");
-            image.src = "/" + data.admin.profile_image.replace(/^\/+/, "");
-            image.alt = data.admin.name || "Administrator";
-            image.loading = "eager";
-            image.decoding = "async";
-            profilePhoto.appendChild(image);
-        } else {
-            profileInitials.textContent =
-                initials(data.admin.name);
-            profilePhoto.appendChild(profileInitials);
-        }
+        renderSettingsAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
 
         document.documentElement.classList.remove("settings-profile-pending");
     } catch (error) {
@@ -497,40 +505,14 @@ form.addEventListener("submit", async event => {
         originalProfileName = data.admin.name || "";
         originalProfileEmail = data.admin.email || "";
 
-        profilePhoto.innerHTML = "";
-
-        if (data.admin.profile_image) {
-            const image = document.createElement("img");
-            image.src = "/" + data.admin.profile_image.replace(/^\/+/, "");
-            image.alt = data.admin.name || "Administrator";
-            image.loading = "eager";
-            image.decoding = "async";
-            profilePhoto.appendChild(image);
-        } else {
-            const initialsSpan = document.createElement("span");
-            initialsSpan.id = "profileInitials";
-            initialsSpan.textContent = initials(data.admin.name);
-            profilePhoto.appendChild(initialsSpan);
-        }
+        renderSettingsAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
 
         const shellName = document.getElementById("markazShellName");
         const shellMenuName = document.getElementById("markazShellMenuName");
         const shellAvatar = document.querySelector(".markaz-shell-profile .admin-profile-avatar");
         if (shellName) shellName.textContent = data.admin.name || "Administrator";
         if (shellMenuName) shellMenuName.textContent = data.admin.name || "Administrator";
-        if (shellAvatar) {
-            shellAvatar.replaceChildren();
-            if (data.admin.profile_image) {
-                const shellImage = document.createElement("img");
-                shellImage.src = "/" + data.admin.profile_image.replace(/^\/+/, "");
-                shellImage.alt = data.admin.name || "Staff profile";
-                shellAvatar.appendChild(shellImage);
-            } else {
-                const shellInitials = document.createElement("span");
-                shellInitials.textContent = initials(data.admin.name);
-                shellAvatar.appendChild(shellInitials);
-            }
-        }
+        renderSettingsAvatar(shellAvatar, data.admin.profile_image || "", data.admin.name);
 
         if (removeProfileButton) {
             removeProfileButton.dataset.remove = "0";

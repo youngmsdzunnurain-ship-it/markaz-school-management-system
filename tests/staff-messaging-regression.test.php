@@ -33,6 +33,6 @@ staffMessagingCheck(str_contains($dashboardJs, 'requiredRole === "staff_messagin
 staffMessagingCheck(str_contains($onlineCss, '.online-workspace-page #tab-overview{padding:24px 0}'), 'Online Class overview has balanced space above and below its summary cards');
 staffMessagingCheck(str_contains($onlineCss, '.online-workspace-page .online-stat::before') && str_contains($onlineCss, 'background:var(--gold,#c8a43a)'), 'Online Class summary cards use the shared dashboard gold top accent');
 staffMessagingCheck(str_contains($onlinePage, 'online-class.css?v=20261120-overview-gold1'), 'Online Class stylesheet cache version is refreshed after overview styling');
-staffMessagingCheck(str_contains($dashboard, 'dashboard.js?v=20261120-staff-messaging-role4'), 'dashboard role-access changes use a fresh JavaScript cache version');
+staffMessagingCheck(str_contains($dashboard, 'dashboard.js?v=20261128-staff-avatar-fallback1'), 'dashboard role-access changes use a fresh JavaScript cache version');
 staffMessagingCheck(str_contains($js, 'textContent'), 'message content is rendered as text rather than executable HTML');
 echo "MARKAZ staff messaging regression checks passed.\n";

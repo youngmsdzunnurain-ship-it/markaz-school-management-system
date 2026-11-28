@@ -843,3 +843,141 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
     box-shadow:0 3px 10px rgba(13,43,28,.18);
   }
 }
+
+/* Finance mobile navigation: the green control belongs to the menu button, not the full header. */
+@media(max-width:850px){
+  body.finance-workspace-page .topbar{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:flex-start;
+    gap:10px;
+    width:100%;
+    min-height:58px;
+    height:auto;
+    padding:8px 12px;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  body.finance-workspace-page .topbar>.finance-menu-control{
+    display:grid;
+    place-items:center;
+    width:40px;
+    height:40px;
+    min-width:40px;
+    flex:0 0 40px;
+    padding:0;
+    border:1px solid rgba(230,217,164,.65);
+    border-radius:11px;
+    background:linear-gradient(145deg,#17643a,#0d2b1c);
+    box-shadow:0 3px 10px rgba(13,43,28,.18);
+  }
+  body.finance-workspace-page .topbar>.finance-menu-control .menu-button{
+    display:grid;
+    place-items:center;
+    width:100%;
+    height:100%;
+    min-width:0;
+    flex:1 1 auto;
+    padding:0;
+    border:0;
+    border-radius:10px;
+    background:transparent!important;
+    color:#fff;
+    box-shadow:none;
+  }
+  body.finance-workspace-page .topbar>div:not(.finance-menu-control){
+    min-width:0;
+    flex:1 1 auto;
+    overflow:hidden;
+  }
+}
+
+/* Payments & Receipts: keep each entry/review pair in a balanced two-column workspace. */
+#tab-payments .two-col{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;
+  gap:14px;
+}
+#tab-payments .two-col>*{min-width:0;align-self:stretch}
+#tab-payments .payment-history-panel{
+  grid-column:auto;
+  min-width:0;
+  padding:16px;
+}
+#tab-payments .form-panel{padding:16px;gap:10px}
+#tab-payments .form-panel .panel-heading{align-items:flex-start;flex-direction:row;gap:8px;margin-bottom:2px}
+#tab-payments .form-panel .panel-heading h2{font-size:16px;line-height:1.3}
+#tab-payments .form-panel label{gap:5px;font-size:11px}
+#tab-payments .form-panel input,
+#tab-payments .form-panel select,
+#tab-payments .form-panel textarea{min-height:38px;padding:8px 10px;font-size:12px}
+#tab-payments .form-panel textarea{min-height:64px}
+#tab-payments .form-panel>.btn{align-self:flex-start}
+#tab-payments .payment-history-panel .panel-heading{flex-direction:row;align-items:center}
+#tab-payments .payment-history-panel .panel-heading h2{font-size:16px}
+#tab-payments .payment-history-panel .panel-heading p{font-size:11px;line-height:1.45}
+#tab-payments #paymentHistory,
+#tab-payments #refundQueue{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#tab-payments .stack-item{padding:10px;font-size:11px}
+@media(max-width:850px){
+  #tab-payments .two-col{grid-template-columns:minmax(0,1fr);gap:12px}
+  #tab-payments .payment-history-panel{grid-column:auto}
+  #tab-payments #paymentHistory,
+  #tab-payments #refundQueue{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Term-aware payroll: readable figures, daily attendance and manual payment audit. */
+#tab-payroll .payroll-controls{
+  max-width:none;
+  grid-template-columns:minmax(220px,1.5fr) repeat(2,minmax(130px,.7fr));
+  gap:10px;
+  margin:0 0 12px;
+}
+#tab-payroll .payroll-period-panel,
+#tab-payroll .payroll-attendance-panel,
+#tab-payroll .payroll-history-panel{padding:16px}
+#tab-payroll .payroll-period-panel .panel-heading,
+#tab-payroll .payroll-attendance-panel .panel-heading,
+#tab-payroll .payroll-history-panel .panel-heading{margin-bottom:12px}
+#tab-payroll .payroll-period-panel .panel-heading h2,
+#tab-payroll .payroll-attendance-panel .panel-heading h2,
+#tab-payroll .payroll-history-panel .panel-heading h2{font-size:17px}
+#tab-payroll .payroll-period-panel .panel-heading p{margin:5px 0 0;font-size:11px}
+#tab-payroll .payroll-period-panel .button-row{margin:8px 0}
+#tab-payroll .payroll-period-panel>.muted{margin:5px 0 12px;line-height:1.5}
+#tab-payroll .table-wrap{max-width:100%}
+#tab-payroll table{font-size:11px}
+#tab-payroll th,#tab-payroll td{padding:9px 8px}
+#tab-payroll td small{display:block;color:var(--muted);font-size:10px;line-height:1.4}
+#tab-payroll .payroll-payment-dialog{
+  width:min(480px,calc(100vw - 28px));
+  max-width:none;
+  max-height:calc(100dvh - 28px);
+  padding:0;
+  border:0;
+  border-radius:16px;
+  background:transparent;
+  overflow:auto;
+}
+#tab-payroll .payroll-payment-dialog::backdrop{background:rgba(9,25,16,.55);backdrop-filter:blur(2px)}
+#tab-payroll .payroll-payment-dialog .form-panel{display:grid;gap:11px;margin:0;padding:20px}
+#tab-payroll .payroll-payment-dialog .panel-heading{margin-bottom:4px}
+#tab-payroll .payroll-payment-dialog .button-row{justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:850px){
+  #tab-payroll .payroll-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #tab-payroll .payroll-controls>label:first-child{grid-column:1/-1}
+}
+@media(max-width:560px){
+  #tab-payroll .payroll-controls{grid-template-columns:minmax(0,1fr)}
+  #tab-payroll .payroll-controls>label:first-child{grid-column:auto}
+  #tab-payroll .payroll-period-panel,
+  #tab-payroll .payroll-attendance-panel,
+  #tab-payroll .payroll-history-panel{padding:12px}
+}
+
+#tab-payroll .pill.no-payment-due{
+  background:#eef1ee;
+  color:#59665d;
+  border:1px solid #d9e0da;
+}

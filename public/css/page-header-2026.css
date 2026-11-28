@@ -357,3 +357,33 @@ html[lang] body:not(#mkhdr) .admin-profile-avatar {
     font-weight: 900 !important;
     flex: none;
 }
+
+/* Finance mobile exception: the shared top-bar theme above uses !important.
+   Keep its page title, but move the green surface onto the menu control only. */
+@media(max-width:850px){
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar{
+    display:flex!important;flex-direction:row!important;align-items:center!important;
+    justify-content:flex-start!important;gap:10px!important;min-height:58px!important;
+    height:auto!important;padding:8px 12px!important;background:transparent!important;
+    border:0!important;box-shadow:none!important;backdrop-filter:none!important;color:#173125!important;
+  }
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar>.finance-menu-control{
+    display:grid!important;place-items:center!important;width:40px!important;height:40px!important;
+    min-width:40px!important;flex:0 0 40px!important;padding:0!important;
+    border:1px solid rgba(230,217,164,.65)!important;border-radius:11px!important;
+    background:linear-gradient(145deg,#17643a,#0d2b1c)!important;
+    box-shadow:0 3px 10px rgba(13,43,28,.18)!important;
+  }
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar>.finance-menu-control .menu-button{
+    display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+    min-width:0!important;flex:1 1 auto!important;padding:0!important;border:0!important;
+    border-radius:10px!important;background:transparent!important;color:#fff!important;box-shadow:none!important;
+  }
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar>div:not(.finance-menu-control){
+    min-width:0!important;flex:1 1 auto!important;overflow:hidden!important;
+  }
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar h1{
+    color:#173125!important;font-size:clamp(16px,4.5vw,19px)!important;
+  }
+  html[lang] body.finance-workspace-page:not(#mkhdr) .topbar p{color:#68796f!important}
+}

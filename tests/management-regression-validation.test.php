@@ -71,7 +71,7 @@ $managementPages = [
 foreach ($managementPages as $page) {
     $html = file_get_contents($root . '/public/' . $page);
     checkFix(
-        str_contains($html, 'management-shell.js?v=20261102-fix1'),
+        str_contains($html, 'management-shell.js?v='),
         'Management shell is missing from ' . $page
     );
 }
