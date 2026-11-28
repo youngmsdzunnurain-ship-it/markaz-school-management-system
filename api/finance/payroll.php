@@ -115,6 +115,9 @@ if($action==='calculate'){
     $attendanceStart=max($first,(string)$academicPeriod['starts_on']);$attendanceEnd=min($last,(string)$academicPeriod['ends_on']);
     if($attendanceStart>$attendanceEnd)financeJson(['success'=>false,'message'=>'The selected month does not fall within the dates of this academic term.'],422);
     $pdo->beginTransaction();
+    $legacyQuery=$pdo->prepare('SELECT id,status FROM finance_payroll_periods WHERE academic_period_id IS NULL AND period_year=? AND period_month=? ORDER BY id DESC LIMIT 1 FOR UPDATE');
+    $legacyQuery->execute([$year,$month]);$legacyPeriod=$legacyQuery->fetch(PDO::FETCH_ASSOC);
+    if($legacyPeriod)financeJson(['success'=>false,'message'=>'A legacy payroll record already exists for this calendar month without an academic term. Review and settle that record from Payroll History before creating a new term-based payroll.'],409);
     $q=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE academic_period_id=? AND period_year=? AND period_month=? FOR UPDATE');$q->execute([$periodId,$year,$month]);$period=$q->fetch(PDO::FETCH_ASSOC);
     if($period&&in_array($period['status'],['approved','processing','completed'],true))financeJson(['success'=>false,'message'=>'Approved or paid payroll cannot be recalculated.'],409);
     if(!$period){$q=$pdo->prepare('INSERT INTO finance_payroll_periods(academic_period_id,period_year,period_month,status,created_by) VALUES(?,?,?,"draft",?)');$q->execute([$periodId,$year,$month,(int)$_SESSION['admin_id']]);$periodIdRow=(int)$pdo->lastInsertId();}
@@ -175,10 +178,16 @@ if($action==='approve'){
     $year=(int)($input['year']??0);$month=(int)($input['month']??0);$periodId=(int)($input['period_id']??0);
     if($periodId<1||$year<2020||$year>2100||$month<1||$month>12)financeJson(['success'=>false,'message'=>'Choose the academic period and payroll month to approve.'],422);
     $pdo->beginTransaction();
+    $legacyQuery=$pdo->prepare('SELECT id FROM finance_payroll_periods WHERE academic_period_id IS NULL AND period_year=? AND period_month=? ORDER BY id DESC LIMIT 1 FOR UPDATE');
+    $legacyQuery->execute([$year,$month]);
+    if($legacyQuery->fetchColumn())financeJson(['success'=>false,'message'=>'A legacy payroll record exists for this calendar month without an academic term. Resolve it from Payroll History before approving another payroll for the month.'],409);
     $q=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE academic_period_id=? AND period_year=? AND period_month=? FOR UPDATE');$q->execute([$periodId,$year,$month]);$period=$q->fetch(PDO::FETCH_ASSOC);
     if(!$period||$period['status']!=='calculated')financeJson(['success'=>false,'message'=>'Calculate and review this academic-period payroll before approval.'],409);
     $pdo->prepare('UPDATE finance_payroll_periods SET status="approved",scheduled_at=NULL,approved_by=?,approved_at=NOW() WHERE id=?')->execute([(int)$_SESSION['admin_id'],(int)$period['id']]);
     $pdo->prepare('UPDATE finance_payroll_items SET status="approved" WHERE payroll_period_id=?')->execute([(int)$period['id']]);
+    $positiveRemaining=$pdo->prepare('SELECT COUNT(*) FROM finance_payroll_items WHERE payroll_period_id=? AND net_salary>0');
+    $positiveRemaining->execute([(int)$period['id']]);
+    if((int)$positiveRemaining->fetchColumn()===0)$pdo->prepare('UPDATE finance_payroll_periods SET status="completed",processed_at=NOW() WHERE id=?')->execute([(int)$period['id']]);
     financeAudit($pdo,'payroll_approved','payroll_period',(int)$period['id'],['academic_period_id'=>$periodId,'year'=>$year,'month'=>$month]);
     $pdo->commit();
     financeJson(['success'=>true,'message'=>'Payroll approved. Record each staff member’s actual salary payment after payment has been made.']);
@@ -219,7 +228,7 @@ if($action==='record_payment'){
         ['account_id'=>financeAccountId($pdo,$cashCode),'debit'=>'0.00','credit'=>$amount,'description'=>'Salary paid by '.str_replace('_',' ',$method)]
     ]);
     $pdo->prepare('UPDATE finance_payroll_items SET status="paid" WHERE id=?')->execute([$itemId]);
-    $remaining=$pdo->prepare("SELECT COUNT(*) FROM finance_payroll_items WHERE payroll_period_id=? AND status<>'paid'");
+    $remaining=$pdo->prepare("SELECT COUNT(*) FROM finance_payroll_items WHERE payroll_period_id=? AND status<>'paid' AND net_salary>0");
     $remaining->execute([(int)$item['payroll_period_id']]);
     if((int)$remaining->fetchColumn()===0){
         $pdo->prepare('UPDATE finance_payroll_periods SET status="completed",processed_at=NOW() WHERE id=?')->execute([(int)$item['payroll_period_id']]);
