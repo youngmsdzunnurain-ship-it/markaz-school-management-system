@@ -217,18 +217,20 @@
  </div>
 </section>
 <section class="tab-panel" id="tab-expenses">
- <div class="two-col">
-  <form class="panel form-panel" id="expenseForm"><div class="panel-heading"><div><span class="eyebrow">SCHOOL SPENDING</span><h2>Record school expense</h2></div></div>
-   <label>Expense category<input name="category" required placeholder="Utilities, repairs, learning materials…"></label><label>Description<textarea name="description" rows="3" required placeholder="What was purchased or paid for?"></textarea></label>
-   <label>Vendor / recipient<input name="vendor_name"></label><label>Amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
-   <div class="inline-fields"><label>Date<input name="expense_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
-   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Submit expense for approval</button>
+ <div class="two-col finance-entry-grid">
+  <form class="panel form-panel finance-simple-form" id="expenseForm"><div class="panel-heading"><div><span class="eyebrow">MONEY OUT</span><h2>Record an expense</h2><p class="muted">Record what the school bought, repaired or paid for.</p></div></div>
+   <label>What was purchased or repaired?<input name="category" required placeholder="e.g. Classroom chairs, plumbing repair"></label>
+   <label>Report / extra details <span class="muted">(optional)</span><textarea name="description" rows="2" placeholder="Add any useful details, if needed"></textarea></label>
+   <label>Amount paid (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></label>
+   <div class="inline-fields"><label>Date paid<input name="expense_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option></select></label></div>
+   <button class="btn btn-primary" type="submit">Save expense</button>
   </form>
-  <form class="panel form-panel" id="incomeForm"><div class="panel-heading"><div><span class="eyebrow">OTHER SCHOOL INCOME</span><h2>Record non-fee income</h2></div></div>
-   <label>Income category<input name="category" required placeholder="Donation, grant, contribution…"></label><label>Description<textarea name="description" rows="3" required></textarea></label>
-   <label>Payer / source<input name="payer_name"></label><label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
-   <div class="inline-fields"><label>Date received<input name="received_date" type="date" required></label><label>Method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
-   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Save other income</button>
+  <form class="panel form-panel finance-simple-form" id="incomeForm"><div class="panel-heading"><div><span class="eyebrow">MONEY IN</span><h2>Record other income</h2><p class="muted">Record money received by the school.</p></div></div>
+   <label>Income type<input name="category" required placeholder="e.g. Donation, contribution, grant"></label>
+   <label>Report / extra details <span class="muted">(optional)</span><textarea name="description" rows="2" placeholder="Add any useful details, if needed"></textarea></label>
+   <label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></label>
+   <div class="inline-fields"><label>Date received<input name="received_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option></select></label></div>
+   <button class="btn btn-primary" type="submit">Save income</button>
   </form>
  </div>
  <div class="two-col">
