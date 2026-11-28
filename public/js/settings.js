@@ -48,7 +48,7 @@ function initials(name) {
     ).toUpperCase();
 }
 
-function renderStaffAvatar(container, profileImage, name, fallbackNode = null) {
+function renderSettingsAvatar(container, profileImage, name, fallbackNode = null) {
     if (!container) return;
     const showFallback = () => {
         const fallback = fallbackNode || document.createElement("span");
@@ -130,7 +130,7 @@ async function loadProfile() {
         previewEmail.textContent =
             data.admin.email || "";
 
-        renderStaffAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
+        renderSettingsAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
 
         document.documentElement.classList.remove("settings-profile-pending");
     } catch (error) {
@@ -505,14 +505,14 @@ form.addEventListener("submit", async event => {
         originalProfileName = data.admin.name || "";
         originalProfileEmail = data.admin.email || "";
 
-        renderStaffAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
+        renderSettingsAvatar(profilePhoto, data.admin.profile_image || "", data.admin.name, profileInitials);
 
         const shellName = document.getElementById("markazShellName");
         const shellMenuName = document.getElementById("markazShellMenuName");
         const shellAvatar = document.querySelector(".markaz-shell-profile .admin-profile-avatar");
         if (shellName) shellName.textContent = data.admin.name || "Administrator";
         if (shellMenuName) shellMenuName.textContent = data.admin.name || "Administrator";
-        renderStaffAvatar(shellAvatar, data.admin.profile_image || "", data.admin.name);
+        renderSettingsAvatar(shellAvatar, data.admin.profile_image || "", data.admin.name);
 
         if (removeProfileButton) {
             removeProfileButton.dataset.remove = "0";
