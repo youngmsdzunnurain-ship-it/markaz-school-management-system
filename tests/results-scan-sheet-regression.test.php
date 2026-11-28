@@ -49,7 +49,9 @@ scanSheetCheck(
     'Scanner identifies and validates the printed sheet before assigning marks'
 );
 scanSheetCheck(
-    str_contains($scanner, 'findSheetFiducials(canvas)') &&
+    str_contains($scanner, 'findSheetFiducials(canvas, code.location)') &&
+    str_contains($scanner, 'function findSheetFiducials(canvas, location)') &&
+    str_contains($scanner, 'const ux =') && str_contains($scanner, 'const uy =') &&
     str_contains($scanner, 'function sheetHomography(points)') &&
     str_contains($scanner, '[4, 4, points.topLeft]') &&
     str_contains($scanner, '[293, 206, points.bottomRight]'),
