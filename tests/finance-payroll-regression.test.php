@@ -99,6 +99,10 @@ financeRegressionCheck(str_contains($teacherAttendanceApi, 'financeCalculateLate
 financeRegressionCheck(!str_contains($payrollApi, 'grace_period'), 'lateness calculation does not apply a grace period');
 
 financeRegressionCheck(str_contains($financePage, 'id="cashflowChart"') && str_contains($financePage, 'id="incomeMixChart"'), 'finance overview provides dedicated cash-flow and income-mix chart regions');
+financeRegressionCheck(str_contains($financePage, 'Recent payments &amp; receipts') && !str_contains($financePage, 'Payment control'), 'Payments & Receipts keeps payment history and receipts without the removed Payment Control panel');
+financeRegressionCheck(str_contains($financePage, 'id="refundForm"') && str_contains($financePage, 'id="refundQueue"'), 'fee refund requests and the refund approval queue remain available');
+financeRegressionCheck(str_contains($financeJs, 'async function resolvePaymentStudent()') && str_contains($financeJs, 'student.admission_number') && str_contains($financeJs, 'await resolvePaymentStudent()'), 'payment submission resolves the selected exact admission number even when the mobile datalist change event is missed');
+financeRegressionCheck(str_contains($financeStyles, '#tab-payments .payment-history-panel') && str_contains($financeStyles, '#tab-payments #paymentHistory') && str_contains($financeStyles, '@media(max-width:850px)'), 'payment history and refund queues use compact responsive card grids');
 financeRegressionCheck(str_contains($financeJs, 'renderCashflowChart') && str_contains($financeJs, 'renderIncomeMixChart'), 'finance overview renders responsive visual analytics from returned data');
 financeRegressionCheck(str_contains($financeApi, 'financeSelectApplicableFeePlans') && str_contains($financeApi, 'fee_code'), 'invoice generation applies one winning plan per fee category');
 financeRegressionCheck(str_contains($feeCategoriesMigration, 'ADD COLUMN fee_code') && str_contains($financeApi, 'fee_code'), 'fee category is persisted on plans and generated invoices');
