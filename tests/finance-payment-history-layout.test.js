@@ -5,7 +5,7 @@ const path = require('node:path');
 const css = fs.readFileSync(path.join(__dirname, '../public/css/finance.css'), 'utf8');
 const js = fs.readFileSync(path.join(__dirname, '../public/js/finance.js'), 'utf8');
 
-assert.match(css, /#tab-payments\s+\.two-col\s*>\s*\.payment-history-panel\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s,
+assert.match(css, /#tab-payments\s+\.payment-history-panel\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s,
   'Recent Payments & Receipts must span the full payments layout width.');
 assert.match(css, /#paymentHistory\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
   'Payment history items must use one full-width column.');
