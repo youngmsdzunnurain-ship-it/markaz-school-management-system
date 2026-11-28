@@ -7,11 +7,13 @@ on:
       - 'api/attendance/**'
       - 'api/auth/me.php'
       - 'api/finance/**'
+      - 'api/settings/accounts.php'
       - 'app/helpers/finance.php'
       - 'database/migrations/20261124_markaz_independent_finance_staff.sql'
       - 'database/migrations/20261125_teacher_attendance_modes.sql'
       - 'database/migrations/20261126_markaz_fee_refunds.sql'
       - 'database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql'
+      - 'database/migrations/20261128_teacher_account_gender.sql'
       - 'public/attendance.html'
       - 'public/finance.html'
       - 'public/**/*.html'
@@ -19,6 +21,7 @@ on:
       - 'public/js/attendance.js'
       - 'public/js/dashboard.js'
       - 'public/js/finance.js'
+      - 'public/js/account-management.js'
       - 'public/js/management-shell.js'
       - 'public/js/settings.js'
       - 'public/js/finance-receipt.js'
@@ -30,6 +33,8 @@ on:
       - 'tools/header/make-header-css.py'
       - 'public/js/teacher-attendance.js'
       - 'scripts/install-finance.sh'
+      - 'scripts/dev/seed-teacher-preview.php'
+      - 'tests/teacher-account-gender-preview.test.php'
       - 'tests/finance-*'
       - 'tests/finance-fee-accounting-regression.test.php'
       - 'tests/finance-refund-regression.test.php'
@@ -68,6 +73,9 @@ jobs:
           php -l api/auth/me.php
           php -l api/finance/index.php
           php -l api/finance/payroll.php
+          php -l api/settings/accounts.php
+          php -l scripts/dev/seed-teacher-preview.php
+          php -l tests/teacher-account-gender-preview.test.php
           php -l tests/finance-receipts-payroll-workspace-regression.test.php
           php -l api/finance/term-fees.php
           php -l public/api/attendance/teachers.php
@@ -84,6 +92,7 @@ jobs:
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
           node --check public/js/finance.js
+          node --check public/js/account-management.js
           node --check public/js/finance-receipt.js
           node --check public/js/management-shell.js
           node --check public/js/settings.js
@@ -99,6 +108,7 @@ jobs:
           touch .env
           php tests/finance-migration-installer.test.php
           php tests/finance-payroll-regression.test.php
+          php tests/teacher-account-gender-preview.test.php
           php tests/finance-receipts-payroll-workspace-regression.test.php
           php tests/independent-finance-staff-attendance.test.php
           php tests/teacher-attendance-policy-regression.test.php
@@ -164,6 +174,12 @@ jobs:
           INSERT INTO admins(name) VALUES ('Finance Test Admin');
           INSERT INTO academic_periods(id) VALUES (1),(2);
           SQL
+      - name: Apply teacher account gender migration twice
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test < database/migrations/20261128_teacher_account_gender.sql
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test < database/migrations/20261128_teacher_account_gender.sql
+          gender_columns="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_receipt_payroll_test -e "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='markaz_receipt_payroll_test' AND TABLE_NAME='admins' AND COLUMN_NAME='gender'")"
+          test "$gender_columns" = "1"
       - name: Apply receipt and academic payroll migration
         run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test < database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql
       - name: Verify bank, period, payment and foreign-key columns
