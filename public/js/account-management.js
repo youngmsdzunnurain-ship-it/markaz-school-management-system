@@ -35,6 +35,15 @@
                     <label for="accountName">Full name</label>
                     <input id="accountName" name="name" type="text" required maxlength="120" autocomplete="name">
 
+                    <div id="accountGenderField" hidden>
+                        <label for="accountGender">Gender</label>
+                        <select id="accountGender" name="gender">
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
                     <label for="accountRole">Account role</label>
                     <select id="accountRole" name="role" required>
                         <option value="admin" hidden>Senior Admin</option>
@@ -335,6 +344,9 @@
         emailField.hidden = isTeacher;
         emailInput.required = !isTeacher;
         emailInput.disabled = isTeacher;
+        $('#accountGenderField').hidden = !isTeacher;
+        $('#accountGender').required = isTeacher;
+        $('#accountGender').disabled = !isTeacher;
         usernameField.hidden = !isTeacher;
         usernameInput.required = isTeacher;
         usernameInput.disabled = !isTeacher;
@@ -585,6 +597,7 @@
         const studentRoleOption = role.querySelector('option[value="student"]');
         if (studentRoleOption) studentRoleOption.hidden = account.role !== 'student';
         $('#accountName').value = account.name || '';
+        $('#accountGender').value = account.gender || '';
         $('#accountEmail').value = account.email || '';
         usernameInput.value = account.username || '';
         role.value = account.role || 'teacher';
@@ -668,6 +681,7 @@ populateStudents(account.student_id || '');
                         <tr>
                             <th>Account</th>
                             <th>Role</th>
+                            <th>Gender</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -681,8 +695,9 @@ populateStudents(account.student_id || '');
                                     ${account.role === 'student' && account.student_id
                                         ? `<small>Student ID: ${escapeHTML(account.student_id)}</small>` : ''}
                                 </td>
-                                <td>${escapeHTML(String(account.role || '').replaceAll('_', ' '))}</td>
-                                <td>${Number(account.is_active) === 1 || account.is_active === true ? 'Active' : 'Inactive'}</td>
+                                <td>\${escapeHTML(String(account.role || '').replaceAll('_', ' '))}</td>
+                                <td>\${account.role === 'teacher' && account.gender ? escapeHTML(account.gender.charAt(0).toUpperCase() + account.gender.slice(1)) : '—'}</td>
+                                <td>\${Number(account.is_active) === 1 || account.is_active === true ? 'Active' : 'Inactive'}</td>
                                 <td><button type="button" class="edit-managed-account" data-account-id="${escapeHTML(account.id)}">Edit</button></td>
                             </tr>
                         `).join('')}
@@ -738,6 +753,7 @@ populateStudents(account.student_id || '');
             name: $('#accountName').value.trim(),
             email: role.value === 'teacher' ? '' : emailInput.value.trim(),
             username: role.value === 'teacher' ? usernameInput.value.trim() : '',
+            gender: role.value === 'teacher' ? $('#accountGender').value : '',
             role: role.value,
             password: $('#accountPassword').value,
             is_active: $('#accountIsActive').checked,
