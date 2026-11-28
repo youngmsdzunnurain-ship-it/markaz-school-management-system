@@ -74,6 +74,7 @@ scanSheetCheck(
 );
 scanSheetCheck(
     str_contains($scanner, 'state.reviewStudents = students') &&
+    str_contains($scanner, 'if (await processTemplateSheet(canvas)) return;') &&
     str_contains($scanner, '(state.reviewStudents || classStudents()).forEach') &&
     str_contains($scanner, 'Save reviewed results'),
     'Review is restricted to the students printed on that page and still requires explicit confirmation'
