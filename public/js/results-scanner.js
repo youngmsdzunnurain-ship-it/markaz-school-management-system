@@ -991,7 +991,7 @@
         if (!code) return false;
 
         const parts = String(code.data || "").split("|");
-        if (parts.length !== 5 || parts[0] !== "MZSCAN1") {
+        if (parts.length !== 6 || parts[0] !== "MZSCAN1") {
             throw new Error("A QR code was found, but it is not a MARKAZ result scan sheet. Print a fresh sheet from the class page.");
         }
         const printedClassId = parts[1], printedClassType = parts[2];
