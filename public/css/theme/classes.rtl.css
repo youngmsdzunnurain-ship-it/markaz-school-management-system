@@ -703,3 +703,8 @@ html[dir="rtl"][dir="rtl"] body :is(.admin-profile-button, .markaz-shell-profile
     padding-left: 5px;
     padding-right: 16px
 }
+@media (max-width:850px) {
+    html[dir="rtl"][lang] body.finance-workspace-page:not(#mkhdr) .topbar>.finance-menu-control {
+        background: linear-gradient(-145deg,#17643a,#0d2b1c) !important
+    }
+}

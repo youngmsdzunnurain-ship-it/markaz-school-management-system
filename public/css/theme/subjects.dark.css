@@ -2410,4 +2410,19 @@ html[data-theme="dark"][lang] body:not(#mkhdr) .admin-profile-avatar {
     background: #04130b;
     color: #9ed7b2
 }
+@media (max-width:850px) {
+    html[data-theme="dark"][lang] body.finance-workspace-page:not(#mkhdr) .topbar {
+        color: #cbe5d7 !important
+    }
+    html[data-theme="dark"][lang] body.finance-workspace-page:not(#mkhdr) .topbar>.finance-menu-control {
+        border: 1px solid rgba(68, 64, 46, 0.65) !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.364) !important
+    }
+    html[data-theme="dark"][lang] body.finance-workspace-page:not(#mkhdr) .topbar h1 {
+        color: #cbe5d7 !important
+    }
+    html[data-theme="dark"][lang] body.finance-workspace-page:not(#mkhdr) .topbar p {
+        color: #a6b6ac !important
+    }
+}
 }
