@@ -1,0 +1,46 @@
+name: Finance layout and teacher account regression
+
+on:
+  push:
+    paths:
+      - 'public/js/finance.js'
+      - 'public/css/finance.css'
+      - 'public/js/account-management.js'
+      - 'api/settings/accounts.php'
+      - 'database/migrations/20261128_teacher_account_gender.sql'
+      - 'database/seeds/create_demo_teachers.php'
+      - 'tests/finance-payment-layout-teacher-gender-regression.test.php'
+      - '.github/workflows/finance-payment-layout-teacher-gender.yml'
+  pull_request:
+    paths:
+      - 'public/js/finance.js'
+      - 'public/css/finance.css'
+      - 'public/js/account-management.js'
+      - 'api/settings/accounts.php'
+      - 'database/migrations/20261128_teacher_account_gender.sql'
+      - 'database/seeds/create_demo_teachers.php'
+      - 'tests/finance-payment-layout-teacher-gender-regression.test.php'
+      - '.github/workflows/finance-payment-layout-teacher-gender.yml'
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/js/finance.js
+          node --check public/js/account-management.js
+      - name: Check PHP syntax
+        run: |
+          php -l api/settings/accounts.php
+          php -l database/seeds/create_demo_teachers.php
+          php -l tests/finance-payment-layout-teacher-gender-regression.test.php
+      - name: Run focused regression checks
+        run: php tests/finance-payment-layout-teacher-gender-regression.test.php
