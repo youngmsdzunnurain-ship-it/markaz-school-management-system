@@ -19,6 +19,7 @@
     const WARN_MS = 40000;
     const CAMERA = { width: 1920, height: 1440 };
     const OCR_MAX_WIDTH = 2800;
+    const OCR_MAX_HEIGHT = 4000;
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
@@ -814,7 +815,7 @@
             await prepareWorker();
             setUploadProgress(18, "Photo ready — reading text");
             bitmap = await createImageBitmap(file);
-            const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
+            const scale = Math.min(2, OCR_MAX_WIDTH / bitmap.width, OCR_MAX_HEIGHT / bitmap.height);
             const canvas = document.createElement("canvas");
             canvas.width = Math.max(1, Math.round(bitmap.width * scale));
             canvas.height = Math.max(1, Math.round(bitmap.height * scale));
