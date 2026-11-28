@@ -45,14 +45,14 @@ $checks = [
         && str_contains($accountJs, "account.gender.charAt(0).toUpperCase()"),
     'account API reads, validates and persists gender' =>
         str_contains($accountsApi, 'a.gender')
-        && str_contains($accountsApi, "in_array($gender, ['male', 'female'], true)")
+        && str_contains($accountsApi, 'in_array($gender, [\'male\', \'female\'], true)')
         && str_contains($accountsApi, 'gender = ?')
         && str_contains($accountsApi, 'role, gender, password_hash'),
     'gender migration adds a nullable enum for existing staff' =>
         str_contains($migration, "ENUM('male', 'female') NULL"),
     'demo teacher seeder is restricted to CLI and a demo database' =>
         str_contains($seed, "PHP_SAPI !== 'cli'")
-        && str_contains($seed, "str_contains(strtolower($databaseName), 'demo')"),
+        && str_contains($seed, 'str_contains(strtolower($databaseName), \'demo\')'),
     'demo teacher seeder contains exactly twenty sample teachers' =>
         preg_match('/\$teachers\s*=\s*\[(.*?)\n\];/s', $seed, $matches) === 1
         && preg_match_all('/^\s*\[\'/m', $matches[1]) === 20,
