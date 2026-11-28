@@ -56,7 +56,8 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <main class="main-content" id="mainContent">
 <header class="topbar">
-                <button
+                <div class="finance-menu-control">
+<button
                     type="button"
                     id="menuButton"
                     class="menu-button"
@@ -65,6 +66,7 @@
                 >
                     <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
+</div>
 
                 <div>
                     <h1 id="pageTitle">Finance</h1>
@@ -200,8 +202,8 @@
   <form class="panel form-panel" id="paymentForm"><div class="panel-heading"><div><span class="eyebrow">FEE COLLECTION</span><h2>Record student payment</h2></div></div>
    <label>Student search<input id="paymentStudentSearch" list="paymentStudentOptions" autocomplete="off" required placeholder="Admission number or student name"><datalist id="paymentStudentOptions"></datalist><input type="hidden" name="student_id" id="paymentStudentId"></label>
    <label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Payment date and time<input name="paid_at" id="paymentPaidAt" type="datetime-local" required></label>
-   <label>Payment method<select name="method"><option value="bank_transfer">Bank transfer / deposit</option><option value="cash">Cash received</option><option value="pos">POS</option><option value="online">Online payment (manual record pending verification)</option><option value="other">Other</option></select></label>
-   <label>Payer name<input name="payer_name" placeholder="Parent / guardian name"></label><label>Bank or payment reference<input name="reference" placeholder="Transaction reference"></label><label>Notes<textarea name="notes" rows="2"></textarea></label>
+   <label>Payment method<select name="method" id="paymentMethod"><option value="bank_transfer">Bank transfer / deposit</option><option value="cash">Cash received</option><option value="pos">POS</option><option value="online">Online payment (manual record pending verification)</option><option value="other">Other</option></select></label>
+   <label>Payer name<input name="payer_name" placeholder="Parent / guardian name"></label><label id="paymentBankField">Bank name<input name="bank_name" maxlength="100" placeholder="e.g. FirstBank, GTBank"></label><label>Bank or payment reference<input name="reference" placeholder="Transaction reference"></label><label>Notes<textarea name="notes" rows="2"></textarea></label>
    <button class="btn btn-primary" type="submit">Save payment record</button>
    <p class="muted small">Cash is recorded as received. Bank transfers and other non-cash entries remain pending verification.</p>
   </form>
@@ -260,13 +262,36 @@
    <button class="btn btn-primary" type="submit">Add Finance staff</button>
   </form></details>
  </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">MONTH-END PAYROLL</span><h2>Calculate and approve payroll</h2></div></div>
-  <div class="inline-fields payroll-controls"><label>Payroll year<input id="payrollYear" type="number" min="2020" max="2100"></label><label>Payroll month<select id="payrollMonth"></select></label><label>Scheduled release date & time<input id="payrollSchedule" type="datetime-local"></label></div>
-  <div class="button-row"><button class="btn btn-light" id="calculatePayroll">Calculate payroll</button><button class="btn btn-primary" id="approvePayroll" disabled>Approve payroll</button></div>
-  <p class="muted small">Approval freezes the reviewed payroll figures. The scheduled transfer worker will remain disabled until a payout provider, verified teacher bank recipients, server scheduler and credentials have been configured and tested.</p>
-  <div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Position</th><th>Basic salary</th><th>Late minutes</th><th>Late deductions</th><th>Absence deductions</th><th>Total deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollRows"><tr><td colspan="10" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
+ <div class="panel payroll-period-panel">
+  <div class="panel-heading"><div><span class="eyebrow">MONTH-END PAYROLL</span><h2>Calculate and approve payroll</h2><p class="muted">Choose the academic session, term and calendar month. Payroll uses approved teacher attendance within that period.</p></div></div>
+  <div class="inline-fields payroll-controls">
+   <label>Academic session &amp; term<select id="payrollAcademicPeriod" required><option value="">Loading academic periods…</option></select></label>
+   <label>Payroll year<input id="payrollYear" type="number" min="2020" max="2100" required></label>
+   <label>Payroll month<select id="payrollMonth" required></select></label>
+  </div>
+  <div class="button-row"><button class="btn btn-light" id="calculatePayroll" type="button">Calculate payroll</button><button class="btn btn-primary" id="approvePayroll" type="button" disabled>Approve payroll</button></div>
+  <p class="muted small">Gross salary is shown before deductions. Only configured, approved lateness deductions reduce the net salary due. Approval does not send a bank transfer; record the actual payment below after paying the staff member.</p>
+  <div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Other deductions</th><th>Total deductions</th><th>Net salary due</th><th>Payment status</th><th>Paid on</th><th>Paid by</th><th>Action</th></tr></thead><tbody id="payrollRows"><tr><td colspan="13" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
  </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">PAYROLL HISTORY</span><h2>Calculated payroll history</h2><p class="muted small">Includes staff-level rows from saved payroll periods.</p></div></div><div class="table-wrap"><table><thead><tr><th>Period</th><th>Staff member</th><th>Staff ID</th><th>Basic salary</th><th>Total deductions</th><th>Net salary</th><th>Status</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="7" class="empty">Loading payroll history…</td></tr></tbody></table></div></div>
+ <div class="panel payroll-attendance-panel">
+  <div class="panel-heading"><div><span class="eyebrow">PAYROLL ATTENDANCE</span><h2>Attendance history</h2><p class="muted small">Approved daily attendance for the selected month. A dash means no lateness deduction was recorded.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Date</th><th>Teacher / staff</th><th>Staff ID</th><th>Role</th><th>Attendance</th><th>Expected arrival</th><th>Actual arrival</th><th>Late minutes</th><th>Lateness deduction</th></tr></thead><tbody id="payrollAttendanceRows"><tr><td colspan="9" class="empty">Choose an academic period to view attendance history.</td></tr></tbody></table></div>
+ </div>
+ <div class="panel payroll-history-panel">
+  <div class="panel-heading"><div><span class="eyebrow">PAYROLL HISTORY</span><h2>Salary and payment history</h2><p class="muted small">Includes each staff member’s approved salary and any recorded payment date and paying staff member.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Academic session / term</th><th>Month</th><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Other deductions</th><th>Net salary due</th><th>Payment status</th><th>Paid on</th><th>Paid by</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="13" class="empty">Loading payroll history…</td></tr></tbody></table></div>
+ </div>
+ <dialog id="payrollPaymentDialog" class="payroll-payment-dialog">
+  <form id="payrollPaymentForm" method="dialog" class="panel form-panel">
+   <div class="panel-heading"><div><span class="eyebrow">MANUAL PAYMENT RECORD</span><h2>Record salary payment</h2><p id="payrollPaymentSummary" class="muted">Record the payment after it has actually been made.</p></div></div>
+   <input type="hidden" name="payroll_item_id">
+   <label>Payment method<select name="payment_method" required><option value="cash">Cash</option><option value="bank_transfer">Bank transfer</option><option value="pos">POS</option><option value="other">Other</option></select></label>
+   <label>Payment date and time<input name="paid_at" type="datetime-local" required></label>
+   <label>Payment reference <span class="muted">(optional)</span><input name="payment_reference" maxlength="190" placeholder="Transaction / transfer reference"></label>
+   <label>Notes <span class="muted">(optional)</span><textarea name="notes" rows="2" maxlength="500"></textarea></label>
+   <div class="button-row"><button type="button" class="btn btn-light" id="cancelPayrollPayment">Cancel</button><button type="submit" class="btn btn-primary">Confirm payment recorded</button></div>
+  </form>
+ </dialog>
  <div class="panel"><div class="panel-heading"><div><span class="eyebrow">FINANCE STAFF REGISTER</span><h2>Payroll staff and salary profiles</h2></div><button class="btn btn-light" id="reloadStaff">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Position</th><th>Monthly salary</th><th>Attendance policy</th><th>Arrival</th><th>Lateness rule</th><th>Status / action</th></tr></thead><tbody id="staffRows"><tr><td colspan="8" class="empty">Loading Finance staff…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-reports">
