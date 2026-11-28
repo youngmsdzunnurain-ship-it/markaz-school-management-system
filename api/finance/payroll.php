@@ -185,9 +185,11 @@ if($action==='approve'){
     if(!$period||$period['status']!=='calculated')financeJson(['success'=>false,'message'=>'Calculate and review this academic-period payroll before approval.'],409);
     $pdo->prepare('UPDATE finance_payroll_periods SET status="approved",scheduled_at=NULL,approved_by=?,approved_at=NOW() WHERE id=?')->execute([(int)$_SESSION['admin_id'],(int)$period['id']]);
     $pdo->prepare('UPDATE finance_payroll_items SET status="approved" WHERE payroll_period_id=?')->execute([(int)$period['id']]);
+    $itemCount=$pdo->prepare('SELECT COUNT(*) FROM finance_payroll_items WHERE payroll_period_id=?');
+    $itemCount->execute([(int)$period['id']]);
     $positiveRemaining=$pdo->prepare('SELECT COUNT(*) FROM finance_payroll_items WHERE payroll_period_id=? AND net_salary>0');
     $positiveRemaining->execute([(int)$period['id']]);
-    if((int)$positiveRemaining->fetchColumn()===0)$pdo->prepare('UPDATE finance_payroll_periods SET status="completed",processed_at=NOW() WHERE id=?')->execute([(int)$period['id']]);
+    if((int)$itemCount->fetchColumn()>0&&(int)$positiveRemaining->fetchColumn()===0)$pdo->prepare('UPDATE finance_payroll_periods SET status="completed",processed_at=NOW() WHERE id=?')->execute([(int)$period['id']]);
     financeAudit($pdo,'payroll_approved','payroll_period',(int)$period['id'],['academic_period_id'=>$periodId,'year'=>$year,'month'=>$month]);
     $pdo->commit();
     financeJson(['success'=>true,'message'=>'Payroll approved. Record each staff member’s actual salary payment after payment has been made.']);
