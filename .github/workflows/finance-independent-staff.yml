@@ -164,7 +164,7 @@ jobs:
             UNIQUE KEY uq_payroll_payment_item (payroll_item_id)
           ) ENGINE=InnoDB;
           INSERT INTO admins(name) VALUES ('Finance Test Admin');
-          INSERT INTO academic_periods() VALUES (),();
+          INSERT INTO academic_periods(id) VALUES (1),(2);
           SQL
       - name: Apply receipt and academic payroll migration
         run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test < database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql
