@@ -975,3 +975,9 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
   #tab-payroll .payroll-attendance-panel,
   #tab-payroll .payroll-history-panel{padding:12px}
 }
+
+#tab-payroll .pill.no-payment-due{
+  background:#eef1ee;
+  color:#59665d;
+  border:1px solid #d9e0da;
+}
