@@ -981,3 +981,99 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
   color:#59665d;
   border:1px solid #d9e0da;
 }
+
+
+/* Recent payments: keep identity, transaction details and totals in distinct columns. */
+.recent-payments-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.recent-payments-table {
+    width: 100%;
+    min-width: 780px;
+    table-layout: fixed;
+    white-space: normal;
+}
+
+.recent-payments-table th,
+.recent-payments-table td {
+    padding: 13px 12px;
+    vertical-align: middle;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
+
+.recent-payments-table th {
+    font-size: 0.76rem;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+}
+
+.recent-payments-table .recent-payment-receipt-number {
+    display: inline-block;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.recent-payments-table .recent-payment-student-name {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary, inherit);
+}
+
+.recent-payments-table .recent-payment-student-id {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-muted, #718096);
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.recent-payments-table .recent-payment-method,
+.recent-payments-table .recent-payment-date {
+    text-align: center;
+}
+
+.recent-payments-table .recent-payment-amount {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.recent-payments-table .recent-payment-amount strong {
+    display: block;
+    white-space: nowrap;
+}
+
+.recent-payments-table .recent-payment-amount small {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-muted, #718096);
+    font-size: 0.75rem;
+}
+
+.recent-payments-table .recent-payment-status {
+    text-align: center;
+}
+
+.recent-payments-table .recent-payment-status .pill {
+    display: inline-flex;
+    justify-content: center;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+    .recent-payments-wrap {
+        margin-inline: 0;
+        border-radius: 10px;
+    }
+
+    .recent-payments-table {
+        min-width: 780px;
+    }
+}
