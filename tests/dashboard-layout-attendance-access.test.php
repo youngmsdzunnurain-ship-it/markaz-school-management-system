@@ -71,12 +71,12 @@ dashboardAssert(
     str_contains($js, 'permissions.can_manage_attendance === true') &&
     str_contains($js, 'permissions.management_permissions?.attendance === true') &&
     str_contains($js, 'permissions.management_permissions?.school_fees === true'),
-    'Attendance and School Fees navigation must follow administrator, assigned teacher and Management permissions'
+    'Attendance and Finance navigation must follow administrator, assigned teacher and Management permissions'
 );
 dashboardAssert(
     preg_match('/<button type="button" data-role-access="attendance"><i class="fa-solid fa-calendar-check"[^>]*><\/i><span>Attendance<\/span><\/button>/', $html) === 1 &&
-    preg_match('/<button type="button" data-role-access="management_school_fees"><i class="fa-solid fa-wallet"[^>]*><\/i><span>School Fees<\/span><\/button>/', $html) === 1,
-    'Attendance and School Fees quick links must use their matching permission rules'
+    preg_match('/<button type="button" data-role-access="management_school_fees"><i class="fa-solid fa-wallet"[^>]*><\/i><span>Finance<\/span><\/button>/', $html) === 1,
+    'Attendance and Finance quick links must use their matching permission rules'
 );
 dashboardAssert(
     str_contains($js, 'const attendanceAllowed = role === "admin"') &&

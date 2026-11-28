@@ -26,6 +26,8 @@ scanSheetCheck(
 scanSheetCheck(
     str_contains($sheetHtml, '@page{size:A4 landscape;margin:0}') &&
     str_contains($sheetHtml, 'width:297mm;height:210mm') &&
+    str_contains($sheetHtml, 'html,body{width:297mm;height:auto;margin:0!important;padding:0!important') &&
+    str_contains($sheetHtml, '.scan-page:last-child{page-break-after:auto!important;break-after:auto!important}') &&
     str_contains($sheetJs, 'i+=15') &&
     str_contains($sheetJs, 'subjects.length>12'),
     'Printable template is A4 landscape, supports up to 12 selected subjects and paginates rosters in groups of 15'
@@ -78,7 +80,7 @@ scanSheetCheck(
     str_contains($scanner, 'const scoreStartX = 72;') &&
     str_contains($scanner, 'subjectIds.length > 12') &&
     str_contains($scanner, 'studentIds.length > 15'),
-    'Cell geometry adapts to any selected subject subset from one through twelve subjects and up to twenty students per page'
+    'Cell geometry adapts to any selected subject subset from one through twelve subjects and up to fifteen students per page'
 );
 scanSheetCheck(
     str_contains($scanner, 'state.reviewStudents = students') &&

@@ -13,13 +13,13 @@
     <meta name="theme-color" content="#166534">
     <script src="js/page-fit.js?v=20261119-polish1"></script>
 
-    <title>School Fees &amp; Finance | MARKAZ</title>
+    <title>Finance | MARKAZ</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/finance.css?v=20261127-intake-controls3">
+    <link rel="stylesheet" href="css/finance.css?v=20261128-finance-compact1">
     <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-no-entrance-jump1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -38,10 +38,10 @@
                 <div class="brand-logo"><img src="./assets/images/markaz-logo.jpg" alt="MARKAZ school logo"></div>
                 <div class="brand-text">
                     <strong>MARKAZ</strong>
-                    <span>School Fees &amp; Finance</span>
+                    <span>Finance</span>
                 </div>
             </div>
-            <nav class="sidebar-nav finance-sidebar-nav" aria-label="School Fees navigation">
+            <nav class="sidebar-nav finance-sidebar-nav" aria-label="Finance navigation">
                 <div class="nav-section-label">Workspace</div>
                 <a href="./dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Main Dashboard</span></a>
                 <div class="nav-section-label">Financial management</div>
@@ -67,8 +67,8 @@
                 </button>
 
                 <div>
-                    <h1 id="pageTitle">School Fees &amp; Finance</h1>
-                    <p>MARKAZ School Fees &amp; Finance Management</p>
+                    <h1 id="pageTitle">Finance</h1>
+                    <p>MARKAZ financial management</p>
                 </div>
             </header>
 <div class="page-content">
@@ -205,7 +205,7 @@
    <button class="btn btn-primary" type="submit">Save payment record</button>
    <p class="muted small">Cash is recorded as received. Bank transfers and other non-cash entries remain pending verification.</p>
   </form>
-  <div class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">VERIFICATION QUEUE</span><h2>Payment control</h2></div></div><p class="muted">Verify the bank transaction against the school's actual bank statement before confirming it. A transfer screenshot alone is not proof of settlement.</p><button class="btn btn-light" id="reloadPayments">Refresh payment history</button><div id="paymentHistory" class="stack-list"></div></div>
+  <section class="panel payment-history-panel"><div class="panel-heading"><div><span class="eyebrow">PAYMENT REGISTER</span><h2>Recent payments &amp; receipts</h2><p class="muted">Review recorded payments and print receipts. Verify non-cash payments against the bank statement.</p></div><button class="btn btn-light" id="reloadPayments" type="button">Refresh</button></div><div id="paymentHistory" class="stack-list"></div></section>
   <form class="panel form-panel" id="refundForm"><div class="panel-heading"><div><span class="eyebrow">REFUND CONTROL</span><h2>Request a fee refund</h2></div></div>
    <p class="muted">Refund requests require a second authorised staff member to approve them. Approved refunds reopen the affected invoice balances and create a ledger entry.</p>
    <label>Confirmed payment<select name="payment_id" id="refundPaymentSelect" required><option value="">Load confirmed payments</option></select></label>
@@ -284,6 +284,6 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261127-student-fees-auto-sync-cache9"></script>
+    <script src="js/finance.js?v=20261128-payment-resolution1"></script>
 </body>
 </html>
