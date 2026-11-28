@@ -19,3 +19,6 @@ financeSimpleCheck(str_contains($financeTab,'id="incomeQueueHeading">Awaiting ve
 financeSimpleCheck(str_contains($financeTab,'class="two-col finance-register-columns"')&&str_contains($financeTab,'Other income register')&&str_contains($financeTab,'Expense register'),'income and expense registers are paired beneath the entry columns');
 financeSimpleCheck(substr_count($financeTab,'id="incomeForm"')===1&&substr_count($financeTab,'id="expenseForm"')===1&&substr_count($financeTab,'id="incomeQueue"')===1&&substr_count($financeTab,'id="expenseQueue"')===1,'existing form and review queue hooks remain unique');
 financeSimpleCheck(str_contains($css,'.finance-money-columns')&&str_contains($css,'@media(max-width:760px)'),'paired finance layout includes responsive single-column mobile styling');
+
+financeSimpleCheck(str_contains($css,'@media(min-width:761px)')&&str_contains($css,'.finance-money-columns,.finance-register-columns{grid-template-columns:repeat(2,minmax(0,1fr))}'),'income and expense workspaces stay side by side above the mobile breakpoint');
+financeSimpleCheck(str_contains($css,'body.finance-workspace-page .topbar{background:transparent')&&str_contains($css,'body.finance-workspace-page .topbar .menu-button{background:'),'mobile Finance header keeps its title while limiting the green panel to the menu button');
