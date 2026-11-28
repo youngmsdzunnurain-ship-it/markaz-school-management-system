@@ -65,7 +65,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
                 DATE_FORMAT(STR_TO_DATE(CONCAT(p.period_year,'-',LPAD(p.period_month,2,'0'),'-01'),'%Y-%m-%d'),'%M %Y') month_label,
                 s.full_name teacher_name,s.staff_number,s.job_title,
                 i.base_salary,i.late_minutes,i.lateness_deductions,i.other_deductions,i.net_salary,i.status,
-                pp.confirmed_at paid_at,paid_by.name paid_by_name
+                pp.confirmed_at paid_at,pp.payment_method,paid_by.name paid_by_name
          FROM finance_payroll_items i
          INNER JOIN finance_payroll_periods p ON p.id=i.payroll_period_id
          INNER JOIN finance_staff s ON s.id=i.finance_staff_id
