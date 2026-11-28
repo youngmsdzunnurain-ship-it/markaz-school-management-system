@@ -137,7 +137,7 @@ html[dir="rtl"] .mkls-table input { direction: ltr; }
 
 
 /* Scanner photo-upload controls, live torch toggle and visible OCR progress */
-.mkls-controls { display: grid; justify-items: center; gap: 9px; }
+.mkls-controls { display: grid; justify-items: center; gap: 9px; padding: 8px 0 4px; }
 .mkls-control-row { display: flex; justify-content: center; gap: 12px; }
 .mkls-icon-btn {
     width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px;

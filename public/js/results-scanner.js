@@ -26,7 +26,7 @@
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set(),
-        previewUrl: null, torchOn: false
+        previewUrl: null, torchOn: false, reviewSubjects: []
     };
 
     const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -157,33 +157,39 @@
         return rows;
     }
 
-    /* where each subject name is written at the top of the sheet (one or more words, one letter of OCR error allowed) */
+    /* Match printed subject headings despite common OCR substitutions and word-splitting.
+       A close match is accepted only against a subject assigned to this class. */
     function findSubjectSpans(words, subjects) {
         const spans = [];
         subjects.forEach(subject => {
             const target = normalise(subject.name);
             if (target.length < 3) return;
-            const allowed = target.length >= 7 ? 1 : 0;
+            const allowed = target.length >= 9 ? 2 : target.length >= 5 ? 1 : 0;
             let best = null;
             for (let i = 0; i < words.length; i++) {
                 let joined = "";
-                for (let j = i; j < Math.min(words.length, i + 5); j++) {
+                for (let j = i; j < Math.min(words.length, i + 7); j++) {
                     joined += normalise(words[j].text);
-                    if (joined.length > target.length + allowed) break;
-                    if (joined.length >= target.length - allowed && editDistance(joined, target) <= allowed) {
-                        const group = words.slice(i, j + 1);
-                        const span = {
-                            subject,
-                            x0: Math.min(...group.map(w => w.x0)),
-                            x1: Math.max(...group.map(w => w.x1)),
-                            count: group.length
+                    if (joined.length > target.length + allowed + 2) break;
+                    if (joined.length < target.length - allowed) continue;
+                    const distance = editDistance(joined, target);
+                    if (distance > allowed) continue;
+                    const group = words.slice(i, j + 1);
+                    const score = distance / target.length + (group.length - 1) * 0.002;
+                    if (!best || score < best.score) {
+                        best = {
+                            score,
+                            span: {
+                                subject,
+                                x0: Math.min(...group.map(w => w.x0)),
+                                x1: Math.max(...group.map(w => w.x1)),
+                                count: group.length
+                            }
                         };
-                        if (!best || span.count > best.count) best = span;
-                        break;
                     }
                 }
             }
-            if (best) spans.push(best);
+            if (best) spans.push(best.span);
         });
         return spans.sort((a, b) => a.x0 - b.x0);
     }
@@ -278,8 +284,9 @@
                 studentRows.push({ row, student });
             }
         });
-        if (!studentRows.length) return { spans: [], read: [] };
-        const firstStudentY = studentRows[0].row.cy;
+        /* Still inspect the page header when roster OCR misses a student row. The photo
+           must not be rejected solely because one name or admission number was missed. */
+        const firstStudentY = studentRows.length ? studentRows[0].row.cy : Infinity;
         const headerWords = rows.filter(row => row.cy < firstStudentY - 2).flatMap(row => row.words);
         const spans = findSubjectSpans(headerWords, subjects);
         const columns = columnsFor(spans, findLabels(headerWords));
@@ -300,6 +307,7 @@
         state.votes = new Map();
         state.lastSeen = new Map();
         state.studentSeen = new Set();
+        state.reviewSubjects = [];
     }
 
     function classStudents() { return (state.meta && state.meta.students) || []; }
@@ -443,18 +451,6 @@
           </div>
           <button type="button" class="mkls-close" data-mkls-close aria-label="Close">&times;</button>
         </header>
-        <div class="mkls-controls" data-mkls-bar>
-          <div class="mkls-control-row">
-            <button type="button" class="mkls-icon-btn" data-mkls-upload-photo aria-label="Upload photo" title="Upload photo">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 2v5m-2-2 2-2 2 2"/></svg>
-            </button>
-            <button type="button" class="mkls-icon-btn" data-mkls-torch aria-label="Turn torch on" aria-pressed="false" title="Turn torch on" disabled>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6l-1 7h3l-7 13 1-9H8l1-11Z"/></svg>
-            </button>
-          </div>
-          <button type="button" class="mkls-btn ghost mkls-review-control" data-mkls-review>Review scanned results</button>
-          <input type="file" data-mkls-photo-input accept="image/*" hidden>
-        </div>
         <section class="mkls-camera" data-mkls-camera>
           <video class="mkls-video" playsinline muted autoplay></video>
           <img class="mkls-upload-preview" data-mkls-upload-preview alt="Selected result sheet preview" hidden>
@@ -477,6 +473,18 @@
           <div class="mkls-progress-meta"><span data-mkls-progress-label>Preparing photo…</span><strong data-mkls-progress-value>0%</strong></div>
         </section>
         <p class="mkls-guide" data-mkls-guide role="status" aria-live="polite"></p>
+        <div class="mkls-controls" data-mkls-bar>
+          <div class="mkls-control-row">
+            <button type="button" class="mkls-icon-btn" data-mkls-upload-photo aria-label="Upload photo" title="Upload photo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 2v5m-2-2 2-2 2 2"/></svg>
+            </button>
+            <button type="button" class="mkls-icon-btn" data-mkls-torch aria-label="Turn torch on" aria-pressed="false" title="Turn torch on" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6l-1 7h3l-7 13 1-9H8l1-11Z"/></svg>
+            </button>
+          </div>
+          <button type="button" class="mkls-btn ghost mkls-review-control" data-mkls-review>Review scanned results</button>
+          <input type="file" data-mkls-photo-input accept="image/*" hidden>
+        </div>
         <section class="mkls-preview" data-mkls-preview hidden>
           <p class="mkls-preview-note" data-mkls-note></p>
           <div class="mkls-table-wrap">
@@ -741,7 +749,20 @@
             const digitResult = await state.worker.recognize(canvas);
             await state.worker.setParameters({ tessedit_char_whitelist: "" });
             setUploadProgress(88, "Matching the class roster");
-            const parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
+            let parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
+            if (!parsed.spans.length) {
+                /* Sparse-text mode is more reliable for printed headings separated by table borders
+                   or wide gaps. Retry only when the normal page layout found no subject at all. */
+                setUploadProgress(78, "Checking printed subject headings");
+                await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "11" });
+                const sparseTextResult = await state.worker.recognize(canvas);
+                await state.worker.setParameters({ tessedit_pageseg_mode: "6" });
+                const sparseParsed = parseFrame(sparseTextResult, digitResult, classStudents(), state.meta.subjects || []);
+                if (sparseParsed.spans.length > parsed.spans.length ||
+                    (sparseParsed.spans.length === parsed.spans.length && sparseParsed.read.length > parsed.read.length)) {
+                    parsed = sparseParsed;
+                }
+            }
 
             parsed.spans.forEach(span => {
                 const id = String(span.subject.id);
@@ -758,20 +779,23 @@
             setUploadProgress(96, "Checking detected scores");
 
             const subjects = confirmedSubjects();
+            const reviewSubjects = (state.meta.subjects || []).length ? state.meta.subjects : subjects;
             setUploadProgress(100, "Scan complete");
-            if (!subjects.length) {
-                setGuide("The photo is visible, but the subject headings could not be identified clearly. Try a sharper, straight-on photo with the subject names visible.");
-                return;
-            }
-            buildReview(subjects);
+            buildReview(reviewSubjects);
             showPhase("review");
             const detectedStudents = state.studentSeen.size;
             const captured = Math.round(state.lastSeen.size / FIELDS.length);
-            const missing = Math.max(0, classStudents().length * subjects.length - captured);
+            const missing = Math.max(0, classStudents().length * reviewSubjects.length - captured);
             const invalid = [...$("[data-mkls-rows]", overlay).querySelectorAll("tr.needs-check")].length;
+            if (!subjects.length) {
+                $("[data-mkls-note]", overlay).textContent =
+                    "The photo was processed, but the printed subject headings could not be matched confidently. All subjects assigned to this class are listed below; verify the subject rows and enter or correct any missing marks before saving.";
+                setGuide("Your photo remains available above. Review every assigned subject and check the marks before saving.");
+                return;
+            }
             $("[data-mkls-note]", overlay).textContent =
-                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected across ${subjects.length} subject(s). ${captured} score line(s) read; ${missing} need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} Check the marks before saving.`;
-            setGuide("Review the highlighted rows and confirm every score before saving.");
+                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected; ${subjects.length} subject heading(s) recognised. ${captured} score line(s) read; ${missing} need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} All assigned subjects are shown for review.`;
+            setGuide("Review every subject and the highlighted rows, then confirm all scores before saving.");
         } catch (error) {
             setUploadProgress(100, "Scan could not finish");
             setGuide(error.message || "The photo could not be read. Your selected photo is still visible; try another clear image.");
@@ -886,6 +910,7 @@
     }
 
     function buildReview(subjects) {
+        state.reviewSubjects = [...subjects];
         const body = $("[data-mkls-rows]", overlay);
         body.replaceChildren();
         let missing = 0;
@@ -955,7 +980,8 @@
         if (state.phase !== "review") return;
         const message = $("[data-mkls-save-msg]", overlay);
         const saveButton = $("[data-mkls-save]", overlay);
-        const subjectsById = new Map(confirmedSubjects().map(subject => [String(subject.id), subject]));
+        const subjectsById = new Map((state.reviewSubjects.length ? state.reviewSubjects : confirmedSubjects())
+            .map(subject => [String(subject.id), subject]));
         const studentsById = new Map(classStudents().map(student => [String(student.id), student]));
         const entries = [];
         for (const tr of overlay.querySelectorAll("[data-mkls-rows] tr")) {
