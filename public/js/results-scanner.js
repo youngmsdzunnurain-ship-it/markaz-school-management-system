@@ -929,12 +929,12 @@
         const context = canvas.getContext("2d", { willReadFrequently: true });
         const output = context.createImageData(canvas.width, canvas.height);
         output.data.fill(255);
-        const rowY = 42 + rowIndex * 8;
-        const scoreStartX = 60;
+        const rowY = 42 + rowIndex * 10;
+        const scoreStartX = 72;
         for (let cell = 0; cell < cellCount; cell++) {
             const pageCell = startCell + cell;
             const cellX = scoreStartX + pageCell * cellWidth + 0.8;
-            const cellY = rowY + 0.8;
+            const cellY = rowY + 1.8;
             const targetX = cell * (CELL_W + GAP);
             for (let py = 0; py < CELL_H; py++) {
                 const pageY = cellY + (py / CELL_H) * 6.4;
@@ -1004,7 +1004,7 @@
         if (String(state.meta.academicPeriodId) !== printedPeriodId) {
             throw new Error("This scan sheet belongs to a different academic period. Print a fresh sheet for the current term.");
         }
-        if (!subjectIds.length || subjectIds.length > 12 || !studentIds.length || studentIds.length > 20) {
+        if (!subjectIds.length || subjectIds.length > 12 || !studentIds.length || studentIds.length > 15) {
             throw new Error("The MARKAZ scan sheet has an invalid subject or student list. Print it again.");
         }
         const subjectsById = new Map((state.meta.subjects || []).map(subject => [String(subject.id), subject]));
@@ -1034,7 +1034,7 @@
         clearTimeout(state.timer);
         stopStream();
         const scoreCellCount = subjects.length * FIELDS.length;
-        const cellWidth = (289 - 56) / scoreCellCount;
+        const cellWidth = (289 - 68) / scoreCellCount;
         state.subjectSeen = new Map(subjects.map(subject => [String(subject.id), CONFIRM_READS]));
         state.subjectInfo = new Map(subjects.map(subject => [String(subject.id), subject]));
         state.studentSeen = new Set(students.map(student => String(student.id)));
