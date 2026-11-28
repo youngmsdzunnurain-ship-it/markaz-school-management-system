@@ -24,6 +24,7 @@ on:
       - 'public/css/finance.css'
       - 'public/css/dashboard-2026.css'
       - 'public/css/page-header-2026.css'
+      - 'tools/header/make-header-css.py'
       - 'public/js/teacher-attendance.js'
       - 'scripts/install-finance.sh'
       - 'tests/finance-*'
@@ -82,6 +83,7 @@ jobs:
           node --check public/js/finance-receipt.js
           node --check public/js/teacher-attendance.js
           bash -n scripts/install-finance.sh
+          python -m py_compile tools/header/make-header-css.py
 
       - name: Run Finance and attendance regression tests
         run: |
