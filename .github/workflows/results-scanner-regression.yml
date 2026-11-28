@@ -11,6 +11,7 @@ on:
       - 'public/js/results-scan-sheet.js'
       - 'public/results-scan-sheet.html'
       - 'public/class.html'
+      - 'public/css/class.css'
       - 'public/js/class.js'
       - 'tests/results-scan-sheet-regression.test.php'
       - 'tests/results-scanner-atomic-upload-regression.test.php'
@@ -47,4 +48,6 @@ jobs:
           node --check public/js/results-scan-sheet.js
           node --check public/js/class.js
       - name: Run scanner regression checks
-        run: php tests/results-scanner-atomic-upload-regression.test.php
+        run: |
+          php tests/results-scanner-atomic-upload-regression.test.php
+          php tests/results-scan-sheet-regression.test.php
