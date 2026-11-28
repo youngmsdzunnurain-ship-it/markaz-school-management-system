@@ -27,7 +27,7 @@
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set(),
-        previewUrl: null, torchOn: false, reviewSubjects: [], reviewStudents: null
+        previewUrl: null, torchOn: false, reviewSubjects: [], reviewStudents: null, templateCheckAt: 0
     };
 
     const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -366,6 +366,7 @@
         state.studentSeen = new Set();
         state.reviewSubjects = [];
         state.reviewStudents = null;
+        state.templateCheckAt = 0;
     }
 
     function classStudents() { return (state.meta && state.meta.students) || []; }
@@ -1016,6 +1017,22 @@
 
         const fiducials = findSheetFiducials(canvas, code.location);
         const h = sheetHomography(fiducials);
+        if (!state.previewUrl) {
+            const snapshot = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.9));
+            if (snapshot) {
+                state.previewUrl = URL.createObjectURL(snapshot);
+                const imagePreview = $("[data-mkls-upload-preview]", overlay);
+                imagePreview.src = state.previewUrl;
+                imagePreview.hidden = false;
+            }
+        }
+        const className = (document.getElementById("classTitle")?.textContent || "Selected class").trim();
+        $("[data-mkls-class-name]", overlay).textContent = className;
+        $("[data-mkls-student-count]", overlay).textContent = String(classStudents().length);
+        $("[data-mkls-subject-count]", overlay).textContent = String((state.meta.subjects || []).length);
+        showPhase("uploading");
+        clearTimeout(state.timer);
+        stopStream();
         const scoreCellCount = subjects.length * FIELDS.length;
         const cellWidth = (289 - 56) / scoreCellCount;
         state.subjectSeen = new Map(subjects.map(subject => [String(subject.id), CONFIRM_READS]));
@@ -1032,6 +1049,7 @@
         });
         let captured = 0;
         const total = students.length * scoreCellCount;
+        setUploadProgress(40, "MARKAZ grid detected · reading score cells");
         for (let rowIndex = 0; rowIndex < students.length; rowIndex++) {
             for (let groupStart = 0; groupStart < scoreCellCount; groupStart += 12) {
                 const groupCount = Math.min(12, scoreCellCount - groupStart);
@@ -1192,7 +1210,7 @@
             if (state.phase !== "camera") return;
             judge(parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []));
         } catch (error) {
-            setGuide("The reader paused. Keep the sheet in view.");
+            setGuide(error.message || "The reader paused. Keep the sheet in view.");
         } finally {
             state.reading = false;
             if (state.phase === "camera") {
