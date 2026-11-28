@@ -1,11 +1,8 @@
-/* MARKAZ Results Scanner: live camera, whole class sheet.
-   "Scan results" opens the camera at once. Hold it over the sheet and move it slowly over the whole page.
-   The sheet is read on this device: the subject names written at the top, every student row (admission
-   number and name) and the three scores (CA1, CA2, Exam) under each subject. Any number of subjects on
-   the sheet is supported, and the page can have 30 or more student rows.
-   Results are saved automatically only when every student and every subject on the sheet has been read the
-   same way on consecutive frames. Anything unclear goes to the review table instead. An existing, different
-   score is never overwritten. Nothing is uploaded and no picture is kept. */
+/* MARKAZ Results Scanner: live camera and template-guided A4 scan sheets.
+   Printed MARKAZ sheets carry a QR identity, four page fiducials, up to 12 selected subjects
+   and no more than 15 students per page. The scanner aligns the page, reads individual score
+   cells and presents them for explicit review before the existing atomic save. Generic photos
+   retain the separate OCR fallback. An existing, different score is never overwritten. */
 (() => {
     "use strict";
     if (window.MarkazResultsScanner) return;
