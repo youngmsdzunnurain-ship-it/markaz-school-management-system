@@ -268,6 +268,28 @@
         return cells;
     }
 
+    /* If OCR misses the subject-name text, a printed sheet can still expose its
+       repeated CA1 / CA2 / Exam column headers. Only infer the subject order when
+       every class subject has one complete, correctly ordered three-column group. */
+    function inferSubjectSpansFromColumnLabels(words, subjects) {
+        if (!subjects.length) return [];
+        const labels = findLabels(words).sort((a, b) => a.cx - b.cx);
+        if (labels.length !== subjects.length * FIELDS.length) return [];
+        const expected = ["ca1", "ca2", "exam"];
+        const spans = [];
+        for (let index = 0; index < subjects.length; index++) {
+            const group = labels.slice(index * FIELDS.length, (index + 1) * FIELDS.length);
+            if (!expected.every((kind, offset) => group[offset].kind === kind)) return [];
+            spans.push({
+                subject: subjects[index],
+                x0: group[0].cx,
+                x1: group[2].cx,
+                inferredFromColumnLabels: true
+            });
+        }
+        return spans;
+    }
+
     /* one camera frame. The text pass finds subject names and student rows; the digits pass reads the scores. */
     function parseFrame(textResult, digitResult, students, subjects) {
         const rows = toRows(wordsOf(textResult));
@@ -288,7 +310,8 @@
            must not be rejected solely because one name or admission number was missed. */
         const firstStudentY = studentRows.length ? studentRows[0].row.cy : Infinity;
         const headerWords = rows.filter(row => row.cy < firstStudentY - 2).flatMap(row => row.words);
-        const spans = findSubjectSpans(headerWords, subjects);
+        const detectedSpans = findSubjectSpans(headerWords, subjects);
+        const spans = detectedSpans.length ? detectedSpans : inferSubjectSpansFromColumnLabels(headerWords, subjects);
         const columns = columnsFor(spans, findLabels(headerWords));
         const read = studentRows.map(({ row, student }) => ({ student, cells: readRowScores(row, digits, spans, columns, tolerance) }));
         state.debug = {
