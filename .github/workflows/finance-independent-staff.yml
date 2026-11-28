@@ -23,6 +23,7 @@ on:
       - 'public/css/finance-receipt.css'
       - 'public/css/finance.css'
       - 'public/css/dashboard-2026.css'
+      - 'public/css/page-header-2026.css'
       - 'public/js/teacher-attendance.js'
       - 'scripts/install-finance.sh'
       - 'tests/finance-*'
