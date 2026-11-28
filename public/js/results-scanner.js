@@ -825,7 +825,7 @@
         return rows.map(row => row[size]);
     }
 
-    function findSheetFiducials(canvas) {
+    function findSheetFiducials(canvas, location) {
         const scale = Math.min(1, 900 / canvas.width, 900 / canvas.height);
         const width = Math.max(1, Math.round(canvas.width * scale));
         const height = Math.max(1, Math.round(canvas.height * scale));
@@ -868,27 +868,34 @@
                 candidates.push({ x: (minX + maxX) / 2, y: (minY + maxY) / 2, area: tail });
             }
         }
-        const corners = {
-            topLeft: item => item.x < width * 0.3 && item.y < height * 0.3,
-            topRight: item => item.x > width * 0.7 && item.y < height * 0.3,
-            bottomLeft: item => item.x < width * 0.3 && item.y > height * 0.7,
-            bottomRight: item => item.x > width * 0.7 && item.y > height * 0.7
+        const qr = location;
+        const uxLength = Math.hypot(qr.topRightCorner.x - qr.topLeftCorner.x, qr.topRightCorner.y - qr.topLeftCorner.y);
+        const uyLength = Math.hypot(qr.bottomLeftCorner.x - qr.topLeftCorner.x, qr.bottomLeftCorner.y - qr.topLeftCorner.y);
+        if (!uxLength || !uyLength) throw new Error("The sheet QR code could not establish its orientation.");
+        const ux = { x: (qr.topRightCorner.x - qr.topLeftCorner.x) / uxLength, y: (qr.topRightCorner.y - qr.topLeftCorner.y) / uxLength };
+        const uy = { x: (qr.bottomLeftCorner.x - qr.topLeftCorner.x) / uyLength, y: (qr.bottomLeftCorner.y - qr.topLeftCorner.y) / uyLength };
+        const qrCentre = {
+            x: (qr.topLeftCorner.x + qr.topRightCorner.x + qr.bottomLeftCorner.x + qr.bottomRightCorner.x) / 4,
+            y: (qr.topLeftCorner.y + qr.topRightCorner.y + qr.bottomLeftCorner.y + qr.bottomRightCorner.y) / 4
         };
-        const choose = (predicate, distance) => candidates.filter(predicate)
-            .sort((a, b) => distance(a) - distance(b))[0];
-        const tl = choose(corners.topLeft, item => item.x + item.y);
-        const tr = choose(corners.topRight, item => (width - item.x) + item.y);
-        const bl = choose(corners.bottomLeft, item => item.x + (height - item.y));
-        const br = choose(corners.bottomRight, item => (width - item.x) + (height - item.y));
+        const projected = candidates.map(item => {
+            const x = item.x / scale - qrCentre.x, y = item.y / scale - qrCentre.y;
+            return { point: { x: item.x / scale, y: item.y / scale }, dx: x * ux.x + y * ux.y, dy: x * uy.x + y * uy.y };
+        });
+        const choose = (positiveX, positiveY) => {
+            const matches = projected.filter(item =>
+                (positiveX ? item.dx > 0 : item.dx < 0) &&
+                (positiveY ? item.dy > 0 : item.dy < 0));
+            matches.sort((a, b) =>
+                (Math.abs(b.dx) + Math.abs(b.dy)) - (Math.abs(a.dx) + Math.abs(a.dy)));
+            return matches[0]?.point;
+        };
+        const tl = choose(false, false), tr = choose(true, false);
+        const bl = choose(false, true), br = choose(true, true);
         if (!tl || !tr || !bl || !br) {
             throw new Error("The four MARKAZ page-corner markers were not all visible. Photograph the complete sheet with all four corners in frame.");
         }
-        return {
-            topLeft: { x: tl.x / scale, y: tl.y / scale },
-            topRight: { x: tr.x / scale, y: tr.y / scale },
-            bottomLeft: { x: bl.x / scale, y: bl.y / scale },
-            bottomRight: { x: br.x / scale, y: br.y / scale }
-        };
+        return { topLeft: tl, topRight: tr, bottomLeft: bl, bottomRight: br };
     }
 
     function sheetHomography(points) {
@@ -1004,7 +1011,7 @@
             throw new Error("The printed sheet no longer matches this class roster or subject list. Print a fresh sheet.");
         }
 
-        const fiducials = findSheetFiducials(canvas);
+        const fiducials = findSheetFiducials(canvas, code.location);
         const h = sheetHomography(fiducials);
         const scoreCellCount = subjects.length * FIELDS.length;
         const cellWidth = (289 - 56) / scoreCellCount;
