@@ -270,8 +270,8 @@
    <label>Payroll month<select id="payrollMonth" required></select></label>
   </div>
   <div class="button-row"><button class="btn btn-light" id="calculatePayroll" type="button">Calculate payroll</button><button class="btn btn-primary" id="approvePayroll" type="button" disabled>Approve payroll</button></div>
-  <p class="muted small">Gross salary is shown before deductions. Only configured, approved lateness deductions reduce the net salary due. Approval does not send a bank transfer; record the actual payment below after paying the staff member.</p>
-  <div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Other deductions</th><th>Total deductions</th><th>Net salary due</th><th>Payment status</th><th>Method</th><th>Paid on</th><th>Paid by</th><th>Action</th></tr></thead><tbody id="payrollRows"><tr><td colspan="14" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
+  <p class="muted small">Gross salary is shown before deductions. Approved lateness and existing absence deductions are shown separately; net salary due is the balance after deductions. Approval does not send a bank transfer.</p>
+  <div class="table-wrap"><table><thead><tr><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Absence deductions</th><th>Total deductions</th><th>Net salary due</th><th>Payment status</th><th>Method</th><th>Paid on</th><th>Paid by</th><th>Action</th></tr></thead><tbody id="payrollRows"><tr><td colspan="14" class="empty">No payroll calculated for this period.</td></tr></tbody></table></div>
  </div>
  <div class="panel payroll-attendance-panel">
   <div class="panel-heading"><div><span class="eyebrow">PAYROLL ATTENDANCE</span><h2>Attendance history</h2><p class="muted small">Approved daily attendance for the selected month. A dash means no lateness deduction was recorded.</p></div></div>
@@ -279,7 +279,7 @@
  </div>
  <div class="panel payroll-history-panel">
   <div class="panel-heading"><div><span class="eyebrow">PAYROLL HISTORY</span><h2>Salary and payment history</h2><p class="muted small">Includes each staff member’s approved salary and any recorded payment date and paying staff member.</p></div></div>
-  <div class="table-wrap"><table><thead><tr><th>Academic session / term</th><th>Month</th><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Other deductions</th><th>Net salary due</th><th>Payment status</th><th>Method</th><th>Paid on</th><th>Paid by</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="14" class="empty">Loading payroll history…</td></tr></tbody></table></div>
+  <div class="table-wrap"><table><thead><tr><th>Academic session / term</th><th>Month</th><th>Staff member</th><th>Staff ID</th><th>Role</th><th>Gross salary</th><th>Late minutes</th><th>Lateness deduction</th><th>Absence deductions</th><th>Net salary due</th><th>Payment status</th><th>Method</th><th>Paid on</th><th>Paid by</th></tr></thead><tbody id="payrollHistoryRows"><tr><td colspan="14" class="empty">Loading payroll history…</td></tr></tbody></table></div>
  </div>
  <dialog id="payrollPaymentDialog" class="payroll-payment-dialog">
   <form id="payrollPaymentForm" method="dialog" class="panel form-panel">
