@@ -94,3 +94,81 @@ jobs:
           php tests/finance-fee-accounting-regression.test.php
           php tests/finance-refund-regression.test.php
           php tests/finance-term-fees-regression.test.php
+
+  receipt-payroll-schema:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: markaz_receipt_payroll_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install MariaDB client
+        run: sudo apt-get update && sudo apt-get install -y mariadb-client
+      - name: Build the existing Finance schema required by the additive migration
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test <<'SQL'
+          CREATE TABLE admins (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(160) NOT NULL
+          ) ENGINE=InnoDB;
+          CREATE TABLE academic_periods (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
+          ) ENGINE=InnoDB;
+          CREATE TABLE finance_fee_payments (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            payer_name VARCHAR(160) NULL
+          ) ENGINE=InnoDB;
+          CREATE TABLE finance_payroll_periods (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            period_year SMALLINT UNSIGNED NOT NULL,
+            period_month TINYINT UNSIGNED NOT NULL,
+            UNIQUE KEY uq_payroll_period (period_year,period_month)
+          ) ENGINE=InnoDB;
+          CREATE TABLE finance_payroll_payments (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            payroll_item_id BIGINT UNSIGNED NOT NULL,
+            provider VARCHAR(60) NOT NULL,
+            idempotency_key VARCHAR(120) NOT NULL UNIQUE,
+            provider_reference VARCHAR(190) NULL UNIQUE,
+            amount DECIMAL(14,2) NOT NULL,
+            status ENUM('queued','processing','successful','failed','unknown') NOT NULL DEFAULT 'queued',
+            failure_reason TEXT NULL,
+            initiated_at DATETIME NULL,
+            confirmed_at DATETIME NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_payroll_payment_item (payroll_item_id)
+          ) ENGINE=InnoDB;
+          INSERT INTO admins(name) VALUES ('Finance Test Admin');
+          INSERT INTO academic_periods() VALUES (),();
+          SQL
+      - name: Apply receipt and academic payroll migration
+        run: mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test < database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql
+      - name: Verify bank, period, payment and foreign-key columns
+        run: |
+          columns="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_receipt_payroll_test -e "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='markaz_receipt_payroll_test' AND ((TABLE_NAME='finance_fee_payments' AND COLUMN_NAME='bank_name') OR (TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME IN ('recorded_by','payment_method','payment_reference','notes')))" )"
+          test "$columns" = "6"
+          foreign_keys="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_receipt_payroll_test -e "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='markaz_receipt_payroll_test' AND REFERENCED_TABLE_NAME IS NOT NULL")"
+          test "$foreign_keys" = "2"
+          index_columns="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_receipt_payroll_test -e "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='markaz_receipt_payroll_test' AND TABLE_NAME='finance_payroll_periods' AND INDEX_NAME='uq_payroll_academic_period_month' AND NON_UNIQUE=0")"
+          test "$index_columns" = "3"
+      - name: Verify academic period payroll uniqueness and manual payment metadata
+        run: |
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test -e "INSERT INTO finance_payroll_periods(academic_period_id,period_year,period_month) VALUES(1,2026,11)"
+          if mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test -e "INSERT INTO finance_payroll_periods(academic_period_id,period_year,period_month) VALUES(1,2026,11)"; then
+            echo "Duplicate academic-period payroll was unexpectedly accepted" >&2
+            exit 1
+          fi
+          mariadb --protocol=TCP -h127.0.0.1 -uroot -proot markaz_receipt_payroll_test -e "INSERT INTO finance_payroll_periods(academic_period_id,period_year,period_month) VALUES(2,2026,11); INSERT INTO finance_payroll_payments(payroll_item_id,provider,idempotency_key,amount,status,recorded_by,payment_method) VALUES(1,'manual','manual-payroll-item-1',50000.00,'successful',1,'cash')"
+          payment="$(mariadb --protocol=TCP -h127.0.0.1 -uroot -proot -N markaz_receipt_payroll_test -e "SELECT CONCAT(recorded_by,':',payment_method,':',amount) FROM finance_payroll_payments WHERE payroll_item_id=1")"
+          test "$payment" = "1:cash:50000.00"
