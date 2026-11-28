@@ -6,7 +6,7 @@ $pdo=db();
 if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
     $year=(int)($_GET['year']??date('Y'));$month=(int)($_GET['month']??date('n'));
     $periods=$pdo->query(
-        "SELECT ap.id,ap.starts_on,ap.ends_on,ap.is_current,s.name session_name,t.name term_name
+        "SELECT ap.id,ap.starts_on,ap.ends_on,ap.is_current,s.is_current session_is_current,s.name session_name,t.name term_name
          FROM academic_periods ap
          INNER JOIN academic_sessions s ON s.id=ap.academic_session_id
          INNER JOIN terms t ON t.id=ap.term_id
@@ -14,7 +14,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
     )->fetchAll(PDO::FETCH_ASSOC);
     $selectedPeriodId=(int)($_GET['period_id']??0);
     if($selectedPeriodId<1){
-        foreach($periods as $candidate){if((int)$candidate['is_current']===1){$selectedPeriodId=(int)$candidate['id'];break;}}
+        foreach($periods as $candidate){if((int)$candidate['is_current']===1&&(int)$candidate['session_is_current']===1){$selectedPeriodId=(int)$candidate['id'];break;}}
         if($selectedPeriodId<1&&$periods)$selectedPeriodId=(int)$periods[0]['id'];
     }
     $selectedPeriod=null;
