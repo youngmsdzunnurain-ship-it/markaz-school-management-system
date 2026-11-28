@@ -981,3 +981,28 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
   color:#59665d;
   border:1px solid #d9e0da;
 }
+
+
+/* Recent Payments: balanced columns and readable cell hierarchy. */
+.recent-payments-panel{min-width:0;}
+.recent-payments-wrap{width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid #e8eee9;border-radius:12px;}
+.recent-payments-table{width:100%;min-width:760px;table-layout:fixed;white-space:normal!important;font-size:12px;}
+.recent-payments-table th,.recent-payments-table td{padding:13px 14px;vertical-align:middle;overflow-wrap:anywhere;}
+.recent-payments-table th:nth-child(1){width:14%;}
+.recent-payments-table th:nth-child(2){width:25%;}
+.recent-payments-table th:nth-child(3){width:15%;}
+.recent-payments-table th:nth-child(4){width:18%;}
+.recent-payments-table th:nth-child(5){width:16%;text-align:right;}
+.recent-payments-table th:nth-child(6){width:12%;text-align:center;}
+.recent-payments-table td:nth-child(5){text-align:right;white-space:nowrap;}
+.recent-payments-table td:nth-child(6){text-align:center;}
+.recent-payments-table tbody tr:hover{background:#f8fbf8;}
+.payment-receipt-number{display:inline-block;font-weight:750;color:#244b34;line-height:1.35;}
+.payment-student-cell{display:grid;gap:4px;min-width:0;}
+.payment-student-cell b{display:block;color:#20392b;font-size:12px;line-height:1.4;white-space:normal;overflow-wrap:anywhere;}
+.payment-student-cell small,.payment-amount-cell small{display:block;color:#77877c;font-size:10px;line-height:1.35;white-space:normal;}
+.payment-method-label{display:inline-block;text-transform:capitalize;color:#40584a;line-height:1.4;white-space:normal;}
+.payment-date-label{display:block;color:#52685a;line-height:1.4;white-space:normal;}
+.payment-amount-cell strong{display:block;color:#1e4930;font-size:12px;font-weight:800;white-space:nowrap;}
+.payment-amount-cell small{margin-top:3px;}
+@media(max-width:760px){.recent-payments-wrap{border-radius:10px}.recent-payments-table{min-width:720px}.recent-payments-table th,.recent-payments-table td{padding:11px 10px}}
