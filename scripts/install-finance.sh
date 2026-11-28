@@ -118,6 +118,7 @@ refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TAB
 receipt_payroll_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_payments' AND COLUMN_NAME='bank_name') OR (TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME IN ('recorded_by','payment_method','payment_reference','notes')))")"
 receipt_payroll_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id' AND REFERENCED_TABLE_NAME='academic_periods') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME='recorded_by' AND REFERENCED_TABLE_NAME='admins'))")"
 receipt_payroll_index="$(query "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_payroll_periods' AND INDEX_NAME='uq_payroll_academic_period_month' AND NON_UNIQUE=0")"
+teacher_gender_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='admins' AND COLUMN_NAME='gender'")"
 independent_staff_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME='finance_staff' AND ((TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
 if [[ "$independent_staff_tables" == "0" && ( "$independent_staff_columns" != "0" || "$independent_staff_constraints" != "0" ) ]]; then
     echo "ERROR: Partial independent Finance staff migration detected. No changes made." >&2
@@ -135,11 +136,15 @@ if [[ "$receipt_payroll_columns" != "0" && "$receipt_payroll_columns" != "6" ]] 
     echo "ERROR: Partial receipt and academic payroll migration detected ($receipt_payroll_columns/6 columns, $receipt_payroll_constraints/2 foreign keys, $receipt_payroll_index/3 unique-index columns). No changes made." >&2
     exit 3
 fi
+if [[ "$teacher_gender_columns" != "0" && "$teacher_gender_columns" != "1" ]]; then
+    echo "ERROR: Partial teacher gender migration detected. No changes made." >&2
+    exit 3
+fi
 if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2" ]]; then
         echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
         exit 3
     fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" && "$receipt_payroll_columns" == "6" && "$receipt_payroll_constraints" == "2" && "$receipt_payroll_index" == "3" ]]; then
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" && "$receipt_payroll_columns" == "6" && "$receipt_payroll_constraints" == "2" && "$receipt_payroll_index" == "3" && "$teacher_gender_columns" == "1" ]]; then
     echo "MARKAZ Finance is already installed: fee foundations, term fees, student intake overrides, independent Finance staff, attendance policies, refunds, receipt attribution and term payroll are present."
     exit 0
 fi
@@ -237,5 +242,11 @@ receipt_payroll_constraints="$(query "SELECT COUNT(*) FROM information_schema.KE
 receipt_payroll_index="$(query "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_payroll_periods' AND INDEX_NAME='uq_payroll_academic_period_month' AND NON_UNIQUE=0")"
 [[ "$receipt_payroll_columns" == "6" && "$receipt_payroll_constraints" == "2" && "$receipt_payroll_index" == "3" ]] || { echo "ERROR: Receipt and academic payroll schema verification failed. Restore from: $backup" >&2; exit 5; }
 
-echo "SUCCESS: MARKAZ Finance schema, including per-student intake classification, is installed and verified."
+if [[ "$teacher_gender_columns" == "0" ]]; then
+    apply_migration "20261128_teacher_account_gender.sql"
+fi
+teacher_gender_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='admins' AND COLUMN_NAME='gender'")"
+[[ "$teacher_gender_columns" == "1" ]] || { echo "ERROR: Teacher gender schema verification failed. Restore from: $backup" >&2; exit 5; }
+
+echo "SUCCESS: MARKAZ Finance schema, teacher gender and per-student intake classification are installed and verified."
 echo "Backup retained at: $backup"
