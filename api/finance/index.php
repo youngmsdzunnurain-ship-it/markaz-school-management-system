@@ -433,7 +433,7 @@ try {
             }
             financeAudit($pdo,'fee_payment_recorded','fee_payment',$paymentId,['amount'=>$amount,'method'=>$method,'status'=>$status]);
             $pdo->commit();
-        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
+        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();if($e instanceof DomainException)financeJson(['success'=>false,'message'=>$e->getMessage()],422);throw $e;}
         financeJson(['success'=>true,'receipt_id'=>$paymentId,'status'=>$status,'message'=>$status==='confirmed'?'Cash payment recorded and allocated.':'Payment recorded as pending verification.'],201);
     }
 
@@ -522,7 +522,7 @@ try {
     if($action==='record_income'){
         $category=trim((string)($input['category']??''));$description=trim((string)($input['description']??''));$amount=financeMoney($input['amount']??'');
         $date=(string)($input['received_date']??date('Y-m-d'));$method=(string)($input['payment_method']??'bank_transfer');
-        if($category===''||$description===''||!financeValidDate($date)||!in_array($method,['cash','bank_transfer','pos','other'],true))financeJson(['success'=>false,'message'=>'Complete the income fields correctly.'],422);
+        if($category===''||!financeValidDate($date)||!in_array($method,['cash','bank_transfer','pos'],true))financeJson(['success'=>false,'message'=>'Enter an income type, amount, valid date and payment method.'],422);
         $status=$method==='cash'?'confirmed':'pending';$pdo->beginTransaction();
         try{
             $stmt=$pdo->prepare('INSERT INTO finance_other_income (income_number,category,description,payer_name,amount,payment_method,reference,received_date,status,recorded_by,verified_by,verified_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
@@ -564,7 +564,7 @@ try {
     if($action==='create_expense'){
         $category=trim((string)($input['category']??''));$description=trim((string)($input['description']??''));$amount=financeMoney($input['amount']??'');
         $date=(string)($input['expense_date']??date('Y-m-d'));$method=(string)($input['payment_method']??'bank_transfer');
-        if($category===''||$description===''||!financeValidDate($date)||!in_array($method,['cash','bank_transfer','pos','other'],true))financeJson(['success'=>false,'message'=>'Complete the expense fields correctly.'],422);
+        if($category===''||!financeValidDate($date)||!in_array($method,['cash','bank_transfer','pos'],true))financeJson(['success'=>false,'message'=>'Enter an item or purpose, amount, valid date and payment method.'],422);
         $st=$pdo->prepare('INSERT INTO finance_expenses (expense_number,category,description,vendor_name,amount,payment_method,reference,expense_date,recorded_by) VALUES (?,?,?,?,?,?,?,?,?)');
         $st->execute([financeNextNumber('EXP'),$category,$description,trim((string)($input['vendor_name']??''))?:null,$amount,$method,trim((string)($input['reference']??''))?:null,$date,(int)$_SESSION['admin_id']]);
         $id=(int)$pdo->lastInsertId();financeAudit($pdo,'expense_submitted','expense',$id,['amount'=>$amount,'category'=>$category]);
