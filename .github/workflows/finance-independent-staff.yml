@@ -84,6 +84,8 @@ jobs:
           node --check public/js/teacher-attendance.js
           bash -n scripts/install-finance.sh
           python -m py_compile tools/header/make-header-css.py
+          python tools/header/make-header-css.py
+          git diff --exit-code -- public/css/page-header-2026.css
 
       - name: Run Finance and attendance regression tests
         run: |
