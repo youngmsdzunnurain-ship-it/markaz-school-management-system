@@ -185,9 +185,10 @@ try {
 
     $pdo->commit();
     fclose($credentialFile);
+    $credentialFile = null;
 
     if (!rename($tempCredentialPath, $credentialPath)) {
-        throw new RuntimeException('Records were created, but the credentials file could not be finalized.');
+        $credentialPath = $tempCredentialPath;
     }
     chmod($credentialPath, 0600);
 
@@ -198,7 +199,9 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    fclose($credentialFile);
+    if (is_resource($credentialFile)) {
+        fclose($credentialFile);
+    }
     @unlink($tempCredentialPath);
     throw $error;
 }
