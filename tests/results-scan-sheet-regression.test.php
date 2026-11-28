@@ -26,9 +26,15 @@ scanSheetCheck(
 scanSheetCheck(
     str_contains($sheetHtml, '@page{size:A4 landscape;margin:0}') &&
     str_contains($sheetHtml, 'width:297mm;height:210mm') &&
-    str_contains($sheetJs, 'i+=20') &&
+    str_contains($sheetJs, 'i+=15') &&
     str_contains($sheetJs, 'subjects.length>12'),
-    'Printable template is A4 landscape, supports up to 12 selected subjects and paginates rosters in groups of 20'
+    'Printable template is A4 landscape, supports up to 12 selected subjects and paginates rosters in groups of 15'
+);
+scanSheetCheck(
+    str_contains($sheetHtml, '.scan-grid tbody tr{height:10mm}') &&
+    str_contains($sheetJs, "<col style='width:20mm'><col style='width:48mm'>") &&
+    str_contains($sheetJs, 'const scoreWidth=(289-68)/scoreCols;'),
+    'Student names and score boxes have increased width and row height for handwriting clarity'
 );
 scanSheetCheck(
     str_contains($sheetJs, 'MZSCAN1') &&
@@ -67,9 +73,11 @@ scanSheetCheck(
     'Score extraction OCRs small groups of individual numeric cells and maps each token back to its own cell'
 );
 scanSheetCheck(
-    str_contains($scanner, 'const cellWidth = (289 - 56) / scoreCellCount') &&
+    str_contains($scanner, 'const cellWidth = (289 - 68) / scoreCellCount') &&
+    str_contains($scanner, 'const rowY = 42 + rowIndex * 10;') &&
+    str_contains($scanner, 'const scoreStartX = 72;') &&
     str_contains($scanner, 'subjectIds.length > 12') &&
-    str_contains($scanner, 'studentIds.length > 20'),
+    str_contains($scanner, 'studentIds.length > 15'),
     'Cell geometry adapts to any selected subject subset from one through twelve subjects and up to twenty students per page'
 );
 scanSheetCheck(
