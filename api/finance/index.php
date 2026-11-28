@@ -423,7 +423,7 @@ try {
         $allowed=['cash','bank_transfer','pos','online','other'];
         $bankName=trim((string)($input['bank_name']??''));
         if($studentId<1||!in_array($method,$allowed,true))financeJson(['success'=>false,'message'=>'Choose a student, amount and valid payment method.'],422);
-        if($method==='bank_transfer'&&$bankName==='')financeJson(['success'=>false,'message'=>'Enter the bank name used for this transfer.'],422);
+        if($method==='bank_transfer'&&($bankName===''||mb_strlen($bankName)>100))financeJson(['success'=>false,'message'=>'Enter a valid bank name for this transfer (maximum 100 characters).'],422);
         $st=$pdo->prepare('SELECT id FROM students WHERE id=?');$st->execute([$studentId]);if(!$st->fetchColumn())financeJson(['success'=>false,'message'=>'Student not found.'],404);
         $reference=trim((string)($input['reference']??''))?:null;
         $paidAtRaw=(string)($input['paid_at']??'');$paidAt=DateTimeImmutable::createFromFormat('!Y-m-d\\TH:i',$paidAtRaw);
