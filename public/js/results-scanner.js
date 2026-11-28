@@ -825,12 +825,76 @@
         return rows.map(row => row[size]);
     }
 
-    function sheetHomography(location) {
+    function findSheetFiducials(canvas) {
+        const scale = Math.min(1, 900 / canvas.width, 900 / canvas.height);
+        const width = Math.max(1, Math.round(canvas.width * scale));
+        const height = Math.max(1, Math.round(canvas.height * scale));
+        const sample = document.createElement("canvas");
+        sample.width = width; sample.height = height;
+        const context = sample.getContext("2d", { willReadFrequently: true });
+        context.drawImage(canvas, 0, 0, width, height);
+        const pixels = context.getImageData(0, 0, width, height).data;
+        const visited = new Uint8Array(width * height);
+        const queue = new Int32Array(width * height);
+        const candidates = [];
+        for (let start = 0; start < width * height; start++) {
+            if (visited[start]) continue;
+            const p = start * 4;
+            const luminance = pixels[p] * 0.299 + pixels[p + 1] * 0.587 + pixels[p + 2] * 0.114;
+            if (luminance > 75) { visited[start] = 1; continue; }
+            let head = 0, tail = 0, minX = width, minY = height, maxX = 0, maxY = 0;
+            visited[start] = 1; queue[tail++] = start;
+            while (head < tail) {
+                const index = queue[head++], x = index % width, y = Math.floor(index / width);
+                minX = Math.min(minX, x); minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+                const neighbours = [x > 0 ? index - 1 : -1, x + 1 < width ? index + 1 : -1,
+                    y > 0 ? index - width : -1, y + 1 < height ? index + width : -1];
+                for (const next of neighbours) {
+                    if (next < 0 || visited[next]) continue;
+                    visited[next] = 1;
+                    const q = next * 4;
+                    if (pixels[q] * 0.299 + pixels[q + 1] * 0.587 + pixels[q + 2] * 0.114 <= 75) {
+                        queue[tail++] = next;
+                    }
+                }
+                if (tail > 12000) break;
+            }
+            const boxWidth = maxX - minX + 1, boxHeight = maxY - minY + 1;
+            const fill = tail / Math.max(1, boxWidth * boxHeight);
+            const ratio = boxWidth / Math.max(1, boxHeight);
+            if (tail >= 55 && tail <= 12000 && boxWidth >= 6 && boxHeight >= 6 &&
+                boxWidth <= 42 && boxHeight <= 42 && fill >= 0.62 && ratio >= 0.72 && ratio <= 1.38) {
+                candidates.push({ x: (minX + maxX) / 2, y: (minY + maxY) / 2, area: tail });
+            }
+        }
+        const corners = {
+            topLeft: item => item.x < width * 0.3 && item.y < height * 0.3,
+            topRight: item => item.x > width * 0.7 && item.y < height * 0.3,
+            bottomLeft: item => item.x < width * 0.3 && item.y > height * 0.7,
+            bottomRight: item => item.x > width * 0.7 && item.y > height * 0.7
+        };
+        const choose = (predicate, distance) => candidates.filter(predicate)
+            .sort((a, b) => distance(a) - distance(b))[0];
+        const tl = choose(corners.topLeft, item => item.x + item.y);
+        const tr = choose(corners.topRight, item => (width - item.x) + item.y);
+        const bl = choose(corners.bottomLeft, item => item.x + (height - item.y));
+        const br = choose(corners.bottomRight, item => (width - item.x) + (height - item.y));
+        if (!tl || !tr || !bl || !br) {
+            throw new Error("The four MARKAZ page-corner markers were not all visible. Photograph the complete sheet with all four corners in frame.");
+        }
+        return {
+            topLeft: { x: tl.x / scale, y: tl.y / scale },
+            topRight: { x: tr.x / scale, y: tr.y / scale },
+            bottomLeft: { x: bl.x / scale, y: bl.y / scale },
+            bottomRight: { x: br.x / scale, y: br.y / scale }
+        };
+    }
+
+    function sheetHomography(points) {
         const source = [
-            [5, 5, location.topLeftCorner],
-            [21, 5, location.topRightCorner],
-            [5, 21, location.bottomLeftCorner],
-            [21, 21, location.bottomRightCorner]
+            [4, 4, points.topLeft], [293, 4, points.topRight],
+            [4, 206, points.bottomLeft], [293, 206, points.bottomRight]
         ];
         const matrix = [], values = [];
         source.forEach(([x, y, point]) => {
@@ -849,8 +913,8 @@
         };
     }
 
-    function makeScoreStrip(source, h, rowIndex, cellWidth, cellCount) {
-        const CELL_W = 112, CELL_H = 92, GAP = 14;
+    function makeScoreStrip(source, h, rowIndex, cellWidth, cellCount, startCell) {
+        const CELL_W = 144, CELL_H = 112, GAP = 22;
         const canvas = document.createElement("canvas");
         canvas.width = cellCount * (CELL_W + GAP);
         canvas.height = CELL_H;
@@ -860,19 +924,27 @@
         const rowY = 42 + rowIndex * 8;
         const scoreStartX = 60;
         for (let cell = 0; cell < cellCount; cell++) {
-            const cellX = scoreStartX + cell * cellWidth + 0.45;
-            const cellY = rowY + 0.55;
+            const pageCell = startCell + cell;
+            const cellX = scoreStartX + pageCell * cellWidth + 0.8;
+            const cellY = rowY + 0.8;
             const targetX = cell * (CELL_W + GAP);
             for (let py = 0; py < CELL_H; py++) {
-                const pageY = cellY + (py / CELL_H) * 6.9;
+                const pageY = cellY + (py / CELL_H) * 6.4;
                 for (let px = 0; px < CELL_W; px++) {
-                    const pageX = cellX + (px / CELL_W) * Math.max(0.8, cellWidth - 0.9);
+                    const pageX = cellX + (px / CELL_W) * Math.max(0.8, cellWidth - 1.6);
                     const point = mapSheetPoint(h, pageX, pageY);
-                    const sx = Math.round(point.x), sy = Math.round(point.y);
-                    if (sx < 0 || sy < 0 || sx >= source.width || sy >= source.height) continue;
-                    const sourceIndex = (sy * source.width + sx) * 4;
+                    const sx = point.x, sy = point.y;
+                    if (sx < 0 || sy < 0 || sx >= source.width - 1 || sy >= source.height - 1) continue;
+                    const x0 = Math.floor(sx), y0 = Math.floor(sy), dx = sx - x0, dy = sy - y0;
                     const targetIndex = (py * canvas.width + targetX + px) * 4;
-                    const gray = Math.round(source.data[sourceIndex] * 0.299 + source.data[sourceIndex + 1] * 0.587 + source.data[sourceIndex + 2] * 0.114);
+                    const sample = channel => {
+                        const a = source.data[(y0 * source.width + x0) * 4 + channel];
+                        const b = source.data[(y0 * source.width + x0 + 1) * 4 + channel];
+                        const d = source.data[((y0 + 1) * source.width + x0) * 4 + channel];
+                        const e = source.data[((y0 + 1) * source.width + x0 + 1) * 4 + channel];
+                        return (a * (1 - dx) + b * dx) * (1 - dy) + (d * (1 - dx) + e * dx) * dy;
+                    };
+                    const gray = Math.round(sample(0) * 0.299 + sample(1) * 0.587 + sample(2) * 0.114);
                     output.data[targetIndex] = gray;
                     output.data[targetIndex + 1] = gray;
                     output.data[targetIndex + 2] = gray;
@@ -932,7 +1004,8 @@
             throw new Error("The printed sheet no longer matches this class roster or subject list. Print a fresh sheet.");
         }
 
-        const h = sheetHomography(code.location);
+        const fiducials = findSheetFiducials(canvas);
+        const h = sheetHomography(fiducials);
         const scoreCellCount = subjects.length * FIELDS.length;
         const cellWidth = (289 - 56) / scoreCellCount;
         state.subjectSeen = new Map(subjects.map(subject => [String(subject.id), CONFIRM_READS]));
@@ -950,20 +1023,23 @@
         let captured = 0;
         const total = students.length * scoreCellCount;
         for (let rowIndex = 0; rowIndex < students.length; rowIndex++) {
-            const strip = makeScoreStrip(source, h, rowIndex, cellWidth, scoreCellCount);
-            const result = await state.worker.recognize(strip.canvas);
-            subjects.forEach((subject, subjectIndex) => {
-                FIELDS.forEach((field, fieldIndex) => {
-                    const cellIndex = subjectIndex * FIELDS.length + fieldIndex;
-                    const raw = numericTokensForCell(result, cellIndex * strip.cellWidth, (cellIndex + 1) * strip.cellWidth).replace(/\s/g, "");
-                    if (!NUMBER.test(raw)) return;
+            for (let groupStart = 0; groupStart < scoreCellCount; groupStart += 12) {
+                const groupCount = Math.min(12, scoreCellCount - groupStart);
+                const strip = makeScoreStrip(source, h, rowIndex, cellWidth, groupCount, groupStart);
+                const result = await state.worker.recognize(strip.canvas);
+                for (let localCell = 0; localCell < groupCount; localCell++) {
+                    const cellIndex = groupStart + localCell;
+                    const subject = subjects[Math.floor(cellIndex / FIELDS.length)];
+                    const field = FIELDS[cellIndex % FIELDS.length];
+                    const raw = numericTokensForCell(result, localCell * strip.cellWidth, (localCell + 1) * strip.cellWidth).replace(/\s/g, "");
+                    if (!NUMBER.test(raw)) continue;
                     const value = Number(raw);
                     const maximum = Number(subject[MAX_KEYS[field]]);
-                    if (!Number.isFinite(value) || value < 0 || value > maximum) return;
+                    if (!Number.isFinite(value) || value < 0 || value > maximum) continue;
                     state.lastSeen.set(students[rowIndex].id + "|" + subject.id + "|" + field, value);
                     captured++;
-                });
-            });
+                }
+            }
             setUploadProgress(42 + Math.round(((rowIndex + 1) / students.length) * 52),
                 "Reading score boxes · student " + (rowIndex + 1) + " of " + students.length);
         }
