@@ -14,11 +14,11 @@ on:
       - 'database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql'
       - 'public/attendance.html'
       - 'public/finance.html'
+      - 'public/**/*.html'
       - 'public/teacher-attendance.html'
       - 'public/js/attendance.js'
       - 'public/js/dashboard.js'
       - 'public/js/finance.js'
-      - 'public/js/dashboard.js'
       - 'public/js/management-shell.js'
       - 'public/js/settings.js'
       - 'public/js/finance-receipt.js'
@@ -35,6 +35,8 @@ on:
       - 'tests/finance-refund-regression.test.php'
       - 'tests/independent-finance-staff-attendance.test.php'
       - 'tests/teacher-attendance-policy-regression.test.php'
+      - 'tests/management-regression-validation.test.php'
+      - 'tests/staff-messaging-regression.test.php'
       - '.github/workflows/finance-independent-staff.yml'
 
 permissions:
@@ -84,7 +86,6 @@ jobs:
           node --check public/js/dashboard.js
           node --check public/js/finance.js
           node --check public/js/finance-receipt.js
-          node --check public/js/dashboard.js
           node --check public/js/management-shell.js
           node --check public/js/settings.js
           node --check public/js/teacher-attendance.js
@@ -105,6 +106,8 @@ jobs:
           php tests/finance-fee-accounting-regression.test.php
           php tests/finance-refund-regression.test.php
           php tests/finance-term-fees-regression.test.php
+          php tests/management-regression-validation.test.php
+          php tests/staff-messaging-regression.test.php
 
   receipt-payroll-schema:
     runs-on: ubuntu-latest
