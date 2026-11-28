@@ -31,6 +31,8 @@ $checks = [
     'numeric OCR uses character boxes to separate adjacent printed score cells' => str_contains($scanner, 'function digitItemsOf(result)') && str_contains($scanner, 'result.data.symbols') && str_contains($scanner, 'near.map(number => number.text).join("")'),
     'score extraction keeps each digit group inside its own detected score column' => str_contains($scanner, 'Math.abs(number.cx - cols[field]) <= reach') && str_contains($scanner, 'if (!NUMBER.test(raw)) ok = false;'),
     'subject subset is accepted when its own headings are recognised' => str_contains($scanner, 'const detectedSpans = findSubjectSpans(headerWords, subjects);') && str_contains($scanner, 'detectedSpans.length ? detectedSpans : inferSubjectSpansFromColumnLabels(headerWords, subjects)'),
+    'photo review limits rows to subjects actually detected on a partial-subject worksheet' => str_contains($scanner, 'const reviewSubjects = subjects.length ? subjects : (state.meta.subjects || [])'),
+    'photo scan reports individual captured cells against the selected worksheet subject count' => str_contains($scanner, 'const totalScoreCells = classStudents().length * reviewSubjects.length * FIELDS.length') && str_contains($scanner, '${capturedScoreCells} of ${totalScoreCells} score cells read'),
     'photo scan retries sparse-text OCR when headings are missed' => str_contains($scanner, 'tessedit_pageseg_mode: "11"') &&
         str_contains($scanner, 'Recovering printed subject and score columns'),
     'photo scan retries sparse OCR when either headings or score cells are missing' => str_contains($scanner, 'function parsedScoreCount(parsed)') && str_contains($scanner, 'parsedScoreCount(sparseParsed) > parsedScoreCount(parsed)'),
