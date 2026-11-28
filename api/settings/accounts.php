@@ -138,6 +138,7 @@ if ($method === 'GET') {
         'SELECT
             a.id,
             a.name,
+            a.gender,
             a.email,
             a.username,
             a.role,
@@ -340,6 +341,7 @@ $name = trim((string) ($data['name'] ?? ''));
 $email = strtolower(trim((string) ($data['email'] ?? '')));
 $username = trim((string) ($data['username'] ?? ''));
 $role = (string) ($data['role'] ?? '');
+$gender = $role === 'teacher' ? strtolower(trim((string) ($data['gender'] ?? ''))) : null;
 $emailValue = $role === 'teacher' ? null : $email;
 $password = (string) ($data['password'] ?? '');
 $isActive = filter_var(
@@ -358,6 +360,9 @@ if ($name === '' || mb_strlen($name) > 120) {
 }
 if (!in_array($role, $allowedRoles, true)) {
     accountResponse(['success' => false, 'message' => 'Choose a valid account role.'], 400);
+}
+if ($role === 'teacher' && !in_array($gender, ['male', 'female'], true)) {
+    accountResponse(['success' => false, 'message' => 'Choose the teacher\'s gender.'], 400);
 }
 if ($isActive === null) {
     accountResponse(['success' => false, 'message' => 'Choose whether this account is active.'], 400);
@@ -474,23 +479,23 @@ try {
         if ($password !== '') {
             $update = $pdo->prepare(
                 'UPDATE admins
-                 SET name = ?, email = ?, username = ?, role = ?, is_active = ?,
+                 SET name = ?, gender = ?, email = ?, username = ?, role = ?, is_active = ?,
                      student_id = ?, password_hash = ?
                  WHERE id = ?'
             );
             $update->execute([
-                $name, $emailValue, ($role === 'teacher' ? $username : null), $role,
+                $name, $gender, $emailValue, ($role === 'teacher' ? $username : null), $role,
                 $isActive ? 1 : 0, $studentId,
                 password_hash($password, PASSWORD_DEFAULT), $accountId
             ]);
         } else {
             $update = $pdo->prepare(
                 'UPDATE admins
-                 SET name = ?, email = ?, username = ?, role = ?, is_active = ?, student_id = ?
+                 SET name = ?, gender = ?, email = ?, username = ?, role = ?, is_active = ?, student_id = ?
                  WHERE id = ?'
             );
             $update->execute([
-                $name, $emailValue, ($role === 'teacher' ? $username : null),
+                $name, $gender, $emailValue, ($role === 'teacher' ? $username : null),
                 $role, $isActive ? 1 : 0, $studentId, $accountId
             ]);
         }
@@ -532,11 +537,12 @@ try {
 
         $insert = $pdo->prepare(
             'INSERT INTO admins
-                (name, email, username, role, password_hash, is_active, student_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?)'
+                (name, gender, email, username, role, password_hash, is_active, student_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $insert->execute([
             $name,
+            $gender,
             $emailValue,
             ($role === 'teacher' ? $username : null),
             $role,
