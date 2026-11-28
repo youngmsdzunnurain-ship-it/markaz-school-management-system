@@ -12,3 +12,10 @@ financeSimpleCheck(!str_contains($entryHtml,'name="payer_name"')&&!str_contains(
 financeSimpleCheck(substr_count($api,'if($category===\'\'||!financeValidDate($date)')>=2,'API accepts optional income and expense descriptions while validating core fields');
 financeSimpleCheck(str_contains($css,'.finance-simple-form')&&str_contains($css,'.finance-entry-grid'),'income and expense forms use compact responsive styling');
 echo "MARKAZ Finance entry regression checks passed.\n";
+
+$financeTabStart=strpos($html,'id="tab-expenses"');$financeTabEnd=strpos($html,'id="tab-payroll"',$financeTabStart===false?0:$financeTabStart);$financeTab=$financeTabStart===false?'':substr($html,$financeTabStart,$financeTabEnd===false?null:$financeTabEnd-$financeTabStart);
+financeSimpleCheck(strpos($financeTab,'id="incomeForm"')<strpos($financeTab,'id="expenseForm"'),'money received column appears before money spent column');
+financeSimpleCheck(str_contains($financeTab,'id="incomeQueueHeading">Awaiting verification')&&str_contains($financeTab,'id="expenseQueueHeading">Awaiting approval'),'review queues use clear, action-specific labels');
+financeSimpleCheck(str_contains($financeTab,'class="two-col finance-register-columns"')&&str_contains($financeTab,'Other income register')&&str_contains($financeTab,'Expense register'),'income and expense registers are paired beneath the entry columns');
+financeSimpleCheck(substr_count($financeTab,'id="incomeForm"')===1&&substr_count($financeTab,'id="expenseForm"')===1&&substr_count($financeTab,'id="incomeQueue"')===1&&substr_count($financeTab,'id="expenseQueue"')===1,'existing form and review queue hooks remain unique');
+financeSimpleCheck(str_contains($css,'.finance-money-columns')&&str_contains($css,'@media(max-width:760px)'),'paired finance layout includes responsive single-column mobile styling');
