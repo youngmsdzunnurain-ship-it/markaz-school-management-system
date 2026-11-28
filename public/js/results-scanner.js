@@ -27,7 +27,7 @@
         startedAt: 0, warned: false, scopeKey: "", markTimer: null, hintTimer: null,
         subjectSeen: new Map(), subjectInfo: new Map(),
         votes: new Map(), lastSeen: new Map(), studentSeen: new Set(),
-        previewUrl: null, torchOn: false, reviewSubjects: []
+        previewUrl: null, torchOn: false, reviewSubjects: [], reviewStudents: null
     };
 
     const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -785,6 +785,198 @@
         scheduleRead(300);
     }
 
+
+    /* Template reader: the QR supplies exact roster/subject order and its square
+       corners define a projective reference for the printed A4 grid. */
+    async function loadJsQR() {
+        if (window.jsQR) return window.jsQR;
+        if (window.markazJsQrLoading) return window.markazJsQrLoading;
+        window.markazJsQrLoading = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+            script.async = true;
+            script.onload = () => window.jsQR ? resolve(window.jsQR) : reject(new Error("QR reader did not initialise."));
+            script.onerror = () => reject(new Error("Could not load the MARKAZ sheet reader. Check your internet connection."));
+            document.head.appendChild(script);
+        });
+        try { return await window.markazJsQrLoading; }
+        catch (error) { window.markazJsQrLoading = null; throw error; }
+    }
+
+    function solveLinearSystem(matrix, values) {
+        const size = values.length;
+        const rows = matrix.map((row, index) => [...row, values[index]]);
+        for (let column = 0; column < size; column++) {
+            let pivot = column;
+            for (let row = column + 1; row < size; row++) {
+                if (Math.abs(rows[row][column]) > Math.abs(rows[pivot][column])) pivot = row;
+            }
+            if (Math.abs(rows[pivot][column]) < 1e-9) throw new Error("The sheet perspective could not be measured. Photograph it straight-on.");
+            [rows[column], rows[pivot]] = [rows[pivot], rows[column]];
+            const divisor = rows[column][column];
+            for (let j = column; j <= size; j++) rows[column][j] /= divisor;
+            for (let row = 0; row < size; row++) {
+                if (row === column) continue;
+                const factor = rows[row][column];
+                for (let j = column; j <= size; j++) rows[row][j] -= factor * rows[column][j];
+            }
+        }
+        return rows.map(row => row[size]);
+    }
+
+    function sheetHomography(location) {
+        const source = [
+            [5, 5, location.topLeftCorner],
+            [21, 5, location.topRightCorner],
+            [5, 21, location.bottomLeftCorner],
+            [21, 21, location.bottomRightCorner]
+        ];
+        const matrix = [], values = [];
+        source.forEach(([x, y, point]) => {
+            const u = point.x, v = point.y;
+            matrix.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); values.push(u);
+            matrix.push([0, 0, 0, x, y, 1, -v * x, -v * y]); values.push(v);
+        });
+        return solveLinearSystem(matrix, values);
+    }
+
+    function mapSheetPoint(h, x, y) {
+        const divisor = h[6] * x + h[7] * y + 1;
+        return {
+            x: (h[0] * x + h[1] * y + h[2]) / divisor,
+            y: (h[3] * x + h[4] * y + h[5]) / divisor
+        };
+    }
+
+    function makeScoreStrip(source, h, rowIndex, cellWidth, cellCount) {
+        const CELL_W = 112, CELL_H = 92, GAP = 14;
+        const canvas = document.createElement("canvas");
+        canvas.width = cellCount * (CELL_W + GAP);
+        canvas.height = CELL_H;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        const output = context.createImageData(canvas.width, canvas.height);
+        output.data.fill(255);
+        const rowY = 42 + rowIndex * 8;
+        const scoreStartX = 60;
+        for (let cell = 0; cell < cellCount; cell++) {
+            const cellX = scoreStartX + cell * cellWidth + 0.45;
+            const cellY = rowY + 0.55;
+            const targetX = cell * (CELL_W + GAP);
+            for (let py = 0; py < CELL_H; py++) {
+                const pageY = cellY + (py / CELL_H) * 6.9;
+                for (let px = 0; px < CELL_W; px++) {
+                    const pageX = cellX + (px / CELL_W) * Math.max(0.8, cellWidth - 0.9);
+                    const point = mapSheetPoint(h, pageX, pageY);
+                    const sx = Math.round(point.x), sy = Math.round(point.y);
+                    if (sx < 0 || sy < 0 || sx >= source.width || sy >= source.height) continue;
+                    const sourceIndex = (sy * source.width + sx) * 4;
+                    const targetIndex = (py * canvas.width + targetX + px) * 4;
+                    const gray = Math.round(source.data[sourceIndex] * 0.299 + source.data[sourceIndex + 1] * 0.587 + source.data[sourceIndex + 2] * 0.114);
+                    output.data[targetIndex] = gray;
+                    output.data[targetIndex + 1] = gray;
+                    output.data[targetIndex + 2] = gray;
+                    output.data[targetIndex + 3] = 255;
+                }
+            }
+        }
+        context.putImageData(output, 0, 0);
+        return { canvas, cellWidth: CELL_W + GAP };
+    }
+
+    function numericTokensForCell(result, left, right) {
+        const symbols = result?.data?.symbols || [];
+        if (symbols.length) {
+            const selected = symbols.filter(symbol => {
+                const box = symbol.bbox || {};
+                const centre = (Number(box.x0) + Number(box.x1)) / 2;
+                return Number.isFinite(centre) && centre >= left && centre < right &&
+                    /^[0-9.]$/.test(String(symbol.text || "").trim());
+            }).sort((a, b) => a.bbox.x0 - b.bbox.x0);
+            if (selected.length) return selected.map(symbol => String(symbol.text).trim()).join("");
+        }
+        const words = result?.data?.words || [];
+        const selectedWords = words.filter(word => {
+            const box = word.bbox || {};
+            const centre = (Number(box.x0) + Number(box.x1)) / 2;
+            return Number.isFinite(centre) && centre >= left && centre < right &&
+                /^[0-9]{1,3}(?:\.[0-9]{1,2})?$/.test(String(word.text || "").trim());
+        });
+        return selectedWords.length === 1 ? String(selectedWords[0].text).trim() : "";
+    }
+
+    async function processTemplateSheet(canvas) {
+        const jsQR = await loadJsQR();
+        const source = canvas.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(source.data, source.width, source.height, { inversionAttempts: "attemptBoth" });
+        if (!code) return false;
+
+        const parts = String(code.data || "").split("|");
+        if (parts.length !== 5 || parts[0] !== "MZSCAN1") {
+            throw new Error("A QR code was found, but it is not a MARKAZ result scan sheet. Print a fresh sheet from the class page.");
+        }
+        const printedClassId = parts[1], printedClassType = parts[2];
+        const subjectIds = parts[3].split(",").filter(Boolean);
+        const studentIds = parts[4].split(",").filter(Boolean);
+        if (String(state.meta.classId) !== printedClassId || state.meta.classType !== printedClassType) {
+            throw new Error("This scan sheet belongs to a different class. Open the matching class before scanning.");
+        }
+        if (!subjectIds.length || subjectIds.length > 12 || !studentIds.length || studentIds.length > 20) {
+            throw new Error("The MARKAZ scan sheet has an invalid subject or student list. Print it again.");
+        }
+        const subjectsById = new Map((state.meta.subjects || []).map(subject => [String(subject.id), subject]));
+        const studentsById = new Map(classStudents().map(student => [String(student.id), student]));
+        const subjects = subjectIds.map(id => subjectsById.get(id));
+        const students = studentIds.map(id => studentsById.get(id));
+        if (subjects.some(item => !item) || students.some(item => !item)) {
+            throw new Error("The printed sheet no longer matches this class roster or subject list. Print a fresh sheet.");
+        }
+
+        const h = sheetHomography(code.location);
+        const scoreCellCount = subjects.length * FIELDS.length;
+        const cellWidth = (289 - 56) / scoreCellCount;
+        state.subjectSeen = new Map(subjects.map(subject => [String(subject.id), CONFIRM_READS]));
+        state.subjectInfo = new Map(subjects.map(subject => [String(subject.id), subject]));
+        state.studentSeen = new Set(students.map(student => String(student.id)));
+        state.lastSeen = new Map();
+        state.reviewStudents = students;
+        state.reviewSubjects = subjects;
+
+        await state.worker.setParameters({
+            tessedit_char_whitelist: "0123456789.",
+            tessedit_pageseg_mode: "11",
+            preserve_interword_spaces: "1"
+        });
+        let captured = 0;
+        const total = students.length * scoreCellCount;
+        for (let rowIndex = 0; rowIndex < students.length; rowIndex++) {
+            const strip = makeScoreStrip(source, h, rowIndex, cellWidth, scoreCellCount);
+            const result = await state.worker.recognize(strip.canvas);
+            subjects.forEach((subject, subjectIndex) => {
+                FIELDS.forEach((field, fieldIndex) => {
+                    const cellIndex = subjectIndex * FIELDS.length + fieldIndex;
+                    const raw = numericTokensForCell(result, cellIndex * strip.cellWidth, (cellIndex + 1) * strip.cellWidth).replace(/\s/g, "");
+                    if (!NUMBER.test(raw)) return;
+                    const value = Number(raw);
+                    const maximum = Number(subject[MAX_KEYS[field]]);
+                    if (!Number.isFinite(value) || value < 0 || value > maximum) return;
+                    state.lastSeen.set(students[rowIndex].id + "|" + subject.id + "|" + field, value);
+                    captured++;
+                });
+            });
+            setUploadProgress(42 + Math.round(((rowIndex + 1) / students.length) * 52),
+                "Reading score boxes · student " + (rowIndex + 1) + " of " + students.length);
+        }
+        await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "6" });
+        setUploadProgress(100, "Grid scan complete");
+        buildReview(subjects);
+        showPhase("review");
+        const missing = Math.max(0, total - captured);
+        $("[data-mkls-note]", overlay).textContent =
+            "MARKAZ grid sheet detected. " + captured + " of " + total + " individual score cells read; " + missing + " need checking. Review every value before saving.";
+        setGuide("The printed grid has been matched to the correct students and subjects. Check the highlighted or empty cells, then save.");
+        return true;
+    }
+
     async function processUploadedFiles(files) {
         clearTimeout(state.timer);
         stopStream();
@@ -865,7 +1057,7 @@
             setUploadProgress(96, "Checking detected scores");
 
             const subjects = confirmedSubjects();
-            const reviewSubjects = subjects.length ? subjects : (state.meta.subjects || []);
+            const reviewSubjects = subjects.length ? subjects : (state.meta.subjects || []);\n            state.reviewStudents = classStudents();
             setUploadProgress(100, "Scan complete");
             buildReview(reviewSubjects);
             showPhase("review");
@@ -877,7 +1069,7 @@
             const invalid = [...$("[data-mkls-rows]", overlay).querySelectorAll("tr.needs-check")].length;
             if (!subjects.length) {
                 $("[data-mkls-note]", overlay).textContent =
-                    "The photo was processed, but the printed subject headings could not be matched confidently. All subjects assigned to this class are listed below; verify the subject rows and enter or correct any missing marks before saving.";
+                    "This photo is not a MARKAZ A4 scan sheet and its subject headings could not be matched confidently. Print the MARKAZ A4 scan sheet from this class page for grid-based score extraction, or enter the missing marks manually.";
                 setGuide("Your photo remains available above. Review every assigned subject and check the marks before saving.");
                 return;
             }
