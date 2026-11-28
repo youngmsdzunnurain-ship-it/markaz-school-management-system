@@ -61,7 +61,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
         }
     }
     $history=$pdo->query(
-        "SELECT CONCAT(s.name,' · ',t.name) session_term,
+        "SELECT CONCAT(acs.name,' · ',t.name) session_term,
                 DATE_FORMAT(STR_TO_DATE(CONCAT(p.period_year,'-',LPAD(p.period_month,2,'0'),'-01'),'%Y-%m-%d'),'%M %Y') month_label,
                 s.full_name teacher_name,s.staff_number,s.job_title,
                 i.base_salary,i.late_minutes,i.lateness_deductions,i.other_deductions,i.net_salary,i.status,
@@ -74,7 +74,6 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
          LEFT JOIN terms t ON t.id=ap.term_id
          LEFT JOIN finance_payroll_payments pp ON pp.payroll_item_id=i.id AND pp.status='successful'
          LEFT JOIN admins paid_by ON paid_by.id=pp.recorded_by
-         LEFT JOIN academic_sessions s ON s.id=ap.academic_session_id
          ORDER BY p.period_year DESC,p.period_month DESC,s.full_name LIMIT 500"
     )->fetchAll(PDO::FETCH_ASSOC);
     financeJson(['success'=>true,'periods'=>$periods,'selected_period_id'=>$selectedPeriodId,'period'=>$period,'items'=>$items,'attendance_history'=>$attendanceHistory,'history'=>$history]);
