@@ -1194,7 +1194,7 @@
         const body = $("[data-mkls-rows]", overlay);
         body.replaceChildren();
         let missing = 0;
-        classStudents().forEach(student => subjects.forEach(subject => {
+        (state.reviewStudents || classStudents()).forEach(student => subjects.forEach(subject => {
             const studentId = String(student.id), subjectId = String(subject.id);
             const values = {};
             let clear = true;
