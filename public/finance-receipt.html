@@ -1,1 +1,47 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Payment Receipt | MARKAZ</title><link rel="stylesheet" href="./css/finance-receipt.css"></head><body><main class="receipt" id="receipt"><header><div class="seal">M</div><div><h1>MARKAZ</h1><p>Markazu Ta’lim Wa Tahfizil Qur’anil Kareem</p><small>Compensation Layout / Old Kuutunku, Gwagwalada, Abuja</small></div></header><div class="receipt-title"><h2>Student Payment Receipt</h2><span id="receiptStatus">Loading…</span></div><div id="receiptDetails" class="details">Loading payment record…</div><div class="allocations"><h3>Payment allocation</h3><table><thead><tr><th>Invoice</th><th>Billing month</th><th>Amount allocated</th></tr></thead><tbody id="receiptAllocations"></tbody></table></div><footer><p>May Allah bless this contribution.</p><small>This receipt was generated from the MARKAZ finance records. Please retain it for your records.</small></footer><div class="actions"><button onclick="window.print()">Print receipt</button><button onclick="window.close()">Close</button></div></main><script src="./js/finance-receipt.js" defer></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17643a">
+  <title>Payment Receipt | MARKAZ</title>
+  <link rel="stylesheet" href="./css/finance-receipt.css?v=20261128-receipt2">
+</head>
+<body>
+  <main class="receipt" id="receipt">
+    <img class="receipt-watermark" src="./assets/images/markaz-logo.jpg" alt="" aria-hidden="true">
+    <div class="receipt-actions" aria-label="Receipt actions">
+      <button type="button" class="receipt-back" id="receiptBackButton"><i aria-hidden="true">←</i> Back</button>
+      <button type="button" class="receipt-print" onclick="window.print()">Print receipt</button>
+    </div>
+    <header class="receipt-header">
+      <img class="receipt-logo" src="./assets/images/markaz-logo.jpg" alt="MARKAZ school logo">
+      <div class="receipt-school">
+        <h1>MARKAZ</h1>
+        <p>Markazu Ta’lim Wa Tahfizil Qur’anil Kareem</p>
+        <small>Compensation Layout / Old Kuutunku, Gwagwalada, Abuja</small>
+      </div>
+    </header>
+    <div class="receipt-title">
+      <div><span class="receipt-kicker">OFFICIAL SCHOOL RECEIPT</span><h2>Student Payment Receipt</h2></div>
+      <span id="receiptStatus" class="receipt-status">Loading…</span>
+    </div>
+    <section class="receipt-section">
+      <h3>Receipt details</h3>
+      <div id="receiptDetails" class="details" aria-live="polite">Loading payment record…</div>
+    </section>
+    <section class="allocations">
+      <h3>Payment allocation</h3>
+      <table>
+        <thead><tr><th>Invoice</th><th>Fee period</th><th>Amount</th></tr></thead>
+        <tbody id="receiptAllocations"><tr><td colspan="3">Loading allocation…</td></tr></tbody>
+      </table>
+    </section>
+    <footer class="receipt-footer">
+      <p>May Allah bless this contribution.</p>
+      <small>This receipt was generated from the MARKAZ finance records. Please retain it for your records.</small>
+    </footer>
+  </main>
+  <script src="./js/finance-receipt.js?v=20261128-receipt2" defer></script>
+</body>
+</html>
