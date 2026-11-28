@@ -27,6 +27,7 @@ expectSourceContains($financeCss, 'overflow-wrap:anywhere', 'Long names and IDs 
 expectSourceContains($financeCss, '.recent-payments-table th:nth-child(2){width:25%;}', 'Student column receives enough width');
 
 expectSourceContains($accountJs, 'id="accountGender"', 'Teacher form includes a gender selector');
+expectSourceContains($accountJs, "'Username: ' + (account.username || 'Not set')", 'Teacher usernames are visible in the account register');
 expectSourceContains($accountJs, 'genderInput.required = isTeacher', 'Gender is required for teacher accounts');
 expectSourceContains($accountJs, "gender: role.value === 'teacher' ? genderInput.value : ''", 'Gender is sent when saving teacher accounts');
 expectSourceContains($accountJs, "account.gender ? account.gender.charAt(0).toUpperCase()", 'Existing teacher gender is displayed in the account list');
