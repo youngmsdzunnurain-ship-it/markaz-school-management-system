@@ -865,7 +865,7 @@
             setUploadProgress(96, "Checking detected scores");
 
             const subjects = confirmedSubjects();
-            const reviewSubjects = (state.meta.subjects || []).length ? state.meta.subjects : subjects;
+            const reviewSubjects = subjects.length ? subjects : (state.meta.subjects || []);
             setUploadProgress(100, "Scan complete");
             buildReview(reviewSubjects);
             showPhase("review");
