@@ -18,7 +18,7 @@
     const CONFIRM_READS = 2;
     const WARN_MS = 40000;
     const CAMERA = { width: 1920, height: 1440 };
-    const OCR_MAX_WIDTH = 2000;
+    const OCR_MAX_WIDTH = 2800;
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
@@ -136,6 +136,27 @@
                 h: Math.max(1, box.y1 - box.y0)
             };
         }).filter(word => word.text && [word.x0, word.x1, word.cx, word.cy].every(Number.isFinite));
+    }
+
+    /* Numeric OCR can merge adjacent printed cells into one long word. Prefer
+       character-level boxes when Tesseract supplies them, then reconstruct each
+       score inside its own detected column instead of trusting word segmentation. */
+    function digitItemsOf(result) {
+        const symbols = result && result.data && result.data.symbols;
+        if (Array.isArray(symbols) && symbols.length) {
+            const items = symbols.map(symbol => {
+                const box = symbol.bbox || {};
+                return {
+                    text: String(symbol.text || "").trim(),
+                    x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1,
+                    cx: (box.x0 + box.x1) / 2, cy: (box.y0 + box.y1) / 2,
+                    h: Math.max(1, box.y1 - box.y0), symbol: true
+                };
+            }).filter(item => item.text && /^[0-9.]$/.test(item.text) &&
+                [item.x0, item.x1, item.cx, item.cy].every(Number.isFinite));
+            if (items.length) return items;
+        }
+        return wordsOf(result).filter(word => NUMBER.test(word.text));
     }
 
     /* words on the same line of the page form one row, read left to right */
@@ -259,9 +280,13 @@
             const values = {};
             let ok = true;
             FIELDS.forEach(field => {
-                const near = numbers.filter(number => Math.abs(number.cx - cols[field]) <= reach);
-                if (near.length !== 1) ok = false;
-                else values[field] = Number(near[0].text);
+                const near = numbers.filter(number => Math.abs(number.cx - cols[field]) <= reach)
+                    .sort((a, b) => a.cx - b.cx);
+                const raw = near.length && near.every(number => number.symbol)
+                    ? near.map(number => number.text).join("")
+                    : near.length === 1 ? near[0].text : "";
+                if (!NUMBER.test(raw)) ok = false;
+                else values[field] = Number(raw);
             });
             cells.set(id, ok ? values : null);
         });
@@ -293,7 +318,7 @@
     /* one camera frame. The text pass finds subject names and student rows; the digits pass reads the scores. */
     function parseFrame(textResult, digitResult, students, subjects) {
         const rows = toRows(wordsOf(textResult));
-        const digits = wordsOf(digitResult).filter(word => NUMBER.test(word.text));
+        const digits = digitItemsOf(digitResult);
         const heights = wordsOf(textResult).map(word => word.h).sort((a, b) => a - b);
         const tolerance = Math.max(6, (heights[Math.floor(heights.length / 2)] || 20) * 0.6);
         const studentRows = [];
