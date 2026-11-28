@@ -12,6 +12,7 @@ CREATE TABLE admins (
     name VARCHAR(120) NOT NULL,
     email VARCHAR(190) NOT NULL UNIQUE,
     role ENUM('admin','exam_officer','teacher','student','management') NOT NULL DEFAULT 'exam_officer',
+    gender ENUM('male','female') NULL,
     student_id BIGINT UNSIGNED NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
