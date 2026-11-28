@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 
-    <link rel="stylesheet" href="css/finance.css?v=20261128-finance-compact1">
+    <link rel="stylesheet" href="css/finance.css?v=20261128-finance-entry2">
     <link rel="stylesheet" href="css/dashboard-2026.css?v=20261112-no-entrance-jump1">
     <link rel="stylesheet" href="css/app-watermark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -217,26 +217,28 @@
  </div>
 </section>
 <section class="tab-panel" id="tab-expenses">
- <div class="two-col">
-  <form class="panel form-panel" id="expenseForm"><div class="panel-heading"><div><span class="eyebrow">SCHOOL SPENDING</span><h2>Record school expense</h2></div></div>
-   <label>Expense category<input name="category" required placeholder="Utilities, repairs, learning materials…"></label><label>Description<textarea name="description" rows="3" required placeholder="What was purchased or paid for?"></textarea></label>
-   <label>Vendor / recipient<input name="vendor_name"></label><label>Amount (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
-   <div class="inline-fields"><label>Date<input name="expense_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
-   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Submit expense for approval</button>
+ <div class="two-col finance-entry-grid">
+  <form class="panel form-panel finance-simple-form" id="expenseForm"><div class="panel-heading"><div><span class="eyebrow">MONEY OUT</span><h2>Record an expense</h2><p class="muted">Record what the school bought, repaired or paid for.</p></div></div>
+   <label>What was purchased or repaired?<input name="category" required placeholder="e.g. Classroom chairs, plumbing repair"></label>
+   <label>Report / extra details <span class="muted">(optional)</span><textarea name="description" rows="2" placeholder="Add any useful details, if needed"></textarea></label>
+   <label>Amount paid (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></label>
+   <div class="inline-fields"><label>Date paid<input name="expense_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option></select></label></div>
+   <button class="btn btn-primary" type="submit">Save expense</button>
   </form>
-  <form class="panel form-panel" id="incomeForm"><div class="panel-heading"><div><span class="eyebrow">OTHER SCHOOL INCOME</span><h2>Record non-fee income</h2></div></div>
-   <label>Income category<input name="category" required placeholder="Donation, grant, contribution…"></label><label>Description<textarea name="description" rows="3" required></textarea></label>
-   <label>Payer / source<input name="payer_name"></label><label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required></label>
-   <div class="inline-fields"><label>Date received<input name="received_date" type="date" required></label><label>Method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option><option value="other">Other</option></select></label></div>
-   <label>Payment reference<input name="reference"></label><button class="btn btn-primary" type="submit">Save other income</button>
+  <form class="panel form-panel finance-simple-form" id="incomeForm"><div class="panel-heading"><div><span class="eyebrow">MONEY IN</span><h2>Record other income</h2><p class="muted">Record money received by the school.</p></div></div>
+   <label>Income type<input name="category" required placeholder="e.g. Donation, contribution, grant"></label>
+   <label>Report / extra details <span class="muted">(optional)</span><textarea name="description" rows="2" placeholder="Add any useful details, if needed"></textarea></label>
+   <label>Amount received (₦)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></label>
+   <div class="inline-fields"><label>Date received<input name="received_date" type="date" required></label><label>Payment method<select name="payment_method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="pos">POS</option></select></label></div>
+   <button class="btn btn-primary" type="submit">Save income</button>
   </form>
  </div>
  <div class="two-col">
   <div class="panel"><div class="panel-heading"><div><span class="eyebrow">EXPENSE APPROVALS</span><h2>Pending expenses</h2></div><button class="btn btn-light" id="reloadExpenses">Refresh</button></div><div id="expenseQueue" class="stack-list"></div></div>
   <div class="panel"><div class="panel-heading"><div><span class="eyebrow">INCOME VERIFICATION</span><h2>Pending other income</h2></div><button class="btn btn-light" id="reloadIncome">Refresh</button></div><div id="incomeQueue" class="stack-list"></div></div>
  </div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">OTHER INCOME REGISTER</span><h2>Verified and pending income</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Source</th><th>Amount</th><th>Status</th></tr></thead><tbody id="incomeRows"><tr><td colspan="5" class="empty">Loading other income…</td></tr></tbody></table></div></div>
- <div class="panel"><div class="panel-heading"><div><span class="eyebrow">AUDITABLE RECORDS</span><h2>Expense register</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="expenses"><tr><td colspan="6" class="empty">Loading expenses…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">OTHER INCOME REGISTER</span><h2>Verified and pending income</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Amount</th><th>Status</th></tr></thead><tbody id="incomeRows"><tr><td colspan="4" class="empty">Loading other income…</td></tr></tbody></table></div></div>
+ <div class="panel"><div class="panel-heading"><div><span class="eyebrow">AUDITABLE RECORDS</span><h2>Expense register</h2></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category / details</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="expenses"><tr><td colspan="5" class="empty">Loading expenses…</td></tr></tbody></table></div></div>
 </section>
 <section class="tab-panel" id="tab-payroll">
  <div class="info-note"><i class="fa-solid fa-clock"></i><div><b>Teacher attendance is managed in the Attendance workspace</b><p>Use the dedicated Teacher Attendance register alongside student attendance. Only Admin and Management accounts with full Attendance access can open it. Approved arrival records are the single source used for payroll deductions.</p><a href="./teacher-attendance.html" class="action-link" data-role-access="teacher_attendance">Open Teacher Attendance <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div></div>
@@ -284,6 +286,6 @@
     <script src="js/device-activity.js?v=20261109-device-activity" data-activity-role="staff" defer></script>
     <script src="/js/markaz-global.js"></script>
     <script src="js/website-image-overrides.js"></script>
-    <script src="js/finance.js?v=20261128-payment-resolution1"></script>
+    <script src="js/finance.js?v=20261128-finance-entry2"></script>
 </body>
 </html>
