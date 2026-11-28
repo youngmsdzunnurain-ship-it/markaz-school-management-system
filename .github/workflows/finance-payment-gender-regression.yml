@@ -32,6 +32,7 @@ jobs:
         run: |
           php -l api/settings/accounts.php
           php -l scripts/seed-demo-teachers.php
+          bash -n scripts/install-finance.sh
 
       - name: Test payment history layout
         run: node tests/finance-payment-history-layout.test.js
