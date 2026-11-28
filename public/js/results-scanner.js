@@ -994,11 +994,14 @@
         if (parts.length !== 6 || parts[0] !== "MZSCAN1") {
             throw new Error("A QR code was found, but it is not a MARKAZ result scan sheet. Print a fresh sheet from the class page.");
         }
-        const printedClassId = parts[1], printedClassType = parts[2];
-        const subjectIds = parts[3].split(",").filter(Boolean);
-        const studentIds = parts[4].split(",").filter(Boolean);
+        const printedClassId = parts[1], printedClassType = parts[2], printedPeriodId = parts[3];
+        const subjectIds = parts[4].split(",").filter(Boolean);
+        const studentIds = parts[5].split(",").filter(Boolean);
         if (String(state.meta.classId) !== printedClassId || state.meta.classType !== printedClassType) {
             throw new Error("This scan sheet belongs to a different class. Open the matching class before scanning.");
+        }
+        if (String(state.meta.academicPeriodId) !== printedPeriodId) {
+            throw new Error("This scan sheet belongs to a different academic period. Print a fresh sheet for the current term.");
         }
         if (!subjectIds.length || subjectIds.length > 12 || !studentIds.length || studentIds.length > 20) {
             throw new Error("The MARKAZ scan sheet has an invalid subject or student list. Print it again.");
