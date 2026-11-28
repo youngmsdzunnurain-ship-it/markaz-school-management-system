@@ -870,8 +870,10 @@
             buildReview(reviewSubjects);
             showPhase("review");
             const detectedStudents = state.studentSeen.size;
-            const captured = Math.round(state.lastSeen.size / FIELDS.length);
-            const missing = Math.max(0, classStudents().length * reviewSubjects.length - captured);
+            const totalScoreCells = classStudents().length * reviewSubjects.length * FIELDS.length;
+            const capturedScoreCells = state.lastSeen.size;
+            const missingScoreCells = Math.max(0, totalScoreCells - capturedScoreCells);
+            const capturedScoreLines = Math.floor(capturedScoreCells / FIELDS.length);
             const invalid = [...$("[data-mkls-rows]", overlay).querySelectorAll("tr.needs-check")].length;
             if (!subjects.length) {
                 $("[data-mkls-note]", overlay).textContent =
@@ -880,7 +882,7 @@
                 return;
             }
             $("[data-mkls-note]", overlay).textContent =
-                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected; ${subjects.length} subject heading(s) recognised. ${captured} score line(s) read; ${missing} need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} All assigned subjects are shown for review.`;
+                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected; ${subjects.length} subject heading(s) recognised. ${capturedScoreCells} of ${totalScoreCells} score cells read (${capturedScoreLines} complete score line(s)); ${missingScoreCells} cells need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} All assigned subjects are shown for review.`;
             setGuide("Review every subject and the highlighted rows, then confirm all scores before saving.");
         } catch (error) {
             setUploadProgress(100, "Scan could not finish");
