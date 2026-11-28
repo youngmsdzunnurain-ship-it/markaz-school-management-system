@@ -14,6 +14,7 @@ $root = dirname(__DIR__);
 $read = static fn(string $path): string => (string) file_get_contents($root . '/' . $path);
 $html = $read('public/finance.html');
 $financeCss = $read('public/css/finance.css');
+$headerCss = $read('public/css/page-header-2026.css');
 $receiptHtml = $read('public/finance-receipt.html');
 $receiptCss = $read('public/css/finance-receipt.css');
 $receiptJs = $read('public/js/finance-receipt.js');
@@ -27,6 +28,7 @@ $installer = $read('scripts/install-finance.sh');
 
 financeReceiptPayrollCheck(str_contains($html, 'class="finance-menu-control"') && str_contains($html, 'id="menuButton"'), 'mobile Finance menu control has a dedicated compact wrapper');
 financeReceiptPayrollCheck(str_contains($financeCss, '.finance-menu-control') && str_contains($financeCss, 'background:transparent!important') && str_contains($financeCss, 'width:40px'), 'mobile Finance header leaves the title beside a compact left-aligned menu control');
+financeReceiptPayrollCheck(str_contains($headerCss, 'body.finance-workspace-page:not(#mkhdr) .topbar') && str_contains($headerCss, 'background:transparent!important') && str_contains($headerCss, '.finance-menu-control'), 'Finance-specific mobile header overrides the later shared page-header gradient');
 financeReceiptPayrollCheck(str_contains($financeCss, '#tab-payments .payment-history-panel{') && str_contains($financeCss, 'grid-column:auto;') && str_contains($financeCss, '#tab-payments .two-col{') && str_contains($financeCss, 'grid-template-columns:repeat(2,minmax(0,1fr));'), 'Payments and Receipts pairs payment entry/history and refund entry/approval in two compact columns');
 financeReceiptPayrollCheck(str_contains($html, 'name="bank_name"') && str_contains($html, 'id="paymentBankField"'), 'student payment form captures the bank name only when relevant');
 financeReceiptPayrollCheck(str_contains($financeApi, 'bank_name') && str_contains($financeApi, 'verified_by_name') && str_contains($financeApi, 'verified_at'), 'receipt API returns bank, recorder and verifier details');
