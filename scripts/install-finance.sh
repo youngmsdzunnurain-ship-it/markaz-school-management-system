@@ -25,7 +25,7 @@ fi
 for command in mariadb mariadb-dump; do
     command -v "$command" >/dev/null 2>&1 || { echo "ERROR: Required command not found: $command" >&2; exit 2; }
 done
-for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql 20261128_teacher_lateness_rate_13_naira.sql 20261129_markaz_section_student_fees.sql 20261130_markaz_student_fee_intake_overrides.sql; do
+for file in 20261121_markaz_finance_payroll.sql 20261122_markaz_finance_fee_categories.sql 20261123_markaz_academic_term_fees.sql 20261124_markaz_independent_finance_staff.sql 20261125_teacher_attendance_modes.sql 20261126_markaz_fee_refunds.sql 20261127_payroll_deduction_and_staff_details.sql 20261128_teacher_lateness_rate_13_naira.sql 20261129_markaz_section_student_fees.sql 20261130_markaz_student_fee_intake_overrides.sql 20261128_finance_receipts_payroll_periods_manual_payments.sql; do
     [[ -s "$MIGRATIONS/$file" ]] || { echo "ERROR: Required migration is missing or empty: $MIGRATIONS/$file" >&2; exit 2; }
 done
 
@@ -115,6 +115,9 @@ independent_staff_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLE
 independent_staff_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_staff' AND COLUMN_NAME='id') OR (TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
 attendance_policy_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND COLUMN_NAME='attendance_mode' AND TABLE_NAME IN ('staff_salary_profiles','staff_attendance')")"
 refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
+receipt_payroll_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_payments' AND COLUMN_NAME='bank_name') OR (TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME IN ('recorded_by','payment_method','payment_reference','notes')))")"
+receipt_payroll_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id' AND REFERENCED_TABLE_NAME='academic_periods') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME='recorded_by' AND REFERENCED_TABLE_NAME='admins'))")"
+receipt_payroll_index="$(query "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_payroll_periods' AND INDEX_NAME='uq_payroll_academic_period_month' AND NON_UNIQUE=0")"
 independent_staff_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME='finance_staff' AND ((TABLE_NAME='staff_salary_profiles' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='staff_attendance' AND COLUMN_NAME='finance_staff_id') OR (TABLE_NAME='finance_payroll_items' AND COLUMN_NAME='finance_staff_id'))")"
 if [[ "$independent_staff_tables" == "0" && ( "$independent_staff_columns" != "0" || "$independent_staff_constraints" != "0" ) ]]; then
     echo "ERROR: Partial independent Finance staff migration detected. No changes made." >&2
@@ -128,12 +131,16 @@ if [[ "$refund_tables" != "0" && "$refund_tables" != "2" ]]; then
     echo "ERROR: Partial student fee refund migration detected ($refund_tables/2 tables). No changes made." >&2
     exit 3
 fi
+if [[ "$receipt_payroll_columns" != "0" && "$receipt_payroll_columns" != "6" ]] || [[ "$receipt_payroll_constraints" != "0" && "$receipt_payroll_constraints" != "2" ]] || [[ "$receipt_payroll_index" != "0" && "$receipt_payroll_index" != "3" ]]; then
+    echo "ERROR: Partial receipt and academic payroll migration detected ($receipt_payroll_columns/6 columns, $receipt_payroll_constraints/2 foreign keys, $receipt_payroll_index/3 unique-index columns). No changes made." >&2
+    exit 3
+fi
 if [[ "$attendance_policy_columns" != "0" && "$attendance_policy_columns" != "2" ]]; then
         echo "ERROR: Partial teacher attendance policy migration detected ($attendance_policy_columns/2 columns). No changes made." >&2
         exit 3
     fi
-if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" ]]; then
-    echo "MARKAZ Finance is already installed: fee foundations, term fees, student intake overrides, independent Finance staff, attendance policies and refund controls are present."
+if [[ "$foundation_count" == "${#foundation_tables[@]}" && "$category_columns" == "2" && "$term_count" == "${#term_tables[@]}" && "$section_fee_tables" == "1" && "$section_fee_columns" == "7" && "$intake_override_tables" == "1" && "$intake_override_columns" == "8" && "$intake_override_constraints" == "4" && "$independent_staff_tables" == "1" && "$independent_staff_columns" == "4" && "$independent_staff_constraints" == "3" && "$attendance_policy_columns" == "2" && "$refund_tables" == "2" && "$receipt_payroll_columns" == "6" && "$receipt_payroll_constraints" == "2" && "$receipt_payroll_index" == "3" ]]; then
+    echo "MARKAZ Finance is already installed: fee foundations, term fees, student intake overrides, independent Finance staff, attendance policies, refunds, receipt attribution and term payroll are present."
     exit 0
 fi
 
@@ -220,6 +227,15 @@ lateness_rate_default="$(query "SELECT COLUMN_DEFAULT FROM information_schema.CO
 
 refund_tables="$(query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME IN ('finance_fee_refunds','finance_fee_refund_allocations')")"
 [[ "$refund_tables" == "2" ]] || { echo "ERROR: Fee refund schema verification failed. Restore from: $backup" >&2; exit 5; }
+
+# Add receipt attribution, academic-period payroll and manual salary-payment audit fields.
+if [[ "$receipt_payroll_columns" == "0" && "$receipt_payroll_constraints" == "0" && "$receipt_payroll_index" == "0" ]]; then
+    apply_migration "20261128_finance_receipts_payroll_periods_manual_payments.sql"
+fi
+receipt_payroll_columns="$(query "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_fee_payments' AND COLUMN_NAME='bank_name') OR (TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME IN ('recorded_by','payment_method','payment_reference','notes')))")"
+receipt_payroll_constraints="$(query "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND ((TABLE_NAME='finance_payroll_periods' AND COLUMN_NAME='academic_period_id' AND REFERENCED_TABLE_NAME='academic_periods') OR (TABLE_NAME='finance_payroll_payments' AND COLUMN_NAME='recorded_by' AND REFERENCED_TABLE_NAME='admins'))")"
+receipt_payroll_index="$(query "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='$DB_NAME' AND TABLE_NAME='finance_payroll_periods' AND INDEX_NAME='uq_payroll_academic_period_month' AND NON_UNIQUE=0")"
+[[ "$receipt_payroll_columns" == "6" && "$receipt_payroll_constraints" == "2" && "$receipt_payroll_index" == "3" ]] || { echo "ERROR: Receipt and academic payroll schema verification failed. Restore from: $backup" >&2; exit 5; }
 
 echo "SUCCESS: MARKAZ Finance schema, including per-student intake classification, is installed and verified."
 echo "Backup retained at: $backup"
