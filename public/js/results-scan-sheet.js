@@ -24,7 +24,7 @@ async function init(){
 }
 function makePage(studentPage,subjects,pageNumber,totalPages){
  const page=document.createElement("section");page.className="scan-page";
- const qrPayload=["MZSCAN1",classId,classType,subjects.map(s=>s.id).join(","),studentPage.map(s=>s.id).join(",")].join("|");
+ const qrPayload=["MZSCAN1",classId,classType,data.academic_period.id,subjects.map(s=>s.id).join(","),studentPage.map(s=>s.id).join(",")].join("|");
  const head=document.createElement("header");head.className="scan-page-head";
  head.innerHTML=`<div><h1>MARKAZ · ${esc(data.class.name)} · RESULT ENTRY</h1><p>${esc(data.academic_period.session_name)} · ${esc(data.academic_period.term_name)} · Page ${pageNumber}/${totalPages}</p></div><div style="text-align:right;font-size:7pt"><b>Write clearly inside each box</b><br>CA1 · CA2 · EXAM</div>`;
  const qr=document.createElement("div");qr.className="scan-qr";page.append(qr,head);
