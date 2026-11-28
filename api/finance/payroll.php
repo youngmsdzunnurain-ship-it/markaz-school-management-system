@@ -148,20 +148,22 @@ if($action==='calculate'){
             if($segmentDays>0){$baseCents+=financeToCents(financeProrateMonthlySalary((string)$profile['base_salary'],$segmentDays,$daysInMonth));$coveredUntil=$segmentEnd;}
         }
         if($baseCents<=0)continue;
-        $attendance->execute([$staffId,$attendanceStart,$attendanceEnd]);$records=$attendance->fetchAll(PDO::FETCH_ASSOC);$lateMinutes=0;$lateDeductionCents=0;
+        $attendance->execute([$staffId,$attendanceStart,$attendanceEnd]);$records=$attendance->fetchAll(PDO::FETCH_ASSOC);$lateMinutes=0;$lateDeductionCents=0;$absenceDeductionCents=0;
         foreach($records as $record){
             if(($record['attendance_mode']??'time_based')==='time_based'&&($record['status']??'')==='present'){
                 $lateMinutes+=(int)$record['late_minutes'];
                 $lateDeductionCents+=financeToCents((string)$record['lateness_deduction']);
             }
+            if(($record['status']??'')==='absent')$absenceDeductionCents+=30000;
         }
         $lateApplied=min($baseCents,$lateDeductionCents);
-        // No unconfigured absence penalty is applied. Only approved, configured lateness amounts reduce salary.
-        $netCents=$baseCents-$lateApplied;
-        $insert->execute([$periodIdRow,$staffId,financeFromCents($baseCents),financeFromCents($lateApplied),$lateMinutes,'0.00',financeFromCents($netCents)]);
+        $otherApplied=min(max(0,$baseCents-$lateApplied),$absenceDeductionCents);
+        $totalApplied=$lateApplied+$otherApplied;
+        $netCents=$baseCents-$totalApplied;
+        $insert->execute([$periodIdRow,$staffId,financeFromCents($baseCents),financeFromCents($lateApplied),$lateMinutes,financeFromCents($otherApplied),financeFromCents($netCents)]);
         $itemId=(int)$pdo->lastInsertId();
-        foreach(financeAllocatePayrollDeductions($records,$lateApplied,0) as $detail){$deduct->execute([$itemId,$detail['staff_attendance_id'],$detail['description'],$detail['amount']]);}
-        $gross+=$baseCents;$totalDeduct+=$lateApplied;$netTotal+=$netCents;
+        foreach(financeAllocatePayrollDeductions($records,$lateApplied,$otherApplied) as $detail){$deduct->execute([$itemId,$detail['staff_attendance_id'],$detail['description'],$detail['amount']]);}
+        $gross+=$baseCents;$totalDeduct+=$totalApplied;$netTotal+=$netCents;
     }
     $q=$pdo->prepare('UPDATE finance_payroll_periods SET status="calculated",total_gross=?,total_deductions=?,total_net=?,approved_by=NULL,approved_at=NULL,scheduled_at=NULL WHERE id=?');
     $q->execute([financeFromCents($gross),financeFromCents($totalDeduct),financeFromCents($netTotal),$periodIdRow]);
