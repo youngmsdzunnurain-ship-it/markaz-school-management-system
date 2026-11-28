@@ -165,3 +165,18 @@ html[dir="rtl"] .mkls-table input { direction: ltr; }
 .mkls-progress-meta { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: rgba(255,255,255,.9); }
 .mkls-progress-meta strong { color: #f3d98a; font-variant-numeric: tabular-nums; }
 .mkls-review-control:disabled { opacity: .55; cursor: default; }
+
+
+/* Keep the file input rendered but visually hidden. Some Android browser/WebView
+   file choosers do not reliably open inputs carrying the HTML hidden attribute. */
+.mkls-photo-input {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
