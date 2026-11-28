@@ -6,6 +6,9 @@ $root = dirname(__DIR__);
 $scanner = file_get_contents($root . '/public/js/results-scanner.js');
 $endpoint = file_get_contents($root . '/api/results/batch-save.php');
 $wrapper = file_get_contents($root . '/public/api/results/batch-save.php');
+$templateStart = strpos($scanner, 'const TEMPLATE = `');
+$cameraPosition = strpos($scanner, '<section class="mkls-camera"', $templateStart === false ? 0 : $templateStart);
+$controlsPosition = strpos($scanner, '<div class="mkls-controls"', $templateStart === false ? 0 : $templateStart);
 
 $checks = [
     'scanner offers one icon-only photo upload control' => str_contains($scanner, 'data-mkls-upload-photo') &&
@@ -14,6 +17,16 @@ $checks = [
         str_contains($scanner, 'function toggleTorch()') && str_contains($scanner, 'torch: next'),
     'scanner shows the selected photo while processing' => str_contains($scanner, 'data-mkls-upload-preview') &&
         str_contains($scanner, 'URL.createObjectURL(file)'),
+    'photo and torch controls render below camera preview' => $cameraPosition !== false &&
+        $controlsPosition !== false && $controlsPosition > $cameraPosition,
+    'printed subject headings tolerate bounded OCR errors and split words' => str_contains($scanner, 'target.length >= 9 ? 2 : target.length >= 5 ? 1 : 0') &&
+        str_contains($scanner, 'Math.min(words.length, i + 7)'),
+    'photo scan retries sparse-text OCR when headings are missed' => str_contains($scanner, 'tessedit_pageseg_mode: "11"') &&
+        str_contains($scanner, 'Checking printed subject headings'),
+    'photo scan opens review instead of rejecting an unrecognised heading' => str_contains($scanner, 'All subjects assigned to this class are listed below') &&
+        !str_contains($scanner, 'Try a sharper, straight-on photo'),
+    'review save uses the subjects actually shown in the review table' => str_contains($scanner, 'state.reviewSubjects = [...subjects]') &&
+        str_contains($scanner, 'state.reviewSubjects.length ? state.reviewSubjects : confirmedSubjects()'),
     'scanner shows class student and subject counts before progress' => str_contains($scanner, 'data-mkls-class-name') &&
         str_contains($scanner, 'data-mkls-student-count') && str_contains($scanner, 'data-mkls-subject-count'),
     'scanner reports staged progress through completion' => str_contains($scanner, 'setUploadProgress(100, "Scan complete")'),
