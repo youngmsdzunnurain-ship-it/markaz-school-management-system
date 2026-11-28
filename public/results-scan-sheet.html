@@ -16,7 +16,7 @@
 .scan-fiducial{position:absolute;width:4mm;height:4mm;background:#000;z-index:2}
 .scan-fiducial.tl{left:2mm;top:2mm}.scan-fiducial.tr{left:291mm;top:2mm}.scan-fiducial.bl{left:2mm;top:204mm}.scan-fiducial.br{left:291mm;top:204mm}
 .scan-page:last-child{page-break-after:auto;break-after:auto}
-.scan-page-head{position:absolute;left:27mm;top:5mm;right:5mm;height:20mm;display:flex;align-items:center;justify-content:space-between}
+.scan-page-head{position:absolute;left:27mm;top:5mm;right:10mm;height:20mm;display:flex;align-items:center;justify-content:space-between}
 .scan-page-head h1{font-size:16pt;margin:0;color:#123d2a}.scan-page-head p{font-size:8pt;margin:2mm 0 0}
 .scan-qr{position:absolute;left:8mm;top:5mm;width:16mm;height:16mm}.scan-qr img,.scan-qr canvas{width:16mm!important;height:16mm!important}
 .scan-grid{position:absolute;left:4mm;top:29mm;width:289mm;border-collapse:collapse;table-layout:fixed;font-size:6.5pt;direction:ltr}
@@ -24,10 +24,10 @@
 .scan-grid thead tr:first-child{height:7mm}.scan-grid thead tr:nth-child(2){height:6mm}
 .scan-grid tbody tr{height:8mm}
 .scan-grid th{font-weight:700;background:#f1f4f1}
-.scan-grid .student-name{text-align:left;padding-left:1mm;font-size:6.3pt}
+.scan-grid .student-name{text-align:left;padding-left:1mm;font-size:6.3pt;white-space:nowrap}
 .scan-grid .admission{font-size:5.8pt}
 .scan-grid .score-cell{background:#fff}
-.scan-footer{position:absolute;bottom:2mm;left:4mm;font-size:5.5pt;color:#555}
+.scan-footer{position:absolute;bottom:2mm;left:8mm;right:8mm;text-align:center;font-size:5.5pt;color:#555}
 @page{size:A4 landscape;margin:0}
 @media print{body{background:#fff}.scan-tools{display:none!important}.scan-pages{display:block}.scan-page{margin:0;box-shadow:none}}
 </style>
