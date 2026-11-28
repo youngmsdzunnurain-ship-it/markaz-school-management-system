@@ -38,7 +38,7 @@ if (!preg_match_all("/\\['[^']+', '(?:male|female)'\\]/", $seeder, $matches) || 
     fwrite(STDERR, "FAIL: seeder must contain exactly 20 fictional teacher records\n");
     exit(1);
 }
-expectSourceContains($seeder, "in_array('--confirm', $argv, true)", 'Seeder requires explicit confirmation');
+expectSourceContains($seeder, "in_array('--confirm', \$argv, true)", 'Seeder requires explicit confirmation');
 expectSourceContains($seeder, 'password_hash($temporaryPassword, PASSWORD_DEFAULT)', 'Seeder hashes generated temporary passwords');
 expectSourceContains($seeder, 'random_bytes(8)', 'Seeder generates unpredictable temporary passwords');
 
