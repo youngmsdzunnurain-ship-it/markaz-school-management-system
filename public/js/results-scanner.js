@@ -18,7 +18,8 @@
     const CONFIRM_READS = 2;
     const WARN_MS = 40000;
     const CAMERA = { width: 1920, height: 1440 };
-    const OCR_MAX_WIDTH = 2000;
+    const OCR_MAX_WIDTH = 2800;
+    const OCR_MAX_HEIGHT = 4000;
     const NUMBER = /^\d{1,3}(\.\d{1,2})?$/;
 
     const state = {
@@ -136,6 +137,27 @@
                 h: Math.max(1, box.y1 - box.y0)
             };
         }).filter(word => word.text && [word.x0, word.x1, word.cx, word.cy].every(Number.isFinite));
+    }
+
+    /* Numeric OCR can merge adjacent printed cells into one long word. Prefer
+       character-level boxes when Tesseract supplies them, then reconstruct each
+       score inside its own detected column instead of trusting word segmentation. */
+    function digitItemsOf(result) {
+        const symbols = result && result.data && result.data.symbols;
+        if (Array.isArray(symbols) && symbols.length) {
+            const items = symbols.map(symbol => {
+                const box = symbol.bbox || {};
+                return {
+                    text: String(symbol.text || "").trim(),
+                    x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1,
+                    cx: (box.x0 + box.x1) / 2, cy: (box.y0 + box.y1) / 2,
+                    h: Math.max(1, box.y1 - box.y0), symbol: true
+                };
+            }).filter(item => item.text && /^[0-9.]$/.test(item.text) &&
+                [item.x0, item.x1, item.cx, item.cy].every(Number.isFinite));
+            if (items.length) return items;
+        }
+        return wordsOf(result).filter(word => NUMBER.test(word.text));
     }
 
     /* words on the same line of the page form one row, read left to right */
@@ -259,19 +281,45 @@
             const values = {};
             let ok = true;
             FIELDS.forEach(field => {
-                const near = numbers.filter(number => Math.abs(number.cx - cols[field]) <= reach);
-                if (near.length !== 1) ok = false;
-                else values[field] = Number(near[0].text);
+                const near = numbers.filter(number => Math.abs(number.cx - cols[field]) <= reach)
+                    .sort((a, b) => a.cx - b.cx);
+                const raw = near.length && near.every(number => number.symbol)
+                    ? near.map(number => number.text).join("")
+                    : near.length === 1 ? near[0].text : "";
+                if (!NUMBER.test(raw)) ok = false;
+                else values[field] = Number(raw);
             });
             cells.set(id, ok ? values : null);
         });
         return cells;
     }
 
+    /* If OCR misses the subject-name text, a printed sheet can still expose its
+       repeated CA1 / CA2 / Exam column headers. Only infer the subject order when
+       every class subject has one complete, correctly ordered three-column group. */
+    function inferSubjectSpansFromColumnLabels(words, subjects) {
+        if (!subjects.length) return [];
+        const labels = findLabels(words).sort((a, b) => a.cx - b.cx);
+        if (labels.length !== subjects.length * FIELDS.length) return [];
+        const expected = ["ca1", "ca2", "exam"];
+        const spans = [];
+        for (let index = 0; index < subjects.length; index++) {
+            const group = labels.slice(index * FIELDS.length, (index + 1) * FIELDS.length);
+            if (!expected.every((kind, offset) => group[offset].kind === kind)) return [];
+            spans.push({
+                subject: subjects[index],
+                x0: group[0].cx,
+                x1: group[2].cx,
+                inferredFromColumnLabels: true
+            });
+        }
+        return spans;
+    }
+
     /* one camera frame. The text pass finds subject names and student rows; the digits pass reads the scores. */
     function parseFrame(textResult, digitResult, students, subjects) {
         const rows = toRows(wordsOf(textResult));
-        const digits = wordsOf(digitResult).filter(word => NUMBER.test(word.text));
+        const digits = digitItemsOf(digitResult);
         const heights = wordsOf(textResult).map(word => word.h).sort((a, b) => a - b);
         const tolerance = Math.max(6, (heights[Math.floor(heights.length / 2)] || 20) * 0.6);
         const studentRows = [];
@@ -288,7 +336,8 @@
            must not be rejected solely because one name or admission number was missed. */
         const firstStudentY = studentRows.length ? studentRows[0].row.cy : Infinity;
         const headerWords = rows.filter(row => row.cy < firstStudentY - 2).flatMap(row => row.words);
-        const spans = findSubjectSpans(headerWords, subjects);
+        const detectedSpans = findSubjectSpans(headerWords, subjects);
+        const spans = detectedSpans.length ? detectedSpans : inferSubjectSpansFromColumnLabels(headerWords, subjects);
         const columns = columnsFor(spans, findLabels(headerWords));
         const read = studentRows.map(({ row, student }) => ({ student, cells: readRowScores(row, digits, spans, columns, tolerance) }));
         state.debug = {
@@ -298,6 +347,14 @@
             tolerance: Math.round(tolerance)
         };
         return { spans, read };
+    }
+
+    function parsedScoreCount(parsed) {
+        let count = 0;
+        (parsed.read || []).forEach(({ cells }) => cells.forEach(values => {
+            if (values) count += FIELDS.filter(field => values[field] !== null && values[field] !== undefined).length;
+        }));
+        return count;
     }
 
     /* ------------------------------------------------------------------ collecting across frames */
@@ -758,7 +815,7 @@
             await prepareWorker();
             setUploadProgress(18, "Photo ready — reading text");
             bitmap = await createImageBitmap(file);
-            const scale = Math.min(1, OCR_MAX_WIDTH / bitmap.width);
+            const scale = Math.min(2, OCR_MAX_WIDTH / bitmap.width, OCR_MAX_HEIGHT / bitmap.height);
             const canvas = document.createElement("canvas");
             canvas.width = Math.max(1, Math.round(bitmap.width * scale));
             canvas.height = Math.max(1, Math.round(bitmap.height * scale));
@@ -775,15 +832,19 @@
             await state.worker.setParameters({ tessedit_char_whitelist: "" });
             setUploadProgress(88, "Matching the class roster");
             let parsed = parseFrame(textResult, digitResult, classStudents(), state.meta.subjects || []);
-            if (!parsed.spans.length) {
-                /* Sparse-text mode is more reliable for printed headings separated by table borders
-                   or wide gaps. Retry only when the normal page layout found no subject at all. */
-                setUploadProgress(78, "Checking printed subject headings");
+            if (!parsed.spans.length || parsedScoreCount(parsed) === 0) {
+                /* Sparse-text mode handles printed headings split by table borders. Run a
+                   matching sparse digits pass too: otherwise OCR can find names but leave
+                   every CA/Exam cell blank even when the marks are clearly printed. */
+                setUploadProgress(76, "Recovering printed subject and score columns");
                 await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "11" });
                 const sparseTextResult = await state.worker.recognize(canvas);
-                await state.worker.setParameters({ tessedit_pageseg_mode: "6" });
-                const sparseParsed = parseFrame(sparseTextResult, digitResult, classStudents(), state.meta.subjects || []);
+                await state.worker.setParameters({ tessedit_char_whitelist: "0123456789.", tessedit_pageseg_mode: "11" });
+                const sparseDigitResult = await state.worker.recognize(canvas);
+                await state.worker.setParameters({ tessedit_char_whitelist: "", tessedit_pageseg_mode: "6" });
+                const sparseParsed = parseFrame(sparseTextResult, sparseDigitResult, classStudents(), state.meta.subjects || []);
                 if (sparseParsed.spans.length > parsed.spans.length ||
+                    parsedScoreCount(sparseParsed) > parsedScoreCount(parsed) ||
                     (sparseParsed.spans.length === parsed.spans.length && sparseParsed.read.length > parsed.read.length)) {
                     parsed = sparseParsed;
                 }
@@ -804,13 +865,15 @@
             setUploadProgress(96, "Checking detected scores");
 
             const subjects = confirmedSubjects();
-            const reviewSubjects = (state.meta.subjects || []).length ? state.meta.subjects : subjects;
+            const reviewSubjects = subjects.length ? subjects : (state.meta.subjects || []);
             setUploadProgress(100, "Scan complete");
             buildReview(reviewSubjects);
             showPhase("review");
             const detectedStudents = state.studentSeen.size;
-            const captured = Math.round(state.lastSeen.size / FIELDS.length);
-            const missing = Math.max(0, classStudents().length * reviewSubjects.length - captured);
+            const totalScoreCells = classStudents().length * reviewSubjects.length * FIELDS.length;
+            const capturedScoreCells = state.lastSeen.size;
+            const missingScoreCells = Math.max(0, totalScoreCells - capturedScoreCells);
+            const capturedScoreLines = Math.floor(capturedScoreCells / FIELDS.length);
             const invalid = [...$("[data-mkls-rows]", overlay).querySelectorAll("tr.needs-check")].length;
             if (!subjects.length) {
                 $("[data-mkls-note]", overlay).textContent =
@@ -819,7 +882,7 @@
                 return;
             }
             $("[data-mkls-note]", overlay).textContent =
-                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected; ${subjects.length} subject heading(s) recognised. ${captured} score line(s) read; ${missing} need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} All assigned subjects are shown for review.`;
+                `Scan complete: ${detectedStudents} of ${classStudents().length} students detected; ${subjects.length} subject heading(s) recognised. ${capturedScoreCells} of ${totalScoreCells} score cells read (${capturedScoreLines} complete score line(s)); ${missingScoreCells} cells need checking. ${invalid ? `${invalid} row(s) need review.` : "No range errors detected."} All assigned subjects are shown for review.`;
             setGuide("Review every subject and the highlighted rows, then confirm all scores before saving.");
         } catch (error) {
             setUploadProgress(100, "Scan could not finish");
