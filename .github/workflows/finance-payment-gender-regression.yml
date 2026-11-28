@@ -1,0 +1,40 @@
+name: Finance payment and teacher account regression
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/js/finance.js
+          node --check public/js/account-management.js
+
+      - name: Check PHP syntax
+        run: |
+          php -l api/settings/accounts.php
+          php -l scripts/seed-demo-teachers.php
+
+      - name: Test payment history layout
+        run: node tests/finance-payment-history-layout.test.js
+
+      - name: Test teacher gender and safe demo seeding
+        run: php tests/teacher-account-gender-regression.test.php
