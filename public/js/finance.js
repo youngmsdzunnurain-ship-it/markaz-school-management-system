@@ -50,7 +50,7 @@ async function loadPayroll(){
   renderPayrollPeriods(d.periods||[],d.selected_period_id||d.period?.academic_period_id);
   currentPayrollPeriod=d.period||null;
   currentPayrollItems=Array.isArray(d.items)?d.items:[];
-  $('#approvePayroll').disabled=!currentPayrollPeriod||currentPayrollPeriod.status!=='calculated';
+  $('#approvePayroll').disabled=!currentPayrollPeriod||currentPayrollPeriod.status!=='calculated';$('#calculatePayroll').disabled=!!currentPayrollPeriod&&['approved','processing','completed'].includes(currentPayrollPeriod.status);
   $('#payrollRows').innerHTML=currentPayrollItems.map(i=>{
    const late=Number(i.late_minutes||0),lateDeduction=Number(i.lateness_deductions||0),other=Number(i.other_deductions||0);
    const paid=String(i.status)==='paid';
