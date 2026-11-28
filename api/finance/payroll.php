@@ -117,7 +117,7 @@ if($action==='calculate'){
     $pdo->beginTransaction();
     $legacyQuery=$pdo->prepare('SELECT id,status FROM finance_payroll_periods WHERE academic_period_id IS NULL AND period_year=? AND period_month=? ORDER BY id DESC LIMIT 1 FOR UPDATE');
     $legacyQuery->execute([$year,$month]);$legacyPeriod=$legacyQuery->fetch(PDO::FETCH_ASSOC);
-    if($legacyPeriod)financeJson(['success'=>false,'message'=>'A legacy payroll record already exists for this calendar month without an academic term. Review and settle that record from Payroll History before creating a new term-based payroll.'],409);
+    if($legacyPeriod)financeJson(['success'=>false,'message'=>'A legacy payroll record already exists for this calendar month without an academic term. Have Finance review and assign that record before creating a new term-based payroll.'],409);
     $q=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE academic_period_id=? AND period_year=? AND period_month=? FOR UPDATE');$q->execute([$periodId,$year,$month]);$period=$q->fetch(PDO::FETCH_ASSOC);
     if($period&&in_array($period['status'],['approved','processing','completed'],true))financeJson(['success'=>false,'message'=>'Approved or paid payroll cannot be recalculated.'],409);
     if(!$period){$q=$pdo->prepare('INSERT INTO finance_payroll_periods(academic_period_id,period_year,period_month,status,created_by) VALUES(?,?,?,"draft",?)');$q->execute([$periodId,$year,$month,(int)$_SESSION['admin_id']]);$periodIdRow=(int)$pdo->lastInsertId();}
@@ -180,7 +180,7 @@ if($action==='approve'){
     $pdo->beginTransaction();
     $legacyQuery=$pdo->prepare('SELECT id FROM finance_payroll_periods WHERE academic_period_id IS NULL AND period_year=? AND period_month=? ORDER BY id DESC LIMIT 1 FOR UPDATE');
     $legacyQuery->execute([$year,$month]);
-    if($legacyQuery->fetchColumn())financeJson(['success'=>false,'message'=>'A legacy payroll record exists for this calendar month without an academic term. Resolve it from Payroll History before approving another payroll for the month.'],409);
+    if($legacyQuery->fetchColumn())financeJson(['success'=>false,'message'=>'A legacy payroll record exists for this calendar month without an academic term. Have Finance review and assign it before approving another payroll for the month.'],409);
     $q=$pdo->prepare('SELECT * FROM finance_payroll_periods WHERE academic_period_id=? AND period_year=? AND period_month=? FOR UPDATE');$q->execute([$periodId,$year,$month]);$period=$q->fetch(PDO::FETCH_ASSOC);
     if(!$period||$period['status']!=='calculated')financeJson(['success'=>false,'message'=>'Calculate and review this academic-period payroll before approval.'],409);
     $pdo->prepare('UPDATE finance_payroll_periods SET status="approved",scheduled_at=NULL,approved_by=?,approved_at=NOW() WHERE id=?')->execute([(int)$_SESSION['admin_id'],(int)$period['id']]);
