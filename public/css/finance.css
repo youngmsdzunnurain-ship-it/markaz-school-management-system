@@ -981,3 +981,164 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
   color:#59665d;
   border:1px solid #d9e0da;
 }
+
+
+/* Recent Payments: one full-width record per row with a clear information hierarchy. */
+#paymentHistory {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    min-width: 0;
+}
+
+#paymentHistory .payment-record {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 190px);
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    background: var(--card-background, #fff);
+    box-sizing: border-box;
+}
+
+.payment-record-main,
+.payment-record-side {
+    min-width: 0;
+}
+
+.payment-record-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(130px, .65fr);
+    gap: 12px 20px;
+    align-items: start;
+}
+
+.payment-record-heading > div,
+.payment-record-meta > span {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.payment-record-label,
+.payment-record-meta small {
+    color: var(--muted-text, #64748b);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .035em;
+    text-transform: uppercase;
+}
+
+.payment-record-heading strong {
+    min-width: 0;
+    color: var(--text-color, #172033);
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.payment-record-meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px 16px;
+    margin-top: 14px;
+}
+
+.payment-record-meta b {
+    min-width: 0;
+    color: var(--text-color, #334155);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.payment-record-side {
+    display: grid;
+    justify-items: end;
+    align-content: center;
+    gap: 9px;
+    padding-left: 16px;
+    border-left: 1px solid var(--border-color, #e2e8f0);
+}
+
+.payment-record-amount {
+    color: var(--text-color, #172033);
+    font-size: 19px;
+    font-weight: 750;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.payment-record-refund {
+    color: var(--muted-text, #64748b);
+    font-size: 11px;
+    text-align: right;
+}
+
+.payment-record-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px 10px;
+}
+
+.payment-record-actions .action-link {
+    white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+    #paymentHistory .payment-record {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .payment-record-side {
+        grid-template-columns: minmax(0, 1fr) auto;
+        justify-items: start;
+        align-items: center;
+        padding: 12px 0 0;
+        border-left: 0;
+        border-top: 1px solid var(--border-color, #e2e8f0);
+    }
+
+    .payment-record-amount {
+        grid-column: 1;
+        text-align: left;
+    }
+
+    .payment-record-side > .pill,
+    .payment-record-refund {
+        grid-column: 1;
+        justify-self: start;
+    }
+
+    .payment-record-actions {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        justify-content: flex-end;
+    }
+
+    .payment-record-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 420px) {
+    #paymentHistory .payment-record {
+        padding: 12px;
+    }
+
+    .payment-record-heading {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .payment-record-actions {
+        gap: 5px 7px;
+    }
+}
