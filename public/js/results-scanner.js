@@ -1202,6 +1202,10 @@
         state.reading = true;
         try {
             const canvas = captureFrame(video);
+            if (Date.now() - state.templateCheckAt >= 1500) {
+                state.templateCheckAt = Date.now();
+                if (await processTemplateSheet(canvas)) return;
+            }
             await state.worker.setParameters({ tessedit_char_whitelist: "" });
             const textResult = await state.worker.recognize(canvas);
             await state.worker.setParameters({ tessedit_char_whitelist: "0123456789." });
