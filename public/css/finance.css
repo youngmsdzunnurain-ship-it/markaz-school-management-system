@@ -786,3 +786,26 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
 .finance-simple-form .inline-fields{gap:10px}
 .finance-simple-form .btn{margin-top:2px}
 @media(max-width:720px){.finance-simple-form{padding:15px;gap:10px}.finance-simple-form .inline-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Finance: pair each money flow with its entry form and review queue. */
+#tab-expenses.active{display:grid;gap:16px;align-content:start}
+.finance-money-columns,.finance-register-columns{align-items:stretch;gap:14px}
+.finance-money-column{display:grid;grid-template-rows:auto auto minmax(150px,1fr);align-content:start;gap:12px;min-width:0}
+.finance-column-heading{padding:3px 2px 0}
+.finance-column-heading h2{margin:4px 0;font-size:19px;color:var(--ink,#20382a)}
+.finance-column-heading p{margin:4px 0;font-size:12px;line-height:1.5}
+.finance-money-column .finance-simple-form,.finance-money-column .finance-queue-panel{height:100%;min-width:0}
+.finance-money-column .finance-simple-form{align-content:start}
+.finance-queue-panel{padding:16px}
+.finance-queue-panel .panel-heading{align-items:center;margin-bottom:4px}
+.finance-queue-panel .panel-heading h3,.finance-register-columns .panel-heading h3{margin:3px 0;font-size:16px}
+.finance-queue-panel .stack-list{margin-top:8px}
+.finance-register-columns>.panel{min-width:0;align-self:start}
+.finance-register-columns .panel-heading{align-items:flex-start}
+.finance-register-columns .panel-heading p{margin:4px 0 0;font-size:11px}
+@media(max-width:760px){
+ .finance-money-columns,.finance-register-columns{grid-template-columns:minmax(0,1fr);gap:12px}
+ .finance-money-column{grid-template-rows:auto auto auto}
+ .finance-queue-panel{padding:14px}
+}
