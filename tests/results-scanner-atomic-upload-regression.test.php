@@ -28,7 +28,7 @@ $checks = [
     'photo scan maps score columns to class subjects only when every ordered header triplet is present' => str_contains($scanner, 'labels.length !== subjects.length * FIELDS.length') && str_contains($scanner, '["ca1", "ca2", "exam"]'),
     'photo review retains extracted score cells when subject headings are recovered by column position' => str_contains($scanner, 'const detectedSpans = findSubjectSpans(headerWords, subjects);') && str_contains($scanner, 'detectedSpans.length ? detectedSpans : inferSubjectSpansFromColumnLabels(headerWords, subjects)'),
     'photo scan retries sparse-text OCR when headings are missed' => str_contains($scanner, 'tessedit_pageseg_mode: "11"') &&
-        str_contains($scanner, 'Checking printed subject headings'),
+        str_contains($scanner, 'Recovering printed subject and score columns'),
     'photo scan retries sparse OCR when either headings or score cells are missing' => str_contains($scanner, 'function parsedScoreCount(parsed)') && str_contains($scanner, 'parsedScoreCount(sparseParsed) > parsedScoreCount(parsed)'),
     'photo scan reads score digits again in sparse page mode when normal OCR misses them' => str_contains($scanner, 'tessedit_char_whitelist: "0123456789.", tessedit_pageseg_mode: "11"'),
     'photo scan opens review instead of rejecting an unrecognised heading' => str_contains($scanner, 'All subjects assigned to this class are listed below') &&
