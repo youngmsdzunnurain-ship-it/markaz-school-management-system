@@ -37,7 +37,7 @@ $checks = [
         str_contains($scanner, 'Recovering printed subject and score columns'),
     'photo scan retries sparse OCR when either headings or score cells are missing' => str_contains($scanner, 'function parsedScoreCount(parsed)') && str_contains($scanner, 'parsedScoreCount(sparseParsed) > parsedScoreCount(parsed)'),
     'photo scan reads score digits again in sparse page mode when normal OCR misses them' => str_contains($scanner, 'tessedit_char_whitelist: "0123456789.", tessedit_pageseg_mode: "11"'),
-    'photo scan opens review instead of rejecting an unrecognised heading' => str_contains($scanner, 'All subjects assigned to this class are listed below') &&
+    'photo scan opens review instead of rejecting an unrecognised heading' => str_contains($scanner, 'Print the MARKAZ A4 scan sheet') &&
         !str_contains($scanner, 'Try a sharper, straight-on photo'),
     'review save uses the subjects actually shown in the review table' => str_contains($scanner, 'state.reviewSubjects = [...subjects]') &&
         str_contains($scanner, 'state.reviewSubjects.length ? state.reviewSubjects : confirmedSubjects()'),

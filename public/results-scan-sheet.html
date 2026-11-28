@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MARKAZ A4 Result Scan Sheet</title>
+<link rel="stylesheet" href="./css/dashboard.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f5f3;color:#183c2b;font-family:Arial,sans-serif}
+.scan-tools{max-width:1100px;margin:24px auto;padding:20px;background:#fff;border-radius:14px}
+.scan-tools h1{margin:0 0 8px}.scan-tools p{color:#52675c}.subject-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:18px 0}
+.subject-options label{display:flex;gap:8px;align-items:center;padding:9px;border:1px solid #d9e4dc;border-radius:8px}
+.scan-tools button{border:0;border-radius:8px;padding:12px 20px;background:#145035;color:white;font-weight:700}
+.scan-pages{display:none}
+.scan-page{position:relative;width:297mm;height:210mm;background:#fff;color:#111;page-break-after:always;break-after:page;overflow:hidden;padding:0}
+.scan-fiducial{position:absolute;width:4mm;height:4mm;background:#000;z-index:2}
+.scan-fiducial.tl{left:2mm;top:2mm}.scan-fiducial.tr{left:291mm;top:2mm}.scan-fiducial.bl{left:2mm;top:204mm}.scan-fiducial.br{left:291mm;top:204mm}
+.scan-page:last-child{page-break-after:auto;break-after:auto}
+.scan-page-head{position:absolute;left:27mm;top:5mm;right:10mm;height:20mm;display:flex;align-items:center;justify-content:space-between}
+.scan-page-head h1{font-size:16pt;margin:0;color:#123d2a}.scan-page-head p{font-size:8pt;margin:2mm 0 0}
+.scan-qr{position:absolute;left:8mm;top:5mm;width:16mm;height:16mm}.scan-qr img,.scan-qr canvas{width:16mm!important;height:16mm!important}
+.scan-grid{position:absolute;left:4mm;top:29mm;width:289mm;border-collapse:collapse;table-layout:fixed;font-size:6.5pt;direction:ltr}
+.scan-grid th,.scan-grid td{border:.25mm solid #111;text-align:center;padding:0;overflow:hidden}
+.scan-grid thead tr:first-child{height:7mm}.scan-grid thead tr:nth-child(2){height:6mm}
+.scan-grid tbody tr{height:8mm}
+.scan-grid th{font-weight:700;background:#f1f4f1}
+.scan-grid .student-name{text-align:left;padding-left:1mm;font-size:6.3pt;white-space:nowrap}
+.scan-grid .admission{font-size:5.8pt}
+.scan-grid .score-cell{background:#fff}
+.scan-footer{position:absolute;bottom:2mm;left:8mm;right:8mm;text-align:center;font-size:5.5pt;color:#555}
+@page{size:A4 landscape;margin:0}
+@media print{body{background:#fff}.scan-tools{display:none!important}.scan-pages{display:block}.scan-page{margin:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<section class="scan-tools">
+<h1>MARKAZ A4 Result Scan Sheet</h1>
+<p>Select the subjects to include. Print this sheet, write each score clearly inside its box, then scan or photograph the complete page. Use the printed MARKAZ sheet for grid-based extraction.</p>
+<div id="sheetStatus">Loading class roster and subjects…</div>
+<div id="subjectOptions" class="subject-options"></div>
+<button type="button" id="printSheets" disabled>Prepare and print A4 sheets</button>
+</section>
+<div id="scanPages" class="scan-pages"></div>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="./js/results-scan-sheet.js?v=20261128-grid1"></script>
+</body></html>
