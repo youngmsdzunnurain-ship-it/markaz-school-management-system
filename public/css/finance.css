@@ -758,3 +758,19 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
 .student-intake-config .btn{min-height:40px;white-space:nowrap}
 .student-intake-config>small{grid-column:1/-1;margin:0;color:var(--muted);font-size:10px;line-height:1.45}
 @media(max-width:560px){.student-intake-config{grid-template-columns:minmax(0,1fr)}.student-intake-config .btn{width:100%}.student-intake-config>small{grid-column:1}}
+
+
+/* Compact Finance payments and refund workspace. */
+#tab-payments .two-col{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:14px}
+#tab-payments .form-panel{padding:18px;gap:11px}
+#tab-payments .form-panel .panel-heading{margin-bottom:2px}
+#tab-payments .form-panel label{gap:5px}
+#tab-payments .form-panel input,#tab-payments .form-panel select,#tab-payments .form-panel textarea{min-height:40px;padding:9px 11px}
+#tab-payments .payment-history-panel{grid-column:1/-1;padding:18px}
+#tab-payments .payment-history-panel .panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+#tab-payments .payment-history-panel .panel-heading h2{margin:2px 0}
+#tab-payments .payment-history-panel .panel-heading p{margin:4px 0 0;font-size:12px}
+#tab-payments #paymentHistory{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#tab-payments #refundQueue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#tab-payments .payment-history-panel .stack-item,#tab-payments #refundQueue .stack-item{min-width:0;margin:0;padding:12px;border-radius:11px}
+@media(max-width:850px){#tab-payments .two-col{grid-template-columns:minmax(0,1fr);gap:12px}#tab-payments .payment-history-panel{grid-column:1}#tab-payments #paymentHistory,#tab-payments #refundQueue{grid-template-columns:minmax(0,1fr)}}
