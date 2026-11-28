@@ -35,6 +35,7 @@
     let classResults = [];
     let selectedSubjectId = "";
     let resultsLoadSequence = 0;
+    let currentAcademicPeriodId = 0;
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -246,6 +247,7 @@
             );
         }
 
+        currentAcademicPeriodId = Number(data.academic_period?.id || 0);
         resultSubjects = data.subjects || [];
         classResults = data.results || [];
 
