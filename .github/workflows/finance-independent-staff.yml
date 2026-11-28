@@ -11,12 +11,18 @@ on:
       - 'database/migrations/20261124_markaz_independent_finance_staff.sql'
       - 'database/migrations/20261125_teacher_attendance_modes.sql'
       - 'database/migrations/20261126_markaz_fee_refunds.sql'
+      - 'database/migrations/20261128_finance_receipts_payroll_periods_manual_payments.sql'
       - 'public/attendance.html'
       - 'public/finance.html'
       - 'public/teacher-attendance.html'
       - 'public/js/attendance.js'
       - 'public/js/dashboard.js'
       - 'public/js/finance.js'
+      - 'public/js/finance-receipt.js'
+      - 'public/finance-receipt.html'
+      - 'public/css/finance-receipt.css'
+      - 'public/css/finance.css'
+      - 'public/css/dashboard-2026.css'
       - 'public/js/teacher-attendance.js'
       - 'scripts/install-finance.sh'
       - 'tests/finance-*'
@@ -56,6 +62,7 @@ jobs:
           php -l api/auth/me.php
           php -l api/finance/index.php
           php -l api/finance/payroll.php
+          php -l tests/finance-receipts-payroll-workspace-regression.test.php
           php -l api/finance/term-fees.php
           php -l public/api/attendance/teachers.php
           php -l tests/finance-migration-installer.test.php
@@ -71,6 +78,7 @@ jobs:
           node --check public/js/attendance.js
           node --check public/js/dashboard.js
           node --check public/js/finance.js
+          node --check public/js/finance-receipt.js
           node --check public/js/teacher-attendance.js
           bash -n scripts/install-finance.sh
 
@@ -80,6 +88,7 @@ jobs:
           touch .env
           php tests/finance-migration-installer.test.php
           php tests/finance-payroll-regression.test.php
+          php tests/finance-receipts-payroll-workspace-regression.test.php
           php tests/independent-finance-staff-attendance.test.php
           php tests/teacher-attendance-policy-regression.test.php
           php tests/finance-fee-accounting-regression.test.php
