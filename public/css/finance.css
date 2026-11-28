@@ -809,3 +809,37 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
  .finance-money-column{grid-template-rows:auto auto auto}
  .finance-queue-panel{padding:14px}
 }
+
+/* Finance layout correction: preserve paired money-flow columns on desktop/tablet.
+   The shared .two-col breakpoint above 760px must not collapse these workspaces. */
+@media(min-width:761px){
+  body.finance-workspace-page .finance-money-columns,
+  body.finance-workspace-page .finance-register-columns{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+/* Mobile Finance header: keep the title, but confine the green chrome to the menu button. */
+@media(max-width:850px){
+  body.finance-workspace-page .topbar{
+    min-height:0;
+    padding:10px 11px 0;
+    gap:10px;
+    background:transparent;
+    box-shadow:none;
+  }
+  body.finance-workspace-page .topbar .menu-button{
+    display:grid;
+    place-items:center;
+    width:40px;
+    height:40px;
+    min-width:40px;
+    flex:0 0 40px;
+    padding:0;
+    border:1px solid rgba(230,217,164,.55);
+    border-radius:11px;
+    background:linear-gradient(145deg,#17643a,#0d2b1c);
+    color:#fff;
+    box-shadow:0 3px 10px rgba(13,43,28,.18);
+  }
+}
