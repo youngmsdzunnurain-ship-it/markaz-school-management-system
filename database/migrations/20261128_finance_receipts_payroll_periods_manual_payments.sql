@@ -7,7 +7,6 @@ ALTER TABLE finance_fee_payments
 ALTER TABLE finance_payroll_periods
     DROP INDEX uq_payroll_period,
     ADD COLUMN academic_period_id BIGINT UNSIGNED NULL AFTER id,
-    ADD KEY idx_payroll_academic_period (academic_period_id, period_year, period_month),
     ADD UNIQUE KEY uq_payroll_academic_period_month (academic_period_id, period_year, period_month),
     ADD CONSTRAINT fk_payroll_academic_period
         FOREIGN KEY (academic_period_id) REFERENCES academic_periods(id)
