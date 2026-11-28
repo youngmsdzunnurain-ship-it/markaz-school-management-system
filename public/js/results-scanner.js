@@ -483,7 +483,7 @@
             </button>
           </div>
           <button type="button" class="mkls-btn ghost mkls-review-control" data-mkls-review>Review scanned results</button>
-          <input type="file" data-mkls-photo-input accept="image/*" hidden>
+          <input type="file" class="mkls-photo-input" data-mkls-photo-input accept="image/*" aria-label="Choose result-sheet photo" tabindex="-1">
         </div>
         <section class="mkls-preview" data-mkls-preview hidden>
           <p class="mkls-preview-note" data-mkls-note></p>
@@ -506,6 +506,27 @@
         </section>
       </div>`;
 
+    /* Release camera and OCR memory before Android opens the system gallery.
+       Keep the scanner overlay alive so the selected file returns to this review flow. */
+    function openPhotoPicker() {
+        const input = $("[data-mkls-photo-input]", overlay);
+        if (!input) return;
+        clearTimeout(state.timer);
+        stopStream();
+        if (state.worker) {
+            const worker = state.worker;
+            state.worker = null;
+            worker.terminate().catch(() => {});
+        }
+        setGuide("Choose a result-sheet photo from your gallery.");
+        try {
+            input.click();
+        } catch (error) {
+            setGuide("The photo picker could not open. Please try again.");
+            startCamera();
+        }
+    }
+
     function buildOverlay() {
         overlay = document.createElement("div");
         overlay.className = "mkls-overlay";
@@ -516,11 +537,15 @@
         $("[data-mkls-done]", overlay).addEventListener("click", closeScanner);
         $("[data-mkls-review]", overlay).addEventListener("click", reviewNow);
         $("[data-mkls-rescan]", overlay).addEventListener("click", startCamera);
-        $("[data-mkls-upload-photo]", overlay).addEventListener("click", () => $("[data-mkls-photo-input]", overlay).click());
-        $("[data-mkls-photo-input]", overlay).addEventListener("change", event => {
+        $("[data-mkls-upload-photo]", overlay).addEventListener("click", openPhotoPicker);
+        const photoInput = $("[data-mkls-photo-input]", overlay);
+        photoInput.addEventListener("change", event => {
             const file = event.target.files && event.target.files[0];
             event.target.value = "";
             if (file) processUploadedFiles([file]);
+        });
+        photoInput.addEventListener("cancel", () => {
+            if (state.phase === "camera") startCamera();
         });
         $("[data-mkls-torch]", overlay).addEventListener("click", toggleTorch);
         $("[data-mkls-save]", overlay).addEventListener("click", saveReviewed);

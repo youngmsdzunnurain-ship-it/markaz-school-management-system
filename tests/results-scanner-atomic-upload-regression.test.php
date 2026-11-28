@@ -13,6 +13,9 @@ $controlsPosition = strpos($scanner, '<div class="mkls-controls"', $templateStar
 $checks = [
     'scanner offers one icon-only photo upload control' => str_contains($scanner, 'data-mkls-upload-photo') &&
         str_contains($scanner, 'aria-label="Upload photo"') && !str_contains($scanner, 'data-mkls-upload-folder'),
+    'photo picker input remains usable in Android browser file choosers' => str_contains($scanner, 'class="mkls-photo-input"') && !str_contains($scanner, 'data-mkls-photo-input accept="image/*" hidden'),
+    'photo picker releases camera and OCR resources before opening gallery' => str_contains($scanner, 'function openPhotoPicker()') && strpos($scanner, 'stopStream();', strpos($scanner, 'function openPhotoPicker()')) < strpos($scanner, 'input.click();', strpos($scanner, 'function openPhotoPicker()')) && str_contains($scanner, 'worker.terminate()'),
+    'cancelled photo picker returns to a working camera preview' => str_contains($scanner, 'addEventListener("cancel"') && str_contains($scanner, 'startCamera();'),
     'scanner has an accessible torch on/off control' => str_contains($scanner, 'data-mkls-torch') &&
         str_contains($scanner, 'function toggleTorch()') && str_contains($scanner, 'torch: next'),
     'scanner shows the selected photo while processing' => str_contains($scanner, 'data-mkls-upload-preview') &&
