@@ -24,6 +24,9 @@ $checks = [
         $controlsPosition !== false && $controlsPosition > $cameraPosition,
     'printed subject headings tolerate bounded OCR errors and split words' => str_contains($scanner, 'target.length >= 9 ? 2 : target.length >= 5 ? 1 : 0') &&
         str_contains($scanner, 'Math.min(words.length, i + 7)'),
+    'photo scan can recover subject columns from repeated CA1 CA2 Exam header triplets' => str_contains($scanner, 'function inferSubjectSpansFromColumnLabels(') && str_contains($scanner, 'inferSubjectSpansFromColumnLabels(headerWords, subjects)'),
+    'photo scan maps score columns to class subjects only when every ordered header triplet is present' => str_contains($scanner, 'labels.length !== subjects.length * FIELDS.length') && str_contains($scanner, '["ca1", "ca2", "exam"]'),
+    'photo review retains extracted score cells when subject headings are recovered by column position' => str_contains($scanner, 'const spans = findSubjectSpans(headerWords, subjects);') && str_contains($scanner, 'spans.length ? spans : inferSubjectSpansFromColumnLabels(headerWords, subjects)'),
     'photo scan retries sparse-text OCR when headings are missed' => str_contains($scanner, 'tessedit_pageseg_mode: "11"') &&
         str_contains($scanner, 'Checking printed subject headings'),
     'photo scan opens review instead of rejecting an unrecognised heading' => str_contains($scanner, 'All subjects assigned to this class are listed below') &&
