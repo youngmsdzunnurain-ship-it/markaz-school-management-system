@@ -30,8 +30,8 @@ function makePage(studentPage,subjects,pageNumber,totalPages){
  const qr=document.createElement("div");qr.className="scan-qr";page.append(qr,head);
  ["tl","tr","bl","br"].forEach(corner=>{const marker=document.createElement("span");marker.className="scan-fiducial "+corner;marker.setAttribute("aria-hidden","true");page.append(marker);});
  const table=document.createElement("table");table.className="scan-grid";
- const scoreCols=subjects.length*3;const scoreWidth=(289-56)/scoreCols;
- let colgroup="<colgroup><col style='width:18mm'><col style='width:38mm'>";
+ const scoreCols=subjects.length*3;const scoreWidth=(289-68)/scoreCols;
+ let colgroup="<colgroup><col style='width:20mm'><col style='width:48mm'>";
  for(let i=0;i<scoreCols;i++)colgroup+=`<col style="width:${scoreWidth.toFixed(4)}mm">`;
  colgroup+="</colgroup>";
  const top=`<tr><th rowspan="2">ADM. NO.</th><th rowspan="2">STUDENT NAME</th>${subjects.map(s=>`<th colspan="3">${esc(s.name)}</th>`).join("")}</tr>`;
@@ -48,10 +48,10 @@ function prepare(){
  const subjects=data.subjects.filter(s=>ids.includes(Number(s.id)));
  if(!subjects.length||subjects.length>12){status.textContent="Select between 1 and 12 subjects.";return;}
  const roster=data.students;
- const chunks=[];for(let i=0;i<roster.length;i+=20)chunks.push(roster.slice(i,i+20));
+ const chunks=[];for(let i=0;i<roster.length;i+=15)chunks.push(roster.slice(i,i+15));
  pages.replaceChildren();
  chunks.forEach((chunk,index)=>pages.append(makePage(chunk,subjects,index+1,chunks.length)));
- status.textContent=`Prepared ${chunks.length} A4 page(s), ${roster.length} students and ${subjects.length} subjects. Use Print and choose A4 landscape, 100% scale, no browser headers or footers.`;
+ status.textContent=`Prepared ${chunks.length} A4 landscape page(s), ${roster.length} students and ${subjects.length} subjects. Each page contains no more than 15 students. Print at 100% scale with browser headers and footers disabled.`;
  window.setTimeout(()=>window.print(),800);
 }
 printButton.addEventListener("click",prepare);
