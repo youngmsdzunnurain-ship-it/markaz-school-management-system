@@ -24,6 +24,7 @@
     const resultStudentSearch = document.getElementById("resultStudentSearch");
     const resultsTableContainer = document.getElementById("resultsTableContainer");
     const resultsMessage = document.getElementById("resultsMessage");
+    const printResultsScanSheet = document.getElementById("printResultsScanSheet");
 
     let selectedClass = null;
     let currentRole = "";
@@ -105,6 +106,7 @@
             ? "Active"
             : "Inactive";
         document.title = `${classLabel} | MARKAZ`;
+        if (printResultsScanSheet) printResultsScanSheet.hidden = false;
 
         if (classType === "arabic") {
             [editClassButton, addStudentButton, panelAddStudentButton].forEach(button => {
@@ -718,6 +720,13 @@
             );
         }
     }
+
+    printResultsScanSheet?.addEventListener("click", event => {
+        event.preventDefault();
+        if (!selectedClass) return;
+        const url = `./results-scan-sheet.html?class_id=${encodeURIComponent(selectedClass.id)}&class_type=${encodeURIComponent(classType)}`;
+        window.open(url, "_blank", "noopener");
+    });
 
     resultSubjectSelect?.addEventListener("change", () => {
         selectedSubjectId = resultSubjectSelect.value;
