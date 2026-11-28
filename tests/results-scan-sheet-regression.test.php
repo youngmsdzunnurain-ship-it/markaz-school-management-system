@@ -33,7 +33,8 @@ scanSheetCheck(
 scanSheetCheck(
     str_contains($sheetJs, 'MZSCAN1') &&
     str_contains($sheetJs, 'subjects.map(s=>s.id).join(",")') &&
-    str_contains($sheetJs, 'studentPage.map(s=>s.id).join(",")'),
+    str_contains($sheetJs, 'studentPage.map(s=>s.id).join(",")') &&
+    str_contains($sheetJs, 'data.academic_period.id'),
     'Each printed page carries its exact class, class type, selected subject order and student order in its QR payload'
 );
 scanSheetCheck(
@@ -45,7 +46,9 @@ scanSheetCheck(
     str_contains($scanner, 'loadJsQR()') &&
     str_contains($scanner, 'parts[0] !== "MZSCAN1"') &&
     str_contains($scanner, 'printedClassId') &&
-    str_contains($scanner, 'printedClassType'),
+    str_contains($scanner, 'printedClassType') &&
+    str_contains($scanner, 'printedPeriodId') &&
+    str_contains($scanner, 'state.meta.academicPeriodId'),
     'Scanner identifies and validates the printed sheet before assigning marks'
 );
 scanSheetCheck(
