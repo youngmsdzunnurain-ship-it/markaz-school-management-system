@@ -40,6 +40,7 @@ verify(str_contains($financeHtml, 'recent-payments-table') && str_contains($fina
 verify(str_contains($financeJs, 'recent-payment-student-name') && str_contains($financeJs, 'recent-payment-amount'), 'Recent payment cells must have clear semantic structure.');
 verify(str_contains($financeCss, 'table-layout: fixed') && str_contains($financeCss, 'recent-payments-table'), 'Recent payments must use fixed, scoped table sizing.');
 verify(str_contains($seed, "MARKAZ_ALLOW_TEACHER_PREVIEW_SEED") && str_contains($seed, "markaz_result_system"), 'Teacher seed script must be explicitly guarded for the local database.');
-verify(substr_count($seed, "'name' =>") === 20, 'Teacher seed must contain exactly 20 distinct sample records.');
+$teacherSeedBlock = substr($seed, strpos($seed, '$teachers = ['), strpos($seed, '$findExisting =') - strpos($seed, '$teachers = ['));
+verify(substr_count($teacherSeedBlock, "'name' =>") === 20, 'Teacher seed must contain exactly 20 distinct sample records.');
 
 echo "PASS: {$checks} teacher-account, seed-safety and recent-payment layout checks.\n";
