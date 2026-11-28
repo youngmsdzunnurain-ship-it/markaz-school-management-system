@@ -27,7 +27,7 @@ function makePage(studentPage,subjects,pageNumber,totalPages){
  const qrPayload=["MZSCAN1",classId,classType,subjects.map(s=>s.id).join(","),studentPage.map(s=>s.id).join(",")].join("|");
  const head=document.createElement("header");head.className="scan-page-head";
  head.innerHTML=`<div><h1>MARKAZ · ${esc(data.class.name)} · RESULT ENTRY</h1><p>${esc(data.academic_period.session_name)} · ${esc(data.academic_period.term_name)} · Page ${pageNumber}/${totalPages}</p></div><div style="text-align:right;font-size:7pt"><b>Write clearly inside each box</b><br>CA1 · CA2 · EXAM</div>`;
- const qr=document.createElement("div");qr.className="scan-qr";page.append(qr,head);
+ const qr=document.createElement("div");qr.className="scan-qr";page.append(qr,head);\n ["tl","tr","bl","br"].forEach(corner=>{const marker=document.createElement("span");marker.className="scan-fiducial "+corner;marker.setAttribute("aria-hidden","true");page.append(marker);});
  const table=document.createElement("table");table.className="scan-grid";
  const scoreCols=subjects.length*3;const scoreWidth=(289-56)/scoreCols;
  let colgroup="<colgroup><col style='width:18mm'><col style='width:38mm'>";
