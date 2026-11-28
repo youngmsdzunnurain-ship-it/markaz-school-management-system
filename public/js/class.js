@@ -383,6 +383,7 @@
             window.MarkazResultsScanner.configure({
                 classId,
                 classType,
+                academicPeriodId: currentAcademicPeriodId,
                 role: currentRole,
                 subjects: resultSubjects,
                 students: classStudents,
