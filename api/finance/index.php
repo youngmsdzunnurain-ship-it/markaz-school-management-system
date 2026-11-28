@@ -99,8 +99,20 @@ try {
             );
             $stmt->execute([$id]);$payment=$stmt->fetch(PDO::FETCH_ASSOC);
             if(!$payment)financeJson(['success'=>false,'message'=>'Receipt record not found.'],404);
-            $alloc=$pdo->prepare('SELECT i.invoice_number,i.billing_year,i.billing_month,fa.amount FROM finance_fee_allocations fa INNER JOIN finance_fee_invoices i ON i.id=fa.invoice_id WHERE fa.payment_id=? ORDER BY i.billing_year,i.billing_month');
-            $alloc->execute([$id]);
+            $alloc=$pdo->prepare(
+                "SELECT invoice_number,billing_period,amount FROM (
+                    SELECT i.invoice_number,CONCAT(LPAD(i.billing_month,2,'0'),'/',i.billing_year) billing_period,fa.amount
+                    FROM finance_fee_allocations fa INNER JOIN finance_fee_invoices i ON i.id=fa.invoice_id
+                    WHERE fa.payment_id=?
+                    UNION ALL
+                    SELECT i.invoice_number,CONCAT(UPPER(LEFT(i.term,1)),SUBSTRING(i.term,2),' Term · ',s.session_name) billing_period,tp.amount
+                    FROM finance_term_fee_payments tp
+                    INNER JOIN finance_term_fee_invoices i ON i.id=tp.term_invoice_id
+                    INNER JOIN finance_academic_sessions s ON s.id=i.session_id
+                    WHERE tp.payment_id=?
+                ) receipt_allocations ORDER BY billing_period"
+            );
+            $alloc->execute([$id,$id]);
             $refunds=$pdo->prepare("SELECT refund_number,amount,reason,status,created_at,reviewed_at FROM finance_fee_refunds WHERE payment_id=? ORDER BY created_at");
             $refunds->execute([$id]);
             financeJson(['success'=>true,'payment'=>$payment,'allocations'=>$alloc->fetchAll(PDO::FETCH_ASSOC),'refunds'=>$refunds->fetchAll(PDO::FETCH_ASSOC)]);
