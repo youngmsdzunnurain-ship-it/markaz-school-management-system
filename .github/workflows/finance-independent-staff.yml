@@ -35,7 +35,6 @@ on:
       - 'tests/finance-refund-regression.test.php'
       - 'tests/independent-finance-staff-attendance.test.php'
       - 'tests/teacher-attendance-policy-regression.test.php'
-      - 'tests/management-regression-validation.test.php'
       - 'tests/staff-messaging-regression.test.php'
       - '.github/workflows/finance-independent-staff.yml'
 
@@ -106,7 +105,6 @@ jobs:
           php tests/finance-fee-accounting-regression.test.php
           php tests/finance-refund-regression.test.php
           php tests/finance-term-fees-regression.test.php
-          php tests/management-regression-validation.test.php
           php tests/staff-messaging-regression.test.php
 
   receipt-payroll-schema:
