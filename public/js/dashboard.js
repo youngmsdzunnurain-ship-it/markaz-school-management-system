@@ -40,6 +40,31 @@ function getInitials(name) {
     ).toUpperCase();
 }
 
+function renderStaffAvatar(container, profileImage, name) {
+    if (!container) return;
+    const initials = getInitials(name);
+    container.replaceChildren();
+    container.style.backgroundImage = "none";
+
+    if (!profileImage) {
+        container.textContent = initials;
+        return;
+    }
+
+    const image = document.createElement("img");
+    image.alt = "";
+    image.loading = "eager";
+    image.decoding = "async";
+    image.style.cssText = "display:block;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:inherit;";
+    image.addEventListener("error", () => {
+        container.replaceChildren();
+        container.style.backgroundImage = "none";
+        container.textContent = initials;
+    }, { once: true });
+    image.src = "/" + String(profileImage).replace(/^\/+/, "");
+    container.appendChild(image);
+}
+
 async function loadAdmin() {
     try {
         const response = await fetch("./api/auth/me.php", {
@@ -134,17 +159,7 @@ async function loadAdmin() {
             if (managerProfileName) managerProfileName.textContent = name;
             if (managerProfileEmail) managerProfileEmail.textContent = email;
             const managerProfilePhoto = document.getElementById("managementDashboardPhoto");
-            if (managerProfilePhoto) {
-                managerProfilePhoto.replaceChildren();
-                if (profileImage) {
-                    const managerImage = document.createElement("img");
-                    managerImage.src = "/" + profileImage.replace(/^\/+/, "");
-                    managerImage.alt = name;
-                    managerProfilePhoto.appendChild(managerImage);
-                } else {
-                    managerProfilePhoto.textContent = initials;
-                }
-            }
+            renderStaffAvatar(managerProfilePhoto, profileImage, name);
         }
         if (role === "teacher") {
             document.body.classList.add("role-teacher");
@@ -189,25 +204,11 @@ async function loadAdmin() {
         if (dashboardAdminName) dashboardAdminName.textContent = name;
         if (dashboardAdminEmail) dashboardAdminEmail.textContent = email;
         if (dashboardAdminPhoto) {
-            dashboardAdminPhoto.innerHTML = "";
-
-            if (profileImage) {
-                const image = document.createElement("img");
-                image.src = "/" + profileImage.replace(/^\/+/, "");
-                image.alt = name;
-                image.loading = "eager";
-                image.decoding = "async";
-                dashboardAdminPhoto.appendChild(image);
-            } else {
-                const initialsSpan = document.createElement("span");
-                initialsSpan.textContent = initials;
-                dashboardAdminPhoto.appendChild(initialsSpan);
-            }
-
+            renderStaffAvatar(dashboardAdminPhoto, profileImage, name);
             dashboardAdminPhoto.classList.add("avatar-ready");
         }
 
-        if (adminInitials) { if (profileImage) { adminInitials.textContent = ""; adminInitials.style.backgroundImage = "url(\"" + profileImage + "\")"; adminInitials.style.backgroundSize = "cover"; adminInitials.style.backgroundPosition = "center"; adminInitials.style.backgroundRepeat = "no-repeat"; } else { adminInitials.style.backgroundImage = "none"; adminInitials.textContent = initials; } }
+        renderStaffAvatar(adminInitials, profileImage, name);
         if (window.markazUpdateTopAdmin) window.markazUpdateTopAdmin(name, email, profileImage);
         if (profileInitials) profileInitials.textContent = initials;
 
@@ -489,21 +490,7 @@ if (topbar && !document.querySelector(".topbar-actions")) {
         }
 
         if (topAdminInitials) {
-            topAdminInitials.innerHTML = "";
-
-            if (profileImage) {
-                const image = document.createElement("img");
-                image.src = "/" + profileImage.replace(/^\/+/, "");
-                image.alt = safeName;
-                image.loading = "eager";
-                image.decoding = "async";
-                topAdminInitials.appendChild(image);
-            } else {
-                const initialsSpan = document.createElement("span");
-                initialsSpan.textContent = getInitials(safeName);
-                topAdminInitials.appendChild(initialsSpan);
-            }
-
+            renderStaffAvatar(topAdminInitials, profileImage, safeName);
             topAdminInitials.classList.add("avatar-ready");
         }
     }
