@@ -774,3 +774,15 @@ body.finance-workspace-page #tab-fees .fee-support-grid>.panel{
 #tab-payments #refundQueue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 #tab-payments .payment-history-panel .stack-item,#tab-payments #refundQueue .stack-item{min-width:0;margin:0;padding:12px;border-radius:11px}
 @media(max-width:850px){#tab-payments .two-col{grid-template-columns:minmax(0,1fr);gap:12px}#tab-payments .payment-history-panel{grid-column:1}#tab-payments #paymentHistory,#tab-payments #refundQueue{grid-template-columns:minmax(0,1fr)}}
+
+/* Compact, easy-to-complete Finance entry forms */
+.finance-entry-grid{align-items:start;gap:14px;margin-bottom:16px}
+.finance-simple-form{gap:11px;padding:18px}
+.finance-simple-form .panel-heading{margin-bottom:4px}
+.finance-simple-form .panel-heading p{margin:5px 0 0;font-size:12px;line-height:1.45}
+.finance-simple-form label{gap:6px}
+.finance-simple-form input,.finance-simple-form select,.finance-simple-form textarea{padding:10px 11px;border-radius:8px}
+.finance-simple-form textarea{min-height:58px}
+.finance-simple-form .inline-fields{gap:10px}
+.finance-simple-form .btn{margin-top:2px}
+@media(max-width:720px){.finance-simple-form{padding:15px;gap:10px}.finance-simple-form .inline-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
