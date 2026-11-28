@@ -18,6 +18,9 @@ on:
       - 'public/js/attendance.js'
       - 'public/js/dashboard.js'
       - 'public/js/finance.js'
+      - 'public/js/dashboard.js'
+      - 'public/js/management-shell.js'
+      - 'public/js/settings.js'
       - 'public/js/finance-receipt.js'
       - 'public/finance-receipt.html'
       - 'public/css/finance-receipt.css'
@@ -81,6 +84,9 @@ jobs:
           node --check public/js/dashboard.js
           node --check public/js/finance.js
           node --check public/js/finance-receipt.js
+          node --check public/js/dashboard.js
+          node --check public/js/management-shell.js
+          node --check public/js/settings.js
           node --check public/js/teacher-attendance.js
           bash -n scripts/install-finance.sh
           python -m py_compile tools/header/make-header-css.py
