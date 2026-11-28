@@ -192,7 +192,7 @@ if($action==='approve'){
     if((int)$itemCount->fetchColumn()>0&&(int)$positiveRemaining->fetchColumn()===0)$pdo->prepare('UPDATE finance_payroll_periods SET status="completed",processed_at=NOW() WHERE id=?')->execute([(int)$period['id']]);
     financeAudit($pdo,'payroll_approved','payroll_period',(int)$period['id'],['academic_period_id'=>$periodId,'year'=>$year,'month'=>$month]);
     $pdo->commit();
-    financeJson(['success'=>true,'message'=>'Payroll approved. Record each staff member’s actual salary payment after payment has been made.']);
+    financeJson(['success'=>true,'message'=>'Payroll approved. Record each positive net salary after it is paid; zero-net rows are settled without a payout.']);
 }
 if($action==='record_payment'){
     $itemId=(int)($input['payroll_item_id']??0);$method=(string)($input['payment_method']??'');
